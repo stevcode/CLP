@@ -11,6 +11,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
+
     #region Info Classes
 
     public class CacheInfo
@@ -161,8 +162,13 @@ namespace Classroom_Learning_Partner.Services
 
     public class DataService : IDataService
     {
+        private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLP";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Caches";
-        private static string DesktopFolderPath { get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); } }
+
+        private static string DesktopFolderPath
+        {
+            get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); }
+        }
 
         public DataService()
         {
@@ -171,7 +177,13 @@ namespace Classroom_Learning_Partner.Services
             var xmlSerializer = SerializationFactory.GetXmlSerializer();
             xmlSerializer.Warmup(typesToWarmup);
 
-            CurrentCachesFolderPath = Path.Combine(DesktopFolderPath, DEFAULT_CACHE_FOLDER_NAME);
+            CurrentCLPDataFolderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
+            if (!Directory.Exists(CurrentCLPDataFolderPath))
+            {
+                Directory.CreateDirectory(CurrentCLPDataFolderPath);
+            }
+
+            CurrentCachesFolderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
             if (!Directory.Exists(CurrentCachesFolderPath))
             {
                 Directory.CreateDirectory(CurrentCachesFolderPath);
@@ -179,6 +191,8 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #region Properties
+
+        public string CurrentCLPDataFolderPath { get; set; }
 
         #region Cache Properties
 
@@ -201,6 +215,7 @@ namespace Classroom_Learning_Partner.Services
         }
 
         private readonly List<NotebookInfo> _openNotebooksInfo = new List<NotebookInfo>();
+
         public List<NotebookInfo> OpenNotebooksInfo
         {
             get { return _openNotebooksInfo; }
@@ -229,12 +244,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var directoryInfo = new DirectoryInfo(cachesFolderPath);
-            return
-                directoryInfo.GetDirectories()
-                             .Where(directory => directory.Name.StartsWith("Cache"))
-                             .Select(directory => new CacheInfo(directory.FullName))
-                             .OrderBy(c => c.CacheName)
-                             .ToList();
+            return directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => new CacheInfo(directory.FullName)).OrderBy(c => c.CacheName).ToList();
         }
 
         public static List<NotebookInfo> GetNotebooksInCache(CacheInfo cache)
@@ -351,6 +361,21 @@ namespace Classroom_Learning_Partner.Services
             return submissions;
         }
 
+        public static List<CLPPage> GetPagesToSave(NotebookInfo notebookInfo, bool isForcedFullSave)
+        {
+            var pagesToSave = new List<CLPPage>();
+            foreach (var page in notebookInfo.Notebook.Pages)
+            {
+                if (isForcedFullSave || !page.IsCached)
+                {
+                    pagesToSave.Add(page);
+                }
+                pagesToSave.AddRange(page.Submissions.Where(s => isForcedFullSave || !s.IsCached));
+            }
+
+            return pagesToSave;
+        }
+
         #endregion //Static Methods
 
         #region Create Methods
@@ -373,7 +398,7 @@ namespace Classroom_Learning_Partner.Services
                 {
                     CurrentCacheInfo = existingCache;
                 }
-                
+
                 return existingCache;
             }
 
@@ -387,7 +412,10 @@ namespace Classroom_Learning_Partner.Services
             return newCache;
         }
 
-        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, bool isNotebookCurrent = true) { return CreateNewNotebook(notebookName, curriculum, CurrentCacheInfo, isNotebookCurrent); }
+        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, bool isNotebookCurrent = true)
+        {
+            return CreateNewNotebook(notebookName, curriculum, CurrentCacheInfo, isNotebookCurrent);
+        }
 
         public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, CacheInfo cache, bool isNotebookCurrent = true)
         {
@@ -395,9 +423,9 @@ namespace Classroom_Learning_Partner.Services
             notebookName = invalidFileNameCharacters.Aggregate(notebookName, (current, c) => current.Replace(c.ToString(), string.Empty));
 
             var newNotebook = new Notebook(notebookName, Person.Author)
-            {
-                Curriculum = curriculum
-            };
+                              {
+                                  Curriculum = curriculum
+                              };
 
             var newPage = new CLPPage(Person.Author);
             newNotebook.AddPage(newPage);
@@ -410,17 +438,19 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var notebookInfo = new NotebookInfo(cache, notebookFolderPath)
-                                   {
-                                       Notebook = newNotebook
-                                   };
+                               {
+                                   Notebook = newNotebook
+                               };
             notebookInfo.Initialize();
+            notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
+            newPage.SaveToXML(notebookInfo.PagesFolderPath);
 
             OpenNotebooksInfo.Add(notebookInfo);
             if (isNotebookCurrent)
             {
                 SetCurrentNotebook(notebookInfo);
             }
-            
+
             return notebookInfo;
         }
 
@@ -428,9 +458,37 @@ namespace Classroom_Learning_Partner.Services
 
         #region AutoSave Methods
 
-        
+        public void AutoSavePage(CLPPage page)
+        {
+            //TODO: take screenshot of page if not already cached
+            //set LastAutoSaveTime of notebook
+            //save page locally, and to export folder
+            //save page async to teacher machine, and partial cache folder
+        }
 
-        
+        public void SetCurrentPage(CLPPage page)
+        {
+            if (CurrentNotebook == null)
+            {
+                return;
+            }
+
+            var oldPage = CurrentNotebook.CurrentPage;
+            AutoSavePage(oldPage);
+            CurrentNotebook.CurrentPage = page;
+        }
+
+        public void DeletePage(CLPPage page)
+        {
+            //TODO: Delete page from notebook
+            //delete page's xml
+            //renumber existing pages
+            //function with full cache
+        }
+
+        #endregion //AutoSave Methods
+
+        #region Save Methods
 
         public void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave)
         {
@@ -440,21 +498,61 @@ namespace Classroom_Learning_Partner.Services
                 Directory.Delete(notebookInfo.NotebookFolderPath);
             }
             notebookInfo.Initialize();
-
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
 
-            var pagesToSave = new List<CLPPage>();
-            foreach (var page in notebookInfo.Notebook.Pages)
-            {
-                if (isForcedFullSave || !page.IsCached)
-                {
-                    pagesToSave.Add(page);
-                }
-                pagesToSave.AddRange(page.Submissions.Where(s => isForcedFullSave || !s.IsCached));
-            }
-
+            var pagesToSave = GetPagesToSave(notebookInfo, isForcedFullSave);
             Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
         }
+
+        #endregion //Save Methods
+
+        public void ArchiveCache(CacheInfo cacheInfo)
+        {
+            //if (!Directory.Exists(cacheInfo.CacheFolderPath))
+            //{
+            //    return;
+            //}
+
+            //var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
+            //var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
+            //var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
+            //if (!Directory.Exists(archiveDirectory))
+            //{
+            //    Directory.CreateDirectory(archiveDirectory);
+            //}
+            //Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
+        }
+
+        
+
+        public void PackageAndSendNotebook(NotebookInfo notebookInfo, bool isNotebookSaved = true)
+        {
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+                App.Network.InstructorProxy == null)
+            {
+                return;
+            }
+
+            if (!isNotebookSaved) { }
+
+            var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
+            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+        }
+
+        public void SetCurrentNotebook(NotebookInfo notebookInfo)
+        {
+            CurrentNotebookInfo = notebookInfo;
+
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
+            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
+            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
+            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
+
+        #region Load Methods
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
@@ -474,7 +572,6 @@ namespace Classroom_Learning_Partner.Services
                 {
                     if (CurrentNotebookInfo == existingNotebookInfo)
                     {
-                        notebookInfo.Notebook = CurrentNotebook;
                         App.MainWindowViewModel.IsBackStageVisible = false;
                     }
                     else if (isSetToNotebookCurrentNotebook)
@@ -512,63 +609,6 @@ namespace Classroom_Learning_Partner.Services
                 SetCurrentNotebook(notebookInfo);
             }
         }
-
-        public void PackageAndSendNotebook(NotebookInfo notebookInfo, bool isNotebookSaved = true)
-        {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
-                App.Network.InstructorProxy == null)
-            {
-                return;
-            }
-
-            if (!isNotebookSaved)
-            {
-                
-            }
-
-            var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
-            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
-            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
-        }
-
-        public void SetCurrentNotebook(NotebookInfo notebookInfo)
-        {
-            CurrentNotebookInfo = notebookInfo;
-            
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
-            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
-            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
-            App.MainWindowViewModel.IsBackStageVisible = false;
-        }
-
-        #endregion //AutoSave Methods
-
-        #region Save Methods
-
-        public void ArchiveCache(CacheInfo cacheInfo)
-        {
-            //if (!Directory.Exists(cacheInfo.CacheFolderPath))
-            //{
-            //    return;
-            //}
-
-            //var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
-            //var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            //var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-            //if (!Directory.Exists(archiveDirectory))
-            //{
-            //    Directory.CreateDirectory(archiveDirectory);
-            //}
-            //Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
-        }
-
-        #endregion //Save Methods
-
-        #region Load Methods
-
-         
 
         #endregion //Load Methods
 
@@ -646,8 +686,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             // Load submissions from disk.
-            if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && 
-                 App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
+            if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
                 notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
                 notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
             {
@@ -735,8 +774,6 @@ namespace Classroom_Learning_Partner.Services
             //}
         }
 
-        
-
         #endregion //Page Methods
 
         #region ClassPeriod Methods
@@ -749,12 +786,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var directoryInfo = new DirectoryInfo(cache.ClassesFolderPath);
-            return
-                directoryInfo.GetFiles()
-                             .Select(fileInfo => new ClassPeriodInfo(cache, fileInfo.FullName))
-                             .Where(c => c != null)
-                             .OrderBy(c => c.StartTime)
-                             .ToList();
+            return directoryInfo.GetFiles().Select(fileInfo => new ClassPeriodInfo(cache, fileInfo.FullName)).Where(c => c != null).OrderBy(c => c.StartTime).ToList();
         }
 
         #endregion //ClassPeriod Methods
