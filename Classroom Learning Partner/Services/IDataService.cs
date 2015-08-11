@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.Services
         void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave = false);
         void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true);
         void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
+        void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         void SetCurrentNotebook(NotebookInfo notebookInfo);
     }
 }

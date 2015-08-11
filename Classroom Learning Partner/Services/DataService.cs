@@ -547,7 +547,8 @@ namespace Classroom_Learning_Partner.Services
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
             // Is Notebook already loaded in memory?
-            var existingNotebookInfo = LoadedNotebooksInfo.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
+            var loadedNotebooks = LoadedNotebooksInfo.ToList();
+            var existingNotebookInfo = loadedNotebooks.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
             if (existingNotebookInfo != null)
             {
                 if (isForcedOpen)
@@ -717,6 +718,56 @@ namespace Classroom_Learning_Partner.Services
             //        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
             //    }
             //}
+        }
+
+        public void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced)
+        {
+            if (notebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            if (isExistingPagesReplaced)
+            {
+                foreach (var page in notebookInfo.Notebook.Pages)
+                {
+                    page.Submissions.Clear();
+                }
+            }
+            
+            var submissions = new List<CLPPage>();
+
+            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+            Parallel.ForEach(pageFilePaths,
+                             pageFilePath =>
+                             {
+                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                                 if (pageNameComposite == null ||
+                                     pageNameComposite.VersionIndex == "0")
+                                 {
+                                     return;
+                                 }
+
+                                 var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
+                                 if (!isPageToBeLoaded)
+                                 {
+                                     return;
+                                 }
+
+                                 var page = CLPPage.LoadFromXML(pageFilePath);
+                                 if (page == null)
+                                 {
+                                     return;
+                                 }
+
+                                 submissions.Add(page);
+                             });
+
+            Parallel.ForEach(notebookInfo.Notebook.Pages,
+                             page =>
+                             {
+                                 page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
+                             });
         }
 
         #endregion //Page Methods

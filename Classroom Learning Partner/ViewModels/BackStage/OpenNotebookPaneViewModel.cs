@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
@@ -47,9 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(AvailableCachesProperty, value); }
         }
 
-        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
-                                                                                       typeof (ObservableCollection<CacheInfo>),
-                                                                                       () => new ObservableCollection<CacheInfo>());
+        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches", typeof (ObservableCollection<CacheInfo>), () => new ObservableCollection<CacheInfo>());
 
         /// <summary>Selected Cache.</summary>
         public CacheInfo SelectedCache
@@ -121,7 +120,29 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetAllPageIDsInNotebook(SelectedNotebook);
-            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, true), null, "Loading Pages");
+            PleaseWaitHelper.Show(() =>
+                                  {
+                                      DataService.LoadPages(SelectedNotebook, pageIDs, true);
+                                      DataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, true);
+                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher && IsIncludeSubmissionsChecked)
+                                      {
+                                          Parallel.ForEach(AvailableNotebooks,
+                                                           notebookInfo =>
+                                                           {
+                                                               if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
+                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T")
+                                                               {
+                                                                   return;
+                                                               }
+
+                                                               DataService.OpenNotebook(notebookInfo, false, false);
+                                                               DataService.LoadPages(notebookInfo, pageIDs, true);
+                                                               DataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
+                                                           });
+                                      }
+                                  },
+                                  null,
+                                  "Loading Pages");
 
             //if (App.Network.InstructorProxy == null)
             //{
@@ -163,7 +184,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
-            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, false), null, "Loading Pages");
+            PleaseWaitHelper.Show(() =>
+                                  {
+                                      DataService.LoadPages(SelectedNotebook, pageIDs, false);
+                                      DataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, false);
+                                  },
+                                  null,
+                                  "Loading Pages");
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
