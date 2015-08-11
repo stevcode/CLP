@@ -120,7 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var newNotebook = DataService.CreateNewNotebook(NotebookName, NotebookCurriculum);
             if (newNotebook == null)
             {
-                MessageBox.Show("Something went wrong. The notebook you tried to create already exists in this cache.");
+                MessageBox.Show("Something went wrong. The notebook you tried to create already exists in this folder.");
             }
         }
 

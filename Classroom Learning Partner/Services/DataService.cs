@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Services
             get
             {
                 var directoryInfo = new DirectoryInfo(CacheFolderPath);
-                return string.Join(" ", directoryInfo.Name.Split('.').Where(s => !s.ToLower().Contains("cache")));
+                return string.Join(" ", directoryInfo.Name.Split('.').Where(s => !s.ToLower().Equals("cache")));
             }
         }
 
@@ -214,11 +214,11 @@ namespace Classroom_Learning_Partner.Services
             get { return GetNotebooksInCache(CurrentCacheInfo); }
         }
 
-        private readonly List<NotebookInfo> _openNotebooksInfo = new List<NotebookInfo>();
+        private readonly List<NotebookInfo> _loadedNotebooksInfo = new List<NotebookInfo>();
 
-        public List<NotebookInfo> OpenNotebooksInfo
+        public List<NotebookInfo> LoadedNotebooksInfo
         {
-            get { return _openNotebooksInfo; }
+            get { return _loadedNotebooksInfo; }
         }
 
         public NotebookInfo CurrentNotebookInfo { get; set; }
@@ -445,7 +445,7 @@ namespace Classroom_Learning_Partner.Services
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
             newPage.SaveToXML(notebookInfo.PagesFolderPath);
 
-            OpenNotebooksInfo.Add(notebookInfo);
+            LoadedNotebooksInfo.Add(notebookInfo);
             if (isNotebookCurrent)
             {
                 SetCurrentNotebook(notebookInfo);
@@ -490,7 +490,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Save Methods
 
-        public void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave)
+        public void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave = false)
         {
             notebookInfo.Cache.Initialize();
             if (isForcedFullSave)
@@ -540,33 +540,19 @@ namespace Classroom_Learning_Partner.Services
             App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
         }
 
-        public void SetCurrentNotebook(NotebookInfo notebookInfo)
-        {
-            CurrentNotebookInfo = notebookInfo;
-
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
-            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
-            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
-            App.MainWindowViewModel.IsBackStageVisible = false;
-        }
+        
 
         #region Load Methods
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
-            // Guarantee folder structure.
-            notebookInfo.Cache.Initialize();
-            notebookInfo.Initialize();
-
             // Is Notebook already loaded in memory?
-            var existingNotebookInfo = OpenNotebooksInfo.FirstOrDefault(n => n.NotebookFilePath == notebookInfo.NotebookFilePath);
+            var existingNotebookInfo = LoadedNotebooksInfo.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
             if (existingNotebookInfo != null)
             {
                 if (isForcedOpen)
                 {
-                    OpenNotebooksInfo.Remove(existingNotebookInfo);
+                    LoadedNotebooksInfo.Remove(existingNotebookInfo);
                 }
                 else
                 {
@@ -582,10 +568,14 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
+            // Guarantee folder structure.
+            notebookInfo.Cache.Initialize();
+            notebookInfo.Initialize();
+
             // Is Notebook included in notebookInfo (e.g. send across the network instead of being loaded from the disk).
             if (notebookInfo.Notebook != null)
             {
-                OpenNotebooksInfo.Add(notebookInfo);
+                LoadedNotebooksInfo.Add(notebookInfo);
                 if (isSetToNotebookCurrentNotebook)
                 {
                     SetCurrentNotebook(notebookInfo);
@@ -603,7 +593,7 @@ namespace Classroom_Learning_Partner.Services
 
             notebookInfo.Notebook = notebook;
 
-            OpenNotebooksInfo.Add(notebookInfo);
+            LoadedNotebooksInfo.Add(notebookInfo);
             if (isSetToNotebookCurrentNotebook)
             {
                 SetCurrentNotebook(notebookInfo);
@@ -611,6 +601,18 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Load Methods
+
+        public void SetCurrentNotebook(NotebookInfo notebookInfo)
+        {
+            CurrentNotebookInfo = notebookInfo;
+
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
+            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
+            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
+            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
 
         #region Page Methods
 
@@ -624,14 +626,15 @@ namespace Classroom_Learning_Partner.Services
             if (isExistingPagesReplaced)
             {
                 notebookInfo.Notebook.Pages.Clear();
+                notebookInfo.Notebook.CurrentPage = null;
             }
 
-            var newNotebookPages = new List<CLPPage>();
+            var pagesToLoad = new List<CLPPage>();
 
             if (notebookInfo.Pages != null &&
                 notebookInfo.Pages.Any()) // Load pages included in notebookInfo (e.g. ones sent across the network).
             {
-                newNotebookPages = notebookInfo.Pages;
+                pagesToLoad = notebookInfo.Pages;
             }
             else // Load local pages.
             {
@@ -659,11 +662,11 @@ namespace Classroom_Learning_Partner.Services
                                          return;
                                      }
 
-                                     newNotebookPages.Add(page);
+                                     pagesToLoad.Add(page);
                                  });
             }
 
-            foreach (var page in newNotebookPages)
+            foreach (var page in pagesToLoad)
             {
                 var index = notebookInfo.Notebook.Pages.ToList().BinarySearch(page, new PageNumberComparer());
                 if (index < 0)
@@ -686,91 +689,33 @@ namespace Classroom_Learning_Partner.Services
             }
 
             // Load submissions from disk.
-            if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
-                notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
-                notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
-            {
-                var submissions = LoadOwnSubmissionsForLoadedPages(notebookInfo);
-
-                foreach (var page in notebookInfo.Notebook.Pages)
-                {
-                    page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(p => p.ID == page.ID).OrderBy(p => p.VersionIndex).ToList());
-                }
-            }
-            else // Load all student submissions for Teacher Notebook.
-            {
-                var notebookInfos = GetNotebooksInCache(notebookInfo.Cache).Where(n => n.NameComposite.ID == notebookInfo.Notebook.ID && n.NameComposite.OwnerTypeTag == "S");
-                var pageFilePathsToCheck = new List<string>();
-
-                foreach (var info in notebookInfos)
-                {
-                    pageFilePathsToCheck.AddRange(Directory.EnumerateFiles(info.PagesFolderPath, "*.xml").ToList());
-                }
-
-                var submissions = LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePathsToCheck);
-
-                foreach (var page in notebookInfo.Notebook.Pages)
-                {
-                    page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
-                }
-            }
-        }
-
-        public void SaveNotebookPages(NotebookInfo notebookInfo, bool isForcedFullSave, bool serializeInkStrokes = true)
-        {
-            if (notebookInfo.Notebook == null)
-            {
-                return;
-            }
-
-            if (!Directory.Exists(notebookInfo.PagesFolderPath))
-            {
-                Directory.CreateDirectory(notebookInfo.PagesFolderPath);
-            }
-
-            foreach (var page in notebookInfo.Notebook.Pages)
-            {
-                if (page.IsCached &&
-                    !isForcedFullSave)
-                {
-                    continue;
-                }
-
-                page.SaveToXML(notebookInfo.PagesFolderPath, serializeInkStrokes);
-            }
-
-            //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-            //foreach(var pageFilePath in from trashedPage in _trashedPages
-            //                            from pageFilePath in pageFilePaths
-            //                            where pageFilePath.Contains(trashedPage.ID)
-            //                            select pageFilePath)
+            //if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
+            //    notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
+            //    notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
             //{
-            //    File.Delete(pageFilePath);
-            //}
-            //_trashedPages.Clear();
+            //    var submissions = LoadOwnSubmissionsForLoadedPages(notebookInfo);
 
-            //foreach(var page in Pages)
-            //{
-            //    foreach(var pageFilePath in pageFilePaths)
+            //    foreach (var page in notebookInfo.Notebook.Pages)
             //    {
-            //        if(pageFilePath.Contains(page.ID))
-            //        {
-            //            var pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1]);
-            //            if(page.PageNumber != pageNumberOfFile)
-            //            {
-            //                File.Delete(pageFilePath);
-            //            }
-            //        }
+            //        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(p => p.ID == page.ID).OrderBy(p => p.VersionIndex).ToList());
             //    }
             //}
-
-            //foreach(var pageFilePath in from pageFilePath in pageFilePaths
-            //                            let pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1])
-            //                            from page in Pages
-            //                            where pageFilePath.Contains(page.ID) && page.PageNumber != pageNumberOfFile
-            //                            select pageFilePath) 
+            //else // Load all student submissions for Teacher Notebook.
             //{
-            //    File.Delete(pageFilePath);
+            //    var notebookInfos = GetNotebooksInCache(notebookInfo.Cache).Where(n => n.NameComposite.ID == notebookInfo.Notebook.ID && n.NameComposite.OwnerTypeTag == "S");
+            //    var pageFilePathsToCheck = new List<string>();
+
+            //    foreach (var info in notebookInfos)
+            //    {
+            //        pageFilePathsToCheck.AddRange(Directory.EnumerateFiles(info.PagesFolderPath, "*.xml").ToList());
+            //    }
+
+            //    var submissions = LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePathsToCheck);
+
+            //    foreach (var page in notebookInfo.Notebook.Pages)
+            //    {
+            //        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
+            //    }
             //}
         }
 

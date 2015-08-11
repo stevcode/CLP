@@ -121,23 +121,22 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetAllPageIDsInNotebook(SelectedNotebook);
-            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, true, IsIncludeSubmissionsChecked), null, "Loading Pages");
+            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, true), null, "Loading Pages");
 
+            //if (App.Network.InstructorProxy == null)
+            //{
+            //    return;
+            //}
 
-            if (App.Network.InstructorProxy == null)
-            {
-                return;
-            }
+            //var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+            //                                         App.MainWindowViewModel.CurrentUser.ID,
+            //                                         App.Network.CurrentMachineName,
+            //                                         App.Network.CurrentMachineAddress);
 
-            var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
-                                                     App.MainWindowViewModel.CurrentUser.ID,
-                                                     App.Network.CurrentMachineName,
-                                                     App.Network.CurrentMachineAddress);
-
-            if (connectionString == "connected")
-            {
-                App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
-            }
+            //if (connectionString == "connected")
+            //{
+            //    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
+            //}
         }
 
         /// <summary>Opens a range of pages in a notebook.</summary>
@@ -164,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
-            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, false, IsIncludeSubmissionsChecked), null, "Loading Pages");
+            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, false), null, "Loading Pages");
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }

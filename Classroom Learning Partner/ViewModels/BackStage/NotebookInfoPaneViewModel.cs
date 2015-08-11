@@ -88,44 +88,44 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
+            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(DataService.CurrentNotebookInfo), null, "Saving Notebook");
 
-            PleaseWaitHelper.Show(
-                                  () =>
-                                  LoadedNotebookService.SaveNotebookLocally(LoadedNotebookService.CurrentNotebook,
-                                                                            Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
-                                  null,
-                                  "Exporting Notebook");
+            //PleaseWaitHelper.Show(
+            //                      () =>
+            //                      LoadedNotebookService.SaveNotebookLocally(LoadedNotebookService.CurrentNotebook,
+            //                                                                Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
+            //                      null,
+            //                      "Exporting Notebook");
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
-                App.Network.InstructorProxy == null)
-            {
-                return;
-            }
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+            //    App.Network.InstructorProxy == null)
+            //{
+            //    return;
+            //}
 
-            var zippedPages = string.Empty;
-            try
-            {
-                var sPages = ObjectSerializer.ToString(LoadedNotebookService.CurrentNotebook.Pages.ToList());
-                zippedPages = CLPServiceAgent.Instance.Zip(sPages);
-            }
-            catch (Exception)
-            {
-                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
-                return;
-            }
+            //var zippedPages = string.Empty;
+            //try
+            //{
+            //    var sPages = ObjectSerializer.ToString(LoadedNotebookService.CurrentNotebook.Pages.ToList());
+            //    zippedPages = CLPServiceAgent.Instance.Zip(sPages);
+            //}
+            //catch (Exception)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    return;
+            //}
 
-            if (string.IsNullOrEmpty(zippedPages))
-            {
-                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
-                return;
-            }
+            //if (string.IsNullOrEmpty(zippedPages))
+            //{
+            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    return;
+            //}
 
-            PleaseWaitHelper.Show(
-                                  () =>
-                                  App.Network.InstructorProxy.AddSerializedPages(zippedPages, LoadedNotebookService.CurrentNotebook.ID),
-                                  null,
-                                  "Collecting Notebook");
+            //PleaseWaitHelper.Show(
+            //                      () =>
+            //                      App.Network.InstructorProxy.AddSerializedPages(zippedPages, LoadedNotebookService.CurrentNotebook.ID),
+            //                      null,
+            //                      "Collecting Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }
