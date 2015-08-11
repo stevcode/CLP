@@ -188,6 +188,8 @@ namespace Classroom_Learning_Partner.Services
             {
                 Directory.CreateDirectory(CurrentCachesFolderPath);
             }
+
+            MigrateCaches();
         }
 
         #region Properties
@@ -506,25 +508,6 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Save Methods
 
-        public void ArchiveCache(CacheInfo cacheInfo)
-        {
-            //if (!Directory.Exists(cacheInfo.CacheFolderPath))
-            //{
-            //    return;
-            //}
-
-            //var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
-            //var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            //var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-            //if (!Directory.Exists(archiveDirectory))
-            //{
-            //    Directory.CreateDirectory(archiveDirectory);
-            //}
-            //Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
-        }
-
-        
-
         public void PackageAndSendNotebook(NotebookInfo notebookInfo, bool isNotebookSaved = true)
         {
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
@@ -539,8 +522,6 @@ namespace Classroom_Learning_Partner.Services
             var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
             App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
         }
-
-        
 
         #region Load Methods
 
@@ -600,22 +581,6 @@ namespace Classroom_Learning_Partner.Services
                 SetCurrentNotebook(notebookInfo);
             }
         }
-
-        #endregion //Load Methods
-
-        public void SetCurrentNotebook(NotebookInfo notebookInfo)
-        {
-            CurrentNotebookInfo = notebookInfo;
-
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
-            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
-            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
-            App.MainWindowViewModel.IsBackStageVisible = false;
-        }
-
-        #region Page Methods
 
         public void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced)
         {
@@ -734,7 +699,7 @@ namespace Classroom_Learning_Partner.Services
                     page.Submissions.Clear();
                 }
             }
-            
+
             var submissions = new List<CLPPage>();
 
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
@@ -770,7 +735,67 @@ namespace Classroom_Learning_Partner.Services
                              });
         }
 
-        #endregion //Page Methods
+        #endregion //Load Methods
+
+        public void SetCurrentNotebook(NotebookInfo notebookInfo)
+        {
+            CurrentNotebookInfo = notebookInfo;
+
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
+            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
+            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
+            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
+
+        #region Archival Methods
+
+        public void ArchiveCache(CacheInfo cacheInfo)
+        {
+            //if (!Directory.Exists(cacheInfo.CacheFolderPath))
+            //{
+            //    return;
+            //}
+
+            //var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
+            //var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
+            //var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
+            //if (!Directory.Exists(archiveDirectory))
+            //{
+            //    Directory.CreateDirectory(archiveDirectory);
+            //}
+            //Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
+        }
+
+        public void MigrateCaches()
+        {
+            var cachesToMove = GetCachesInFolder(DesktopFolderPath);
+            if (!cachesToMove.Any())
+            {
+                return;
+            }
+
+            var result = MessageBox.Show("Do you want to migrate caches to new location?", "Migrate Caches", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            
+            Parallel.ForEach(cachesToMove,
+                             cacheInfo =>
+                             {
+                                 var cacheFolderName = new DirectoryInfo(cacheInfo.CacheFolderPath).Name;
+                                 var newCacheFolderPath = Path.Combine(CurrentCachesFolderPath, cacheFolderName);
+                                 if (Directory.Exists(newCacheFolderPath))
+                                 {
+                                     return;
+                                 }
+                                 Directory.Move(cacheInfo.CacheFolderPath, newCacheFolderPath);
+                             });
+        }
+
+        #endregion // Archival Methods
 
         #region ClassPeriod Methods
 
