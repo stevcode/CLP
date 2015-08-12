@@ -27,5 +27,6 @@ namespace Classroom_Learning_Partner.Services
         void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         void SetCurrentNotebook(NotebookInfo notebookInfo);
         void MigrateCaches();
+        void GenerateSubmissionsFromModifiedStudentPages();
     }
 }

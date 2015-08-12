@@ -797,6 +797,41 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Archival Methods
 
+        #region Researcher Methods
+
+        public void GenerateSubmissionsFromModifiedStudentPages()
+        {
+            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
+            {
+                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+                {
+                    if (page.Submissions.Any())
+                    {
+                        var mostRecentSubmission = page.Submissions.Last();
+                        if (page.InkStrokes.StrokesWeight() != mostRecentSubmission.InkStrokes.StrokesWeight() ||
+                            page.PageObjects.Count != mostRecentSubmission.PageObjects.Count)
+                        {
+                            page.TrimPage();
+                            var submission = page.NextVersionCopy();
+                            page.Submissions.Add(submission);
+                        }
+                    }
+                    else
+                    {
+                        if (page.InkStrokes.Any(s => s.GetStrokeOwnerID() == page.OwnerID) ||
+                            page.PageObjects.Any(p => p.OwnerID == page.OwnerID))
+                        {
+                            page.TrimPage();
+                            var submission = page.NextVersionCopy();
+                            page.Submissions.Add(submission);
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion // Researcher Methods
+
         #region ClassPeriod Methods
 
         public static List<ClassPeriodInfo> GetClassPeriodsInFolder(CacheInfo cache)

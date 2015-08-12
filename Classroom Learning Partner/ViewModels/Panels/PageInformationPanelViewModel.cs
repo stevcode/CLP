@@ -274,7 +274,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
-                if (parentPage == null)
+                if (parentPage == null ||
+                    !parentPage.Submissions.Any())
                 {
                     return Double.NaN;
                 }
@@ -313,7 +314,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
-                if (parentPage == null)
+                if (parentPage == null ||
+                    !parentPage.Submissions.Any())
                 {
                     return Double.NaN;
                 }

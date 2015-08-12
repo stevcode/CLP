@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
 using Catel;
 
 namespace CLP.Entities
 {
-    /// <summary>
-    /// Extension methods for the <see cref="StrokeCollectionExtension" /> class.
-    /// </summary>
+    /// <summary>Extension methods for the <see cref="StrokeCollectionExtension" /> class.</summary>
     public static class StrokeCollectionExtension
     {
         #region Transformation
@@ -64,5 +60,11 @@ namespace CLP.Entities
         }
 
         #endregion //Transformation
+
+        #region HitTesting
+
+        public static double StrokesWeight(this IEnumerable<Stroke> strokes) { return strokes.Sum(stroke => stroke.StrokeWeight()); }
+
+        #endregion // HitTesting
     }
 }

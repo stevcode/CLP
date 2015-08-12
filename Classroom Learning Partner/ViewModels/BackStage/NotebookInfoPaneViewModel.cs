@@ -22,6 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             SaveNotebookForStudentCommand = new Command(OnSaveNotebookForStudentCommandExecute, OnSaveNotebookForStudentCanExecute);
+            ForceSaveCurrentNotebookCommand = new Command(OnForceSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
         }
 
@@ -78,9 +79,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveCurrentNotebookCommandExecute() { SaveCurrentNotebook(); }
 
+        /// <summary>Saves the current notebook.</summary>
+        public Command ForceSaveCurrentNotebookCommand { get; private set; }
+
+        private void OnForceSaveCurrentNotebookCommandExecute() { SaveCurrentNotebook(true); }
+
         #endregion //Commands
 
-        private void SaveCurrentNotebook()
+        private void SaveCurrentNotebook(bool isForceSave = false)
         {
             if (DataService == null ||
                 DataService.CurrentNotebook == null)
@@ -88,7 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(DataService.CurrentNotebookInfo), null, "Saving Notebook");
+            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(DataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
 
             //PleaseWaitHelper.Show(
             //                      () =>
