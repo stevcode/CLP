@@ -828,6 +828,23 @@ namespace Classroom_Learning_Partner.Services
                     }
                 }
             }
+
+            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && !n.Notebook.Owner.IsStudent))
+            {
+                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+                {
+                    var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+                    foreach (var pageViewModel in pageViewModels)
+                    {
+                        var pageVM = pageViewModel as ACLPPageBaseViewModel;
+                        if (pageVM == null)
+                        {
+                            continue;
+                        }
+                        pageVM.UpdateSubmissionCount();
+                    }
+                }
+            }
         }
 
         #endregion // Researcher Methods

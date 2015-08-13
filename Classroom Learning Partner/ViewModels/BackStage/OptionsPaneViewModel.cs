@@ -46,7 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var names = (KnownColor[])Enum.GetValues(typeof (KnownColor));
             var randomColorName = names[randomGen.Next(names.Length)];
             var color = Color.FromKnownColor(randomColorName);
-            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)); 
         }
 
         /// <summary>
