@@ -167,8 +167,17 @@ namespace CLP.Entities
                                                    clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
                 var startIndex = combinedHistory.IndexOf(startAnimationIndicator);
                 var stopIndex = combinedHistory.IndexOf(stopAnimationIndicator);
+                if (stopIndex > -1) //HACK: This garauntees correct historyItems in the scenario when a student hits Record, then Clear Page, does work and then hits Stop.
+                {
+                    startIndex = 0;
+                }
 
                 var animationHistoryItems = new List<IHistoryItem>();
+                if (stopIndex == 0) //HACK: Above Hack, but where first UndoItem is a Stop.
+                {
+                    return animationHistoryItems;
+                }
+
                 if (startIndex > -1)
                 {
                     animationHistoryItems = combinedHistory.Skip(startIndex).ToList();
@@ -178,9 +187,13 @@ namespace CLP.Entities
                     return animationHistoryItems;
                 }
 
-                if (stopIndex >= -1)
+                if (stopIndex > 0)
                 {
                     animationHistoryItems = animationHistoryItems.Take(stopIndex - startIndex + 1).ToList();
+                }
+                else //HACK: This garauntees correct historyItems in the scenario when a student hits Record, but Submits page before hitting Stop.
+                {
+                    animationHistoryItems = animationHistoryItems.Take(combinedHistory.Count - startIndex).ToList();
                 }
 
                 return animationHistoryItems;

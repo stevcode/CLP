@@ -324,6 +324,18 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs.Distinct().ToList();
         }
 
+
+        public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID)
+        {
+            var submissions = new List<CLPPage>();
+            foreach (var notebook in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
+            {
+                submissions.AddRange(notebook.Pages.Where(p =>p.ID == pageID && p.VersionIndex != 0));
+            }
+
+            return submissions;
+        } 
+
         public static List<CLPPage> LoadOwnSubmissionsForLoadedPages(NotebookInfo notebookInfo)
         {
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
