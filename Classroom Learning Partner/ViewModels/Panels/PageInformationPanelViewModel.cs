@@ -13,6 +13,7 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -254,13 +255,19 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var parentPage = CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted
-                                     ? CurrentPage
-                                     : Notebook.Pages.FirstOrDefault(
-                                                                     x =>
-                                                                     x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null)
+                {
+                    return string.Empty;
+                }
 
-                return string.Format("{0} / {1} / {2}", parentPage.MinSubmissionHistoryLength, parentPage.MaxSubmissionHistoryLength, parentPage.AverageSubmissionHistoryLength);
+                var submissions = dataService.GetLoadedSubmissionsForTeacherPage(Notebook.ID, CurrentPage.ID, CurrentPage.DifferentiationLevel);
+
+                var minSubmissionHistoryLength = !submissions.Any() ? -1 : submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { int.MaxValue }).Min();
+                var maxSubmissionHistoryLength = !submissions.Any() ? -1 : submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { 0 }).Max();
+                var averageSubmissionHistoryLength = !submissions.Any() ? double.NaN : Math.Round(submissions.Select(submission => submission.History.HistoryLength).Average());
+
+                return string.Format("{0} / {1} / {2}", minSubmissionHistoryLength, maxSubmissionHistoryLength, averageSubmissionHistoryLength);
             }
         }
 
@@ -268,21 +275,21 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                if (CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted)
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null)
                 {
-                    return Double.NaN;
+                    return double.NaN;
                 }
 
-                var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
-                if (parentPage == null ||
-                    !parentPage.Submissions.Any())
+                var submissions = dataService.GetLoadedSubmissionsForTeacherPage(Notebook.ID, CurrentPage.ID, CurrentPage.DifferentiationLevel);
+                if (!submissions.Any())
                 {
-                    return Double.NaN;
+                    return double.NaN;
                 }
 
-                var mean = parentPage.AverageSubmissionHistoryLength;
-                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => (double)x.History.HistoryLength).Average(x => Math.Pow(x - mean, 2)));
-                var zScore = (CurrentPage.History.HistoryLength - mean) / standardDeviation;
+                var averageSubmissionHistoryLength = !submissions.Any() ? double.NaN : Math.Round(submissions.Select(submission => submission.History.HistoryLength).Average());
+                var standardDeviation = Math.Sqrt(submissions.Select(x => (double)x.History.HistoryLength).Average(x => Math.Pow(x - averageSubmissionHistoryLength, 2)));
+                var zScore = (CurrentPage.History.HistoryLength - averageSubmissionHistoryLength) / standardDeviation;
                 return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
             }
         }
@@ -291,16 +298,19 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var parentPage = CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted
-                                     ? CurrentPage
-                                     : Notebook.Pages.FirstOrDefault(
-                                                                     x =>
-                                                                     x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null)
+                {
+                    return string.Empty;
+                }
 
-                return string.Format("{0} / {1} / {2}",
-                                     parentPage.MinSubmissionAnimationLength,
-                                     parentPage.MaxSubmissionAnimationLength,
-                                     parentPage.AverageSubmissionAnimationLength);
+                var submissions = dataService.GetLoadedSubmissionsForTeacherPage(Notebook.ID, CurrentPage.ID, CurrentPage.DifferentiationLevel);
+
+                var minSubmissionAnimationLength = !submissions.Any() ? -1 : submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { int.MaxValue }).Min();
+                var maxSubmissionAnimationLength = !submissions.Any() ? -1 : submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { 0 }).Max();
+                var averageSubmissionAnimationLength = !submissions.Any() ? double.NaN : Math.Round(submissions.Select(submission => submission.History.AnimationLength).Average());
+
+                return string.Format("{0} / {1} / {2}", minSubmissionAnimationLength, maxSubmissionAnimationLength, averageSubmissionAnimationLength);
             }
         }
 
@@ -308,21 +318,21 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                if (CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted)
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null)
                 {
-                    return Double.NaN;
+                    return double.NaN;
                 }
 
-                var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
-                if (parentPage == null ||
-                    !parentPage.Submissions.Any())
+                var submissions = dataService.GetLoadedSubmissionsForTeacherPage(Notebook.ID, CurrentPage.ID, CurrentPage.DifferentiationLevel);
+                if (!submissions.Any())
                 {
-                    return Double.NaN;
+                    return double.NaN;
                 }
 
-                var mean = parentPage.AverageSubmissionAnimationLength;
-                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => x.History.AnimationLength).Average(x => Math.Pow(x - mean, 2)));
-                var zScore = (CurrentPage.History.AnimationLength - mean) / standardDeviation;
+                var averageSubmissionAnimationLength = !submissions.Any() ? double.NaN : Math.Round(submissions.Select(submission => submission.History.AnimationLength).Average());
+                var standardDeviation = Math.Sqrt(submissions.Select(x => x.History.AnimationLength).Average(x => Math.Pow(x - averageSubmissionAnimationLength, 2)));
+                var zScore = (CurrentPage.History.AnimationLength - averageSubmissionAnimationLength) / standardDeviation;
                 return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
             }
         }

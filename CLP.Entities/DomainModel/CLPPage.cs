@@ -424,7 +424,7 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Interaction history of the page.</summary>
         public PageHistory History
         {
             get { return GetValue<PageHistory>(HistoryProperty); }
@@ -432,36 +432,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof (PageHistory));
-
-        public int MinSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { Int32.MaxValue }).Min(); }
-        }
-
-        public int MaxSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { 0 }).Max(); }
-        }
-
-        public double AverageSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
-        }
-
-        public int MinSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { Int32.MaxValue }).Min(); }
-        }
-
-        public int MaxSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { 0 }).Max(); }
-        }
-
-        public double AverageSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.AnimationLength).Average()); }
-        }
 
         #region Calculated Sort Properties
 

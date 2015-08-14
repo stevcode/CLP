@@ -112,7 +112,7 @@ namespace Classroom_Learning_Partner.Services
 
         public Notebook Notebook { get; set; }
 
-        public List<CLPPage> Pages { get; set; }
+        public List<CLPPage> Pages { get; set; } //TODO: Rename to something like NetworkLoadedPages to avoid confusion.
 
         public string DisplaysFolderPath
         {
@@ -325,12 +325,16 @@ namespace Classroom_Learning_Partner.Services
         }
 
 
-        public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID)
+        public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
         {
             var submissions = new List<CLPPage>();
-            foreach (var notebook in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
+            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
             {
-                submissions.AddRange(notebook.Pages.Where(p =>p.ID == pageID && p.VersionIndex != 0));
+                var pageSubmissions = notebookInfo.Notebook.Pages.Where(p => p.ID == pageID && p.DifferentiationLevel == differentiationLevel && p.VersionIndex == 0).Select(p => p.Submissions).ToList();
+                foreach (var pageSubmission in pageSubmissions)
+                {
+                    submissions.AddRange(pageSubmission);
+                }
             }
 
             return submissions;
