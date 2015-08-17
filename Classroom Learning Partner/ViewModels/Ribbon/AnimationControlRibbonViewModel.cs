@@ -343,7 +343,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (page.History.IsAnimation)
             {
                 var eraseRedoAnimation =
-                    MessageBox.Show("Do you want to recording from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                    MessageBox.Show("Do you want to start recording from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
                     MessageBoxResult.Yes;
                 if (!eraseRedoAnimation)
                 {
