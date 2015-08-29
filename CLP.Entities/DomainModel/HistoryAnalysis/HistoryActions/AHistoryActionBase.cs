@@ -118,6 +118,89 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof (List<string>), () => new List<string>());
 
+        /// <summary>CodedObject portion of the CodedHistoryAction report.</summary>
+        public string CodedObject
+        {
+            get { return GetValue<string>(CodedObjectProperty); }
+            set { SetValue(CodedObjectProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof (string), string.Empty);
+
+
+        /// <summary>SubType portion of the CodedHistoryAction report.</summary>
+        public string CodedObjectSubType
+        {
+            get { return GetValue<string>(CodedObjectSubTypeProperty); }
+            set { SetValue(CodedObjectSubTypeProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectSubTypeProperty = RegisterProperty("CodedObjectSubType", typeof (string), string.Empty);
+
+        /// <summary>Determines if SubType portion of the CodedHistoryAction is visibly reported.</summary>
+        public bool IsSubTypeVisisble
+        {
+            get { return GetValue<bool>(IsSubTypeVisisbleProperty); }
+            set { SetValue(IsSubTypeVisisbleProperty, value); }
+        }
+
+        public static readonly PropertyData IsSubTypeVisisbleProperty = RegisterProperty("IsSubTypeVisisble", typeof (bool), true);
+
+        /// <summary>Forces SubType portion of the CodedHistoryAction to be visibly reported.</summary>
+        public bool IsSubTypeForcedVisible
+        {
+            get { return GetValue<bool>(IsSubTypeForcedVisibleProperty); }
+            set { SetValue(IsSubTypeForcedVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsSubTypeForcedVisibleProperty = RegisterProperty("IsSubTypeForcedVisible", typeof (bool), false);
+        
+        
+        /// <summary>ObjectAction portion of the CodedHistoryAction report.</summary>
+        public string CodedObjectAction
+        {
+            get { return GetValue<string>(CodedObjectActionProperty); }
+            set { SetValue(CodedObjectActionProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectActionProperty = RegisterProperty("CodedObjectAction", typeof (string), string.Empty);
+
+        /// <summary>Determines if ObjectAction portion of the CodedHistoryAction is visibly reported.</summary>
+        public bool IsObjectActionVisible
+        {
+            get { return GetValue<bool>(IsObjectActionVisibleProperty); }
+            set { SetValue(IsObjectActionVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsObjectActionVisibleProperty = RegisterProperty("IsObjectActionVisible", typeof (bool), true);
+
+        /// <summary>Forces ObjectAction portion of the CodedHistoryAction to be visibly reported.</summary>
+        public bool IsObjectActionForcedVisible
+        {
+            get { return GetValue<bool>(IsObjectActionForcedVisibleProperty); }
+            set { SetValue(IsObjectActionForcedVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsObjectActionForcedVisibleProperty = RegisterProperty("IsObjectActionForcedVisible", typeof (bool), false);
+        
+        /// <summary>ObjectID portion of the CodedHistoryAction report.</summary>
+        public string CodedObjectID
+        {
+            get { return GetValue<string>(CodedObjectIDProperty); }
+            set { SetValue(CodedObjectIDProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof (string), string.Empty);
+
+        /// <summary>ObjectActionID portion of the CodedHistoryAction report.</summary>
+        public string CodedObjectActionID
+        {
+            get { return GetValue<string>(CodedObjectActionIDProperty); }
+            set { SetValue(CodedObjectActionIDProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectActionIDProperty = RegisterProperty("CodedObjectActionID", typeof (string), string.Empty);
+
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
         {
@@ -127,16 +210,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
 
-        /// <summary>Cached value of the FormattedValue with correct page state.</summary>
-        public string CachedFormattedValue
+        public string CodedValue
         {
-            get { return GetValue<string>(CachedFormattedValueProperty); }
-            set { SetValue(CachedFormattedValueProperty, value); }
+            get
+            {
+                var subType = IsSubTypeForcedVisible || IsSubTypeVisisble ? " " + CodedObjectSubType : string.Empty;
+                var action = IsObjectActionForcedVisible || IsObjectActionVisible ? " " + CodedObjectAction : string.Empty;
+                var actionID = string.IsNullOrWhiteSpace(CodedObjectActionID) ? string.Empty : ": " + CodedObjectActionID;
+                return string.Format("{0}{1}{2} [{3}{4}]", CodedObject, subType, action, CodedObjectID, actionID);
+            }
         }
-
-        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
-
-        public abstract string CodedValue { get; }
 
         #region Calculated Properties
 
@@ -155,11 +238,5 @@ namespace CLP.Entities
         #endregion //Calculated Properties
 
         #endregion //Properties
-
-        #region Methods
-
-        public abstract void GenerateValues();
-
-        #endregion //Methods
     }
 }

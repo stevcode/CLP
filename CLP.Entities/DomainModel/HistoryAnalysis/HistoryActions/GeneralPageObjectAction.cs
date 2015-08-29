@@ -8,13 +8,14 @@ namespace CLP.Entities
 {
     public class GeneralPageObjectAction : AHistoryActionBase
     {
-        public enum GeneralActions
-        {
-            Move,
-            Resize,
-            Add,
-            Delete
-        }
+        #region CodedActions
+
+        public const string ACTION_ADD = "add";
+        public const string ACTION_DELETE = "delete";
+        public const string ACTION_MOVE = "move";
+        public const string ACTION_RESIZE = "resize";
+
+        #endregion // CodedActions
 
         #region Constructors
 
@@ -23,27 +24,6 @@ namespace CLP.Entities
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            var movedPageObjects = MovedPageObjects;
-            var resizedPageObjects = ResizedPageObjects;
-            var addedPageObjects = AddedPageObjects;
-            var removedPageObjects = RemovedPageObjects;
-
-            if (movedPageObjects.Any())
-            {
-                GeneralAction = GeneralActions.Move;
-            }
-            else if (resizedPageObjects.Any())
-            {
-                GeneralAction = GeneralActions.Resize;
-            }
-            else if (addedPageObjects.Any())
-            {
-                GeneralAction = GeneralActions.Add;
-            }
-            else if (removedPageObjects.Any())
-            {
-                GeneralAction = GeneralActions.Delete;
-            }
         }
 
         /// <summary>Initializes <see cref="GeneralPageObjectAction" /> based on <see cref="SerializationInfo" />.</summary>
@@ -54,141 +34,104 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
-        #region Properties
+        #region Static Methods
 
-        /// <summary>The type of General Action this HistoryAction represents.</summary>
-        public GeneralActions GeneralAction
+        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
-            get { return GetValue<GeneralActions>(GeneralActionProperty); }
-            set { SetValue(GeneralActionProperty, value); }
+            return historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).ToList();
         }
 
-        public static readonly PropertyData GeneralActionProperty = RegisterProperty("GeneralAction", typeof (GeneralActions));
-
-        public override string CodedValue
+        public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
-            get
+            return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
+        }
+
+        public static List<IPageObject> GetAddedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
+        {
+            return historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(page.GetPageObjectByIDOnPageOrInHistory)).ToList();
+        }
+
+        public static List<IPageObject> GetRemovedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
+        {
+            return historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(page.GetPageObjectByIDOnPageOrInHistory)).ToList();
+        }
+
+        public static bool IsHistoryItemsOnlyGeneralPageObjectActions(CLPPage page, List<IHistoryItem> historyItems)
+        {
+            return historyItems.All(h => h is ObjectsOnPageChangedHistoryItem || h is PageObjectResizeBatchHistoryItem || h is ObjectsMovedBatchHistoryItem);
+        } 
+
+        public static GeneralPageObjectAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
+        {
+            if (!IsHistoryItemsOnlyGeneralPageObjectActions(parentPage, historyItems))
             {
-                var historyItems = HistoryItems;
-                var parentPage = historyItems.First().ParentPage;
-                var firstObjectID = "";
-                var objectIDsList = new List<string>();
-
-                if (GeneralAction == GeneralActions.Add)
-                {
-                    var historyItem = historyItems.First() as ObjectsOnPageChangedHistoryItem;
-                    firstObjectID = historyItem.PageObjectIDsAdded.First();
-                    objectIDsList = historyItem.PageObjectIDsAdded;
-                }
-                else if (GeneralAction == GeneralActions.Delete)
-                {
-                    var historyItem = historyItems.First() as ObjectsOnPageChangedHistoryItem;
-                    firstObjectID = historyItem.PageObjectIDsRemoved.First();
-                }
-                else if (GeneralAction == GeneralActions.Move)
-                {
-                    var historyItem = historyItems.First() as ObjectsMovedBatchHistoryItem;
-                    firstObjectID = historyItem.PageObjectIDs.First().Key;
-                }
-                else //resize
-                {
-                    var historyItem = historyItems.First() as PageObjectResizeBatchHistoryItem;
-                    firstObjectID = historyItem.PageObjectID;
-                }
-
-                var objectCode = "";
-                var objectDescriptor = "";
-
-                if (PageObjectType == "CLPArray")
-                {
-                    var arrayHistoryItem = parentPage.GetPageObjectByIDOnPageOrInHistory(firstObjectID) as CLPArray;
-                    objectCode = "ARR";
-                    objectDescriptor = string.Format(" [{0}x{1}{2}]", arrayHistoryItem.Rows, arrayHistoryItem.Columns, ObjectCodedID);
-                }
-                else if (PageObjectType == "NumberLine")
-                {
-                    var numberLineHistoryItem = parentPage.GetPageObjectByIDOnPageOrInHistory(firstObjectID) as NumberLine;
-                    objectCode = "NL";
-                    objectDescriptor = string.Format(" [{0}{1}]", numberLineHistoryItem.NumberLineSize, ObjectCodedID);
-                }
-                else if (PageObjectType == "Stamp")
-                {
-                    var stampHistoryItem = parentPage.GetPageObjectByIDOnPageOrInHistory(firstObjectID) as Stamp;
-                    objectCode = "STAMP"; //pictorial, parts?
-                }
-                else if (PageObjectType == "StampedObject")
-                {
-                    var stampHistoryItem = historyItems.First() as StampedObject;
-                    objectCode = "STAMP IMAGE";
-                    if (GeneralAction == GeneralActions.Add)
-                    {
-                        objectDescriptor = string.Format("[{0}x]", objectIDsList.Count); //pictorial, parts?
-                    }
-                }
-
-                if (GeneralAction == GeneralActions.Add)
-                {
-                    return string.Format("{0}{1}", objectCode, objectDescriptor);
-                }
-                var codedActionType = GeneralAction.ToString().ToLower();
-                return string.Format("{0} {1}{2}", objectCode, codedActionType, objectDescriptor);
+                return null;
             }
-        }
 
-        #endregion //Properties
+            var movedPageObjects = GetMovedPageObjects(parentPage, historyItems);
+            var resizedPageObjects = GetResizedPageObjects(parentPage, historyItems);
+            var addedPageObjects = GetAddedPageObjects(parentPage, historyItems);
+            var removedPageObjects = GetRemovedPageObjects(parentPage, historyItems);
 
-        #region Calculated Properties
-
-        public List<IPageObject> MovedPageObjects
-        {
-            get { return HistoryItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Keys.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList(); }
-        }
-
-        public List<IPageObject> ResizedPageObjects
-        {
-            get { return HistoryItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => ParentPage.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList(); }
-        }
-
-        public List<IPageObject> AddedPageObjects
-        {
-            get
+            if (movedPageObjects.Any() &&
+                !resizedPageObjects.Any() &&
+                !addedPageObjects.Any() &&
+                !removedPageObjects.Any())
             {
-                return HistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();
+                return null;
             }
-        }
 
-        public List<IPageObject> RemovedPageObjects
-        {
-            get
+            if (resizedPageObjects.Any() &&
+                !movedPageObjects.Any() &&
+                !addedPageObjects.Any() &&
+                !removedPageObjects.Any())
             {
-                return HistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();
+                return null;
             }
-        }
 
-        #endregion //Calculated Properties
-
-        #region Methods
-
-        #region Overrides of AHistoryActionBase
-
-        public override void GenerateValues()
-        {
-            switch (GeneralAction)
+            if (addedPageObjects.Any() &&
+                !resizedPageObjects.Any() &&
+                !movedPageObjects.Any() &&
+                !removedPageObjects.Any())
             {
-                case GeneralActions.Move:
-                    break;
-                case GeneralActions.Resize:
-                    break;
-                case GeneralActions.Add:
+                if (addedPageObjects.Count == 1)
+                {
+                    var pageObject = addedPageObjects.First();
+                    var historyAction = new GeneralPageObjectAction(parentPage, historyItems)
+                                        {
+                                            CodedObject = pageObject.CodedName,
+                                            CodedObjectAction = ACTION_ADD,
+                                            IsObjectActionVisible = false,
+                                            CodedObjectID = pageObject.CodedID
+                                        };
 
-                    break;
-                case GeneralActions.Delete:
-                    break;
+                    return historyAction;
+                }
+                
             }
+
+            if (removedPageObjects.Any() &&
+                !resizedPageObjects.Any() &&
+                !addedPageObjects.Any() &&
+                !movedPageObjects.Any())
+            {
+                if (removedPageObjects.Count == 1)
+                {
+                    var pageObject = addedPageObjects.First();
+                    var historyAction = new GeneralPageObjectAction(parentPage, historyItems)
+                                        {
+                                            CodedObject = pageObject.CodedName,
+                                            CodedObjectAction = ACTION_DELETE,
+                                            CodedObjectID = pageObject.CodedID
+                                        };
+
+                    return historyAction;
+                }
+            }
+
+            return null;
         }
 
-        #endregion
-
-        #endregion //Methods
+        #endregion // Static Methods
     }
 }
