@@ -6,25 +6,11 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class GeneralPageObjectAction : AHistoryActionBase
+    public static class ObjectCodedActions
     {
-        #region Constructors
-
-        /// <summary>Initializes <see cref="GeneralPageObjectAction" /> using <see cref="CLPPage" />.</summary>
-        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems)
-            : base(parentPage, historyItems) { }
-
-        /// <summary>Initializes <see cref="GeneralPageObjectAction" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public GeneralPageObjectAction(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
-        #endregion //Constructors
-
         #region Static Methods
 
-        public static GeneralPageObjectAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public static HistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
         {
             if (!historyItems.All(h => h is ObjectsOnPageChangedHistoryItem || 
                                        h is PageObjectResizeBatchHistoryItem || 
@@ -66,7 +52,7 @@ namespace CLP.Entities
                     var pageObject = addedPageObjects.First();
                     var codedObject = pageObject.CodedName;
                     var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                    var historyAction = new GeneralPageObjectAction(parentPage, historyItems)
+                    var historyAction = new HistoryAction(parentPage, historyItems)
                     {
                         CodedObject = codedObject,
                         CodedObjectAction = Codings.ACTION_OBJECT_ADD,
@@ -91,7 +77,7 @@ namespace CLP.Entities
                     var pageObject = addedPageObjects.First();
                     var codedObject = pageObject.CodedName;
                     var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                    var historyAction = new GeneralPageObjectAction(parentPage, historyItems)
+                    var historyAction = new HistoryAction(parentPage, historyItems)
                     {
                         CodedObject = codedObject,
                         CodedObjectAction = Codings.ACTION_OBJECT_DELETE,

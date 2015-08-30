@@ -8,23 +8,11 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class NumberLineHistoryAction : AHistoryActionBase
+    public static class NumberLineCodedActions
     {
-        #region Constructors
-
-        public NumberLineHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
-            : base(parentPage, historyItems) { }
-
-        /// <summary>Initializes <see cref="ArrayHistoryAction" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public NumberLineHistoryAction(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-        #endregion //Constructors
-
         #region Static Methods
 
-        public static NumberLineHistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public static HistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
         {
             if (!historyItems.All(h => h is NumberLineEndPointsChangedHistoryItem ||
                                        h is NumberLineJumpSizesChangedHistoryItem) || // TODO: allow inclusion of inkChanged historyItems and test for CHANGE_INK
@@ -49,7 +37,7 @@ namespace CLP.Entities
                     codedActionID += " " + codedActionIDIncrementID;
                 }
 
-                var historyAction = new NumberLineHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                                     {
                                         CodedObject = codedObject,
                                         CodedObjectAction = Codings.ACTION_NUMBER_LINE_CHANGE,
@@ -92,7 +80,7 @@ namespace CLP.Entities
                 }
                 var codedActionID = string.Join("; ", jumpSegments);
 
-                var historyAction = new NumberLineHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_NUMBER_LINE_JUMP,

@@ -10,8 +10,6 @@ namespace CLP.Entities
         string ParentPageOwnerID { get; set; }
         uint ParentPageVersionIndex { get; set; }
         CLPPage ParentPage { get; set; }
-        List<string> HistoryItemIDs { get; set; }
-        List<string> HistoryActionIDs { get; set; }
         string CodedObject { get; set; }
         string CodedObjectSubType { get; set; }
         bool IsSubTypeVisisble { get; set; }
@@ -24,9 +22,10 @@ namespace CLP.Entities
         string CodedObjectSubID { get; set; }
         string CodedObjectSubIDIncrement { get; set; }
         string CodedObjectActionID { get; set; }
+        List<string> HistoryItemIDs { get; set; }
+        List<IHistoryAction> HistoryActions { get; set; }
         string CachedCodedValue { get; set; }
         string CodedValue { get; }
         List<IHistoryItem> HistoryItems { get; }
-        List<IHistoryAction> HistoryActions { get; }
     }
 }

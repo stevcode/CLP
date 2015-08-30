@@ -8,24 +8,16 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class ArrayHistoryAction : AHistoryActionBase
+    public static class ArrayCodedActions
     {
-        #region Constructors
-
-        public ArrayHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
-            : base(parentPage, historyItems) { }
-
-        /// <summary>Initializes <see cref="ArrayHistoryAction" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayHistoryAction(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
-        #endregion //Constructors
-
         #region Static Methods
 
-        public static ArrayHistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public static HistoryAction VerifyAndGenerateArrayRotate(CLPPage page, List<IHistoryItem> historyItems)
+        {
+            
+        }
+
+        public static HistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
         {
             if (!historyItems.All(h => h is CLPArrayRotateHistoryItem ||
                                        h is PageObjectCutHistoryItem ||
@@ -58,7 +50,7 @@ namespace CLP.Entities
                     codedActionID += " " + codedActionIDIncrementID;
                 }
 
-                var historyAction = new ArrayHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_ARRAY_ROTATE,
@@ -123,7 +115,7 @@ namespace CLP.Entities
 
                 var codedActionID = string.Join(", ", codedActionSegments);
 
-                var historyAction = new ArrayHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_ARRAY_CUT,
@@ -167,7 +159,7 @@ namespace CLP.Entities
                     codedActionID += " " + codedActionIDIncrementID;
                 }
 
-                var historyAction = new ArrayHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_ARRAY_SNAP,
@@ -235,7 +227,7 @@ namespace CLP.Entities
 
                 var codedActionID = string.Join(", ", codedActionSegments);
 
-                var historyAction = new ArrayHistoryAction(parentPage, historyItems)
+                var historyAction = new HistoryAction(parentPage, historyItems)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_ARRAY_DIVIDE,

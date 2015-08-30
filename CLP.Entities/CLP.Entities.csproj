@@ -103,7 +103,7 @@
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\HistoryActions\AHistoryActionBase.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\HistoryActions\HistoryAction.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryActions\ArrayHistoryAction.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryActions\GeneralPageObjectAction.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryActions\IHistoryAction.cs" />

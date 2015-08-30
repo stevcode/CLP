@@ -2,39 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public abstract class AHistoryActionBase : AEntityBase, IHistoryAction
+    public class HistoryAction : AEntityBase, IHistoryAction
     {
-        public static Dictionary<string,int> IncrementIDs = new Dictionary<string, int>(); 
-
         #region Constructors
 
-        /// <summary>Initializes <see cref="AHistoryActionBase" /> from scratch.</summary>
-        public AHistoryActionBase() { ID = Guid.NewGuid().ToCompactID(); }
+        /// <summary>Initializes <see cref="HistoryAction" /> from scratch.</summary>
+        public HistoryAction() { ID = Guid.NewGuid().ToCompactID(); }
 
-        public AHistoryActionBase(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : this(parentPage, historyItems, new List<IHistoryAction>()) { }
 
-        public AHistoryActionBase(CLPPage parentPage, List<IHistoryAction> historyActions)
+        public HistoryAction(CLPPage parentPage, List<IHistoryAction> historyActions)
             : this(parentPage, new List<IHistoryItem>(), historyActions)
         { }
 
-        public AHistoryActionBase(CLPPage parentPage, List<IHistoryItem> historyItems, List<IHistoryAction> historyActions)
+        public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems, List<IHistoryAction> historyActions)
             : this()
         {
             ParentPage = parentPage;
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
+            HistoryActions = historyActions;
         }
 
-        /// <summary>Initializes <see cref="AHistoryActionBase" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="HistoryAction" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public AHistoryActionBase(SerializationInfo info, StreamingContext context)
+        public HistoryAction(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -44,6 +43,7 @@ namespace CLP.Entities
         #region Navigation Properties
 
         /// <summary>Location of the <see cref="IHistoryAction" /> in the list of <see cref="IHistoryAction" />s.</summary>
+        [XmlAttribute]
         public int HistoryActionIndex
         {
             get { return GetValue<int>(HistoryActionIndexProperty); }
@@ -113,27 +113,10 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
-        /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
-        public List<string> HistoryItemIDs
-        {
-            get { return GetValue<List<string>>(HistoryItemIDsProperty); }
-            set { SetValue(HistoryItemIDsProperty, value); }
-        }
-
-        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
-
-        /// <summary>List of the IDs of any HistoryActions that make up this HistoryAction.</summary>
-        public List<string> HistoryActionIDs
-        {
-            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
-            set { SetValue(HistoryActionIDsProperty, value); }
-        }
-
-        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof (List<string>), () => new List<string>());
-
         #region Coded Portions
 
         /// <summary>CodedObject portion of the CodedHistoryAction report.</summary>
+        [XmlAttribute]
         public string CodedObject
         {
             get { return GetValue<string>(CodedObjectProperty); }
@@ -141,7 +124,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
-
 
         /// <summary>SubType portion of the CodedHistoryAction report.</summary>
         public string CodedObjectSubType
@@ -162,6 +144,7 @@ namespace CLP.Entities
         public static readonly PropertyData IsSubTypeVisisbleProperty = RegisterProperty("IsSubTypeVisisble", typeof(bool), true);
 
         /// <summary>Forces SubType portion of the CodedHistoryAction to be visibly reported.</summary>
+        [XmlIgnore]
         public bool IsSubTypeForcedVisible
         {
             get { return GetValue<bool>(IsSubTypeForcedVisibleProperty); }
@@ -170,8 +153,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsSubTypeForcedVisibleProperty = RegisterProperty("IsSubTypeForcedVisible", typeof(bool), false);
 
-
         /// <summary>ObjectAction portion of the CodedHistoryAction report.</summary>
+        [XmlAttribute]
         public string CodedObjectAction
         {
             get { return GetValue<string>(CodedObjectActionProperty); }
@@ -190,6 +173,7 @@ namespace CLP.Entities
         public static readonly PropertyData IsObjectActionVisibleProperty = RegisterProperty("IsObjectActionVisible", typeof(bool), true);
 
         /// <summary>Forces ObjectAction portion of the CodedHistoryAction to be visibly reported.</summary>
+        [XmlIgnore]
         public bool IsObjectActionForcedVisible
         {
             get { return GetValue<bool>(IsObjectActionForcedVisibleProperty); }
@@ -245,6 +229,24 @@ namespace CLP.Entities
 
         #endregion // Coded Portions
 
+        /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
+        public List<string> HistoryItemIDs
+        {
+            get { return GetValue<List<string>>(HistoryItemIDsProperty); }
+            set { SetValue(HistoryItemIDsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>List of the IDs of any HistoryActions that make up this HistoryAction.</summary>
+        public List<IHistoryAction> HistoryActions
+        {
+            get { return GetValue<List<IHistoryAction>>(HistoryActionsProperty); }
+            set { SetValue(HistoryActionsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (List<IHistoryAction>), () => new List<IHistoryAction>());
+
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
         {
@@ -253,6 +255,8 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
+
+        #region Calculated Properties
 
         /// <summary>
         /// Take the following form: OBJECT SUB_TYPE action [ID id_increment, SUB_ID sub_id_increment: action_id]
@@ -273,23 +277,29 @@ namespace CLP.Entities
             }
         }
 
-        #region Calculated Properties
-
         /// <summary>List of the HistoryItems that make up this HistoryAction.</summary>
         public List<IHistoryItem> HistoryItems
         {
             get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
         }
 
-        /// <summary>List of the HistoryActions that make up this HistoryAction.</summary>
-        public List<IHistoryAction> HistoryActions
-        {
-            get { return ParentPage.History.HistoryActions.Where(x => HistoryActionIDs.Contains(x.ID)).OrderBy(x => x.HistoryActionIndex).ToList(); }
-        }
-
         #endregion //Calculated Properties
 
         #endregion //Properties
+
+        #region Static Properties
+
+        /// <summary>
+        /// Maps an "OBJECT ID" or "pageObjectID_SUB ID" to its current max IncrementID.
+        /// </summary>
+        public static Dictionary<string, int> CurrentMaxIncrementID = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Maps an "pageObjectID" or "pageObjectID_SUB" to its current IncrementID.
+        /// </summary>
+        public static Dictionary<string, int> CurrentIncrementID = new Dictionary<string, int>();
+
+        #endregion // Static Properties
 
         #region Static Methods
 
