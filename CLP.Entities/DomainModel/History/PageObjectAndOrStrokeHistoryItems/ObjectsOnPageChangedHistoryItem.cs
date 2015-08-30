@@ -206,8 +206,8 @@ namespace CLP.Entities
         {
             get
             {
-                var pageObjectsAdded = PageObjectIDsAdded.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
-                var pageObjectsRemoved = PageObjectIDsRemoved.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
+                var pageObjectsAdded = PageObjectsAdded;
+                var pageObjectsRemoved = PageObjectsRemoved;
 
                 var objectsAdded = pageObjectsAdded.Any() ? string.Format(" Added {0}.", string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))) : string.Empty;
                 var objectsRemoved = pageObjectsRemoved.Any() ? string.Format(" Removed {0}.", string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))) : string.Empty;
@@ -218,6 +218,38 @@ namespace CLP.Entities
                                          : string.Empty;
 
                 return string.Format("Index #{0},{1}{2}{3}{4}", HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
+            }
+        }
+
+        public List<IPageObject> PageObjectsAdded
+        {
+            get
+            {
+                return PageObjectIDsAdded.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
+            }
+        }
+
+        public List<IPageObject> PageObjectsRemoved
+        {
+            get
+            {
+                return PageObjectIDsRemoved.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
+            }
+        }
+
+        public List<Stroke> StrokesAdded
+        {
+            get
+            {
+                return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
+            }
+        }
+
+        public List<Stroke> StrokesRemoved
+        {
+            get
+            {
+                return StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
             }
         }
 

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -10,85 +7,71 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static HistoryAction VerifyAndGenerate(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public static HistoryAction Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
-            if (!historyItems.All(h => h is ObjectsOnPageChangedHistoryItem || 
-                                       h is PageObjectResizeBatchHistoryItem || 
-                                       h is ObjectsMovedBatchHistoryItem) ||
-                !historyItems.Any())
+            if (page == null ||
+                objectsOnPageChangedHistoryItem == null ||
+                !objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any() ||
+                objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any())
             {
                 return null;
             }
 
-            var movedPageObjects = GetMovedPageObjects(parentPage, historyItems);
-            var resizedPageObjects = GetResizedPageObjects(parentPage, historyItems);
-            var addedPageObjects = GetAddedPageObjects(parentPage, historyItems);
-            var removedPageObjects = GetRemovedPageObjects(parentPage, historyItems);
+            var addedPageObjects = objectsOnPageChangedHistoryItem.PageObjectsAdded;
 
-            if (movedPageObjects.Any() &&
-                !resizedPageObjects.Any() &&
-                !addedPageObjects.Any() &&
-                !removedPageObjects.Any())
+            if (addedPageObjects.Count == 1)
+            {
+                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var pageObject = addedPageObjects.First();
+                var codedObject = pageObject.CodedName;
+                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                                    {
+                                        CodedObject = codedObject,
+                                        CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                                        IsObjectActionVisible = false,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                                    };
+
+                return historyAction;
+            }
+
+            // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
+            // special case for Bins
+            return null;
+        }
+
+        public static HistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        {
+            if (page == null ||
+                objectsOnPageChangedHistoryItem == null ||
+                !objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any() ||
+                objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any())
             {
                 return null;
             }
 
-            if (resizedPageObjects.Any() &&
-                !movedPageObjects.Any() &&
-                !addedPageObjects.Any() &&
-                !removedPageObjects.Any())
+            var removedPageObjects = objectsOnPageChangedHistoryItem.PageObjectsRemoved;
+            if (removedPageObjects.Count == 1)
             {
-                return null;
+                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var pageObject = removedPageObjects.First();
+                var codedObject = pageObject.CodedName;
+                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                                    {
+                                        CodedObject = codedObject,
+                                        CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                                    };
+
+                return historyAction;
             }
 
-            if (addedPageObjects.Any() &&
-                !resizedPageObjects.Any() &&
-                !movedPageObjects.Any() &&
-                !removedPageObjects.Any())
-            {
-                if (addedPageObjects.Count == 1)
-                {
-                    var historyIndex = historyItems.First().HistoryIndex;
-                    var pageObject = addedPageObjects.First();
-                    var codedObject = pageObject.CodedName;
-                    var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                    var historyAction = new HistoryAction(parentPage, historyItems)
-                    {
-                        CodedObject = codedObject,
-                        CodedObjectAction = Codings.ACTION_OBJECT_ADD,
-                        IsObjectActionVisible = false,
-                        CodedObjectID = codedObjectID,
-                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
-                    };
-
-                    return historyAction;
-                }
-
-            }
-
-            if (removedPageObjects.Any() &&
-                !resizedPageObjects.Any() &&
-                !addedPageObjects.Any() &&
-                !movedPageObjects.Any())
-            {
-                if (removedPageObjects.Count == 1)
-                {
-                    var historyIndex = historyItems.First().HistoryIndex;
-                    var pageObject = addedPageObjects.First();
-                    var codedObject = pageObject.CodedName;
-                    var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                    var historyAction = new HistoryAction(parentPage, historyItems)
-                    {
-                        CodedObject = codedObject,
-                        CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
-                        CodedObjectID = codedObjectID,
-                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
-                    };
-
-                    return historyAction;
-                }
-            }
-
+            // TODO: deal with multiple pageObjects deleted at once (lasso?)
+            // special case for Bins
             return null;
         }
 
@@ -100,16 +83,6 @@ namespace CLP.Entities
         public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
-        }
-
-        public static List<IPageObject> GetAddedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
-        {
-            return historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(page.GetPageObjectByIDOnPageOrInHistory)).ToList();
-        }
-
-        public static List<IPageObject> GetRemovedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
-        {
-            return historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(page.GetPageObjectByIDOnPageOrInHistory)).ToList();
         }
 
         #endregion // Static Methods

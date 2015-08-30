@@ -15,6 +15,10 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="HistoryAction" /> from scratch.</summary>
         public HistoryAction() { ID = Guid.NewGuid().ToCompactID(); }
 
+        public HistoryAction(CLPPage parentPage, IHistoryItem historyItem)
+            : this(parentPage, new List<IHistoryItem> { historyItem }, new List<IHistoryAction>())
+        { }
+
         public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : this(parentPage, historyItems, new List<IHistoryAction>()) { }
 

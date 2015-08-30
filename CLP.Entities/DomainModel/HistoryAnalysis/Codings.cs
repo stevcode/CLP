@@ -7,15 +7,21 @@
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARRAY = "ARR";
         public const string OBJECT_NUMBER_LINE = "NL";
-        public const string OBJECT_BINS = "BINS";
         public const string OBJECT_STAMP = "STAMP";
         public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
         public const string OBJECT_GROUP = "GROUP";
+        public const string OBJECT_BINS = "BINS";
 
         #endregion // CodedObjects
 
-        #region CodedActions                                                        
-                                                                                    // {Variable} (Optional)
+        #region CodedActions                                                        // {Variable} (Optional)                                                
+
+        #region Ink Actions
+
+
+
+        #endregion // Ink Actions
+
         #region General PageObject Actions
 
         public const string ACTION_OBJECT_ADD = "add";
