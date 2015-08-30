@@ -31,6 +31,21 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static List<HistoryAction> GroupAddAndErase(CLPPage page, IHistoryAction inkAction)
+        {
+            if (page == null ||
+                inkAction == null ||
+                !inkAction.HistoryItemIDs.Any() ||
+                inkAction.CodedObjectAction != Codings.ACTION_INK_CHANGE)
+            {
+                return null;
+            }
+
+
+            // TODO
+            return null;
+        } 
+
         #endregion // Static Methods
 
     }
