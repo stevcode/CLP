@@ -271,13 +271,14 @@ namespace CLP.Entities
         {
             get
             {
-                var subType = IsSubTypeForcedVisible || IsSubTypeVisisble ? " " + CodedObjectSubType : string.Empty;
-                var objectAction = IsObjectActionForcedVisible || IsObjectActionVisible ? " " + CodedObjectAction : string.Empty;
+                var subType = !string.IsNullOrWhiteSpace(CodedObjectSubType) && (IsSubTypeForcedVisible || IsSubTypeVisisble) ? " " + CodedObjectSubType : string.Empty;
+                var objectAction = !string.IsNullOrWhiteSpace(CodedObjectAction) && (IsObjectActionForcedVisible || IsObjectActionVisible) ? " " + CodedObjectAction : string.Empty;
                 var idIncrement = string.IsNullOrWhiteSpace(CodedObjectIDIncrement) ? string.Empty : " " + CodedObjectIDIncrement;
                 var subID = string.IsNullOrWhiteSpace(CodedObjectSubID) ? string.Empty : ", " + CodedObjectSubID;
                 var subIDIncrement = string.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? string.Empty : " " + CodedObjectSubIDIncrement;
                 var objectActionID = string.IsNullOrWhiteSpace(CodedObjectActionID) ? string.Empty : ": " + CodedObjectActionID;
-                return string.Format("{0}{1}{2} [{3}{4}{5}{6}{7}]", CodedObject, subType, objectAction, CodedObjectID, idIncrement, subID, subIDIncrement, objectActionID);
+                var bracketsContent = string.IsNullOrWhiteSpace(CodedObjectID) ? string.Empty : string.Format(" [{0}{1}{2}{3}{4}]", CodedObjectID, idIncrement, subID, subIDIncrement, objectActionID);
+                return string.Format("{0}{1}{2}{3}", CodedObject, subType, objectAction, bracketsContent);
             }
         }
 
@@ -292,8 +293,6 @@ namespace CLP.Entities
         #endregion //Properties
 
         #region Static Properties
-
-   //     public static readonly Dictionary<string, string> CurrentID = new Dictionary<string, string>(); 
 
         /// <summary>
         /// Maps an "pageObjectID" or "pageObjectID_SUB" to its current IncrementID.

@@ -10,26 +10,28 @@ namespace CLP.Entities
 {
     public static class InkCodedActions
     {
-        public enum InkActions
+        #region Static Methods
+
+        public static HistoryAction ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isChange = true)
         {
-            Change,
-            Add,
-            Erase,
-            Ignore
+            if (page == null ||
+                objectsOnPageChangedHistoryItems == null ||
+                !objectsOnPageChangedHistoryItems.Any() ||
+                !objectsOnPageChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+            {
+                return null;
+            }
+
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            {
+                CodedObject = Codings.OBJECT_INK,
+                CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
+            };
+
+            return historyAction;
         }
 
-        public enum InkLocations
-        {
-            None,
-            Over,
-            Left,
-            Right,
-            Above,
-            Below
-        }
+        #endregion // Static Methods
 
-  
-
-    
     }
 }

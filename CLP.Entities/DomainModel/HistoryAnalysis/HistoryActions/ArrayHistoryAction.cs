@@ -92,7 +92,7 @@ namespace CLP.Entities
             var isVerticalStrokeCut = Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
             if (isVerticalStrokeCut)
             {
-                codedActionSegments.Add("v");
+                codedActionSegments.Add(Codings.ACTIONID_ARRAY_CUT_VERTICAL);
             }
 
             var codedActionID = string.Join(", ", codedActionSegments);
@@ -206,7 +206,7 @@ namespace CLP.Entities
 
             if (divideHistoryItem.IsColumnRegionsChange.Value)
             {
-                codedActionSegments.Add("v");
+                codedActionSegments.Add(Codings.ACTIONID_ARRAY_DIVIDER_VERTICAL);
             }
 
             var codedActionID = string.Join(", ", codedActionSegments);
