@@ -40,11 +40,19 @@ namespace CLP.Entities
                 rotateHistoryItems.Count == 1)
             {
                 var historyItem = rotateHistoryItems.First();
+
+                var arrayID = historyItem.ArrayID;
+                var array = parentPage.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
+                if (array == null)
+                {
+                    return null;
+                }
+
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = string.Format("{0}x{1}", historyItem.OldRows, historyItem.OldColumns);
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
                 var codedActionID = string.Format("{0}x{1}", historyItem.OldColumns, historyItem.OldRows);
-                var codedActionIDIncrementID = IncrementAndGetIncrementID(codedObject, codedActionID);
+                var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(array.ID, codedObject, codedActionID);
                 if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
                 {
                     codedActionID += " " + codedActionIDIncrementID;
@@ -80,7 +88,7 @@ namespace CLP.Entities
 
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = cutArray.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex);
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(cutArray.ID, codedObject, codedID);
                 var codedActionSegments = new List<string>();
                 foreach (var halvedPageObjectID in historyItem.HalvedPageObjectIDs)
                 {
@@ -91,7 +99,7 @@ namespace CLP.Entities
                     }
 
                     var arrayCodedID = array.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex + 1);
-                    var arrayIncrementID = IncrementAndGetIncrementID(codedObject, arrayCodedID);
+                    var arrayIncrementID = HistoryAction.IncrementAndGetIncrementID(array.ID, codedObject, arrayCodedID);
                     var actionSegment = string.IsNullOrWhiteSpace(arrayIncrementID) ? arrayCodedID : string.Format("{0} {1}", arrayCodedID, arrayIncrementID);
                     codedActionSegments.Add(actionSegment);
                 }
@@ -149,11 +157,11 @@ namespace CLP.Entities
                 // whose dimensions change. The SubID is the array that is snapped onto
                 // the persistingArray then disappears.
                 var codedID = persistingArray.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex);
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(persistingArray.ID, codedObject, codedID);
                 var codedSubID = snappedArray.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex);
-                var incrementSubID = GetIncrementID(codedObject, codedSubID);
+                var incrementSubID = HistoryAction.GetIncrementID(snappedArray.ID, codedObject, codedSubID);
                 var codedActionID = persistingArray.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex + 1);
-                var codedActionIDIncrementID = IncrementAndGetIncrementID(codedObject, codedActionID);
+                var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(persistingArray.ID, codedObject, codedActionID);
                 if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
                 {
                     codedActionID += " " + codedActionIDIncrementID;
@@ -191,7 +199,7 @@ namespace CLP.Entities
                 }
 
                 var codedID = dividedArray.GetCodedIDAtHistoryIndex(historyItem.HistoryIndex);
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(dividedArray.ID, codedObject, codedID);
                 var codedActionSegments = new List<string>();
 
                 // QUESTION: Right now, only listing new regions created. Alternatively, can list all regions, or have SubID for the replaced region
@@ -211,7 +219,7 @@ namespace CLP.Entities
                     }
 
                     var segmentID = string.Format("{0}x{1}", regionColumn, regionRow);
-                    var segmentIncrementID = IncrementAndGetIncrementID(codedObject, segmentID); // TODO: add something like "_SUB to codedObject to give subarrays their own increment path
+                    var segmentIncrementID = HistoryAction.IncrementAndGetIncrementID(codedObject, segmentID); // TODO: add something like "_SUB to codedObject to give subarrays their own increment path
                     if (!string.IsNullOrWhiteSpace(segmentIncrementID))
                     {
                         segmentID += " " + segmentIncrementID;

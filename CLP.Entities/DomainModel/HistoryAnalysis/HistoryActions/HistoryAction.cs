@@ -289,44 +289,64 @@ namespace CLP.Entities
 
         #region Static Properties
 
-        /// <summary>
-        /// Maps an "OBJECT ID" or "pageObjectID_SUB ID" to its current max IncrementID.
-        /// </summary>
-        public static Dictionary<string, int> CurrentMaxIncrementID = new Dictionary<string, int>();
+   //     public static readonly Dictionary<string, string> CurrentID = new Dictionary<string, string>(); 
 
         /// <summary>
         /// Maps an "pageObjectID" or "pageObjectID_SUB" to its current IncrementID.
         /// </summary>
-        public static Dictionary<string, int> CurrentIncrementID = new Dictionary<string, int>();
+        public static readonly Dictionary<string, int> CurrentIncrementID = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Maps an "OBJECT ID" or "pageObjectID_SUB ID" to its current max IncrementID.
+        /// </summary>
+        public static readonly Dictionary<string, int> MaxIncrementID = new Dictionary<string, int>();
 
         #endregion // Static Properties
 
         #region Static Methods
 
-        public static string GetIncrementID(string codedObject, string codedID)
+        public static string GetIncrementID(string pageObjectID, string codedObject, string codedID, int subIndex = -1)
         {
-            var codedKey = string.Format("{0} {1}", codedObject, codedID);
-            if (!IncrementIDs.ContainsKey(codedKey))
+            var maxKey = subIndex < 0 ? string.Format("{0} {1}", codedObject, codedID) : string.Format("{0}_SUB {1}", pageObjectID, codedID);
+            var currentKey = subIndex < 0 ? pageObjectID : string.Format("{0} SUB_{1}", pageObjectID, subIndex);
+            if (!CurrentIncrementID.ContainsKey(currentKey))
             {
-                IncrementIDs.Add(codedKey, 0);
+                var incrementID = 0;
+                if (MaxIncrementID.ContainsKey(maxKey))
+                {
+                    MaxIncrementID[maxKey] = MaxIncrementID[maxKey] + 1;
+                    incrementID = MaxIncrementID[maxKey];
+                }
+
+                CurrentIncrementID.Add(currentKey, incrementID);
             }
 
-            return IncrementIDs[codedKey].ToLetter();
+            return CurrentIncrementID[currentKey].ToLetter();
         }
 
-        public static string IncrementAndGetIncrementID(string codedObject, string codedID)
+        public static string IncrementAndGetIncrementID(string pageObjectID, string codedObject, string codedID, int subIndex = -1)
         {
-            var codedKey = string.Format("{0} {1}", codedObject, codedID);
-            if (!IncrementIDs.ContainsKey(codedKey))
+            var maxKey = subIndex < 0 ? string.Format("{0} {1}", codedObject, codedID) : string.Format("{0}_SUB {1}", pageObjectID, codedID);
+            if (!MaxIncrementID.ContainsKey(maxKey))
             {
-                IncrementIDs.Add(codedKey, 0);
+                MaxIncrementID.Add(maxKey, 0);
             }
             else
             {
-                IncrementIDs[codedKey]++;
+                MaxIncrementID[maxKey] = MaxIncrementID[maxKey] + 1;
             }
 
-            return IncrementIDs[codedKey].ToLetter();
+            var currentKey = subIndex < 0 ? pageObjectID : string.Format("{0} SUB_{1}", pageObjectID, subIndex);
+            if (!CurrentIncrementID.ContainsKey(currentKey))
+            {
+                CurrentIncrementID.Add(currentKey, MaxIncrementID[maxKey]);
+            }
+            else
+            {
+                CurrentIncrementID[currentKey] = MaxIncrementID[maxKey];
+            }
+
+            return CurrentIncrementID[currentKey].ToLetter();
         }
 
         #endregion // Static Methods

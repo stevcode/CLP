@@ -27,11 +27,18 @@ namespace CLP.Entities
             if (endPointsChangedHistoryItems.Any() &&
                 !jumpSizesChangedHistoryItems.Any())
             {
+                var numberLineID = endPointsChangedHistoryItems.First().NumberLineID;
+                var numberLine = parentPage.GetPageObjectByIDOnPageOrInHistory(numberLineID);
+                if (numberLine == null)
+                {
+                    return null;
+                }
+
                 var codedObject = Codings.OBJECT_NUMBER_LINE;
                 var codedID = endPointsChangedHistoryItems.First().PreviousEndValue.ToString();
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(numberLine.ID, codedObject, codedID);
                 var codedActionID = endPointsChangedHistoryItems.Last().NewEndValue.ToString();
-                var codedActionIDIncrementID = IncrementAndGetIncrementID(codedObject, codedActionID);
+                var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(numberLine.ID, codedObject, codedActionID);
                 if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
                 {
                     codedActionID += " " + codedActionIDIncrementID;
@@ -62,7 +69,7 @@ namespace CLP.Entities
 
                 var codedObject = Codings.OBJECT_NUMBER_LINE;
                 var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryIndex);
-                var incrementID = GetIncrementID(codedObject, codedID);
+                var incrementID = HistoryAction.GetIncrementID(numberLine.ID, codedObject, codedID);
                 var jumpSegments = new List<string>();
                 foreach (var historyItem in jumpSizesChangedHistoryItems)
                 {

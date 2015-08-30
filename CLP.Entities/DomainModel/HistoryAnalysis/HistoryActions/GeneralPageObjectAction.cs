@@ -58,7 +58,7 @@ namespace CLP.Entities
                         CodedObjectAction = Codings.ACTION_OBJECT_ADD,
                         IsObjectActionVisible = false,
                         CodedObjectID = codedObjectID,
-                        CodedObjectIDIncrement = IncrementAndGetIncrementID(codedObject, codedObjectID)
+                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
                     };
 
                     return historyAction;
@@ -82,7 +82,7 @@ namespace CLP.Entities
                         CodedObject = codedObject,
                         CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
                         CodedObjectID = codedObjectID,
-                        CodedObjectIDIncrement = GetIncrementID(codedObject, codedObjectID)
+                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
                     };
 
                     return historyAction;
