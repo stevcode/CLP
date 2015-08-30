@@ -20,6 +20,9 @@ namespace CLP.Entities
         bool IsObjectActionVisible { get; set; }
         bool IsObjectActionForcedVisible { get; set; }
         string CodedObjectID { get; set; }
+        string CodedObjectIDIncrement { get; set; }
+        string CodedObjectSubID { get; set; }
+        string CodedObjectSubIDIncrement { get; set; }
         string CodedObjectActionID { get; set; }
         string CachedCodedValue { get; set; }
         string CodedValue { get; }

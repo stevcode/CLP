@@ -652,7 +652,12 @@ namespace CLP.Entities
 
         public override string CodedName
         {
-            get { return "NL"; }
+            get { return Codings.OBJECT_NUMBER_LINE; }
+        }
+
+        public override string CodedID
+        {
+            get { return NumberLineSize.ToString(); }
         }
 
         public override int ZIndex
@@ -810,6 +815,10 @@ namespace CLP.Entities
             return newNumberLine;
         }
 
+        /// <summary>
+        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
+        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public override string GetCodedIDAtHistoryIndex(int historyIndex) { return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString(); }
 
         #endregion //APageObjectBase Overrides

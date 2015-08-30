@@ -279,8 +279,16 @@ namespace CLP.Entities
 
         #region History Methods
 
+        /// <summary>
+        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
+        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return ID; }
 
+        /// <summary>
+        /// Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo().
+        /// To get (Width, Height) just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
             var resizeHistoryItem =
@@ -295,6 +303,10 @@ namespace CLP.Entities
             return resizeHistoryItem.StretchedDimensions.First();
         }
 
+        /// <summary>
+        /// Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo().
+        /// To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
             var moveHistoryItem =

@@ -29,8 +29,6 @@ namespace CLP.Entities
 
         public static void GenerateInitialHistoryActions(CLPPage page)
         {
-            //TODO: For Steve: Look into TypeSwitch static class as seen here: http://stackoverflow.com/questions/298976/is-there-a-better-alternative-than-this-to-switch-on-type
-
             page.History.IsAnimating = true;
 
             //Start from beginning of the History, e.g. the original page.

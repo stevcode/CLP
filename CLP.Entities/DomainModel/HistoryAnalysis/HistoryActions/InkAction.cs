@@ -32,7 +32,7 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
         public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems)
-            : base(parentPage)
+            : base(parentPage, historyItems)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
             InkActionType = InkActions.Change;
@@ -54,7 +54,7 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
         public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems, InkActions inkActionType, InkLocations inkLocation, String locationDescriptor, String inkGroup)
-            : base(parentPage)
+            : base(parentPage, historyItems)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
             InkLocation = inkLocation;
@@ -138,7 +138,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData InkGroupProperty = RegisterProperty("InkGroup", typeof (string), string.Empty);
 
-        public override string CodedValue
+        public string blahCodedValue
         {
             get
             {
