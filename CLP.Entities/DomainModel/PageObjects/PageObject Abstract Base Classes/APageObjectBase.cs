@@ -301,6 +301,8 @@ namespace CLP.Entities
             }
 
             return resizeHistoryItem.StretchedDimensions.First();
+
+            // TODO: numberline.endpointchange, remainderTiles.updated
         }
 
         /// <summary>

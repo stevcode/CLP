@@ -469,6 +469,60 @@ namespace CLP.Entities
             return string.Format("{0}x{1}", dimensions.Y, dimensions.X);
         }
 
+        public override Point GetDimensionsAtHistoryIndex(int historyIndex)
+        {
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            if (resizeHistoryItem == null &&
+                rotateHistoryItem == null)
+            {
+                return new Point(Width, Height);
+            }
+
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
+            var resizeHistoryIndex = resizeHistoryItem == null ? int.MaxValue : resizeHistoryItem.HistoryIndex;
+
+            if (rotateHistoryIndex < resizeHistoryIndex)
+            {
+                var preRotateWidth = rotateHistoryItem.OldWidth;
+                var preRotateHeight = rotateHistoryItem.OldHeight;
+                return new Point(preRotateWidth, preRotateHeight);
+            }
+
+            if (!resizeHistoryItem.StretchedDimensions.Any())
+            {
+                return new Point(Width, Height);
+            }
+
+            return resizeHistoryItem.StretchedDimensions.First();
+        }
+
+        public override Point GetPositionAtHistoryIndex(int historyIndex)
+        {
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+            if (rotateHistoryItem == null &&
+                moveHistoryItem == null)
+            {
+                return new Point(XPosition, YPosition);
+            }
+
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
+            var moveHistoryIndex = moveHistoryItem == null ? int.MaxValue : moveHistoryItem.HistoryIndex;
+
+            if (rotateHistoryIndex < moveHistoryIndex)
+            {
+                var preRotateX = rotateHistoryItem.ArrayXCoord;
+                var preRotateY = rotateHistoryItem.ArrayYCoord;
+                return new Point(preRotateX, preRotateY);
+            }
+
+            var initialPosition = moveHistoryItem.TravelledPositions.First();
+            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
+            return adjustedPosition;
+        }
+
         #endregion //APageObjectBase Overrides
 
         #region ACLPArrayBase Overrides

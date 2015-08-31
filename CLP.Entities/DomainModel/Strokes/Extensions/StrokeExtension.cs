@@ -265,5 +265,15 @@ namespace CLP.Entities
         }
 
         #endregion //HitTesting
+
+        #region History
+
+        public static Rect GetBoundsAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        {
+            var strokeID = stroke.GetStrokeID();
+            return stroke.GetBounds();
+        }
+
+        #endregion // History
     }
 }

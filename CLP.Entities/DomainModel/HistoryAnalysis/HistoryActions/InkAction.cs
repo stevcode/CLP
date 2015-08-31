@@ -49,10 +49,10 @@ namespace CLP.Entities
             return null;
         }
 
-        public static double DistanceBetweenStrokes(Stroke stroke1, Stroke stroke2)
-        {
-            stroke1.GetBounds().
-        }
+        //public static double DistanceBetweenStrokes(Stroke stroke1, Stroke stroke2)
+        //{
+        //    stroke1.GetBounds().
+        //}
 
         #endregion // Static Methods
 
