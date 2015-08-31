@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -41,10 +42,17 @@ namespace CLP.Entities
                 return null;
             }
 
+            var orderedHistoryItems = inkAction.HistoryItems.OrderBy(h => h.HistoryIndex).ToList();
+
 
             // TODO
             return null;
-        } 
+        }
+
+        public static double DistanceBetweenStrokes(Stroke stroke1, Stroke stroke2)
+        {
+            stroke1.GetBounds().
+        }
 
         #endregion // Static Methods
 
