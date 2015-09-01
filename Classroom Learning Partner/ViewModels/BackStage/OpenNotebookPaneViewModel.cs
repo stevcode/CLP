@@ -124,13 +124,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                   {
                                       DataService.LoadPages(SelectedNotebook, pageIDs, true);
                                       DataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, true);
-                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher && IsIncludeSubmissionsChecked)
+                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher && IsIncludeSubmissionsChecked && SelectedNotebook.NameComposite.OwnerTypeTag == "T")
                                       {
                                           Parallel.ForEach(AvailableNotebooks,
                                                            notebookInfo =>
                                                            {
                                                                if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
-                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T")
+                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T" ||
+                                                                   notebookInfo == SelectedNotebook)
                                                                {
                                                                    return;
                                                                }
