@@ -124,7 +124,6 @@ namespace CLP.Entities
                 var newRegion = NewRegions.Any() ? string.Join(",", NewRegions.Select(d => d.Value)) : "none";
 
                 //TODO: Created FormattedValue for situation where IsObscuring is being toggled.
-                //BUG: IsSideLabelVisible and IsTopLabelVisible need to be changed when dealing is obscuration playback.
                 return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryIndex, orientation, array.FormattedName, oldRegion, newRegion);
             }
         }
@@ -197,10 +196,12 @@ namespace CLP.Entities
             if ((bool)IsColumnRegionsChange)
             {
                 array.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(OldRegions);
+                array.IsTopLabelVisible = array.VerticalDivisions.All(d => !d.IsObscured);
             }
             else
             {
                 array.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(OldRegions);
+                array.IsSideLabelVisible = array.HorizontalDivisions.All(d => !d.IsObscured);
             }
         }
 
@@ -223,10 +224,12 @@ namespace CLP.Entities
             if ((bool)IsColumnRegionsChange)
             {
                 array.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(NewRegions);
+                array.IsTopLabelVisible = array.VerticalDivisions.All(d => !d.IsObscured);
             }
             else
             {
                 array.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(NewRegions);
+                array.IsSideLabelVisible = array.HorizontalDivisions.All(d => !d.IsObscured);
             }
         }
 
