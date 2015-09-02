@@ -291,10 +291,13 @@ namespace CLP.Entities
             var tempHorizontalDivisions = persistingArray.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             persistingArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayHorizontalDivisions);
             PersistingArrayHorizontalDivisions = tempHorizontalDivisions;
+            persistingArray.IsSideLabelVisible = persistingArray.HorizontalDivisions.All(d => !d.IsObscured);
+            // BUG: doens't take into account if Both labels were hidden at the same time.
 
             var tempVerticalDivisions = persistingArray.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             persistingArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayVerticalDivisions);
             PersistingArrayVerticalDivisions = tempVerticalDivisions;
+            persistingArray.IsTopLabelVisible = persistingArray.VerticalDivisions.All(d => !d.IsObscured);
         }
 
         private void RestoreDimensionsAndPosition(CLPArray persistingArray)
