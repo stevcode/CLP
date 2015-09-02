@@ -15,6 +15,8 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ProgressPanelViewModel : APanelBaseViewModel
     {
+        protected readonly IDataService DataService;
+
         #region Constructor
 
         /// <summary>
@@ -26,26 +28,13 @@ namespace Classroom_Learning_Partner.ViewModels
             Initialized += ProgressPanelViewModel_Initialized;
             StagingPanel = stagingPanel;
 
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService != null && notebookService.CurrentClassPeriod != null)
-            {
-                StudentList = notebookService.CurrentClassPeriod.ClassInformation.StudentList;
-            }
-            else
-            {
-                StudentList = new ObservableCollection<Person>();
-                for(int i = 1; i <= 10; i++)
-                {
-                    StudentList.Add(Person.TestSubmitter);
-                }
-            }
+            var DataService = DependencyResolver.Resolve<IDataService>();
             
             ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();
 
             CurrentPages = Notebook.Pages;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
-            ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);
             StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
         }
 
@@ -192,20 +181,6 @@ namespace Classroom_Learning_Partner.ViewModels
             stagingPanel.IsVisible = true;
 
             stagingPanel.SetStudentNotebook(student);
-        }
-
-        /// <summary>
-        /// Meant to allow for looking at progress outside the class period.
-        /// TODO: Loading stuff from outside the current class period isn't really supported.
-        /// </summary>
-        public Command ChooseClassPeriodCommand
-        {
-            get;
-            private set;
-        }
-
-        private void OnChooseClassPeriodCommandExecute()
-        {
         }
 
         #endregion

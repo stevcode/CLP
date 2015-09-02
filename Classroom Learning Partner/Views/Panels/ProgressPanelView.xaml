@@ -5,9 +5,13 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
     <UserControl.Resources>
+        
         <ResourceDictionary>
+            
+            <!-- Converters -->
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:DifferentiationGroupDisplayConverter x:Key="DifferentiationGroupDisplayConverter" />
@@ -17,51 +21,63 @@
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+            
         </ResourceDictionary>
+        
     </UserControl.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        
         <Border Grid.Column="0" 
-            Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
-            Width="{Binding Length}"
-            Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                Background="{StaticResource GrayBackgroundColor}"
+                BorderBrush="{StaticResource GrayEdgeColor}"
+                BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+                Width="{Binding Length}"
+                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+            
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Grid.Column="0" Height="30" Width="170"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Content="Choose Class Period" Margin="10"
-                    Command="{Binding ChooseClassPeriodCommand}" />
-                <Slider Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" x:Name="SizeSlider"
-                    Minimum="32" Maximum="300"/>
 
-                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal">
+
+                    <Button Height="30" 
+                            VerticalAlignment="Center"
+                            Content="Choose Class Period"
+                            Command="{Binding ChooseClassPeriodCommand}" />
+
+                    <Slider x:Name="SizeSlider"
+                            VerticalAlignment="Center"
+                            Width="268"
+                            Minimum="32" 
+                            Maximum="300"/>
+                    
+                </StackPanel>
+
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
+                        <!-- Teacher Pages -->
                         <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
-                        <!-- teacher pages -->
-                        <RowDefinition Height="20"/>
                         <!-- page numbers -->
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="20"/>
                         <!-- student pages -->
-                        <RowDefinition Height="25" />
+                        <RowDefinition Height="*"/>
                         <!-- placeholder for horizontal scrollbar -->
+                        <RowDefinition Height="25" />
                     </Grid.RowDefinitions>
                     <!-- names and pages -->
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="110" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    
                     <ScrollViewer Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"
                                   HorizontalScrollBarVisibility="Disabled"
                                   VerticalScrollBarVisibility="Hidden"
@@ -108,6 +124,7 @@
                             </ItemsControl>
                         </Grid>
                     </ScrollViewer>
+                    
                     <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" 
                               HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Auto" Margin="0"
@@ -272,48 +289,25 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
-                <!--Thumb Cursor="ScrollWE" Width="5" 
-            <Thumb Cursor="ScrollWE"
-                   Grid.Column="1"
-                   Width="7"
-                   Margin="0 0 -7 0"
-                   VerticalAlignment="Stretch"
-                   HorizontalAlignment="Right">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <Thumb.Template>
-                    <ControlTemplate>
-                        <Grid VerticalAlignment="Stretch"
-                              Background="Transparent">
-                            <UniformGrid Columns="1"
-                                         Height="30"
-                                         Background="Transparent">
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                            </UniformGrid>
-                        </Grid>
-                    </ControlTemplate>
-                </Thumb.Template>
-            </-->
 
             </Grid>
+            
         </Border>
-        <views:StagingPanelView DataContext="{Binding StagingPanel}"
-                                Grid.Column="1"
-                                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+        
+        <views:StagingPanelView x:Name="Stage" 
+                                DataContext="{Binding StagingPanel}"
+                                Grid.Column="1">
+            <views:StagingPanelView.Visibility>
+                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                    <Binding Path="IsVisible" />
+                    <Binding Path="MainWindowViewModel.CurrentProgramMode" 
+                             Source="{x:Static Application.Current}"
+                             Converter="{StaticResource EnumToBoolConverter}"
+                             ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
+                </MultiBinding>
+            </views:StagingPanelView.Visibility>
+
+        </views:StagingPanelView>
+        
     </Grid>
 </catel:UserControl>

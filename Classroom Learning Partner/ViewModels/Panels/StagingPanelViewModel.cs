@@ -679,10 +679,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendStudentNotebook(Person student)
         {
-            foreach (var page in _notebookService.CurrentNotebook.Pages)
-            {
-                AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
-            }
+            //foreach (var page in _notebookService.CurrentNotebook.Pages)
+            //{
+            //    AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
+            //}
 
             //Hack: For Demo
             //if(CurrentSortAndGroupType != SortAndGroupTypes.PageNumber)
