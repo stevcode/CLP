@@ -97,14 +97,16 @@
                                          Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
                                 <Button DockPanel.Dock="Left" 
+                                        Margin="0 0 10 0"
                                         Height="28"
                                         Command="{Binding DataContext.OpenNotebookCommand, ElementName=TeacherNotebooks}"
                                         CommandParameter="{Binding}">
                                     <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
                                 </Button>
-                                
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                              VerticalScrollBarVisibility="Visible">
+
+                                <ScrollViewer ScrollChanged="MainScrollViewer_OnScrollChanged"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Hidden">
                                     <ScrollViewer.Resources>
                                         <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
                                         <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
@@ -123,15 +125,24 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
 
-                                                <Grid>
+                                                <Grid HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      Width="{Binding Value, ElementName=ColumnWidthSlider}">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
 
-                                                    <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                    <views:CLPPagePreviewView Grid.Row="0" 
+                                                                              x:Name="PagePreviewView"
                                                                               DataContext="{Binding}"
-                                                                              Width="{Binding Value, ElementName=ColumnWidthSlider}"
-                                                                              Margin="5"
+                                                                              Margin="2"
                                                                               ClipToBounds="True" />
 
-                                                    <Rectangle Margin="5"
+                                                    <Rectangle Grid.Row="0"
+                                                               Margin="2"
+                                                               Height="{Binding Height, ElementName=PagePreviewView}"
+                                                               Width="{Binding Width, ElementName=PagePreviewView}"
                                                                Stroke="{StaticResource GrayEdgeColor}"
                                                                StrokeThickness="1"
                                                                Fill="Transparent">
@@ -143,6 +154,12 @@
                                                             </i:EventTrigger>
                                                         </i:Interaction.Triggers>
                                                     </Rectangle>
+
+                                                    <TextBlock Grid.Row="1"
+                                                               Text="{Binding PageNumber}"
+                                                               TextAlignment="Center"
+                                                               FontWeight="Bold"
+                                                               HorizontalAlignment="Center" />
 
                                                 </Grid>
 
@@ -199,13 +216,15 @@
                                          Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
                                 <Button DockPanel.Dock="Left"
+                                        Margin="0 0 10 0"
                                         Height="28"
                                         Command="{Binding DataContext.OpenNotebookCommand, ElementName=TeacherNotebooks}"
                                         CommandParameter="{Binding}">
                                     <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
                                 </Button>
 
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                <ScrollViewer x:Name="StudentScrollViewer" 
+                                              HorizontalScrollBarVisibility="Hidden"
                                               VerticalScrollBarVisibility="Hidden">
                                     <ScrollViewer.Resources>
                                         <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
@@ -225,41 +244,47 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
 
-                                                <Border Margin="2"
-                                                        Height="28"
-                                                        Width="28"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        BorderBrush="{StaticResource GrayEdgeColor}"
-                                                        BorderThickness="1">
-                                                    <Grid>
+                                                <Grid HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" 
+                                                      Width="{Binding Value, ElementName=ColumnWidthSlider}">
 
+                                                    <Border Margin="2"
+                                                            Height="28"
+                                                            Width="28"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            BorderBrush="{StaticResource GrayEdgeColor}"
+                                                            BorderThickness="1">
                                                         <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Image Grid.Column="0"
-                                                                   Source="pack://application:,,,/Resources/Images/Starred16.png"
-                                                                   Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
 
-                                                            <Image Grid.Column="1"
-                                                                   Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
-                                                                   Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Image Grid.Column="0"
+                                                                       Source="pack://application:,,,/Resources/Images/Starred16.png"
+                                                                       Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
+
+                                                                <Image Grid.Column="1"
+                                                                       Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
+                                                                       Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
+                                                            </Grid>
+                                                            <Rectangle Fill="Transparent"
+                                                                       Stroke="{StaticResource GrayEdgeColor}"
+                                                                       StrokeThickness="2">
+                                                                <i:Interaction.Triggers>
+                                                                    <i:EventTrigger EventName="MouseUp">
+                                                                        <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=StudentNotebooks}"
+                                                                                              PassEventArgsToCommand="False"
+                                                                                              CommandParameter="{Binding}" />
+                                                                    </i:EventTrigger>
+                                                                </i:Interaction.Triggers>
+                                                            </Rectangle>
                                                         </Grid>
-                                                        <Rectangle Fill="Transparent"
-                                                                   Stroke="{StaticResource GrayEdgeColor}"
-                                                                   StrokeThickness="2">
-                                                            <i:Interaction.Triggers>
-                                                                <i:EventTrigger EventName="MouseUp">
-                                                                    <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=StudentNotebooks}"
-                                                                                          PassEventArgsToCommand="False"
-                                                                                          CommandParameter="{Binding}" />
-                                                                </i:EventTrigger>
-                                                            </i:Interaction.Triggers>
-                                                        </Rectangle>
-                                                    </Grid>
-                                                </Border>
+                                                    </Border>
+                                                    
+                                                </Grid>
 
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

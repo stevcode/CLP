@@ -199,6 +199,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             DataService.OpenNotebook(notebookInfo);
+
+            App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
         }
 
         #endregion
