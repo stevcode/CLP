@@ -104,7 +104,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Events
 
-        private void ProgressPanelViewModel_Initialized(object sender, EventArgs e) { SetPanelWidth(); }
+        private void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
+        {
+            RefreshProgressPanelData();
+            SetPanelWidth();
+        }
 
         #endregion // Events
 

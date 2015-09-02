@@ -21,6 +21,8 @@
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+            <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
+            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
             
         </ResourceDictionary>
         
@@ -42,37 +44,249 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal">
+                <Slider Grid.Row="0" 
+                        x:Name="ColumnWidthSlider"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="268"
+                        Minimum="32"
+                        Maximum="300" />
 
-                    <Button Height="30" 
-                            VerticalAlignment="Center"
-                            Content="Choose Class Period"
-                            Command="{Binding ChooseClassPeriodCommand}" />
-
-                    <Slider x:Name="SizeSlider"
-                            VerticalAlignment="Center"
-                            Width="268"
-                            Minimum="32" 
-                            Maximum="300"/>
+                <TextBlock Grid.Row="1" 
+                           Margin="10 0 0 0"
+                           Text="Teacher"
+                           FontWeight="Bold"
+                           FontSize="18" />
+                
+                <ItemsControl Grid.Row="2" 
+                              x:Name="TeacherNotebooks"
+                              ItemsSource="{Binding TeacherNotebooks}">
                     
-                </StackPanel>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            
+                            <StackPanel />
+                            
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
 
-                <Grid Grid.Row="1">
+                            <DockPanel LastChildFill="True"
+                                       Margin="20 3 0 3">
+                                
+                                <TextBlock DockPanel.Dock="Left"
+                                           Text="{Binding Notebook.Owner.DisplayName}"
+                                           TextAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Width="100" />
+
+                                <Ellipse DockPanel.Dock="Left"
+                                         Height="7"
+                                         Width="7"
+                                         Fill="LawnGreen"
+                                         Margin="5 0 3 0"
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+
+                                <Button DockPanel.Dock="Left" 
+                                        Height="28"
+                                        Command="{Binding DataContext.OpenNotebookCommand, ElementName=TeacherNotebooks}"
+                                        CommandParameter="{Binding}">
+                                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
+                                </Button>
+                                
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                              VerticalScrollBarVisibility="Visible">
+                                    <ScrollViewer.Resources>
+                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                                        <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
+                                    </ScrollViewer.Resources>
+
+                                    <ItemsControl ItemsSource="{Binding Notebook.Pages}">
+
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+
+                                                <StackPanel Orientation="Horizontal" />
+
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+
+                                                <Grid>
+
+                                                    <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                                              DataContext="{Binding}"
+                                                                              Width="{Binding Value, ElementName=ColumnWidthSlider}"
+                                                                              Margin="5"
+                                                                              ClipToBounds="True" />
+
+                                                    <Rectangle Margin="5"
+                                                               Stroke="{StaticResource GrayEdgeColor}"
+                                                               StrokeThickness="1"
+                                                               Fill="Transparent">
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="MouseUp">
+                                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=TeacherNotebooks}"
+                                                                                      PassEventArgsToCommand="False"
+                                                                                      CommandParameter="{Binding}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                    </Rectangle>
+
+                                                </Grid>
+
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+
+                                    </ItemsControl>
+                                    
+                                </ScrollViewer>
+
+                            </DockPanel>
+                            
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    
+                </ItemsControl>
+
+                <TextBlock Grid.Row="3"
+                           Margin="10 0 0 0"
+                           Text="Students"
+                           FontWeight="Bold"
+                           FontSize="18" />
+
+                <ItemsControl Grid.Row="4"
+                              x:Name="StudentNotebooks"
+                              ItemsSource="{Binding StudentNotebooks}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+
+                            <StackPanel />
+
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <DockPanel LastChildFill="True"
+                                       Margin="20 3 0 3">
+
+                                <TextBlock DockPanel.Dock="Left"
+                                           Text="{Binding Notebook.Owner.DisplayName}"
+                                           TextAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           Width="100" />
+
+                                <Ellipse DockPanel.Dock="Left"
+                                         Height="7"
+                                         Width="7"
+                                         Fill="LawnGreen"
+                                         Margin="5 0 3 0"
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+
+                                <Button DockPanel.Dock="Left"
+                                        Height="28"
+                                        Command="{Binding DataContext.OpenNotebookCommand, ElementName=TeacherNotebooks}"
+                                        CommandParameter="{Binding}">
+                                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
+                                </Button>
+
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                              VerticalScrollBarVisibility="Hidden">
+                                    <ScrollViewer.Resources>
+                                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                                        <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
+                                    </ScrollViewer.Resources>
+
+                                    <ItemsControl ItemsSource="{Binding Notebook.Pages}">
+
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+
+                                                <StackPanel Orientation="Horizontal" />
+
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+
+                                                <Border Margin="2"
+                                                        Height="28"
+                                                        Width="28"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        BorderBrush="{StaticResource GrayEdgeColor}"
+                                                        BorderThickness="1">
+                                                    <Grid>
+
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Image Grid.Column="0"
+                                                                   Source="pack://application:,,,/Resources/Images/Starred16.png"
+                                                                   Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
+
+                                                            <Image Grid.Column="1"
+                                                                   Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
+                                                                   Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
+                                                        </Grid>
+                                                        <Rectangle Fill="Transparent"
+                                                                   Stroke="{StaticResource GrayEdgeColor}"
+                                                                   StrokeThickness="2">
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="MouseUp">
+                                                                    <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=StudentNotebooks}"
+                                                                                          PassEventArgsToCommand="False"
+                                                                                          CommandParameter="{Binding}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Rectangle>
+                                                    </Grid>
+                                                </Border>
+
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+
+                                    </ItemsControl>
+
+                                </ScrollViewer>
+
+                            </DockPanel>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
+                <!--<Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <!-- Teacher Pages -->
+                        --><!-- Teacher Pages --><!--
                         <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
-                        <!-- page numbers -->
+                        --><!-- page numbers --><!--
                         <RowDefinition Height="20"/>
-                        <!-- student pages -->
+                        --><!-- student pages --><!--
                         <RowDefinition Height="*"/>
-                        <!-- placeholder for horizontal scrollbar -->
+                        --><!-- placeholder for horizontal scrollbar --><!--
                         <RowDefinition Height="25" />
                     </Grid.RowDefinitions>
-                    <!-- names and pages -->
+                    --><!-- names and pages --><!--
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="110" />
                         <ColumnDefinition Width="*" />
@@ -170,7 +384,7 @@
                                                     <Control.Style>
                                                         <Style TargetType="{x:Type Control}">
                                                             <Style.Triggers>
-                                                                <!--Thumbnail trigger-->
+                                                                --><!--Thumbnail trigger--><!--
                                                                 <MultiDataTrigger>
                                                                     <MultiDataTrigger.Conditions>
                                                                         <Condition Value="True">
@@ -185,7 +399,7 @@
                                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                                 </MultiDataTrigger>
 
-                                                                <!--PagePreview trigger-->
+                                                                --><!--PagePreview trigger--><!--
                                                                 <MultiDataTrigger>
                                                                     <MultiDataTrigger.Conditions>
                                                                         <Condition Value="False">
@@ -232,7 +446,7 @@
                                                 <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
                                                     <Binding Path="Submissions"/>
                                                     <Binding Path="Submissions.Count"/>
-                                                    <!-- hack to update on collection change -->
+                                                    --><!-- hack to update on collection change --><!--
                                                 </MultiBinding>
                                             </ItemsControl.ItemsSource>
                                             <ItemsControl.ItemsPanel>
@@ -288,7 +502,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                </Grid>
+                </Grid>-->
 
             </Grid>
             

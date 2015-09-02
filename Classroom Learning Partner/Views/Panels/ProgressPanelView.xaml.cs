@@ -14,12 +14,12 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
 
-            MainScrollViewer.ScrollChanged += new ScrollChangedEventHandler(MainScrollViewer_ScrollChanged);
+            //MainScrollViewer.ScrollChanged += new ScrollChangedEventHandler(MainScrollViewer_ScrollChanged);
         }
 
         void MainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            NamesScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
+          //  NamesScrollViewer.ScrollToVerticalOffset(e.VerticalOffset);
         }
 
         protected override Type GetViewModelType() { return typeof(ProgressPanelViewModel); }

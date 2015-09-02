@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
+using System.Windows;
 using System.Windows.Data;
-using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
@@ -10,22 +11,13 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var page = ((StudentProgressInfo)value).Page;
-            if(page != null)
+            var page = value as CLPPage;
+            if (page == null)
             {
-                foreach(var t in page.Tags)
-                {
-                    if(t is StarredTag)
-                    {
-                        if((t as StarredTag).Value.ToString() == "Starred")
-                        {
-                            return "Visible";
-                        }
-                        return "Hidden";
-                    }
-                }
+                return Visibility.Hidden;
             }
-            return "Hidden";
+
+            return page.Submissions.Any() ? page.Submissions.ToList().Last().IsStarred == "Starred" ? Visibility.Visible : Visibility.Hidden : Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotImplementedException(); }
