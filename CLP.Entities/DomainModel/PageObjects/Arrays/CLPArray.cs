@@ -1342,6 +1342,11 @@ namespace CLP.Entities
 
         public void LoadAcceptedStrokes()
         {
+            if (AcceptedStrokeParentIDs == null)
+            {
+                AcceptedStrokeParentIDs = new List<string>();
+            }
+
             if (!AcceptedStrokeParentIDs.Any())
             {
                 return;
