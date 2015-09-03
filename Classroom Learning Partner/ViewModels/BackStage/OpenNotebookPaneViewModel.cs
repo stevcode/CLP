@@ -189,6 +189,23 @@ namespace Classroom_Learning_Partner.ViewModels
                                   {
                                       DataService.LoadPages(SelectedNotebook, pageIDs, false);
                                       DataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, false);
+                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher && IsIncludeSubmissionsChecked && SelectedNotebook.NameComposite.OwnerTypeTag == "T")
+                                      {
+                                          Parallel.ForEach(AvailableNotebooks,
+                                                           notebookInfo =>
+                                                           {
+                                                               if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
+                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T" ||
+                                                                   notebookInfo == SelectedNotebook)
+                                                               {
+                                                                   return;
+                                                               }
+
+                                                               DataService.OpenNotebook(notebookInfo, false, false);
+                                                               DataService.LoadPages(notebookInfo, pageIDs, true);
+                                                               DataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
+                                                           });
+                                      }
                                   },
                                   null,
                                   "Loading Pages");
