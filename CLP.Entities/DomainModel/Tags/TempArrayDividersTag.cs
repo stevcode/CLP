@@ -77,7 +77,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Interpreted Array Dividers [TEMP]"; }
+            get { return "Interpreted Array Dividers"; }
         }
 
         public override string FormattedValue
