@@ -36,6 +36,13 @@ namespace Classroom_Learning_Partner.ViewModels
         FailedSnap
     }
 
+    public enum HistoryAnalysisSteps
+    {
+        Tags,
+        HistoryActions,
+        HistoryItems
+    }
+
     public class PageInformationPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
@@ -336,6 +343,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
             }
         }
+
+        /// <summary>Switches bottom list between analysis steps.</summary>
+        public HistoryAnalysisSteps CurrentAnalysisStep
+        {
+            get { return GetValue<HistoryAnalysisSteps>(CurrentAnalysisStepProperty); }
+            set { SetValue(CurrentAnalysisStepProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentAnalysisStepProperty = RegisterProperty("CurrentAnalysisStep", typeof (HistoryAnalysisSteps), HistoryAnalysisSteps.Tags);
+        
 
         #endregion //Bindings
 
