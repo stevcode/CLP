@@ -962,7 +962,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var inkOnPage = CurrentPage.InkStrokes;
             var debug = true;
 
             //Makes .txt file to store data in
@@ -988,7 +987,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 var prevRow = -2;
                 //var prev_xpos = -2.0; 
 
-                foreach (var inkStroke in inkOnPage)
+                var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5), array.YPosition - (array.LabelLength * 1.5), array.Width + (array.LabelLength * 3), array.Height + (array.LabelLength * 3));
+                var inkCloseToArray = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
+
+                foreach (var inkStroke in inkCloseToArray)
                 {
                     //Defines location variables
                     var row = -2;
@@ -1193,16 +1195,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 }
 
+                var equation = string.Empty;
+                var skipCounts = new Dictionary<int,string>();
                 //Writes row number and ink interpretation to txt file
                 foreach (var row in skipCountStrokes.Keys)
                 {
                     var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
+                    if (row == -1)
+                    {
+                        equation = interpretation;
+                    }
+                    else
+                    {
+                        skipCounts.Add(row, interpretation);
+                    }
                     File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
                     Console.WriteLine("{0},{1}", row, interpretation);
                 }
 
-            }
+                if (!string.IsNullOrEmpty(equation) ||
+                    skipCounts.Keys.Any())
+                {
+                    var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated);
+                    tag.ArrayName = array.Rows + "x" + array.Columns;
+                    tag.EquationInterpretation = equation;
+                    var keys = skipCounts.Keys.ToList();
+                    keys.Sort();
 
+                    foreach (var key in keys)
+                    {
+                        tag.SkipCountingValues.Add(skipCounts[key]);
+                    }
+
+                    CurrentPage.AddTag(tag);
+                }
+            }
         }
 
         #endregion //Commands
