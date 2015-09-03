@@ -359,8 +359,9 @@
                 <UniformGrid Grid.Column="0"
                              Columns="2">
 
-
-                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}">
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
                         <ToggleButton.Style>
                             <Style TargetType="ToggleButton">
                                 <Setter Property="Template">
@@ -372,15 +373,67 @@
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <TextBlock Text="TAGS"
+                                                                   FontWeight="Bold"
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
                             </Style>
                         </ToggleButton.Style>
                     </ToggleButton>
-                    <TextBlock Text="TAGS"
-                           FontWeight="Bold"
-                           FontSize="16"
-                           HorizontalAlignment="Center" />
 
-
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Image Source="pack://application:,,,/Resources/Images/Hourglass256.png"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <TextBlock Text="HISTORY"
+                                                               FontWeight="Bold"
+                                                               FontSize="16"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
 
                 </UniformGrid>
 
