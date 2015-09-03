@@ -22,7 +22,11 @@ namespace Classroom_Learning_Partner.Views
         {
             for (int i = 0; i < StudentNotebooks.Items.Count; i++)
             {
-                var c = (ContentPresenter)StudentNotebooks.ItemContainerGenerator.ContainerFromItem(StudentNotebooks.Items[i]);
+                var c = StudentNotebooks.ItemContainerGenerator.ContainerFromItem(StudentNotebooks.Items[i]) as ContentPresenter;
+                if (c == null)
+                {
+                    return;
+                }
                 var scroll = c.ContentTemplate.FindName("StudentScrollViewer", c) as ScrollViewer;
 
                 if (scroll != null)
