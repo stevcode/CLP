@@ -567,15 +567,15 @@
         </DockPanel>
 
         <!-- Pane View -->
-        <ContentControl Margin="42 61 0 0">
+        <ContentControl Margin="42 20 0 0">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="NotebookInfoPaneTemplate">
                     <views:NotebookInfoPaneView DataContext="{Binding DisplayedPane}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="NewNotebookPaneTemplate">
-                    <views:NewNotebookPaneView DataContext="{Binding DisplayedPane}" />
+                <ControlTemplate x:Key="NewPaneTemplate">
+                    <views:NewPaneView DataContext="{Binding DisplayedPane}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="OpenNotebookPaneTemplate">
@@ -605,9 +605,9 @@
 
                         <!-- NewNotebookPane trigger -->
                         <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
-                                     Value="NewNotebookPaneViewModel">
+                                     Value="NewPaneViewModel">
                             <Setter Property="Template"
-                                    Value="{StaticResource NewNotebookPaneTemplate}" />
+                                    Value="{StaticResource NewPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- OpenNotebookPane trigger -->

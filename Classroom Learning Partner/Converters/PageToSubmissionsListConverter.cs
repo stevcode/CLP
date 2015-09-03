@@ -28,7 +28,7 @@ namespace Classroom_Learning_Partner.Converters
             var studentList = new ObservableCollection<Person>();
             if (notebookService.CurrentClassPeriod != null)
             {
-                studentList = notebookService.CurrentClassPeriod.ClassSubject.StudentList;
+                studentList = notebookService.CurrentClassPeriod.ClassInformation.StudentList;
             }
 
             var allSubmissions = new List<CLPPage>();

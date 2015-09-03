@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -11,6 +12,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -310,17 +312,33 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<string> GetStudentsWithNoSubmissions()
         {
             var userNames = new ObservableCollection<string>();
-
-            foreach(var availableUser in App.MainWindowViewModel.AvailableUsers)
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
             {
-                userNames.Add(availableUser.FullName);
+                return userNames;
             }
 
-            foreach(var p in LastFilteredPage.Submissions.Where(p => userNames.Contains(p.Owner.FullName))) 
+            var pageID = LastFilteredPage.ID;
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
             {
-                userNames.Remove(p.Owner.FullName);
+                var studentPage = notebookInfo.Notebook.Pages.FirstOrDefault(p => p.ID == pageID);
+                if (studentPage == null)
+                {
+                    if (notebookInfo.Notebook.Owner.IsStudent)
+                    {
+                        userNames.Add(notebookInfo.Notebook.Owner.DisplayName);
+                    }
+                    continue;
+                }
+
+                if (!studentPage.Submissions.Any() &&
+                    studentPage.Owner.IsStudent)
+                {
+                    userNames.Add(studentPage.Owner.DisplayName);
+                }
             }
-            return userNames;
+
+            return new ObservableCollection<string>(userNames.Sort().Distinct());
         }
 
         #endregion //Commands
@@ -621,7 +639,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendSubmissionsForPage(CLPPage page)
         {
-            AppendCollectionOfPagesToStage(page.Submissions);
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            if (dataService.CurrentNotebook.Owner.IsStudent)
+            {
+                AppendCollectionOfPagesToStage(page.Submissions);
+            }
+            else
+            {
+                var pageID = page.ID;
+                foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+                {
+                    var studentPage = notebookInfo.Notebook.Pages.FirstOrDefault(p => p.ID == pageID);
+                    if (studentPage == null ||
+                        !studentPage.Owner.IsStudent)
+                    {
+                        continue;
+                    }
+
+                    AppendCollectionOfPagesToStage(studentPage.Submissions);
+                }
+            }
 
             if(CurrentSortAndGroupType != SortAndGroupTypes.StudentName)
             {
@@ -637,10 +679,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendStudentNotebook(Person student)
         {
-            foreach (var page in _notebookService.CurrentNotebook.Pages)
-            {
-                AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
-            }
+            //foreach (var page in _notebookService.CurrentNotebook.Pages)
+            //{
+            //    AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
+            //}
 
             //Hack: For Demo
             //if(CurrentSortAndGroupType != SortAndGroupTypes.PageNumber)

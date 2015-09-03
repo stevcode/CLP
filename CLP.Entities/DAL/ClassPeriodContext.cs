@@ -4,7 +4,7 @@ namespace CLP.Entities
 {
     public class ClassPeriodContext : DbContext
     {
-        public DbSet<ClassSubject> ClassSubjects { get; set; }
+        public DbSet<ClassInformation> ClassSubjects { get; set; }
 
         public DbSet<ClassPeriod> ClassPeriods { get; set; }
         public DbSet<Notebook> Notebooks { get; set; }
@@ -34,9 +34,9 @@ namespace CLP.Entities
             modelBuilder.Ignore<APageObjectBase>();
             modelBuilder.Ignore<ATagBase>();
 
-            modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsDirty);
-            modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<ClassSubject>().Ignore(t => t.Mode);
+            modelBuilder.Entity<ClassInformation>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<ClassInformation>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<ClassInformation>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsReadOnly);

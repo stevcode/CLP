@@ -37,36 +37,31 @@ namespace CLP.Entities
 
     public class PageNameComposite
     {
-        public string FullPageFilePath { get; set; }
+        public const string QUALIFIER_TEXT = "p";
         public string PageNumber { get; set; }
         public string ID { get; set; }
         public string DifferentiationGroupName { get; set; }
         public string VersionIndex { get; set; }
-        public bool IsLocal { get; set; }
 
-        public string ToFileName()
-        {
-            return string.Format("p;{0};{1};{2};{3}",
-            PageNumber, ID, DifferentiationGroupName, VersionIndex);
-        }
+        public string ToFileName() { return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex); }
 
-        public static PageNameComposite ParsePageToNameComposite(CLPPage page)
+        public static PageNameComposite ParsePage(CLPPage page)
         {
             var nameComposite = new PageNameComposite
-            {
-                PageNumber = page.PageNumber.ToString(),
-                ID = page.ID,
-                DifferentiationGroupName = page.DifferentiationLevel,
-                VersionIndex = page.VersionIndex.ToString(),
-                IsLocal = true
-            };
+                                {
+                                    PageNumber = page.PageNumber.ToString(),
+                                    ID = page.ID,
+                                    DifferentiationGroupName = page.DifferentiationLevel,
+                                    VersionIndex = page.VersionIndex.ToString()
+                                };
 
             return nameComposite;
         }
 
-        public static PageNameComposite ParseFilePathToNameComposite(string filePath)
+        public static PageNameComposite ParseFilePath(string pageFilePath)
         {
-            var pageFileName = Path.GetFileNameWithoutExtension(filePath);
+            var fileInfo = new FileInfo(pageFilePath);
+            var pageFileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             var pageFileParts = pageFileName.Split(';');
             if (pageFileParts.Length != 5)
             {
@@ -74,16 +69,22 @@ namespace CLP.Entities
             }
 
             var nameComposite = new PageNameComposite
-            {
-                FullPageFilePath = filePath,
-                PageNumber = pageFileParts[1],
-                ID = pageFileParts[2],
-                DifferentiationGroupName = pageFileParts[3],
-                VersionIndex = pageFileParts[4],
-                IsLocal = true
-            };
+                                {
+                                    PageNumber = pageFileParts[1],
+                                    ID = pageFileParts[2],
+                                    DifferentiationGroupName = pageFileParts[3],
+                                    VersionIndex = pageFileParts[4]
+                                };
 
             return nameComposite;
+        }
+    }
+
+    public class PageNumberComparer : IComparer<CLPPage>
+    {
+        public int Compare(CLPPage x, CLPPage y)
+        {
+            return x.PageNumber.CompareTo(y.PageNumber);
         }
     }
 
@@ -423,7 +424,7 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Interaction history of the page.</summary>
         public PageHistory History
         {
             get { return GetValue<PageHistory>(HistoryProperty); }
@@ -431,36 +432,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof (PageHistory));
-
-        public int MinSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { Int32.MaxValue }).Min(); }
-        }
-
-        public int MaxSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { 0 }).Max(); }
-        }
-
-        public double AverageSubmissionHistoryLength
-        {
-            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
-        }
-
-        public int MinSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { Int32.MaxValue }).Min(); }
-        }
-
-        public int MaxSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { 0 }).Max(); }
-        }
-
-        public double AverageSubmissionAnimationLength
-        {
-            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.AnimationLength).Average()); }
-        }
 
         #region Calculated Sort Properties
 
@@ -760,10 +731,7 @@ namespace CLP.Entities
             Tags.Remove(tag);
         }
 
-        public void AddBoundary(Rect rect)
-        {
-            AddBoundary(rect.X, rect.Y, rect.Height, rect.Width);
-        }
+        public void AddBoundary(Rect rect) { AddBoundary(rect.X, rect.Y, rect.Height, rect.Width); }
 
         public void AddBoundary(double xPos, double yPos, double height, double width)
         {
@@ -957,21 +925,21 @@ namespace CLP.Entities
 
         public bool IsCached { get; set; }
 
-        public void ToXML(string filePath, bool serializeStrokes = true)
+        public void ToXML(string pageFilePath, bool serializeInkStrokes = true)
         {
-            if (serializeStrokes)
+            if (serializeInkStrokes)
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
                 History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
             }
 
-            var fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(pageFilePath);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -980,32 +948,57 @@ namespace CLP.Entities
             IsCached = true;
         }
 
-        public void SavePageLocally(string folderPath)
+        public void SaveToXML(string folderPath, bool serializeInkStrokes = true)
         {
-            var nameComposite = PageNameComposite.ParsePageToNameComposite(this);
+            var nameComposite = PageNameComposite.ParsePage(this);
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
-            ToXML(filePath);
+            ToXML(filePath, serializeInkStrokes);
+
+            //if(page.PageThumbnail == null)
+            //{
+            //    return;
+            //}
+
+            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
+            //if(!Directory.Exists(thumbnailsFolderPath))
+            //{
+            //    Directory.CreateDirectory(thumbnailsFolderPath);
+            //}
+            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+
+            //var pngEncoder = new PngBitmapEncoder();
+            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+            //using(var outputStream = new MemoryStream())
+            //{
+            //    pngEncoder.Save(outputStream);
+            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            //}
         }
 
-        public static CLPPage LoadLocalPage(string filePath)
+        public static CLPPage LoadFromXML(string pageFilePath)
         {
             try
             {
-                var page = Load<CLPPage>(filePath, SerializationMode.Xml);
-                var nameComposite = PageNameComposite.ParseFilePathToNameComposite(filePath);
-                if (nameComposite == null ||
-                    page == null)
+                var nameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                if (nameComposite == null)
                 {
                     return null;
                 }
-                page.PageNumber = Decimal.Parse(nameComposite.PageNumber);
+
+                var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+                if (page == null)
+                {
+                    return null;
+                }
+
+                page.PageNumber = decimal.Parse(nameComposite.PageNumber);
                 page.ID = nameComposite.ID;
                 page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
-                page.VersionIndex = UInt32.Parse(nameComposite.VersionIndex);
+                page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
                 page.AfterDeserialization();
 
                 // BUG: loaded thumbnails don't let go of their disk reference.
-                //var fileInfo = new FileInfo(filePath);
+                //var fileInfo = new FileInfo(pageFilePath);
                 //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
                 //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
                 //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);

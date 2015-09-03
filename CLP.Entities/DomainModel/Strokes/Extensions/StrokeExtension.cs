@@ -227,6 +227,43 @@ namespace CLP.Entities
             return weightContained / totalWeight;
         }
 
+        public static double StrokeWeight(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            var weight = 0.0;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+
+                }
+
+                weight += pointWeight;
+            }
+
+            return weight;
+        }
+
         #endregion //HitTesting
     }
 }

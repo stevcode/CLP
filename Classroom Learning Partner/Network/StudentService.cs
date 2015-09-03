@@ -120,14 +120,14 @@ namespace Classroom_Learning_Partner
             }
 
             var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
-            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassSubject;
+            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassInformation;
             if(classSubject == null)
             {
                 Logger.Instance.WriteToLog("Failed to load classperiod.");
                 return;
             }
 
-            classPeriod.ClassSubject = classSubject;
+            classPeriod.ClassInformation = classSubject;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -138,7 +138,7 @@ namespace Classroom_Learning_Partner
                                                                                             notebookService.CurrentClassPeriod = classPeriod;
                                                                                         }
 
-                                                                                        App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassSubject.StudentList.OrderBy(x => x.FullName));
+                                                                                        App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassInformation.StudentList.OrderBy(x => x.FullName));
 
                                                                                         return null;
                                                                                     },

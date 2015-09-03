@@ -6,8 +6,7 @@
     <DockPanel LastChildFill="True">
 
         <StackPanel DockPanel.Dock="Top"
-                    Orientation="Horizontal"
-                    Margin="0 30 0 0">
+                    Orientation="Horizontal">
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
@@ -32,7 +31,7 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
-            <Button Content="Toggle Boundaries"
+            <Button Content="Toggle Boundary Style"
                     Command="{Binding ToggleBindingStyleCommand}"
                     Height="80"
                     Width="300"
@@ -47,7 +46,15 @@
                     Margin="10"
                     FontSize="22"
                     FontWeight="Bold" />
-            
+
+            <Button Content="Generate Submissions"
+                    Command="{Binding GenerateSubmissionsCommand}"
+                    Height="80"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
         </StackPanel>
     </DockPanel>
 

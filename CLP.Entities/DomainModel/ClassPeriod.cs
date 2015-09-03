@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -9,54 +10,43 @@ namespace CLP.Entities
 {
     public class ClassPeriodNameComposite
     {
-        public string FullClassPeriodFilePath { get; set; }
-        public string ID { get; set; }
+        public const string QUALIFIER_TEXT = "period";
         public string StartTime { get; set; }
-        public string StartPageID { get; set; }
-        public string NumberOfPages { get; set; }
+        public string ID { get; set; }
+        public string PageNumbers { get; set; }
         public string AllowedBlankPages { get; set; }
-        public bool IsLocal { get; set; }
 
-        public string ToFileName()
-        {
-            return string.Format("period;{0};{1};{2};{3};{4}",
-            ID, StartTime, StartPageID, NumberOfPages, AllowedBlankPages);
-        }
+        public string ToFileName() { return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, StartTime, ID, PageNumbers, AllowedBlankPages); }
 
-        public static ClassPeriodNameComposite ParseClassPeriodToNameComposite(ClassPeriod classPeriod)
+        public static ClassPeriodNameComposite ParseClassPeriod(ClassPeriod classPeriod)
         {
             var nameComposite = new ClassPeriodNameComposite
                                 {
-                                    ID = classPeriod.ID,
                                     StartTime = classPeriod.StartTime.ToString("yyyy.M.dd.HH.mm"),
-                                    StartPageID = classPeriod.StartPageID,
-                                    NumberOfPages = classPeriod.NumberOfPages.ToString(),
+                                    ID = classPeriod.ID,
+                                    PageNumbers = classPeriod.PageNumbers,
                                     AllowedBlankPages = classPeriod.NumberOfAllowedBlankPages.ToString(),
-                                    IsLocal = true
                                 };
 
             return nameComposite;
         }
 
-        public static ClassPeriodNameComposite ParseFilePathToNameComposite(string filePath)
+        public static ClassPeriodNameComposite ParseFilePath(string filePath)
         {
             var classPeriodFileName = Path.GetFileNameWithoutExtension(filePath);
             var classPeriodFileNameParts = classPeriodFileName.Split(';');
-            if (classPeriodFileNameParts.Length != 6)
+            if (classPeriodFileNameParts.Length != 5)
             {
                 return null;
             }
 
             var nameComposite = new ClassPeriodNameComposite
-            {
-                FullClassPeriodFilePath = filePath,
-                ID = classPeriodFileNameParts[1],
-                StartTime = classPeriodFileNameParts[2],
-                StartPageID = classPeriodFileNameParts[3],
-                NumberOfPages = classPeriodFileNameParts[4],
-                AllowedBlankPages = classPeriodFileNameParts[5],
-                IsLocal = true
-            };
+                                {
+                                    StartTime = classPeriodFileNameParts[1],
+                                    ID = classPeriodFileNameParts[2],
+                                    PageNumbers = classPeriodFileNameParts[3],
+                                    AllowedBlankPages = classPeriodFileNameParts[4]
+                                };
 
             return nameComposite;
         }
@@ -67,26 +57,23 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        public ClassPeriod(ClassSubject classSubject, string notebookID, DateTime startTime, string titlePageID, string startPageID, uint numberOfPages, uint numberOfAllowedBlankPages)
-            :this()
+        public ClassPeriod(ClassInformation classInformation, string notebookID, DateTime startTime, string pageNumbers, uint numberOfAllowedBlankPages)
+            : this()
         {
-            ClassSubject = classSubject;
+            ClassInformation = classInformation;
             NotebookID = notebookID;
             StartTime = startTime;
-            TitlePageID = titlePageID;
-            StartPageID = startPageID;
-            NumberOfPages = numberOfPages;
+            PageNumbers = pageNumbers;
             NumberOfAllowedBlankPages = numberOfAllowedBlankPages;
         }
 
-        /// <summary>
-        /// Initializes <see cref="ClassPeriod" /> from scratch.
-        /// </summary>
-        public ClassPeriod() { ID = Guid.NewGuid().ToCompactID(); }
+        /// <summary>Initializes <see cref="ClassPeriod" /> from scratch.</summary>
+        public ClassPeriod()
+        {
+            ID = Guid.NewGuid().ToCompactID();
+        }
 
-        /// <summary>
-        /// Initializes <see cref="ClassPeriod" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="ClassPeriod" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public ClassPeriod(SerializationInfo info, StreamingContext context)
@@ -96,75 +83,43 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="ClassPeriod" />.
-        /// </summary>
+        /// <summary>Unique Identifier for the <see cref="ClassPeriod" />.</summary>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
-        /// <summary>
-        /// ID for the notebook's Title Page to insure it is always loaded.
-        /// </summary>
-        public string TitlePageID
-        {
-            get { return GetValue<string>(TitlePageIDProperty); }
-            set { SetValue(TitlePageIDProperty, value); }
-        }
-
-        public static readonly PropertyData TitlePageIDProperty = RegisterProperty("TitlePageID", typeof (string));
-
-        /// <summary>
-        /// Start Time and Date of the <see cref="ClassPeriod" />.
-        /// </summary>
-        public DateTime StartTime
-        {
-            get { return GetValue<DateTime>(StartTimeProperty); }
-            set { SetValue(StartTimeProperty, value); }
-        }
-
-        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="Notebook" /> used during this <see cref="ClassPeriod" />.
-        /// </summary>
+        /// <summary>Unique Identifier of the <see cref="Notebook" /> used during this <see cref="ClassPeriod" />.</summary>
         public string NotebookID
         {
             get { return GetValue<string>(NotebookIDProperty); }
             set { SetValue(NotebookIDProperty, value); }
         }
 
-        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof (string));
 
-        /// <summary>
-        /// ID of the page to start with.
-        /// </summary>
-        public string StartPageID
+        /// <summary>Start Time and Date of the <see cref="ClassPeriod" />.</summary>
+        public DateTime StartTime
         {
-            get { return GetValue<string>(StartPageIDProperty); }
-            set { SetValue(StartPageIDProperty, value); }
+            get { return GetValue<DateTime>(StartTimeProperty); }
+            set { SetValue(StartTimeProperty, value); }
         }
 
-        public static readonly PropertyData StartPageIDProperty = RegisterProperty("StartPageID", typeof (string));
+        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof (DateTime));
 
-        /// <summary>
-        /// Number of pages, including Start Page to include in the ClassPeriod.
-        /// </summary>
-        public uint NumberOfPages
+        /// <summary>Range of page numbers to include in the class period.</summary>
+        public string PageNumbers
         {
-            get { return GetValue<uint>(NumberOfPagesProperty); }
-            set { SetValue(NumberOfPagesProperty, value); }
+            get { return GetValue<string>(PageNumbersProperty); }
+            set { SetValue(PageNumbersProperty, value); }
         }
 
-        public static readonly PropertyData NumberOfPagesProperty = RegisterProperty("NumberOfPages", typeof (uint));
+        public static readonly PropertyData PageNumbersProperty = RegisterProperty("PageNumbers", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Number of Blank Pages a student can self generate.
-        /// </summary>
+        /// <summary>Number of Blank Pages a student can self generate.</summary>
         public uint NumberOfAllowedBlankPages
         {
             get { return GetValue<uint>(NumberOfAllowedBlankPagesProperty); }
@@ -175,43 +130,37 @@ namespace CLP.Entities
 
         #region Navigation Properties
 
-        /// <summary>
-        /// Unique Identifier of the <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />.
-        /// </summary>
-        /// <remarks>
-        /// Foreign Key.
-        /// </remarks>
-        public string ClassSubjectID
+        /// <summary>Unique Identifier of the <see cref="ClassInformation" /> of the <see cref="ClassPeriod" />.</summary>
+        /// <remarks>Foreign Key.</remarks>
+        public string ClassInformationID
         {
-            get { return GetValue<string>(ClassSubjectIDProperty); }
-            set { SetValue(ClassSubjectIDProperty, value); }
+            get { return GetValue<string>(ClassInformationIDProperty); }
+            set { SetValue(ClassInformationIDProperty, value); }
         }
 
-        public static readonly PropertyData ClassSubjectIDProperty = RegisterProperty("ClassSubjectID", typeof(string));
+        public static readonly PropertyData ClassInformationIDProperty = RegisterProperty("ClassInformationID", typeof (string));
 
         /// <summary>
-        /// <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />
+        ///     <see cref="ClassInformation" /> of the <see cref="ClassPeriod" />
         /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
         [ExcludeFromSerialization]
-        public virtual ClassSubject ClassSubject
+        public virtual ClassInformation ClassInformation
         {
-            get { return GetValue<ClassSubject>(ClassSubjectProperty); }
+            get { return GetValue<ClassInformation>(ClassInformationProperty); }
             set
             {
-                SetValue(ClassSubjectProperty, value);
-                if(value == null)
+                SetValue(ClassInformationProperty, value);
+                if (value == null)
                 {
                     return;
                 }
-                ClassSubjectID = value.ID;
+                ClassInformationID = value.ID;
             }
         }
 
-        public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassSubject", typeof(ClassSubject));
+        public static readonly PropertyData ClassInformationProperty = RegisterProperty("ClassInformation", typeof (ClassInformation));
 
         #endregion //Navigation Properties
 
@@ -219,15 +168,15 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string filePath)
+        public void ToXML(string classPeriodFilePath)
         {
-            var fileInfo = new FileInfo(filePath);
-            if(!Directory.Exists(fileInfo.DirectoryName))
+            var fileInfo = new FileInfo(classPeriodFilePath);
+            if (!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using(Stream stream = new FileStream(filePath, FileMode.Create))
+            using (Stream stream = new FileStream(classPeriodFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -235,25 +184,35 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveClassPeriodLocally(string folderPath)
+        public void SaveToXML(string folderPath)
         {
-            var nameComposite = ClassPeriodNameComposite.ParseClassPeriodToNameComposite(this);
+            var nameComposite = ClassPeriodNameComposite.ParseClassPeriod(this);
+            var possiblePreExistingFiles =
+                Directory.EnumerateFiles(folderPath, string.Format("{0};*;{1};*.xml", ClassPeriodNameComposite.QUALIFIER_TEXT, nameComposite.ID)).ToList();
+            foreach (var oldFilePath in possiblePreExistingFiles)
+            {
+                File.Delete(oldFilePath);
+            }
+
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
             ToXML(filePath);
         }
 
-        public static ClassPeriod LoadLocalClassPeriod(string filePath)
+        public static ClassPeriod LoadFromXML(string classPeriodFilePath)
         {
             try
             {
-                var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
-                var nameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(filePath);
-                if (nameComposite == null ||
-                    classPeriod == null)
+                var nameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
+                if (nameComposite == null)
                 {
                     return null;
                 }
-                classPeriod.ID = nameComposite.ID;
+
+                var classPeriod = Load<ClassPeriod>(classPeriodFilePath, SerializationMode.Xml);
+                if (classPeriod == null)
+                {
+                    return null;
+                }
 
                 var time = nameComposite.StartTime;
                 var timeParts = time.Split('.');
@@ -263,18 +222,30 @@ namespace CLP.Entities
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
+
                 classPeriod.StartTime = dateTime;
-                classPeriod.StartPageID = nameComposite.StartPageID;
-                classPeriod.NumberOfPages = UInt32.Parse(nameComposite.NumberOfPages);
+                classPeriod.ID = nameComposite.ID;
+                classPeriod.PageNumbers = nameComposite.PageNumbers;
                 classPeriod.NumberOfAllowedBlankPages = UInt32.Parse(nameComposite.AllowedBlankPages);
 
-                var classPeriodFolderPath = Path.GetDirectoryName(filePath);
-                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "subject" + ";" + classPeriod.ClassSubjectID + ".xml");
-                classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
+                var classPeriodFolderPath = Path.GetDirectoryName(classPeriodFilePath);
+                var classInformationFilePath =
+                    Directory.EnumerateFiles(classPeriodFolderPath, string.Format("{0};*;{1}.xml", ClassInformationNameComposite.QUALIFIER_TEXT, classPeriod.ClassInformationID))
+                             .FirstOrDefault();
+                if (string.IsNullOrEmpty(classInformationFilePath))
+                {
+                    return null;
+                }
+                var classInformation = ClassInformation.LoadFromXML(classInformationFilePath);
+                if (classInformation == null)
+                {
+                    return null;
+                }
+                classPeriod.ClassInformation = classInformation;
 
                 return classPeriod;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }

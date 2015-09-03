@@ -657,7 +657,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
-            notebookWorkspace.Notebook.AddCLPPageToNotebook(newPage);
+            notebookWorkspace.Notebook.AddPage(newPage);
         }
 
         /// <summary>
@@ -677,7 +677,7 @@ namespace Classroom_Learning_Partner.ViewModels
                           {
                               PageType = PageTypes.Animation
                           };
-            notebookWorkspace.Notebook.AddCLPPageToNotebook(newPage);
+            notebookWorkspace.Notebook.AddPage(newPage);
         }
 
         /// <summary>Doubles height of the current page.</summary>

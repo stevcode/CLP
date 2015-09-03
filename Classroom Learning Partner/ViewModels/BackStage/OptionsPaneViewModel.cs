@@ -2,6 +2,7 @@
 using System.Drawing;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
@@ -19,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ApplyRenameToCacheCommand = new Command(OnApplyRenameToCacheCommandExecute);
             ToggleBindingStyleCommand = new Command(OnToggleBindingStyleCommandExecute);
             ReplayHistoryCommand = new Command(OnReplayHistoryCommandExecute);
+            GenerateSubmissionsCommand = new Command(OnGenerateSubmissionsCommandExecute);
         }
 
         #endregion //Constructor
@@ -44,7 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var names = (KnownColor[])Enum.GetValues(typeof (KnownColor));
             var randomColorName = names[randomGen.Next(names.Length)];
             var color = Color.FromKnownColor(randomColorName);
-            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)); 
         }
 
         /// <summary>
@@ -94,6 +96,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             animationControlRibbon.IsNonAnimationPlaybackEnabled = !animationControlRibbon.IsNonAnimationPlaybackEnabled;
+        }
+
+        /// <summary>Generates submissions for pages with no submissions.</summary>
+        public Command GenerateSubmissionsCommand { get; private set; }
+
+        private void OnGenerateSubmissionsCommandExecute()
+        {
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            PleaseWaitHelper.Show(() =>
+                                  {
+                                      DataService.GenerateSubmissionsFromModifiedStudentPages();
+                                  },
+                                  null,
+                                  "Generating Submissions");
         }
 
         #endregion //Commands

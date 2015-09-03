@@ -95,7 +95,7 @@
     <Compile Include="DAL\DatabaseConfiguration.cs" />
     <Compile Include="DAL\ClassPeriodContext.cs" />
     <Compile Include="DomainModel\ClassPeriod.cs" />
-    <Compile Include="DomainModel\ClassSubject.cs" />
+    <Compile Include="DomainModel\ClassInformation.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />

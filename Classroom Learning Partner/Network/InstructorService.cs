@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner
                 var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
                 var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
+                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassInformation);
                 var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
                 var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(machineAddress));
@@ -128,8 +128,8 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var submissionNameComposite = PageNameComposite.ParsePageToNameComposite(submission);
-            var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+            var submissionNameComposite = PageNameComposite.ParsePage(submission);
+            var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
             notebookNameComposite.OwnerID = submission.OwnerID;
             if (submission.Owner == null)
             {
@@ -237,8 +237,8 @@ namespace Classroom_Learning_Partner
                 page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                 page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
 
-                var pageNameComposite = PageNameComposite.ParsePageToNameComposite(page);
-                var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+                var pageNameComposite = PageNameComposite.ParsePage(page);
+                var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
                 notebookNameComposite.OwnerID = page.OwnerID;
                 if (page.Owner == null)
                 {
@@ -286,7 +286,7 @@ namespace Classroom_Learning_Partner
                                           return;
                                       }
 
-                                      var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
+                                      var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
                                       var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
                                       notebook.SavePartialNotebook(notebookFolderPath, false);
                                   });
@@ -311,7 +311,7 @@ namespace Classroom_Learning_Partner
                     return;
                 }
 
-                var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
+                var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
                 var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
                 notebook.SavePartialNotebook(notebookFolderPath, false);
             });
@@ -425,7 +425,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var student = notebookService.CurrentClassPeriod.ClassSubject.StudentList.FirstOrDefault(x => x.ID == studentID);
+            var student = notebookService.CurrentClassPeriod.ClassInformation.StudentList.FirstOrDefault(x => x.ID == studentID);
             if (student == null)
             {
                 Logger.Instance.WriteToLog("Failed to log out student. student is null.");

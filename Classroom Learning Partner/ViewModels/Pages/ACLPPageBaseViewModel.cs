@@ -282,12 +282,50 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Whether the page has submissions or not.</summary>
         public bool HasSubmissions
         {
-            get { return Submissions.Any() || Page.LastVersionIndex != null; }
+            get
+            {
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null ||
+                    Page == null ||
+                    Page.Owner == null)
+                {
+                    return false;
+                }
+
+                if (Page.Owner.IsStudent)
+                {
+                    return Submissions.Any() || Page.LastVersionIndex != null;
+                }
+
+                return dataService.LoadedNotebooksInfo.Any(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Owner.IsStudent && p.VersionIndex != 0));
+            }
         }
 
         public int NumberOfDistinctSubmissions
         {
-            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
+            get
+            {
+                var dataService = DependencyResolver.Resolve<IDataService>();
+                if (dataService == null ||
+                    Page == null ||
+                    Page.Owner == null)
+                {
+                    return 0;
+                }
+
+                if (Page.Owner.IsStudent)
+                {
+                    return Submissions.Count();
+                }
+
+                var count =
+                    dataService.LoadedNotebooksInfo.Where(n => n.Notebook.Owner.IsStudent)
+                               .Select(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Notebook.Owner.FullName : string.Empty)
+                               .Distinct()
+                               .Count();
+
+                return Math.Max(0, count - 1);
+            }
         }
 
         #endregion //Calculated Properties
@@ -497,6 +535,12 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+
+        public void UpdateSubmissionCount()
+        {
+            RaisePropertyChanged("HasSubmissions");
+            RaisePropertyChanged("NumberOfDistinctSubmissions");
+        }
 
         protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

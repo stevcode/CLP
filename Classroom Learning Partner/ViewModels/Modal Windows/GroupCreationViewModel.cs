@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (notebookService.CurrentClassPeriod != null)
             {
-                StudentsNotInGroup = new ObservableCollection<Person>(notebookService.CurrentClassPeriod.ClassSubject.StudentList);
+                StudentsNotInGroup = new ObservableCollection<Person>(notebookService.CurrentClassPeriod.ClassInformation.StudentList);
             }
 
             SortedStudentsNotInGroup.Source = StudentsNotInGroup;

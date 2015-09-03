@@ -176,7 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddGridDisplayCommandExecute()
         {
-            Notebook.AddDisplayToNotebook(new GridDisplay(Notebook));
+            Notebook.AddDisplay(new GridDisplay(Notebook));
             CurrentDisplay = Displays.LastOrDefault();
         }
 
@@ -187,7 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddColumnDisplayCommandExecute()
         {
-            Notebook.AddDisplayToNotebook(new ColumnDisplay(Notebook));
+            Notebook.AddDisplay(new ColumnDisplay(Notebook));
             Notebook.CurrentPage = null;
             CurrentDisplay = Displays.LastOrDefault();
         }
@@ -200,7 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            Notebook.AddDisplayToNotebook(newGridDisplay);
+            Notebook.AddDisplay(newGridDisplay);
             CurrentDisplay = newGridDisplay;
             PageHistory.UISleep(1300);
             newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);

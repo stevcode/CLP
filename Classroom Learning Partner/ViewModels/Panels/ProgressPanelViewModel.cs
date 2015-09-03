@@ -1,74 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class ProgressPanelViewModel : APanelBaseViewModel
     {
+        protected readonly IDataService DataService;
+
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.</summary>
         public ProgressPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
         {
-            Notebook = notebook;
-            Initialized += ProgressPanelViewModel_Initialized;
+            DataService = DependencyResolver.Resolve<IDataService>();
             StagingPanel = stagingPanel;
+            Notebook = notebook;
 
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService != null && notebookService.CurrentClassPeriod != null)
-            {
-                StudentList = notebookService.CurrentClassPeriod.ClassSubject.StudentList;
-            }
-            else
-            {
-                StudentList = new ObservableCollection<Person>();
-                for(int i = 1; i <= 10; i++)
-                {
-                    StudentList.Add(Person.TestSubmitter);
-                }
-            }
-            
-            ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();
-
-            CurrentPages = Notebook.Pages;
+            RefreshProgressPanelData();
+            Initialized += ProgressPanelViewModel_Initialized;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
-            ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);
-            StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
-        }
-
-        void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
-        {
-            setWidth();
-        }
-
-        void setWidth()
-        {
-            var calculatedWidth = CurrentPages.Count * 40 + 110;
-            if(App.Current.MainWindow.ActualWidth < calculatedWidth * 2)
-            {
-                Length = App.Current.MainWindow.ActualWidth / 2;
-            }
-            else
-            {
-                if(calculatedWidth < 200)
-                {
-                    calculatedWidth = 200;
-                }
-                Length = calculatedWidth;
-            }
+            OpenNotebookCommand = new Command<NotebookInfo>(OnOpenNotebookCommandExecute);
         }
 
         public override string Title
@@ -79,9 +38,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructor
 
         #region Model
-        /// <summary>
-        /// Notebook associated with the panel.
-        /// </summary>
+
+        /// <summary>Notebook associated with the panel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -89,26 +47,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
 
-        /// <summary>
-        /// Pages of the Notebook.
-        /// </summary>
-        public ObservableCollection<CLPPage> CurrentPages
-        {
-            get { return GetValue<ObservableCollection<CLPPage>>(CurrentPagesProperty); }
-            set { SetValue(CurrentPagesProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
-
-        #endregion //Model
-
-        #region Bindings
-
-        /// <summary>
-        /// Current, selected page in the notebook.
-        /// </summary>
+        /// <summary>Current, selected page in the notebook.</summary>
         [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
@@ -118,94 +59,148 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
-        public ObservableCollection<Person> StudentList
+        #endregion //Model
+
+        #region Bindings
+
+        /// <summary>NotebookInfos for all loaded Teacher Notebooks.</summary>
+        public ObservableCollection<NotebookInfo> TeacherNotebooks
         {
-            get { return GetValue<ObservableCollection<Person>>(StudentListProperty); }
-            set { SetValue(StudentListProperty, value); }
+            get { return GetValue<ObservableCollection<NotebookInfo>>(TeacherNotebooksProperty); }
+            set { SetValue(TeacherNotebooksProperty, value); }
         }
 
-        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
+        public static readonly PropertyData TeacherNotebooksProperty = RegisterProperty("TeacherNotebooks", typeof (ObservableCollection<NotebookInfo>), () => new ObservableCollection<NotebookInfo>());
 
-        public ObservableCollection<ClassPeriodForDisplay> ClassPeriodsForDisplay
+        /// <summary>NotebookInfos for all loaded Student Notebooks.</summary>
+        public ObservableCollection<NotebookInfo> StudentNotebooks
         {
-            get { return GetValue<ObservableCollection<ClassPeriodForDisplay>>(ClassPeriodsForDisplayProperty); }
-            set { SetValue(ClassPeriodsForDisplayProperty, value); }
+            get { return GetValue<ObservableCollection<NotebookInfo>>(StudentNotebooksProperty); }
+            set { SetValue(StudentNotebooksProperty, value); }
         }
 
-        public static readonly PropertyData ClassPeriodsForDisplayProperty = RegisterProperty("ClassPeriodsForDisplay", typeof(ObservableCollection<ClassPeriodForDisplay>), () => new ObservableCollection<ClassPeriodForDisplay>());
-
-        /// <summary>
-        /// Staging Panel for submissions
-        /// </summary>
+        public static readonly PropertyData StudentNotebooksProperty = RegisterProperty("StudentNotebooks", typeof (ObservableCollection<NotebookInfo>), () => new ObservableCollection<NotebookInfo>());
+        
+        /// <summary>Staging Panel for submissions</summary>
         public StagingPanelViewModel StagingPanel
         {
             get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
             set { SetValue(StagingPanelProperty, value); }
         }
 
-        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof (StagingPanelViewModel));
 
         #endregion //Bindings
 
         #region IPanel Override
 
-        /// <summary>
-        /// Initial Length of the Panel, before any resizing.
-        /// </summary>
+        /// <summary>Initial Length of the Panel, before any resizing.</summary>
         public override double InitialLength
         {
-            get { return 400; }
+            get { return 200; }
         }
 
         #endregion //IPanel Override
 
-        #region Commands
+        #region Events
 
-        /// <summary>
-        /// Sets the current selected page in the listbox.
-        /// </summary>
-        public Command<CLPPage> SetCurrentPageCommand { get; private set; }
-
-        private void OnSetCurrentPageCommandExecute(CLPPage page)
+        private void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            if(page != null)
+            RefreshProgressPanelData();
+            SetPanelWidth();
+        }
+
+        #endregion // Events
+
+        #region Methods
+
+        private void SetPanelWidth()
+        {
+            if (DataService == null ||
+                !DataService.LoadedNotebooksInfo.Any())
             {
-                //Take thumbnail of page before navigating away from it.
-                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
-                Notebook.CurrentPage = page;
+                Length = InitialLength;
+                return;
+            }
+
+            var referenceNotebook = DataService.LoadedNotebooksInfo.FirstOrDefault(ni => !ni.Notebook.Owner.IsStudent);
+            if (referenceNotebook == null)
+            {
+                referenceNotebook = DataService.LoadedNotebooksInfo.FirstOrDefault();
+            }
+
+            var pageCount = referenceNotebook.Notebook.Pages.Count;
+
+            var calculatedWidth = pageCount * 40 + 110;
+            if (Application.Current.MainWindow.ActualWidth < calculatedWidth * 2)
+            {
+                Length = Application.Current.MainWindow.ActualWidth / 2;
+            }
+            else
+            {
+                if (calculatedWidth < 200)
+                {
+                    calculatedWidth = 200;
+                }
+                Length = calculatedWidth;
             }
         }
 
-        /// <summary>
-        /// Appends submissions for the given student/page combo to the staging panel
-        /// </summary>
-        public Command<Person> StageStudentNotebookCommand { get; private set; }
-
-        private void OnStageStudentNotebookCommandExecute(Person student)
+        private void RefreshProgressPanelData()
         {
-            var stagingPanel = StagingPanel as StagingPanelViewModel;
-            if(stagingPanel == null)
+            if (DataService == null ||
+                !DataService.LoadedNotebooksInfo.Any())
             {
                 return;
             }
 
-            stagingPanel.IsVisible = true;
-
-            stagingPanel.SetStudentNotebook(student);
+            TeacherNotebooks = new ObservableCollection<NotebookInfo>(DataService.LoadedNotebooksInfo.Where(ni => !ni.Notebook.Owner.IsStudent).OrderBy(ni => ni.Notebook.Owner.DisplayName));
+            StudentNotebooks = new ObservableCollection<NotebookInfo>(DataService.LoadedNotebooksInfo.Where(ni => ni.Notebook.Owner.IsStudent).OrderBy(ni => ni.Notebook.Owner.DisplayName));
         }
 
-        /// <summary>
-        /// Meant to allow for looking at progress outside the class period.
-        /// TODO: Loading stuff from outside the current class period isn't really supported.
-        /// </summary>
-        public Command ChooseClassPeriodCommand
+        #endregion // Methods
+
+        #region Commands
+
+        /// <summary>Sets the current selected page for the notebook.</summary>
+        public Command<CLPPage> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            get;
-            private set;
+            if (page == null ||
+                DataService == null)
+            {
+                return;
+            }
+
+            var pageToSwitchTo = page;
+            if (page.Owner.IsStudent &&
+                page.Submissions.Any())
+            {
+                pageToSwitchTo = page.Submissions.Last();
+            }
+
+            DataService.SetCurrentPage(pageToSwitchTo);
         }
 
-        private void OnChooseClassPeriodCommandExecute()
+        /// <summary>Switches current notebook to selected notebook.</summary>
+        public Command<NotebookInfo> OpenNotebookCommand { get; private set; }
+
+        private void OnOpenNotebookCommandExecute(NotebookInfo notebookInfo)
         {
+            if (DataService == null)
+            {
+                return;
+            }
+
+            if (StagingPanel != null)
+            {
+                StagingPanel.IsVisible = false;
+            }
+
+            DataService.OpenNotebook(notebookInfo);
+
+            App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
         }
 
         #endregion

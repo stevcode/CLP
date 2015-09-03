@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public NotebookInfoPaneViewModel()
         {
-            Notebook = LoadedNotebookService.CurrentNotebook;
+            Notebook = DataService.CurrentNotebook;
             InitializeCommands();
         }
 
@@ -22,6 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             SaveNotebookForStudentCommand = new Command(OnSaveNotebookForStudentCommandExecute, OnSaveNotebookForStudentCanExecute);
+            ForceSaveCurrentNotebookCommand = new Command(OnForceSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
         }
 
@@ -78,54 +79,59 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveCurrentNotebookCommandExecute() { SaveCurrentNotebook(); }
 
+        /// <summary>Saves the current notebook.</summary>
+        public Command ForceSaveCurrentNotebookCommand { get; private set; }
+
+        private void OnForceSaveCurrentNotebookCommandExecute() { SaveCurrentNotebook(true); }
+
         #endregion //Commands
 
-        private void SaveCurrentNotebook()
+        private void SaveCurrentNotebook(bool isForceSave = false)
         {
-            if (LoadedNotebookService == null ||
-                LoadedNotebookService.CurrentNotebook == null)
+            if (DataService == null ||
+                DataService.CurrentNotebook == null)
             {
                 return;
             }
 
-            PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
+            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(DataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
 
-            PleaseWaitHelper.Show(
-                                  () =>
-                                  LoadedNotebookService.SaveNotebookLocally(LoadedNotebookService.CurrentNotebook,
-                                                                            Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
-                                  null,
-                                  "Exporting Notebook");
+            //PleaseWaitHelper.Show(
+            //                      () =>
+            //                      LoadedNotebookService.SaveNotebookLocally(LoadedNotebookService.CurrentNotebook,
+            //                                                                Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
+            //                      null,
+            //                      "Exporting Notebook");
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
-                App.Network.InstructorProxy == null)
-            {
-                return;
-            }
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+            //    App.Network.InstructorProxy == null)
+            //{
+            //    return;
+            //}
 
-            var zippedPages = string.Empty;
-            try
-            {
-                var sPages = ObjectSerializer.ToString(LoadedNotebookService.CurrentNotebook.Pages.ToList());
-                zippedPages = CLPServiceAgent.Instance.Zip(sPages);
-            }
-            catch (Exception)
-            {
-                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
-                return;
-            }
+            //var zippedPages = string.Empty;
+            //try
+            //{
+            //    var sPages = ObjectSerializer.ToString(LoadedNotebookService.CurrentNotebook.Pages.ToList());
+            //    zippedPages = CLPServiceAgent.Instance.Zip(sPages);
+            //}
+            //catch (Exception)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    return;
+            //}
 
-            if (string.IsNullOrEmpty(zippedPages))
-            {
-                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
-                return;
-            }
+            //if (string.IsNullOrEmpty(zippedPages))
+            //{
+            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    return;
+            //}
 
-            PleaseWaitHelper.Show(
-                                  () =>
-                                  App.Network.InstructorProxy.AddSerializedPages(zippedPages, LoadedNotebookService.CurrentNotebook.ID),
-                                  null,
-                                  "Collecting Notebook");
+            //PleaseWaitHelper.Show(
+            //                      () =>
+            //                      App.Network.InstructorProxy.AddSerializedPages(zippedPages, LoadedNotebookService.CurrentNotebook.ID),
+            //                      null,
+            //                      "Collecting Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }

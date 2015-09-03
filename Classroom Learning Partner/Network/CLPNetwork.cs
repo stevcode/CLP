@@ -124,7 +124,7 @@ namespace Classroom_Learning_Partner
                                        //    var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
                                        //    var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                                       //    var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
+                                       //    var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassInformation);
                                        //    var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
                                        //    //var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);

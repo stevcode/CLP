@@ -4,12 +4,12 @@ using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for NewNotebookPaneView.xaml</summary>
-    public partial class NewNotebookPaneView
+    /// <summary>Interaction logic for NewPaneView.xaml</summary>
+    public partial class NewPaneView
     {
-        public NewNotebookPaneView() { InitializeComponent(); }
+        public NewPaneView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof (NewNotebookPaneViewModel); }
+        protected override Type GetViewModelType() { return typeof (NewPaneViewModel); }
 
         private void CachesListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }
     }

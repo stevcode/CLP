@@ -142,12 +142,12 @@
                                                IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
 
-            <!--<customControls:ToggleRibbonButton UnCheckedText="Show Progress"
+            <customControls:ToggleRibbonButton UnCheckedText="Show Progress"
                                                CheckedText="Hide Progress"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                                IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />-->
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Stage"
                                                CheckedText="Hide Stage"

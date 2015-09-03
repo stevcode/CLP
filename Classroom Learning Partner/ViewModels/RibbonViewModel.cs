@@ -109,7 +109,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
             //    try
             //    {
-            //        App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
+            //        App.MainWindowViewModel.CurrentClassPeriod.ClassInformation.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
             //    }
             //    catch
             //    {
@@ -237,7 +237,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
             //try
             //{
-            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
+            //    App.MainWindowViewModel.CurrentClassPeriod.ClassInformation.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
             //}
             //catch
             //{
