@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image, INotebookService notebookService)
+        public CLPImageViewModel(CLPImage image, IDataService dataService)
         {
             PageObject = image;
             if(App.MainWindowViewModel.ImagePool.ContainsKey(image.ImageHashID))
@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
                 foreach(var imageFilePath in from imageFilePath in imageFilePaths
                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                              where imageHashID == image.ImageHashID

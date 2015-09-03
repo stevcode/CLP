@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="StampedObjectViewModel" /> class.</summary>
-        public StampedObjectViewModel(StampedObject stampedObject, INotebookService notebookService)
+        public StampedObjectViewModel(StampedObject stampedObject, IDataService dataService)
         {
             PageObject = stampedObject;
             RaisePropertyChanged("IsGroupStampedObject");
@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
                 foreach (var imageFilePath in from imageFilePath in imageFilePaths
                                               let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                               where imageHashID == stampedObject.ImageHashID

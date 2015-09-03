@@ -200,7 +200,8 @@
                         Command="{Binding AnalyzePageCommand}"
                         Height="20"
                         Margin="1"
-                        Grid.ColumnSpan="2" />
+                        Grid.ColumnSpan="2"
+                        Visibility="Collapsed" />
 
                 <!--<Button Content="Run History Analysis"
                         Command="{Binding AnalyzePageHistoryCommand}"
@@ -224,7 +225,8 @@
                         Command="{Binding PrintAllHistoryItemsCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />
+                        Margin="1"
+                        Visibility="Collapsed" />
 
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
@@ -236,7 +238,8 @@
                         Command="{Binding FixCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />
+                        Margin="1"
+                        Visibility="Collapsed" />
 
                 <Rectangle Grid.ColumnSpan="2"
                            Height="1"
