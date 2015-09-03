@@ -216,10 +216,10 @@
                                                LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
-            <customControls:ToggleRibbonButton UnCheckedText="Extras"
+            <!--<customControls:ToggleRibbonButton UnCheckedText="Extras"
                                                CheckedText="Extras"
                                                LargeImageSource="pack://application:,,,/Resources/Images/ExtrasFolder32.png"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />-->
 
         </StackPanel>
 

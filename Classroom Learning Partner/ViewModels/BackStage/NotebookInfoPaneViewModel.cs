@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Catel.Data;
+using Catel.IO;
 using Catel.MVVM;
 using Catel.Windows;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
@@ -140,8 +142,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveNotebookForStudentCommandExecute()
         {
-            if (LoadedNotebookService == null ||
-                LoadedNotebookService.CurrentNotebook == null)
+            if (DataService == null ||
+                DataService.CurrentCacheInfo == null ||
+                DataService.CurrentNotebookInfo == null ||
+                DataService.CurrentNotebookInfo.Notebook == null)
             {
                 return;
             }
@@ -166,17 +170,16 @@ namespace Classroom_Learning_Partner.ViewModels
                              FullName = textInputViewModel.InputText
                          };
 
-            var copiedNotebook = LoadedNotebookService.CurrentNotebook.CopyForNewOwner(person);
+            var copiedNotebook = DataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
             copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-            LoadedNotebookService.OpenNotebooks.Clear();
-            LoadedNotebookService.OpenNotebooks.Add(copiedNotebook);
-            LoadedNotebookService.CurrentNotebook = copiedNotebook;
-            App.MainWindowViewModel.CurrentUser = person;
-            App.MainWindowViewModel.IsAuthoring = false;
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
-            App.MainWindowViewModel.IsBackStageVisible = false;
+            var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+            var notebookPath = Path.Combine(DataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+            var notebookInfo = new NotebookInfo(DataService.CurrentCacheInfo, notebookPath)
+                               {
+                                   Notebook = copiedNotebook
+                               };
+            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
+            DataService.SetCurrentNotebook(notebookInfo);
         }
 
         private bool OnSaveNotebookForStudentCanExecute()

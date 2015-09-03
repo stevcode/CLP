@@ -511,7 +511,8 @@ namespace Classroom_Learning_Partner.Services
         public void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave = false)
         {
             notebookInfo.Cache.Initialize();
-            if (isForcedFullSave)
+            if (isForcedFullSave &&
+                Directory.Exists(notebookInfo.NotebookFolderPath))
             {
                 Directory.Delete(notebookInfo.NotebookFolderPath);
             }
