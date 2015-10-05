@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -53,6 +54,12 @@ namespace CLP.Entities
         //{
         //    stroke1.GetBounds().
         //}
+
+        #region Utility Static Methods
+
+        public static Rect GetStrokeBoundsAtHistoryIndex(Stroke stroke, int historyIndex) { return stroke.GetBounds(); }
+
+        #endregion // Utility Static Methods
 
         #endregion // Static Methods
 
