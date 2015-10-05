@@ -126,6 +126,8 @@
     <Compile Include="DomainModel\PageObjects\Bins\Bin.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\BinReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
+    <Compile Include="DomainModel\PageObjects\Interpretation\HandwritingInterpreter.cs" />
+    <Compile Include="DomainModel\PageObjects\Interpretation\InterpretationRegion.cs" />
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectAccepter.cs" />
