@@ -8,7 +8,10 @@ namespace CLP.Entities
     public static class HistoryAnalysis
     {
         public static void GenerateInitialHistoryActions(CLPPage page)
-        { }
+        {
+            var historyItemBuffer = new List<IHistoryItem>();
+            
+        }
 
         public static void AnalyzeHistoryActions(CLPPage page)
         {
