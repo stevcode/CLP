@@ -14,7 +14,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static HistoryAction ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isChange = true)
+        public static IHistoryAction ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isChange = true)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItems == null ||
@@ -25,29 +25,32 @@ namespace CLP.Entities
             }
 
             var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
-            {
-                CodedObject = Codings.OBJECT_INK,
-                CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
-            };
+                                {
+                                    CodedObject = Codings.OBJECT_INK,
+                                    CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
+                                };
 
             return historyAction;
         }
 
-        public static List<HistoryAction> GroupAddAndErase(CLPPage page, IHistoryAction inkAction)
+        public static IHistoryAction GroupAddOrErase(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isAdd = true)
         {
             if (page == null ||
-                inkAction == null ||
-                !inkAction.HistoryItemIDs.Any() ||
-                inkAction.CodedObjectAction != Codings.ACTION_INK_CHANGE)
+                objectsOnPageChangedHistoryItems == null ||
+                !objectsOnPageChangedHistoryItems.Any() ||
+                !objectsOnPageChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
             {
                 return null;
             }
 
-            var orderedHistoryItems = inkAction.HistoryItems.OrderBy(h => h.HistoryIndex).ToList();
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
+                                {
+                                    CodedObject = Codings.OBJECT_INK,
+                                    CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE
+                                };
 
-
-            // TODO
-            return null;
+            
+            return historyAction;
         }
 
         //public static double DistanceBetweenStrokes(Stroke stroke1, Stroke stroke2)

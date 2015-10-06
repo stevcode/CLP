@@ -22,9 +22,13 @@ namespace CLP.Entities
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "2"
                                             });
+            var refinedInkHistoryActions = RefineInkHistoryActions(page, initialHistoryActions);
+            page.History.HistoryActions.AddRange(refinedInkHistoryActions);
+
+
         }
 
-        #region First Pass
+        #region First Pass: Initialization
 
         public static List<IHistoryAction> GenerateInitialHistoryActions(CLPPage page)
         {
@@ -167,7 +171,65 @@ namespace CLP.Entities
             return null;
         }
 
-        #endregion // First Pass
+        #endregion // First Pass: Initialization
+
+        #region Second Pass: Ink Refinement
+
+        public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var refinedHistoryActions = new List<IHistoryAction>();
+
+            foreach (var historyAction in historyActions)
+            {
+                if (historyAction.CodedObject == Codings.OBJECT_INK &&
+                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
+                {
+                    var refinedInkActions = ProcessInkChangeHistoryAction(page, historyAction);
+                    refinedHistoryActions.AddRange(refinedInkActions);
+                }
+                else
+                {
+                    refinedHistoryActions.Add(historyAction);
+                }
+            }
+
+            return refinedHistoryActions;
+        }
+
+        public static List<IHistoryAction> ProcessInkChangeHistoryAction(CLPPage page, IHistoryAction historyAction)
+        {
+            var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
+            var processedInkActions = new List<IHistoryAction>();
+            // TODO: validation
+
+            var historyItemBuffer = new List<IHistoryItem>();
+            for (var i = 0; i < historyItems.Count; i++)
+            {
+                var currentHistoryItem = historyItems[i];
+                historyItemBuffer.Add(currentHistoryItem);
+
+                var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
+                var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
+                if (compoundHistoryAction != null)
+                {
+                    processedInkActions.Add(compoundHistoryAction);
+                    historyItemBuffer.Clear();
+                }
+            }
+
+
+            return processedInkActions;
+        } 
+
+        #endregion // Second Pass: Ink Refinement
+
+        // 3rd pass: ink interpretation: ink divider, skip counting, grouping by inking, ignoring?
+
+            // 4th pass: simple pattern interpretations
+
+            // 5th pass: complex pattern interpretations
+
+            // 6th pass: Tag generation
 
         public static void AnalyzeHistoryActions(CLPPage page)
         {

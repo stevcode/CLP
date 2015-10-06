@@ -9,7 +9,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static HistoryAction Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static IHistoryAction Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
@@ -45,7 +45,7 @@ namespace CLP.Entities
             return null;
         }
 
-        public static HistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static IHistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
@@ -79,7 +79,7 @@ namespace CLP.Entities
             return null;
         }
 
-        public static HistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
+        public static IHistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
         {
             if (page == null ||
                objectsMovedHistoryItems == null ||

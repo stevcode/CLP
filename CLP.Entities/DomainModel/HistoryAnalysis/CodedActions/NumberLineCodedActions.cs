@@ -7,7 +7,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static HistoryAction EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryItem> endPointsChangedHistoryItems)
+        public static IHistoryAction EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryItem> endPointsChangedHistoryItems)
         {
             if (page == null ||
                 endPointsChangedHistoryItems == null ||
@@ -45,7 +45,7 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static HistoryAction JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryItem> jumpSizesChangedHistoryItems)
+        public static IHistoryAction JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryItem> jumpSizesChangedHistoryItems)
         {
             if (page == null ||
                 jumpSizesChangedHistoryItems == null ||

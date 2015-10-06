@@ -304,6 +304,8 @@ namespace CLP.Entities
         /// </summary>
         public static readonly Dictionary<string, int> MaxIncrementID = new Dictionary<string, int>();
 
+        public static readonly Dictionary<string, List<string>> InkGroupIDs = new Dictionary<string, List<string>>();
+
         #endregion // Static Properties
 
         #region Static Methods

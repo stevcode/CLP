@@ -8,7 +8,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static HistoryAction Rotate(CLPPage page, CLPArrayRotateHistoryItem rotateHistoryItem)
+        public static IHistoryAction Rotate(CLPPage page, CLPArrayRotateHistoryItem rotateHistoryItem)
         {
             if (page == null ||
                 rotateHistoryItem == null)
@@ -45,7 +45,7 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static HistoryAction Cut(CLPPage page, PageObjectCutHistoryItem cutHistoryItem)
+        public static IHistoryAction Cut(CLPPage page, PageObjectCutHistoryItem cutHistoryItem)
         {
             if (page == null ||
                 cutHistoryItem == null)
@@ -109,7 +109,7 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static HistoryAction Snap(CLPPage page, CLPArraySnapHistoryItem snapHistoryItem)
+        public static IHistoryAction Snap(CLPPage page, CLPArraySnapHistoryItem snapHistoryItem)
         {
             if (page == null ||
                 snapHistoryItem == null)
@@ -155,7 +155,7 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static HistoryAction Divide(CLPPage page, CLPArrayDivisionsChangedHistoryItem divideHistoryItem)
+        public static IHistoryAction Divide(CLPPage page, CLPArrayDivisionsChangedHistoryItem divideHistoryItem)
         {
             if (page == null ||
                 divideHistoryItem == null)
