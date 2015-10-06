@@ -9,8 +9,19 @@ namespace CLP.Entities
     {
         public static void GenerateHistoryActions(CLPPage page)
         {
+            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "1"
+                                            });
             var initialHistoryActions = GenerateInitialHistoryActions(page);
-            page.History.HistoryActions = initialHistoryActions;
+            page.History.HistoryActions.AddRange(initialHistoryActions);
+
+            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "2"
+                                            });
         }
 
         #region First Pass
