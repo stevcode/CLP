@@ -88,6 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
             HistoryActionAnaylsisCommand = new Command(OnHistoryActionAnaylsisCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
+            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1442,6 +1443,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 dt.RaiseAllPropertiesChanged();
             }
+        }
+
+        public Command GenerateHistoryActionsCommand
+        { get; private set; }
+
+        private void OnGenerateHistoryActionsCommandExecute()
+        {
+            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
         }
     }
 }
