@@ -110,7 +110,7 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var historyAction = ObjectCodedActions.Move(page, historyItems);
+                    var historyAction = ObjectCodedActions.Move(page, objectsMovedHistoryItems);
                     return historyAction;
                 }
             }

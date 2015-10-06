@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Ink;
 
@@ -78,7 +79,7 @@ namespace CLP.Entities
             return null;
         }
 
-        public static HistoryAction Move(CLPPage page, List<IHistoryItem> objectsMovedHistoryItems)
+        public static HistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
         {
             if (page == null ||
                objectsMovedHistoryItems == null ||
@@ -103,12 +104,16 @@ namespace CLP.Entities
                 var pageObject = movedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var historyAction = new HistoryAction(page, objectsMovedHistoryItems)
+                var historyAction = new HistoryAction(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
                     CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                    CodedObjectActionID = string.Format("({0}, {1}) to ({2}, {3})", Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
+                                                                                    Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
+                                                                                    Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
+                                                                                    Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y))
                     // TODO: make coded action to describe distance travelled during move.
                     // note that there may be more than one objectsMovedHistoryItem in a row where
                     // a student moved the same pageObject several consecutive times.
@@ -120,14 +125,14 @@ namespace CLP.Entities
             return null;
         }
 
-        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
+        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
         {
-            return historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
+            return historyItems.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
-        public static List<Stroke> GetMovedStrokes(CLPPage page, List<IHistoryItem> historyItems)
+        public static List<Stroke> GetMovedStrokes(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
         {
-            return historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.StrokeIDs.Keys.Select(page.GetStrokeByIDOnPageOrInHistory)).Distinct().ToList();
+            return historyItems.SelectMany(h => h.StrokeIDs.Keys.Select(page.GetStrokeByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
         public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
