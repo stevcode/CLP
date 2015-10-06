@@ -411,7 +411,15 @@ namespace CLP.Entities
         {
             var firstBounds = new Rect(firstPageObject.XPosition, firstPageObject.YPosition, firstPageObject.Width, firstPageObject.Height);
             var secondBounds = new Rect(secondPageObject.XPosition, secondPageObject.YPosition, secondPageObject.Width, secondPageObject.Height);
-            return firstBounds.IntersectsWith(secondBounds);
+            return IsBoundsOverlapping(firstBounds, secondBounds);
+        }
+
+        public static bool IsBoundsOverlapping(Rect firstBounds, Rect secondBounds) { return firstBounds.IntersectsWith(secondBounds); }
+
+        public static bool IsBoundsOverlappingByPercentage(Rect firstBounds, Rect secondBounds, double percentage)
+        {
+            var intersectRect = Rect.Intersect(firstBounds, secondBounds);
+            return intersectRect.Area() / secondBounds.Area() >= percentage;
         }
 
         #endregion //Utility Methods

@@ -224,7 +224,8 @@
     <Compile Include="DomainModel\Tags\Stamps\TroubleWithMultiplicationTag.cs" />
     <Compile Include="DomainModel\Tags\TempArrayDividersTag.cs" />
     <Compile Include="DomainModel\Tags\TempArraySkipCountingTag.cs" />
-    <Compile Include="DomainModel\Utility\Extentions\IntegerExtesions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />
     <Compile Include="DomainModel\Utility\TypeSwitch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Ink;
 
 namespace CLP.Entities
@@ -200,15 +201,45 @@ namespace CLP.Entities
         {
             var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
             var processedInkActions = new List<IHistoryAction>();
+            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyItems.First().HistoryIndex);
             // TODO: validation
 
             var historyItemBuffer = new List<IHistoryItem>();
+            IPageObject currentPageObjectReference = null;
+            var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
+            var isInkAdd = true;
             for (var i = 0; i < historyItems.Count; i++)
             {
                 var currentHistoryItem = historyItems[i];
                 historyItemBuffer.Add(currentHistoryItem);
+                if (historyItemBuffer.Count == 1)
+                {
+                    var strokes = currentHistoryItem.StrokesAdded;
+                    if (!strokes.Any())
+                    {
+                        strokes = currentHistoryItem.StrokesRemoved;
+                        isInkAdd = false;
+                    }
+
+                    // TODO: If strokes.count != 1, deal with point erase
+                    // TODO: Validation
+                    var stroke = strokes.First();
+                    var strokeBounds = InkCodedActions.GetStrokeBoundsAtHistoryIndex(stroke, currentHistoryItem.HistoryIndex);
+                    currentPageObjectReference = pageObjectsOnPage.FirstOrDefault(p =>
+                                                                                  {
+                                                                                      var pageObjectBounds = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page,
+                                                                                                                                                                  p,
+                                                                                                                                                                  currentHistoryItem.HistoryIndex);
+                                                                                      return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, strokeBounds, 0.80);
+                                                                                  });
+                }
 
                 var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
+                if (nextHistoryItem != null)
+                {
+                    var isNextPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
+                }
+
                 var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
                 if (compoundHistoryAction != null)
                 {

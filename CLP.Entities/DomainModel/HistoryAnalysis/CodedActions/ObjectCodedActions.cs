@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Ink;
 
 namespace CLP.Entities
@@ -138,6 +139,19 @@ namespace CLP.Entities
         public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
+        }
+
+        public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(CLPPage page, int historyIndex)
+        {
+            // TOOO: Implement better
+            return page.PageObjects.ToList();
+        }
+
+        public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)
+        {
+            var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
+            var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
+            return new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
         }
 
         #endregion // Static Methods

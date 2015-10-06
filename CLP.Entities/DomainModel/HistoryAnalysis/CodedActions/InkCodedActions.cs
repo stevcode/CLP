@@ -60,7 +60,11 @@ namespace CLP.Entities
 
         #region Utility Static Methods
 
-        public static Rect GetStrokeBoundsAtHistoryIndex(Stroke stroke, int historyIndex) { return stroke.GetBounds(); }
+        public static Rect GetStrokeBoundsAtHistoryIndex(Stroke stroke, int historyIndex)
+        {
+            // TODO: Implement better
+            return stroke.GetBounds();
+        }
 
         #endregion // Utility Static Methods
 

@@ -3,7 +3,7 @@ using Catel;
 
 namespace CLP.Entities
 {
-    public static class IntegerExtesions
+    public static class IntegerExtensions
     {
         private const int COLUMN_BASE = 26;
         private const int DIGIT_MAX = 7;
