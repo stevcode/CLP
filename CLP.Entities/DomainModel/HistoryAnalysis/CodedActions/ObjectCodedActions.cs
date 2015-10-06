@@ -13,7 +13,8 @@ namespace CLP.Entities
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
                 !objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any() ||
-                objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any())
+                objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any() ||
+                objectsOnPageChangedHistoryItem.IsUsingStrokes)
             {
                 return null;
             }
@@ -48,7 +49,8 @@ namespace CLP.Entities
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
                 !objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any() ||
-                objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any())
+                objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any() ||
+                objectsOnPageChangedHistoryItem.IsUsingStrokes)
             {
                 return null;
             }

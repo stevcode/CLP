@@ -7,11 +7,156 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
-        public static void GenerateInitialHistoryActions(CLPPage page)
+        public static void GenerateHistoryActions(CLPPage page)
+        {
+            var initialHistoryActions = GenerateInitialHistoryActions(page);
+            page.History.HistoryActions = initialHistoryActions;
+        }
+
+        #region First Pass
+
+        public static List<IHistoryAction> GenerateInitialHistoryActions(CLPPage page)
         {
             var historyItemBuffer = new List<IHistoryItem>();
-            
+            var initialHistoryActions = new List<IHistoryAction>();
+            var historyItems = page.History.CompleteOrderedHistoryItems;
+
+            for (var i = 0; i < historyItems.Count; i++)
+            {
+                var currentHistoryItem = historyItems[i];
+                historyItemBuffer.Add(currentHistoryItem);
+                if (historyItemBuffer.Count == 1)
+                {
+                    var singleHistoryAction = VerifyAndGenerateSingleItemAction(page, historyItemBuffer.First());
+                    if (singleHistoryAction != null)
+                    {
+                        initialHistoryActions.Add(singleHistoryAction);
+                        historyItemBuffer.Clear();
+                        continue;
+                    }
+                }
+
+                var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
+                var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
+                if (compoundHistoryAction != null)
+                {
+                    initialHistoryActions.Add(compoundHistoryAction);
+                    historyItemBuffer.Clear();
+                }
+            }
+
+            return initialHistoryActions;
         }
+
+        public static IHistoryAction VerifyAndGenerateSingleItemAction(CLPPage page, IHistoryItem historyItem)
+        {
+            if (historyItem == null)
+            {
+                return null;
+            }
+
+            IHistoryAction historyAction = null;
+            TypeSwitch.On(historyItem)
+                      .Case<ObjectsOnPageChangedHistoryItem>(h =>
+                      {
+                          historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
+                      })
+                      .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
+                      .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
+                      .Case<CLPArraySnapHistoryItem>(h => { historyAction = ArrayCodedActions.Snap(page, h); })
+                      .Case<CLPArrayDivisionsChangedHistoryItem>(h => { historyAction = ArrayCodedActions.Divide(page, h); });
+
+            return historyAction;
+        }
+
+        public static IHistoryAction VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
+        {
+            if (!historyItems.Any())
+            {
+                return null;
+            }
+
+            if (historyItems.All(h => h is ObjectsOnPageChangedHistoryItem))
+            {
+                var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryItem>().ToList();
+                // TODO: Edge case that recognizes multiple bins added at once.
+
+                if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+                {
+                    var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
+                    if (nextObjectsChangedHistoryItem != null &&
+                        nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                        !nextObjectsChangedHistoryItem.IsUsingPageObjects)
+                    {
+                        return null;
+                    }
+
+                    var historyAction = InkCodedActions.ChangeOrIgnore(page, objectsChangedHistoryItems);
+                    return historyAction;
+                }
+            }
+
+            if (historyItems.All(h => h is ObjectsMovedBatchHistoryItem))
+            {
+                var objectsMovedHistoryItems = historyItems.Cast<ObjectsMovedBatchHistoryItem>().ToList();
+
+                var firstIDSequence = objectsMovedHistoryItems.First().PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList();
+                if (objectsMovedHistoryItems.All(h => firstIDSequence.SequenceEqual(h.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList())))
+                {
+                    var nextMovedHistoryItem = nextHistoryItem as ObjectsMovedBatchHistoryItem;
+                    if (nextMovedHistoryItem != null &&
+                        firstIDSequence.SequenceEqual(nextMovedHistoryItem.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList()))
+                    {
+                        return null;
+                    }
+
+                    var historyAction = ObjectCodedActions.Move(page, historyItems);
+                    return historyAction;
+                }
+            }
+
+            if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryItem))
+            {
+                var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryItem>().ToList();
+
+                var firstNumberLineID = endPointsChangedHistoryItems.First().NumberLineID;
+                if (endPointsChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
+                {
+                    var nextEndPointsChangedHistoryItem = nextHistoryItem as NumberLineEndPointsChangedHistoryItem;
+                    if (nextEndPointsChangedHistoryItem != null &&
+                        nextEndPointsChangedHistoryItem.NumberLineID == firstNumberLineID)
+                    {
+                        return null;
+                    }
+
+                    var historyAction = NumberLineCodedActions.EndPointsChange(page, endPointsChangedHistoryItems);
+                    return historyAction;
+                }
+            }
+
+            if (historyItems.All(h => h is NumberLineJumpSizesChangedHistoryItem))
+            {
+                var jumpSizesChangedHistoryItems = historyItems.Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
+
+                var firstNumberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
+                if (jumpSizesChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
+                {
+                    var nextEndPointsChangedHistoryItem = nextHistoryItem as NumberLineJumpSizesChangedHistoryItem;
+                    if (nextEndPointsChangedHistoryItem != null &&
+                        nextEndPointsChangedHistoryItem.NumberLineID == firstNumberLineID)
+                    {
+                        return null;
+                    }
+
+                    var historyAction = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
+                    return historyAction;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion // First Pass
 
         public static void AnalyzeHistoryActions(CLPPage page)
         {
