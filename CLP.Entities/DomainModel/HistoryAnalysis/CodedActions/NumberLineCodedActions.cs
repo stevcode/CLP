@@ -71,10 +71,10 @@ namespace CLP.Entities
                 // historyItem. // TODO: not enough information to build, probably need to modify and re-convert historyItems to included needed info.
             }
 
-            if (!jumpSegments.Any())
-            {
-                return null;
-            }
+            //if (!jumpSegments.Any())
+            //{
+            //    return null;
+            //}
             var codedActionID = string.Join("; ", jumpSegments);
 
             var historyAction = new HistoryAction(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Ink;
@@ -17,6 +18,26 @@ namespace CLP.Entities
                                             });
             var initialHistoryActions = GenerateInitialHistoryActions(page);
             page.History.HistoryActions.AddRange(initialHistoryActions);
+
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(page).ToFileName() + ".txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            File.AppendAllText(filePath, "PASS [1]"+ "\n");
+            foreach (var item in initialHistoryActions)
+            {
+                var semi = item == initialHistoryActions.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, item.CodedValue + semi);
+            }
 
             page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
                                             {

@@ -378,7 +378,7 @@
             </Button>
 
             <!--Play Backwards Button-->
-            <!--<Button DockPanel.Dock="Left"
+            <Button DockPanel.Dock="Left"
                     Width="70"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
@@ -470,7 +470,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-            </Button>-->
+            </Button>
 
             <!-- Playback Speed -->
             <StackPanel DockPanel.Dock="Left"
