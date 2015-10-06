@@ -252,13 +252,30 @@ namespace CLP.Entities
                                                                                                                                                                   p,
                                                                                                                                                                   currentHistoryItem.HistoryIndex);
                                                                                       return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, strokeBounds, 0.80);
-                                                                                  });
+                                                                                  }); // TODO: make this pick the one it's most overlapping
                 }
 
                 var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
                 if (nextHistoryItem != null)
                 {
-                    var isNextPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
+                    var nextStrokes = nextHistoryItem.StrokesAdded;
+
+                    if (!nextStrokes.Any())
+                    {
+                        nextStrokes = nextHistoryItem.StrokesRemoved;
+                    }
+                    var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
+
+                    var nextStroke = nextStrokes.First();
+                    var nextStrokeBounds = InkCodedActions.GetStrokeBoundsAtHistoryIndex(nextStroke, nextHistoryItem.HistoryIndex);
+                    var nextPageObjectReference = pageObjectsOnPage.FirstOrDefault(p =>
+                                                                                   {
+                                                                                       var pageObjectBounds = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page,
+                                                                                                                                                                   p,
+                                                                                                                                                                   nextHistoryItem.HistoryIndex);
+                                                                                       return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, nextStrokeBounds, 0.80);
+                                                                                   }); // TODO: make this pick the one it's most overlapping
+                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
                 }
 
                 var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
