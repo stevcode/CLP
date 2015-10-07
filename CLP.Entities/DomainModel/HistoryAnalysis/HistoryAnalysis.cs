@@ -276,6 +276,9 @@ namespace CLP.Entities
                                                                                        return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, nextStrokeBounds, 0.80);
                                                                                    }); // TODO: make this pick the one it's most overlapping
                     var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
+
+                    //grouping is either over pageObject or not, if not, once NEXT is over a pageObject, take all previous and find the pageObject their weighted difference is closest to
+                    //use that for location assignment. can even try clustering them all if not directly over.
                 }
 
                 var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
