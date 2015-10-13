@@ -83,8 +83,8 @@ namespace CLP.Entities
         public static IHistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
         {
             if (page == null ||
-               objectsMovedHistoryItems == null ||
-               !objectsMovedHistoryItems.Any())
+                objectsMovedHistoryItems == null ||
+                !objectsMovedHistoryItems.Any())
             {
                 return null;
             }
@@ -106,19 +106,21 @@ namespace CLP.Entities
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
                 var historyAction = new HistoryAction(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
-                    CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
-                    CodedObjectActionID = string.Format("({0}, {1}) to ({2}, {3})", Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
-                                                                                    Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
-                                                                                    Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
-                                                                                    Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y))
-                    // TODO: make coded action to describe distance travelled during move.
-                    // note that there may be more than one objectsMovedHistoryItem in a row where
-                    // a student moved the same pageObject several consecutive times.
-                };
+                                    {
+                                        CodedObject = codedObject,
+                                        CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                        CodedObjectActionID =
+                                            string.Format("({0}, {1}) to ({2}, {3})",
+                                                          Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
+                                                          Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
+                                                          Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
+                                                          Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y))
+                                        // TODO: make coded action to describe distance travelled during move.
+                                        // note that there may be more than one objectsMovedHistoryItem in a row where
+                                        // a student moved the same pageObject several consecutive times.
+                                    };
 
                 return historyAction;
             }

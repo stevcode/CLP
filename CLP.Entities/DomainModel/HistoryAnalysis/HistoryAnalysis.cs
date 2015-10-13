@@ -8,6 +8,45 @@ using System.Windows.Ink;
 
 namespace CLP.Entities
 {
+    // Derived from: http://www.johndcook.com/blog/standard_deviation/
+    public class RollingStandardDeviation
+    {
+        private int _numberOfDataValues;
+        private double _oldMean;
+        private double _newMean;
+        private double _oldSum;
+        private double _newSum;
+
+        public RollingStandardDeviation() { _numberOfDataValues = 0; }
+
+        public double Mean { get { return _numberOfDataValues > 0 ? _newMean : 0.0; } }
+
+        public double Variance {  get { return _numberOfDataValues > 1 ? _newSum / (_numberOfDataValues - 1) : 0.0; } }
+
+        public double StandardDeviation { get { return Math.Sqrt(Variance); } }
+
+        public void Clear() { _numberOfDataValues = 0; }
+
+        public void Update(double x)
+        {
+            _numberOfDataValues++;
+
+            if (_numberOfDataValues == 1)
+            {
+                _oldMean = x;
+                _newMean = x;
+                _oldSum = 0.0;
+                return;
+            }
+
+            _newMean = _oldMean + (x - _oldMean) / _numberOfDataValues;
+            _newSum = _oldSum + (x - _oldMean) * (x - _oldMean);
+
+            _oldMean = _newMean;
+            _oldSum = _newSum;
+        }
+    }
+
     public static class HistoryAnalysis
     {
         public static void GenerateHistoryActions(CLPPage page)
@@ -198,6 +237,10 @@ namespace CLP.Entities
 
         #region Second Pass: Ink Refinement
 
+        // HANNAH CHANGES HERE
+        public const double MAX_DISTANCE_Z_SCORE = 2.0;
+        public const double DIMENSION_MULTIPLIER_THRESHOLD = 1.5;
+
         public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
             var refinedHistoryActions = new List<IHistoryAction>();
@@ -226,11 +269,17 @@ namespace CLP.Entities
             var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyItems.First().HistoryIndex);
             // TODO: validation
 
+            var averageStrokeDimensions = InkCodedActions.GetAverageStrokeDimensions(page);
+            var averageClosestStrokeDistance = InkCodedActions.GetAverageClosestStrokeDistance(page);
+            var closestStrokeDistanceStandardDeviation = InkCodedActions.GetStandardDeviationOfClosestStrokeDistance(page);
+            var rollingStatsForDistanceFromCluster = new RollingStandardDeviation();
             var historyItemBuffer = new List<IHistoryItem>();
             IPageObject currentPageObjectReference = null;
+            Stroke currentStrokeReference = null;
             var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
             var isInkAdd = true;
-            Point currentClusterCentroid;
+            var currentClusterCentroid = new Point(0, 0);
+            var currentClusterWeight = 0.0;
             var isMatchingAgainstCluster = false;
 
             for (var i = 0; i < historyItems.Count; i++)
@@ -240,6 +289,7 @@ namespace CLP.Entities
                 if (historyItemBuffer.Count == 1)
                 {
                     var strokes = currentHistoryItem.StrokesAdded;
+                    isInkAdd = true;
                     if (!strokes.Any())
                     {
                         strokes = currentHistoryItem.StrokesRemoved;
@@ -248,16 +298,17 @@ namespace CLP.Entities
 
                     // TODO: If strokes.count != 1, deal with point erase
                     // TODO: Validation (strokes is empty)
-                    var stroke = strokes.First();
-                    currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, stroke, currentHistoryItem.HistoryIndex);
+                    currentStrokeReference = strokes.First();
+                    currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, currentStrokeReference, currentHistoryItem.HistoryIndex);
                     currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
                     isMatchingAgainstCluster = false;
                     if (currentPageObjectReference == null)
                     {
                         isMatchingAgainstCluster = true;
 
-                        var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
+                        var strokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
                         currentClusterCentroid = strokeCopy.WeightedCenter();
+                        currentClusterWeight = strokeCopy.StrokeWeight();
                     }
                 }
 
@@ -274,13 +325,54 @@ namespace CLP.Entities
                     var nextStroke = nextStrokes.First();
                     var nextPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
                     var nextLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
+                    var isNextPartOfCurrentCluster = false;
                     if (nextPageObjectReference == null)
                     {
-                        // See if matches current cluster.
+                        if (isMatchingAgainstCluster)
+                        {
+                            var currentStrokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
+                            var currentCentroid = currentStrokeCopy.WeightedCenter();
+                            var nextStrokeCopy = nextStroke.GetStrokeCopyAtHistoryIndex(page, nextHistoryItem.HistoryIndex);
+                            var nextCentroid = nextStrokeCopy.WeightedCenter();
+                            var distanceFromLastStroke = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentCentroid, nextCentroid));
+                            var lastStrokeDistanceZScore = (distanceFromLastStroke - averageClosestStrokeDistance) / closestStrokeDistanceStandardDeviation;
+                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE ||
+                                                      distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD ||
+                                                      distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
+
+                            bool isCloseToCluster;
+                            var distanceFromCluster = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
+                            if (historyItemBuffer.Count == 1)
+                            {
+                                isCloseToCluster = isCloseToLastStroke;
+                            }
+                            else
+                            {
+                                var clusterDistanceZScore = (distanceFromCluster - rollingStatsForDistanceFromCluster.Mean) / rollingStatsForDistanceFromCluster.StandardDeviation;
+                                isCloseToCluster = clusterDistanceZScore <= MAX_DISTANCE_Z_SCORE;
+                            }
+
+                            if (isCloseToLastStroke ||
+                                isCloseToCluster)
+                            {
+                                isNextPartOfCurrentCluster = true;
+                                var oldClusterWeight = currentClusterWeight;
+                                var nextStrokeWeight = nextStrokeCopy.StrokeWeight();
+                                currentClusterWeight += nextStrokeWeight;
+
+                                var totalImportance = oldClusterWeight / currentClusterWeight;
+                                var importance = nextStrokeWeight / currentClusterWeight;
+                                var weightedXAverage = (totalImportance + currentClusterCentroid.X) + (importance * nextCentroid.X);
+                                var weightedYAverage = (totalImportance + currentClusterCentroid.Y) + (importance * nextCentroid.Y);
+                                currentClusterCentroid = new Point(weightedXAverage, weightedYAverage);
+
+                                rollingStatsForDistanceFromCluster.Update(distanceFromCluster);
+                            }
+                        }
                     }
 
                     var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
-                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
+                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID; // TODO: check for nulls here
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
 
                     //grouping is either over pageObject or not, if not, once NEXT is over a pageObject, take all previous and find the pageObject their weighted difference is closest to

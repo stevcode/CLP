@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Ink;
-using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -49,13 +45,55 @@ namespace CLP.Entities
                                     CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE
                                 };
 
-            
             return historyAction;
         }
 
         #endregion // Verify And Generate Methods
 
         #region Utility Static Methods
+
+        public static Point GetAverageStrokeDimensions(CLPPage page)
+        {
+            var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            var averageWidth = strokes.Average(s => s.GetBounds().Width);
+            var averageHeight = strokes.Average(s => s.GetBounds().Height);
+            return new Point(averageWidth, averageHeight);
+        }
+
+        public static double GetAverageClosestStrokeDistance(CLPPage page)
+        {
+            var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            var allClosestDistances = (from stroke in strokes
+                                       let centroid = stroke.WeightedCenter()
+                                       select (from otherStroke in strokes
+                                               where stroke.GetStrokeID() != otherStroke.GetStrokeID()
+                                               select otherStroke.WeightedCenter()
+                                               into otherCentroid
+                                               select DistanceSquaredBetweenPoints(centroid, otherCentroid)).Min()
+                                       into closestDistanceSquared
+                                       select Math.Sqrt(closestDistanceSquared)).ToList();
+
+            return allClosestDistances.Average();
+        }
+
+        public static double GetStandardDeviationOfClosestStrokeDistance(CLPPage page)
+        {
+            var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            var allClosestDistances = (from stroke in strokes
+                                       let centroid = stroke.WeightedCenter()
+                                       select (from otherStroke in strokes
+                                               where stroke.GetStrokeID() != otherStroke.GetStrokeID()
+                                               select otherStroke.WeightedCenter()
+                                               into otherCentroid
+                                               select DistanceSquaredBetweenPoints(centroid, otherCentroid)).Min()
+                                       into closestDistanceSquared
+                                       select Math.Sqrt(closestDistanceSquared)).ToList();
+
+            var averageDistance = allClosestDistances.Average();
+            var standardDeviation = Math.Sqrt(allClosestDistances.Average(x => Math.Pow(x - averageDistance, 2)));
+
+            return standardDeviation;
+        }
 
         public static IPageObject FindMostOverlappedPageObjectAtHistoryIndex(CLPPage page, List<IPageObject> pageObjects, Stroke stroke, int historyIndex)
         {
@@ -64,7 +102,7 @@ namespace CLP.Entities
             foreach (var pageObject in pageObjects)
             {
                 var percentOfStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, pageObject, stroke, historyIndex);
-                if (percentOfStrokeOverlap < 20.0)  // Stroke not overlapping if only 20 percent of the stroke is on top of a pageObject.
+                if (percentOfStrokeOverlap < 20.0) // Stroke not overlapping if only 20 percent of the stroke is on top of a pageObject.
                 {
                     continue;
                 }
@@ -131,8 +169,13 @@ namespace CLP.Entities
             var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
             var strokeCentroid = strokeCopy.WeightedCenter();
 
-            var dx = strokeCentroid.X - midX;
-            var dy = strokeCentroid.Y - midY;
+            return DistanceSquaredBetweenPoints(strokeCentroid, new Point(midX, midY));
+        }
+
+        public static double DistanceSquaredBetweenPoints(Point p1, Point p2)
+        {
+            var dx = p1.X - p2.X;
+            var dy = p1.Y - p2.Y;
             var distanceSquared = (dx * dx) + (dy * dy); // Again, for performance purposes, multiplication is used here instead of Math.Pow(). 20x performance boost.
 
             return distanceSquared;
@@ -157,7 +200,7 @@ namespace CLP.Entities
             var bottomRightArc = Math.Atan2(-dimensions.Y / 2, dimensions.X / 2);
 
             var locationReference = Codings.ACTIONID_INK_LOCATION_NONE;
-            if (centroidArcFromMid >= 0 && 
+            if (centroidArcFromMid >= 0 &&
                 centroidArcFromMid <= topRightArc)
             {
                 locationReference = Codings.ACTIONID_INK_LOCATION_RIGHT;
@@ -186,8 +229,5 @@ namespace CLP.Entities
         }
 
         #endregion // Utility Static Methods
-
-
-
     }
 }
