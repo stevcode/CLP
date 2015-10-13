@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Ink;
 
 namespace CLP.Entities
@@ -229,6 +230,7 @@ namespace CLP.Entities
             IPageObject currentPageObjectReference = null;
             var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
             var isInkAdd = true;
+
             for (var i = 0; i < historyItems.Count; i++)
             {
                 var currentHistoryItem = historyItems[i];
@@ -243,16 +245,15 @@ namespace CLP.Entities
                     }
 
                     // TODO: If strokes.count != 1, deal with point erase
-                    // TODO: Validation
+                    // TODO: Validation (strokes is empty)
                     var stroke = strokes.First();
-                    var strokeBounds = InkCodedActions.GetStrokeBoundsAtHistoryIndex(stroke, currentHistoryItem.HistoryIndex);
-                    currentPageObjectReference = pageObjectsOnPage.FirstOrDefault(p =>
-                                                                                  {
-                                                                                      var pageObjectBounds = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page,
-                                                                                                                                                                  p,
-                                                                                                                                                                  currentHistoryItem.HistoryIndex);
-                                                                                      return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, strokeBounds, 0.80);
-                                                                                  }); // TODO: make this pick the one it's most overlapping
+                    currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, stroke, currentHistoryItem.HistoryIndex);
+                    currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
+                    if (currentPageObjectReference == null)
+                    {
+                        currentPageObjectReference = InkCodedActions.FindClosestPageObjectAtHistoryIndex(page, pageObjectsOnPage, stroke, currentHistoryItem.HistoryIndex);
+                        currentLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, currentPageObjectReference, stroke, currentHistoryItem.HistoryIndex);
+                    }
                 }
 
                 var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
@@ -264,18 +265,19 @@ namespace CLP.Entities
                     {
                         nextStrokes = nextHistoryItem.StrokesRemoved;
                     }
-                    var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
 
                     var nextStroke = nextStrokes.First();
-                    var nextStrokeBounds = InkCodedActions.GetStrokeBoundsAtHistoryIndex(nextStroke, nextHistoryItem.HistoryIndex);
-                    var nextPageObjectReference = pageObjectsOnPage.FirstOrDefault(p =>
-                                                                                   {
-                                                                                       var pageObjectBounds = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page,
-                                                                                                                                                                   p,
-                                                                                                                                                                   nextHistoryItem.HistoryIndex);
-                                                                                       return APageObjectBase.IsBoundsOverlappingByPercentage(pageObjectBounds, nextStrokeBounds, 0.80);
-                                                                                   }); // TODO: make this pick the one it's most overlapping
+                    var nextPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
+                    var nextLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
+                    if (nextPageObjectReference == null)
+                    {
+                        nextPageObjectReference = InkCodedActions.FindClosestPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
+                        nextLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, nextStroke, nextHistoryItem.HistoryIndex);
+                    }
+
+                    var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
                     var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
+                    var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
 
                     //grouping is either over pageObject or not, if not, once NEXT is over a pageObject, take all previous and find the pageObject their weighted difference is closest to
                     //use that for location assignment. can even try clustering them all if not directly over.

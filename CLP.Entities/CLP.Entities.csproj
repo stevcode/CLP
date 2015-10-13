@@ -103,10 +103,10 @@
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\HistoryAction.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\HistoryAction.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArrayCodedActions.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\IHistoryAction.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\IHistoryAction.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkCodedActions.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineCodedActions.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryAnalysis.cs" />

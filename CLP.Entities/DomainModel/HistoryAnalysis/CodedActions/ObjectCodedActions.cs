@@ -8,7 +8,7 @@ namespace CLP.Entities
 {
     public static class ObjectCodedActions
     {
-        #region Static Methods
+        #region Verify And Generate Methods
 
         public static IHistoryAction Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
@@ -126,6 +126,10 @@ namespace CLP.Entities
             return null;
         }
 
+        #endregion // Verify And Generate Methods
+
+        #region Utility Methods
+
         public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
         {
             return historyItems.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
@@ -154,6 +158,6 @@ namespace CLP.Entities
             return new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
         }
 
-        #endregion // Static Methods
+        #endregion // Utility Methods
     }
 }

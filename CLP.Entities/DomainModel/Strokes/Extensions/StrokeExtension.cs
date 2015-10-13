@@ -316,10 +316,9 @@ namespace CLP.Entities
 
         #region History
 
-        public static Rect GetBoundsAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        public static Stroke GetStrokeCopyAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
         {
-            var strokeID = stroke.GetStrokeID();
-            return stroke.GetBounds();
+            return stroke.Clone();
         }
 
         #endregion // History
