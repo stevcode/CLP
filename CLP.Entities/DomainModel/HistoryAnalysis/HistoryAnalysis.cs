@@ -230,6 +230,8 @@ namespace CLP.Entities
             IPageObject currentPageObjectReference = null;
             var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
             var isInkAdd = true;
+            Point currentClusterCentroid;
+            var isMatchingAgainstCluster = false;
 
             for (var i = 0; i < historyItems.Count; i++)
             {
@@ -249,10 +251,13 @@ namespace CLP.Entities
                     var stroke = strokes.First();
                     currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, stroke, currentHistoryItem.HistoryIndex);
                     currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
+                    isMatchingAgainstCluster = false;
                     if (currentPageObjectReference == null)
                     {
-                        currentPageObjectReference = InkCodedActions.FindClosestPageObjectAtHistoryIndex(page, pageObjectsOnPage, stroke, currentHistoryItem.HistoryIndex);
-                        currentLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, currentPageObjectReference, stroke, currentHistoryItem.HistoryIndex);
+                        isMatchingAgainstCluster = true;
+
+                        var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
+                        currentClusterCentroid = strokeCopy.WeightedCenter();
                     }
                 }
 
@@ -271,8 +276,7 @@ namespace CLP.Entities
                     var nextLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
                     if (nextPageObjectReference == null)
                     {
-                        nextPageObjectReference = InkCodedActions.FindClosestPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
-                        nextLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, nextStroke, nextHistoryItem.HistoryIndex);
+                        // See if matches current cluster.
                     }
 
                     var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
