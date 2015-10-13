@@ -264,6 +264,54 @@ namespace CLP.Entities
             return weight;
         }
 
+        /// <summary>
+        /// Finds the centroid of a stroke. The centroid calculation takes into account pressure
+        /// sensitivity and ascribes more importance to points with higher pressure values.
+        /// </summary>
+        /// <param name="stroke"></param>
+        /// <returns></returns>
+        public static Point WeightedCenter(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeWeight = stroke.StrokeWeight();
+            var weightedXAverage = 0.0;
+            var weightedYAverage = 0.0;
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+
+                }
+
+                var importance = pointWeight / strokeWeight;
+                weightedXAverage += importance * stylusPoints[i].X;
+                weightedYAverage += importance * stylusPoints[i].Y;
+            }
+
+            return new Point(weightedXAverage, weightedYAverage);
+        }
+
         #endregion //HitTesting
 
         #region History
