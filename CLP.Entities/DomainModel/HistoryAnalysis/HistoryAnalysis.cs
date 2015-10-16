@@ -262,6 +262,11 @@ namespace CLP.Entities
             return refinedHistoryActions;
         }
 
+        /// <summary>
+        /// Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions
+        /// </summary>
+        /// <param name="page">Parent page the history action belongs to.</param>
+        /// <param name="historyAction">"INK change" history action to process</param>
         public static List<IHistoryAction> ProcessInkChangeHistoryAction(CLPPage page, IHistoryAction historyAction)
         {
             var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
@@ -309,6 +314,12 @@ namespace CLP.Entities
                         var strokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
                         currentClusterCentroid = strokeCopy.WeightedCenter();
                         currentClusterWeight = strokeCopy.StrokeWeight();
+
+                        currentPageObjectReference = InkCodedActions.FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, currentHistoryItem.HistoryIndex);
+                        if (currentPageObjectReference != null)
+                        {
+                            currentLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, currentPageObjectReference, currentClusterCentroid, currentHistoryItem.HistoryIndex);
+                        }
                     }
                 }
 
@@ -372,28 +383,30 @@ namespace CLP.Entities
                     }
 
                     var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
-                    if (!isNextInkPartOfCurrent)
-                    {
-                        var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
-                        processedInkActions.Add(refinedHistoryAction);
-                        historyItemBuffer.Clear();
-                    }
-
-
                     var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID; // TODO: check for nulls here
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
-
-                    
+                    if (isNextInkPartOfCurrent &&
+                        isNextPageObjectReferencePartOfCurrent &&
+                        isNextLocationReferencePartOfCurrent &&
+                        isNextPartOfCurrentCluster)
+                    {
+                        continue;
+                    }
                 }
 
-                var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
-                if (compoundHistoryAction != null)
+                var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
+                refinedHistoryAction.CodedObjectID = "A";
+                if (currentPageObjectReference != null)
                 {
-                    processedInkActions.Add(compoundHistoryAction);
-                    historyItemBuffer.Clear();
+                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
+                                                                             currentLocationReference,
+                                                                             currentPageObjectReference.CodedName,
+                                                                             currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
-            }
 
+                processedInkActions.Add(refinedHistoryAction);
+                historyItemBuffer.Clear();
+            }
 
             return processedInkActions;
         } 

@@ -157,6 +157,30 @@ namespace CLP.Entities
             return closestPageObject;
         }
 
+        public static IPageObject FindClosestPageObjectByPointAtHistoryIndex(CLPPage page, List<IPageObject> pageObjects, Point point, int historyIndex)
+        {
+            IPageObject closestPageObject = null;
+
+            foreach (var pageObject in pageObjects)
+            {
+                if (closestPageObject == null)
+                {
+                    closestPageObject = pageObject;
+                    continue;
+                }
+
+                var distanceSquared = DistanceSquaredFromPointToPageObjectAtHistoryIndex(page, pageObject, point, historyIndex);
+
+                var closestDistanceSquared = DistanceSquaredFromPointToPageObjectAtHistoryIndex(page, closestPageObject, point, historyIndex);
+                if (distanceSquared < closestDistanceSquared)
+                {
+                    closestPageObject = pageObject;
+                }
+            }
+
+            return closestPageObject;
+        }
+
         // DistanceSquared is used here for performance purposes. You get the same comparison results as normal distance and
         // Math.Sqrt() is really (relatively) slow. Math.Sqrt() can still be called on this result when needed.
         public static double DistanceSquaredFromStrokeToPageObjectAtHistoryIndex(CLPPage page, IPageObject pageObject, Stroke stroke, int historyIndex)
@@ -172,6 +196,16 @@ namespace CLP.Entities
             return DistanceSquaredBetweenPoints(strokeCentroid, new Point(midX, midY));
         }
 
+        public static double DistanceSquaredFromPointToPageObjectAtHistoryIndex(CLPPage page, IPageObject pageObject, Point point, int historyIndex)
+        {
+            var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
+            var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
+            var midX = position.X + (dimensions.X / 2.0);
+            var midY = position.Y + (dimensions.Y / 2.0);
+
+            return DistanceSquaredBetweenPoints(point, new Point(midX, midY));
+        }
+
         public static double DistanceSquaredBetweenPoints(Point p1, Point p2)
         {
             var dx = p1.X - p2.X;
@@ -181,18 +215,15 @@ namespace CLP.Entities
             return distanceSquared;
         }
 
-        public static string FindLocationReferenceAtHistoryLocation(CLPPage page, IPageObject pageObject, Stroke stroke, int historyIndex)
+        public static string FindLocationReferenceAtHistoryLocation(CLPPage page, IPageObject pageObject, Point point, int historyIndex)
         {
             var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
             var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
             var midX = position.X + (dimensions.X / 2.0);
             var midY = position.Y + (dimensions.Y / 2.0);
 
-            var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
-            var strokeCentroid = strokeCopy.WeightedCenter();
-
-            var dx = strokeCentroid.X - midX;
-            var dy = strokeCentroid.Y - midY;
+            var dx = point.X - midX;
+            var dy = point.Y - midY;
             var centroidArcFromMid = Math.Atan2(dy, dx);
             var topRightArc = Math.Atan2(dimensions.Y / 2, dimensions.X / 2);
             var topLeftArc = Math.Atan2(dimensions.Y / 2, -dimensions.X / 2);
