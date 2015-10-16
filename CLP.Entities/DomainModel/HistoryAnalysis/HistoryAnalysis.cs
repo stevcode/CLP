@@ -368,6 +368,13 @@ namespace CLP.Entities
                                 isCloseToCluster)
                             {
                                 isNextPartOfCurrentCluster = true;
+
+                                nextPageObjectReference = InkCodedActions.FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, nextHistoryItem.HistoryIndex);
+                                if (nextPageObjectReference != null)
+                                {
+                                    nextLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, currentClusterCentroid, nextHistoryItem.HistoryIndex);
+                                }
+
                                 var oldClusterWeight = currentClusterWeight;
                                 var nextStrokeWeight = nextStrokeCopy.StrokeWeight();
                                 currentClusterWeight += nextStrokeWeight;
@@ -384,7 +391,12 @@ namespace CLP.Entities
                     }
 
                     var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
-                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID; // TODO: check for nulls here
+                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference == null && currentPageObjectReference == null;
+                    if (nextPageObjectReference != null &&
+                        currentPageObjectReference != null)
+                    {
+                        isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
+                    }
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
                     if (isNextInkPartOfCurrent &&
                         isNextPageObjectReferencePartOfCurrent &&
