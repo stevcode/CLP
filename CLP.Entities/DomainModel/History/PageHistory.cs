@@ -231,13 +231,13 @@ namespace CLP.Entities
         /// <summary>
         /// List of all the IHistoryActions analysis generates.
         /// </summary>
-        public List<IHistoryAction> HistoryActions
+        public ObservableCollection<IHistoryAction> HistoryActions
         {
-            get { return GetValue<List<IHistoryAction>>(HistoryActionsProperty); }
+            get { return GetValue<ObservableCollection<IHistoryAction>>(HistoryActionsProperty); }
             set { SetValue(HistoryActionsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (List<IHistoryAction>), () => new List<IHistoryAction>()); 
+        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>()); 
 
         #endregion //HistoryActions
 

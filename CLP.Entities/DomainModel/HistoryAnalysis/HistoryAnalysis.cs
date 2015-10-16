@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Ink;
+using Catel.Collections;
 
 namespace CLP.Entities
 {
