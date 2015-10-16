@@ -372,11 +372,18 @@ namespace CLP.Entities
                     }
 
                     var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
+                    if (!isNextInkPartOfCurrent)
+                    {
+                        var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
+                        processedInkActions.Add(refinedHistoryAction);
+                        historyItemBuffer.Clear();
+                    }
+
+
                     var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID; // TODO: check for nulls here
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
 
-                    //grouping is either over pageObject or not, if not, once NEXT is over a pageObject, take all previous and find the pageObject their weighted difference is closest to
-                    //use that for location assignment. can even try clustering them all if not directly over.
+                    
                 }
 
                 var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
