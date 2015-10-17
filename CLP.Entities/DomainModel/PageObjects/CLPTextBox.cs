@@ -53,6 +53,16 @@ namespace CLP.Entities
             get { return "Text Box"; }
         }
 
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_TEXT; }
+        }
+
+        public override string CodedID
+        {
+            get { return "A"; } // TODO: Make this work with IncrementID
+        }
+
         public override int ZIndex
         {
             get { return 20; }

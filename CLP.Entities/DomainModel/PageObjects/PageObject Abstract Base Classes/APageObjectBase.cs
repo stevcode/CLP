@@ -283,7 +283,7 @@ namespace CLP.Entities
         /// Gets CodedID just before the historyItem at historyIndex executes Redo().
         /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
         /// </summary>
-        public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return ID; }
+        public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return CodedID; }
 
         /// <summary>
         /// Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo().

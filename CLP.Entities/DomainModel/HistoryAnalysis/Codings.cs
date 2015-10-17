@@ -11,6 +11,7 @@
         public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
         public const string OBJECT_GROUP = "GROUP";
         public const string OBJECT_BINS = "BINS";
+        public const string OBJECT_TEXT = "TEXT";
 
         #endregion // CodedObjects
 
