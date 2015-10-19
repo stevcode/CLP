@@ -401,7 +401,7 @@ namespace CLP.Entities
                     if (isNextInkPartOfCurrent &&
                         isNextPageObjectReferencePartOfCurrent &&
                         isNextLocationReferencePartOfCurrent &&
-                        isNextPartOfCurrentCluster)
+                        (isNextPartOfCurrentCluster || currentLocationReference == Codings.ACTIONID_INK_LOCATION_OVER))
                     {
                         continue;
                     }

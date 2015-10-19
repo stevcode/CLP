@@ -128,9 +128,16 @@ namespace CLP.Entities
             var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
             var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
             var bounds = new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
+            var array = pageObject as ACLPArrayBase;
+            if (array != null)
+            {
+                bounds = new Rect(position.X + array.LabelLength, position.Y + array.LabelLength, dimensions.X - (2 * array.LabelLength), dimensions.Y - (2 * array.LabelLength));
+            }
+            // HACK: make the above more abstract
+            
             var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
 
-            return strokeCopy.PercentContainedByBounds(bounds);
+            return strokeCopy.PercentContainedByBounds(bounds) * 100;
         }
 
         public static IPageObject FindClosestPageObjectAtHistoryIndex(CLPPage page, List<IPageObject> pageObjects, Stroke stroke, int historyIndex)

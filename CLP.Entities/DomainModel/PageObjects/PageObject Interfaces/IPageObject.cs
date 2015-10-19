@@ -41,6 +41,7 @@ namespace CLP.Entities
         void OnRotating(double oldAngle, bool fromHistory = false);
         void OnRotated(double oldAngle, bool fromHistory = false);
         bool PageObjectIsOver(IPageObject pageObject, double percentage);
+        bool IsOnPageAtHistoryIndex(int historyIndex);
         string GetCodedIDAtHistoryIndex(int historyIndex);
         Point GetPositionAtHistoryIndex(int historyIndex);
         Point GetDimensionsAtHistoryIndex(int historyIndex);

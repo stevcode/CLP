@@ -149,8 +149,7 @@ namespace CLP.Entities
 
         public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(CLPPage page, int historyIndex)
         {
-            // TOOO: Implement better
-            return page.PageObjects.ToList();
+            return page.PageObjects.Where(p => p.IsOnPageAtHistoryIndex(historyIndex)).ToList();
         }
 
         public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)

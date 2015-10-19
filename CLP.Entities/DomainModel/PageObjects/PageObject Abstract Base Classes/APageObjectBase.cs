@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Input;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -278,6 +279,21 @@ namespace CLP.Entities
         }
 
         #region History Methods
+
+        public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
+        {
+            var addedAtAnyPointHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
+            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+
+            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems
+                                  .OfType<ObjectsOnPageChangedHistoryItem>()
+                                  .FirstOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryIndex <= historyIndex);
+
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.PageObjectIDsAdded.Contains(ID);
+
+            return isOnPageBefore || !isPartOfHistory;
+        }
 
         /// <summary>
         /// Gets CodedID just before the historyItem at historyIndex executes Redo().
