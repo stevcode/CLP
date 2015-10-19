@@ -233,6 +233,12 @@
   <ItemGroup>
     <Folder Include="Repositories\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
+      <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
+      <Name>CLP.InkInterpretation</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

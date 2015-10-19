@@ -52,6 +52,10 @@ namespace CLP.Entities
     {
         public static void GenerateHistoryActions(CLPPage page)
         {
+            HistoryAction.CurrentIncrementID.Clear();
+            HistoryAction.MaxIncrementID.Clear();
+
+            // First Pass
             page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
                                             {
                                                 CodedObject = "PASS",
@@ -80,6 +84,7 @@ namespace CLP.Entities
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
+            // Second Pass
             page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
                                             {
                                                 CodedObject = "PASS",
@@ -88,7 +93,21 @@ namespace CLP.Entities
             var refinedInkHistoryActions = RefineInkHistoryActions(page, initialHistoryActions);
             page.History.HistoryActions.AddRange(refinedInkHistoryActions);
 
+            File.AppendAllText(filePath, "PASS [2]" + "\n");
+            foreach (var item in refinedInkHistoryActions)
+            {
+                var semi = item == refinedInkHistoryActions.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, item.CodedValue + semi);
+            }
 
+            // Third Pass
+            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+            {
+                CodedObject = "PASS",
+                CodedObjectID = "3"
+            });
+            var interpretedHistoryActions = InterpretHistoryActions(page, refinedInkHistoryActions);
+            page.History.HistoryActions.AddRange(interpretedHistoryActions);
         }
 
         #region First Pass: Initialization
@@ -416,23 +435,59 @@ namespace CLP.Entities
                                                                              currentPageObjectReference.CodedName,
                                                                              currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
+                refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
 
                 processedInkActions.Add(refinedHistoryAction);
                 historyItemBuffer.Clear();
             }
 
             return processedInkActions;
-        } 
+        }
 
         #endregion // Second Pass: Ink Refinement
 
-        // 3rd pass: ink interpretation: ink divider, skip counting, grouping by inking, ignoring?
+        #region Third Pass: Interpretation
 
-            // 4th pass: simple pattern interpretations
+        public static List<IHistoryAction> InterpretHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var interpretedHistoryActions = new List<IHistoryAction>();
 
-            // 5th pass: complex pattern interpretations
+            foreach (var historyAction in historyActions)
+            {
+                if (historyAction.CodedObject == Codings.OBJECT_INK &&
+                    historyAction.CodedObjectAction == Codings.ACTION_INK_ADD)
+                {
+                    var interpretedHistoryAction = AttemptHistoryActionInterpretation(page, historyAction);
+                    interpretedHistoryActions.Add(interpretedHistoryAction);
+                }
+                else
+                {
+                    interpretedHistoryActions.Add(historyAction);
+                }
+            }
 
-            // 6th pass: Tag generation
+            return interpretedHistoryActions;
+        }
+
+        public static IHistoryAction AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
+        {
+            IHistoryAction interpretedAction = null;
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
+                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
+            {
+                interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+            }
+
+            return interpretedAction ?? historyaction;
+        }
+
+        #endregion // Third Pass: Interpretation
+
+        // 4th pass: simple pattern interpretations
+
+        // 5th pass: complex pattern interpretations
+
+        // 6th pass: Tag generation
 
         public static void AnalyzeHistoryActions(CLPPage page)
         {

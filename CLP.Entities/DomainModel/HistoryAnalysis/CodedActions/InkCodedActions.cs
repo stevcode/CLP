@@ -48,6 +48,8 @@ namespace CLP.Entities
             return historyAction;
         }
 
+
+
         #endregion // Verify And Generate Methods
 
         #region Utility Static Methods

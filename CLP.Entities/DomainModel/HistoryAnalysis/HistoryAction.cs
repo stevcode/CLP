@@ -22,6 +22,10 @@ namespace CLP.Entities
         public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : this(parentPage, historyItems, new List<IHistoryAction>()) { }
 
+        public HistoryAction(CLPPage parentPage, IHistoryAction historyAction)
+            : this(parentPage, new List<IHistoryItem>(), new List<IHistoryAction> { historyAction })
+        { }
+
         public HistoryAction(CLPPage parentPage, List<IHistoryAction> historyActions)
             : this(parentPage, new List<IHistoryItem>(), historyActions)
         { }
@@ -232,6 +236,16 @@ namespace CLP.Entities
         public static readonly PropertyData CodedObjectActionIDProperty = RegisterProperty("CodedObjectActionID", typeof(string), string.Empty);
 
         #endregion // Coded Portions
+
+        /// <summary>SUMMARY</summary>
+        public Dictionary<string,string> MetaData
+        {
+            get { return GetValue<Dictionary<string,string>>(MetaDataProperty); }
+            set { SetValue(MetaDataProperty, value); }
+        }
+
+        public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof (Dictionary<string,string>), () => new Dictionary<string,string>());
+        
 
         /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
         public List<string> HistoryItemIDs

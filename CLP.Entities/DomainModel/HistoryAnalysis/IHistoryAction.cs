@@ -22,6 +22,7 @@ namespace CLP.Entities
         string CodedObjectSubID { get; set; }
         string CodedObjectSubIDIncrement { get; set; }
         string CodedObjectActionID { get; set; }
+        Dictionary<string, string> MetaData { get; set; }
         List<string> HistoryItemIDs { get; set; }
         List<IHistoryAction> HistoryActions { get; set; }
         string CachedCodedValue { get; set; }
