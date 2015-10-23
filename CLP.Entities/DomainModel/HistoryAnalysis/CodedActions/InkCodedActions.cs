@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
+using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -48,11 +49,59 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static IHistoryAction Arithmetic(CLPPage page, IHistoryAction inkAction)
+        {
+            const double INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD = 5.0;
+            const string MULTIPLICATION_SYMBOL = "×";
+            const string ADDITION_SYMBOL = "+";
+            const string EQUALS_SYMBOL = "=";
 
+            if (page == null ||
+                inkAction == null ||
+                inkAction.CodedObject != Codings.OBJECT_INK ||
+                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ||
+                  inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
+            {
+                return null;
+            }
+
+            var strokes = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD
+                              ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+
+            var interpretation = InkInterpreter.StrokesToBestGuessText(new StrokeCollection(strokes));
+
+            var definitelyInArith = new List<string> { MULTIPLICATION_SYMBOL, ADDITION_SYMBOL, EQUALS_SYMBOL };
+            var percentageOfDigits = GetPercentageOfDigits(interpretation);
+            var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
+
+            if (!isDefinitelyArith ||
+                percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD)
+            {
+                return null;
+            }
+
+            var historyAction = new HistoryAction(page, inkAction)
+            {
+                CodedObject = Codings.OBJECT_ARITH,
+                CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
+                IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
+                CodedObjectID = "A",
+                CodedObjectActionID = string.Format("\"{0}\"", interpretation)
+            };
+
+            return historyAction;
+        }
 
         #endregion // Verify And Generate Methods
 
         #region Utility Static Methods
+
+        public static double GetPercentageOfDigits(string s)
+        {
+            var numberOfDigits = s.Where(char.IsDigit).Count();
+            return numberOfDigits * 100.0 / s.Length;
+        }
 
         public static Point GetAverageStrokeDimensions(CLPPage page)
         {

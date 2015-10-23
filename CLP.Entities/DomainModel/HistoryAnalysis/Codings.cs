@@ -5,6 +5,7 @@
         #region CodedObjects
 
         public const string OBJECT_INK = "INK";
+        public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_ARRAY = "ARR";
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";
@@ -25,6 +26,13 @@
         public const string ACTION_INK_ERASE = "strokes erase";                     // ActionID = "{ActionIDInkLocation} {CodedObject} [{CodedID} {IncrementID}]"
 
         #endregion // Ink Actions
+
+        #region Arith Actions
+
+        public const string ACTION_ARITH_ADD = "add";
+        public const string ACTION_ARITH_ERASE = "erase";
+
+        #endregion // Arith Actions
 
         #region General PageObject Actions
 
@@ -52,6 +60,7 @@
         public const string ACTION_ARRAY_ROTATE = "rotate";                         // ActionID = "{ArrayCodedID} {IncrementID}"
         public const string ACTION_ARRAY_SNAP = "snap";                             // ID = "{ArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}", ActionID = "{ArrayCodedID} {IncrementID}"
         public const string ACTION_ARRAY_SKIP = "skip";
+        public const string ACTION_ARRAY_SKIP_ERASE = "skip erase";
 
         #endregion // Array Actions
 

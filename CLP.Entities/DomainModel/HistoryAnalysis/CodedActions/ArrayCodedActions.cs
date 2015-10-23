@@ -229,7 +229,10 @@ namespace CLP.Entities
         public static IHistoryAction SkipCounting(CLPPage page, IHistoryAction inkAction)
         {
             if (page == null ||
-                inkAction == null)
+                inkAction == null ||
+                inkAction.CodedObject != Codings.OBJECT_INK ||
+                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ||
+                  inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
             {
                 return null;
             }
@@ -439,7 +442,7 @@ namespace CLP.Entities
                 var historyAction = new HistoryAction(page, inkAction)
                 {
                     CodedObject = codedObject,
-                    CodedObjectAction = Codings.ACTION_ARRAY_SKIP,
+                    CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
                     CodedObjectID = codedID,
                     CodedObjectIDIncrement = incrementID,
                     CodedObjectActionID = codedActionID

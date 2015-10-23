@@ -404,8 +404,7 @@ namespace CLP.Entities
 
             foreach (var historyAction in historyActions)
             {
-                if (historyAction.CodedObject == Codings.OBJECT_INK &&
-                    historyAction.CodedObjectAction == Codings.ACTION_INK_ADD)
+                if (historyAction.CodedObject == Codings.OBJECT_INK)
                 {
                     var interpretedHistoryAction = AttemptHistoryActionInterpretation(page, historyAction);
                     interpretedHistoryActions.Add(interpretedHistoryAction);
@@ -426,6 +425,10 @@ namespace CLP.Entities
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
                 interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+            }
+            else if (!historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER))
+            {
+                interpretedAction = InkCodedActions.Arithmetic(page, historyaction);
             }
 
             return interpretedAction ?? historyaction;
