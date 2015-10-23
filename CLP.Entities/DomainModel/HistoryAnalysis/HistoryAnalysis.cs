@@ -258,8 +258,8 @@ namespace CLP.Entities
         #region Second Pass: Ink Refinement
 
         // HANNAH CHANGES HERE
-        public const double MAX_DISTANCE_Z_SCORE = 2.0;
-        public const double DIMENSION_MULTIPLIER_THRESHOLD = 1.5;
+        public const double MAX_DISTANCE_Z_SCORE = 3.0;
+        public const double DIMENSION_MULTIPLIER_THRESHOLD = 3.0;
 
         public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
@@ -418,9 +418,7 @@ namespace CLP.Entities
                     }
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
                     if (isNextInkPartOfCurrent &&
-                        isNextPageObjectReferencePartOfCurrent &&
-                        isNextLocationReferencePartOfCurrent &&
-                        (isNextPartOfCurrentCluster || currentLocationReference == Codings.ACTIONID_INK_LOCATION_OVER))
+                        (isNextPartOfCurrentCluster || (currentLocationReference == Codings.ACTIONID_INK_LOCATION_OVER && isNextPageObjectReferencePartOfCurrent)))
                     {
                         continue;
                     }
