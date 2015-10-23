@@ -40,7 +40,9 @@ namespace CLP.InkInterpretation
             inkManager.UpdateRecognitionResults(recognitionResults);
 
             // Aggregate the most likely result words, with spaces between.
-            return recognitionResults.Select(result => result.GetTextCandidates()).Aggregate(string.Empty, (current, text) => current + " " + text[0]);
+            var interpretation = recognitionResults.Select(result => result.GetTextCandidates()).Aggregate(string.Empty, (current, text) => current + " " + text[0]);
+
+            return interpretation.Trim();
         }
     }
 }
