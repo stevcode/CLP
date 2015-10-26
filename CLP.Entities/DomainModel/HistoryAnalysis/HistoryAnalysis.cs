@@ -19,6 +19,7 @@ namespace CLP.Entities
                                            OwnerID = "AUTHOR0000000000000000",
                                            VersionIndex = page.VersionIndex
                                        };
+            interpretationRegion.Interpreters.Add(Interpreters.Handwriting);
 
             switch (page.ID)
             {
