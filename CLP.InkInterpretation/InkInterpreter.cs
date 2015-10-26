@@ -10,6 +10,12 @@ namespace CLP.InkInterpretation
     {
         public static string StrokesToBestGuessText(StrokeCollection strokes)
         {
+            if (strokes == null ||
+                !strokes.Any())
+            {
+                return string.Empty;
+            }
+
             var inkManager = new InkManager();
             var strokeBuilder = new InkStrokeBuilder();
 
