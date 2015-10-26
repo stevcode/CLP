@@ -161,6 +161,23 @@ namespace CLP.Entities
             get { return "Multiple Choice Box"; }
         }
 
+        public override string CodedName
+        {
+            get
+            {
+                return "MC";
+            }
+        }
+
+        public override string CodedID
+        {
+            get
+            {
+                return "[]"; //marked letter, incorrect/correct
+            }
+        }
+
+
         public override int ZIndex
         {
             get { return 15; }

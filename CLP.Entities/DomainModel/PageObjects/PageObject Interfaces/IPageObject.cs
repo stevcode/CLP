@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Windows;
 
 namespace CLP.Entities
 {
     public interface IPageObject
     {
         string FormattedName { get; }
+        string CodedName { get; }
+        string CodedID { get; }
         string ID { get; set; }
         string OwnerID { get; set; }
         uint VersionIndex { get; set; }
@@ -38,5 +41,9 @@ namespace CLP.Entities
         void OnRotating(double oldAngle, bool fromHistory = false);
         void OnRotated(double oldAngle, bool fromHistory = false);
         bool PageObjectIsOver(IPageObject pageObject, double percentage);
+        bool IsOnPageAtHistoryIndex(int historyIndex);
+        string GetCodedIDAtHistoryIndex(int historyIndex);
+        Point GetPositionAtHistoryIndex(int historyIndex);
+        Point GetDimensionsAtHistoryIndex(int historyIndex);
     }
 }

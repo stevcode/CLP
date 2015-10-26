@@ -85,8 +85,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
+            HistoryActionAnaylsisCommand = new Command(OnHistoryActionAnaylsisCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
+            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -967,12 +969,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var fileDirectory = Path.Combine(desktopDirectory, "SkipCountLogs");
-            Console.WriteLine(fileDirectory);
             if (!Directory.Exists(fileDirectory))
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V6.txt");
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber + "_V6.txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -987,15 +988,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 var prevRow = -2;
                 //var prev_xpos = -2.0; 
 
-                var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5), array.YPosition - (array.LabelLength * 1.5), array.Width + (array.LabelLength * 3), array.Height + (array.LabelLength * 3));
+                var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5),
+                                                   array.YPosition - (array.LabelLength * 1.5),
+                                                   array.Width + (array.LabelLength * 3),
+                                                   array.Height + (array.LabelLength * 3));
                 var inkCloseToArray = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
 
                 foreach (var inkStroke in inkCloseToArray)
                 {
                     //Defines location variables
                     var row = -2;
-                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1*array.GridSquareSize;
-                    var width = (4.5*array.LabelLength) + (1.1*array.GridSquareSize);
+                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1 * array.GridSquareSize;
+                    var width = (4.5 * array.LabelLength) + (1.1 * array.GridSquareSize);
                     var height = array.GridSquareSize;
                     //var curr_xpos = xpos;
 
@@ -1011,7 +1015,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*   INSIDE GENERAL AREA TEST  */
                     /*******************************/
                     bool cont = false;
-                    var generalBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength-0.1*height, array.ArrayWidth+4.5*array.LabelLength, array.ArrayHeight+0.2*height);
+                    var generalBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength - 0.1 * height, array.ArrayWidth + 4.5 * array.LabelLength, array.ArrayHeight + 0.2 * height);
                     if (debug)
                     {
                         CurrentPage.ClearBoundaries();
@@ -1192,7 +1196,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
                     }
-
                 }
 
                 var equation = string.Empty;
@@ -1214,7 +1217,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 if (!string.IsNullOrEmpty(equation) ||
-                    skipCounts.Keys.Any())
+                skipCounts.Keys.Any())
                 {
                     var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated);
                     tag.ArrayName = array.Rows + "x" + array.Columns;
@@ -1356,6 +1359,39 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Analysizes the HistoryItems to generate appropriate HistoryActions and Tags.
+        /// </summary>
+        public Command HistoryActionAnaylsisCommand { get; private set; }
+
+        private void OnHistoryActionAnaylsisCommandExecute()
+        {
+            //HistoryAnalysis.GenerateInitialHistoryActions(CurrentPage);
+
+            //HistoryAnalysis.AnalyzeHistoryActions(CurrentPage);
+
+            ////Prints HistoryAction Coded Values to .txt file
+            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //var fileDirectory = Path.Combine(desktopDirectory, "CodedHistoryLogs");
+            //if (!Directory.Exists(fileDirectory))
+            //{
+            //    Directory.CreateDirectory(fileDirectory);
+            //}
+
+            //var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + CurrentPage.Owner.FullName + ".txt");
+            //if (File.Exists(filePath))
+            //{
+            //    File.Delete(filePath);
+            //}
+            //File.WriteAllText(filePath, "");
+            //var historyActions = CurrentPage.History.HistoryActions;
+
+            //foreach (var action in historyActions)
+            //{
+            //    File.AppendAllText(filePath, action.CodedValue + "\n");
+            //}
+        }
+
+        /// <summary>
         /// SUMMARY
         /// </summary>
         public Command GenerateStampGroupingsCommand { get; private set; }
@@ -1407,6 +1443,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 dt.RaiseAllPropertiesChanged();
             }
+        }
+
+        public Command GenerateHistoryActionsCommand
+        { get; private set; }
+
+        private void OnGenerateHistoryActionsCommandExecute()
+        {
+            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
         }
     }
 }

@@ -172,6 +172,39 @@ namespace CLP.Entities
             }
         }
 
+        public Point GetColumnsAndRowsAtHistoryIndex(int historyIndex)
+        {
+            var rows = Rows;
+            var columns = Columns;
+            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryIndex >= historyIndex).Reverse())
+            {
+                TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryItem>(h =>
+                                                                           {
+                                                                               if (h.ArrayID == ID)
+                                                                               {
+                                                                                   rows = h.OldRows;
+                                                                                   columns = h.OldColumns;
+                                                                               }
+                                                                           })
+                                          .Case<CLPArraySnapHistoryItem>(h =>
+                                                                         {
+                                                                             if (h.PersistingArrayID == ID)
+                                                                             {
+                                                                                 if (h.IsHorizontal)
+                                                                                 {
+                                                                                     columns = h.PersistingArrayRowsOrColumns;
+                                                                                 }
+                                                                                 else
+                                                                                 {
+                                                                                     rows = h.PersistingArrayRowsOrColumns;
+                                                                                 }
+                                                                             }
+                                                                         });
+            }
+
+            return new Point(columns, rows);
+        }
+
         #endregion //Methods
 
         #region APageObjectBase Overrides
@@ -205,6 +238,16 @@ namespace CLP.Entities
 
                 return string.Format("{0}x{1} {2}", Rows, Columns, arrayType);
             }
+        }
+
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_ARRAY; }
+        }
+
+        public override string CodedID
+        {
+            get { return string.Format("{0}x{1}", Rows, Columns); }
         }
 
         public override bool IsBackgroundInteractable
@@ -420,6 +463,66 @@ namespace CLP.Entities
             return newCLPArray;
         }
 
+        public override string GetCodedIDAtHistoryIndex(int historyIndex)
+        {
+            var dimensions = GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            return string.Format("{0}x{1}", dimensions.Y, dimensions.X);
+        }
+
+        public override Point GetDimensionsAtHistoryIndex(int historyIndex)
+        {
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            if (resizeHistoryItem == null &&
+                rotateHistoryItem == null)
+            {
+                return new Point(Width, Height);
+            }
+
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
+            var resizeHistoryIndex = resizeHistoryItem == null ? int.MaxValue : resizeHistoryItem.HistoryIndex;
+
+            if (rotateHistoryIndex < resizeHistoryIndex)
+            {
+                var preRotateWidth = rotateHistoryItem.OldWidth;
+                var preRotateHeight = rotateHistoryItem.OldHeight;
+                return new Point(preRotateWidth, preRotateHeight);
+            }
+
+            if (!resizeHistoryItem.StretchedDimensions.Any())
+            {
+                return new Point(Width, Height);
+            }
+
+            return resizeHistoryItem.StretchedDimensions.First();
+        }
+
+        public override Point GetPositionAtHistoryIndex(int historyIndex)
+        {
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+            if (rotateHistoryItem == null &&
+                moveHistoryItem == null)
+            {
+                return new Point(XPosition, YPosition);
+            }
+
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
+            var moveHistoryIndex = moveHistoryItem == null ? int.MaxValue : moveHistoryItem.HistoryIndex;
+
+            if (rotateHistoryIndex < moveHistoryIndex)
+            {
+                var preRotateX = rotateHistoryItem.ArrayXCoord;
+                var preRotateY = rotateHistoryItem.ArrayYCoord;
+                return new Point(preRotateX, preRotateY);
+            }
+
+            var initialPosition = moveHistoryItem.TravelledPositions.First();
+            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
+            return adjustedPosition;
+        }
+
         #endregion //APageObjectBase Overrides
 
         #region ACLPArrayBase Overrides
@@ -464,7 +567,7 @@ namespace CLP.Entities
 
             //RefreshStrokeParentIDs();
             OnResized(initialWidth, initialHeight);
-        } 
+        }
 
         #endregion //ACLPArrayBase Overrides
 
@@ -1318,7 +1421,7 @@ namespace CLP.Entities
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
@@ -1329,7 +1432,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -1338,7 +1441,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         public void LoadAcceptedStrokes()
         {

@@ -191,10 +191,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
 
-        public virtual string FormattedValue
-        {
-            get { return "Not yet Implemented."; }
-        }
+        public abstract string FormattedValue { get; }
 
         #endregion //Properties
 

@@ -121,6 +121,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
 
+        #region HistoryItems
+
         /// <summary>
         /// All events available for Undo.
         /// </summary>
@@ -204,7 +206,7 @@ namespace CLP.Entities
         {
             get
             {
-                lock(_historyLock)
+                lock (_historyLock)
                 {
                     return !_isUndoingOperation && UndoItems.Any() && UseHistory;
                 }
@@ -215,12 +217,29 @@ namespace CLP.Entities
         {
             get
             {
-                lock(_historyLock)
+                lock (_historyLock)
                 {
                     return !_isUndoingOperation && RedoItems.Any() && UseHistory;
                 }
             }
         }
+
+        #endregion //HistoryItems
+
+        #region HistoryActions
+
+        /// <summary>
+        /// List of all the IHistoryActions analysis generates.
+        /// </summary>
+        public ObservableCollection<IHistoryAction> HistoryActions
+        {
+            get { return GetValue<ObservableCollection<IHistoryAction>>(HistoryActionsProperty); }
+            set { SetValue(HistoryActionsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>()); 
+
+        #endregion //HistoryActions
 
         #region Playback Indication
 

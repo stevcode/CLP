@@ -278,6 +278,11 @@ namespace CLP.Entities
 
         #endregion //Methods
 
+        public override string FormattedValue
+        {
+            get { return "OBSOLETE PAGE OBJECT MOVE HISTORY ITEM."; }
+        }
+
         protected override void ConversionUndoAction()
         {
 

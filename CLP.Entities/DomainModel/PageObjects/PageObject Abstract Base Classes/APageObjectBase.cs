@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Input;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -39,6 +40,16 @@ namespace CLP.Entities
         public virtual string FormattedName
         {
             get { return GetType().Name; }
+        }
+
+        public virtual string CodedName
+        {
+            get { return "Coded Name not implemented."; }
+        }
+
+        public virtual string CodedID
+        {
+            get { return "CodedID not implemented."; }
         }
 
         /// <summary>Unique Identifier for the <see cref="IPageObject" />.</summary>
@@ -267,6 +278,73 @@ namespace CLP.Entities
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
+        #region History Methods
+
+        public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
+        {
+            var addedAtAnyPointHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
+            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+
+            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems
+                                  .OfType<ObjectsOnPageChangedHistoryItem>()
+                                  .FirstOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryIndex <= historyIndex);
+
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.PageObjectIDsAdded.Contains(ID);
+
+            return isOnPageBefore || !isPartOfHistory;
+        }
+
+        /// <summary>
+        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
+        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
+        public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return CodedID; }
+
+        /// <summary>
+        /// Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo().
+        /// To get (Width, Height) just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
+        public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
+        {
+            var resizeHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>()
+                          .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            if (resizeHistoryItem == null ||
+                !resizeHistoryItem.StretchedDimensions.Any())
+            {
+                return new Point(Width, Height);
+            }
+
+            return resizeHistoryItem.StretchedDimensions.First();
+
+            // TODO: numberline.endpointchange, remainderTiles.updated
+        }
+
+        /// <summary>
+        /// Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo().
+        /// To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
+        public virtual Point GetPositionAtHistoryIndex(int historyIndex)
+        {
+            var moveHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>()
+                          .FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+
+            if (moveHistoryItem == null ||
+                !moveHistoryItem.TravelledPositions.Any())
+            {
+                return new Point(XPosition, YPosition);
+            }
+
+            var initialPosition = moveHistoryItem.TravelledPositions.First();
+            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
+            return adjustedPosition;
+        }
+
+        #endregion //History Methods
+
         #endregion //Methods
 
         #region Utility Methods
@@ -349,7 +427,15 @@ namespace CLP.Entities
         {
             var firstBounds = new Rect(firstPageObject.XPosition, firstPageObject.YPosition, firstPageObject.Width, firstPageObject.Height);
             var secondBounds = new Rect(secondPageObject.XPosition, secondPageObject.YPosition, secondPageObject.Width, secondPageObject.Height);
-            return firstBounds.IntersectsWith(secondBounds);
+            return IsBoundsOverlapping(firstBounds, secondBounds);
+        }
+
+        public static bool IsBoundsOverlapping(Rect firstBounds, Rect secondBounds) { return firstBounds.IntersectsWith(secondBounds); }
+
+        public static bool IsBoundsOverlappingByPercentage(Rect firstBounds, Rect secondBounds, double percentage)
+        {
+            var intersectRect = Rect.Intersect(firstBounds, secondBounds);
+            return intersectRect.Area() / secondBounds.Area() >= percentage;
         }
 
         #endregion //Utility Methods

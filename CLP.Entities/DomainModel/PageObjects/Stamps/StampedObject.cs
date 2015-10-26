@@ -140,6 +140,23 @@ namespace CLP.Entities
             }
         }
 
+        public override string CodedName
+        {
+            get
+            {
+                return "STAMP IMAGE";
+            }
+        }
+
+        public override string CodedID
+        {
+            get
+            {
+                return ""; //pictorial, discrete/unitized, drag/menu
+            }
+        }
+             
+
         public override int ZIndex
         {
             get { return StampedObjectType == StampedObjectTypes.GroupStampedObject || StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject ? 70 : 80; }

@@ -95,6 +95,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -197,11 +198,10 @@
                            Stroke="{StaticResource GrayBorderColor}" />
 
                 <Button Content="Run Page Analysis"
-                        Command="{Binding AnalyzePageCommand}"
+                        Command="{Binding GenerateHistoryActionsCommand}"
                         Height="20"
                         Margin="1"
-                        Grid.ColumnSpan="2"
-                        Visibility="Collapsed" />
+                        Grid.ColumnSpan="2" />
 
                 <!--<Button Content="Run History Analysis"
                         Command="{Binding AnalyzePageHistoryCommand}"
@@ -227,6 +227,12 @@
                         Height="20"
                         Margin="1"
                         Visibility="Collapsed" />
+
+                <Button Content="Run History Analysis"
+                        Command="{Binding HistoryActionAnaylsisCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
 
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
@@ -360,7 +366,7 @@
                 </Grid.ColumnDefinitions>
 
                 <UniformGrid Grid.Column="0"
-                             Columns="2">
+                             Columns="3">
 
                     <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
                                   HorizontalAlignment="Center"
@@ -392,6 +398,44 @@
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Image Source="pack://application:,,,/Resources/Images/Steps512.png"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <TextBlock Text="STEPS"
+                                                               FontWeight="Bold"
+                                                               FontSize="16"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                         <Setter Property="IsEnabled"
                                                 Value="False" />
                                     </Trigger>
@@ -626,6 +670,28 @@
                         </ListBox>
                     </ControlTemplate>
 
+                    <ControlTemplate x:Key="HistoryActionsTemplate">
+                        <ListBox DataContext="{Binding}"
+                                 ItemsSource="{Binding CurrentPage.History.HistoryActions}"
+                                 SelectionMode="Single"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                 VirtualizingStackPanel.CacheLength="2,3"
+                                 VirtualizingStackPanel.CacheLengthUnit="Page"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold"
+                                    Text="{Binding CodedValue, Mode=OneWay}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+                    </ControlTemplate>
+
                     <ControlTemplate x:Key="HistoryItemsTemplate">
                         <ListBox DataContext="{Binding}"
                                  ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryItems}"
@@ -660,6 +726,13 @@
                                          Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
                                 <Setter Property="Template"
                                         Value="{StaticResource TagsTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Show HistoryActionss trigger -->
+                            <DataTrigger Binding="{Binding CurrentAnalysisStep}"
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
+                                <Setter Property="Template"
+                                        Value="{StaticResource HistoryActionsTemplate}" />
                             </DataTrigger>
 
                             <!-- Show HistoryItems trigger -->

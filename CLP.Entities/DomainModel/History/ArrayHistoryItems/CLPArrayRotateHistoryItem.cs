@@ -27,8 +27,8 @@ namespace CLP.Entities
             : base(parentPage, owner)
         {
             ArrayID = arrayID;
-            ArrayXCoord = oldXPosition;
-            ArrayYCoord = oldYPosition;
+            OldXPosition = oldXPosition;
+            OldYPosition = oldYPosition;
             NewXPosition = newXPosition;
             NewYPosition = newYPosition;
             OldRows = oldRows;
@@ -61,6 +61,7 @@ namespace CLP.Entities
 
         /// <summary>X Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldXPosition.</remarks>
+        [Obsolete("Use OldXPosition now.")]
         public double ArrayXCoord
         {
             get { return GetValue<double>(ArrayXCoordProperty); }
@@ -71,6 +72,7 @@ namespace CLP.Entities
 
         /// <summary>Y Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldYPosition.</remarks>
+        [Obsolete("Use OldYPosition now.")]
         public double ArrayYCoord
         {
             get { return GetValue<double>(ArrayYCoordProperty); }
@@ -78,6 +80,25 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof (double));
+
+        /// <summary>X Position before rotate.</summary>
+        public double OldXPosition
+        {
+            get { return GetValue<double>(OldXPositionProperty); }
+            set { SetValue(OldXPositionProperty, value); }
+        }
+
+        public static readonly PropertyData OldXPositionProperty = RegisterProperty("OldXPosition", typeof (double));
+
+        /// <summary>Y Position before rotate.</summary>
+        public double OldYPosition
+        {
+            get { return GetValue<double>(OldYPositionProperty); }
+            set { SetValue(OldYPositionProperty, value); }
+        }
+
+        public static readonly PropertyData OldYPositionProperty = RegisterProperty("OldYPosition", typeof (double));
+        
 
         /// <summary>X Position after rotate.</summary>
         public double NewXPosition
@@ -115,6 +136,47 @@ namespace CLP.Entities
 
         public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof (int));
 
+        /// <summary>Width before rotate.</summary>
+        /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
+        public double OldWidth
+        {
+            get { return GetValue<double>(OldWidthProperty); }
+            set { SetValue(OldWidthProperty, value); }
+        }
+
+        public static readonly PropertyData OldWidthProperty = RegisterProperty("OldWidth", typeof (double));
+
+
+        /// <summary>Height before rotate.</summary>
+        /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
+        public double OldHeight
+        {
+            get { return GetValue<double>(OldHeightProperty); }
+            set { SetValue(OldHeightProperty, value); }
+        }
+
+        public static readonly PropertyData OldHeightProperty = RegisterProperty("OldHeight", typeof (double));
+
+        /// <summary>Width after rotate.</summary>
+        /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
+        public double NewWidth
+        {
+            get { return GetValue<double>(NewWidthProperty); }
+            set { SetValue(NewWidthProperty, value); }
+        }
+
+        public static readonly PropertyData NewWidthProperty = RegisterProperty("NewWidth", typeof (double));
+
+        /// <summary>Height after rotate.</summary>
+        /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
+        public double NewHeight
+        {
+            get { return GetValue<double>(NewHeightProperty); }
+            set { SetValue(NewHeightProperty, value); }
+        }
+
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof (double));
+
         public override string FormattedValue
         {
             get
@@ -141,9 +203,15 @@ namespace CLP.Entities
 
             NewXPosition = array.XPosition;
             NewYPosition = array.YPosition;
+            NewWidth = array.Width;
+            NewHeight = array.Height;
             array.RotateArray();
             array.XPosition = ArrayXCoord;
             array.YPosition = ArrayYCoord;
+            OldXPosition = ArrayXCoord;
+            OldYPosition = ArrayYCoord;
+            OldWidth = array.Width;
+            OldHeight = array.Height;
             OldRows = array.Rows;
             OldColumns = array.Columns;
         }

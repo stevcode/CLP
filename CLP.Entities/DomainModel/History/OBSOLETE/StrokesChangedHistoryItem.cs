@@ -194,6 +194,11 @@ namespace CLP.Entities
 
         #endregion //Methods
 
+        public override string FormattedValue
+        {
+            get { return "OBSOLETE STROKES CHANGED HISTORY ITEM."; }
+        }
+
         protected override void ConversionUndoAction()
         {
 

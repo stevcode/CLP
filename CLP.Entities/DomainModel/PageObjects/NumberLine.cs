@@ -480,6 +480,34 @@ namespace CLP.Entities
             }
         }
 
+        public int GetJumpStartFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTickToArcStroke(stroke, true);
+            var tickL = FindClosestTickToArcStroke(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return -1;
+            }
+
+            return tickL.TickValue;
+        }
+
+        public int GetJumpEndFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTickToArcStroke(stroke, true);
+            var tickL = FindClosestTickToArcStroke(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return -1;
+            }
+
+            return tickR.TickValue;
+        }
+
         public NumberLineTick FindClosestTickToArcStroke(Stroke stroke, bool isLookingForRightTick)
         {
             return FindClosestTickToArcStroke(new StrokeCollection
@@ -605,6 +633,14 @@ namespace CLP.Entities
 
         public double FindTallestPoint(IEnumerable<Stroke> strokes) { return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min(); }
 
+        public int GetNumberLineSizeAtHistoryIndex(int historyIndex)
+        {
+            var sizeHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>()
+                          .FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
+            return sizeHistoryItem == null ? NumberLineSize : sizeHistoryItem.PreviousEndValue;
+        }
+
         #endregion //Methods
 
         #region APageObjectBase Overrides
@@ -612,6 +648,16 @@ namespace CLP.Entities
         public override string FormattedName
         {
             get { return string.Format("Number Line from 0 to {0} with {1} jumps", NumberLineSize, JumpSizes.Count); }
+        }
+
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_NUMBER_LINE; }
+        }
+
+        public override string CodedID
+        {
+            get { return NumberLineSize.ToString(); }
         }
 
         public override int ZIndex
@@ -768,6 +814,12 @@ namespace CLP.Entities
 
             return newNumberLine;
         }
+
+        /// <summary>
+        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
+        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
+        /// </summary>
+        public override string GetCodedIDAtHistoryIndex(int historyIndex) { return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString(); }
 
         #endregion //APageObjectBase Overrides
 
