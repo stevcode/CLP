@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Ink;
 using Catel.Data;
+using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -16,20 +15,23 @@ namespace CLP.Entities
         Underline
     }
 
+    public enum Interpreters
+    {
+        Handwriting
+    }
+
     [Serializable]
     public class InterpretationRegion : APageObjectBase
     {
         #region Constructors
 
         /// <summary>Initializes <see cref="InterpretationRegion" /> from scratch.</summary>
-        public InterpretationRegion()
-        { }
+        public InterpretationRegion() { }
 
         /// <summary>Initializes <see cref="InterpretationRegion" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="InterpretationRegion" /> belongs to.</param>
         public InterpretationRegion(CLPPage parentPage)
-            : base(parentPage)
-        { }
+            : base(parentPage) { }
 
         /// <summary>Initializes <see cref="InterpretationRegion" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -50,6 +52,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData RegionBorderStyleProperty = RegisterProperty("RegionBorderStyle", typeof (RegionBorderStyles), RegionBorderStyles.Hidden);
 
+        /// <summary>List of interpreters to run on the region.</summary>
+        public ObservableCollection<Interpreters> Interpreters
+        {
+            get { return GetValue<ObservableCollection<Interpreters>>(InterpretersProperty); }
+            set { SetValue(InterpretersProperty, value); }
+        }
+
+        public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof (ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
+        
+        
 
         #endregion // Properties
 
@@ -58,6 +70,16 @@ namespace CLP.Entities
         public override string FormattedName
         {
             get { return "Interpretation Region"; }
+        }
+
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_FILL_IN; }
+        }
+
+        public override string CodedID
+        {
+            get { return string.Empty; } // TODO: Make this work with IncrementID
         }
 
         public override int ZIndex
@@ -87,5 +109,11 @@ namespace CLP.Entities
         }
 
         #endregion // APageObjectBase Overrides
+
+        #region Static Methods
+
+        public static string InterpretHandwriting(InterpretationRegion region, StrokeCollection strokes) { return InkInterpreter.StrokesToBestGuessText(strokes); } 
+
+        #endregion // Static Methods
     }
 }

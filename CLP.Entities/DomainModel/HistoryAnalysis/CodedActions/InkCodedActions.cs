@@ -93,9 +93,42 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static IHistoryAction FillInInterpretation(CLPPage page, IHistoryAction inkAction)
+        {
+            if (page == null ||
+                inkAction == null ||
+                inkAction.CodedObject != Codings.OBJECT_INK ||
+                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD || inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
+            {
+                return null;
+            }
+
+            var referenceRegionID = inkAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+            var region = page.GetPageObjectByIDOnPageOrInHistory(referenceRegionID) as InterpretationRegion;
+            if (region == null)
+            {
+                return null;
+            }
+
+            var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
+
+            var codedID = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
+
+            var historyAction = new HistoryAction(page, inkAction)
+            {
+                CodedObject = Codings.OBJECT_FILL_IN,
+                CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_FILL_IN_ADD : Codings.ACTION_FILL_IN_ERASE,
+                IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
+                CodedObjectID = codedID,
+                CodedObjectActionID = "unknown"
+            };
+
+            return historyAction;
+        }
+
         #endregion // Verify And Generate Methods
 
-        #region Utility Static Methods
+            #region Utility Static Methods
 
         public static double GetPercentageOfDigits(string s)
         {
@@ -158,6 +191,12 @@ namespace CLP.Entities
                     continue;
                 }
 
+                if (pageObject is InterpretationRegion &&
+                    percentOfStrokeOverlap > 95.0)
+                {
+                    return pageObject;
+                }
+
                 if (mostOverlappedPageObject == null)
                 {
                     mostOverlappedPageObject = pageObject;
@@ -166,6 +205,12 @@ namespace CLP.Entities
 
                 var mostOverlappedPercentOfStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, mostOverlappedPageObject, stroke, historyIndex);
                 if (percentOfStrokeOverlap > mostOverlappedPercentOfStrokeOverlap)
+                {
+                    mostOverlappedPageObject = pageObject;
+                }
+
+                if (Math.Abs(percentOfStrokeOverlap - mostOverlappedPercentOfStrokeOverlap) < 0.01 &&
+                    pageObject is InterpretationRegion)
                 {
                     mostOverlappedPageObject = pageObject;
                 }

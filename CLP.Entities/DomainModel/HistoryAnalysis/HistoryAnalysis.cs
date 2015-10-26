@@ -10,8 +10,90 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
+        public static void BoxConversions(CLPPage page)
+        {
+            IPageObject pageObjectToAdd;
+            var interpretationRegion = new InterpretationRegion(page)
+                                       {
+                                           CreatorID = "AUTHOR0000000000000000",
+                                           OwnerID = "AUTHOR0000000000000000",
+                                           VersionIndex = page.VersionIndex
+                                       };
+
+            switch (page.ID)
+            {
+                case "_ctKrAO-MEK-g9PtqpFzVQ":
+                    interpretationRegion.ID = "_ctKrAO-MEK-g9PtqpFmoo";
+                    interpretationRegion.XPosition = 235.3954;
+                    interpretationRegion.YPosition = 220.9490;
+                    interpretationRegion.Height = 80;
+                    interpretationRegion.Width = 80;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "gdruAzwX6kWe2k-etZ6gcQ":
+                    interpretationRegion.ID = "gdruAzwX6kWe2k-etZ6moo";
+                    interpretationRegion.XPosition = 253.1625;
+                    interpretationRegion.YPosition = 221.9357;
+                    interpretationRegion.Height = 80;
+                    interpretationRegion.Width = 80;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "yzvpdIROIEOFrndOASGjvA":
+                    interpretationRegion.ID = "yzvpdIROIEOFrndOASGmoo";
+                    interpretationRegion.XPosition = 106.74036;
+                    interpretationRegion.YPosition = 223.4880;
+                    interpretationRegion.Height = 80;
+                    interpretationRegion.Width = 80;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "gsQu4sdxVEKGZsgCD_zfWQ":
+                    interpretationRegion.ID = "gsQu4sdxVEKGZsgCD_zmoo";
+                    interpretationRegion.XPosition = 98.90192;
+                    interpretationRegion.YPosition = 205.11349;
+                    interpretationRegion.Height = 102.1971;
+                    interpretationRegion.Width = 171.0040;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "MtZusuAFZEOqTr8KRlFlMA":
+                    interpretationRegion.ID = "MtZusuAFZEOqTr8KRlFmoo";
+                    interpretationRegion.XPosition = 103.60754;
+                    interpretationRegion.YPosition = 243.3032;
+                    interpretationRegion.Height = 93.2830;
+                    interpretationRegion.Width = 146.4150;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "QHJ7pFHY3ECr8u6bSFRCkA":
+                    interpretationRegion.ID = "QHJ7pFHY3ECr8u6bSFRmoo";
+                    interpretationRegion.XPosition = 234.6666;
+                    interpretationRegion.YPosition = 668.9809;
+                    interpretationRegion.Height = 116.3069;
+                    interpretationRegion.Width = 108.3371;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                case "cgXYlAbAM0GGy8iBI4tyGw":
+                    interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
+                    interpretationRegion.XPosition = 240.3143;
+                    interpretationRegion.YPosition = 661.8379;
+                    interpretationRegion.Height = 131.1860;
+                    interpretationRegion.Width = 103.4241;
+                    pageObjectToAdd = interpretationRegion;
+                    break;
+                default:
+                    return;
+            }
+
+            if (page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
+            {
+                return;
+            }
+
+            page.PageObjects.Add(pageObjectToAdd);
+        }
+
         public static void GenerateHistoryActions(CLPPage page)
         {
+            BoxConversions(page);
+
             HistoryAction.CurrentIncrementID.Clear();
             HistoryAction.MaxIncrementID.Clear();
 
@@ -421,6 +503,18 @@ namespace CLP.Entities
         public static List<IHistoryAction> AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
         {
             var allInterpretedActions = new List<IHistoryAction>();
+
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
+                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_FILL_IN))
+            {
+                // HACK: discuss structure of history action
+
+                var interpretedAction = InkCodedActions.FillInInterpretation(page, historyaction); // TODO: Potentionally needs a recursive pass through.
+                if (interpretedAction != null)
+                {
+                    allInterpretedActions.Add(interpretedAction);
+                }
+            }
 
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
