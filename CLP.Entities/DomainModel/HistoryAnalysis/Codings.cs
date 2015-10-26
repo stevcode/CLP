@@ -13,6 +13,7 @@
         public const string OBJECT_GROUP = "GROUP";
         public const string OBJECT_BINS = "BINS";
         public const string OBJECT_TEXT = "TEXT";
+        public const string OBJECT_FILL_IN = "ANS FI";
 
         #endregion // CodedObjects
 
@@ -33,6 +34,13 @@
         public const string ACTION_ARITH_ERASE = "erase";
 
         #endregion // Arith Actions
+
+        #region Answer Actions
+
+        public const string ACTION_FILL_IN_ADD = "add";
+        public const string ACTION_FILL_IN_ERASE = "erase";
+
+        #endregion // Answer Actions
 
         #region General PageObject Actions
 
