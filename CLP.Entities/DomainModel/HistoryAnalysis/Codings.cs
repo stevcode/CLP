@@ -57,6 +57,7 @@
         public const string ACTION_ARRAY_CUT = "cut";                               // ActionID = "{NewArrayCodedID} {IncrementID}, {NewArrayCodedID} {IncrementID}(, ACTIONID_ARRAY_CUT_VERTICAL)"
         public const string ACTION_ARRAY_DIVIDE = "divide";                         // ActionID = "{SubArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}(, REPEAT)(, ACTIONID_ARRAY_DIVIDER_VERTICAL)"
         public const string ACTION_ARRAY_DIVIDE_INK = "divide ink";                 // ActionID = "{SubArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}(, REPEAT)(, ACTIONID_ARRAY_DIVIDER_VERTICAL)"
+        public const string ACTION_ARRAY_DIVIDE_INK_ERASE = "divide ink erase";
         public const string ACTION_ARRAY_ROTATE = "rotate";                         // ActionID = "{ArrayCodedID} {IncrementID}"
         public const string ACTION_ARRAY_SNAP = "snap";                             // ID = "{ArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}", ActionID = "{ArrayCodedID} {IncrementID}"
         public const string ACTION_ARRAY_SKIP = "skip";

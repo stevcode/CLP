@@ -400,38 +400,60 @@ namespace CLP.Entities
 
         public static List<IHistoryAction> InterpretHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var interpretedHistoryActions = new List<IHistoryAction>();
+            var allInterpretedHistoryActions = new List<IHistoryAction>();
 
             foreach (var historyAction in historyActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK)
                 {
-                    var interpretedHistoryAction = AttemptHistoryActionInterpretation(page, historyAction);
-                    interpretedHistoryActions.Add(interpretedHistoryAction);
+                    var interpretedHistoryActions = AttemptHistoryActionInterpretation(page, historyAction);
+                    allInterpretedHistoryActions.AddRange(interpretedHistoryActions);
                 }
                 else
                 {
-                    interpretedHistoryActions.Add(historyAction);
+                    allInterpretedHistoryActions.Add(historyAction);
                 }
             }
 
-            return interpretedHistoryActions;
+            return allInterpretedHistoryActions;
         }
 
-        public static IHistoryAction AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
+        public static List<IHistoryAction> AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
         {
-            IHistoryAction interpretedAction = null;
+            var allInterpretedActions = new List<IHistoryAction>();
+
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
+                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
+            {
+                var interpretedActions = ArrayCodedActions.InkDivide(page, historyaction); // TODO: Potentionally needs a recursive pass through.
+                allInterpretedActions.AddRange(interpretedActions);
+            }
+
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
-            }
-            else if (!historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER))
-            {
-                interpretedAction = InkCodedActions.Arithmetic(page, historyaction);
+                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+                if (interpretedAction != null)
+                {
+                    allInterpretedActions.Add(interpretedAction);
+                }
             }
 
-            return interpretedAction ?? historyaction;
+            if (!historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER))
+            {
+                var interpretedAction = InkCodedActions.Arithmetic(page, historyaction);
+                if (interpretedAction != null)
+                {
+                    allInterpretedActions.Add(interpretedAction);
+                }
+            }
+
+            if (!allInterpretedActions.Any())
+            {
+                allInterpretedActions.Add(historyaction);
+            }
+
+            return allInterpretedActions;
         }
 
         #endregion // Third Pass: Interpretation

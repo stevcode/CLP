@@ -435,7 +435,7 @@ namespace CLP.Entities
                 var keys = skipCounts.Keys.ToList();
                 keys.Sort();
                 var values = keys.Select(key => skipCounts[key]).ToList();
-                var interpretedValues = string.Join(",", values);
+                var interpretedValues = string.Join(", ", values);
 
                 var codedActionID = string.Format("{0}, \"{1}\"", location, interpretedValues);
 
@@ -452,6 +452,173 @@ namespace CLP.Entities
             }
 
             return null;
+        }
+
+        public static List<IHistoryAction> InkDivide(CLPPage page, IHistoryAction inkAction)
+        {
+            if (page == null ||
+                inkAction == null ||
+                inkAction.CodedObject != Codings.OBJECT_INK ||
+                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD || inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE) ||
+                !inkAction.HistoryItems.All(h => h is ObjectsOnPageChangedHistoryItem))
+            {
+                return null;
+            }
+
+            var referenceArrayID = inkAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+            var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
+            if (array == null ||
+                array.ArrayType != ArrayTypes.Array ||
+                !array.IsGridOn)
+            {
+                return null;
+            }
+
+            var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
+            var codedObject = Codings.OBJECT_ARRAY;
+            var codedDescription = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
+
+            var interpretedActions = new List<IHistoryAction>();
+            var historyItemBuffer = new List<IHistoryItem>();
+
+            #region Ink Divide Interpretation
+
+            var verticalDividers = new List<int> { 0 };
+            var horizontalDividers = new List<int> { 0 };
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var cuttableTop = arrayPosition.Y + array.LabelLength;
+            var cuttableBottom = cuttableTop + arrayDimensions.Y - (2 * array.LabelLength);
+            var cuttableLeft = arrayPosition.X + array.LabelLength;
+            var cuttableRight = cuttableLeft + arrayDimensions.X - (2 * array.LabelLength);
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+
+            foreach (var historyItem in inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>())
+            {
+                var strokesInHistoryItem = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? historyItem.StrokesAdded : historyItem.StrokesRemoved;
+                if (strokesInHistoryItem.Count != 1)
+                {
+                    // TODO: Handles point erases
+                    historyItemBuffer.Add(historyItem);
+                    continue;
+                }
+
+                var stroke = strokesInHistoryItem.First();
+                var referenceStrokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
+
+                var strokeTop = referenceStrokeCopy.GetBounds().Top;
+                var strokeBottom = referenceStrokeCopy.GetBounds().Bottom;
+                var strokeLeft = referenceStrokeCopy.GetBounds().Left;
+                var strokeRight = referenceStrokeCopy.GetBounds().Right;
+
+                const double SMALL_THRESHOLD = 5.0;
+                const double LARGE_THRESHOLD = 15.0;
+
+                if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                    strokeRight <= cuttableRight &&
+                    strokeLeft >= cuttableLeft &&
+                    (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
+                    cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
+                    (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
+                    cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
+                    strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
+                    arrayColumnsAndRows.X > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+                {
+                    var average = (strokeRight + strokeLeft) / 2;
+                    var relativeAverage = average - array.LabelLength - arrayPosition.X;
+                    var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                    if (dividerValue == 0 ||
+                        dividerValue == arrayColumnsAndRows.X)
+                    {
+                        historyItemBuffer.Add(historyItem);
+                        continue;
+                    }
+
+                    var newInkAction = new HistoryAction(page, historyItemBuffer)
+                                       {
+                                           CodedObject = Codings.OBJECT_INK,
+                                           CodedObjectAction = inkAction.CodedObjectAction,
+                                           CodedObjectID = inkAction.CodedObjectID, // TODO: Increment correctly.
+                                           CodedObjectActionID = inkAction.CodedObjectActionID
+                                       };
+
+                    historyItemBuffer.Clear();
+                    interpretedActions.Add(newInkAction);
+
+                    var inkDivideAction = new HistoryAction(page, historyItem)
+                                          {
+                                              CodedObject = codedObject,
+                                              CodedObjectAction = codedDescription,
+                                              CodedObjectID = codedID,
+                                              CodedObjectIDIncrement = incrementID
+                                          };
+
+                    verticalDividers.Add(dividerValue);
+                    verticalDividers.Add(array.Columns);  // TODO: Fix for if multiple ink dividers are made in a row
+                    verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
+                    var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
+                    inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
+
+                    interpretedActions.Add(inkDivideAction);
+                }
+
+                if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                         strokeBottom <= cuttableBottom &&
+                         strokeTop >= cuttableTop &&
+                         (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
+                         strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
+                         (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
+                         strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
+                         strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
+                         arrayColumnsAndRows.Y > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                {
+                    var average = (strokeTop + strokeBottom) / 2;
+                    var relativeAverage = average - array.LabelLength - arrayPosition.Y;
+                    var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                    if (dividerValue == 0 ||
+                        dividerValue == arrayColumnsAndRows.Y)
+                    {
+                        historyItemBuffer.Add(historyItem);
+                        continue;
+                    }
+
+                    var newInkAction = new HistoryAction(page, historyItemBuffer)
+                                       {
+                                           CodedObject = Codings.OBJECT_INK,
+                                           CodedObjectAction = inkAction.CodedObjectAction,
+                                           CodedObjectID = inkAction.CodedObjectID, // TODO: Increment correctly.
+                                           CodedObjectActionID = inkAction.CodedObjectActionID
+                                       };
+
+                    historyItemBuffer.Clear();
+                    interpretedActions.Add(newInkAction);
+
+                    var inkDivideAction = new HistoryAction(page, historyItem)
+                    {
+                        CodedObject = codedObject,
+                        CodedObjectAction = codedDescription,
+                        CodedObjectID = codedID,
+                        CodedObjectIDIncrement = incrementID
+                    };
+
+                    horizontalDividers.Add(dividerValue);
+                    horizontalDividers.Add(array.Rows);
+                    horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
+                    var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.X, x));
+
+                    inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
+
+                    interpretedActions.Add(inkDivideAction);
+                }
+            }
+
+            #endregion // Ink Divide Interpretation
+
+            return interpretedActions;
         }
 
         #endregion // Static Methods
