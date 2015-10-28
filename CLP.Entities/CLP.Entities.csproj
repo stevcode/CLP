@@ -218,6 +218,7 @@
     <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\ProblemTypeTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\TagAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Stamps\StampGroupTag.cs" />
