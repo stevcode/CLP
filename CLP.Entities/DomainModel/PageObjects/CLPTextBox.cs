@@ -4,6 +4,13 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum TextContexts
+    {
+        None,
+        WordProblem,
+        NonWordProblem
+    }
+
     [Serializable]
     public class CLPTextBox : APageObjectBase
     {
@@ -43,6 +50,16 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof (string), string.Empty);
+
+        /// <summary>Context associated with <see cref="CLPTextBox" />.</summary>
+        public TextContexts TextContext
+        {
+            get { return GetValue<TextContexts>(TextContextProperty); }
+            set { SetValue(TextContextProperty, value); }
+        }
+
+        public static readonly PropertyData TextContextProperty = RegisterProperty("TextContext", typeof (TextContexts), TextContexts.None);
+        
 
         #endregion //Properties
 

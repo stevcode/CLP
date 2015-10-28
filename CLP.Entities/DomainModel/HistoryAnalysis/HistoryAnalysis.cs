@@ -12,7 +12,8 @@ namespace CLP.Entities
     {
         public static void BoxConversions(CLPPage page)
         {
-            IPageObject pageObjectToAdd;
+            CLPTextBox textBox = null;
+            IPageObject pageObjectToAdd = null;
             var interpretationRegion = new InterpretationRegion(page)
                                        {
                                            CreatorID = "AUTHOR0000000000000000",
@@ -23,7 +24,31 @@ namespace CLP.Entities
 
             switch (page.ID)
             {
-                case "_ctKrAO-MEK-g9PtqpFzVQ":
+                case "D2Op0HfG10aoQtL2W0BX6Q":  // Page 1
+                    break;
+                case "-zOauyypbEmgpo3f_dalNA":  // Page 2
+                    textBox = page.PageObjects.First(p => p.ID == "lpIezx13R0-fHaXnVqgT6A") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
+                    break;
+                case "UvLXlXlpCEuLF1309g5zPA":  // Page 3
+                    textBox = page.PageObjects.First(p => p.ID == "LZlupX4OskOkxC-VQv1pKg") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
+                    break;
+                case "526u6U8sQUqjFkCXTJZYiA":  // Page 4
+                    textBox = page.PageObjects.First(p => p.ID == "DvQf2cvBkU-WFEFmLBEuoA") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
+                    break;
+                case "y-wako1KCk6Aurwrn5QbVg":  // Page 5
+                    textBox = page.PageObjects.First(p => p.ID == "JsuHVsdb6k2zYQGS8HdeJA") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
+                    break;
+                case "_024ibxTi0qlw4gzCD7QXA":  // Page 6
+                    textBox = page.PageObjects.First(p => p.ID == "3A0ABSEEdUa487Mkvp9CcQ") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
+                    break;
+                case "_ctKrAO-MEK-g9PtqpFzVQ":  // Page 7
+                    textBox = page.PageObjects.First(p => p.ID == "bC1g8LJ6okmsezeVSRub4A") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
                     interpretationRegion.ID = "_ctKrAO-MEK-g9PtqpFmoo";
                     interpretationRegion.XPosition = 235.3954;
                     interpretationRegion.YPosition = 220.9490;
@@ -31,7 +56,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 80;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "gdruAzwX6kWe2k-etZ6gcQ":
+                case "gdruAzwX6kWe2k-etZ6gcQ":  // Page 8
+                    textBox = page.PageObjects.First(p => p.ID == "_0qgnvZ1EkyYgEU49l5dNw") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
                     interpretationRegion.ID = "gdruAzwX6kWe2k-etZ6moo";
                     interpretationRegion.XPosition = 253.1625;
                     interpretationRegion.YPosition = 221.9357;
@@ -39,7 +66,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 80;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "yzvpdIROIEOFrndOASGjvA":
+                case "yzvpdIROIEOFrndOASGjvA":  // Page 9
+                    textBox = page.PageObjects.First(p => p.ID == "DisblHoHakqYkPzMu9_bxQ") as CLPTextBox;
+                    textBox.TextContext = TextContexts.NonWordProblem;
                     interpretationRegion.ID = "yzvpdIROIEOFrndOASGmoo";
                     interpretationRegion.XPosition = 106.74036;
                     interpretationRegion.YPosition = 223.4880;
@@ -47,7 +76,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 80;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "gsQu4sdxVEKGZsgCD_zfWQ":
+                case "gsQu4sdxVEKGZsgCD_zfWQ":  // Page 10
+                    textBox = page.PageObjects.First(p => p.ID == "GBXW7G0YmEKXQ4Q_MMIn5g") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
                     interpretationRegion.ID = "gsQu4sdxVEKGZsgCD_zmoo";
                     interpretationRegion.XPosition = 98.90192;
                     interpretationRegion.YPosition = 205.11349;
@@ -55,7 +86,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 171.0040;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "MtZusuAFZEOqTr8KRlFlMA":
+                case "MtZusuAFZEOqTr8KRlFlMA":  // Page 11
+                    textBox = page.PageObjects.First(p => p.ID == "oiQrn_vQbUOsbzWYtNIejA") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
                     interpretationRegion.ID = "MtZusuAFZEOqTr8KRlFmoo";
                     interpretationRegion.XPosition = 103.60754;
                     interpretationRegion.YPosition = 243.3032;
@@ -63,7 +96,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 146.4150;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "QHJ7pFHY3ECr8u6bSFRCkA":
+                case "QHJ7pFHY3ECr8u6bSFRCkA":  // Page 12
+                    textBox = page.PageObjects.First(p => p.ID == "JleS1FBQiEGyoe4VseiPMA") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
                     interpretationRegion.ID = "QHJ7pFHY3ECr8u6bSFRmoo";
                     interpretationRegion.XPosition = 234.6666;
                     interpretationRegion.YPosition = 668.9809;
@@ -71,7 +106,9 @@ namespace CLP.Entities
                     interpretationRegion.Width = 108.3371;
                     pageObjectToAdd = interpretationRegion;
                     break;
-                case "cgXYlAbAM0GGy8iBI4tyGw":
+                case "cgXYlAbAM0GGy8iBI4tyGw":  // Page 13
+                    textBox = page.PageObjects.First(p => p.ID == "SNY1QJrMUUqUeK3hCIDDRA") as CLPTextBox;
+                    textBox.TextContext = TextContexts.WordProblem;
                     interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
                     interpretationRegion.XPosition = 240.3143;
                     interpretationRegion.YPosition = 661.8379;
@@ -83,7 +120,7 @@ namespace CLP.Entities
                     return;
             }
 
-            if (page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
+            if (pageObjectToAdd == null || page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
             {
                 return;
             }

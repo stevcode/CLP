@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -71,12 +72,12 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(fontFamilyLabel);
 
             _fontFamilyComboxBox = new ComboBox
-            {
-                ItemsSource = AvailableFontFamilies,
-                SelectedItem = CurrentFontFamily,
-                Width = 200,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
+                                   {
+                                       ItemsSource = AvailableFontFamilies,
+                                       SelectedItem = CurrentFontFamily,
+                                       Width = 200,
+                                       VerticalContentAlignment = VerticalAlignment.Center
+                                   };
             _fontFamilyComboxBox.SelectionChanged += _fontFamilyComboxBox_SelectionChanged;
             _contextButtons.Add(_fontFamilyComboxBox);
 
@@ -93,11 +94,11 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(fontSizeLabel);
 
             _fontSizeComboxBox = new ComboBox
-            {
-                ItemsSource = AvailableFontSizes,
-                SelectedItem = CurrentFontSize,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
+                                 {
+                                     ItemsSource = AvailableFontSizes,
+                                     SelectedItem = CurrentFontSize,
+                                     VerticalContentAlignment = VerticalAlignment.Center
+                                 };
             _fontSizeComboxBox.SelectionChanged += _fontSizeComboxBox_SelectionChanged;
             _contextButtons.Add(_fontSizeComboxBox);
 
@@ -113,11 +114,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                  };
             _contextButtons.Add(fontColorLabel);
 
-            var comboBoxItemDataTemplate = new DataTemplate(typeof(ComboBoxItem));
+            var comboBoxItemDataTemplate = new DataTemplate(typeof (ComboBoxItem));
 
             var brushBinding = new Binding();
 
-            var rectFactory = new FrameworkElementFactory(typeof(Rectangle));
+            var rectFactory = new FrameworkElementFactory(typeof (Rectangle));
             rectFactory.SetValue(FrameworkElement.HeightProperty, 40.0);
             rectFactory.SetValue(FrameworkElement.WidthProperty, 100.0);
             rectFactory.SetBinding(Shape.FillProperty, brushBinding);
@@ -134,11 +135,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _fontColorComboxBox.SelectionChanged += _fontColorComboxBox_SelectionChanged;
             _contextButtons.Add(_fontColorComboxBox);
+
+            // Context
+            var textContextLabel = new TextBlock
+                               {
+                                   Text = "Context:",
+                                   TextAlignment = TextAlignment.Left,
+                                   VerticalAlignment = VerticalAlignment.Center,
+                                   FontFamily = new FontFamily("Segoe UI"),
+                                   FontSize = 12.0,
+                                   FontWeight = FontWeights.Bold
+                               };
+            _contextButtons.Add(textContextLabel);
+
+            _textContextComboxBox = new ComboBox
+                                    {
+                                        ItemsSource = Enum.GetValues(typeof(TextContexts)),
+                                        SelectedItem = TextContext,
+                                        VerticalContentAlignment = VerticalAlignment.Center
+                                    };
+            _textContextComboxBox.SelectionChanged += _textContextComboxBox_SelectionChanged;
+            _contextButtons.Add(_textContextComboxBox);
         }
 
         private bool _isUpdatingSelection = false;
 
-        void _fontFamilyComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void _fontFamilyComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
             if (comboBox == null || _isUpdatingSelection)
@@ -156,7 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
             TextBoxView.SetFont(0, CurrentFontFamily, null, null, null, null);
         }
 
-        void _fontSizeComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void _fontSizeComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
             if (comboBox == null || _isUpdatingSelection)
@@ -171,7 +193,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        void _fontColorComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void _fontColorComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
             if (comboBox == null || _isUpdatingSelection)
@@ -187,6 +209,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CurrentFontColor = newFontColor;
             TextBoxView.SetFont(0, null, CurrentFontColor, null, null, null);
+        }
+
+        private void _textContextComboxBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            if (comboBox == null || _isUpdatingSelection)
+            {
+                return;
+            }
+
+            if (comboBox.SelectedItem is TextContexts)
+            {
+                TextContext = (TextContexts)comboBox.SelectedItem;
+            }
         }
 
         private void toggleBoldButton_Checked(object sender, RoutedEventArgs e)
@@ -241,12 +277,12 @@ namespace Classroom_Learning_Partner.ViewModels
         private ComboBox _fontFamilyComboxBox;
         private ComboBox _fontSizeComboxBox;
         private ComboBox _fontColorComboxBox;
+        private ComboBox _textContextComboxBox;
 
         #endregion //Buttons
 
         #region Model
 
-        /// <summary>Gets or sets the property value.</summary>
         [ViewModelToModel("PageObject")]
         public string Text
         {
@@ -255,6 +291,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof (string));
+
+        [ViewModelToModel("PageObject")]
+        public TextContexts TextContext
+        {
+            get { return GetValue<TextContexts>(TextContextProperty); }
+            set { SetValue(TextContextProperty, value); }
+        }
+
+        public static readonly PropertyData TextContextProperty = RegisterProperty("TextContext", typeof(TextContexts));
 
         #endregion //Model
 
@@ -294,9 +339,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentFontFamilyProperty, value); }
         }
 
-        public static readonly PropertyData CurrentFontFamilyProperty = RegisterProperty("CurrentFontFamily",
-                                                                                         typeof (FontFamily),
-                                                                                         () => new FontFamily("Arial"));
+        public static readonly PropertyData CurrentFontFamilyProperty = RegisterProperty("CurrentFontFamily", typeof (FontFamily), () => new FontFamily("Arial"));
 
         /// <summary>Selected text's font size.</summary>
         public double CurrentFontSize

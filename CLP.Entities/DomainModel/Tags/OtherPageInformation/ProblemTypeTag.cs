@@ -52,7 +52,7 @@ namespace CLP.Entities
             set { SetValue(ProblemTypesProperty, value); }
         }
 
-        public static readonly PropertyData ProblemTypesProperty = RegisterProperty("ProblemTypes", typeof (List<ProblemTypes>));
+        public static readonly PropertyData ProblemTypesProperty = RegisterProperty("ProblemTypes", typeof (List<ProblemTypes>), () => new List<ProblemTypes>());
 
         #region ATagBase Overrides
 
