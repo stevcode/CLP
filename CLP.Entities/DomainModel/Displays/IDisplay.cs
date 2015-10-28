@@ -10,8 +10,10 @@ namespace CLP.Entities
         DateTime CreationDate { get; set; }
         int DisplayNumber { get; set; }
         string NotebookID { get; set; }
+        Notebook ParentNotebook { get; set; }
         List<string> CompositePageIDs { get; set; } 
-        ObservableCollection<CLPPage> Pages { get; set; } 
+        ObservableCollection<CLPPage> Pages { get; set; }
+        bool IsHidden { get; set; }
 
         void AddPageToDisplay(CLPPage page);
         void RemovePageFromDisplay(CLPPage page);

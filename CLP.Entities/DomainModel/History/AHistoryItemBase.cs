@@ -43,6 +43,17 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
+        /// Location of the <see cref="IHistoryItem" /> in the entirety of history, including UndoItems and RedoItems.
+        /// </summary>
+        public int HistoryIndex
+        {
+            get { return GetValue<int>(HistoryIndexProperty); }
+            set { SetValue(HistoryIndexProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryIndexProperty = RegisterProperty("HistoryIndex", typeof (int), -1);
+
+        /// <summary>
         /// Unique Identifier for the <see cref="AHistoryItemBase" />.
         /// </summary>
         /// <remarks>
@@ -171,9 +182,31 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        /// <summary>Cached value of FormattedValue with correct page state.</summary>
+        public string CachedFormattedValue
+        {
+            get { return GetValue<string>(CachedFormattedValueProperty); }
+            set { SetValue(CachedFormattedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
+
+        public abstract string FormattedValue { get; }
+
         #endregion //Properties
 
         #region Methods
+
+        public void ConversionUndo()
+        {
+            if (ParentPage == null)
+            {
+                return;
+            }
+            ParentPage.IsTagAddPrevented = true;
+            ConversionUndoAction();
+            ParentPage.IsTagAddPrevented = false;
+        }
 
         public void Undo(bool isAnimationUndo = false)
         {
@@ -181,8 +214,12 @@ namespace CLP.Entities
             {
                 return;
             }
+            ParentPage.IsTagAddPrevented = true;
             UndoAction(isAnimationUndo);
+            ParentPage.IsTagAddPrevented = false;
         }
+
+        protected abstract void ConversionUndoAction();
 
         protected abstract void UndoAction(bool isAnimationUndo);
 
@@ -192,7 +229,10 @@ namespace CLP.Entities
             {
                 return;
             }
+            ParentPage.IsTagAddPrevented = true;
             RedoAction(isAnimationRedo);
+            CachedFormattedValue = FormattedValue;
+            ParentPage.IsTagAddPrevented = false;
         }
 
         protected abstract void RedoAction(bool isAnimationRedo);
@@ -201,9 +241,9 @@ namespace CLP.Entities
 
         public abstract void UnpackHistoryItem();
 
-        public virtual bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedPageObject(string id) { return false; }
 
-        public virtual bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedInkStroke(string id) { return false; }
 
         #endregion //Methods
     }

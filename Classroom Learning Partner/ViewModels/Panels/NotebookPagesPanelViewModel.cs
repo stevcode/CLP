@@ -133,6 +133,7 @@ namespace Classroom_Learning_Partner.ViewModels
             StagingPanel.IsVisible = true;
             StagingPanel.SetSubmissionsForPage(page);
             StagingPanel.LastFilteredPage = page;
+            StagingPanel.StudentsWithNoSubmissions = StagingPanel.GetStudentsWithNoSubmissions();
         }
 
         /// <summary>
@@ -214,6 +215,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static CLPPage GetCurrentPage()
         {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {

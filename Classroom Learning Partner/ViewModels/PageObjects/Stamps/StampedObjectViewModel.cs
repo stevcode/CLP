@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -18,7 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="StampedObjectViewModel" /> class.</summary>
-        public StampedObjectViewModel(StampedObject stampedObject)
+        public StampedObjectViewModel(StampedObject stampedObject, IDataService dataService)
         {
             PageObject = stampedObject;
             RaisePropertyChanged("IsGroupStampedObject");
@@ -29,7 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
                 foreach (var imageFilePath in from imageFilePath in imageFilePaths
                                               let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                               where imageHashID == stampedObject.ImageHashID
@@ -55,13 +57,38 @@ namespace Classroom_Learning_Partner.ViewModels
                 StrokePaths.Add(strokePath);
             }
 
-            stampedObject.AcceptedPageObjects.Clear();
-            foreach (var acceptedPageObjectID in stampedObject.AcceptedPageObjectIDs)
+            ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
+
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+            if (IsGroupStampedObject)
             {
-                stampedObject.AcceptedPageObjects.Add(stampedObject.ParentPage.GetPageObjectByID(acceptedPageObjectID));
+                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject, true));
+
+                IsBoundaryVisible = false;
+                IsPartsLabelVisible = false;
+            }
+            else
+            {
+                var toggleChildPartsButton = new ToggleRibbonButton("Show Group Size", "Hide Group Size", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
+                {
+                    IsChecked = IsPartsLabelVisible
+                };
+                toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
+                toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
+                _contextButtons.Add(toggleChildPartsButton);
+            }
+        }
+
+        void toggleChildPartsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleRibbonButton;
+            if (button == null ||
+                button.IsChecked == null)
+            {
+                return;
             }
 
-            ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
+            IsPartsLabelVisible = (bool)button.IsChecked;
         }
 
         /// <summary>Gets the title of the view model.</summary>
@@ -94,6 +121,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof (int));
+
+        /// <summary>
+        /// Toggles the visibility of a boundary around the stampedObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsBoundaryVisible
+        {
+            get { return GetValue<bool>(IsBoundaryVisibleProperty); }
+            set { SetValue(IsBoundaryVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof(bool));
+
+        /// <summary>
+        /// Toggles visibility of Parts.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsPartsLabelVisible
+        {
+            get { return GetValue<bool>(IsPartsLabelVisibleProperty); }
+            set { SetValue(IsPartsLabelVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsPartsLabelVisibleProperty = RegisterProperty("IsPartsLabelVisible", typeof(bool));
 
         #endregion //Model
 
@@ -151,9 +202,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new KeypadWindowView("How many copies?", 21)
             {
                 Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                Top = 100,
-                Left = 100
+                WindowStartupLocation = WindowStartupLocation.Manual
             };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
@@ -182,17 +231,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 ungroupedStampedObjects =
                     stampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) == 0).ToList();
 
-                
-
-                if (ungroupedStampedObjects.Count < numberOfAcceptedStampedObjects * numberOfCopies)
+                if (!ungroupedStampedObjects.Any())
                 {
-                    MessageBox.Show("Not enough objects on page.");
+                    isDuplicateAndTake = false;
+                }
+                else if (ungroupedStampedObjects.Count < numberOfAcceptedStampedObjects * numberOfCopies)
+                {
+                    MessageBox.Show("Not enough objects on the page.");
                     return;
                 }
             }
 
+            //TODO: Make this work with a universal ApplyDistinctPosition Method.
             var initialXPosition = XPosition + Width + 10.0;
             var initialYPosition = YPosition;
+            if (initialXPosition + Width > PageObject.ParentPage.Width)
+            {
+                initialXPosition = 25;
+                initialYPosition += Height + 5;
+            }
+            if (initialYPosition + Height > PageObject.ParentPage.Height)
+            {
+                initialYPosition = PageObject.ParentPage.Height - Height;
+            }
 
             var stampCopiesToAdd = new List<IPageObject>();
             var ungroupedStampedObjectsIndex = 0;
@@ -227,6 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         var referenceAcceptedPageObject = stampedObject.AcceptedPageObjects[n];
                         var ungroupedStampObject = ungroupedStampedObjects[ungroupedStampedObjectsIndex];
+                        //BUG: This position change needs to be recorded in the history.
                         ungroupedStampObject.XPosition = newStampedObject.XPosition + (referenceAcceptedPageObject.XPosition - stampedObject.XPosition);
                         ungroupedStampObject.YPosition = newStampedObject.YPosition + (referenceAcceptedPageObject.YPosition - stampedObject.YPosition);
                         newStampedObject.AcceptedPageObjectIDs.Add(ungroupedStampObject.ID);
@@ -248,6 +310,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.AddPageObjectsToPage(stampedObject.ParentPage, stampCopiesToAdd);
+            stampedObject.ParentPage.UpdateAllReporters();
         }
 
         #endregion //Commands

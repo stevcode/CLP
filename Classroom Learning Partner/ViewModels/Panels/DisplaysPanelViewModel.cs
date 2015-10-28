@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
@@ -46,6 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
+            AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
             AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
             RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
@@ -175,7 +176,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddGridDisplayCommandExecute()
         {
-            Notebook.AddDisplayToNotebook(new GridDisplay());
+            Notebook.AddDisplay(new GridDisplay(Notebook));
+            CurrentDisplay = Displays.LastOrDefault();
+        }
+
+        /// <summary>
+        /// Adds a ColumnDisplay to the notebook.
+        /// </summary>
+        public Command AddColumnDisplayCommand { get; private set; }
+
+        private void OnAddColumnDisplayCommandExecute()
+        {
+            Notebook.AddDisplay(new ColumnDisplay(Notebook));
+            Notebook.CurrentPage = null;
             CurrentDisplay = Displays.LastOrDefault();
         }
 
@@ -187,7 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            Notebook.AddDisplayToNotebook(newGridDisplay);
+            Notebook.AddDisplay(newGridDisplay);
             CurrentDisplay = newGridDisplay;
             PageHistory.UISleep(1300);
             newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
@@ -244,6 +257,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return;
                 }
+
+                gridDisplay.IsHidden = true;
             }
 
             // TODO: Entities

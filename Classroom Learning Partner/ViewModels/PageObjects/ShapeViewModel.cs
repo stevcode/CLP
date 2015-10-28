@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -18,9 +19,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public ShapeViewModel(Shape shape)
         {
             PageObject = shape;
+            PageObject.IsManipulatableByNonCreator = true;
 
             ResizeShapeCommand = new Command<DragDeltaEventArgs>(OnResizeShapeCommandExecute);
             DuplicateShapeCommand = new Command(OnDuplicateShapeCommandExecute);
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateShapeCommand, null, true));
         }
 
         /// <summary>
@@ -78,9 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new KeypadWindowView("How many copies?", 21)
                          {
                              Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual,
-                             Top = 100,
-                             Left = 100
+                             WindowStartupLocation = WindowStartupLocation.Manual
                          };
             keyPad.ShowDialog();
             if(keyPad.DialogResult != true ||
@@ -132,5 +140,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, shapesToAdd);
             }
         }
+
+        #region Static Methods
+
+        public static void AddShapeToPage(CLPPage page, ShapeType shapeType)
+        {
+            var shape = new Shape(page, shapeType);
+            ApplyDistinctPosition(shape);
+            ACLPPageBaseViewModel.AddPageObjectToPage(shape);
+        } 
+
+        #endregion //Static Methods
     }
 }

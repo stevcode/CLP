@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM.Views;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -138,7 +139,8 @@ namespace Classroom_Learning_Partner
                                                                                                                      {
                                                                                                                          ID = displayID,
                                                                                                                          DisplayNumber = displayNumber,
-                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                                                         ParentNotebook = notebookWorkspaceViewModel.Notebook
                                                                                                                      };
                                                                                                 notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
                                                                                                 notebookWorkspaceViewModel.CurrentDisplay = null;
@@ -160,8 +162,14 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
             CLPPage page = null;
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            foreach (var notebook in notebookService.OpenNotebooks)
             {
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
@@ -183,7 +191,8 @@ namespace Classroom_Learning_Partner
                                                                                                                 {
                                                                                                                     ID = displayID,
                                                                                                                     DisplayNumber = displayNumber,
-                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                                                    ParentNotebook = notebookWorkspaceViewModel.Notebook
                                                                                                                 };
                                                                                         newGridDisplay.AddPageToDisplay(page);
                                                                                         notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
@@ -204,8 +213,14 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
             CLPPage page = null;
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            foreach (var notebook in notebookService.OpenNotebooks)
             {
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
@@ -251,8 +266,14 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
             CLPPage page = null;
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            foreach (var notebook in notebookService.OpenNotebooks)
             {
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
@@ -291,42 +312,59 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            if(submission == null)
+            if (submission == null ||
+                submission.Owner == null)
             {
                 Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
-            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+
+            var currentNotebook =
+                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+
+            if (currentNotebook == null)
+            {
+                return;
+            }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        try
-                                                                                        {
-                                                                                            if(currentNotebook != null)
-                                                                                            {
-                                                                                                var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID && x.DifferentiationLevel == submission.DifferentiationLevel);
-                                                                                                if(page == null)
-                                                                                                {
-                                                                                                    return null;
-                                                                                                }
-                                                                                                page.Submissions.Add(submission);
-                                                                                            }
-                                                                                            //TODO: QuickSave
-                                                                                        }
-                                                                                        catch(Exception e)
-                                                                                        {
-                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                                                                                        }
+                                                       {
+                                                           try
+                                                           {
+                                                               var page =
+                                                                       currentNotebook.Pages.FirstOrDefault(
+                                                                                                            x =>
+                                                                                                            x.ID == submission.ID &&
+                                                                                                            x.DifferentiationLevel ==
+                                                                                                            submission.DifferentiationLevel);
+                                                               if (page == null)
+                                                               {
+                                                                   return null;
+                                                               }
+                                                               page.Submissions.Add(submission);
+                                                           }
+                                                           catch (Exception e)
+                                                           {
+                                                               Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+                                                                                          e.Message);
+                                                           }
 
-                                                                                        return null;
-                                                                                    },
+                                                           return null;
+                                                       },
                                                        null);
+
         }
 
         public void ScrollPage(double percentOffset)
@@ -379,27 +417,27 @@ namespace Classroom_Learning_Partner
 
         public void RewindCurrentPage()
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.Notebook.CurrentPage).First(x => (x is CLPAnimationPageViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as CLPAnimationPageViewModel;
-            if(pageViewModel == null)
-            {
-                return;
-            }
+            //var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.Notebook.CurrentPage).First(x => (x is CLPAnimationPageViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as CLPAnimationPageViewModel;
+            //if(pageViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
 
-                                                                                        CLPAnimationPageViewModel.Rewind(pageViewModel);
+            //                                                                            CLPAnimationPageViewModel.Rewind(pageViewModel);
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
         }
 
         #endregion //Animation Commands
@@ -417,21 +455,27 @@ namespace Classroom_Learning_Partner
             }
 
             var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
-            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassSubject;
+            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassInformation;
             if(classSubject == null)
             {
                 Logger.Instance.WriteToLog("Failed to load classperiod.");
                 return;
             }
 
-            classPeriod.ClassSubject = classSubject;
+            classPeriod.ClassInformation = classSubject;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
-                                                                                        App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
+                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        if (notebookService == null)
+                                                                                        {
+                                                                                            return null;
+                                                                                        }
+
+                                                                                        notebookService.CurrentClassPeriod = classPeriod;
+                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassInformation.StudentList;
+                                                                                        App.MainWindowViewModel.CurrentUser = notebookService.CurrentClassPeriod.ClassInformation.Teacher;
 
                                                                                         return null;
                                                                                     },
@@ -440,73 +484,81 @@ namespace Classroom_Learning_Partner
 
         public void OpenPartialNotebook(string zippedNotebook)
         {
-            var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
-            var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
-            if(notebook == null)
-            {
-                Logger.Instance.WriteToLog("Failed to load notebook.");
-                return;
-            }
+            //var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+            //var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            //if(notebook == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to load notebook.");
+            //    return;
+            //}
 
-            App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
+            //App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassInformation.Teacher;
 
-            notebook.CurrentPage = notebook.Pages.First();
-            foreach(var page in notebook.Pages)
-            {
-                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
-            }
+            //notebook.CurrentPage = notebook.Pages.First();
+            //foreach(var page in notebook.Pages)
+            //{
+            //    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+            //    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+            //}
 
-            foreach(var page in notebook.Pages)
-            {
-                foreach(var notebookName in MainWindowViewModel.AvailableLocalNotebookNames)
-                {
-                    var notebookInfo = notebookName.Split(';');
-                    if(notebookInfo.Length != 4 ||
-                       notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
-                    {
-                        continue;
-                    }
+            //foreach(var page in notebook.Pages)
+            //{
+            //    foreach(var notebookName in MainWindowViewModel.AvailableLocalNotebookNames)
+            //    {
+            //        var notebookInfo = notebookName.Split(';');
+            //        if(notebookInfo.Length != 4 ||
+            //           notebookInfo[3] == Person.Author.ID ||
+            //           notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
+            //        {
+            //            continue;
+            //        }
 
-                    var folderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, notebookName);
-                    if(!Directory.Exists(folderPath))
-                    {
-                        continue;
-                    }
+            //        var folderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, notebookName);
+            //        if(!Directory.Exists(folderPath))
+            //        {
+            //            continue;
+            //        }
 
-                    var submissionsPath = Path.Combine(folderPath, "Pages");
-                    if(!Directory.Exists(submissionsPath))
-                    {
-                        continue;
-                    }
+            //        var submissionsPath = Path.Combine(folderPath, "Pages");
+            //        if(!Directory.Exists(submissionsPath))
+            //        {
+            //            continue;
+            //        }
 
-                    var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
+            //        var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
 
-                    foreach(var submissionPath in submissionPaths)
-                    {
-                        var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
-                        var submissionInfo = submissionFileName.Split(';');
-                        if(submissionInfo.Length == 5 &&
-                           submissionInfo[2] == page.ID &&
-                           submissionInfo[4] != "0")
-                        {
-                            var submission = ModelBase.Load<CLPPage>(submissionPath, SerializationMode.Xml);
-                            page.Submissions.Add(submission);
-                        }
-                    }
-                }
-            }
+            //        foreach(var submissionPath in submissionPaths)
+            //        {
+            //            var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
+            //            var submissionInfo = submissionFileName.Split(';');
+            //            if(submissionInfo.Length == 5 &&
+            //               submissionInfo[2] == page.ID &&
+            //               submissionInfo[4] != "0")
+            //            {
+            //                var submission = ModelBase.Load<CLPPage>(submissionPath, SerializationMode.Xml);
+            //                page.Submissions.Add(submission);
+            //            }
+            //        }
+            //    }
+            //}
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                                                                                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
+            //                                                                            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            //                                                                            if (notebookService == null)
+            //                                                                            {
+            //                                                                                return null;
+            //                                                                            }
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            notebookService.OpenNotebooks.Add(notebook);
+            //                                                                            notebookService.CurrentNotebook = notebook;
+            //                                                                            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            //                                                                            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
         }
 
         public void AddHistoryItem(string compositePageID, string zippedHistoryItem)
@@ -528,7 +580,13 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        if (notebookService == null)
+                                                                                        {
+                                                                                            return null;
+                                                                                        }
+
+                                                                                        foreach (var notebook in notebookService.OpenNotebooks)
                                                                                         {
                                                                                             var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
 

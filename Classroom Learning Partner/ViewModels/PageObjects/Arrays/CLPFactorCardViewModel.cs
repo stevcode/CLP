@@ -73,5 +73,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion
 
+        #region Static Methods
+
+        #endregion //Static Methods
     }
 }

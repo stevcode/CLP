@@ -11,14 +11,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="CLPImage" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPImage" /> from scratch.</summary>
         public CLPImage() { }
 
-        /// <summary>
-        /// Initializes <see cref="CLPImage" /> from 
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPImage" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPImage" /> belongs to.</param>
         /// <param name="imageHashID">A unique hash of the image that corresponds to the fileName in the ImagePool.</param>
         /// <param name="height">Original height of the image.</param>
@@ -32,15 +28,13 @@ namespace CLP.Entities
             Height = 300.0;
             Width = 300.0;
 
-            //var aspectRatio = width / height;
+            //var aspectRatio = width / height;   //TODO
             //EnforceAspectRatio(aspectRatio);
 
             //ApplyDistinctPosition(this);
         }
 
-        /// <summary>
-        /// Initializes <see cref="CLPImage" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPImage" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public CLPImage(SerializationInfo info, StreamingContext context)
@@ -50,30 +44,38 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// The unique Hash of the image this <see cref="CLPImage" /> represents.
-        /// </summary>
+        /// <summary>The unique Hash of the image this <see cref="CLPImage" /> represents.</summary>
         public string ImageHashID
         {
             get { return GetValue<string>(ImageHashIDProperty); }
             set { SetValue(ImageHashIDProperty, value); }
         }
 
-        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
+        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof (string), string.Empty);
 
         #endregion //Properties
 
-        #region Methods
+        #region APageObjectBase Overrides
+
+        public override string FormattedName
+        {
+            get { return "Image"; }
+        }
+
+        public override int ZIndex
+        {
+            get { return 10; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
 
         public override IPageObject Duplicate()
         {
             var newCLPImage = Clone() as CLPImage;
-            if(newCLPImage == null)
+            if (newCLPImage == null)
             {
                 return null;
             }
@@ -86,9 +88,13 @@ namespace CLP.Entities
             return newCLPImage;
         }
 
+        #endregion //APageObjectBase Overrides
+
+        #region Static Methods
+
         public static BitmapImage GetImageFromPath(string filePath)
         {
-            if(!File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
                 return null;
             }
@@ -102,6 +108,6 @@ namespace CLP.Entities
             return bitmapImage;
         }
 
-        #endregion //Methods
+        #endregion //Static Methods
     }
 }

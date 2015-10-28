@@ -80,6 +80,26 @@
                 <views:LassoRegionView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="TemporaryBoundaryTemplate">
+                <views:TemporaryBoundaryView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="MultipleChoiceBoxTemplate">
+                <views:MultipleChoiceBoxView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="MarkTemplate">
+                <views:MarkView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="BinTemplate">
+                <views:BinView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="BinReporterTemplate">
+                <views:BinReporterView DataContext="{Binding}" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -171,6 +191,41 @@
                     <!-- LassoRegion trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="LassoRegion">
                         <Setter Property="Template" Value="{StaticResource LassoRegionTemplate}" />
+                    </DataTrigger>
+
+                    <!-- TemporaryBoundary trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="TemporaryBoundary">
+                        <Setter Property="Template"
+                                Value="{StaticResource TemporaryBoundaryTemplate}" />
+                    </DataTrigger>
+
+                    <!-- MultipleChoiceBox trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="MultipleChoiceBox">
+                        <Setter Property="Template"
+                                Value="{StaticResource MultipleChoiceBoxTemplate}" />
+                    </DataTrigger>
+
+                    <!-- Mark trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="Mark">
+                        <Setter Property="Template"
+                                Value="{StaticResource MarkTemplate}" />
+                    </DataTrigger>
+
+                    <!-- Bin trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="Bin">
+                        <Setter Property="Template"
+                                Value="{StaticResource BinTemplate}" />
+                    </DataTrigger>
+
+                    <!-- BinReporter trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="BinReporter">
+                        <Setter Property="Template"
+                                Value="{StaticResource BinReporterTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>

@@ -1,9 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.IO;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
 
@@ -13,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(MajorRibbonViewModel))]
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
@@ -25,8 +31,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookWorkspaceViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            ContextRibbon = new ContextRibbonViewModel();
+            AnimationControlRibbon = new AnimationControlRibbonViewModel(notebook);
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
+
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
+            GoToPageCommand = new Command(OnGoToPageCommandExecute);
 
             InitializePanels(notebook);
 
@@ -39,12 +51,12 @@ namespace Classroom_Learning_Partner.ViewModels
             SingleDisplay = new SingleDisplayViewModel(notebook);
 
             StagingPanel = new StagingPanelViewModel(notebook)
-                           {
-                               IsVisible = false
-                           };
+            {
+                IsVisible = false
+            };
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
             ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
-            if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
+            if (App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
             {
                 LeftPanel = ProgressPanel;
             }
@@ -114,6 +126,28 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
+
+        /// <summary>
+        /// The Context Ribbon.
+        /// </summary>
+        public ContextRibbonViewModel ContextRibbon
+        {
+            get { return GetValue<ContextRibbonViewModel>(ContextRibbonProperty); }
+            set { SetValue(ContextRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof(ContextRibbonViewModel));
+
+        /// <summary>
+        /// The Animation Control Ribbon.
+        /// </summary>
+        public AnimationControlRibbonViewModel AnimationControlRibbon
+        {
+            get { return GetValue<AnimationControlRibbonViewModel>(AnimationControlRibbonProperty); }
+            set { SetValue(AnimationControlRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData AnimationControlRibbonProperty = RegisterProperty("AnimationControlRibbon", typeof(AnimationControlRibbonViewModel));
 
         #region Displays
 
@@ -241,28 +275,141 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StagingPanelProperty, value); }
         }
 
-        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
-         
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel));
+
         #endregion //Panels
 
         #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Navigates to previous page in the notebook.
+        /// </summary>
+        public Command PreviousPageCommand { get; private set; }
+
+        private void OnPreviousPageCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return;
+            }
+
+            var index = Notebook.Pages.IndexOf(currentPage);
+
+            if (index > 0)
+            {
+                var page = panel.Notebook.Pages[index - 1];
+                panel.CurrentPage = page;
+            }
+        }
+
+        private bool OnPreviousPageCanExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return false;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index > 0;
+        }
+
+        /// <summary>
+        /// Navigates to the next page in the notebook.
+        /// </summary>
+        public Command NextPageCommand { get; private set; }
+
+        private void OnNextPageCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            if (index < panel.Notebook.Pages.Count - 1)
+            {
+                var page = panel.Notebook.Pages[index + 1];
+                panel.CurrentPage = page;
+            }
+        }
+
+        private bool OnNextPageCanExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return false;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index < panel.Notebook.Pages.Count - 1;
+        }
+
+        /// <summary>
+        /// Launched keypad to allow a jump to a specific page.
+        /// </summary>
+        public Command GoToPageCommand { get; private set; }
+
+        private void OnGoToPageCommandExecute()
+        {
+            if (Notebook == null)
+            {
+                MessageBox.Show("No notebook loaded.");
+                return;
+            }
+
+            var keyPad = new KeypadWindowView("Go To Page", 999)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var newPageIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var newPage = Notebook.Pages.FirstOrDefault(x => x.PageNumber == newPageIndex);
+
+            if (newPage == null)
+            {
+                MessageBox.Show("No page with that page number loaded.");
+                return;
+            }
+
+            Notebook.CurrentPage = newPage;
+        }
+
+        #endregion //Commands
 
         #region Methods
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(viewModel == null)
+            if (viewModel == null)
             {
                 return;
             }
 
-            if(viewModel is RibbonViewModel)
+            if (viewModel is MajorRibbonViewModel)
             {
-                var ribbon = viewModel as RibbonViewModel;
+                var ribbon = viewModel as MajorRibbonViewModel;
 
-                if(propertyName == "CurrentLeftPanel")
+                if (propertyName == "CurrentLeftPanel")
                 {
-                    switch(ribbon.CurrentLeftPanel)
+                    switch (ribbon.CurrentLeftPanel)
                     {
                         case Panels.NotebookPages:
                             LeftPanel = NotebookPagesPanel;
@@ -278,9 +425,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                if(propertyName == "CurrentRightPanel")
+                if (propertyName == "CurrentRightPanel")
                 {
-                    switch(ribbon.CurrentRightPanel)
+                    switch (ribbon.CurrentRightPanel)
                     {
                         case Panels.Displays:
                             RightPanel = DisplaysPanel;
@@ -297,29 +444,52 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if(viewModel is MainWindowViewModel)
+            if (viewModel is MainWindowViewModel)
             {
                 var mainWindow = viewModel as MainWindowViewModel;
-                if(propertyName == "IsAuthoring")
+                if (propertyName == "IsAuthoring")
                 {
                     CurrentDisplay = null;
-                    if(mainWindow.IsAuthoring)
+                    if (mainWindow.IsAuthoring)
                     {
                         WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                     }
                     else
                     {
                         WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                     }
                 }
-            }           
+            }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        public static ContextRibbonViewModel GetContextRibbon()
+        {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.ContextRibbon;
+        }
+
+        public static AnimationControlRibbonViewModel GetAnimationControlRibbon()
+        {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.AnimationControlRibbon;
+        }
+
+        #endregion //Static Methods
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 

@@ -4,20 +4,17 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <oldconv:LengthConverter x:Key="LengthConverter" />
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
         <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <conv:IntToOppositeVisibilityConverter x:Key="IntToOppositeVisibilityConverter" />
         <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
@@ -57,6 +54,28 @@
                     Width="{Binding Width}"
                     Height="{Binding Height}">
 
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
                            StrokeThickness="2"
@@ -64,16 +83,17 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=14}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemoveFuzzyFactorCardCommand}"
-                        Cursor="Hand"
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Top="-40">
+                        Canvas.Top="-40"
+                        Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -91,63 +111,6 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-                <!--Drag Thumb-->
-                <Thumb Cursor="ScrollAll"
-                       Width="40"
-                       Height="40"
-                       Canvas.Right="-40"
-                       Canvas.Top="-40">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
@@ -188,31 +151,6 @@
                     </Thumb.Template>
                 </Thumb>
 
-                <!--Take Away Last Array Button-->
-                <Button Command="{Binding RemoveLastArrayCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0.5 L1,0.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Green"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
@@ -236,9 +174,9 @@
                        Text="{Binding Rows}"
                        TextAlignment="Center"
                        FontWeight="Bold"
-                       FontSize="22"
+                       FontSize="20"
                        Foreground="{StaticResource LeftLabelColor}"
-                       Height="22"
+                       Height="23"
                        Width="{Binding ArrayHeight}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
@@ -256,7 +194,7 @@
                     Grid.ColumnSpan="2"
                     Background="Transparent"
                     Height="{Binding ArrayHeight}"
-                    Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=3}"
+                    Width="{Binding ArrayWidth, Converter={conv:IncreaseNumberConverter}, ConverterParameter=3}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     BorderThickness="0 3 0 3"
@@ -287,24 +225,6 @@
                   SnapsToDevicePixels="True"
                   Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
-
-            <!--Fuzzy Edge hit box-->
-            <Rectangle Grid.Row="1"
-                       Grid.Column="2"
-                       Tag="FuzzyEdgeHitBox"
-                       Width="{Binding PageObject.LargeLabelLength}"
-                       Height="{Binding ArrayHeight}"
-                       Fill="Transparent"
-                       Stroke="Transparent"
-                       StrokeThickness="3"
-                       Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Rectangle>
 
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1"
@@ -391,7 +311,7 @@
                                 <Rectangle Width="{Binding Length}"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      Converter={conv:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Opacity=".3">
@@ -409,7 +329,7 @@
                                            Width="3"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      Converter={conv:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Fill="{StaticResource DividerColor}"
@@ -444,7 +364,7 @@
                                                FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource LeftLabelColor}"
-                                               Height="20" />
+                                               Height="23" />
                                     <TextBlock Grid.Column="1"
                                                IsHitTestVisible="False"
                                                Margin="3"
@@ -454,7 +374,7 @@
                                                HorizontalAlignment="Center"
                                                FontSize="20"
                                                FontWeight="Bold"
-                                               Height="20" />
+                                               Height="23" />
                                     <TextBlock Grid.Column="2"
                                                IsHitTestVisible="False"
                                                Text="{Binding Value}"
@@ -464,7 +384,7 @@
                                                FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource TopLabelColor}"
-                                               Height="20" />
+                                               Height="23" />
                                 </Grid>
                             </Canvas>
                         </DataTemplate>
@@ -537,7 +457,7 @@
                            Foreground="Black"
                            VerticalAlignment="Top"
                            HorizontalAlignment="Left"
-                           Margin="-32 28 0 0"
+                           Margin="-32 23 0 0"
                            Text="{Binding Dividend}"
                            TextAlignment="Center"
                            Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
@@ -564,27 +484,40 @@
                        Foreground="Black"
                        VerticalAlignment="Top"
                        HorizontalAlignment="Center"
-                       Margin="0 28 0 0"
+                       Margin="0 23 0 0"
                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"
                        Text="{Binding Dividend}" />
 
             <!--Array hit box-->
-            <Rectangle Grid.Row="1"
-                       Grid.Column="1"
-                       Tag="ArrayBodyHitBox"
-                       Width="{Binding ArrayWidth}"
-                       Height="{Binding ArrayHeight}"
-                       Fill="Transparent"
-                       Stroke="Transparent"
-                       StrokeThickness="3">
+            <Thumb Tag="PageObjectHitBox"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}"
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Rectangle>
-
+            </Thumb>
+            
             <StackPanel Grid.Row="2"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
@@ -595,24 +528,24 @@
 
                 <!--Bottom Label (Equation)-->
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Foreground="{StaticResource LeftLabelColor}"
                            Text="{Binding Rows}" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Text="x" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Foreground="{StaticResource TopLabelColor}"
                            Text="{Binding PageObject.GroupsSubtracted}" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            VerticalAlignment="Top"
@@ -626,7 +559,7 @@
                              Stroke="Black"
                              Fill="Transparent" />
                     <TextBlock TextAlignment="Center"
-                               Margin="2 7 1 0"
+                               Margin="2 4 1 0"
                                FontWeight="Bold"
                                FontSize="18"
                                Foreground="Black"

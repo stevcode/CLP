@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -17,14 +18,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="Person" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="Person" /> from scratch.</summary>
         public Person() { ID = Guid.NewGuid().ToCompactID(); }
 
-        /// <summary>
-        /// Initializes <see cref="Person" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="Person" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public Person(SerializationInfo info, StreamingContext context)
@@ -34,60 +31,63 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="Person" />.
-        /// </summary>
+        /// <summary>Unique Identifier for the <see cref="Person" />.</summary>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
-        /// <summary>
-        /// Full Name of the <see cref="Person" />, delimited by spaces.
-        /// </summary>
+        /// <summary>Full Name of the <see cref="Person" />, delimited by spaces.</summary>
         public string FullName
         {
             get { return GetValue<string>(FullNameProperty); }
             set { SetValue(FullNameProperty, value); }
         }
 
-        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
+        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Alternate name for the <see cref="Person" />, delimited by spaces.
-        /// </summary>
+        /// <summary>Alternate name for the <see cref="Person" />, delimited by spaces.</summary>
         public string Alias
         {
             get { return GetValue<string>(AliasProperty); }
             set { SetValue(AliasProperty, value); }
         }
 
-        public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof(string), string.Empty);
+        public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Left or Right Handed.
-        /// </summary>
+        public string DisplayName
+        {
+            get
+            {
+                var nameParts = FullName.Split(' ');
+                var first = nameParts.FirstOrDefault() ?? "No First Name";
+                var last = nameParts.Count() > 1 ? nameParts.LastOrDefault() : null;
+                var lastInitial = last == null ? string.Empty : " " + last[0] + ".";
+                var firstAndLastInitial = first + lastInitial;
+                return ID == Author.ID ? "AUTHOR" : !string.IsNullOrEmpty(Alias) ? Alias : firstAndLastInitial;
+            }
+        }
+
+        /// <summary>Left or Right Handed.</summary>
         public Handedness Handedness
         {
             get { return GetValue<Handedness>(HandednessProperty); }
             set { SetValue(HandednessProperty, value); }
         }
 
-        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof (Handedness), Handedness.Right);
 
-        /// <summary>
-        /// Signifies the <see cref="Person" /> is a student.
-        /// </summary>
+        /// <summary>Signifies the <see cref="Person" /> is a student.</summary>
         public bool IsStudent
         {
             get { return GetValue<bool>(IsStudentProperty); }
             set { SetValue(IsStudentProperty, value); }
         }
 
-        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
+        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof (bool), true);
 
         public string CurrentDifferentiationGroup
         {
@@ -95,7 +95,7 @@ namespace CLP.Entities
             set { SetValue(CurrentDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof (string), string.Empty);
 
         public string TempDifferentiationGroup
         {
@@ -103,8 +103,7 @@ namespace CLP.Entities
             set { SetValue(TempDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData TempDifferentiationGroupProperty = RegisterProperty("TempDifferentiationGroup", typeof(string), string.Empty);
-
+        public static readonly PropertyData TempDifferentiationGroupProperty = RegisterProperty("TempDifferentiationGroup", typeof (string), string.Empty);
 
         #endregion //Properties
 
@@ -154,9 +153,7 @@ namespace CLP.Entities
 
         #region IConnectedPerson Members
 
-        /// <summary>
-        /// Friendly Name of the computer the <see cref="Person" /> is currently using.
-        /// </summary>
+        /// <summary>Friendly Name of the computer the <see cref="Person" /> is currently using.</summary>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public string CurrentMachineName
@@ -165,11 +162,9 @@ namespace CLP.Entities
             set { SetValue(CurrentMachineNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// TCP address of the computer the <see cref="Person" /> is currently using.
-        /// </summary>
+        /// <summary>TCP address of the computer the <see cref="Person" /> is currently using.</summary>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public string CurrentMachineAddress
@@ -178,11 +173,9 @@ namespace CLP.Entities
             set { SetValue(CurrentMachineAddressProperty, value); }
         }
 
-        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Whether or not this <see cref="Person" /> currently has an established connection with CurrentUser.
-        /// </summary>
+        /// <summary>Whether or not this <see cref="Person" /> currently has an established connection with CurrentUser.</summary>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public bool IsConnected
@@ -191,7 +184,7 @@ namespace CLP.Entities
             set { SetValue(IsConnectedProperty, value); }
         }
 
-        public static readonly PropertyData IsConnectedProperty = RegisterProperty("IsConnected", typeof(bool), false);
+        public static readonly PropertyData IsConnectedProperty = RegisterProperty("IsConnected", typeof (bool), false);
 
         #endregion
     }

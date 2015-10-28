@@ -1,0 +1,28 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.ContextRibbonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:catel="http://catel.codeplex.com">
+    <DockPanel Height="34"
+               Background="{StaticResource GrayBackgroundColor}">
+
+        <ScrollViewer x:Name="ScrollViewer"
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Hidden">
+            <ItemsControl ItemsSource="{Binding Buttons}"
+                          HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="FrameworkElement">
+                        <Setter Property="Margin"
+                                Value="3 0 3 0" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </DockPanel>
+</catel:UserControl>

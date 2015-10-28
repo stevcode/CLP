@@ -223,21 +223,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
+    <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
+    <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
+    <Compile Include="Converters\Single Converters\PointXConverter.cs" />
+    <Compile Include="Converters\Single Converters\SizeHalfHeightConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeOfConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
-    <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
-    <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
-    <Compile Include="Converters\BooleanToOppositeVisibilityConverter.cs" />
-    <Compile Include="Converters\BoolToAlignmentConverter.cs" />
-    <Compile Include="Converters\BoolToHighlighterConverter.cs" />
+    <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
-    <Compile Include="Converters\BoolToDoubleConverter.cs" />
-    <Compile Include="Converters\ByteArrayToBoolConverter.cs" />
-    <Compile Include="Converters\BytesToImageSourceConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
@@ -247,21 +245,17 @@
     <Compile Include="Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
-    <Compile Include="Converters\NumberIncrementConverter.cs" />
+    <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
-    <Compile Include="Converters\PersonToSubmissionsCountConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
-    <Compile Include="Converters\MarginSingleSideConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
     <Compile Include="Converters\PageToSubmissionsListConverter.cs" />
     <Compile Include="Converters\Panel Converters\PanelLocationToThicknessConverter.cs" />
     <Compile Include="Converters\PageToStarredVisibilityConverter.cs" />
     <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
-    <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
+    <Compile Include="Converters\StringToEmptyStringConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
@@ -272,11 +266,30 @@
     <Compile Include="Network\InstructorService.cs" />
     <Compile Include="Network\ProjectorService.cs" />
     <Compile Include="Network\StudentService.cs" />
-    <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="Services\DataService.cs" />
+    <Compile Include="Services\IDataService.cs" />
+    <Compile Include="Services\INotebookService.cs" />
+    <Compile Include="Services\IPageInteractionService.cs" />
+    <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
-    <Compile Include="ViewModels\PageObjects\Arrays\NumberLineViewModel.cs" />
+    <Compile Include="Utilities\RangeHelper.cs" />
+    <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
+    <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
+    <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
+    <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
+    <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
+    <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
+    <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
+    <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
@@ -284,8 +297,7 @@
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\LassoRegionViewModel.cs" />
-    <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
@@ -305,10 +317,41 @@
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
+    <Compile Include="Views\BackStage\BackStageView.xaml.cs">
+      <DependentUpon>BackStageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BackStage\ExportPaneView.xaml.cs">
+      <DependentUpon>ExportPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\ExportPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\NewPaneView.xaml.cs">
+      <DependentUpon>NewPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\NewPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\NotebookInfoPaneView.xaml.cs">
+      <DependentUpon>NotebookInfoPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\NotebookInfoPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\OpenNotebookPaneView.xaml.cs">
+      <DependentUpon>OpenNotebookPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\OpenNotebookPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\OptionsPaneView.xaml.cs">
+      <DependentUpon>OptionsPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
+    <Compile Include="Views\Displays\ColumnDisplayPreviewView.xaml.cs">
+      <DependentUpon>ColumnDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
+      <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>AdditionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
@@ -340,6 +383,9 @@
     <Compile Include="Views\Modal Windows\MVVM\PersonCreationView.xaml.cs">
       <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\TextInputView.xaml.cs">
+      <DependentUpon>TextInputView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\NumberLineCreationView.xaml.cs">
       <DependentUpon>NumberLineCreationView.xaml</DependentUpon>
     </Compile>
@@ -352,17 +398,26 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Arrays\NumberLineView.xaml.cs">
+    <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
+      <DependentUpon>BinReporterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\BinView.xaml.cs">
+      <DependentUpon>BinView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\MarkView.xaml.cs">
+      <DependentUpon>MarkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\MultipleChoiceBoxView.xaml.cs">
+      <DependentUpon>MultipleChoiceBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\NumberLineView.xaml.cs">
       <DependentUpon>NumberLineView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Temporary\LassoRegionView.xaml.cs">
       <DependentUpon>LassoRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
-      <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
       <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
@@ -379,7 +434,6 @@
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Extenders\ListBoxExtenders.cs" />
-    <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />
@@ -407,8 +461,6 @@
     <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
@@ -450,6 +502,9 @@
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml.cs">
+      <DependentUpon>TemporaryBoundaryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pages\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
@@ -461,9 +516,6 @@
     </Compile>
     <Compile Include="Views\Displays\GridDisplayView.xaml.cs">
       <DependentUpon>GridDisplayView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\NotebookNamerWindowView.xaml.cs">
-      <DependentUpon>NotebookNamerWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPAggregationDataTableView.xaml.cs">
       <DependentUpon>CLPAggregationDataTableView.xaml</DependentUpon>
@@ -534,23 +586,17 @@
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RibbonView.xaml.cs">
-      <DependentUpon>RibbonView.xaml</DependentUpon>
+    <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
+      <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Ribbon\ContextRibbonView.xaml.cs">
+      <DependentUpon>ContextRibbonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Ribbon\MajorRibbonView.xaml.cs">
       <DependentUpon>MajorRibbonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml.cs">
-      <DependentUpon>CacheSelectorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml.cs">
-      <DependentUpon>LocationBrowserWorkspaceView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
-      <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
       <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
@@ -566,9 +612,45 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\BackStage\BackStageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BackStage\ExportPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\NewPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\NotebookInfoPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\OpenNotebookPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\OptionsPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
@@ -610,6 +692,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\MVVM\TextInputView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\NumberLineCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -626,19 +712,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Arrays\NumberLineView.xaml">
+    <Page Include="Views\PageObjects\Bins\BinReporterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\LassoRegionView.xaml">
+    <Page Include="Views\PageObjects\Bins\BinView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\MarkView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\MultipleChoiceBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\NumberLineView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Temporary\LassoRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\Arrays\RemainderTilesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\AnimationPageToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -730,6 +828,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Pages\CLPPagePreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -743,10 +845,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\GridDisplayView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\NotebookNamerWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -842,7 +940,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\RibbonView.xaml">
+    <Page Include="Views\Ribbon\AnimationControlRibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Ribbon\ContextRibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -851,18 +953,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -955,6 +1045,10 @@
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
       <Name>CLP.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
+      <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
+      <Name>CLP.InkInterpretation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
       <Name>ServiceModelEx</Name>
@@ -991,10 +1085,36 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Steps512.png" />
+    <Resource Include="Resources\Images\Tags128.png" />
+    <Resource Include="Resources\Images\Hourglass256.png" />
+    <Resource Include="Images\AddTriangle.png" />
+    <Resource Include="Resources\Temp\Lock.png" />
+    <Resource Include="Resources\Temp\Unlock.png" />
+    <Resource Include="Resources\Images\Marker128.png" />
+    <Resource Include="Resources\Images\MajorRibbon\TextBox512.png" />
+    <Resource Include="Resources\Images\ExtrasFolder256.png" />
+    <Resource Include="Resources\Images\ExtrasFolder32.png" />
+    <Resource Include="Resources\Images\PageObjects32.png" />
+    <Resource Include="Resources\Images\PageObjects512.png" />
+    <Resource Include="Resources\Images\WindowControls\CloseButton.png" />
+    <Resource Include="Resources\Images\WindowControls\MaximizeButton.png" />
+    <Resource Include="Resources\Images\WindowControls\MinimizeButton.png" />
+    <Resource Include="Resources\Images\WindowControls\RestoreButton.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless64.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless64.png" />
     <Resource Include="Resources\Images\NumberLine128.png" />
     <Resource Include="Resources\Images\NumberLine16.png" />
     <Resource Include="Resources\Images\NumberLine32.png" />
     <Resource Include="Resources\Images\NumberLine64.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless256.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless64.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless256.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless64.png" />
     <Resource Include="Resources\Images\Pile128.png" />
     <Resource Include="Resources\Images\Pile16.png" />
     <Resource Include="Resources\Images\Pile256.png" />
@@ -1246,6 +1366,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\List Converters\" />
+    <Folder Include="Resources\Images\ContextRibbon\PageObjectBase\" />
+    <Folder Include="Resources\Images\ContextRibbon\TextBox\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

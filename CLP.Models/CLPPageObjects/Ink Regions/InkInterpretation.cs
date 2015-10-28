@@ -20,6 +20,7 @@ namespace CLP.Models
 
         public static string InterpretHandwriting(StrokeCollection strokes, CLPHandwritingAnalysisType type)
         {
+            //ZC look over this code
             string result = null;
             InkAnalyzer analyzer = new InkAnalyzer();
             AnalysisHintNode hint = analyzer.CreateAnalysisHint();

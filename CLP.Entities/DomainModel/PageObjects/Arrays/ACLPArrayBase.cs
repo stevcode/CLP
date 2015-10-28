@@ -20,17 +20,16 @@ namespace CLP.Entities
 
         public CLPArrayDivision() { }
 
-        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
+        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value, bool isObscured = false)
         {
             Orientation = orientation;
             Position = position;
             Length = length;
             Value = value;
+            IsObscured = isObscured;
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         protected CLPArrayDivision(SerializationInfo info, StreamingContext context)
@@ -40,65 +39,64 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Describes whether the division is horizontal or vertical.
-        /// </summary>
+        /// <summary>Describes whether the division is horizontal or vertical.</summary>
         public ArrayDivisionOrientation Orientation
         {
             get { return GetValue<ArrayDivisionOrientation>(OrientationProperty); }
             set { SetValue(OrientationProperty, value); }
         }
 
-        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof(ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
+        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof (ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
 
-        /// <summary>
-        /// The position of the top (for horizontal) or left (for vertical) of the array division.
-        /// </summary>
+        /// <summary>The position of the top (for horizontal) or left (for vertical) of the array division.</summary>
         public double Position
         {
             get { return GetValue<double>(PositionProperty); }
             set { SetValue(PositionProperty, value); }
         }
 
-        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0);
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof (double), 0);
 
-        /// <summary>
-        /// The length of the array division.
-        /// </summary>
+        /// <summary>The length of the array division.</summary>
         public double Length
         {
             get { return GetValue<double>(LengthProperty); }
             set { SetValue(LengthProperty, value); }
         }
 
-        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof (double), 0);
 
-        /// <summary>
-        /// The value that was written by the student as the label on that side length. 0 if unlabelled.
-        /// </summary>
+        /// <summary>The value that was written by the student as the label on that side length. 0 if unlabelled.</summary>
         public int Value
         {
             get { return GetValue<int>(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(int), 0);
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (int), 0);
+
+        /// <summary>Designates a Divider Region as obscured or not.</summary>
+        public bool IsObscured
+        {
+            get { return GetValue<bool>(IsObscuredProperty); }
+            set { SetValue(IsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsObscuredProperty = RegisterProperty("IsObscured", typeof(bool), false);
+
+        public double GetActualValue(double gridSquareSize) { return (Length + 1.0) / gridSquareSize; }
 
         #endregion //Properties
 
         #region Overrides of ModelBase
 
-        /// <summary>
-        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
-        /// </summary>
-        /// <returns>
-        /// true if the specified object  is equal to the current object; otherwise, false.
-        /// </returns>
+        /// <summary>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />.</summary>
+        /// <returns>true if the specified object  is equal to the current object; otherwise, false.</returns>
         /// <param name="obj">The object to compare with the current object. </param>
-        public override bool Equals(object obj) 
+        public override bool Equals(object obj)
         {
             var division = obj as CLPArrayDivision;
-            if(division == null)
+            if (division == null)
             {
                 return false;
             }
@@ -112,16 +110,17 @@ namespace CLP.Entities
     [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
+        public const double ARRAY_STARING_Y_POSITION = 100;   // 295.0;
+        public const double ARRAY_LABEL_LENGTH = 22.0;
+        public const double DT_LABEL_LENGTH = 35.0;
+        public const double DT_LARGE_LABEL_LENGTH = 52.5;
+
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="ACLPArrayBase" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="ACLPArrayBase" /> from scratch.</summary>
         public ACLPArrayBase() { }
 
-        /// <summary>
-        /// Initializes <see cref="ACLPArrayBase" /> from
-        /// </summary>
+        /// <summary>Initializes <see cref="ACLPArrayBase" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ACLPArrayBase" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="ACLPArrayBase" />.</param>
         /// <param name="rows">The number of rows in the <see cref="ACLPArrayBase" />.</param>
@@ -130,11 +129,11 @@ namespace CLP.Entities
         {
             Columns = columns;
             Rows = rows;
+            XPosition = 0.0;
+            YPosition = ARRAY_STARING_Y_POSITION;
         }
 
-        /// <summary>
-        /// Initializes <see cref="ACLPArrayBase" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="ACLPArrayBase" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public ACLPArrayBase(SerializationInfo info, StreamingContext context)
@@ -146,113 +145,113 @@ namespace CLP.Entities
 
         public virtual double LabelLength
         {
-            get { return 22; }
+            get { return ARRAY_LABEL_LENGTH; }
         }
 
-        /// <summary>
-        /// The number of rows in the <see cref="ACLPArrayBase" />.
-        /// </summary>
+        /// <summary>The number of rows in the <see cref="ACLPArrayBase" />.</summary>
         public int Rows
         {
             get { return GetValue<int>(RowsProperty); }
             set { SetValue(RowsProperty, value); }
         }
 
-        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(int), 1);
+        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof (int), 1);
 
-        /// <summary>
-        /// The number of columns in the <see cref="ACLPArrayBase" />.
-        /// </summary>
+        /// <summary>The number of columns in the <see cref="ACLPArrayBase" />.</summary>
         public int Columns
         {
             get { return GetValue<int>(ColumnsProperty); }
             set { SetValue(ColumnsProperty, value); }
         }
 
-        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int), 1);
+        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof (int), 1);
 
-        /// <summary>
-        /// List of horizontal divisions in the array.
-        /// </summary>
+        /// <summary>List of horizontal divisions in the array.</summary>
         public ObservableCollection<CLPArrayDivision> HorizontalDivisions
         {
-            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            get
+            {
+                var val = GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty);
+                if (val == null)
+                {
+                    return new ObservableCollection<CLPArrayDivision>();
+                }
+                
+                return val;
+            }
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
         public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
-                                                                                           typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                           typeof (ObservableCollection<CLPArrayDivision>),
                                                                                            () => new ObservableCollection<CLPArrayDivision>());
 
-        /// <summary>
-        /// List of vertical divisions in the array.
-        /// </summary>
+        /// <summary>List of vertical divisions in the array.</summary>
         public ObservableCollection<CLPArrayDivision> VerticalDivisions
         {
-            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            get
+            {
+                var val = GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty);
+                if (val == null)
+                {
+                    return new ObservableCollection<CLPArrayDivision>();
+                }
+
+                return val;
+            }
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions",
-                                                                                         typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                         typeof (ObservableCollection<CLPArrayDivision>),
                                                                                          () => new ObservableCollection<CLPArrayDivision>());
 
         #region Behavior Properties
 
-        /// <summary>
-        /// Turns the grid on or off.
-        /// </summary>
+        /// <summary>Turns the grid on or off.</summary>
         public bool IsGridOn
         {
             get { return GetValue<bool>(IsGridOnProperty); }
             set { SetValue(IsGridOnProperty, value); }
         }
 
-        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool), true);
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof (bool), true);
 
-        /// <summary>
-        /// Turns the division behavior on or off.
-        /// </summary>
+        /// <summary>Turns the division behavior on or off.</summary>
         public bool IsDivisionBehaviorOn
         {
             get { return GetValue<bool>(IsDivisionBehaviorOnProperty); }
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof (bool), true);
 
-        /// <summary>
-        /// Whether the array can be snapped to other arrays or not.
-        /// </summary>
+        /// <summary>Whether the array can be snapped to other arrays or not.</summary>
         public bool IsSnappable
         {
             get { return GetValue<bool>(IsSnappableProperty); }
             set { SetValue(IsSnappableProperty, value); }
         }
 
-        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool), true);
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);
 
-        /// <summary>
-        /// Sets the visibility of the array's top label.
-        /// </summary>
+        /// <summary>Sets the visibility of the array's top label.</summary>
         public bool IsTopLabelVisible
         {
             get { return GetValue<bool>(IsTopLabelVisibleProperty); }
             set { SetValue(IsTopLabelVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool), true);
+        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof (bool), true);
 
-        /// <summary>
-        /// Sets the visibility of the array's side label.
-        /// </summary>
+        /// <summary>Sets the visibility of the array's side label.</summary>
         public bool IsSideLabelVisible
         {
             get { return GetValue<bool>(IsSideLabelVisibleProperty); }
             set { SetValue(IsSideLabelVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof(bool), true);
+        public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof (bool), true);
 
         #endregion //Behavior Properties
 
@@ -275,6 +274,33 @@ namespace CLP.Entities
 
         public abstract double MinimumGridSquareSize { get; }
 
+        /// <summary>Signifies obscuring shape over Rows.</summary>
+        public bool IsRowsObscured
+        {
+            get
+            {
+                if (HorizontalDivisions == null)
+                {
+                    return false;
+                }
+                return HorizontalDivisions.Any(d => d.IsObscured);
+            }
+        }
+
+        /// <summary>Signifies obscuring shape over Columns.</summary>
+        public bool IsColumnsObscured
+        {
+
+            get
+            {
+                if (VerticalDivisions == null)
+                {
+                    return false;
+                }
+                return VerticalDivisions.Any(d => d.IsObscured);
+            }
+        }
+
         #endregion //Calculated Properties
 
         #endregion //Properties
@@ -288,17 +314,17 @@ namespace CLP.Entities
         public CLPArrayDivision FindDivisionAbove(double position, IEnumerable<CLPArrayDivision> divisionList)
         {
             CLPArrayDivision divAbove = null;
-            foreach(var div in divisionList)
+            foreach (var div in divisionList)
             {
-                if(divAbove == null)
+                if (divAbove == null)
                 {
-                    if(div.Position < position)
+                    if (div.Position < position)
                     {
                         divAbove = div;
                     }
                 }
-                else if(divAbove.Position < div.Position &&
-                        div.Position < position)
+                else if (divAbove.Position < div.Position &&
+                         div.Position < position)
                 {
                     divAbove = div;
                 }
@@ -309,38 +335,53 @@ namespace CLP.Entities
         public CLPArrayDivision FindDivisionBelow(double position, IEnumerable<CLPArrayDivision> divisionList)
         {
             CLPArrayDivision divBelow = null;
-            foreach(var div in divisionList)
+            foreach (var div in divisionList)
             {
-                if(divBelow == null)
+                if (divBelow == null)
                 {
-                    if(div.Position > position)
+                    if (div.Position > position)
                     {
                         divBelow = div;
                     }
                 }
-                else if(divBelow.Position > div.Position &&
-                        div.Position > position)
+                else if (divBelow.Position > div.Position &&
+                         div.Position > position)
                 {
                     divBelow = div;
                 }
             }
+            
             return divBelow;
         }
 
-        public void ResizeDivisions()
+        public virtual void SortDivisions()
         {
-            var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
-            foreach(var division in HorizontalDivisions)
+            VerticalDivisions = new ObservableCollection<CLPArrayDivision>(VerticalDivisions.OrderBy(d => d.Position));
+            HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(HorizontalDivisions.OrderBy(d => d.Position));
+        }
+
+        public virtual void ResizeDivisions()
+        {
+            SortDivisions();
+            var position = 0.0;
+            var oldArrayWidth = VerticalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldArrayHeight = HorizontalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldGridSquareSize = VerticalDivisions.Any() ? oldArrayWidth / Columns : oldArrayHeight / Rows;
+            foreach (var division in HorizontalDivisions)
             {
-                division.Position = division.Position * ArrayHeight / oldHeight;
-                division.Length = division.Length * ArrayHeight / oldHeight;
+                var actualValue = division.GetActualValue(oldGridSquareSize);
+                division.Position = position;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
+                position += division.Length;
             }
 
-            var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
-            foreach(var division in VerticalDivisions)
+            position = 0.0;
+            foreach (var division in VerticalDivisions)
             {
-                division.Position = division.Position * ArrayWidth / oldWidth;
-                division.Length = division.Length * ArrayWidth / oldWidth;
+                var actualValue = division.GetActualValue(oldGridSquareSize);
+                division.Position = position;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
+                position += division.Length;
             }
         }
 
@@ -357,27 +398,50 @@ namespace CLP.Entities
             var tempHorizontalDivisions = HorizontalDivisions;
             HorizontalDivisions = VerticalDivisions;
             VerticalDivisions = tempHorizontalDivisions;
-            foreach(var verticalDivision in VerticalDivisions)
+            foreach (var verticalDivision in VerticalDivisions)
             {
                 verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
             }
-            foreach(var horizontalDivision in HorizontalDivisions)
+            foreach (var horizontalDivision in HorizontalDivisions)
             {
                 horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
             }
             SizeArrayToGridLevel(tempGridSquareSize);
 
-            if(XPosition + Width > ParentPage.Width)
+            if (XPosition + Width > ParentPage.Width)
             {
                 XPosition = ParentPage.Width - Width;
             }
-            if(YPosition + Height > ParentPage.Height)
+            if (YPosition + Height > ParentPage.Height)
             {
                 YPosition = ParentPage.Height - Height;
             }
 
             //RefreshStrokeParentIDs();
             OnResized(initialWidth, initialHeight);
+        }
+
+        #endregion //Methods
+
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 50; }
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Height")
+            {
+                RaisePropertyChanged("ArrayHeight");
+            }
+            if (e.PropertyName == "Width")
+            {
+                RaisePropertyChanged("ArrayWidth");
+                RaisePropertyChanged("GridSquareSize");
+            }
+            base.OnPropertyChanged(e);
         }
 
         public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
@@ -394,79 +458,74 @@ namespace CLP.Entities
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
-        #endregion //Methods
+        #endregion //APageObjectBase Overrides
 
-        #region Overrides of ObservableObject
+        #region Static Properties
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        public static double DefaultGridSquareSize //used to be 45.0, then 34.0, now again 45.0
         {
-            if(e.PropertyName == "Height")
-            {
-                RaisePropertyChanged("ArrayHeight");
-            }
-            if(e.PropertyName == "Width")
-            {
-                RaisePropertyChanged("ArrayWidth");
-                RaisePropertyChanged("GridSquareSize");
-            }
-            base.OnPropertyChanged(e);
+            get { return 45.0; }
         }
 
-        #endregion //Overrides of ObservableObject
+        #endregion //Static Properties
 
         #region Static Methods
 
-        public static void ApplyDistinctPosition(ACLPArrayBase array, string currentUserID)
+        public static void ApplyDistinctPosition(ACLPArrayBase array)
         {
-            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            var lastArray =
-                array.ParentPage.PageObjects.LastOrDefault(x => x is ACLPArrayBase && (x.OwnerID != Person.Author.ID || currentUserID == Person.Author.ID) && x.ID != array.ID) as ACLPArrayBase;
-            if(lastArray == null)
+            var currentPage = array.ParentPage;
+            if (currentPage == null)
             {
-                if(array.XPosition + array.Width >= array.ParentPage.Width)
-                {
-                    array.XPosition = array.ParentPage.Width - array.Width;
-                }
-                if(array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.YPosition = array.ParentPage.Height - array.Height;
-                }
                 return;
             }
 
-            var previousGridSquareSize = array.GridSquareSize;
-            array.SizeArrayToGridLevel(lastArray.GridSquareSize);
-            if(lastArray is CLPArray)
+            var arraysToAvoid = currentPage.PageObjects.OfType<ACLPArrayBase>().Where(a => a.ID != array.ID).ToList();
+            while (arraysToAvoid.Any())
             {
-                array.YPosition = lastArray.YPosition;
-                array.XPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Width;
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
+                var overlappingArray = arraysToAvoid.FirstOrDefault(a => IsOverlapping(a, array));
+                if (overlappingArray == null)
                 {
-                    array.XPosition = lastArray.XPosition;
-                    array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height;
+                    break;
                 }
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
+
+                arraysToAvoid.Remove(overlappingArray);
+
+                if (overlappingArray is FuzzyFactorCard)
                 {
-                    ApplyDistinctPosition(array);
+                    array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                }
+                else
+                {
+                    if (overlappingArray.Rows >= overlappingArray.Columns) //Move array right.
+                    {
+                        array.XPosition = overlappingArray.XPosition + overlappingArray.Width;
+                        if (array.XPosition + array.Width >= currentPage.Width)
+                        {
+                            array.XPosition = 0.0;
+                            array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                        }
+                    }
+                    else //Move array down.
+                    {
+                        array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                        if (array.YPosition + array.Height >= currentPage.Height)
+                        {
+                            array.XPosition = overlappingArray.XPosition + overlappingArray.Width;
+                            array.YPosition = ARRAY_STARING_Y_POSITION;
+                        }
+                    }
                 }
             }
-            else if(lastArray is FuzzyFactorCard || (lastArray as FuzzyFactorCard).RemainderTiles != null)
+
+            var rnd = new Random();
+
+            if (array.YPosition + array.Height >= currentPage.Height)
             {
-                array.XPosition = lastArray.XPosition;
-                array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height + (lastArray as FuzzyFactorCard).LargeLabelLength - array.LabelLength;
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.XPosition = 0.0;
-                }
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.YPosition = 100.0;
-                    ApplyDistinctPosition(array);
-                }
+                array.YPosition = currentPage.Height - array.Height - rnd.Next(30);
+            }
+            if (array.XPosition + array.Width >= currentPage.Width)
+            {
+                array.XPosition = currentPage.Width - array.Width - rnd.Next(30);
             }
         }
 

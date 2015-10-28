@@ -3,18 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:system="clr-namespace:System;assembly=mscorlib">
-
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <oldconv:LengthConverter x:Key="LengthConverter" />
-            <conv:BoolToHighlighterConverter x:Key="BoolToHighlighterConverter" />
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        </ResourceDictionary>
-    </UserControl.Resources>
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
 
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
@@ -27,10 +17,32 @@
         <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent>
 
-                <Canvas HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Width="{Binding Width}"
-                        Height="{Binding Height}">
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
+
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
@@ -39,106 +51,17 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
-                <!--<Grid Canvas.Top="-5"
-                      Canvas.Left="-5"
-                      Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                      Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}">
-                    --><!--Drag Thumb--><!--
-                    <Thumb Cursor="ScrollAll"
-                           Width="40"
-                           Height="40"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="DragStarted">
-                                <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
-                                                      PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="DragDelta">
-                                <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
-                                                      PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="DragCompleted">
-                                <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
-                                                      PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <Thumb.Template>
-                            <ControlTemplate>
-                                <Grid>
-                                    <Ellipse Stroke="Black"
-                                             StrokeThickness="3"
-                                             Fill="White"
-                                             VerticalAlignment="Stretch"
-                                             HorizontalAlignment="Stretch" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 20,5 L 20,35" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                    <Path Stroke="Black"
-                                          StrokeThickness="1"
-                                          Fill="Black"
-                                          Data="M 5,20 L 35,20" />
-                                </Grid>
-                            </ControlTemplate>
-                        </Thumb.Template>
-                    </Thumb>
-                </Grid>-->
-
-                    <!--Close Button-->
-                    <Button Command="{Binding RemovePageObjectCommand}"
-                            Cursor="Hand"
-                            Width="40"
-                            Height="40"
-                            Canvas.Left="-40"
-                            Canvas.Top="-40">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid>
-                                    <Ellipse Stroke="Black"
-                                             StrokeThickness="3"
-                                             Fill="White"
-                                             VerticalAlignment="Stretch"
-                                             HorizontalAlignment="Stretch" />
-                                    <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                          Stretch="Fill"
-                                          Margin="5"
-                                          Stroke="Red"
-                                          StrokeThickness="3" />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <!--Multiple Stamp Copies Button Option 2-->
-                    <!--<Button Command="{Binding ParameterizeStampedObjectCommand}"
-                        Cursor="Hand"
+                <!--Close Button-->
+                <Button Command="{Binding RemovePageObjectCommand}"
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Bottom="-40">
-                    <Button.CommandParameter>
-                        <system:Boolean>False</system:Boolean>
-                    </Button.CommandParameter>
+                        Canvas.Top="-40"
+                        Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -147,49 +70,17 @@
                                          Fill="White"
                                          VerticalAlignment="Stretch"
                                          HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                <Path Data="M0,0 L1,1 M0,1 L1,0"
                                       Stretch="Fill"
                                       Margin="5"
-                                      Stroke="Green"
+                                      Stroke="Red"
                                       StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>-->
+                </Button>
 
-                    <!--Multiple Stamp Copies Button Option 1-->
-                    <Button Command="{Binding ParameterizeStampedObjectCommand}"
-                            Cursor="Hand"
-                            Width="40"
-                            Height="40"
-                            Canvas.Left="-40"
-                            Canvas.Bottom="-40"
-                            Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
-                        <Button.CommandParameter>
-                            <system:Boolean>True</system:Boolean>
-                        </Button.CommandParameter>
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Grid>
-                                    <Border BorderBrush="Black"
-                                            BorderThickness="3 0 3 3"
-                                            CornerRadius="2"
-                                            Background="White"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalAlignment="Stretch" />
-                                    <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
-                                          Stretch="Fill"
-                                          Margin="5"
-                                          Stroke="Blue"
-                                          StrokeThickness="3" />
-                                </Grid>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                </Canvas>
-
-                
+            </Canvas>
 
         </ac:AdornedControl.AdornerContent>
 
@@ -202,10 +93,20 @@
                     Width="{Binding Width}"
                     BorderBrush="LightGray"
                     BorderThickness="2 0 2 2"
-                    CornerRadius="0 0 5 5"
                     VerticalAlignment="Stretch"
                     Margin="0"
-                    Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
+                    Visibility="{Binding IsGroupStampedObject, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
+
+            <Rectangle VerticalAlignment="Stretch"
+                       HorizontalAlignment="Stretch"
+                       Fill="Transparent"
+                       StrokeThickness="1"
+                       Stroke="LightGray"
+                       StrokeDashArray="4 4"
+                       Margin="-4"
+                       RadiusX="5"
+                       RadiusY="5"
+                       Visibility="{Binding IsBoundaryVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <ItemsControl ClipToBounds="True"
                           IsHitTestVisible="False"
@@ -225,8 +126,21 @@
                     <DataTemplate>
                         <Path Data="{Binding PathData}"
                               StrokeThickness="{Binding PathWidth}"
-                              Stroke="{Binding PathColor}"
-                              Opacity="{Binding IsHighlighter, Converter={StaticResource BoolToHighlighterConverter}, ConverterParameter=.5}" />
+                              Stroke="{Binding PathColor}">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Opacity"
+                                            Value="1.0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsHighlighter}"
+                                                     Value="True">
+                                            <Setter Property="Opacity"
+                                                    Value="0.5" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -238,10 +152,19 @@
                        VerticalAlignment="Bottom"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                        FontSize="18"
-                       Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
+                       Visibility="{Binding IsGroupStampedObject, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
                 <Run Text="group of" />
                 <Run Text="{Binding Parts}" />
             </TextBlock>
+
+            <TextBlock Text="{Binding Parts}"
+                       FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                       FontSize="18"
+                       Margin="0 0 0 -18"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       TextAlignment="Center"
+                       Visibility="{Binding IsPartsLabelVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <Thumb Tag="PageObjectHitBox"
                    Width="{Binding Width}"
@@ -264,10 +187,6 @@
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseEnter">

@@ -5,13 +5,15 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
-        
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:StringToEmptyStringConverter x:Key="StringToEmptyStringConverter" />
+
         <ObjectDataProvider x:Key="AnswerDefinitions"
                             MethodName="GetValues"
                             ObjectType="{x:Type sys:Enum}">
@@ -49,19 +51,19 @@
         <DockPanel LastChildFill="True">
 
             <ToggleButton DockPanel.Dock="Top"
-                          Name="PageInfoToggleButton"
+                          Name="PageCommandsToggleButton"
                           IsChecked="False"
                           Height="20"
-                          Margin="1 1 1 5">
+                          Margin="1">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content"
-                                Value="Show Page Info" />
+                                Value="Show Page Commands" />
                         <Style.Triggers>
                             <Trigger Property="IsChecked"
                                      Value="True">
                                 <Setter Property="Content"
-                                        Value="Hide Page Info" />
+                                        Value="Hide Page Commands" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -70,7 +72,7 @@
 
             <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=PageInfoToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=PageCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -94,53 +96,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
-                <TextBlock Text="ID:" />
-                <TextBox Text="{Binding ID}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="DifferentiationLevel:" />
-                <TextBox Text="{Binding DifferentiationLevel}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="VersionIndex:" />
-                <TextBox Text="{Binding VersionIndex}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Page Number:" />
-                <TextBox Text="{Binding PageNumber}" />
-
-                <TextBlock Text="History Length:" />
-                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="History Z-Score:" />
-                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
-                         Background="#66FF8C00" />
-
-                <TextBlock Text="Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Animation Z-Score:" />
-                <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageAnimationLength}"
-                         Background="#66FF8C00" />
 
                 <Button Content="Add Page:"
                         Command="{Binding AddPageCommand}"
@@ -149,10 +105,17 @@
 
                 <ComboBox ItemsSource="{Binding PageOrientations}"
                           SelectedItem="{Binding SelectedPageOrientation}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
                 <Button Content="Move Page Up"
                         Command="{Binding MovePageUpCommand}"
@@ -217,72 +180,381 @@
 
                 <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
                           SelectedItem="{Binding SelectedAnswerDefinition}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
-                <Button Content="Add Tag:"
-                        Command="{Binding AddTagCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                <ComboBox ItemsSource="{Binding Source={StaticResource ManualTags}}"
-                          SelectedItem="{Binding SelectedTag}"
-                          Height="18"
-                          Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
                 <Button Content="Run Page Analysis"
-                        Command="{Binding AnalyzePageCommand}"
+                        Command="{Binding GenerateHistoryActionsCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
 
-                <Button Content="Run History Analysis"
+                <!--<Button Content="Run History Analysis"
                         Command="{Binding AnalyzePageHistoryCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />-->
+
+                <Button Content="Run Divider Interpretation"
+                        Command="{Binding InterpretArrayDividersCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />
 
-                
+                <Button Content="Run Skip Counting Analysis"
+                        Command="{Binding AnalyzeSkipCountingCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Print Histories"
+                        Command="{Binding PrintAllHistoryItemsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Collapsed" />
+
+                <Button Content="Run History Analysis"
+                        Command="{Binding HistoryActionAnaylsisCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Generate Stamp Groupings"
+                        Command="{Binding GenerateStampGroupingsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Fix DTs"
+                        Command="{Binding FixCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Collapsed" />
+
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
             </catel:StackGrid>
 
-            <TextBlock Text="TAGS"
-                       FontWeight="Bold"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
-                       DockPanel.Dock="Top" />
+            <catel:StackGrid DockPanel.Dock="Top"
+                             Margin="5 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <ListBox ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
-                     ItemsSource="{Binding SortedTags.View, IsAsync=True}"
-                     SelectionMode="Single"
-                     Margin="5 0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     VirtualizingPanel.IsVirtualizing="True"
-                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                     VirtualizingStackPanel.CacheLength="2,3"
-                     VirtualizingStackPanel.CacheLengthUnit="Page"
-                     VirtualizingStackPanel.ScrollUnit="Pixel"
-                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <ListBox.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.ContainerStyle>
-                            <Style TargetType="{x:Type GroupItem}">
+                <!--
+                <TextBlock Text="ID:" />
+                <TextBox Text="{Binding ID}"
+                         IsReadOnly="True" />
+                -->
+
+                <TextBlock Grid.ColumnSpan="2"
+                           TextAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Page {0}{1} - {2}">
+                            <Binding Path="PageNumber" />
+                            <Binding Path="DifferentiationLevel"
+                                     Converter="{StaticResource StringToEmptyStringConverter}"
+                                     ConverterParameter="0" />
+                            <Binding Path="CurrentPage.Owner.DisplayName" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <TextBlock Grid.ColumnSpan="2"
+                           TextAlignment="Center">
+                    <Run Text="Submitted at:" />
+                    <Run Text="{Binding CurrentPage.SubmissionTime, StringFormat=MM/dd/yy HH:mm tt}" />
+                </TextBlock>
+
+                <TextBlock Text="History Length:" />
+                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="History Z-Score:" />
+                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
+                         Background="#66FF8C00" />
+
+                <catel:StackGrid Grid.ColumnSpan="2">
+                    <catel:StackGrid.Style>
+                        <Style TargetType="catel:StackGrid">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentPage.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </catel:StackGrid.Style>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Animation Length:" />
+                    <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
+                             IsReadOnly="True" />
+
+                    <TextBlock Text="Animation Z-Score:" />
+                    <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
+                             IsReadOnly="True" />
+
+                    <TextBlock Text="Min/Max/Avg:" />
+                    <TextBox IsReadOnly="True"
+                             Text="{Binding FormattedMinMaxAverageAnimationLength}"
+                             Background="#66FF8C00" />
+
+                </catel:StackGrid>
+
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
+            </catel:StackGrid>
+
+            <Grid DockPanel.Dock="Top"
+                  Height="24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <UniformGrid Grid.Column="0"
+                             Columns="3">
+
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
                                 <Setter Property="Template">
                                     <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Image Source="pack://application:,,,/Resources/Images/Tags128.png"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <TextBlock Text="TAGS"
+                                                                   FontWeight="Bold"
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
 
-                                            <Grid Margin="0 2">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="*" />
-                                                </Grid.RowDefinitions>
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Image Source="pack://application:,,,/Resources/Images/Steps512.png"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <TextBlock Text="STEPS"
+                                                               FontWeight="Bold"
+                                                               FontSize="16"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
 
-                                                <Border Grid.Row="0"
+                    <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Image Source="pack://application:,,,/Resources/Images/Hourglass256.png"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="IsEnabled"
+                                        Value="True" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <TextBlock Text="HISTORY"
+                                                               FontWeight="Bold"
+                                                               FontSize="16"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="IsEnabled"
+                                                Value="False" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                </UniformGrid>
+
+                <ToggleButton x:Name="TagLockToggleButton" 
+                              Grid.Column="1"
+                              Width="18"
+                              Height="18"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Right"
+                              Margin="5 0"
+                              IsChecked="True">
+
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Image Source="pack://application:,,,/Resources/Temp/Unlock.png" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                <Image Source="pack://application:,,,/Resources/Temp/Lock.png"
+                                                       Opacity="0.5" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+
+            </Grid>
+
+            <Control HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     Margin="5 0">
+
+                <Control.Resources>
+
+                    <ControlTemplate x:Key="TagsTemplate">
+                        <ListBox DataContext="{Binding}"
+                                 ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                                 ItemsSource="{Binding SortedTags.View, IsAsync=True}"
+                                 SelectionMode="Single"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                 VirtualizingStackPanel.CacheLength="2,3"
+                                 VirtualizingStackPanel.CacheLengthUnit="Page"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+
+                            <ListBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.ContainerStyle>
+                                        <Style TargetType="{x:Type GroupItem}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+
+                                                        <Grid Margin="0 2">
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="*" />
+                                                            </Grid.RowDefinitions>
+
+                                                            <Border Grid.Row="0"
                                                         VerticalAlignment="Bottom"
                                                         Background="Transparent"
                                                         BorderBrush="Black"
@@ -290,55 +562,55 @@
                                                         Margin="2 2 2 0"
                                                         Height="10" />
 
-                                                <Border Grid.Row="0"
+                                                            <Border Grid.Row="0"
                                                         Background="White"
                                                         BorderBrush="Black"
                                                         BorderThickness="1"
                                                         Margin="10 0 50 0"
                                                         Height="20">
 
-                                                    <TextBlock Margin="5 0"
+                                                                <TextBlock Margin="5 0"
                                                                FontWeight="Bold"
                                                                HorizontalAlignment="Left"
                                                                VerticalAlignment="Center">
                                                         <Run Text="{Binding Name, Mode=OneWay}" />
-                                                    </TextBlock>
+                                                                </TextBlock>
 
-                                                </Border>
+                                                            </Border>
 
-                                                <Border Grid.Row="1"
+                                                            <Border Grid.Row="1"
                                                         Background="Transparent"
                                                         BorderBrush="Black"
                                                         BorderThickness="2 0 2 2"
                                                         Margin="2 0 2 2">
 
-                                                    <ItemsPresenter />
+                                                                <ItemsPresenter />
 
-                                                </Border>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </GroupStyle.ContainerStyle>
-                    </GroupStyle>
-                </ListBox.GroupStyle>
+                                                            </Border>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.ContainerStyle>
+                                </GroupStyle>
+                            </ListBox.GroupStyle>
 
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="5 2"
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5 2"
                               Visibility="{Binding IsHiddenTag, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0"
+                                        <TextBlock Grid.Row="0"
                                        Grid.Column="0"
                                        FontWeight="Bold"
                                        Text="{Binding FormattedName, Mode=OneWay}">
@@ -349,9 +621,9 @@
                                                               PassEventArgsToCommand="False" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                            </TextBlock>
+                                        </TextBlock>
 
-                            <TextBlock Grid.Row="1"
+                                        <TextBlock Grid.Row="1"
                                        Grid.Column="0"
                                        Text="{Binding FormattedValue, Mode=OneWay}">
                                 <i:Interaction.Triggers>
@@ -361,9 +633,9 @@
                                                               PassEventArgsToCommand="False" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-                            </TextBlock>
+                                        </TextBlock>
 
-                            <Button Grid.Row="0"
+                                        <Button Grid.Row="0"
                                     Grid.RowSpan="2"
                                     Grid.Column="1"
                                     Cursor="Hand"
@@ -371,30 +643,109 @@
                                     Width="25"
                                     VerticalAlignment="Center"
                                     Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid>
-                                            <Ellipse Stroke="Black"
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Grid>
+                                                        <Ellipse Stroke="Black"
                                                      StrokeThickness="3"
                                                      Fill="White"
                                                      VerticalAlignment="Stretch"
                                                      HorizontalAlignment="Stretch" />
-                                            <Path Data="M0,0 L1,1 M0,1 L1,0"
+                                                        <Path Data="M0,0 L1,1 M0,1 L1,0"
                                                   Stretch="Fill"
                                                   Margin="5"
                                                   Stroke="Red"
                                                   StrokeThickness="3" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
 
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
 
-            </ListBox>
+                        </ListBox>
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="HistoryActionsTemplate">
+                        <ListBox DataContext="{Binding}"
+                                 ItemsSource="{Binding CurrentPage.History.HistoryActions}"
+                                 SelectionMode="Single"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                 VirtualizingStackPanel.CacheLength="2,3"
+                                 VirtualizingStackPanel.CacheLengthUnit="Page"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold"
+                                    Text="{Binding CodedValue, Mode=OneWay}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="HistoryItemsTemplate">
+                        <ListBox DataContext="{Binding}"
+                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryItems}"
+                                 SelectionMode="Single"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 VirtualizingPanel.IsVirtualizing="True"
+                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                 VirtualizingStackPanel.CacheLength="2,3"
+                                 VirtualizingStackPanel.CacheLengthUnit="Page"
+                                 VirtualizingStackPanel.ScrollUnit="Pixel"
+                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold"
+                                    Text="{Binding CachedFormattedValue, Mode=OneWay}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+                    </ControlTemplate>
+
+                </Control.Resources>
+
+                <Control.Style>
+                    <Style TargetType="{x:Type Control}">
+
+                        <Style.Triggers>
+
+                            <!-- Show Tags trigger -->
+                            <DataTrigger Binding="{Binding CurrentAnalysisStep}"
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
+                                <Setter Property="Template"
+                                        Value="{StaticResource TagsTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Show HistoryActionss trigger -->
+                            <DataTrigger Binding="{Binding CurrentAnalysisStep}"
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
+                                <Setter Property="Template"
+                                        Value="{StaticResource HistoryActionsTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Show HistoryItems trigger -->
+                            <DataTrigger Binding="{Binding CurrentAnalysisStep}"
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryItems}">
+                                <Setter Property="Template"
+                                        Value="{StaticResource HistoryItemsTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Control.Style>
+            </Control>
 
         </DockPanel>
 

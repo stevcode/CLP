@@ -4,11 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
-
-    <UserControl.Resources>
-        <conv:LengthConverter x:Key="LengthConverter" />
-    </UserControl.Resources>
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
@@ -25,6 +21,28 @@
                     Width="{Binding Width}"
                     Height="{Binding Height}">
 
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
                            StrokeThickness="2"
@@ -32,16 +50,17 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
-                        Cursor="Hand"
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Top="-40">
+                        Canvas.Top="-40"
+                        Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -59,63 +78,6 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-                <!--Drag Thumb-->
-                <Thumb Cursor="ScrollAll"
-                       Width="40"
-                       Height="40"
-                       Canvas.Right="-40"
-                       Canvas.Top="-40">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Fill="Black"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
@@ -165,14 +127,27 @@
                    Height="{Binding Height}"
                    Width="{Binding Width}" />
 
-            <Rectangle Tag="PageObjectHitBox"
-                       Fill="Transparent"
-                       Stretch="Fill"
-                       Width="{Binding Width, Mode=TwoWay}"
-                       Height="{Binding Height, Mode=TwoWay}">
+            <Thumb Tag="PageObjectHitBox"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseEnter">
@@ -180,7 +155,7 @@
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Rectangle>
+            </Thumb>
 
         </Grid>
 

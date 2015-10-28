@@ -91,7 +91,14 @@
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
                                   SelectedItem="{Binding CurrentSortAndGroupType, Mode=TwoWay}"
-                                  VerticalContentAlignment="Center" />
+                                  VerticalContentAlignment="Center">
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ComboBoxItem}">
+                                    <Setter Property="FontSize"
+                                            Value="18" />
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                        </ComboBox>
 
                     </Grid>
 
@@ -177,7 +184,7 @@
                                                                   x:Name="GroupVisibilityToggle"
                                                                   Margin="10 0 50 0"
                                                                   Height="20"
-                                                                  MinWidth="175">
+                                                                  MinWidth="50">
                                                         <ToggleButton.Style>
                                                             <Style TargetType="ToggleButton">
                                                                 <Setter Property="IsChecked"
@@ -227,7 +234,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Bottom">
-                                    <Run Text="{Binding Owner.FullName}" />
+                                    <Run Text="{Binding Owner.DisplayName, Mode=OneWay}" />
                                     <Run Text="   Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>

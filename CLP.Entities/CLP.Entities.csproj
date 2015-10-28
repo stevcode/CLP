@@ -95,12 +95,21 @@
     <Compile Include="DAL\DatabaseConfiguration.cs" />
     <Compile Include="DAL\ClassPeriodContext.cs" />
     <Compile Include="DomainModel\ClassPeriod.cs" />
-    <Compile Include="DomainModel\ClassSubject.cs" />
+    <Compile Include="DomainModel\ClassInformation.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
+    <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\HistoryAction.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArrayCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\IHistoryAction.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\HistoryAnalysis.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
@@ -108,12 +117,33 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
-    <Compile Include="DomainModel\PageObjects\Arrays\NumberLine.cs" />
+    <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\RemainderTilesVisibilityToggledHistoryItem.cs" />
+    <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineEndPointsChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineJumpSizesChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsMovedBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsOnPageChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\ICountableHistoryItems\PartsValueChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\Bin.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\BinReporter.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
+    <Compile Include="DomainModel\PageObjects\Interpretation\InterpretationRegion.cs" />
+    <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
+    <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAndPageObjectAccepter.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
-    <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
-    <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
+    <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
+    <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\AdditionRelationAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\ArrayAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\DivisionRelationAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\DivisionTemplateAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\FactorsOfProductAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\MultiplicationRelationAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
-    <Compile Include="DomainModel\Tags\AnalysisRoutines\StampAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayTriedWrongDividerValuesTag.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
@@ -122,21 +152,21 @@
     <Compile Include="DomainModel\History\IHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageHistory.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectCutHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectMoveBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectMoveBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectResizeBatchHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsAddedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsMoveBatchHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsRemovedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\StrokesChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectsAddedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectsMoveBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectsRemovedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\StrokesChangedHistoryItem.cs" />
     <Compile Include="DomainModel\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
-    <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\RemainderTiles.cs" />
     <Compile Include="DomainModel\PageObjects\CLPImage.cs" />
-    <Compile Include="DomainModel\PageObjects\LassoRegion.cs" />
+    <Compile Include="DomainModel\PageObjects\Temporary\LassoRegion.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />
@@ -153,7 +183,10 @@
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayXAxisDividerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayYAxisDividerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\AdditionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\FactorsOfProductDefinitionTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\IRelationPart.cs" />
     <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayRegionStrategyTag.cs" />
@@ -161,12 +194,19 @@
     <Compile Include="DomainModel\Tags\Array\ArrayXAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayYAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
+    <Compile Include="DomainModel\Tags\Definition\NumericValueDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\ADivisionTemplateBaseTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateFactorPairErrorsTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\ANumberLineBaseTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineCompletenessTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineCreationTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineDeletedTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineDimensionsChangedTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
@@ -178,16 +218,29 @@
     <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\ProblemTypeTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\TagAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Stamps\StampGroupTag.cs" />
     <Compile Include="DomainModel\Tags\Stamps\StampTroubleWithGroupingTag.cs" />
     <Compile Include="DomainModel\Tags\Stamps\TroubleWithMultiplicationTag.cs" />
+    <Compile Include="DomainModel\Tags\TempArrayDividersTag.cs" />
+    <Compile Include="DomainModel\Tags\TempArraySkipCountingTag.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />
+    <Compile Include="DomainModel\Utility\RollingStandardDeviation.cs" />
+    <Compile Include="DomainModel\Utility\TypeSwitch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
+      <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
+      <Name>CLP.InkInterpretation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

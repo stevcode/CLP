@@ -62,6 +62,26 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(LassoRegionViewModel);
             }
+            if (dataContext is TemporaryBoundary)
+            {
+                return typeof(TemporaryBoundaryViewModel);
+            }
+            if (dataContext is MultipleChoiceBox)
+            {
+                return typeof(MultipleChoiceBoxViewModel);
+            }
+            if (dataContext is Mark)
+            {
+                return typeof(MarkViewModel);
+            }
+            if (dataContext is Bin)
+            {
+                return typeof(BinViewModel);
+            }
+            if (dataContext is BinReporter)
+            {
+                return typeof(BinReporterViewModel);
+            }
 
             return null;
         }

@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
     </UserControl.Resources>
     
     <Grid x:Name="TopGrid">
@@ -28,40 +29,14 @@
         </Grid.Style>
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <views:AnimationPageToolBar x:Name="AnimationPageToolBar"
-                                        Grid.Column="1"
-                                        Grid.Row="0"
-                                        Width="{Binding DataContext.BorderWidth, ElementName=TopGrid}">
-                <views:AnimationPageToolBar.Style>
-                    <Style TargetType="{x:Type views:AnimationPageToolBar}">
-                        <Setter Property="Visibility"
-                                Value="Collapsed" />
-                        <Style.Triggers>
-                            <!--Animitation Page ToolBar-->
-                            <DataTrigger Binding="{Binding PageType}"
-                                         Value="Animation">
-                                <Setter Property="Visibility"
-                                        Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </views:AnimationPageToolBar.Style>
-
-            </views:AnimationPageToolBar>
-
             <TextBlock Grid.Column="0"
-                       Grid.Row="1"
-                       Foreground="{StaticResource MainColor}"
+                       Foreground="{DynamicResource DynamicMainColor}"
                        FontWeight="Bold"
                        VerticalAlignment="Center">
                 <Run Text="Page" />
@@ -77,10 +52,9 @@
             </TextBlock>
 
             <TextBlock Grid.Column="0"
-                       Grid.Row="1"
                        Margin="0 0 0 5"
-                       Text="{Binding CurrentPage.Owner.FullName}"
-                       Foreground="{StaticResource MainColor}"
+                       Text="{Binding CurrentPage.Owner.DisplayName}"
+                       Foreground="{DynamicResource DynamicMainColor}"
                        FontWeight="Bold"
                        VerticalAlignment="Bottom"
                        Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
@@ -95,7 +69,6 @@
             </TextBlock>
 
             <Border Grid.Column="1"
-                    Grid.Row="1"
                     BorderThickness="0"
                     Width="{Binding BorderWidth}"
                     Height="{Binding BorderHeight}">
@@ -115,29 +88,27 @@
                           Height="{Binding DimensionHeight}">
 
                         <views:CLPPageView x:Name="CLPPageView"
-                                           DataContext="{Binding CurrentPage}"
-                                           ViewModelChanged="CLPPageView_OnViewModelChanged" />
+                                           DataContext="{Binding CurrentPage}" />
 
                     </Grid>
                 </ScrollViewer>
             </Border>
 
             <Rectangle Grid.Column="1"
-                       Grid.Row="1"
                        StrokeThickness="{Binding BorderThickness}"
                        Stroke="{StaticResource GrayBorderColor}"
                        Width="{Binding BorderWidth}"
                        Height="{Binding BorderHeight}" />
 
             <ToggleButton Grid.Column="2"
-                          Grid.Row="1"
                           Width="30"
                           Height="30"
                           Margin="-20 0 0 0"
                           Cursor="Hand"
-                          IsChecked="{Binding MainWindowViewModel.Ribbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
-                          VerticalAlignment="Top">
+                          VerticalAlignment="Top"
+                          IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                          IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
@@ -166,14 +137,13 @@
             </ToggleButton>
 
             <Button Grid.Column="2"
-                    Grid.Row="1"
                     Width="30"
                     Height="30"
                     Margin="-20 40 0 0"
                     Cursor="Hand"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
                     Command="{Binding ReplayHistoryCommand}"
-                    VerticalAlignment="Top">
+                    VerticalAlignment="Top"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Image Source="pack://application:,,,/Images/video.png" />

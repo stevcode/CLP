@@ -26,7 +26,11 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="animationIndicatorType">The <see cref="AnimationIndicatorType" /> of animation indication this <see cref="AnimationIndicator" /> represents.</param>
         public AnimationIndicator(CLPPage parentPage, Person owner, AnimationIndicatorType animationIndicatorType)
-            : base(parentPage, owner) { AnimationIndicatorType = animationIndicatorType; }
+            : base(parentPage, owner)
+        {
+            AnimationIndicatorType = animationIndicatorType;
+            CachedFormattedValue = FormattedValue;
+        }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo" />.
@@ -56,9 +60,23 @@ namespace CLP.Entities
 
         public static readonly PropertyData AnimationIndicatorTypeProperty = RegisterProperty("AnimationIndicatorType", typeof(AnimationIndicatorType));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                var animationLocation = AnimationIndicatorType == AnimationIndicatorType.Record ? "Animation Start" : "Animation End";
+                return string.Format("Index #{0}, {1}.", HistoryIndex, animationLocation);
+            }
+        }
+
         #endregion //Properties
 
         #region Methods
+
+        protected override void ConversionUndoAction()
+        {
+
+        }
 
         /// <summary>
         /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.

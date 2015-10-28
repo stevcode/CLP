@@ -10,6 +10,8 @@
                 Value="{Binding XPosition}" />
         <Setter Property="Canvas.Top"
                 Value="{Binding YPosition}" />
+        <Setter Property="Canvas.ZIndex"
+                Value="{Binding ZIndex}" />
     </Style>
 
 </ResourceDictionary>

@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
@@ -13,6 +14,59 @@
 
     <DockPanel Background="{Binding WorkspaceBackgroundColor}"
                LastChildFill="True">
+        
+        <!-- Context Ribbon -->
+        <DockPanel DockPanel.Dock="Top"
+                   Height="35"
+                   LastChildFill="True"
+                   HorizontalAlignment="Stretch"
+                   Background="{StaticResource GrayBackgroundColor}">
+
+            <Line DockPanel.Dock="Bottom"
+                  Stretch="Fill"
+                  X1="0"
+                  X2="1"
+                  Margin="-1 0 -1 0"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <Grid DockPanel.Dock="Left"
+                        Width="250">
+                
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+
+                    <customControls:RibbonButton Text="Previous Page"
+                                                 Command="{Binding PreviousPageCommand}"
+                                                 LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
+                                                 IsContextButton="True" />
+
+                    <customControls:RibbonButton Text="Next Page"
+                                                 Command="{Binding NextPageCommand}"
+                                                 LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
+                                                 IsContextButton="True" />
+
+                </StackPanel>
+                
+            </Grid>
+
+            <Line DockPanel.Dock="Left"
+                  Stretch="Fill"
+                  Y1="0"
+                  Y2="1"
+                  Margin="0 2 0 2"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <customControls:RibbonButton DockPanel.Dock="Left"
+                                         Text="Go To Page"
+                                         Command="{Binding GoToPageCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
+                                         IsContextButton="True" />
+
+            <views:ContextRibbonView DataContext="{Binding ContextRibbon}" />
+            
+        </DockPanel>
 
         <!--Left Panel-->
         <Control DockPanel.Dock="Left">
@@ -64,10 +118,10 @@
                     <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
-                
                 <ControlTemplate x:Key="PageInformationPanelTemplate">
                     <views:PageInformationPanelView DataContext="{Binding PageInformationPanel}" />
                 </ControlTemplate>
+                
             </Control.Resources>
 
             <Control.Style>
@@ -100,33 +154,25 @@
             </Control.Style>
         </Control>
 
-        <!--Bottom Panel-->
-        <Control DockPanel.Dock="Bottom"
-                 Visibility="{Binding BottomPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-            <Control.Resources>
+        <!-- Animation Control Ribbon -->
+        <DockPanel DockPanel.Dock="Top"
+                   Height="69"
+                   LastChildFill="True"
+                   HorizontalAlignment="Stretch"
+                   Background="{StaticResource GrayBackgroundColor}"
+                   Visibility="{Binding AnimationControlRibbon.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
 
-                <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
-                    <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}"
-                                                      Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
-                </ControlTemplate>
+            <Line DockPanel.Dock="Bottom"
+                  Stretch="Fill"
+                  X1="0"
+                  X2="1"
+                  Margin="-1 0 -1 0"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
 
-            </Control.Resources>
+            <views:AnimationControlRibbonView DataContext="{Binding AnimationControlRibbon}" />
 
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!--SubmissionHistoryPanel trigger-->
-                        <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}"
-                                     Value="SubmissionHistoryPanelViewModel">
-                            <Setter Property="Template"
-                                    Value="{StaticResource SubmissionHistoryPanelTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </Control>
+        </DockPanel>
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch"
@@ -140,6 +186,10 @@
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
                     <views:GridDisplayView DataContext="{Binding CurrentDisplay}" />
+                </ControlTemplate>
+
+                <ControlTemplate x:Key="ColumnDisplayTemplate">
+                    <views:ColumnDisplayView DataContext="{Binding CurrentDisplay}" />
                 </ControlTemplate>
 
             </Control.Resources>
@@ -163,6 +213,13 @@
                                      Value="GridDisplay">
                             <Setter Property="Template"
                                     Value="{StaticResource GridDisplayTemplate}" />
+                        </DataTrigger>
+
+                        <!-- ColumnDisplay trigger -->
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="ColumnDisplay">
+                            <Setter Property="Template"
+                                    Value="{StaticResource ColumnDisplayTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

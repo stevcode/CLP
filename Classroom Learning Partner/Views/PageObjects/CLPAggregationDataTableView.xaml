@@ -4,14 +4,13 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
-        <conv:LengthConverter x:Key="LengthConverter"/>
-        <conv:HalfLengthConverter x:Key="HalfLengthConverter"/>
-        <conv:LengthSubtractConverter x:Key="LengthSubtractConverter"/>
-        <conv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>
+        <!--<oconv:HalfLengthConverter x:Key="HalfLengthConverter"/>
+        <oconv:LengthSubtractConverter x:Key="LengthSubtractConverter"/>
+        <oconv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>-->
         
 
         <Style x:Key="GridPartStyle">
@@ -31,68 +30,26 @@
             <!--This is the adorner-->
             <Canvas Width="{Binding Path=Width}" Height="{Binding Path=Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                           RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
-                           Width="{Binding Converter={StaticResource LengthConverter},Path=Width, ConverterParameter=10}"
-                           Height="{Binding Converter={StaticResource LengthConverter},Path=Height, ConverterParameter=10}" />
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
-                <!--Close Button-->
-                <Button x:Name="AdornerClose"
-                                Command="{Binding RemovePageObjectCommand}"
-                                Width="40" Height="40"
-                                Canvas.Left="-50" Canvas.Top="-50"
-                                Cursor="Hand">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                              Stretch="Fill" Margin="5"
-                                              Stroke="Red" StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Drag Thumb-->
-                <Thumb x:Name="AdornerDrag"
-                               Canvas.Right="-50" Canvas.Top="-50"
-                               Width="40" Height="40"
-                               Cursor="ScrollAll">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                              Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <!--Resize Thumb-->
                 <Thumb x:Name="AdornerResize"

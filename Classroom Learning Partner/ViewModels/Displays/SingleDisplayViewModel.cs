@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof(CLPPageViewModel))]
-    [InterestedIn(typeof(CLPAnimationPageViewModel))]
+    [InterestedIn(typeof (CLPPageViewModel))]
     public class SingleDisplayViewModel : ViewModelBase
     {
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the SingleDisplayViewModel class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the SingleDisplayViewModel class.</summary>
         public SingleDisplayViewModel(Notebook notebook)
         {
             Notebook = notebook;
@@ -35,9 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Model
 
-        /// <summary>
-        /// The Model of the ViewModel.
-        /// </summary>
+        /// <summary>The Model of the ViewModel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -45,11 +36,9 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
 
-        /// <summary>
-        /// A property mapped to a property on the Model SingleDisplay.
-        /// </summary>
+        /// <summary>A property mapped to a property on the Model SingleDisplay.</summary>
         [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
@@ -57,21 +46,21 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), null, OnCurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), null, OnCurrentPageChanged);
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var singleDisplayViewModel = sender as SingleDisplayViewModel;
-            if(singleDisplayViewModel == null ||
-               singleDisplayViewModel.CurrentPage == null)
+            if (singleDisplayViewModel == null ||
+                singleDisplayViewModel.CurrentPage == null)
             {
                 return;
             }
 
             singleDisplayViewModel.OnPageResize();
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
-               App.Network.ProjectorProxy == null)
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                App.Network.ProjectorProxy == null)
             {
                 return;
             }
@@ -82,20 +71,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, "SingleDisplay");
             }
-            catch(Exception)
-            {
-
-            }
+            catch (Exception) { }
         }
 
         #endregion //Model
 
         #region Page Resizing Bindings
 
-        /// <summary>
-        /// Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay.
-        /// DataBinding done from Dependency Property in the View.
-        /// </summary>
+        /// <summary>Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay. DataBinding done from Dependency Property in the View.</summary>
         public Tuple<double, double> DisplayWidthHeight
         {
             get { return GetValue<Tuple<double, double>>(DisplayWidthHeightProperty); }
@@ -103,97 +86,81 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(DisplayWidthHeightProperty, value);
 
-                if(value != null)
+                if (value != null)
                 {
                     OnPageResize();
                 }
             }
         }
 
-        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
+        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof (Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
 
-        /// <summary>
-        /// Height of the toolbar for the current page.
-        /// </summary>
+        /// <summary>Height of the toolbar for the current page.</summary>
         public double ToolBarHeight
         {
             get { return GetValue<double>(ToolBarHeightProperty); }
             set { SetValue(ToolBarHeightProperty, value); }
         }
 
-        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof(double), 0.0);
+        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof (double), 0.0);
 
-        /// <summary>
-        /// Thickness of the border around the page.
-        /// </summary>
+        /// <summary>Thickness of the border around the page.</summary>
         public double BorderThickness
         {
             get { return GetValue<double>(BorderThicknessProperty); }
             set { SetValue(BorderThicknessProperty, value); }
         }
 
-        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof(double), 1.0);
+        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof (double), 1.0);
 
-        /// <summary>
-        /// Width of the visible border around a page.
-        /// Scales based on zoom leve.
-        /// </summary>
+        /// <summary>Width of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderWidth
         {
             get { return GetValue<double>(BorderWidthProperty); }
             set { SetValue(BorderWidthProperty, value); }
         }
 
-        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof(double));
+        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof (double));
 
-        /// <summary>
-        /// Height of the visible border around a page.
-        /// Scales based on zoom leve.
-        /// </summary>
+        /// <summary>Height of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderHeight
         {
             get { return GetValue<double>(BorderHeightProperty); }
             set { SetValue(BorderHeightProperty, value); }
         }
 
-        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double));
+        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof (double));
 
-        /// <summary>
-        /// Physical Width of Page. Differs from the Width because Width is inside a ViewBox.
-        /// </summary>
+        /// <summary>Physical Width of Page. Differs from the Width because Width is inside a ViewBox.</summary>
         public double DimensionWidth
         {
             get { return GetValue<double>(DimensionWidthProperty); }
             set { SetValue(DimensionWidthProperty, value); }
         }
 
-        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double));
+        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof (double));
 
-        /// <summary>
-        /// Physical Height of Page. Differs from the Height because Height is inside a ViewBox.
-        /// </summary>
+        /// <summary>Physical Height of Page. Differs from the Height because Height is inside a ViewBox.</summary>
         public double DimensionHeight
         {
             get { return GetValue<double>(DimensionHeightProperty); }
             set { SetValue(DimensionHeightProperty, value); }
         }
 
-        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double));
+        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof (double));
 
         #endregion //Page Resizing Bindings
 
         #region Commands
 
-        /// <summary>
-        /// Forwards PageScroll events to the Projector.
-        /// </summary>
+        /// <summary>Forwards PageScroll events to the Projector.</summary>
         public Command<ScrollChangedEventArgs> PageScrollCommand { get; private set; }
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
-               App.Network.ProjectorProxy == null ||
-               Math.Abs(e.VerticalChange) < 0.001)
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                App.Network.ProjectorProxy == null ||
+                Math.Abs(e.VerticalChange) < 0.001)
             {
                 return;
             }
@@ -204,47 +171,22 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.ScrollPage(percentOffset);
             }
-            catch(Exception)
-            {
-
-            }
+            catch (Exception) { }
         }
 
-        /// <summary>
-        /// Replays the interaction history of the page on the Grid Display.
-        /// </summary>
+        /// <summary>Replays the interaction history of the page on the Grid Display.</summary>
         public Command ReplayHistoryCommand { get; private set; }
 
         private void OnReplayHistoryCommandExecute()
         {
-            var currentPage = CurrentPage;
-            if (currentPage == null) { return; }
-
-            currentPage.IsTagAddPrevented = true;
-            var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.None;
-
-            while (currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
-
-            var t = new Thread(() =>
+            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
+            if (CurrentPage == null ||
+                animationControlRibbon == null)
             {
-                while (currentPage.History.RedoItems.Any())
-                {
-                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                          (DispatcherOperationCallback)delegate
-                                                          {
-                                                              currentPage.History.Redo(true);
-                                                              return null;
-                                                          },
-                                                          null);
-                    Thread.Sleep(historyItemAnimationDelay);
-                }
-                currentPage.IsTagAddPrevented = false;
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = oldPageInteractionMode;
-            });
+                return;
+            }
 
-            t.Start();
+            animationControlRibbon.IsNonAnimationPlaybackEnabled = !animationControlRibbon.IsNonAnimationPlaybackEnabled;
         }
 
         #endregion //Commands
@@ -253,12 +195,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(propertyName == "Height")
+            if (propertyName == "Height")
             {
                 var pageViewModel = viewModel as ACLPPageBaseViewModel;
-                if(pageViewModel != null &&
-                   CurrentPage != null &&
-                   pageViewModel.Page.ID == CurrentPage.ID)
+                if (pageViewModel != null &&
+                    CurrentPage != null &&
+                    pageViewModel.Page.ID == CurrentPage.ID)
                 {
                     OnPageResize();
                 }
@@ -269,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageResize()
         {
-            if(CurrentPage == null)
+            if (CurrentPage == null)
             {
                 return;
             }
@@ -283,7 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var borderWidth = DisplayWidthHeight.Item1 - PAGE_MARGIN - 20;
             var borderHeight = borderWidth / pageAspectRatio;
 
-            if(borderHeight > DisplayWidthHeight.Item2 - PAGE_MARGIN - ToolBarHeight)
+            if (borderHeight > DisplayWidthHeight.Item2 - PAGE_MARGIN - ToolBarHeight)
             {
                 borderHeight = DisplayWidthHeight.Item2 - PAGE_MARGIN - ToolBarHeight;
                 borderWidth = borderHeight * pageAspectRatio;

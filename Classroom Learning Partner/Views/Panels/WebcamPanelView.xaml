@@ -2,14 +2,9 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:webcam="clr-namespace:Classroom_Learning_Partner.ViewModels.Controls.WebcamPlayer"
                    Width="{Binding InitialWidth}">
-    
-    <!-- Resources -->
-    <UserControl.Resources>
-        <conv:ThreeFourthConverter x:Key="ThreeFourthConverter" />
-    </UserControl.Resources>
 
     <!-- Content -->
     <Border Background="#F3F3F3"
@@ -24,7 +19,7 @@
 
             <!--Webcam-->
             <webcam:CapPlayer x:Name="webcamPlayer" Grid.Row="0" Stretch="Fill" Margin="6"
-                              Height="{Binding ElementName=webcamPlayer, Path=ActualWidth, Converter={StaticResource ThreeFourthConverter}}"
+                              Height="{Binding ActualWidth, ElementName=webcamPlayer, Converter={conv:MultiplyNumberConverter}, ConverterParameter=0.75}"
                               Rotation="{Binding WebcamRotation}"
                               Device="{Binding SelectedWebcam}" />
 

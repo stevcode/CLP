@@ -4,13 +4,7 @@
 				   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
-
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <conv:LengthConverter x:Key="LengthConverter"/>
-        </ResourceDictionary>
-    </UserControl.Resources>
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
@@ -23,66 +17,63 @@
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
                     Width="{Binding Width}" Height="{Binding Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                           RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+
+                <Rectangle Stroke="Black"
+                           StrokeDashArray="0.5 1.0 0.3"
+                           StrokeThickness="2"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
-                        Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Left="-40" Canvas.Top="-40">
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Top="-40"
+                        Cursor="Hand">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0,0 L1,1 M0,1 L1,0"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Red"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-                <!--Drag Thumb-->
-                <Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Top="-40">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
@@ -113,31 +104,6 @@
                     </Thumb.Template>
                 </Thumb>
                 
-                <!--Duplicate Shape Button-->
-                <Button Command="{Binding DuplicateShapeCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Green"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
@@ -158,6 +124,17 @@
                                  Height="{Binding Height, Mode=TwoWay}" 
                                  Width="{Binding Width, Mode=TwoWay}" 
                                  Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="TriangleTemplate">
+                        <Polygon DataContext="{Binding}"
+                                 Points="0,2 2,2 1,0"
+                                 Height="{Binding Height, Mode=TwoWay}"
+                                 Width="{Binding Width, Mode=TwoWay}"
+                                 Stretch="Uniform"
+                                 Fill="Transparent"
+                                 Stroke="Black"
+                                 StrokeThickness="3" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="HorizontalLineTemplate">
@@ -183,6 +160,60 @@
                                Source="..\..\Images\Protractor.png" />
                     </ControlTemplate>
 
+                    <ControlTemplate x:Key="RightDiagonalLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              Stretch="Uniform"
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="1"
+                              X2="1"
+                              Y2="0" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="RightDiagonalDashedLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              StrokeDashArray="3,1"
+                              Stretch="Uniform"
+                              StrokeThickness="2"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="1"
+                              X2="1"
+                              Y2="0" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="LeftDiagonalLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              Stretch="Uniform"
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="1" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="LeftDiagonalDashedLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              StrokeDashArray="3,1"
+                              Stretch="Uniform"
+                              StrokeThickness="2"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="1" />
+                    </ControlTemplate>
+
                 </Control.Resources>
 
                 <Control.Style>
@@ -197,6 +228,13 @@
                             <!-- Ellipse trigger -->
                             <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
                                 <Setter Property="Template" Value="{StaticResource EllipseTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Triangle trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="Triangle">
+                                <Setter Property="Template"
+                                        Value="{StaticResource TriangleTemplate}" />
                             </DataTrigger>
 
                             <!-- HorizontalLine trigger -->
@@ -214,22 +252,68 @@
                                 <Setter Property="Template" Value="{StaticResource ProtractorTemplate}" />
                             </DataTrigger>
 
+                            <!-- RightDiagonalLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="RightDiagonal">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RightDiagonalLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- RightDiagonalDashedLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="RightDiagonalDashed">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RightDiagonalDashedLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- LeftDiagonalLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="LeftDiagonal">
+                                <Setter Property="Template"
+                                        Value="{StaticResource LeftDiagonalLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- LeftDiagonalDashedLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="LeftDiagonalDashed">
+                                <Setter Property="Template"
+                                        Value="{StaticResource LeftDiagonalDashedLineTemplate}" />
+                            </DataTrigger>
+
                         </Style.Triggers>
                     </Style>
                 </Control.Style>
             </Control>
 
-            <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
-                       Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}">
+            <Thumb Tag="PageObjectHitBox"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseEnter">
-                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Rectangle>
+            </Thumb>
 
         </Grid>
 

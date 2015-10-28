@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Text;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using Catel;
 
 namespace CLP.Entities
@@ -50,11 +52,20 @@ namespace CLP.Entities
             return strokeDTO;
         }
 
+        #region ExtendedProperties
+
+        public static bool HasStrokeID(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return stroke.ContainsPropertyData(StrokeIDKey);
+        }
+
         public static string GetStrokeID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            if(stroke.ContainsPropertyData(StrokeIDKey))
+            if (stroke.ContainsPropertyData(StrokeIDKey))
             {
                 return stroke.GetPropertyData(StrokeIDKey) as string;
             }
@@ -72,8 +83,8 @@ namespace CLP.Entities
         public static string GetStrokeOwnerID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
-            
-            if(stroke.ContainsPropertyData(StrokeOwnerIDKey))
+
+            if (stroke.ContainsPropertyData(StrokeOwnerIDKey))
             {
                 return stroke.GetPropertyData(StrokeOwnerIDKey) as string;
             }
@@ -92,7 +103,7 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            if(stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
+            if (stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
             {
                 return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
             }
@@ -111,8 +122,8 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            
-            if(stroke.ContainsPropertyData(StrokeVersionIndexKey))
+
+            if (stroke.ContainsPropertyData(StrokeVersionIndexKey))
             {
                 return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
             }
@@ -127,11 +138,189 @@ namespace CLP.Entities
             stroke.AddPropertyData(StrokeVersionIndexKey, index);
         }
 
-        public static bool HasStrokeID(this Stroke stroke)
+        #endregion //ExtendedProperties
+
+        #region Transformation
+
+        /// <summary>
+        /// Scales a <see cref="Stroke" /> with respect to a center point.
+        /// </summary>
+        public static void Stretch(this Stroke stroke, double scaleX, double scaleY, double centerX, double centerY)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.ContainsPropertyData(StrokeIDKey);
+            var transform = new Matrix();
+            transform.ScaleAt(scaleX, scaleY, centerX, centerY);
+            stroke.Transform(transform, false);
         }
+
+        /// <summary>
+        /// Moves every <see cref="StylusPoint" /> in a <see cref="Stroke" /> by an offset.
+        /// </summary>
+        public static void Move(this Stroke stroke, double deltaX, double deltaY)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var transform = new Matrix();
+            transform.Translate(deltaX, deltaY);
+            stroke.Transform(transform, true);
+        }
+
+        public static void Rotate(this Stroke stroke, double angle, double centerX, double centerY, double offsetX, double offsetY)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var transform = new Matrix();
+            transform.RotateAt(90, centerX, centerY);
+            transform.Translate(offsetX, offsetY);
+            stroke.Transform(transform, false);
+        }
+
+        #endregion //Transformation
+
+        #region HitTesting
+
+        public static double PercentContainedByBounds(this Stroke stroke, Rect bounds)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("bounds", bounds);
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            var weightContained = 0.0;
+            var weightNotContained = 0.0;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                    
+                }
+
+                if (bounds.Contains((Point)stylusPoints[i]))
+                {
+                    weightContained += pointWeight;
+                }
+                else
+                {
+                    weightNotContained += pointWeight;
+                }
+            }
+
+            var totalWeight = weightContained + weightNotContained;
+            return weightContained / totalWeight;
+        }
+
+        public static double StrokeWeight(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            var weight = 0.0;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+
+                }
+
+                weight += pointWeight;
+            }
+
+            return weight;
+        }
+
+        /// <summary>
+        /// Finds the centroid of a stroke. The centroid calculation takes into account pressure
+        /// sensitivity and ascribes more importance to points with higher pressure values.
+        /// </summary>
+        /// <param name="stroke"></param>
+        /// <returns></returns>
+        public static Point WeightedCenter(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeWeight = stroke.StrokeWeight();
+            var weightedXAverage = 0.0;
+            var weightedYAverage = 0.0;
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+
+                }
+
+                var importance = pointWeight / strokeWeight;
+                weightedXAverage += importance * stylusPoints[i].X;
+                weightedYAverage += importance * stylusPoints[i].Y;
+            }
+
+            return new Point(weightedXAverage, weightedYAverage);
+        }
+
+        #endregion //HitTesting
+
+        #region History
+
+        public static Stroke GetStrokeCopyAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        {
+            return stroke.Clone();
+        }
+
+        #endregion // History
     }
 }

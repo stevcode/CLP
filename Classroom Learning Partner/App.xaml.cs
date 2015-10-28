@@ -1,12 +1,14 @@
 using System;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.IO;
+using Catel.IoC;
+using Catel.Logging;
 using Catel.Reflection;
-using Catel.Runtime.Serialization;
 using Catel.Windows.Controls;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -24,7 +26,8 @@ namespace Classroom_Learning_Partner
             CLPServiceAgent.Instance.Initialize();
 
             InitializeCatelSettings();
-
+            InitializeServices();
+            
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView
                          {
@@ -33,7 +36,6 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
-            MainWindowViewModel.InitializeLocalCache(currentProgramMode);
             CLPServiceAgent.Instance.NetworkSetup();
             MainWindowViewModel.SetWorkspace();
         }
@@ -44,18 +46,27 @@ namespace Classroom_Learning_Partner
             var directory = typeof (MainWindowView).Assembly.GetDirectory();
             AppDomain.CurrentDomain.PreloadAssemblies(directory);
 
+            //var fileLogListener = new FileLogListener();
+            //fileLogListener.FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "catellog.log");
+            //LogManager.AddListener(fileLogListener);
+            //LogManager.IsDebugEnabled = true;
+
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            //LogManager.RegisterDebugListener();
+            //LogManager.AddDebugListener();
 
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
+        }
 
-            //Warm up Serializer to make loading of notebook faster.
-            var typesToWarmup = new[] { typeof (Notebook) };
-            var xmlSerializer = SerializationFactory.GetXmlSerializer();
-            xmlSerializer.Warmup(typesToWarmup);
+        private static void InitializeServices()
+        {
+            var dataService = new DataService();
+            ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
+
+            var pageInteractionService = new PageInteractionService();
+            ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
         }
 
         #region Methods

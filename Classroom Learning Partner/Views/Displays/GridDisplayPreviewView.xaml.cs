@@ -3,20 +3,19 @@ using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for GridDisplayView.xaml
-    /// </summary>
+    /// <summary>Interaction logic for GridDisplayView.xaml</summary>
     public partial class GridDisplayPreviewView
     {
         public GridDisplayPreviewView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof(GridDisplayViewModel); }
+        protected override Type GetViewModelType() { return typeof (GridDisplayViewModel); }
 
         protected override void OnViewModelChanged()
         {
-            if(ViewModel is GridDisplayViewModel)
+            var viewModel = ViewModel as GridDisplayViewModel;
+            if (viewModel != null)
             {
-                (ViewModel as GridDisplayViewModel).IsDisplayPreview = true;
+                viewModel.IsDisplayPreview = true;
             }
 
             base.OnViewModelChanged();

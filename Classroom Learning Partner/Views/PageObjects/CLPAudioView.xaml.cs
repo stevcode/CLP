@@ -1,16 +1,12 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Catel.Windows.Controls;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
-    public partial class CLPAudioView : Catel.Windows.Controls.UserControl
+    public partial class CLPAudioView
     {
-        public CLPAudioView()
-        {
-            InitializeComponent();
-        }
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(CLPAudioViewModel);
-        }
+        public CLPAudioView() { InitializeComponent(); }
+        protected override Type GetViewModelType() { return typeof (CLPAudioViewModel); }
     }
 }

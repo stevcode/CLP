@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Windows.Data;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -24,9 +26,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void init()
         {
-            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            var notebookService = DependencyResolver.Resolve<INotebookService>();
+            if (notebookService == null)
             {
-                StudentsNotInGroup = new ObservableCollection<Person>(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList);
+                return;
+            }
+
+            if (notebookService.CurrentClassPeriod != null)
+            {
+                StudentsNotInGroup = new ObservableCollection<Person>(notebookService.CurrentClassPeriod.ClassInformation.StudentList);
             }
 
             SortedStudentsNotInGroup.Source = StudentsNotInGroup;
