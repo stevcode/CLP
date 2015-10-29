@@ -439,6 +439,7 @@ namespace ConsoleScripts
                     #region JumpSizeConversion
 
                     var removedJumpStrokeIDs = new List<string>();
+                    var jumpsRemoved = new List<NumberLineJumpSize>();
                     foreach (var strokeID in objectsChanged.StrokeIDsRemoved)
                     {
                         var stroke = page.GetVerifiedStrokeInHistoryByID(strokeID);
@@ -489,6 +490,8 @@ namespace ConsoleScripts
                                                                                                     {
                                                                                                         stroke
                                                                                                     },
+                                                                                                    new List<NumberLineJumpSize>(),
+                                                                                                    new List<NumberLineJumpSize>(),
                                                                                                     oldHeight,
                                                                                                     oldYPosition,
                                                                                                     numberLine.Height,
@@ -534,6 +537,8 @@ namespace ConsoleScripts
                                                                                                         stroke
                                                                                                     },
                                                                                                     new List<Stroke>(),
+                                                                                                    new List<NumberLineJumpSize>(),
+                                                                                                    new List<NumberLineJumpSize>(),
                                                                                                     oldHeight,
                                                                                                     oldYPosition,
                                                                                                     numberLine.Height,

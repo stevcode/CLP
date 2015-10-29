@@ -245,9 +245,7 @@ namespace CLP.Entities
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes",
-                                                                                 typeof (ObservableCollection<NumberLineJumpSize>),
-                                                                                 () => new ObservableCollection<NumberLineJumpSize>());
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<NumberLineJumpSize>), () => new ObservableCollection<NumberLineJumpSize>());
 
         /// <summary>A collection of the ticks of the number line</summary>
         public ObservableCollection<NumberLineTick> Ticks
@@ -256,9 +254,7 @@ namespace CLP.Entities
             set { SetValue(TicksProperty, value); }
         }
 
-        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks",
-                                                                             typeof (ObservableCollection<NumberLineTick>),
-                                                                             () => new ObservableCollection<NumberLineTick>());
+        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>), () => new ObservableCollection<NumberLineTick>());
 
         #endregion //Properties
 
@@ -304,15 +300,15 @@ namespace CLP.Entities
             var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
             for (var i = 0; i < Ticks.Count; i++)
             {
-                var isLabelVisible = i == 0 || i == NumberLineSize || i % defaultInteger == 0 ||
-                                     JumpSizes.Any(j => j.StartingTickIndex == i || j.StartingTickIndex + j.JumpSize == i);
+                var isLabelVisible = i == 0 || i == NumberLineSize || i % defaultInteger == 0 || JumpSizes.Any(j => j.StartingTickIndex == i || j.StartingTickIndex + j.JumpSize == i);
 
                 Ticks[i].IsNumberVisible = isLabelVisible;
             }
         }
 
-        public bool RemoveJumpFromStroke(Stroke stroke)
+        public List<NumberLineJumpSize> RemoveJumpFromStroke(Stroke stroke)
         {
+            var removedJumps = new List<NumberLineJumpSize>();
             switch (NumberLineType)
             {
                 case NumberLineTypes.NumberLine:
@@ -323,7 +319,7 @@ namespace CLP.Entities
                         tickL == null ||
                         tickR == tickL)
                     {
-                        return false;
+                        return removedJumps;
                     }
 
                     var deletedStartTickValue = tickL.TickValue;
@@ -332,9 +328,10 @@ namespace CLP.Entities
                     var jumpToRemove = JumpSizes.FirstOrDefault(jump => jump.JumpSize == deletedJumpSize && jump.StartingTickIndex == deletedStartTickValue);
                     if (jumpToRemove == null)
                     {
-                        return false;
+                        return removedJumps;
                     }
 
+                    removedJumps.Add(jumpToRemove);
                     JumpSizes.Remove(jumpToRemove);
 
                     if (JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
@@ -351,21 +348,20 @@ namespace CLP.Entities
                         tickL.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
                     }
 
-                    return true;
+                    break;
                 }
                 case NumberLineTypes.AutoArcs:
                 {
                     var closestTick = FindClosestTickToTickStroke(stroke);
                     if (closestTick == null)
                     {
-                        return false;
+                        return removedJumps;
                     }
-
-                    var wasJumpRemoved = false;
 
                     var jumpsToRemove = JumpSizes.Where(j => j.StartingTickIndex == closestTick.TickValue || j.StartingTickIndex + j.JumpSize == closestTick.TickValue).ToList();
                     foreach (var jump in jumpsToRemove)
                     {
+                        removedJumps.Add(jump);
                         JumpSizes.Remove(jump);
                         var leftTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex);
                         var rightTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex + jump.JumpSize);
@@ -385,8 +381,6 @@ namespace CLP.Entities
                             leftTick.TickColor = "Black";
                             leftTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || leftTick.TickValue % 5 == 0 || leftTick.TickValue == NumberLineSize;
                         }
-
-                        wasJumpRemoved = true;
                     }
 
                     if (closestTick.IsMarked)
@@ -394,19 +388,18 @@ namespace CLP.Entities
                         closestTick.IsMarked = false;
                         closestTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || closestTick.TickValue % 5 == 0 || closestTick.TickValue == NumberLineSize;
                         closestTick.TickColor = "Black";
-
-                        wasJumpRemoved = true;
                     }
 
-                    return wasJumpRemoved;
+                    break;
                 }
-                default:
-                    return false;
             }
+
+            return removedJumps;
         }
 
-        public bool AddJumpFromStroke(Stroke stroke)
+        public List<NumberLineJumpSize> AddJumpFromStroke(Stroke stroke)
         {
+            var addedJumps = new List<NumberLineJumpSize>();
             switch (NumberLineType)
             {
                 case NumberLineTypes.NumberLine:
@@ -417,7 +410,7 @@ namespace CLP.Entities
                         tickL == null ||
                         tickR == tickL)
                     {
-                        return false;
+                        return addedJumps;
                     }
 
                     tickR.IsMarked = true;
@@ -436,48 +429,48 @@ namespace CLP.Entities
                     }
 
                     var jumpSize = tickR.TickValue - tickL.TickValue;
-                    JumpSizes.Add(new NumberLineJumpSize(jumpSize, tickL.TickValue, stroke.DrawingAttributes.Color.ToString()));
-
-                    return true;
+                    var jump = new NumberLineJumpSize(jumpSize, tickL.TickValue, stroke.DrawingAttributes.Color.ToString());
+                    JumpSizes.Add(jump);
+                    addedJumps.Add(jump);
+                    break;
                 }
                 case NumberLineTypes.AutoArcs:
                 {
                     var closestTick = FindClosestTickToTickStroke(stroke);
                     if (closestTick == null)
                     {
-                        return false;
+                        return addedJumps;
                     }
 
-                    var wasJumpMade = false;
                     if (!closestTick.IsMarked)
                     {
                         closestTick.IsMarked = true;
                         closestTick.IsNumberVisible = true;
                         closestTick.TickColor = stroke.DrawingAttributes.Color == Colors.Black ? "Blue" : stroke.DrawingAttributes.Color.ToString();
-                        wasJumpMade = true;
                     }
 
                     var markedTickToTheLeft = Ticks.LastOrDefault(t => t.IsMarked && t.TickValue < closestTick.TickValue);
                     if (markedTickToTheLeft != null)
                     {
                         var leftJumpSize = closestTick.TickValue - markedTickToTheLeft.TickValue;
-                        JumpSizes.Add(new NumberLineJumpSize(leftJumpSize, markedTickToTheLeft.TickValue, stroke.DrawingAttributes.Color.ToString()));
-                        wasJumpMade = true;
+                        var jump = new NumberLineJumpSize(leftJumpSize, markedTickToTheLeft.TickValue, stroke.DrawingAttributes.Color.ToString());
+                        JumpSizes.Add(jump);
+                        addedJumps.Add(jump);
                     }
 
                     var markedTickToTheRight = Ticks.FirstOrDefault(t => t.IsMarked && t.TickValue > closestTick.TickValue);
                     if (markedTickToTheRight != null)
                     {
                         var rightJumpSize = markedTickToTheRight.TickValue - closestTick.TickValue;
-                        JumpSizes.Add(new NumberLineJumpSize(rightJumpSize, closestTick.TickValue, stroke.DrawingAttributes.Color.ToString()));
-                        wasJumpMade = true;
+                        var jump = new NumberLineJumpSize(rightJumpSize, closestTick.TickValue, stroke.DrawingAttributes.Color.ToString());
+                        JumpSizes.Add(jump);
+                        addedJumps.Add(jump);
                     }
-
-                    return wasJumpMade;
+                    break;
                 }
-                default:
-                    return false;
             }
+
+            return addedJumps;
         }
 
         public int GetJumpStartFromStroke(Stroke stroke)
@@ -636,8 +629,7 @@ namespace CLP.Entities
         public int GetNumberLineSizeAtHistoryIndex(int historyIndex)
         {
             var sizeHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>()
-                          .FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>().FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
             return sizeHistoryItem == null ? NumberLineSize : sizeHistoryItem.PreviousEndValue;
         }
 
@@ -731,14 +723,7 @@ namespace CLP.Entities
                 var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
 
                 var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-                var tag = new NumberLineDeletedTag(ParentPage,
-                                                   Origin.StudentPageObjectGenerated,
-                                                   ID,
-                                                   0,
-                                                   NumberLineSize,
-                                                   numberLineIDsInHistory.IndexOf(ID),
-                                                   jumpSizes,
-                                                   lastMarkedTickNumber);
+                var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
                 ParentPage.AddTag(tag);
             }
 
@@ -815,11 +800,11 @@ namespace CLP.Entities
             return newNumberLine;
         }
 
-        /// <summary>
-        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
-        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
-        /// </summary>
-        public override string GetCodedIDAtHistoryIndex(int historyIndex) { return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString(); }
+        /// <summary>Gets CodedID just before the historyItem at historyIndex executes Redo(). To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        public override string GetCodedIDAtHistoryIndex(int historyIndex)
+        {
+            return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString();
+        }
 
         #endregion //APageObjectBase Overrides
 

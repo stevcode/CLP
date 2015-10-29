@@ -23,6 +23,8 @@ namespace CLP.Entities
                                                      string numberLineID,
                                                      List<Stroke> addedJumpStrokes,
                                                      List<Stroke> removedJumpStrokes,
+                                                     List<NumberLineJumpSize> jumpsAdded,
+                                                     List<NumberLineJumpSize> jumpsRemoved,
                                                      double previousHeight,
                                                      double previousYPosition,
                                                      double newHeight,
@@ -35,6 +37,8 @@ namespace CLP.Entities
             PreviousYPosition = previousYPosition;
             NewHeight = newHeight;
             NewYPosition = newYPosition;
+            JumpsAdded = jumpsAdded;
+            JumpsRemoved = jumpsRemoved;
 
             AddedJumpStrokeIDs = addedJumpStrokes.Select(s => s.GetStrokeID()).ToList();
             foreach (var stroke in removedJumpStrokes)
@@ -80,6 +84,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof (List<string>));
 
+        /// <summary>Jumps added by the strokes in AddedJumpStrokeIDs</summary>
+        public List<NumberLineJumpSize> JumpsAdded
+        {
+            get { return GetValue<List<NumberLineJumpSize>>(JumpsAddedProperty); }
+            set { SetValue(JumpsAddedProperty, value); }
+        }
+
+        public static readonly PropertyData JumpsAddedProperty = RegisterProperty("JumpsAdded", typeof (List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
+
         /// <summary>IDs of the Strokes used in a removed Jump.</summary>
         public List<string> RemovedJumpStrokeIDs
         {
@@ -88,6 +101,16 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData RemovedJumpStrokeIDsProperty = RegisterProperty("RemovedJumpStrokeIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>Jumps removed by the strokes in RemovedJumpStrokeIDs</summary>
+        public List<NumberLineJumpSize> JumpsRemoved
+        {
+            get { return GetValue<List<NumberLineJumpSize>>(JumpsRemovedProperty); }
+            set { SetValue(JumpsRemovedProperty, value); }
+        }
+
+        public static readonly PropertyData JumpsRemovedProperty = RegisterProperty("JumpsRemoved", typeof (List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
+        
 
         /// <summary>Previous Height of the number line.</summary>
         public double PreviousHeight
@@ -169,7 +192,8 @@ namespace CLP.Entities
                 }
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
-                numberLine.RemoveJumpFromStroke(stroke);
+                var jumps = numberLine.RemoveJumpFromStroke(stroke);
+                JumpsAdded = jumps;
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
                                                  new List<Stroke>
                                                  {
@@ -187,7 +211,8 @@ namespace CLP.Entities
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
-                numberLine.AddJumpFromStroke(stroke);
+                var jumps = numberLine.AddJumpFromStroke(stroke);
+                JumpsRemoved = jumps;
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>
                                                  {
                                                      stroke
@@ -220,12 +245,24 @@ namespace CLP.Entities
                 }
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
-                numberLine.RemoveJumpFromStroke(stroke);
+                //numberLine.RemoveJumpFromStroke(stroke);              Should now be taken care of by JumpsAdded
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
                                                  new List<Stroke>
                                                  {
                                                      stroke
                                                  });
+            }
+
+            foreach (var jump in JumpsAdded)
+            {
+                var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
+                if (jumpToRemove == null)
+                {
+                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsAdded not found on Number Line during Undo.", HistoryIndex);
+                    continue;
+                }
+
+                numberLine.JumpSizes.Remove(jumpToRemove);
             }
 
             foreach (var stroke in RemovedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
@@ -238,12 +275,17 @@ namespace CLP.Entities
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
-                numberLine.AddJumpFromStroke(stroke);
+                //numberLine.AddJumpFromStroke(stroke);              Should now be taken care of by JumpsRemoved
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>
                                                  {
                                                      stroke
                                                  },
                                                  new List<Stroke>());
+            }
+
+            foreach (var jump in JumpsRemoved)
+            {
+                numberLine.JumpSizes.Add(jump);
             }
 
             numberLine.YPosition = PreviousYPosition;
@@ -270,12 +312,24 @@ namespace CLP.Entities
                 }
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
-                numberLine.RemoveJumpFromStroke(stroke);
+                //numberLine.RemoveJumpFromStroke(stroke);              Should now be taken care of by JumpsRemoved
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
                                                  new List<Stroke>
                                                  {
                                                      stroke
                                                  });
+            }
+
+            foreach (var jump in JumpsRemoved)
+            {
+                var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
+                if (jumpToRemove == null)
+                {
+                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsRemoved not found on Number Line during Redo.", HistoryIndex);
+                    continue;
+                }
+
+                numberLine.JumpSizes.Remove(jumpToRemove);
             }
 
             foreach (var stroke in AddedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
@@ -287,12 +341,17 @@ namespace CLP.Entities
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
-                numberLine.AddJumpFromStroke(stroke);
+                //numberLine.AddJumpFromStroke(stroke);                 Should now be taken care of by JumpsAdded
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>
                                                  {
                                                      stroke
                                                  },
                                                  new List<Stroke>());
+            }
+
+            foreach (var jump in JumpsAdded)
+            {
+                numberLine.JumpSizes.Add(jump);
             }
 
             numberLine.YPosition = NewYPosition;

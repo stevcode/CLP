@@ -435,8 +435,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var didInteract = false;
             foreach (var stroke in removedStrokesList.Where(stroke => numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
-                var isStrokeAJump = numberLine.RemoveJumpFromStroke(stroke);
-                if (!isStrokeAJump)
+                var jumpsRemoved = numberLine.RemoveJumpFromStroke(stroke);
+                if (!jumpsRemoved.Any())
                 {
                     continue;
                 }
@@ -463,6 +463,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                      {
                                                                                                          stroke
                                                                                                      },
+                                                                                                     new List<NumberLineJumpSize>(),
+                                                                                                     jumpsRemoved, 
                                                                                                      oldHeight,
                                                                                                      oldYPosition,
                                                                                                      numberLine.Height,
@@ -471,8 +473,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var stroke in addedStrokesList.Where(stroke => numberLine.IsStrokeOverPageObject(stroke) && !numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
-                var isStrokeAJump = numberLine.AddJumpFromStroke(stroke);
-                if (!isStrokeAJump)
+                var jumpsAdded = numberLine.AddJumpFromStroke(stroke);
+                if (!jumpsAdded.Any())
                 {
                     continue;
                 }
@@ -513,6 +515,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                          stroke
                                                                                                      },
                                                                                                      new List<Stroke>(),
+                                                                                                     jumpsAdded,
+                                                                                                     new List<NumberLineJumpSize>(), 
                                                                                                      oldHeight,
                                                                                                      oldYPosition,
                                                                                                      numberLine.Height,

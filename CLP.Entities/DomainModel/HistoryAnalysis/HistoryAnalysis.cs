@@ -348,11 +348,13 @@ namespace CLP.Entities
                 var jumpSizesChangedHistoryItems = historyItems.Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
 
                 var firstNumberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
+                var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
                 if (jumpSizesChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
                 {
-                    var nextEndPointsChangedHistoryItem = nextHistoryItem as NumberLineJumpSizesChangedHistoryItem;
-                    if (nextEndPointsChangedHistoryItem != null &&
-                        nextEndPointsChangedHistoryItem.NumberLineID == firstNumberLineID)
+                    var nextJumpsChangedHistoryItem = nextHistoryItem as NumberLineJumpSizesChangedHistoryItem;
+                    if (nextJumpsChangedHistoryItem != null &&
+                        nextJumpsChangedHistoryItem.NumberLineID == firstNumberLineID &&
+                        isAdding == (nextJumpsChangedHistoryItem.JumpsAdded.Any() && !nextJumpsChangedHistoryItem.JumpsRemoved.Any()))
                     {
                         return null;
                     }
