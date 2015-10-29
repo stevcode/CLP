@@ -54,6 +54,7 @@
         #region Number Line Actions
 
         public const string ACTION_NUMBER_LINE_JUMP = "jump";                       // ActionID = "{JumpSizeOfIdenticalConsecutiveJumps}, {StartTick}-{EndTick}(ACTIONID_NUMBER_LINE_JUMP_RUNOFF)(; REPEAT; REPEAT)"   // ACTIONID_NUMBER_LINE_JUMP_RUNOFF replaces {EndTick} if arc of Jump goes past edge of Number Line.
+        public const string ACTION_NUMBER_LINE_JUMP_ERASE = "jump erase";
         public const string ACTION_NUMBER_LINE_JUMP_BELOW = "jump below";           // ActionID = "{JumpSizeOfIdenticalConsecutiveJumps}, {StartTick}-{EndTick}(ACTIONID_NUMBER_LINE_JUMP_RUNOFF)(; REPEAT; REPEAT)"   // ACTIONID_NUMBER_LINE_JUMP_RUNOFF replaces {EndTick} if arc of Jump goes past edge of Number Line.
         public const string ACTION_NUMBER_LINE_CHANGE = "change";                   // ActionID = "{NewNumberLineSize} {IncrementID}"
         public const string ACTION_NUMBER_LINE_CHANGE_INK = "change ink";           // ActionID = "{NewNumberLineSize} {IncrementID}"
