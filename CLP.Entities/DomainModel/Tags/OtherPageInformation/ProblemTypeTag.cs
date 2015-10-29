@@ -8,7 +8,7 @@ namespace CLP.Entities
     public enum ProblemTypes
     {
         WordProblem,
-        NotWordProblem,
+        NonWordProblem,
         Division,
         Multiplication,
         Addition,
@@ -16,7 +16,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class ProblemTypeTag : ATagBase
+    public class ProblemTypeTag : ATagBase  // TODO: Implement a way to manually add and/or edit this tag.
     {
         #region Constructors
 

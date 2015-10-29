@@ -12,7 +12,7 @@ namespace CLP.Entities
     {
         public static void BoxConversions(CLPPage page)
         {
-            CLPTextBox textBox = null;
+            CLPTextBox textBox;
             IPageObject pageObjectToAdd = null;
             var interpretationRegion = new InterpretationRegion(page)
                                        {
@@ -22,6 +22,8 @@ namespace CLP.Entities
                                        };
             interpretationRegion.Interpreters.Add(Interpreters.Handwriting);
 
+            var problemTypes = new List<ProblemTypes>();
+
             switch (page.ID)
             {
                 case "D2Op0HfG10aoQtL2W0BX6Q":  // Page 1
@@ -29,26 +31,39 @@ namespace CLP.Entities
                 case "-zOauyypbEmgpo3f_dalNA":  // Page 2
                     textBox = page.PageObjects.First(p => p.ID == "lpIezx13R0-fHaXnVqgT6A") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Division);
                     break;
                 case "UvLXlXlpCEuLF1309g5zPA":  // Page 3
                     textBox = page.PageObjects.First(p => p.ID == "LZlupX4OskOkxC-VQv1pKg") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 case "526u6U8sQUqjFkCXTJZYiA":  // Page 4
                     textBox = page.PageObjects.First(p => p.ID == "DvQf2cvBkU-WFEFmLBEuoA") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 case "y-wako1KCk6Aurwrn5QbVg":  // Page 5
                     textBox = page.PageObjects.First(p => p.ID == "JsuHVsdb6k2zYQGS8HdeJA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 case "_024ibxTi0qlw4gzCD7QXA":  // Page 6
                     textBox = page.PageObjects.First(p => p.ID == "3A0ABSEEdUa487Mkvp9CcQ") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Division);
                     break;
                 case "_ctKrAO-MEK-g9PtqpFzVQ":  // Page 7
                     textBox = page.PageObjects.First(p => p.ID == "bC1g8LJ6okmsezeVSRub4A") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
+                    problemTypes.Add(ProblemTypes.Division);
                     interpretationRegion.ID = "_ctKrAO-MEK-g9PtqpFmoo";
                     interpretationRegion.XPosition = 235.3954;
                     interpretationRegion.YPosition = 220.9490;
@@ -59,6 +74,8 @@ namespace CLP.Entities
                 case "gdruAzwX6kWe2k-etZ6gcQ":  // Page 8
                     textBox = page.PageObjects.First(p => p.ID == "_0qgnvZ1EkyYgEU49l5dNw") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     interpretationRegion.ID = "gdruAzwX6kWe2k-etZ6moo";
                     interpretationRegion.XPosition = 253.1625;
                     interpretationRegion.YPosition = 221.9357;
@@ -69,6 +86,9 @@ namespace CLP.Entities
                 case "yzvpdIROIEOFrndOASGjvA":  // Page 9
                     textBox = page.PageObjects.First(p => p.ID == "DisblHoHakqYkPzMu9_bxQ") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
+                    problemTypes.Add(ProblemTypes.NonWordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
+                    problemTypes.Add(ProblemTypes.Division);
                     interpretationRegion.ID = "yzvpdIROIEOFrndOASGmoo";
                     interpretationRegion.XPosition = 106.74036;
                     interpretationRegion.YPosition = 223.4880;
@@ -79,6 +99,8 @@ namespace CLP.Entities
                 case "gsQu4sdxVEKGZsgCD_zfWQ":  // Page 10
                     textBox = page.PageObjects.First(p => p.ID == "GBXW7G0YmEKXQ4Q_MMIn5g") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     interpretationRegion.ID = "gsQu4sdxVEKGZsgCD_zmoo";
                     interpretationRegion.XPosition = 98.90192;
                     interpretationRegion.YPosition = 205.11349;
@@ -89,6 +111,8 @@ namespace CLP.Entities
                 case "MtZusuAFZEOqTr8KRlFlMA":  // Page 11
                     textBox = page.PageObjects.First(p => p.ID == "oiQrn_vQbUOsbzWYtNIejA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Division);
                     interpretationRegion.ID = "MtZusuAFZEOqTr8KRlFmoo";
                     interpretationRegion.XPosition = 103.60754;
                     interpretationRegion.YPosition = 243.3032;
@@ -99,6 +123,8 @@ namespace CLP.Entities
                 case "QHJ7pFHY3ECr8u6bSFRCkA":  // Page 12
                     textBox = page.PageObjects.First(p => p.ID == "JleS1FBQiEGyoe4VseiPMA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     interpretationRegion.ID = "QHJ7pFHY3ECr8u6bSFRmoo";
                     interpretationRegion.XPosition = 234.6666;
                     interpretationRegion.YPosition = 668.9809;
@@ -109,6 +135,8 @@ namespace CLP.Entities
                 case "cgXYlAbAM0GGy8iBI4tyGw":  // Page 13
                     textBox = page.PageObjects.First(p => p.ID == "SNY1QJrMUUqUeK3hCIDDRA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
+                    problemTypes.Add(ProblemTypes.WordProblem);
+                    problemTypes.Add(ProblemTypes.Multiplication);
                     interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
                     interpretationRegion.XPosition = 240.3143;
                     interpretationRegion.YPosition = 661.8379;
@@ -118,6 +146,13 @@ namespace CLP.Entities
                     break;
                 default:
                     return;
+            }
+
+            problemTypes = problemTypes.Distinct().ToList();
+            if (problemTypes.Any())
+            {
+                var problemTypesTag = new ProblemTypeTag(page, Origin.Author, problemTypes);
+                page.AddTag(problemTypesTag);
             }
 
             if (pageObjectToAdd == null || page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
