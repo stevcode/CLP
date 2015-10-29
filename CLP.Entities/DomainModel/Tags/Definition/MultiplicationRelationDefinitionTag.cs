@@ -13,9 +13,10 @@ namespace CLP.Entities
         {
             GeneralMultiplication,
             Area,
-            Volume,
             EqualGroups,
-            OrderedEqualGroups
+            OrderedEqualGroups,
+            Commutativity,
+            Associativity
         }
 
         #region Constructors
