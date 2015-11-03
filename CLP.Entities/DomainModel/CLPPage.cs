@@ -774,6 +774,50 @@ namespace CLP.Entities
             return newPage;
         }
 
+        public CLPPage CreateOriginalVersion()
+        {
+            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
+            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x != null));
+            var copy = Clone() as CLPPage;
+            if (copy == null)
+            {
+                return null;
+            }
+            copy.VersionIndex = 0;
+            copy.History.VersionIndex = 0;
+
+            foreach (var pageObject in copy.PageObjects.Where(x => x != null))
+            {
+                pageObject.VersionIndex = 0;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach (var pageObject in copy.History.TrashedPageObjects.Where(x => x != null))
+            {
+                pageObject.VersionIndex = 0;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach (var tag in copy.Tags.Where(x => x != null))
+            {
+                tag.VersionIndex = 0;
+                tag.ParentPage = copy;
+            }
+
+            foreach (var serializedStroke in copy.SerializedStrokes.Where(x => x != null))
+            {
+                //TODO: Stroke Version Index should be uint
+                serializedStroke.VersionIndex = 0;
+            }
+
+            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes.Where(x => x != null))
+            {
+                serializedStroke.VersionIndex = 0;
+            }
+
+            return copy;
+        }
+
         public Stroke GetVerifiedStrokeOnPageByID(string id)
         {
             var stroke = GetStrokeByID(id);
