@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.Converters
             double height;
             try
             {
-                height = System.Convert.ToDouble(value) / 2;
+                height = System.Convert.ToDouble(value) / 2;  // BUG: Ann's Cache, page 24, some heights set to zero?
             }
             catch (Exception)
             {
@@ -30,7 +30,9 @@ namespace Classroom_Learning_Partner.Converters
                 width = 0;
             }
 
-            return new Size(height - 2.0, width);
+            var finalHeight = height - 2.0 >= 0.0 ? height : 2.0;
+
+            return new Size(finalHeight - 2.0, width);
         }
     }
 }
