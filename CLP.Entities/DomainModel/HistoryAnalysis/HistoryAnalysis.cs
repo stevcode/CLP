@@ -760,8 +760,21 @@ namespace CLP.Entities
             if (historyItems.All(h => h is ObjectsOnPageChangedHistoryItem))
             {
                 var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryItem>().ToList();
-                // TODO: Edge case that recognizes multiple bins added at once.
+                //check for bins
+                if (objectsChangedHistoryItems.All(h => !h.IsUsingStrokes && h.IsUsingPageObjects))
+                {
+                    var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
+                    if (nextObjectsChangedHistoryItem != null &&
+                        !nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                        nextObjectsChangedHistoryItem.IsUsingPageObjects)
+                    {
+                        return null;
+                    }
 
+                    var historyAction = ObjectCodedActions.AddBins(page, objectsChangedHistoryItems);
+                    return historyAction;
+                }
+                //
                 if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;

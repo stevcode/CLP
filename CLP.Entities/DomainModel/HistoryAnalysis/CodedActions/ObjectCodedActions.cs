@@ -22,10 +22,10 @@ namespace CLP.Entities
             }
 
             var addedPageObjects = objectsOnPageChangedHistoryItem.PageObjectsAdded;
+            var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
 
             if (addedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
@@ -41,8 +41,61 @@ namespace CLP.Entities
                 return historyAction;
             }
 
-            // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
-            // special case for Bins
+            else if (addedPageObjects.Count == 2) //this case is similar to the previous, should we combine them?
+            {
+                var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
+                var codedObject = pageObject.CodedName;
+                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                                    {
+                                        CodedObject = codedObject,
+                                        CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                                        IsObjectActionVisible = false,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                                    };
+                return historyAction;
+            }
+            return null;
+        }
+
+        public static IHistoryAction AddBins(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
+        {
+            if (page == null ||
+                objectsOnPageChangedHistoryItems == null ||
+                objectsOnPageChangedHistoryItems.Any(h => h.IsUsingStrokes && !h.PageObjectIDsAdded.Any()))
+            {
+                return null;
+            }
+
+            var codedObject = "";
+            var codedObjectID = "";
+            Boolean firstItem = true;
+            foreach (ObjectsOnPageChangedHistoryItem individualHistoryItem in objectsOnPageChangedHistoryItems)
+            {
+                var addedPageObjects = individualHistoryItem.PageObjectsAdded;
+                var historyIndex = individualHistoryItem.HistoryIndex;
+                if (addedPageObjects.Count == 1 ||
+                    addedPageObjects.Count == 2)
+                {
+                    var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
+                    if (firstItem)
+                    { //this logic only takes codedObject and codedObjectID from the first individualHistoryItem; should we check all of them?
+                        codedObject = pageObject.CodedName;
+                        codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                    }
+                }
+                firstItem = false;
+                
+            }
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems) //not sure how this constructor should be called
+                                {
+                                    CodedObject = codedObject,
+                                    CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                                    IsObjectActionVisible = false,
+                                    CodedObjectID = codedObjectID,
+                                    CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                                };
             return null;
         }
 
