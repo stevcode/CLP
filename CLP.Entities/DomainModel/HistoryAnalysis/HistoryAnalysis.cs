@@ -438,18 +438,6 @@ namespace CLP.Entities
         {
             BoxConversions(page);
 
-            HistoryAction.CurrentIncrementID.Clear();
-            HistoryAction.MaxIncrementID.Clear();
-
-            // First Pass
-            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
-                                            {
-                                                CodedObject = "PASS",
-                                                CodedObjectID = "1"
-                                            });
-            var initialHistoryActions = GenerateInitialHistoryActions(page);
-            page.History.HistoryActions.AddRange(initialHistoryActions);
-
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
             if (!Directory.Exists(fileDirectory))
@@ -463,6 +451,28 @@ namespace CLP.Entities
                 File.Delete(filePath);
             }
             File.WriteAllText(filePath, "");
+
+            File.AppendAllText(filePath, "*****History Items*****" + "\n\n");
+            foreach (var historyItem in page.History.CompleteOrderedHistoryItems)
+            {
+                File.AppendAllText(filePath, historyItem.FormattedValue + "\n");
+            }
+
+            HistoryAction.CurrentIncrementID.Clear();
+            HistoryAction.MaxIncrementID.Clear();
+            page.History.HistoryActions.Clear();
+
+            File.AppendAllText(filePath, "\n\n*****Coded Actions/Steps*****" + "\n\n");
+
+            // First Pass
+            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "1"
+                                            });
+            var initialHistoryActions = GenerateInitialHistoryActions(page);
+            page.History.HistoryActions.AddRange(initialHistoryActions);
+            
             File.AppendAllText(filePath, "PASS [1]" + "\n");
             foreach (var item in initialHistoryActions)
             {
@@ -504,6 +514,13 @@ namespace CLP.Entities
 
             // Last Pass
             GenerateTags(page, interpretedHistoryActions);
+
+            File.AppendAllText(filePath, "\n\n\n*****Tags*****" + "\n\n");
+            foreach (var tag in page.Tags)
+            {
+                File.AppendAllText(filePath, "*" + tag.FormattedName + "*\n");
+                File.AppendAllText(filePath, tag.FormattedValue + "\n\n");
+            }
         }
 
         #region First Pass: Initialization
