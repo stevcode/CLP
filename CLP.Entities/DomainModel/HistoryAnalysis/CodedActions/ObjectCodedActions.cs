@@ -27,6 +27,10 @@ namespace CLP.Entities
             if (addedPageObjects.Count == 1)
             {
                 var pageObject = addedPageObjects.First();
+                if (pageObject is Bin)
+                {
+                    return null;
+                }
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
                 var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
@@ -41,7 +45,7 @@ namespace CLP.Entities
                 return historyAction;
             }
 
-            else if (addedPageObjects.Count == 2) //this case is similar to the previous, should we combine them?
+            /**if (addedPageObjects.Count == 2) //this case is similar to the previous, should we combine them?
             {
                 var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
                 var codedObject = pageObject.CodedName;
@@ -55,7 +59,7 @@ namespace CLP.Entities
                                         CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
                                     };
                 return historyAction;
-            }
+            }**/
             return null;
         }
 
@@ -67,36 +71,18 @@ namespace CLP.Entities
             {
                 return null;
             }
-
-            var codedObject = "";
-            var codedObjectID = "";
-            Boolean firstItem = true;
-            foreach (ObjectsOnPageChangedHistoryItem individualHistoryItem in objectsOnPageChangedHistoryItems)
+            var addedPageObjects = objectsOnPageChangedHistoryItems.First().PageObjectsAdded;
+            var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
+            var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString();
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList()) //use first object
             {
-                var addedPageObjects = individualHistoryItem.PageObjectsAdded;
-                var historyIndex = individualHistoryItem.HistoryIndex;
-                if (addedPageObjects.Count == 1 ||
-                    addedPageObjects.Count == 2)
-                {
-                    var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
-                    if (firstItem)
-                    { //this logic only takes codedObject and codedObjectID from the first individualHistoryItem; should we check all of them?
-                        codedObject = pageObject.CodedName;
-                        codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                    }
-                }
-                firstItem = false;
-                
-            }
-            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems) //not sure how this constructor should be called
-                                {
-                                    CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_OBJECT_ADD,
-                                    IsObjectActionVisible = false,
-                                    CodedObjectID = codedObjectID,
-                                    CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
-                                };
-            return null;
+                CodedObject = Codings.OBJECT_BINS,
+                CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                IsObjectActionVisible = false,
+                CodedObjectID = codedObjectID,
+                CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, Codings.OBJECT_BINS, codedObjectID)
+            };
+            return historyAction;
         }
 
         public static IHistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)

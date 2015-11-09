@@ -760,13 +760,13 @@ namespace CLP.Entities
             if (historyItems.All(h => h is ObjectsOnPageChangedHistoryItem))
             {
                 var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryItem>().ToList();
-                //check for bins
                 if (objectsChangedHistoryItems.All(h => !h.IsUsingStrokes && h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
                     if (nextObjectsChangedHistoryItem != null &&
                         !nextObjectsChangedHistoryItem.IsUsingStrokes &&
-                        nextObjectsChangedHistoryItem.IsUsingPageObjects)
+                        nextObjectsChangedHistoryItem.IsUsingPageObjects &&
+                        nextObjectsChangedHistoryItem.PageObjectsAdded.Any(h => h is Bin))
                     {
                         return null;
                     }
@@ -774,7 +774,6 @@ namespace CLP.Entities
                     var historyAction = ObjectCodedActions.AddBins(page, objectsChangedHistoryItems);
                     return historyAction;
                 }
-                //
                 if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
