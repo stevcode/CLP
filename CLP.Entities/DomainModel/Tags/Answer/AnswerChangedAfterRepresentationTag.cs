@@ -83,8 +83,8 @@ namespace CLP.Entities
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }
 
-                var isFirstAnswerCorrect = firstAnswer.CodedObjectActionID.EndsWith("C"); // TODO: Make static methods to manipulate and parse actionIDs
-                var isLastAnswerCorrect = lastAnswer.CodedObjectActionID.EndsWith("C");
+                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "C";
+                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "C";
                 var analysisObjectCode = string.Empty;
                 if (isFirstAnswerCorrect)
                 {
@@ -95,8 +95,8 @@ namespace CLP.Entities
                     analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_INC_TO_COR_AFTER_REP : Codings.ANALYSIS_INC_TO_INC_AFTER_REP;
                 }
 
-                var firstAnswerContents = firstAnswer.CodedObjectActionID.Remove(firstAnswer.CodedObjectActionID.Length - 2);
-                var lastAnswerContents = lastAnswer.CodedObjectActionID.Remove(lastAnswer.CodedObjectActionID.Length - 2);
+                var firstAnswerContents = Codings.GetAnswerObjectContent(firstAnswer);
+                var lastAnswerContents = Codings.GetAnswerObjectContent(lastAnswer);
 
                 var answerChanged = string.Format("{0} {1} ({2}) changed to {3} ({4})",
                                                   Codings.FriendlyObjects[firstAnswer.CodedObject],
