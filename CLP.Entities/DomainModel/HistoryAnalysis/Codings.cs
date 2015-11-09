@@ -1,4 +1,6 @@
-﻿namespace CLP.Entities
+﻿using System.Collections.Generic;
+
+namespace CLP.Entities
 {
     public static class Codings
     {
@@ -10,10 +12,20 @@
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";
         public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
-        public const string OBJECT_GROUP = "GROUP";
         public const string OBJECT_BINS = "BINS";
         public const string OBJECT_TEXT = "TEXT";
         public const string OBJECT_FILL_IN = "ANS FI";
+        public const string OBJECT_MULTIPLE_CHOICE = "ANS MC";
+
+        public static Dictionary<string, string> FriendlyObjects = new Dictionary<string, string>
+                                                                   {
+                                                                       { OBJECT_INK, "Ink" },
+                                                                       { OBJECT_ARRAY, "Array" },
+                                                                       { OBJECT_STAMP, "Stamp" },
+                                                                       { OBJECT_NUMBER_LINE, "Number Line" },
+                                                                       { OBJECT_FILL_IN, "Filled In Answer" },
+                                                                       { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" }
+                                                                   };
 
         #endregion // CodedObjects
 
@@ -39,6 +51,8 @@
 
         public const string ACTION_FILL_IN_ADD = "add";
         public const string ACTION_FILL_IN_ERASE = "erase";
+        public const string ACTION_MULTIPLE_CHOICE_ADD = "add";
+        public const string ACTION_MULTIPLE_CHOICE_ERASE = "erase";
 
         #endregion // Answer Actions
 
@@ -103,5 +117,31 @@
         #endregion // Array ActionID Variables
 
         #endregion // CodedActionIDVariables
+
+        #region Analysis Codes
+
+        public const string ANALYSIS_COR_BEFORE_REP = "ABR";
+        public const string ANALYSIS_INC_BEFORE_REP = "ABR-I";
+        public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
+        public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
+        public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
+        public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+
+        #endregion // Analysis Codes
+
+        public static bool IsAnswerObject(IHistoryAction historyAction)
+        {
+            return historyAction.CodedObject == OBJECT_FILL_IN || 
+                   historyAction.CodedObject == OBJECT_MULTIPLE_CHOICE;
+        }
+
+        public static bool IsRepresentationObject(IHistoryAction historyAction)
+        {
+            return historyAction.CodedObject == OBJECT_ARRAY ||
+                   historyAction.CodedObject == OBJECT_NUMBER_LINE ||
+                   historyAction.CodedObject == OBJECT_STAMP ||
+                   historyAction.CodedObject == OBJECT_STAMPED_OBJECTS ||
+                   historyAction.CodedObject == OBJECT_BINS;
+        }
     }
 }

@@ -23,7 +23,8 @@ namespace CLP.Entities
         NumberLine,
         Definition,
         CurriculumInformation,
-        OtherPageInformation
+        OtherPageInformation,
+        Answer
     }
 
     [Serializable]

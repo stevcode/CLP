@@ -144,6 +144,7 @@
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayTriedWrongDividerValuesTag.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
