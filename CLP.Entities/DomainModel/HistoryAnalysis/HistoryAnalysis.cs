@@ -208,7 +208,7 @@ namespace CLP.Entities
             var refinedInkHistoryActions = RefineInkHistoryActions(page, initialHistoryActions);
             page.History.HistoryActions.AddRange(refinedInkHistoryActions);
 
-            File.AppendAllText(filePath, "PASS [2]" + "\n");
+            File.AppendAllText(filePath, "\nPASS [2]" + "\n");
             foreach (var item in refinedInkHistoryActions)
             {
                 var semi = item == refinedInkHistoryActions.Last() ? string.Empty : "; ";
@@ -223,6 +223,16 @@ namespace CLP.Entities
                                             });
             var interpretedHistoryActions = InterpretHistoryActions(page, refinedInkHistoryActions);
             page.History.HistoryActions.AddRange(interpretedHistoryActions);
+
+            File.AppendAllText(filePath, "\nPASS [3]" + "\n");
+            foreach (var item in interpretedHistoryActions)
+            {
+                var semi = item == interpretedHistoryActions.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, item.CodedValue + semi);
+            }
+
+            // Last Pass
+            GenerateHistoryActions(page);
         }
 
         #region First Pass: Initialization
@@ -632,5 +642,17 @@ namespace CLP.Entities
         // 5th pass: complex pattern interpretations
 
         // 6th pass: Tag generation
+
+        #region Last Pass: Tag Generation
+
+        public static void GenerateTags(CLPPage page)
+        {
+            
+
+        }
+
+
+
+        #endregion // Last Pass: Tag Generation
     }
 }
