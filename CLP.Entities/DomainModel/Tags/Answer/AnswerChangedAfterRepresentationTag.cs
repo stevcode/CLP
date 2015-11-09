@@ -14,10 +14,10 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="AnswerChangedAfterRepresentationTag" /> belongs to.</param>
-        public AnswerChangedAfterRepresentationTag(CLPPage parentPage, Origin origin, List<string> historyActionIDs)
+        public AnswerChangedAfterRepresentationTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions)
             : base(parentPage, origin)
         {
-            HistoryActionIDs = historyActionIDs;
+            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
         }
 
         /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" /> based on <see cref="SerializationInfo" />.</summary>

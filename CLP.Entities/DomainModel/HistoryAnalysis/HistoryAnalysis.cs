@@ -232,7 +232,7 @@ namespace CLP.Entities
             }
 
             // Last Pass
-            GenerateHistoryActions(page);
+            GenerateTags(page, interpretedHistoryActions);
         }
 
         #region First Pass: Initialization
@@ -645,13 +645,32 @@ namespace CLP.Entities
 
         #region Last Pass: Tag Generation
 
-        public static void GenerateTags(CLPPage page)
+        public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions) { AttemptAnswerChangedAfterRepresentationTag(page, historyActions); }
+
+        public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            
+            var answerActions = historyActions.Where(Codings.IsAnswerObject).ToList();
+            if (answerActions.Count < 2)
+            {
+                return;
+            }
 
+            var firstAnswer = historyActions.First(Codings.IsAnswerObject);
+            var firstIndex = historyActions.IndexOf(firstAnswer);
+            var lastAnswer = historyActions.Last(Codings.IsAnswerObject);
+            var lastIndex = historyActions.IndexOf(lastAnswer);
+
+            var possibleTagActions = historyActions.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
+            var isUsingRepresentations = possibleTagActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
+
+            if (!isUsingRepresentations)
+            {
+                return;
+            }
+
+            var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagActions);
+            page.AddTag(tag);
         }
-
-
 
         #endregion // Last Pass: Tag Generation
     }
