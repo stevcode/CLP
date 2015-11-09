@@ -101,9 +101,9 @@ namespace CLP.Entities
                 var answerChanged = string.Format("{0} {1} ({2}) changed to {3} ({4})",
                                                   Codings.FriendlyObjects[firstAnswer.CodedObject],
                                                   firstAnswerContents,
-                                                  isFirstAnswerCorrect,
+                                                  isFirstAnswerCorrect ? "correct" : "incorrect",
                                                   lastAnswerContents,
-                                                  isLastAnswerCorrect);
+                                                  isLastAnswerCorrect ? "correct" : "incorrect");
 
                 var analysisCode = string.IsNullOrWhiteSpace(analysisObjectCode) ? string.Empty : string.Format("{0} [{1}, {2}]", analysisObjectCode, firstAnswerContents, lastAnswerContents);
 
