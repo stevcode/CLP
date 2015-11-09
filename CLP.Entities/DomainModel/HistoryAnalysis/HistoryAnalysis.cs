@@ -27,9 +27,9 @@ namespace CLP.Entities
 
             switch (page.ID)
             {
-                case "D2Op0HfG10aoQtL2W0BX6Q":  // Page 1
+                case "D2Op0HfG10aoQtL2W0BX6Q": // Page 1
                     break;
-                case "-zOauyypbEmgpo3f_dalNA":  // Page 2
+                case "-zOauyypbEmgpo3f_dalNA": // Page 2
                 {
                     textBox = page.PageObjects.First(p => p.ID == "lpIezx13R0-fHaXnVqgT6A") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -37,7 +37,7 @@ namespace CLP.Entities
                     problemTypes.Add(ProblemTypes.Division);
                     break;
                 }
-                case "UvLXlXlpCEuLF1309g5zPA":  // Page 3
+                case "UvLXlXlpCEuLF1309g5zPA": // Page 3
                 {
                     textBox = page.PageObjects.First(p => p.ID == "LZlupX4OskOkxC-VQv1pKg") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -45,7 +45,7 @@ namespace CLP.Entities
                     problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 }
-                case "526u6U8sQUqjFkCXTJZYiA":  // Page 4
+                case "526u6U8sQUqjFkCXTJZYiA": // Page 4
                 {
                     textBox = page.PageObjects.First(p => p.ID == "DvQf2cvBkU-WFEFmLBEuoA") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -53,23 +53,66 @@ namespace CLP.Entities
                     problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 }
-                case "y-wako1KCk6Aurwrn5QbVg":  // Page 5
+                case "y-wako1KCk6Aurwrn5QbVg": // Page 5
                 {
                     textBox = page.PageObjects.First(p => p.ID == "JsuHVsdb6k2zYQGS8HdeJA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
                     problemTypes.Add(ProblemTypes.WordProblem);
                     problemTypes.Add(ProblemTypes.Multiplication);
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "l-WC1c1mGkukYDgVm937KQ",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        Product = 64,
+                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication
+                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "8L-RIJBn_06lpKH4yBlOzg",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        NumericValue = 8
+                    };
+
+                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "dk5lXzsvu0GHmpGgwoh-vA",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        NumericValue = 8
+                    };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
                     break;
                 }
-                case "_024ibxTi0qlw4gzCD7QXA":  // Page 6
+                case "_024ibxTi0qlw4gzCD7QXA": // Page 6
                 {
                     textBox = page.PageObjects.First(p => p.ID == "3A0ABSEEdUa487Mkvp9CcQ") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
                     problemTypes.Add(ProblemTypes.WordProblem);
                     problemTypes.Add(ProblemTypes.Division);
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
+                                              {
+                                                  ID = "U18DjuOfc0WJ7OIDClEC3A",
+                                                  OwnerID = Person.Author.ID,
+                                                  LastVersionIndex = page.LastVersionIndex,
+                                                  VersionIndex = page.VersionIndex,
+                                                  Dividend = 56,
+                                                  Divisor = 7,
+                                                  Quotient = 8,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
                     break;
                 }
-                case "_ctKrAO-MEK-g9PtqpFzVQ":  // Page 7
+                case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
                 {
                     textBox = page.PageObjects.First(p => p.ID == "bC1g8LJ6okmsezeVSRub4A") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -84,7 +127,7 @@ namespace CLP.Entities
                     pageObjectToAdd = interpretationRegion;
                     break;
                 }
-                case "gdruAzwX6kWe2k-etZ6gcQ":  // Page 8
+                case "gdruAzwX6kWe2k-etZ6gcQ": // Page 8
                 {
                     textBox = page.PageObjects.First(p => p.ID == "_0qgnvZ1EkyYgEU49l5dNw") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -98,7 +141,7 @@ namespace CLP.Entities
                     pageObjectToAdd = interpretationRegion;
                     break;
                 }
-                case "yzvpdIROIEOFrndOASGjvA":  // Page 9
+                case "yzvpdIROIEOFrndOASGjvA": // Page 9
                 {
                     textBox = page.PageObjects.First(p => p.ID == "DisblHoHakqYkPzMu9_bxQ") as CLPTextBox;
                     textBox.TextContext = TextContexts.NonWordProblem;
@@ -113,7 +156,7 @@ namespace CLP.Entities
                     pageObjectToAdd = interpretationRegion;
                     break;
                 }
-                case "gsQu4sdxVEKGZsgCD_zfWQ":  // Page 10
+                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
                 {
                     textBox = page.PageObjects.First(p => p.ID == "GBXW7G0YmEKXQ4Q_MMIn5g") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
@@ -125,9 +168,40 @@ namespace CLP.Entities
                     interpretationRegion.Height = 102.1971;
                     interpretationRegion.Width = 171.0040;
                     pageObjectToAdd = interpretationRegion;
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "ZipMYNwixkq61bBN2_HD5g",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        Product = 28,
+                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
+                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "WK6bKs_ByUCH8BOWgWxgUA",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        NumericValue = 4
+                    };
+
+                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                    {
+                        ID = "2Ra04Eclg06aMGDGKtZ6fQ",
+                        OwnerID = Person.Author.ID,
+                        LastVersionIndex = page.LastVersionIndex,
+                        VersionIndex = page.VersionIndex,
+                        NumericValue = 7
+                    };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
                     break;
                 }
-                case "MtZusuAFZEOqTr8KRlFlMA":  // Page 11
+                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
                 {
                     textBox = page.PageObjects.First(p => p.ID == "oiQrn_vQbUOsbzWYtNIejA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
@@ -139,9 +213,21 @@ namespace CLP.Entities
                     interpretationRegion.Height = 93.2830;
                     interpretationRegion.Width = 146.4150;
                     pageObjectToAdd = interpretationRegion;
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
+                                              {
+                                                  ID = "J8Sflc0rWEyodHSiD6BOoQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  LastVersionIndex = page.LastVersionIndex,
+                                                  VersionIndex = page.VersionIndex,
+                                                  Dividend = 48,
+                                                  Divisor = 8,
+                                                  Quotient = 6,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
                     break;
                 }
-                case "QHJ7pFHY3ECr8u6bSFRCkA":  // Page 12
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
                 {
                     textBox = page.PageObjects.First(p => p.ID == "JleS1FBQiEGyoe4VseiPMA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
@@ -232,7 +318,7 @@ namespace CLP.Entities
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
                     break;
                 }
-                case "cgXYlAbAM0GGy8iBI4tyGw":  // Page 13
+                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
                 {
                     textBox = page.PageObjects.First(p => p.ID == "SNY1QJrMUUqUeK3hCIDDRA") as CLPTextBox;
                     textBox.TextContext = TextContexts.WordProblem;
@@ -327,6 +413,11 @@ namespace CLP.Entities
                     return;
             }
 
+            if (relationDefinitionToAdd != null)
+            {
+                page.AddTag(relationDefinitionToAdd);
+            }
+
             problemTypes = problemTypes.Distinct().ToList();
             if (problemTypes.Any())
             {
@@ -334,12 +425,8 @@ namespace CLP.Entities
                 page.AddTag(problemTypesTag);
             }
 
-            if (relationDefinitionToAdd != null)
-            {
-                page.AddTag(relationDefinitionToAdd);
-            }
-
-            if (pageObjectToAdd == null || page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
+            if (pageObjectToAdd == null ||
+                page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
             {
                 return;
             }
