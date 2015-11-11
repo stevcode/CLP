@@ -97,7 +97,7 @@ namespace CLP.Entities
                     currentJump.JumpSize != nextJump.JumpSize)
                 {
                     groupedJumps.Add(buffer);
-                    buffer.Clear();
+                    buffer = new List<NumberLineJumpSize>();
                 }
             }
 
