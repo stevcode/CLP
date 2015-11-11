@@ -111,16 +111,19 @@ namespace CLP.Entities
             }
 
             var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
+            var interpretation = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
 
-            var codedID = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IRelationPart || t is DivisionRelationDefinitionTag);
+            var answer = relationDefinitionTag == null ? "UNDEFINED" : relationDefinitionTag is IRelationPart ? (relationDefinitionTag as IRelationPart).RelationPartAnswerValue.ToString() : (relationDefinitionTag as DivisionRelationDefinitionTag).Quotient.ToString();
+            var correctness =  answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "C" : "I";
 
             var historyAction = new HistoryAction(page, inkAction)
             {
                 CodedObject = Codings.OBJECT_FILL_IN,
                 CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_FILL_IN_ADD : Codings.ACTION_FILL_IN_ERASE,
                 IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
-                CodedObjectID = codedID,
-                CodedObjectActionID = "unknown"
+                CodedObjectID = answer,
+                CodedObjectActionID = string.Format("\"{0}\", {1}", interpretation, correctness)
             };
 
             return historyAction;
