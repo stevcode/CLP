@@ -90,6 +90,72 @@ namespace CLP.Entities
             get { return string.Join("+", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")")); }
         }
 
+        public bool IsExpandedFormatRelationVisible
+        {
+            get { return !Addends.All(r => r is NumericValueDefinitionTag); }
+        }
+
+        public string AlternateFormattedRelation
+        {
+            get
+            {
+                if (!Addends.All(r => r is MultiplicationRelationDefinitionTag))
+                {
+                    return string.Empty;
+                }
+
+                var multiplicationRelations = Addends.Cast<MultiplicationRelationDefinitionTag>().ToList();
+                if (!multiplicationRelations.All(m => m.Factors.All(f => f is NumericValueDefinitionTag)) &&
+                    multiplicationRelations.Count != 2)
+                {
+                    return string.Empty;
+                }
+
+                var firstAddend = multiplicationRelations.First();
+                var secondAddend = multiplicationRelations.Last();
+
+                if (firstAddend.RelationType != secondAddend.RelationType)
+                {
+                    return string.Empty;
+                }
+
+                var alternateRelations = new List<string>();
+
+                // Group Size Matches
+                if (Math.Abs(firstAddend.Factors.Last().RelationPartAnswerValue - secondAddend.Factors.Last().RelationPartAnswerValue) < 0.001)
+                {
+                    var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue;
+                    var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue + secondAddend.Factors.First().RelationPartAnswerValue;
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ||
+                                    firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
+                                        ? " group(s) of "
+                                        : "x";
+                    var alternateRelation = string.Format("{0}{1}{2} = {3}", numberOfGroups, delimiter, groupSize, Sum);
+                    alternateRelations.Add(alternateRelation);
+                }
+
+                // Number of Groups Matches
+                if (Math.Abs(firstAddend.Factors.First().RelationPartAnswerValue - secondAddend.Factors.First().RelationPartAnswerValue) < 0.001 &&
+                    firstAddend.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+                {
+                    var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
+                    var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                        ? " group(s) of "
+                                        : "x";
+                    var alternateRelation = string.Format("{0}{1}{2} = {3}", numberOfGroups, delimiter, groupSize, Sum);
+                    alternateRelations.Add(alternateRelation);
+                }
+
+                if (!alternateRelations.Any())
+                {
+                    return string.Empty;
+                }
+
+                return string.Join("\n", alternateRelations);
+            }
+        }
+
         #endregion //IRelationPartImplementation
 
         #region ATagBase Overrides
@@ -106,7 +172,13 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Relation Type: {0}\n" + "{1} = {2}\n" + "Expanded Relation:\n" + "{3} = {2}", RelationType, FormattedRelation, Sum, ExpandedFormattedRelation); }
+            get
+            {
+                var expandedRelation = !IsExpandedFormatRelationVisible ? string.Empty : string.Format("\nExpanded Relation:\n{0} = {1}", ExpandedFormattedRelation, Sum);
+                var alternateRelation = string.IsNullOrWhiteSpace(AlternateFormattedRelation) ? string.Empty : string.Format("\nAlternate Relation(s):\n{0}", AlternateFormattedRelation);
+
+                return string.Format("Relation Type: {0}\n{1} = {2}{3}{4}", RelationType, FormattedRelation, Sum, expandedRelation, alternateRelation);
+            }
         }
 
         #endregion //ATagBase Overrides
