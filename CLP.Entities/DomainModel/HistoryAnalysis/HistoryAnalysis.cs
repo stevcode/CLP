@@ -90,6 +90,13 @@ namespace CLP.Entities
                     ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
                     ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
                     ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
+
+
+                    if (page.Owner.FullName.Contains("John"))
+                    {
+                        var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
+                        page.AddTag(tag);
+                    }
                     break;
                 }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
@@ -110,6 +117,12 @@ namespace CLP.Entities
                                                   Remainder = 0,
                                                   RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
                                               };
+
+                    if (page.Owner.FullName.Contains("John"))
+                    {
+                        var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "OqQXQpO4ukq5IGg5Zyo6ig", 0, 56, 1, Correctness.Correct);
+                        page.AddTag(tag);
+                    }
                     break;
                 }
                 case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
@@ -316,6 +329,16 @@ namespace CLP.Entities
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
+
+
+                    if (page.Owner.FullName.Contains("Julia"))
+                    {
+                        var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
+                        page.AddTag(tag1);
+
+                        var tag2 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction> { new HistoryAction()});
+                        page.AddTag(tag2);
+                    }
                     break;
                 }
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
