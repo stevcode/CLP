@@ -115,7 +115,7 @@ namespace CLP.Entities
 
             var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IRelationPart || t is DivisionRelationDefinitionTag);
             var answer = relationDefinitionTag == null ? "UNDEFINED" : relationDefinitionTag is IRelationPart ? (relationDefinitionTag as IRelationPart).RelationPartAnswerValue.ToString() : (relationDefinitionTag as DivisionRelationDefinitionTag).Quotient.ToString();
-            var correctness =  answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "C" : "I";
+            var correctness =  answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "COR" : "INC";
 
             var historyAction = new HistoryAction(page, inkAction)
             {
@@ -200,6 +200,13 @@ namespace CLP.Entities
                     return pageObject;
                 }
 
+                // HACK: Temporarily in place until MC Boxes are re-written and converted.
+                if (pageObject is MultipleChoiceBox &&
+                    percentOfStrokeOverlap > 70.0)
+                {
+                    return pageObject;
+                }
+
                 if (mostOverlappedPageObject == null)
                 {
                     mostOverlappedPageObject = pageObject;
@@ -213,7 +220,8 @@ namespace CLP.Entities
                 }
 
                 if (Math.Abs(percentOfStrokeOverlap - mostOverlappedPercentOfStrokeOverlap) < 0.01 &&
-                    pageObject is InterpretationRegion)
+                    (pageObject is InterpretationRegion ||
+                     pageObject is MultipleChoiceBox))  // HACK: Temporarily in place until MC Boxes are re-written and converted.
                 {
                     mostOverlappedPageObject = pageObject;
                 }

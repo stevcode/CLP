@@ -83,8 +83,8 @@ namespace CLP.Entities
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }
 
-                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "C";
-                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "C";
+                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "COR";
+                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "COR";
                 var analysisObjectCode = string.Empty;
                 if (isFirstAnswerCorrect)
                 {
