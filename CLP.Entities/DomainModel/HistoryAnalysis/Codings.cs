@@ -165,7 +165,7 @@ namespace CLP.Entities
 
             var actionID = historyAction.CodedObjectActionID;
             var delimiterIndex = actionID.LastIndexOf(',');
-            var correctness = new string(actionID.Skip(delimiterIndex + 1).ToArray());
+            var correctness = new string(actionID.Skip(delimiterIndex + 2).ToArray());
             return correctness;
         }
 

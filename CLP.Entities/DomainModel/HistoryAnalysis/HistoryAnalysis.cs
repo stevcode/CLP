@@ -1109,7 +1109,43 @@ namespace CLP.Entities
 
         #region Last Pass: Tag Generation
 
-        public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions) { AttemptAnswerChangedAfterRepresentationTag(page, historyActions); }
+        public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            AttemptAnswerBeforeRepresentationTag(page, historyActions);
+            AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
+        }
+
+        public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var answerActions = historyActions.Where(Codings.IsAnswerObject).ToList();
+            if (answerActions.Count < 1)
+            {
+                return;
+            }
+
+            var firstAnswer = historyActions.First(Codings.IsAnswerObject);
+            var firstIndex = historyActions.IndexOf(firstAnswer);
+
+            var beforeActions = historyActions.Take(firstIndex + 1).ToList();
+            var isUsingRepresentationsBefore = beforeActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
+
+            if (isUsingRepresentationsBefore)
+            {
+                return;
+            }
+
+            var afterActions = historyActions.Skip(firstIndex).ToList();
+            var isUsingRepresentationsAfter = afterActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
+
+            if (!isUsingRepresentationsAfter)
+            {
+                return;
+            }
+
+            // TODO: Derive this entire Analysis Code from ARA Tag and don't use this Tag
+            var tag = new AnswerBeforeRepresentationTag(page, Origin.StudentPageGenerated, afterActions);
+            page.AddTag(tag);
+        }
 
         public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
         {
