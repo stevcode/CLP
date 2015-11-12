@@ -85,7 +85,12 @@ namespace CLP.Entities
                     analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_INC_TO_COR_AFTER_REP : Codings.ANALYSIS_INC_TO_INC_AFTER_REP;
                 }
 
-                return analysisObjectCode;
+                var firstAnswerContents = Codings.GetAnswerObjectContent(firstAnswer);
+                var lastAnswerContents = Codings.GetAnswerObjectContent(lastAnswer);
+
+                var analysisCode = string.IsNullOrWhiteSpace(analysisObjectCode) ? string.Empty : string.Format("{0} [{1}, {2}]", analysisObjectCode, firstAnswerContents, lastAnswerContents);
+
+                return analysisCode;
             }
         }
 

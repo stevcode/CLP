@@ -62,8 +62,9 @@ namespace CLP.Entities
             get
             {
                 var isAnswerCorrect = Codings.GetAnswerObjectCorrectness(Answer) == "COR";
+                var answerContent = Codings.GetAnswerObjectContent(Answer);
                 var analysisObjectCode = isAnswerCorrect ? Codings.ANALYSIS_COR_BEFORE_REP : Codings.ANALYSIS_INC_BEFORE_REP;
-                return analysisObjectCode;
+                return string.Format("{0} [{1}]", analysisObjectCode, answerContent);
             }
         }
 
