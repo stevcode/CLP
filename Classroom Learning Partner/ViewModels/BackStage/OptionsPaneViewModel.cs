@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
+            BatchTagAnalysisCommand = new Command(OnBatchTagAnalysisCommandExecute);
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             ApplyRenameToCacheCommand = new Command(OnApplyRenameToCacheCommandExecute);
             ToggleBindingStyleCommand = new Command(OnToggleBindingStyleCommandExecute);
@@ -36,6 +37,19 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        public Command BatchTagAnalysisCommand { get; private set; }
+
+        private void OnBatchTagAnalysisCommandExecute()
+        {
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            dataService.Analyze();
+        }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
         public Command GenerateRandomMainColorCommand { get; private set; }

@@ -29,5 +29,7 @@ namespace Classroom_Learning_Partner.Services
         void MigrateCaches();
         void GenerateSubmissionsFromModifiedStudentPages();
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
+
+        void Analyze();
     }
 }

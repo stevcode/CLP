@@ -57,6 +57,16 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
+        public string AnalysisCode
+        {
+            get
+            {
+                var isAnswerCorrect = Codings.GetAnswerObjectCorrectness(Answer) == "COR";
+                var analysisObjectCode = isAnswerCorrect ? Codings.ANALYSIS_COR_BEFORE_REP : Codings.ANALYSIS_INC_BEFORE_REP;
+                return analysisObjectCode;
+            }
+        }
+
         public override Category Category
         {
             get { return Category.Answer; }

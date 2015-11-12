@@ -62,6 +62,33 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
+        public string AnalysisCode
+        {
+            get
+            {
+                var firstAnswer = FirstAnswer;
+                var lastAnswer = LastAnswer;
+                if (firstAnswer.ID == lastAnswer.ID)
+                {
+                    return "[ERROR]: Tag generated with incorrect variables.";
+                }
+
+                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "COR";
+                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "COR";
+                var analysisObjectCode = string.Empty;
+                if (isFirstAnswerCorrect)
+                {
+                    analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_COR_TO_COR_AFTER_REP : Codings.ANALYSIS_COR_TO_INC_AFTER_REP;
+                }
+                else
+                {
+                    analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_INC_TO_COR_AFTER_REP : Codings.ANALYSIS_INC_TO_INC_AFTER_REP;
+                }
+
+                return analysisObjectCode;
+            }
+        }
+
         public override Category Category
         {
             get { return Category.Answer; }
