@@ -1113,6 +1113,7 @@ namespace CLP.Entities
         {
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
+            AttemptAnswerTag(page, historyActions);
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
@@ -1169,6 +1170,22 @@ namespace CLP.Entities
             }
 
             var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagActions);
+            page.AddTag(tag);
+        }
+
+        public static void AttemptAnswerTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var lastAnswerAction = historyActions.LastOrDefault(Codings.IsAnswerObject);
+            if (lastAnswerAction == null ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_FILL_IN_ERASE)
+            {
+                return;
+            }
+
+            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction> { lastAnswerAction });
             page.AddTag(tag);
         }
 
