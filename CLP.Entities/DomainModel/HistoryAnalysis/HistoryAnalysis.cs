@@ -96,6 +96,9 @@ namespace CLP.Entities
                     {
                         var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
                         page.AddTag(tag);
+
+                        var tag2 = new NumberLineJumpEraseTag(page, Origin.StudentPageGenerated);
+                        page.AddTag(tag2);
                     }
                     break;
                 }

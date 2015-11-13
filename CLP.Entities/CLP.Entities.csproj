@@ -209,6 +209,7 @@
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineCreationTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDimensionsChangedTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineJumpEraseTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
