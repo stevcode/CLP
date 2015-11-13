@@ -86,7 +86,7 @@ namespace CLP.Entities
                 CodedObject = Codings.OBJECT_ARITH,
                 CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
                 IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
-                CodedObjectID = "A] ",  // HACK: Formatting hack for papers, needs to be returned to just "A", and eventually correctly incremented
+                CodedObjectID = "A",
                 CodedObjectActionID = string.Format("\"{0}\"", interpretation)
             };
 
