@@ -105,7 +105,7 @@ namespace CLP.Entities
             get
             {
                 var analysisCode = string.Format("NL [{0}: COR]", LastNumber);
-                return string.Format("{0}{1}", Correctness, string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nAnalysis Code: " + analysisCode);
+                return string.Format("{0}{1}", Correctness, string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nCode: " + analysisCode);
 
                 //return string.Format("Correctness for {0} to {1}.\n" + "Number Line {2} on page.\n" + "{3}{4}{5}",
                 //                     FirstNumber,

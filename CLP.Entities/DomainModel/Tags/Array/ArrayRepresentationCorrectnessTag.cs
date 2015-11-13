@@ -111,7 +111,7 @@ namespace CLP.Entities
             get
             {
                 var analysisCode = HistoryActionIDs.Any() ? "ARR [4x8: COR]" : "ARR [5x8: COR]";
-                return string.Format("{0}{1}", Correctness, string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nAnalysis Code: " + analysisCode);
+                return string.Format("{0}{1}", Correctness, string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nCode: " + analysisCode);
 
                 //return string.Format("{0}{1}{3}",
                 //                     Correctness,

@@ -76,7 +76,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Answer"; }
+            get { return "Answer Correctness"; }
         }
 
         public override string FormattedValue
@@ -102,7 +102,7 @@ namespace CLP.Entities
 
                 return string.Format("{0}{1}",
                                      answerSet,
-                                     string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nAnalysis Code: " + AnalysisCode);
+                                     string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nCode: " + AnalysisCode);
             }
         }
 

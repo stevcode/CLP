@@ -146,7 +146,7 @@ namespace CLP.Entities
                 return string.Format("{0}\nRepresentations:\n{1}{2}",
                                      answerChanged,
                                      string.Join("\n", representationsAdded),
-                                     string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nAnalysis Code: " + analysisCode);
+                                     string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nCode: " + analysisCode);
             }
         }
 

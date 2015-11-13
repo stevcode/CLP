@@ -75,8 +75,8 @@ namespace CLP.Entities
             var percentageOfDigits = GetPercentageOfDigits(interpretation);
             var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
 
-            if (!isDefinitelyArith ||
-                percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD)
+            if (percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD &&
+                !isDefinitelyArith)
             {
                 return null;
             }

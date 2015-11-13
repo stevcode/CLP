@@ -70,7 +70,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return "1 jump of 7 erased from 48 to 55\nAnalysis Code: NLJE"; }
+            get { return "1 jump of 7 erased from 48 to 55\nCode: NLJE"; }
         }
 
         #endregion //ATagBase Overrides
