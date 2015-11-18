@@ -990,6 +990,25 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public void PrintUsedHistoryItems()
+        {
+            var historyItemTypes = new List<Type>();
+            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
+            {
+                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+                {
+                    historyItemTypes.AddRange(page.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
+                    foreach (var submission in page.Submissions)
+                    {
+                        historyItemTypes.AddRange(submission.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
+                    }
+                }
+            }
+
+            historyItemTypes = historyItemTypes.Distinct().ToList();
+            historyItemTypes.ForEach(Console.WriteLine);
+        }
+
         #endregion // Researcher Methods
 
         #region ClassPeriod Methods
