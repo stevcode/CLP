@@ -63,7 +63,7 @@ namespace CLP.Entities
         {
             if (CanAcceptStrokes &&
                 AcceptedStrokes.Any() &&
-                fromHistory)
+                !fromHistory)
             {
                 var strokesToRestore = new StrokeCollection();
 
@@ -78,7 +78,7 @@ namespace CLP.Entities
 
             if (CanAcceptPageObjects &&
                 AcceptedPageObjects.Any() &&
-                fromHistory)
+                !fromHistory)
             {
                 var pageObjectsToRestore = new List<IPageObject>();
 
