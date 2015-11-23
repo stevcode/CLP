@@ -71,6 +71,11 @@ namespace CLP.Entities
             get { return string.Format("{0} {1} Mark", MarkColor, MarkShape); }
         }
 
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_MARK; }
+        }
+
         public override int ZIndex
         {
             get { return 80; }
