@@ -28,6 +28,9 @@ namespace Classroom_Learning_Partner.Services
         void SetCurrentNotebook(NotebookInfo notebookInfo);
         void MigrateCaches();
         void GenerateSubmissionsFromModifiedStudentPages();
+        void PrintUsedHistoryItems();
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
+
+        void Analyze();
     }
 }

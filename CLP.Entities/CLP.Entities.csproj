@@ -144,6 +144,9 @@
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\Answer\AnswerBeforeRepresentationTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\AnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayTriedWrongDividerValuesTag.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
@@ -206,6 +209,7 @@
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineCreationTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDimensionsChangedTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineJumpEraseTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />

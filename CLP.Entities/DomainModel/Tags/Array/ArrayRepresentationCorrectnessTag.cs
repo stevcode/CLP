@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -34,6 +35,13 @@ namespace CLP.Entities
             ArrayIncorrectReasons = incorrectReasons;
         }
 
+        public ArrayRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<IHistoryAction> historyActions)
+            : base(parentPage, origin)
+        {
+            Correctness = correctness;
+            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
+        }
+
         /// <summary>
         /// Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
@@ -66,7 +74,25 @@ namespace CLP.Entities
             set { SetValue(ArrayIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayRepresentationIncorrectReason>));
+        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayRepresentationIncorrectReason>), () => new List<ArrayIncorrectReasons>());
+
+        /// <summary>List of <see cref="IHistoryAction" /> IDs used to generate this Tag.</summary>
+        public List<string> HistoryActionIDs
+        {
+            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
+            set { SetValue(HistoryActionIDsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
+
+        #region Calculated Properties
+
+        public List<IHistoryAction> HistoryActions
+        {
+            get { return ParentPage.History.HistoryActions.Where(h => HistoryActionIDs.Contains(h.ID)).OrderBy(h => h.HistoryActionIndex).ToList(); }
+        }
+
+        #endregion // Calculated Properties
 
         #region ATagBase Overrides
 
@@ -84,11 +110,15 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("{0}{1}",
-                                     Correctness,
-                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown
-                                         ? string.Empty
-                                         : " due to: " + string.Join(", ", ArrayIncorrectReasons));
+                var analysisCode = HistoryActionIDs.Any() ? "ARR [4x8: COR]" : "ARR [5x8: COR]";
+                return string.Format("{0}{1}", Correctness, string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nCode: " + analysisCode);
+
+                //return string.Format("{0}{1}{3}",
+                //                     Correctness,
+                //                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown
+                //                         ? string.Empty
+                //                         : " due to: " + string.Join(", ", ArrayIncorrectReasons),
+                //                     string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nAnalysis Code: " + analysisCode);
             }
         }
 

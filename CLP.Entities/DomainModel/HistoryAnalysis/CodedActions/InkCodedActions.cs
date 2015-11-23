@@ -75,8 +75,8 @@ namespace CLP.Entities
             var percentageOfDigits = GetPercentageOfDigits(interpretation);
             var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
 
-            if (!isDefinitelyArith ||
-                percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD)
+            if (percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD &&
+                !isDefinitelyArith)
             {
                 return null;
             }
@@ -111,16 +111,19 @@ namespace CLP.Entities
             }
 
             var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
+            var interpretation = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
 
-            var codedID = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IRelationPart || t is DivisionRelationDefinitionTag);
+            var answer = relationDefinitionTag == null ? "UNDEFINED" : relationDefinitionTag is IRelationPart ? (relationDefinitionTag as IRelationPart).RelationPartAnswerValue.ToString() : (relationDefinitionTag as DivisionRelationDefinitionTag).Quotient.ToString();
+            var correctness =  answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "COR" : "INC";
 
             var historyAction = new HistoryAction(page, inkAction)
             {
                 CodedObject = Codings.OBJECT_FILL_IN,
                 CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_FILL_IN_ADD : Codings.ACTION_FILL_IN_ERASE,
                 IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
-                CodedObjectID = codedID,
-                CodedObjectActionID = "unknown"
+                CodedObjectID = answer,
+                CodedObjectActionID = string.Format("\"{0}\", {1}", interpretation, correctness)
             };
 
             return historyAction;
@@ -197,6 +200,13 @@ namespace CLP.Entities
                     return pageObject;
                 }
 
+                // HACK: Temporarily in place until MC Boxes are re-written and converted.
+                if (pageObject is MultipleChoiceBox &&
+                    percentOfStrokeOverlap > 70.0)
+                {
+                    return pageObject;
+                }
+
                 if (mostOverlappedPageObject == null)
                 {
                     mostOverlappedPageObject = pageObject;
@@ -210,7 +220,8 @@ namespace CLP.Entities
                 }
 
                 if (Math.Abs(percentOfStrokeOverlap - mostOverlappedPercentOfStrokeOverlap) < 0.01 &&
-                    pageObject is InterpretationRegion)
+                    (pageObject is InterpretationRegion ||
+                     pageObject is MultipleChoiceBox))  // HACK: Temporarily in place until MC Boxes are re-written and converted.
                 {
                     mostOverlappedPageObject = pageObject;
                 }

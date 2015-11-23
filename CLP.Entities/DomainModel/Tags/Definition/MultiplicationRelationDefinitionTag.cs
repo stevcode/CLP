@@ -83,13 +83,7 @@ namespace CLP.Entities
                 {
                     case RelationTypes.EqualGroups:
                     case RelationTypes.OrderedEqualGroups:
-                        return string.Join(" groups of ", Factors.Select(x => x.RelationPartAnswerValue));
-                    //return string.Join(", ",
-                    //                                 Factors.Select((e, i) => new
-                    //                                                          {
-                    //                                                              Index = i / 2,
-                    //                                                              Item = e
-                    //                                                          }).GroupBy(x => x.Index, x => x.Item).Select(x => string.Join(" groups of ", x)));
+                        return string.Join(" group(s) of ", Factors.Select(x => x.RelationPartAnswerValue));
                     default:
                         return string.Join("x", Factors.Select(x => x.RelationPartAnswerValue));
                 }
@@ -104,11 +98,16 @@ namespace CLP.Entities
                 {
                     case RelationTypes.EqualGroups:
                     case RelationTypes.OrderedEqualGroups:
-                        return string.Join(" groups of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
+                        return string.Join(" group(s) of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
                     default:
                         return string.Join("x", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
                 }
             }
+        }
+
+        public bool IsExpandedFormatRelationVisible
+        {
+            get { return !Factors.All(r => r is NumericValueDefinitionTag); }
         }
 
         #endregion //IRelationPartImplementation
@@ -129,7 +128,10 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("Relation Type: {0}\n" + "{1} = {2}\n" + "Expanded Relation:\n" + "{3} = {2}", RelationType, FormattedRelation, Product, ExpandedFormattedRelation);
+                var expandedRelation = !IsExpandedFormatRelationVisible ? string.Empty : string.Format("\nExpanded Relation:\n{0} = {1}", ExpandedFormattedRelation, Product);
+                var alternateRelation = string.Empty;
+
+                return string.Format("Relation Type: {0}\n{1} = {2}{3}{4}", RelationType, FormattedRelation, Product, expandedRelation, alternateRelation);
             }
         }
 

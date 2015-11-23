@@ -236,6 +236,77 @@ namespace Classroom_Learning_Partner.Services
 
         #region Methods
 
+        #region Batch Methods
+
+        public void Analyze()
+        {
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, "BatchTags.txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            File.AppendAllText(filePath, "*****Tags*****" + "\n\n");
+
+            foreach (var notebookInfo in LoadedNotebooksInfo)
+            {
+                var notebook = notebookInfo.Notebook;
+                if (notebook.OwnerID == Person.Author.ID ||
+                    !notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in notebook.Pages)
+                {
+                    var lastSubmission = page.Submissions.LastOrDefault();
+                    if (lastSubmission == null)
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine("Generating Actions for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+                    HistoryAnalysis.GenerateHistoryActions(lastSubmission);
+                    Console.WriteLine("Finished generating Actions.\n");
+
+                    var tags = lastSubmission.Tags.Where(t => t is AnswerBeforeRepresentationTag || t is AnswerChangedAfterRepresentationTag).ToList();
+                    if (!tags.Any())
+                    {
+                        continue;
+                    }
+
+                    var codes = new List<string>();
+                    foreach (var tag in tags)
+                    {
+                        var t = tag as AnswerBeforeRepresentationTag;
+                        if (t != null)
+                        {
+                            codes.Add(t.AnalysisCode);
+                        }
+
+                        var t2 = tag as AnswerChangedAfterRepresentationTag;
+                        if (t2 != null)
+                        {
+                            codes.Add(t2.AnalysisCode);
+                        }
+                    }
+
+                    var tagLine = string.Format("{0}, p {1}: {2}", page.Owner.FullName, page.PageNumber, string.Join("; ", codes));
+
+                    File.AppendAllText(filePath, tagLine + "\n");
+                }
+            }
+        } 
+
+        #endregion // Batch Methods
+
         #region Static Methods
 
         public static List<CacheInfo> GetCachesInFolder(string cachesFolderPath)
@@ -917,6 +988,25 @@ namespace Classroom_Learning_Partner.Services
                     }
                 }
             }
+        }
+
+        public void PrintUsedHistoryItems()
+        {
+            var historyItemTypes = new List<Type>();
+            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
+            {
+                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+                {
+                    historyItemTypes.AddRange(page.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
+                    foreach (var submission in page.Submissions)
+                    {
+                        historyItemTypes.AddRange(submission.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
+                    }
+                }
+            }
+
+            historyItemTypes = historyItemTypes.Distinct().ToList();
+            historyItemTypes.ForEach(Console.WriteLine);
         }
 
         #endregion // Researcher Methods

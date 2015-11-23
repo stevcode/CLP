@@ -130,6 +130,8 @@ namespace ConsoleScripts
                     break;
                 }
 
+                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryIndex);
+
                 #region WorksAsIs
 
                 if (historyItemToUndo is AnimationIndicator ||
@@ -566,6 +568,8 @@ namespace ConsoleScripts
                 }
 
                 #endregion //StrokesChanged to ObjectsOnPageChanged
+
+                page.History.ConversionUndo();
             }
 
             page.History.RefreshHistoryIndexes();
