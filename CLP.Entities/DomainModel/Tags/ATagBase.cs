@@ -18,6 +18,7 @@ namespace CLP.Entities
     public enum Category
     {
         Array,
+        Bin,
         DivisionTemplate,
         Stamp,
         NumberLine,

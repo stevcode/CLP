@@ -763,16 +763,74 @@ namespace CLP.Entities
                 if (objectsChangedHistoryItems.All(h => !h.IsUsingStrokes && h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
-                    if (nextObjectsChangedHistoryItem != null &&
-                        !nextObjectsChangedHistoryItem.IsUsingStrokes &&
-                        nextObjectsChangedHistoryItem.IsUsingPageObjects &&
-                        nextObjectsChangedHistoryItem.PageObjectsAdded.Any(h => h is Bin))
+                    if (objectsChangedHistoryItems.All(h => h.PageObjectsAdded.Any(i => i is Bin)))
                     {
-                        return null;
+                        //buffer is all bins, check if next is also bin
+                        if (nextObjectsChangedHistoryItem != null &&
+                            !nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                            nextObjectsChangedHistoryItem.IsUsingPageObjects &&
+                            nextObjectsChangedHistoryItem.PageObjectsAdded.Any(h => h is Bin))
+                        {
+                            return null;
+                        }
+
+                        var historyAction = ObjectCodedActions.AddBins(page, objectsChangedHistoryItems);
+                        return historyAction;
+                    }
+                    else if (objectsChangedHistoryItems.All(h => h.PageObjectsAdded.Count == 1 && h.PageObjectsAdded.First() is Mark))
+                    {
+                        //buffer is all marks, check if next is also mark
+                        if (nextObjectsChangedHistoryItem != null &&
+                            !nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                            nextObjectsChangedHistoryItem.IsUsingPageObjects &&
+                            nextObjectsChangedHistoryItem.PageObjectsAdded.Count == 1 &&
+                            nextObjectsChangedHistoryItem.PageObjectsAdded.First() is Mark)
+                        {
+                            var nextMark = nextObjectsChangedHistoryItem.PageObjectsAdded.First() as Mark;
+                            var firstMark = objectsChangedHistoryItems.First().PageObjectsAdded.First() as Mark;
+                            var currentIndex = nextObjectsChangedHistoryItem.HistoryIndex;
+                            var whichBinHasNextMark = nextMark.IsInWhichBin(page, currentIndex);
+                            var whichBinHasFirstMark = firstMark.IsInWhichBin(page, currentIndex);
+                            /*
+                            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, currentIndex);
+                            var binsOnPage = pageObjectsOnPage.FindAll(h => h is Bin);
+                            var nextMarkRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, nextMark, currentIndex);
+                            var firstMarkRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, firstMark, currentIndex);
+                            var whichBinHasNextMark = "OUT";
+                            var whichBinHasFirstMark = "OUT";
+                            for (int i = 0; i < binsOnPage.Count; i++)
+                            {
+                                var position = binsOnPage[i].GetPositionAtHistoryIndex(currentIndex);
+                                var dimensions = binsOnPage[i].GetDimensionsAtHistoryIndex(currentIndex);
+                                if (nextMarkRect.Bottom < position.Y + dimensions.Y &&
+                                    nextMarkRect.Top > position.Y &&
+                                    nextMarkRect.Right < position.X + dimensions.X &&
+                                    nextMarkRect.Left > position.X)
+                                {
+                                    whichBinHasNextMark = i.ToString();
+                                }
+                                if (firstMarkRect.Bottom < position.Y + dimensions.Y &&
+                                    firstMarkRect.Top > position.Y &&
+                                    firstMarkRect.Right < position.X + dimensions.X &&
+                                    firstMarkRect.Left > position.X)
+                                {
+                                    whichBinHasFirstMark = i.ToString();
+                                }
+                            }
+                            */
+
+                            if (nextMark.MarkShape == firstMark.MarkShape &&
+                                nextMark.MarkColor == firstMark.MarkColor &&
+                                whichBinHasNextMark == whichBinHasFirstMark)
+                            {
+                                return null;
+                            }
+                        }
+
+                        var historyAction = ObjectCodedActions.AddMarks(page, objectsChangedHistoryItems);
+                        return historyAction;
                     }
 
-                    var historyAction = ObjectCodedActions.AddBins(page, objectsChangedHistoryItems);
-                    return historyAction;
                 }
                 if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
@@ -1129,6 +1187,7 @@ namespace CLP.Entities
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
+            BinsDealStrategyTag(page, historyActions);
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
@@ -1201,6 +1260,13 @@ namespace CLP.Entities
             }
 
             var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction> { lastAnswerAction });
+            page.AddTag(tag);
+        }
+
+        public static void BinsDealStrategyTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var filteredHistoryActions = historyActions;
+            var tag = new BinsStrategyTag(page, Origin.StudentPageGenerated);
             page.AddTag(tag);
         }
 

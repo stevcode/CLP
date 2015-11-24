@@ -27,7 +27,7 @@ namespace CLP.Entities
             if (addedPageObjects.Count == 1)
             {
                 var pageObject = addedPageObjects.First();
-                if (pageObject is Bin)
+                if (pageObject is Bin || pageObject is Mark)
                 {
                     return null;
                 }
@@ -44,22 +44,6 @@ namespace CLP.Entities
 
                 return historyAction;
             }
-
-            /**if (addedPageObjects.Count == 2) //this case is similar to the previous, should we combine them?
-            {
-                var pageObject = (addedPageObjects.First() is Bin) ? addedPageObjects.First() : addedPageObjects.Last();
-                var codedObject = pageObject.CodedName;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
-                                    {
-                                        CodedObject = codedObject,
-                                        CodedObjectAction = Codings.ACTION_OBJECT_ADD,
-                                        IsObjectActionVisible = false,
-                                        CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
-                                    };
-                return historyAction;
-            }**/
             return null;
         }
 
@@ -81,6 +65,30 @@ namespace CLP.Entities
                 IsObjectActionVisible = false,
                 CodedObjectID = codedObjectID,
                 CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, Codings.OBJECT_BINS, codedObjectID)
+            };
+            return historyAction;
+        }
+
+        public static IHistoryAction AddMarks(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
+        {
+            if (page == null ||
+                objectsOnPageChangedHistoryItems == null ||
+                objectsOnPageChangedHistoryItems.Any(h => h.IsUsingStrokes && !h.PageObjectIDsAdded.Any()))
+            {
+                return null;
+            }
+            var addedPageObjects = objectsOnPageChangedHistoryItems.First().PageObjectsAdded;
+            var pageObject = addedPageObjects.First();
+            var addedMark = pageObject as Mark;
+            var whichBin = addedMark.IsInWhichBin(page, objectsOnPageChangedHistoryItems.First().HistoryIndex);
+            var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString() + " " + whichBin + " " + addedMark.MarkShape.ToString() + " " + addedMark.MarkColor;
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList()) //use first object
+            {
+                CodedObject = Codings.OBJECT_MARK,
+                CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                IsObjectActionVisible = false,
+                CodedObjectID = codedObjectID,
+                CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, Codings.OBJECT_MARK, codedObjectID)
             };
             return historyAction;
         }
