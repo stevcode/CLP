@@ -6,9 +6,12 @@ using System.IO;
 using System.Threading.Tasks;
 using CLP.CustomControls;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
+using Catel.IoC;
 
 namespace Classroom_Learning_Partner.Services
 {
+    /* not being used currently - should it be?
     //serialize this
     [Serializable()]
     public class Preferences
@@ -19,11 +22,11 @@ namespace Classroom_Learning_Partner.Services
         [System.Xml.Serialization.XmlElement("color")]
         public string color { get; set; }
     }
-
+    */
 
     public class PreferencesService : IPreferencesService
     {
-        private ObservableCollection<string> buttonsToShow;
+        private ObservableCollection<string> buttonsToShow = new ObservableCollection<string>();
         private string savedColorVal;
 
         public ObservableCollection<string> visibleButtons
@@ -45,6 +48,37 @@ namespace Classroom_Learning_Partner.Services
             { return savedColorVal; }
             set
             { savedColorVal = value; }
+        }
+
+        private string path = "/users/dirk/desktop/prefs.xml"; //TODO: use name composite path
+        private XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
+
+        //call this to save what preferences we currently have
+        public void savePreferencesToDisk()
+        {
+            FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
+
+            //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
+            //prefService.visibleButtons.Add("TestingStringToVisibleButtons");
+
+            Console.WriteLine("Serializing xml for preferences to " + path);
+            //serializer.Serialize(stream, prefService);
+            serializer.Serialize(stream, this.visibleButtons);
+            stream.Close();
+        }
+
+        public void loadPreferencesFromDisk()
+        {
+            //testing deserialization
+            StreamReader reader = new StreamReader(path);
+            this.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
+            reader.Close();
+
+            Console.WriteLine("visibleButtons after loading:");
+            foreach (string s in this.visibleButtons)
+            {
+                Console.WriteLine(s);
+            }
         }
 
     }

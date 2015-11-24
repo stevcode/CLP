@@ -547,65 +547,21 @@ namespace Classroom_Learning_Partner.Services
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
             Console.WriteLine("in OpenNotebook");
-            /*
-            public void ToXML(string notebookFilePath)
-            {
-                LastSavedDate = DateTime.Now;
-                var fileInfo = new FileInfo(notebookFilePath);
-                if (!Directory.Exists(fileInfo.DirectoryName))
-                {
-                    Directory.CreateDirectory(fileInfo.DirectoryName);
-                }
-                using (Stream stream = new FileStream(notebookFilePath, FileMode.Create))
-                {
-                    var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                    xmlSerializer.Serialize(this, stream);
-                    ClearIsDirtyOnAllChilds();
-                }
-            }*/
 
-            //testing serialization
-            XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
-            string path = "/users/dirk/desktop/prefs.xml";
-
-            FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
-
-            var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
-            Console.WriteLine("prefService: " + prefService.ToString());
-            prefService.visibleButtons.Add("TestingStringToVisibleButtons");
-
-            Console.WriteLine("Serializing xml for preferences to " + path);
-            //serializer.Serialize(stream, prefService);
-            serializer.Serialize(stream, prefService.visibleButtons);
-            stream.Close();
+            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
 
 
-            //For testing - remove and see if we can load back in
-            prefService.visibleButtons.Clear();
+            prefService.visibleButtons.Add("insertBinButton");
+            prefService.visibleButtons.Add("insertTextBoxButton");
+            prefService.visibleButtons.Add("insertArrayButton");
+
+            prefService.savePreferencesToDisk();
+
+            prefService.loadPreferencesFromDisk();
+
+            App.MainWindowViewModel.MajorRibbon.SetVisibleRibbonButtons(prefService);
 
 
-
-
-
-
-
-
-
-
-
-
-            
-            //testing deserialization
-            StreamReader reader = new StreamReader(path);
-            prefService.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
-            reader.Close();
-
-            Console.Write(prefService.visibleButtons);
-            foreach (string s in prefService.visibleButtons)
-            {
-                Console.WriteLine(s);
-            }
-            
 
 
             // Is Notebook already loaded in memory?

@@ -1004,17 +1004,21 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Buttons.Add((UIElement)button);
             }*/
-
-            prefService.visibleButtons = new ObservableCollection<string>();
-
-            foreach(IPreferenceButton button in _buttonsList)
-            {
-                if (prefService.visibleButtons.Contains(button.buttonID))
+            
+            if (prefService.visibleButtons != null && prefService.visibleButtons.Count != 0)
+            { //TODO: initialize this to make this if unnecessary
+                foreach (IPreferenceButton button in _buttonsList)
                 {
-                    Buttons.Add((UIElement)button);
+                    Console.WriteLine("button.buttonID: " + button.buttonID);
+                    if (prefService.visibleButtons.Contains(button.buttonID))
+                    {
+                        Console.WriteLine("Adding button " + button.buttonID);
+                        Buttons.Add((UIElement)button);
+                    }
                 }
+                //TODO: no addrange for observablecollection?
             }
-            //TODO: no addrange for observablecollection?
+
         }
 
 
