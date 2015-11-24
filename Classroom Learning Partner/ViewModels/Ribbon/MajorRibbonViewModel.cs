@@ -250,15 +250,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                   "MULTIPLECHOICEBOX");
             _insertMultipleChoiceTextBoxButton.buttonID = "insertMultipleChoiceTextBoxButton";
             _buttonsList.Add(_insertMultipleChoiceTextBoxButton);
-
-            /*
-            Console.Write("--------------------------------------------------");
-            Console.WriteLine("Printing _buttonsList now:");
-            foreach (IPreferenceButton b in _buttonsList)
-            {
-                Console.WriteLine(b.buttonID);
-            }
-            */
         }
 
         private bool _isCheckedEventRunning = false;
@@ -992,18 +983,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
         
-        public void SetVisibleRibbonButtons(IPreferencesService prefService)
+        public void SetVisibleRibbonButtons()
         {
+            PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
             Console.WriteLine("In SetVisibleRibbonButtons");
 
-            Buttons.Clear();
-            /*
-            List<IPreferenceButton> toAdd = _buttonsList.Where(b => prefService.visibleButtons.Contains(b.buttonID));//.toList();
-
-            foreach(IPreferenceButton button in toAdd)
-            {
-                Buttons.Add((UIElement)button);
-            }*/
+            Buttons.Clear(); //remove all, then add particular ones back in
             
             if (prefService.visibleButtons != null && prefService.visibleButtons.Count != 0)
             { //TODO: initialize this to make this if unnecessary
@@ -1018,7 +1003,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 //TODO: no addrange for observablecollection?
             }
-
         }
 
 
@@ -1072,8 +1056,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Console.WriteLine("in viewmondel");
             Console.WriteLine(_insertNumberLineButton);
 
-            var prefService = DependencyResolver.Resolve<IPreferencesService>();
-            SetVisibleRibbonButtons(prefService);
+            SetVisibleRibbonButtons();
         }
 
         #endregion //Methods

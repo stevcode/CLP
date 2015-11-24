@@ -50,27 +50,34 @@ namespace Classroom_Learning_Partner.Services
             { savedColorVal = value; }
         }
 
-        private string path = "/users/dirk/desktop/prefs.xml"; //TODO: use name composite path
+        //private string path = "/users/dirk/desktop/prefs.xml"; //TODO: use name composite path
         private XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
+        //private XmlSerializer serializer = new XmlSerializer(typeof(PreferencesService));
 
         //call this to save what preferences we currently have
-        public void savePreferencesToDisk()
+        public void savePreferencesToDisk(string folderPath)
         {
-            FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
+            var nameComposite = PreferencesNameComposite.ParsePreferences(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
+
+            FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
 
             //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
             //prefService.visibleButtons.Add("TestingStringToVisibleButtons");
 
-            Console.WriteLine("Serializing xml for preferences to " + path);
+            Console.WriteLine("Serializing xml for preferences to " + filePath);
             //serializer.Serialize(stream, prefService);
             serializer.Serialize(stream, this.visibleButtons);
             stream.Close();
         }
 
-        public void loadPreferencesFromDisk()
+        public void loadPreferencesFromDisk(string folderPath)
         {
+            var nameComposite = PreferencesNameComposite.ParsePreferences(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
+
             //testing deserialization
-            StreamReader reader = new StreamReader(path);
+            StreamReader reader = new StreamReader(filePath);
             this.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
             reader.Close();
 
@@ -80,7 +87,6 @@ namespace Classroom_Learning_Partner.Services
                 Console.WriteLine(s);
             }
         }
-
     }
 
 
@@ -94,6 +100,17 @@ namespace Classroom_Learning_Partner.Services
 
         public string ToFileName()
         { return string.Format("{0};{1};{2};", QUALIFIER_TEXT, CLASS_NAME, ID); }
+
+        public static PreferencesNameComposite ParsePreferences(PreferencesService prefService)
+        {
+            var nameComposite = new PreferencesNameComposite
+            {
+                //ID = prefService
+                CLASS_NAME = "className" //TODO: update this
+            };
+
+            return nameComposite;
+        }
 
         public static PreferencesNameComposite ParseFilePath(string prefFilePath)
         {

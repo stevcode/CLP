@@ -546,21 +546,6 @@ namespace Classroom_Learning_Partner.Services
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
-            Console.WriteLine("in OpenNotebook");
-
-            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
-
-
-            prefService.visibleButtons.Add("insertBinButton");
-            prefService.visibleButtons.Add("insertTextBoxButton");
-            prefService.visibleButtons.Add("insertArrayButton");
-
-            prefService.savePreferencesToDisk();
-
-            prefService.loadPreferencesFromDisk();
-
-            App.MainWindowViewModel.MajorRibbon.SetVisibleRibbonButtons(prefService);
-
 
 
 
@@ -617,6 +602,36 @@ namespace Classroom_Learning_Partner.Services
             {
                 SetCurrentNotebook(notebookInfo);
             }
+
+            /*
+            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
+            PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
+            
+            prefService.loadPreferencesFromDisk(prefNameComp.ToFileName());
+            */
+            
+            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
+
+
+            //Remove these
+            prefService.visibleButtons.Add("setLassoModeButton");
+            prefService.visibleButtons.Add("insertBinButton");
+            prefService.visibleButtons.Add("setEraseModeButton");
+            prefService.savePreferencesToDisk("/users/dirk/desktop/");
+            prefService.visibleButtons.Clear();
+
+
+
+            prefService.loadPreferencesFromDisk("/users/dirk/desktop/");
+
+            //refresh the main ribbon
+            App.MainWindowViewModel.MajorRibbon.SetVisibleRibbonButtons();
+            
+
+
+
+
+
         }
 
         public void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced)
