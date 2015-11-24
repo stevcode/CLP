@@ -1,11 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using CLP.CustomControls.Button_Controls;
 
 namespace CLP.CustomControls
 {
-    public class ColorButton : RadioButton
+    public class ColorButton : RadioButton, IPreferenceButton
     {
+        private string ID;
+        public string buttonID
+        {
+            get { return ID; }
+            set { ID = value; }
+        }
+
         static ColorButton()
         {
             // Initialize as a lookless control.

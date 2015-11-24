@@ -210,6 +210,10 @@
                                          Command="{Binding ReverseSubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />-->
 
+            <customControls:ToggleRibbonButton LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png" 
+                                               UnCheckedText="Testing"
+                                               Visibility="Visible" />
+
             <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
                                                CheckedText="Pens Up"
                                                IsChecked="{Binding BlockStudentPenInput}"

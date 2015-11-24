@@ -67,6 +67,9 @@ namespace Classroom_Learning_Partner
 
             var pageInteractionService = new PageInteractionService();
             ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
+
+            var preferencesService = new PreferencesService();
+            ServiceLocator.Default.RegisterInstance<IPreferencesService>(preferencesService);
         }
 
         #region Methods

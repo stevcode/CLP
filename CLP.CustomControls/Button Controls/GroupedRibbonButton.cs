@@ -1,12 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using CLP.CustomControls.Button_Controls;
 
 namespace CLP.CustomControls
 {
     /// <summary></summary>
-    public class GroupedRibbonButton : RadioButton
+    public class GroupedRibbonButton : RadioButton, IPreferenceButton
     {
+        private string ID;
+        public string buttonID
+        {
+            get { return ID; }
+            set { ID = value; }
+        }
         static GroupedRibbonButton()
         {
             // Initialize as a lookless control.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
@@ -7,12 +8,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
+using CLP.CustomControls.Button_Controls;
+using System.Collections;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -71,106 +75,190 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
+            this._buttonsList = new ObservableCollection<IPreferenceButton>();
+
             //PageInteractionMode Toggles
             _setSelectModeButton = new GroupedRibbonButton("Select",
                                                            "PageInteractionMode",
                                                            "pack://application:,,,/Resources/Images/Hand32.png",
                                                            PageInteractionModes.Select.ToString());
             _setSelectModeButton.Checked += _button_Checked;
+            _setSelectModeButton.buttonID = "setSelectModeButton";
+            this._buttonsList.Add(_setSelectModeButton);
 
             _setDrawModeButton = new GroupedRibbonButton("Draw", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", PageInteractionModes.Draw.ToString());
             _setDrawModeButton.Checked += _button_Checked;
+            _setDrawModeButton.buttonID = "setDrawModeButton";
+            _buttonsList.Add(_setDrawModeButton);
 
             _setEraseModeButton = new GroupedRibbonButton("Erase",
                                                           "PageInteractionMode",
                                                           "pack://application:,,,/Resources/Images/PointEraser32.png",
                                                           PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
+            _setEraseModeButton.buttonID = "setEraseModeButton";
+            _buttonsList.Add(_setEraseModeButton);
 
             _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
             _setMarkModeButton.Checked += _button_Checked;
+            _setMarkModeButton.buttonID = "setMarkModeButton";
+            _buttonsList.Add(_setMarkModeButton);
 
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
                                                           "PageInteractionMode",
                                                           "pack://application:,,,/Resources/Images/Lasso32.png",
                                                           PageInteractionModes.Lasso.ToString());
             _setLassoModeButton.Checked += _button_Checked;
+            _setLassoModeButton.buttonID = "setLassoModeButton";
+            _buttonsList.Add(_setLassoModeButton);
 
             _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", PageInteractionModes.Cut.ToString());
             _setCutModeButton.Checked += _button_Checked;
+            _setCutModeButton.buttonID = "setCutModeButton";
+            _buttonsList.Add(_setCutModeButton);
 
             _setDividerCreationModeButton = new GroupedRibbonButton("Add Divider",
                                                                     "PageInteractionMode",
                                                                     "pack://application:,,,/Resources/Images/InkArray32.png",
                                                                     PageInteractionModes.DividerCreation.ToString());
             _setDividerCreationModeButton.Checked += _button_Checked;
+            _setDividerCreationModeButton.buttonID = "setDividerCreationModeButton";
+            _buttonsList.Add(_setDividerCreationModeButton);
 
             //Images
             //TODO: Better Icons
             _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+            _insertImageButton.buttonID = "insertImageButton";
+            _buttonsList.Add(_insertImageButton);
 
             //Stamps
             _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
+            _insertGeneralStampButton.buttonID = "insertGeneralStampButton";
+            _buttonsList.Add(_insertGeneralStampButton);
             _insertGroupStampButton = new RibbonButton("Group Stamp",
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
+            _insertGroupStampButton.buttonID = "insertGroupStampButton";
+            _buttonsList.Add(_insertGroupStampButton);
             _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
+            _insertImageGeneralStampButton.buttonID = "insertImageGeneralStampButton";
+            _buttonsList.Add(_insertImageGeneralStampButton);
             //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
+            _insertImageGroupStampButton.buttonID = "insertImageGroupStampButton";
+            _buttonsList.Add(_insertImageGroupStampButton);
             //TODO: Better Icon
             _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
+            _insertPileButton.buttonID = "insertPileButton";
+            _buttonsList.Add(_insertPileButton);
 
             //Arrays
             _insertArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "ARRAY");
+            _insertArrayButton.buttonID = "insertArrayButton";
+            _buttonsList.Add(_insertArrayButton);
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
+            _insert10x10ArrayButton.buttonID = "insert10x10ArrayButton";
+            _buttonsList.Add(_insert10x10ArrayButton);
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
+            _insertArrayCardButton.buttonID = "insertArrayCardButton";
+            _buttonsList.Add(_insertArrayCardButton);
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
+            _insertFactorCardButton.buttonID = "insertFactorCardButton";
+            _buttonsList.Add(_insertFactorCardButton);
             _insertObscurableArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
+            _insertObscurableArrayButton.buttonID = "insertObscurableArrayButton";
+            _buttonsList.Add(_insertObscurableArrayButton);
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Template",
                                                              "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
                                                              AddPageObjectToPageCommand,
                                                              "DIVISIONTEMPLATE");
+            _insertDivisionTemplateButton.buttonID = "insertDivisionTemplateButton";
+            _buttonsList.Add(_insertDivisionTemplateButton);
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
+            _insertNumberLineButton.buttonID = "insertNumberLineButton";
+            _buttonsList.Add(_insertNumberLineButton);
             _insertAutoNumberLineButton = new RibbonButton("Auto Number Line",
                                                            "pack://application:,,,/Resources/Images/NumberLine32.png",
                                                            AddPageObjectToPageCommand,
                                                            "AUTO_NUMBERLINE");
+            _insertAutoNumberLineButton.buttonID = "insertAutoNumberLineButton";
+            _buttonsList.Add(_insertAutoNumberLineButton);
 
             //Shapes
             //TODO: Better Icons
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
+            _insertSquareButton.buttonID = "insertSquareButton";
+            _buttonsList.Add(_insertSquareButton);
             _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
+            _insertCircleButton.buttonID = "insertCircleButton";
+            _buttonsList.Add(_insertCircleButton);
             _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
+            _insertTriangleButton.buttonID = "insertTriangleButton";
+            _buttonsList.Add(_insertTriangleButton);
             _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
+            _insertHorizontalLineButton.buttonID = "insertHorizontalLineButton";
+            _buttonsList.Add(_insertHorizontalLineButton);
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
+            _insertVerticalLineButton.buttonID = "insertVerticalLineButton";
+            _buttonsList.Add(_insertVerticalLineButton);
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
+            _insertProtractorButton.buttonID = "insertProtractorButton";
+            _buttonsList.Add(_insertProtractorButton);
             _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
+            _insertRightDiagonalButton.buttonID = "insertRightDiagonalButton";
+            _buttonsList.Add(_insertRightDiagonalButton);
             _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed",
                                                                 "pack://application:,,,/Images/LargeIcon.png",
                                                                 AddPageObjectToPageCommand,
                                                                 "RIGHT_DIAGONAL_DASHED");
+            _insertRightDiagonalDashedButton.buttonID = "insertRightDiagonalDashedButton";
+            _buttonsList.Add(_insertRightDiagonalDashedButton);
             _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
+            _insertLeftDiagonalButton.buttonID = "insertLeftDiagonalButton";
+            _buttonsList.Add(_insertLeftDiagonalButton);
             _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed",
                                                                "pack://application:,,,/Images/LargeIcon.png",
                                                                AddPageObjectToPageCommand,
                                                                "LEFT_DIAGONAL_DASHED");
+            _insertLeftDiagonalDashedButton.buttonID = "insertLeftDiagonalDashedButton";
+            _buttonsList.Add(_insertLeftDiagonalDashedButton);
 
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
+            _insertBinButton.buttonID = "insertBinButton";
+            _buttonsList.Add(_insertBinButton);
+
+            //TESTING
+            _newTestingButton = new RibbonButton("Test Button", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
+            _newTestingButton.buttonID = "newTestingButton";
+            _buttonsList.Add(_newTestingButton);
 
             //Text
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
+            _insertTextBoxButton.buttonID = "insertTextBoxButton";
+            _buttonsList.Add(_insertTextBoxButton);
 
             _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice",
                                                                   "pack://application:,,,/Resources/Images/TempIcon32.png",
                                                                   AddPageObjectToPageCommand,
                                                                   "MULTIPLECHOICEBOX");
+            _insertMultipleChoiceTextBoxButton.buttonID = "insertMultipleChoiceTextBoxButton";
+            _buttonsList.Add(_insertMultipleChoiceTextBoxButton);
+
+            /*
+            Console.Write("--------------------------------------------------");
+            Console.WriteLine("Printing _buttonsList now:");
+            foreach (IPreferenceButton b in _buttonsList)
+            {
+                Console.WriteLine(b.buttonID);
+            }
+            */
         }
 
         private bool _isCheckedEventRunning = false;
@@ -325,6 +413,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Bin
         private RibbonButton _insertBinButton;
+
+        //Testing
+        private RibbonButton _newTestingButton;
+
+        private ObservableCollection<IPreferenceButton> _buttonsList = new ObservableCollection<IPreferenceButton>();
 
         #endregion //Insert PageObject Buttons
 
@@ -898,6 +991,32 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+        
+        public void SetVisibleRibbonButtons(IPreferencesService prefService)
+        {
+            Console.WriteLine("In SetVisibleRibbonButtons");
+
+            Buttons.Clear();
+            /*
+            List<IPreferenceButton> toAdd = _buttonsList.Where(b => prefService.visibleButtons.Contains(b.buttonID));//.toList();
+
+            foreach(IPreferenceButton button in toAdd)
+            {
+                Buttons.Add((UIElement)button);
+            }*/
+
+            prefService.visibleButtons = new ObservableCollection<string>();
+
+            foreach(IPreferenceButton button in _buttonsList)
+            {
+                if (prefService.visibleButtons.Contains(button.buttonID))
+                {
+                    Buttons.Add((UIElement)button);
+                }
+            }
+            //TODO: no addrange for observablecollection?
+        }
+
 
         public void SetRibbonButtons()
         {
@@ -925,6 +1044,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
+            Buttons.Add(_newTestingButton);
 
             // Insert Shapes
             //Buttons.Add(Separater);
@@ -944,6 +1064,12 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+
+            Console.WriteLine("in viewmondel");
+            Console.WriteLine(_insertNumberLineButton);
+
+            var prefService = DependencyResolver.Resolve<IPreferencesService>();
+            SetVisibleRibbonButtons(prefService);
         }
 
         #endregion //Methods

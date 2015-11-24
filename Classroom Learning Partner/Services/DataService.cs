@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Serialization;
+using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
@@ -544,6 +546,62 @@ namespace Classroom_Learning_Partner.Services
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
+            Console.WriteLine("in OpenNotebook");
+            /*
+            public void ToXML(string notebookFilePath)
+            {
+                LastSavedDate = DateTime.Now;
+                var fileInfo = new FileInfo(notebookFilePath);
+                if (!Directory.Exists(fileInfo.DirectoryName))
+                {
+                    Directory.CreateDirectory(fileInfo.DirectoryName);
+                }
+                using (Stream stream = new FileStream(notebookFilePath, FileMode.Create))
+                {
+                    var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                    xmlSerializer.Serialize(this, stream);
+                    ClearIsDirtyOnAllChilds();
+                }
+            }*/
+
+            //testing serialization
+            XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
+            string path = "/users/dirk/desktop/prefs.xml";
+
+            FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
+
+            var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
+            Console.WriteLine("prefService: " + prefService.ToString());
+            prefService.visibleButtons.Add("TestingStringToVisibleButtons");
+
+            Console.WriteLine("Serializing xml for preferences to " + path);
+            //serializer.Serialize(stream, prefService);
+            serializer.Serialize(stream, prefService.visibleButtons);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
+            //testing deserialization
+            Preferences prefs = null;
+
+            StreamReader reader = new StreamReader(path);
+            prefs = (Preferences)serializer.Deserialize(reader);
+            reader.Close();
+            */
+
+
             // Is Notebook already loaded in memory?
             var loadedNotebooks = LoadedNotebooksInfo.ToList();
             var existingNotebookInfo = loadedNotebooks.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());

@@ -2,12 +2,19 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using CLP.CustomControls.Button_Controls;
 
 namespace CLP.CustomControls
 {
     /// <summary></summary>
-    public class RibbonButton : Button
+    public class RibbonButton : Button, IPreferenceButton
     {
+        private string ID;
+        public string buttonID
+        {
+            get { return ID; }
+            set { ID = value; }
+        }
         static RibbonButton()
         {
             // Initialize as a lookless control.

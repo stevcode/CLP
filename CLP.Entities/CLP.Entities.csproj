@@ -128,6 +128,7 @@
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAndPageObjectAccepter.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
+    <Compile Include="DomainModel\Preferences\ClassPrefs.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\AdditionRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\ArrayAnalysis.cs" />
