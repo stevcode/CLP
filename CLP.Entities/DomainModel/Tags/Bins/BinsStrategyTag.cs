@@ -12,8 +12,27 @@ namespace CLP.Entities
 
         public BinsStrategyTag() { }
 
-        public BinsStrategyTag(CLPPage parentPage, Origin origin)
-            : base(parentPage, origin) { }
+        public BinsStrategyTag(CLPPage parentPage, Origin origin, int binCount, int dealBy, int dealt)
+            : base(parentPage, origin)
+        {
+            BinCount = binCount;
+            DealBy = dealBy;
+            Dealt = dealt;
+        }
+
+        public int BinCount
+        {
+            get; set; }
+
+        public int DealBy
+        {
+            get; set;
+        }
+
+        public int Dealt
+        {
+            get; set;
+        }
 
 
         public override Category Category
@@ -24,12 +43,16 @@ namespace CLP.Entities
             }
         }
 
+        public override string FormattedName
+        {
+            get { return "Bins Strategy"; }
+        }
+
         public override string FormattedValue
         {
             get
             {
-                var x = 0;
-                return "BINS 3 DB 2";
+                return BinCount + " DB " + DealBy + " D: " + Dealt;
             }
         }
     }

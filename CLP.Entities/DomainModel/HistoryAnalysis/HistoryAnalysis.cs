@@ -791,34 +791,6 @@ namespace CLP.Entities
                             var currentIndex = nextObjectsChangedHistoryItem.HistoryIndex;
                             var whichBinHasNextMark = nextMark.IsInWhichBin(page, currentIndex);
                             var whichBinHasFirstMark = firstMark.IsInWhichBin(page, currentIndex);
-                            /*
-                            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, currentIndex);
-                            var binsOnPage = pageObjectsOnPage.FindAll(h => h is Bin);
-                            var nextMarkRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, nextMark, currentIndex);
-                            var firstMarkRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, firstMark, currentIndex);
-                            var whichBinHasNextMark = "OUT";
-                            var whichBinHasFirstMark = "OUT";
-                            for (int i = 0; i < binsOnPage.Count; i++)
-                            {
-                                var position = binsOnPage[i].GetPositionAtHistoryIndex(currentIndex);
-                                var dimensions = binsOnPage[i].GetDimensionsAtHistoryIndex(currentIndex);
-                                if (nextMarkRect.Bottom < position.Y + dimensions.Y &&
-                                    nextMarkRect.Top > position.Y &&
-                                    nextMarkRect.Right < position.X + dimensions.X &&
-                                    nextMarkRect.Left > position.X)
-                                {
-                                    whichBinHasNextMark = i.ToString();
-                                }
-                                if (firstMarkRect.Bottom < position.Y + dimensions.Y &&
-                                    firstMarkRect.Top > position.Y &&
-                                    firstMarkRect.Right < position.X + dimensions.X &&
-                                    firstMarkRect.Left > position.X)
-                                {
-                                    whichBinHasFirstMark = i.ToString();
-                                }
-                            }
-                            */
-
                             if (nextMark.MarkShape == firstMark.MarkShape &&
                                 nextMark.MarkColor == firstMark.MarkColor &&
                                 whichBinHasNextMark == whichBinHasFirstMark)
@@ -1263,10 +1235,41 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
+        //depends on string formatting in ObjectCodedActions.AddMarks
         public static void BinsDealStrategyTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var filteredHistoryActions = historyActions;
-            var tag = new BinsStrategyTag(page, Origin.StudentPageGenerated);
+            var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectID.Contains(": OUT")).ToList();
+            var binsCount = 0;
+            var dealBy = 0;
+            var dealt = 0;
+            var firstBinNum = 0;
+            var firstRegion = true;
+            for (int i = 0; i < historyActionsInsideBins.Count(); i++)
+            {
+                var currentCodedObjectID = historyActionsInsideBins[i].CodedObjectID;
+                var boundaryColon = currentCodedObjectID.IndexOf(": ");
+                var boundaryComma = currentCodedObjectID.IndexOf(", ");
+                var dealNum = Int32.Parse(currentCodedObjectID.Substring(0, boundaryColon));
+                var binNum = Int32.Parse(currentCodedObjectID.Substring(boundaryColon + 2, boundaryComma - boundaryColon - 2));
+                if (binNum > binsCount)
+                {
+                    binsCount = binNum;
+                }
+                if (i == 0)
+                {
+                    firstBinNum = binNum;
+                }
+                if (!(binNum == firstBinNum))
+                {
+                    firstRegion = false;
+                }
+                if (firstRegion)
+                {
+                    dealBy += dealNum;
+                }
+                dealt += dealNum;
+            }
+            var tag = new BinsStrategyTag(page, Origin.StudentPageGenerated, binsCount, dealBy, dealt);
             page.AddTag(tag);
         }
 
