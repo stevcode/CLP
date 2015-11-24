@@ -577,6 +577,11 @@ namespace Classroom_Learning_Partner.Services
             Console.WriteLine("Serializing xml for preferences to " + path);
             //serializer.Serialize(stream, prefService);
             serializer.Serialize(stream, prefService.visibleButtons);
+            stream.Close();
+
+
+            //For testing - remove and see if we can load back in
+            prefService.visibleButtons.Clear();
 
 
 
@@ -589,17 +594,18 @@ namespace Classroom_Learning_Partner.Services
 
 
 
-
-
-
-            /*
+            
             //testing deserialization
-            Preferences prefs = null;
-
             StreamReader reader = new StreamReader(path);
-            prefs = (Preferences)serializer.Deserialize(reader);
+            prefService.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
             reader.Close();
-            */
+
+            Console.Write(prefService.visibleButtons);
+            foreach (string s in prefService.visibleButtons)
+            {
+                Console.WriteLine(s);
+            }
+            
 
 
             // Is Notebook already loaded in memory?
