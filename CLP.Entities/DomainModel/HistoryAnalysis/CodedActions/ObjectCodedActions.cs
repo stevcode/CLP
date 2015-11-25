@@ -82,6 +82,7 @@ namespace CLP.Entities
             var pageObject = pageObjects.First();
             var addedMark = pageObject as Mark;
             var whichBin = Mark.IsInWhichBin(page, objectsOnPageChangedHistoryItems.First().HistoryIndex, addedMark);
+            var whichBinWithHeader = "";
             var colorAsString = addedMark.MarkColor;
             var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString();
             var codedObjectActionID = "Bin " + whichBin + ", " +

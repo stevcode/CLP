@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -155,18 +156,21 @@ namespace CLP.Entities
         {
             var whichBin = "OUT";
             var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex);
-            var binsOnPage = pageObjectsOnPage.FindAll(h => h is Bin);
+            var binsOnPage = pageObjectsOnPage.Where(h => h is Bin).ToList();
             var markRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, mark, historyIndex);
-            for (int i = 0; i < binsOnPage.Count; i++)
+            foreach (var bin in binsOnPage)
             {
-                var position = binsOnPage[i].GetPositionAtHistoryIndex(historyIndex);
-                var dimensions = binsOnPage[i].GetDimensionsAtHistoryIndex(historyIndex);
-                if (markRect.Bottom < position.Y + dimensions.Y &&
-                    markRect.Top > position.Y &&
-                    markRect.Right < position.X + dimensions.X &&
-                    markRect.Left > position.X)
+                var binRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, bin, historyIndex);
+                var intersectRect = Rect.Intersect(binRect, markRect);
+                var percentOverlap = intersectRect.Area() / markRect.Area();
+                if (intersectRect.IsEmpty)
                 {
-                    whichBin = (i+1).ToString();
+                    percentOverlap = 0.0;
+                }
+                var isOverlapping = percentOverlap >= .6;
+                if (isOverlapping)
+                {
+                    whichBin = (binsOnPage.IndexOf(bin)+1).ToString();
                 }
             }
             return whichBin;
