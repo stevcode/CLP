@@ -789,8 +789,8 @@ namespace CLP.Entities
                             var nextMark = nextObjectsChangedHistoryItem.PageObjectsAdded.First() as Mark;
                             var firstMark = objectsChangedHistoryItems.First().PageObjectsAdded.First() as Mark;
                             var currentIndex = nextObjectsChangedHistoryItem.HistoryIndex;
-                            var whichBinHasNextMark = nextMark.IsInWhichBin(page, currentIndex);
-                            var whichBinHasFirstMark = firstMark.IsInWhichBin(page, currentIndex);
+                            var whichBinHasNextMark = Mark.IsInWhichBin(page, currentIndex, nextMark);
+                            var whichBinHasFirstMark = Mark.IsInWhichBin(page, currentIndex, firstMark);
                             if (nextMark.MarkShape == firstMark.MarkShape &&
                                 nextMark.MarkColor == firstMark.MarkColor &&
                                 whichBinHasNextMark == whichBinHasFirstMark)
@@ -1063,7 +1063,21 @@ namespace CLP.Entities
                 {
                     //make a new HistoryAction
                     var refinedHistoryAction = InkCodedActions.MarksAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
+                    if (currentPageObjectReference != null)
+                    {
+                        var whichBin = "OUT";
+                        var binsOnPage = pageObjectsOnPage.FindAll(h => h is Bin);
+                        for (int j = 0; j < binsOnPage.Count; j++)
+                        {
+                            if (binsOnPage[j].ID == currentPageObjectReference.ID)
+                            {
+                                whichBin = (j + 1).ToString();
+                            }
+                        }
+                        var inkColor = currentStrokeReference.DrawingAttributes.Color.ToString();
+                        refinedHistoryAction.CodedObjectActionID = string.Format("Bin {0}, {1}, ink", whichBin, inkColor);
 
+                    }
                     processedInkActions.Add(refinedHistoryAction);
                     historyItemBuffer.Clear();
                 }
@@ -1256,7 +1270,7 @@ namespace CLP.Entities
         //depends on string formatting in ObjectCodedActions.AddMarks
         public static void BinsDealStrategyTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectID.Contains(": OUT")).ToList();
+            var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectActionID.Contains("OUT")).ToList();
             var binsCount = 0;
             var dealBy = 0;
             var dealt = 0;
@@ -1264,11 +1278,11 @@ namespace CLP.Entities
             var firstRegion = true;
             for (int i = 0; i < historyActionsInsideBins.Count(); i++)
             {
+                var currentCodedObjectActionID = historyActionsInsideBins[i].CodedObjectActionID;
                 var currentCodedObjectID = historyActionsInsideBins[i].CodedObjectID;
-                var boundaryColon = currentCodedObjectID.IndexOf(": ");
-                var boundaryComma = currentCodedObjectID.IndexOf(", ");
-                var dealNum = Int32.Parse(currentCodedObjectID.Substring(0, boundaryColon));
-                var binNum = Int32.Parse(currentCodedObjectID.Substring(boundaryColon + 2, boundaryComma - boundaryColon - 2));
+                var terms = currentCodedObjectActionID.Split(',');
+                var dealNum = Int32.Parse(currentCodedObjectID);
+                var binNum = Int32.Parse(terms[0].Split(' ')[1]);
                 if (binNum > binsCount)
                 {
                     binsCount = binNum;

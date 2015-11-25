@@ -52,7 +52,7 @@ namespace CLP.Entities
         {
             get
             {
-                return "TAGS: BINS deal [" + BinCount + " DB " + DealBy + " D: " + Dealt + "]";
+                return "Code: BINS deal [" + BinCount + " DB " + DealBy + " D: " + Dealt + "]";
             }
         }
     }

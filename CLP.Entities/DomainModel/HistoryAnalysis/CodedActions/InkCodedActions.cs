@@ -58,11 +58,15 @@ namespace CLP.Entities
             {
                 return null;
             }
+            var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString();
             var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = Codings.OBJECT_MARK,
-                                    CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE;
+                                    CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE,
+                                    IsObjectActionVisible = !isAdd,
+                                    CodedObjectID = codedObjectID
                                 };
+
             return historyAction;
         }
 

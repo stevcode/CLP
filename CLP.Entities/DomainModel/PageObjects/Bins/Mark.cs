@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -150,16 +151,16 @@ namespace CLP.Entities
         //Given a page and an index, returns which bin this mark is fully inside.
         //If there is more than one, return the latest bin added chronologically.
         //The bins are indexed 1, 2, ... in the order added.
-        public string IsInWhichBin(CLPPage page, int currentIndex)
+        public static string IsInWhichBin(CLPPage page, int historyIndex, Mark mark)
         {
             var whichBin = "OUT";
-            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, currentIndex);
+            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex);
             var binsOnPage = pageObjectsOnPage.FindAll(h => h is Bin);
-            var markRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, this, currentIndex);
+            var markRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, mark, historyIndex);
             for (int i = 0; i < binsOnPage.Count; i++)
             {
-                var position = binsOnPage[i].GetPositionAtHistoryIndex(currentIndex);
-                var dimensions = binsOnPage[i].GetDimensionsAtHistoryIndex(currentIndex);
+                var position = binsOnPage[i].GetPositionAtHistoryIndex(historyIndex);
+                var dimensions = binsOnPage[i].GetDimensionsAtHistoryIndex(historyIndex);
                 if (markRect.Bottom < position.Y + dimensions.Y &&
                     markRect.Top > position.Y &&
                     markRect.Right < position.X + dimensions.X &&
