@@ -49,6 +49,23 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static IHistoryAction MarksAddOrErase(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isAdd = true)
+        {
+            if (page == null ||
+                objectsOnPageChangedHistoryItems == null ||
+                !objectsOnPageChangedHistoryItems.Any() ||
+                !objectsOnPageChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+            {
+                return null;
+            }
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
+                                {
+                                    CodedObject = Codings.OBJECT_MARK,
+                                    CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE;
+                                };
+            return historyAction;
+        }
+
         public static IHistoryAction Arithmetic(CLPPage page, IHistoryAction inkAction)
         {
             const double INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD = 5.0;

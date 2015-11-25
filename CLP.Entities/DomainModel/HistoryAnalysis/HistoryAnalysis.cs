@@ -937,6 +937,7 @@ namespace CLP.Entities
             var currentClusterCentroid = new Point(0, 0);
             var currentClusterWeight = 0.0;
             var isMatchingAgainstCluster = false;
+            var isMatchingAgainstBin = false;
 
             for (var i = 0; i < historyItems.Count; i++)
             {
@@ -958,6 +959,7 @@ namespace CLP.Entities
                     currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, currentStrokeReference, currentHistoryItem.HistoryIndex);
                     currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
                     isMatchingAgainstCluster = false;
+                    isMatchingAgainstBin = false;
                     if (currentPageObjectReference == null)
                     {
                         isMatchingAgainstCluster = true;
@@ -971,6 +973,11 @@ namespace CLP.Entities
                         {
                             currentLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, currentPageObjectReference, currentClusterCentroid, currentHistoryItem.HistoryIndex);
                         }
+                    }
+                    if (currentPageObjectReference is Bin &&
+                        currentLocationReference == Codings.ACTIONID_INK_LOCATION_OVER)
+                    {
+                        isMatchingAgainstBin = true;
                     }
                 }
 
@@ -1052,19 +1059,30 @@ namespace CLP.Entities
                     }
                 }
 
-                var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
-                refinedHistoryAction.CodedObjectID = "A";
-                if (currentPageObjectReference != null)
+                if (isMatchingAgainstBin)
                 {
-                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
-                                                                             currentLocationReference,
-                                                                             currentPageObjectReference.CodedName,
-                                                                             currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
-                }
-                refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
+                    //make a new HistoryAction
+                    var refinedHistoryAction = InkCodedActions.MarksAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
 
-                processedInkActions.Add(refinedHistoryAction);
-                historyItemBuffer.Clear();
+                    processedInkActions.Add(refinedHistoryAction);
+                    historyItemBuffer.Clear();
+                }
+                else
+                {
+                    var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
+                    refinedHistoryAction.CodedObjectID = "A";
+                    if (currentPageObjectReference != null)
+                    {
+                        refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
+                                                                                 currentLocationReference,
+                                                                                 currentPageObjectReference.CodedName,
+                                                                                 currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
+                    }
+                    refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
+
+                    processedInkActions.Add(refinedHistoryAction);
+                    historyItemBuffer.Clear();
+                }  
             }
 
             return processedInkActions;
