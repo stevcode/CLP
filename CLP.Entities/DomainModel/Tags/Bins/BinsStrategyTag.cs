@@ -52,7 +52,7 @@ namespace CLP.Entities
         {
             get
             {
-                var dealtStr = Dealt[0].ToString();
+                var dealtStr = (Dealt.Count == 0) ? "" : Dealt[0].ToString();
                 if (Dealt.Distinct().Skip(1).Any())
                 {
                     for (int i = 1; i < Dealt.Count; i++)
