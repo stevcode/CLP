@@ -1273,7 +1273,7 @@ namespace CLP.Entities
             var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectActionID.Contains("OUT")).ToList();
             var binsCount = 0;
             var dealBy = 0;
-            var dealt = 0;
+            int[] dealt = new int[historyActionsInsideBins.Count];
             var firstBinNum = 0;
             var firstRegion = true;
             for (int i = 0; i < historyActionsInsideBins.Count(); i++)
@@ -1291,7 +1291,7 @@ namespace CLP.Entities
                 {
                     firstBinNum = binNum;
                 }
-                if (!(binNum == firstBinNum))
+                if (binNum != firstBinNum)
                 {
                     firstRegion = false;
                 }
@@ -1299,9 +1299,13 @@ namespace CLP.Entities
                 {
                     dealBy += dealNum;
                 }
-                dealt += dealNum;
+                if (historyActionsInsideBins[i].CodedObjectAction == Codings.ACTION_INK_ERASE)
+                {
+                    dealNum = -dealNum;
+                }
+                dealt[binNum-1] += dealNum;
             }
-            var tag = new BinsStrategyTag(page, Origin.StudentPageGenerated, binsCount, dealBy, dealt);
+            var tag = new BinsStrategyTag(page, Origin.StudentPageGenerated, binsCount, dealBy, new List<int>(dealt.Take(binsCount)));
             page.AddTag(tag);
         }
 

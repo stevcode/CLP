@@ -12,8 +12,8 @@ namespace CLP.Entities
 
         public BinsStrategyTag() { }
 
-        public BinsStrategyTag(CLPPage parentPage, Origin origin, int binCount, int dealBy, int dealt)
-            : base(parentPage, origin)
+        public BinsStrategyTag(CLPPage parentPage, Origin origin, int binCount, int dealBy, List<int> dealt)
+    : base(parentPage, origin)
         {
             BinCount = binCount;
             DealBy = dealBy;
@@ -29,7 +29,7 @@ namespace CLP.Entities
             get; set;
         }
 
-        public int Dealt
+        public List<int> Dealt
         {
             get; set;
         }
@@ -52,7 +52,15 @@ namespace CLP.Entities
         {
             get
             {
-                return "Code: BINS deal [" + BinCount + " DB " + DealBy + " D: " + Dealt + "]";
+                var dealtStr = Dealt[0].ToString();
+                if (Dealt.Distinct().Skip(1).Any())
+                {
+                    for (int i = 1; i < Dealt.Count; i++)
+                    {
+                        dealtStr = dealtStr + ", " + Dealt[i].ToString();
+                    }
+                }
+                return "Code: BINS deal [" + BinCount + " DB " + DealBy + " D: " + dealtStr + "]";
             }
         }
     }
