@@ -605,8 +605,9 @@ namespace Classroom_Learning_Partner.Services
 
             Console.WriteLine("Opening notebook");
 
-            PreferencesService prefService = ServiceLocator.Default.ResolveType<PreferencesService>();
-            
+            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
+            //PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
+
             Console.WriteLine(prefService.GetHashCode());
             PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
 

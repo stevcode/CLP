@@ -1009,23 +1009,26 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetVisibleRibbonButtons()
         {
             PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
-            Console.WriteLine("In SetVisibleRibbonButtons");
-            Console.WriteLine(prefService.GetHashCode());
+            if (prefService != null) //should only be null on initial startup
+            {
+                Console.WriteLine("In SetVisibleRibbonButtons");
+                Console.WriteLine(prefService.GetHashCode());
 
-            Buttons.Clear(); //remove all, then add particular ones back in
-            
-            if (prefService.visibleButtons != null && prefService.visibleButtons.Count != 0)
-            { //TODO: initialize this to make this if unnecessary
-                foreach (IPreferenceButton button in _buttonsList)
-                {
-                    Console.WriteLine("button.buttonID: " + button.buttonID);
-                    if (prefService.visibleButtons.Contains(button.buttonID))
+                Buttons.Clear(); //remove all, then add particular ones back in
+
+                if (prefService.visibleButtons != null && prefService.visibleButtons.Count != 0)
+                { //TODO: initialize this to make this if unnecessary
+                    foreach (IPreferenceButton button in _buttonsList)
                     {
-                        Console.WriteLine("Adding button " + button.buttonID);
-                        Buttons.Add((UIElement)button);
+                        Console.WriteLine("button.buttonID: " + button.buttonID);
+                        if (prefService.visibleButtons.Contains(button.buttonID))
+                        {
+                            Console.WriteLine("Adding button " + button.buttonID);
+                            Buttons.Add((UIElement)button);
+                        }
                     }
+                    //TODO: no addrange for observablecollection?
                 }
-                //TODO: no addrange for observablecollection?
             }
         }
 

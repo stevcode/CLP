@@ -31,5 +31,11 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         {
             this.preferencesSelectorViewModel = preferencesSelectorViewModel;
         }
+
+        private void HandleChange(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Checkbox clicked");
+        }
+
     }
 }

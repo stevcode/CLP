@@ -5,8 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Classroom_Learning_Partner.Views.Modal_Windows"
         mc:Ignorable="d"
-        Title="PreferencesSelectorView" Height="300" Width="300">
+        Title="PreferencesSelectorView" Height="100" Width="100">
     <Grid>
-        
+        <TextBox Text="Testing" />
+        <CheckBox VerticalAlignment="Center" Margin="20 0 0 0" Checked="HandleChange" />
+        <ItemsControl ItemsSource="{Binding PreferencesCheckboxes}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Margin="10, 10, 3, 3" Grid.Column="0" Grid.Row="2" Name="cb1" FontSize="12" Checked="HandleChange">
+                        Check Box
+                    </CheckBox>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
     </Grid>
 </Window>
