@@ -17,6 +17,9 @@ using CLP.CustomControls;
 using CLP.Entities;
 using CLP.CustomControls.Button_Controls;
 using System.Collections;
+using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Views.Modal_Windows;
+using Classroom_Learning_Partner.ViewModels.Modal_Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -71,6 +74,8 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
 
             ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
+
+            PreferencesCommand = new Command(OnPreferencesCommandExecute);
         }
 
         private void InitializeButtons()
@@ -725,6 +730,24 @@ namespace Classroom_Learning_Partner.ViewModels
             return !CurrentPage.IsCached;
         }
 
+        public Command PreferencesCommand { get; set; }
+
+        private void OnPreferencesCommandExecute()
+        {
+            Console.WriteLine("In OnPreferencesCommandExecute");
+
+            var preferencesSelectorViewModel = new PreferencesSelectorViewModel();
+            var preferencesSelectorView = new PreferencesSelectorView(preferencesSelectorViewModel);
+            preferencesSelectorView.Owner = Application.Current.MainWindow;
+
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
+            preferencesSelectorView.ShowDialog();
+            if (preferencesSelectorView.DialogResult == true)
+            {
+                //SendExitTickets(exitTicketCreationViewModel);
+            }
+        }
+
         #endregion //Sharing Commands
 
         #region Page Commands
@@ -987,6 +1010,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
             Console.WriteLine("In SetVisibleRibbonButtons");
+            Console.WriteLine(prefService.GetHashCode());
 
             Buttons.Clear(); //remove all, then add particular ones back in
             

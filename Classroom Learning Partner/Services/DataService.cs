@@ -603,33 +603,36 @@ namespace Classroom_Learning_Partner.Services
                 SetCurrentNotebook(notebookInfo);
             }
 
-            /*
-            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
-            PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
-            
-            prefService.loadPreferencesFromDisk(prefNameComp.ToFileName());
-            */
-            
-            PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
+            Console.WriteLine("Opening notebook");
 
+            PreferencesService prefService = ServiceLocator.Default.ResolveType<PreferencesService>();
+            
+            Console.WriteLine(prefService.GetHashCode());
+            PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
+
+            //prefService.savePreferencesToDisk(notebookInfo.NotebookFolderPath); //initially save
+            //TODO: will need to initially save a file there
+            /*
+            NotebookFolderPath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A
+               PagesFolderPath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A\Pages
+              NotebookFilePath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A\notebook.xml
+            */
+
+            prefService.loadPreferencesFromDisk(notebookInfo.NotebookFolderPath);
+            
 
             //Remove these
+            /*
             prefService.visibleButtons.Add("setLassoModeButton");
             prefService.visibleButtons.Add("insertBinButton");
             prefService.visibleButtons.Add("setEraseModeButton");
             prefService.savePreferencesToDisk("/users/dirk/desktop/");
             prefService.visibleButtons.Clear();
-
-
-
-            prefService.loadPreferencesFromDisk("/users/dirk/desktop/");
+            */
 
             //refresh the main ribbon
             App.MainWindowViewModel.MajorRibbon.SetVisibleRibbonButtons();
             
-
-
-
 
 
         }

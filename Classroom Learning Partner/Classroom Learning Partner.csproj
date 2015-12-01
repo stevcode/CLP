@@ -202,6 +202,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.ServiceModel.Discovery" />
     <Reference Include="System.Windows.Controls.Ribbon" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\System.Windows.Interactivity.dll</HintPath>
@@ -281,6 +282,7 @@
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\PreferencesSelectorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
@@ -399,6 +401,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\PreferencesSelectorView.xaml.cs">
+      <DependentUpon>PreferencesSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
       <DependentUpon>BinReporterView.xaml</DependentUpon>
@@ -711,6 +716,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\PreferencesSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

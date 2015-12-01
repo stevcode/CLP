@@ -62,14 +62,14 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeServices()
         {
+            var preferencesService = new PreferencesService();
+            ServiceLocator.Default.RegisterInstance<IPreferencesService>(preferencesService);
+
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
             var pageInteractionService = new PageInteractionService();
             ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
-
-            var preferencesService = new PreferencesService();
-            ServiceLocator.Default.RegisterInstance<IPreferencesService>(preferencesService);
         }
 
         #region Methods

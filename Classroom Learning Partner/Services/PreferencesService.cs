@@ -57,7 +57,9 @@ namespace Classroom_Learning_Partner.Services
         //call this to save what preferences we currently have
         public void savePreferencesToDisk(string folderPath)
         {
-            var nameComposite = PreferencesNameComposite.ParsePreferences(this);
+
+            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
+            Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
@@ -73,14 +75,16 @@ namespace Classroom_Learning_Partner.Services
 
         public void loadPreferencesFromDisk(string folderPath)
         {
-            var nameComposite = PreferencesNameComposite.ParsePreferences(this);
+            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
+            var fileName = nameComposite.ToFileName();
+
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
-            //testing deserialization
             StreamReader reader = new StreamReader(filePath);
             this.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
             reader.Close();
 
+            
             Console.WriteLine("visibleButtons after loading:");
             foreach (string s in this.visibleButtons)
             {
@@ -101,23 +105,26 @@ namespace Classroom_Learning_Partner.Services
         public string ToFileName()
         { return string.Format("{0};{1};{2};", QUALIFIER_TEXT, CLASS_NAME, ID); }
 
-        public static PreferencesNameComposite ParsePreferences(PreferencesService prefService)
+        /*
+        public static PreferencesNameComposite ParsePreferences(PreferencesService prefService, string folderPath)
         {
             var nameComposite = new PreferencesNameComposite
             {
-                //ID = prefService
+                ID = prefService;
                 CLASS_NAME = "className" //TODO: update this
             };
 
-            return nameComposite;
-        }
-
-        public static PreferencesNameComposite ParseFilePath(string prefFilePath)
+            return nameComposite; 
+        }*/
+        
+        public static PreferencesNameComposite ParseFilePath(string folderFilePath)
         {
-            var fileInfo = new FileInfo(prefFilePath);
+            var fileInfo = new FileInfo(folderFilePath);
             var pageFileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             var pageFileParts = pageFileName.Split(';');
-            if (pageFileParts.Length != 3)
+            Console.WriteLine("folderFilePath: " + folderFilePath);
+            //needs to be an author notebook and have the proper filename
+            if (pageFileParts.Length != 5 || pageFileParts[4] != "A") 
             {
                 return null;
             }
@@ -125,7 +132,7 @@ namespace Classroom_Learning_Partner.Services
             var nameComposite = new PreferencesNameComposite
             {
                 ID = pageFileParts[1],
-                CLASS_NAME = pageFileParts[2],
+                CLASS_NAME = pageFileParts[3],
             };
 
             return nameComposite;
