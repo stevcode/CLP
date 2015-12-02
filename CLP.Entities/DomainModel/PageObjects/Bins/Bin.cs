@@ -49,6 +49,16 @@ namespace CLP.Entities
             get { return string.Format("Bin of {0}", Parts); }
         }
 
+        public override string CodedName
+        {
+            get { return "BIN"; }
+        }
+
+        public override string CodedID 
+        {
+            get { return "A"; }
+        }
+
         public override int ZIndex
         {
             get { return 70; }

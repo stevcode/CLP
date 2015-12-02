@@ -777,7 +777,20 @@ namespace CLP.Entities
                         var historyAction = ObjectCodedActions.AddBins(page, objectsChangedHistoryItems);
                         return historyAction;
                     }
-                    else if (objectsChangedHistoryItems.All(h => h.PageObjectsAdded.Count == 1 && h.PageObjectsAdded.First() is Mark))
+                    if (objectsChangedHistoryItems.All(h => h.PageObjectsRemoved.Any(i => i is Bin)))
+                    {
+                        if (nextObjectsChangedHistoryItem != null &&
+                            !nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                            nextObjectsChangedHistoryItem.IsUsingPageObjects &&
+                            nextObjectsChangedHistoryItem.PageObjectsRemoved.Any(h => h is Bin))
+                        {
+                            return null;
+                        }
+
+                        var historyAction = ObjectCodedActions.DeleteBins(page, objectsChangedHistoryItems);
+                        return historyAction;
+                    }
+                    if (objectsChangedHistoryItems.All(h => h.PageObjectsAdded.Count == 1 && h.PageObjectsAdded.First() is Mark))
                     {
                         //buffer is all marks, check if next is also mark
                         if (nextObjectsChangedHistoryItem != null &&
@@ -799,10 +812,33 @@ namespace CLP.Entities
                             }
                         }
 
-                        var historyAction = ObjectCodedActions.AddMarks(page, objectsChangedHistoryItems);
+                        var historyAction = ObjectCodedActions.AddOrDeleteMarks(page, objectsChangedHistoryItems);
                         return historyAction;
                     }
+                    if (objectsChangedHistoryItems.All(h => h.PageObjectsRemoved.Count == 1 && h.PageObjectsRemoved.First() is Mark))
+                    {
+                        if (nextObjectsChangedHistoryItem != null &&
+                            !nextObjectsChangedHistoryItem.IsUsingStrokes &&
+                            nextObjectsChangedHistoryItem.IsUsingPageObjects &&
+                            nextObjectsChangedHistoryItem.PageObjectsRemoved.Count == 1 &&
+                            nextObjectsChangedHistoryItem.PageObjectsRemoved.First() is Mark)
+                        {
+                            var nextMark = nextObjectsChangedHistoryItem.PageObjectsRemoved.First() as Mark;
+                            var firstMark = objectsChangedHistoryItems.First().PageObjectsRemoved.First() as Mark;
+                            var currentIndex = nextObjectsChangedHistoryItem.HistoryIndex;
+                            var whichBinHasNextMark = Mark.IsInWhichBin(page, currentIndex, nextMark);
+                            var whichBinHasFirstMark = Mark.IsInWhichBin(page, currentIndex, firstMark);
+                            if (nextMark.MarkShape == firstMark.MarkShape &&
+                                nextMark.MarkColor == firstMark.MarkColor &&
+                                whichBinHasNextMark == whichBinHasFirstMark)
+                            {
+                                return null;
+                            }
+                        }
 
+                        var historyAction = ObjectCodedActions.AddOrDeleteMarks(page, objectsChangedHistoryItems);
+                        return historyAction;
+                    }
                 }
                 if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
@@ -1267,10 +1303,11 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
-        //depends on string formatting in ObjectCodedActions.AddMarks
+        //depends on string formatting in ObjectCodedActions.AddOrDeleteMarks
         public static void BinsDealStrategyTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectActionID.Contains("OUT")).ToList();
+            var historyActionsInsideBins = historyActions.Where(h => h.CodedObject == Codings.OBJECT_MARK && !h.CodedObjectActionID.Contains("OUT") &&
+            h.CodedObjectAction != Codings.ACTION_OBJECT_MOVE && h.CodedObjectAction != Codings.ACTION_OBJECT_RESIZE).ToList();
             var binsCount = 0;
             var dealBy = 0;
             int[] dealt = new int[historyActionsInsideBins.Count];
@@ -1299,7 +1336,8 @@ namespace CLP.Entities
                 {
                     dealBy += dealNum;
                 }
-                if (historyActionsInsideBins[i].CodedObjectAction == Codings.ACTION_INK_ERASE)
+                if (historyActionsInsideBins[i].CodedObjectAction == Codings.ACTION_INK_ERASE || 
+                    historyActionsInsideBins[i].CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
                 {
                     dealNum = -dealNum;
                 }

@@ -47,6 +47,27 @@ namespace CLP.Entities
             return null;
         }
 
+        public static IHistoryAction DeleteBins(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
+        {
+            if (page == null ||
+                objectsOnPageChangedHistoryItems == null ||
+                objectsOnPageChangedHistoryItems.Any(h => h.IsUsingStrokes && !h.PageObjectIDsRemoved.Any()))
+            {
+                return null;
+            }
+            var removedPageObjects = objectsOnPageChangedHistoryItems.First().PageObjectsRemoved;
+            var pageObject = (removedPageObjects.First() is Bin) ? removedPageObjects.First() : removedPageObjects.Last();
+            var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString();
+            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList()) //use first object
+            {
+                CodedObject = Codings.OBJECT_BINS,
+                CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
+                CodedObjectID = codedObjectID,
+                CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, Codings.OBJECT_BINS, codedObjectID)
+            };
+            return historyAction;
+        }
+
         public static IHistoryAction AddBins(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
         {
             if (page == null ||
@@ -69,7 +90,7 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static IHistoryAction AddMarks(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
+        public static IHistoryAction AddOrDeleteMarks(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItems == null ||
@@ -86,7 +107,6 @@ namespace CLP.Entities
             {
                 whichBin = "Bin " + whichBin;
             }
-
             var whichBinWithHeader = "";
             var colorAsString = addedMark.MarkColor;
             var codedObjectID = objectsOnPageChangedHistoryItems.Count.ToString();
@@ -95,7 +115,7 @@ namespace CLP.Entities
             var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList()) //use first object
             {
                 CodedObject = Codings.OBJECT_MARK,
-                CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                CodedObjectAction = objectsOnPageChangedHistoryItems.First().PageObjectsAdded.Any() ? Codings.ACTION_OBJECT_ADD : Codings.ACTION_OBJECT_DELETE,
                 IsObjectActionVisible = !objectsOnPageChangedHistoryItems.First().PageObjectsAdded.Any(),
                 CodedObjectID = codedObjectID,
                 CodedObjectActionID = codedObjectActionID
@@ -119,6 +139,10 @@ namespace CLP.Entities
             {
                 var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
                 var pageObject = removedPageObjects.First();
+                if (pageObject is Bin || pageObject is Mark)
+                {
+                    return null;
+                }
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
                 var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
