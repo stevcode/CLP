@@ -801,6 +801,25 @@ namespace CLP.Entities
                 }
             }
 
+            if (historyItems.All(h => h is PageObjectResizeBatchHistoryItem))
+            {
+                var objectsResizedHistoryItems = historyItems.Cast<PageObjectResizeBatchHistoryItem>().ToList();
+
+                var firstID = objectsResizedHistoryItems.First().PageObjectID;
+                if (objectsResizedHistoryItems.All(h => h.PageObjectID == firstID))
+                {
+                    var nextResizedHistoryItem = nextHistoryItem as PageObjectResizeBatchHistoryItem;
+                    if (nextResizedHistoryItem != null &&
+                        firstID == nextResizedHistoryItem.PageObjectID)
+                    {
+                        return null;
+                    }
+
+                    var historyAction = ObjectCodedActions.Resize(page, objectsResizedHistoryItems);
+                    return historyAction;
+                }
+            }
+
             if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryItem))
             {
                 var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryItem>().ToList();
