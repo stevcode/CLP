@@ -148,6 +148,7 @@
     <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessSummaryTag.cs" />
+    <Compile Include="DomainModel\Tags\Array\ArrayStrategiesTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayTriedWrongDividerValuesTag.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArraySnappedInHistoryItem.cs" />

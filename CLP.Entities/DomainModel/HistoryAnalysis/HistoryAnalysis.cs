@@ -1137,6 +1137,7 @@ namespace CLP.Entities
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
             AttemptRepresentationsUsedTag(page, historyActions);
+            AttemptArrayStrategiesTag(page, historyActions);
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
@@ -1225,6 +1226,7 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
+        // HACK: Add IsRepresentation to IPageObject
         public static bool IsRepresentation(IPageObject pageObject)
         {
             return pageObject is CLPArray ||
@@ -1232,6 +1234,24 @@ namespace CLP.Entities
                    pageObject is NumberLine ||
                    pageObject is Stamp ||
                    pageObject is StampedObject;
+        }
+
+        public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var strategies =
+                historyActions.Where(
+                                     h =>
+                                     h.CodedObject == Codings.OBJECT_ARRAY &&
+                                     (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK ||
+                                      h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
+
+            if (!strategies.Any())
+            {
+                return;
+            }
+
+            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, strategies);
+            page.AddTag(tag);
         }
 
         #endregion // Last Pass: Tag Generation
