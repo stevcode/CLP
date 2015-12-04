@@ -19,7 +19,7 @@ using CLP.CustomControls.Button_Controls;
 using System.Collections;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using Classroom_Learning_Partner.ViewModels.Modal_Windows;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

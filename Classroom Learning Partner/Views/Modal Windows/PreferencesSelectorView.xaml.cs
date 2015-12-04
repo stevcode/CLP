@@ -11,30 +11,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Classroom_Learning_Partner.ViewModels.Modal_Windows;
+using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.Modal_Windows
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class PreferencesSelectorView : Window
+    public partial class PreferencesSelectorView
     {
-        private PreferencesSelectorViewModel preferencesSelectorViewModel;
 
-        public PreferencesSelectorView()
+
+        public PreferencesSelectorView(PreferencesSelectorViewModel preferencesSelectorViewModel) : base (preferencesSelectorViewModel)
         {
             InitializeComponent();
-        }
-
-        public PreferencesSelectorView(PreferencesSelectorViewModel preferencesSelectorViewModel)
-        {
-            this.preferencesSelectorViewModel = preferencesSelectorViewModel;
-        }
-
-        private void HandleChange(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("Checkbox clicked");
         }
 
     }
