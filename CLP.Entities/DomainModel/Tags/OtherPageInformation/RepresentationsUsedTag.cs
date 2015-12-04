@@ -56,7 +56,7 @@ namespace CLP.Entities
                     return new List<string>();
                 }
 
-                var representations = ParentPage.PageObjects.Select(p => p.CodedName).Distinct().ToList();
+                var representations = ParentPage.PageObjects.Where(HistoryAnalysis.IsRepresentation).Select(p => p.CodedName).Distinct().ToList();
 
                 return representations;
             }
