@@ -149,6 +149,8 @@ namespace CLP.Entities
             set { SetValue(PartsProperty, value); }
         }
 
+        public static List<string> BinsIndex = new List<string>();
+
         //Given a page and an index, returns which bin this mark is fully inside.
         //If there is more than one, return the latest bin added chronologically.
         //The bins are indexed 1, 2, ... in the order added.
@@ -157,6 +159,13 @@ namespace CLP.Entities
             var whichBin = "OUT";
             var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex);
             var binsOnPage = pageObjectsOnPage.Where(h => h is Bin).ToList();
+            foreach (var bin in binsOnPage)
+            {
+                if (!BinsIndex.Contains(bin.ID))
+                {
+                    BinsIndex.Add(bin.ID);
+                }
+            }
             var markRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, mark, historyIndex);
             foreach (var bin in binsOnPage)
             {
@@ -170,7 +179,7 @@ namespace CLP.Entities
                 var isOverlapping = percentOverlap >= .6;
                 if (isOverlapping)
                 {
-                    whichBin = (binsOnPage.IndexOf(bin)+1).ToString();
+                    whichBin = (BinsIndex.IndexOf(bin.ID)+1).ToString();
                 }
             }
             return whichBin;

@@ -552,6 +552,7 @@ namespace CLP.Entities
 
         public static List<IHistoryAction> GenerateInitialHistoryActions(CLPPage page)
         {
+            Mark.BinsIndex.Clear();
             var historyItemBuffer = new List<IHistoryItem>();
             var initialHistoryActions = new List<IHistoryAction>();
             var historyItems = page.History.CompleteOrderedHistoryItems;
