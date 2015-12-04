@@ -1136,6 +1136,7 @@ namespace CLP.Entities
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
+            AttemptRepresentationsUsedTag(page, historyActions);
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
@@ -1209,6 +1210,28 @@ namespace CLP.Entities
 
             var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction> { lastAnswerAction });
             page.AddTag(tag);
+        }
+
+        public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var representations =
+                historyActions.Where(
+                                     h =>
+                                     h.CodedObjectAction == Codings.ACTION_OBJECT_ADD &&
+                                     (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE ||
+                                      h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
+
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
+            page.AddTag(tag);
+        }
+
+        public static bool IsRepresentation(IPageObject pageObject)
+        {
+            return pageObject is CLPArray ||
+                   pageObject is Bin ||
+                   pageObject is NumberLine ||
+                   pageObject is Stamp ||
+                   pageObject is StampedObject;
         }
 
         #endregion // Last Pass: Tag Generation

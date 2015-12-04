@@ -176,7 +176,7 @@ namespace CLP.Entities
 
         public override string CodedName
         {
-            get { return "STAMP"; }
+            get { return Codings.OBJECT_STAMP; }
         }
 
         public override int ZIndex

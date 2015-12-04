@@ -23,6 +23,7 @@ namespace CLP.Entities
                                                                                 { OBJECT_INK, "Ink" },
                                                                                 { OBJECT_ARRAY, "Array" },
                                                                                 { OBJECT_STAMP, "Stamp" },
+                                                                                { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
                                                                                 { OBJECT_NUMBER_LINE, "Number Line" },
                                                                                 { OBJECT_FILL_IN, "Filled In Answer" },
                                                                                 { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" }
