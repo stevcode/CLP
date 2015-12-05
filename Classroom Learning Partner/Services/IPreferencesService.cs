@@ -11,9 +11,10 @@ namespace Classroom_Learning_Partner.Services
     //serialize this to save preferences to xml
     public interface IPreferencesService
     {
+
         //does order of buttons indicate their layout order? Or do we need to store that? 
-        ObservableCollection<string> visibleButtons
-        { get; set; }
+        void addPreference(string ID, PreferencesService.prefType type);
+        void removePreference(string ID, PreferencesService.prefType type);
 
         string savedColor
         { get; set; }

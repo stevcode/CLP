@@ -11,7 +11,6 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel>
-                        
                     </StackPanel>
                 </ItemsPanelTemplate>
                 
@@ -19,8 +18,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBox Text="{Binding ID}" />
+                        <TextBlock Text="{Binding ID}" />
                         <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnTeacher}" />
+                        <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnStudent}" />
+                        <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnProjector}" />
                     </StackPanel>
 
                 </DataTemplate>

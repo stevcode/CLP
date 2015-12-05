@@ -11,25 +11,17 @@ using Catel.IoC;
 
 namespace Classroom_Learning_Partner.Services
 {
-    /* not being used currently - should it be?
-    //serialize this
-    [Serializable()]
-    public class Preferences
-    {
-        [System.Xml.Serialization.XmlElement("visibleButtons")]
-        public ObservableCollection<string> visibleButtons { get; set; }
-
-        [System.Xml.Serialization.XmlElement("color")]
-        public string color { get; set; }
-    }
-    */
-
     public class PreferencesService : IPreferencesService
     {
         private ObservableCollection<string> buttonsToShow = new ObservableCollection<string>();
         private string savedColorVal;
 
-        public ObservableCollection<string> visibleButtons
+        public enum prefType
+        {
+            TEACHER,STUDENT,PROJECTOR
+        }
+
+        public ObservableCollection<string> visibleButtonsTeacher
         {
             get
             {
@@ -39,6 +31,50 @@ namespace Classroom_Learning_Partner.Services
             {
                 buttonsToShow = value;
             }
+        }
+
+        public ObservableCollection<string> visibleButtonsStudent
+        {
+            get
+            {
+                return buttonsToShow;
+            }
+            set
+            {
+                buttonsToShow = value;
+            }
+        }
+
+        public ObservableCollection<string> visibleButtonsProjector
+        {
+            get
+            {
+                return buttonsToShow;
+            }
+            set
+            {
+                buttonsToShow = value;
+            }
+        }
+
+
+
+        public void addPreference(string ID, prefType type)
+        {
+            if (type == PreferencesService.prefType.TEACHER)
+            {
+                visibleButtonsTeacher.Add(ID);
+            }
+            //TODO: implement the other types
+        }
+
+        public void removePreference(string ID, prefType type)
+        {
+            if (type == PreferencesService.prefType.TEACHER)
+            {
+                visibleButtonsTeacher.Remove(ID);
+            }
+            //TODO: implement the other types
         }
 
 
@@ -65,11 +101,11 @@ namespace Classroom_Learning_Partner.Services
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
 
             //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
-            //prefService.visibleButtons.Add("TestingStringToVisibleButtons");
+            //prefService.visibleButtonsTeacher.Add("TestingStringToVisibleButtons");
 
             Console.WriteLine("Serializing xml for preferences to " + filePath);
             //serializer.Serialize(stream, prefService);
-            serializer.Serialize(stream, this.visibleButtons);
+            serializer.Serialize(stream, this.visibleButtonsTeacher);
             stream.Close();
         }
 
@@ -81,12 +117,12 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
             StreamReader reader = new StreamReader(filePath);
-            this.visibleButtons = (ObservableCollection<string>)serializer.Deserialize(reader);
+            this.visibleButtonsTeacher = (ObservableCollection<string>)serializer.Deserialize(reader);
             reader.Close();
 
             
-            Console.WriteLine("visibleButtons after loading:");
-            foreach (string s in this.visibleButtons)
+            Console.WriteLine("visibleButtonsTeacher after loading:");
+            foreach (string s in this.visibleButtonsTeacher)
             {
                 Console.WriteLine(s);
             }

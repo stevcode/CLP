@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
+using CLP.CustomControls.Button_Controls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -17,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             ID = id;
         }
+
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -33,16 +35,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsVisibleOnTeacherProperty = RegisterProperty("IsVisibleOnTeacher", typeof(bool), true);
 
+        public bool IsVisibleOnStudent
+        {
+            get { return GetValue<bool>(IsVisibleOnStudentProperty); }
+            set { SetValue(IsVisibleOnStudentProperty, value); }
+        }
+
+        public static readonly PropertyData IsVisibleOnStudentProperty = RegisterProperty("IsVisibleOnStudent", typeof(bool), true);
+
+
+        public bool IsVisibleOnProjector
+        {
+            get { return GetValue<bool>(IsVisibleOnProjectorProperty); }
+            set { SetValue(IsVisibleOnProjectorProperty, value); }
+        }
+
+        public static readonly PropertyData IsVisibleOnProjectorProperty = RegisterProperty("IsVisibleOnProjector", typeof(bool), true);
+
     }
 
     public class PreferencesSelectorViewModel : ViewModelBase
     {
 
-        public PreferencesSelectorViewModel()
+        public PreferencesSelectorViewModel(ObservableCollection<IPreferenceButton> buttonsIn)
         {
-            PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertArrayButton"));
-            PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertPileButton"));
+            Buttons = buttonsIn;
+            //PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertArrayButton"));
+            //PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertPileButton"));
+
+            foreach (IPreferenceButton pb in Buttons)
+            {
+                PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID));
+            }
+
             PreferenceCheckboxes.First().IsVisibleOnTeacher = false;
+        }
+
+        private ObservableCollection<IPreferenceButton> buttons;
+
+        public ObservableCollection<IPreferenceButton> Buttons
+        {
+            get { return buttons; }
+            set { buttons = value; }
         }
 
         public ObservableCollection<ButtonPreferenceSelector> PreferenceCheckboxes

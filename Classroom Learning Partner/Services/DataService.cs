@@ -606,8 +606,6 @@ namespace Classroom_Learning_Partner.Services
             Console.WriteLine("Opening notebook");
 
             PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
-
-            Console.WriteLine(prefService.GetHashCode());
             PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
 
             //prefService.savePreferencesToDisk(notebookInfo.NotebookFolderPath); //initially save
@@ -620,14 +618,14 @@ namespace Classroom_Learning_Partner.Services
 
             prefService.loadPreferencesFromDisk(notebookInfo.NotebookFolderPath);
             
-
+            
             //Remove these
             /*
-            prefService.visibleButtons.Add("setLassoModeButton");
-            prefService.visibleButtons.Add("insertBinButton");
-            prefService.visibleButtons.Add("setEraseModeButton");
+            prefService.visibleButtonsTeacher.Add("setLassoModeButton");
+            prefService.visibleButtonsTeacher.Add("insertBinButton");
+            prefService.visibleButtonsTeacher.Add("setEraseModeButton");
             prefService.savePreferencesToDisk("/users/dirk/desktop/");
-            prefService.visibleButtons.Clear();
+            prefService.visibleButtonsTeacher.Clear();
             */
 
             //refresh the main ribbon

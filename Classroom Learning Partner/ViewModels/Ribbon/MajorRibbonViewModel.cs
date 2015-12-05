@@ -734,17 +734,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPreferencesCommandExecute()
         {
-            Console.WriteLine("In OnPreferencesCommandExecute");
-
-            var preferencesSelectorViewModel = new PreferencesSelectorViewModel();
+            var preferencesSelectorViewModel = new PreferencesSelectorViewModel(_buttonsList);
             var preferencesSelectorView = new PreferencesSelectorView(preferencesSelectorViewModel);
             preferencesSelectorView.Owner = Application.Current.MainWindow;
 
-            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
-            preferencesSelectorView.ShowDialog();
+            preferencesSelectorView.ShowDialog(); //returns when window is closed
             if (preferencesSelectorView.DialogResult == true)
             {
-                //SendExitTickets(exitTicketCreationViewModel);
+                PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
+                //user clicked "okay" and not "cancel"
+                foreach (ButtonPreferenceSelector b in preferencesSelectorViewModel.PreferenceCheckboxes)
+                {
+                    if (b.IsVisibleOnTeacher)
+                    {
+                        prefService.addPreference(b.ID, PreferencesService.prefType.TEACHER);
+                    }
+                    if (b.IsVisibleOnStudent)
+                    {
+                        prefService.addPreference(b.ID, PreferencesService.prefType.STUDENT);
+                    }
+                    if (b.IsVisibleOnProjector)
+                    {
+                        prefService.addPreference(b.ID, PreferencesService.prefType.PROJECTOR);
+                    }
+                }
+                //prefService.savePreferencesToDisk(); //TODO: do this on save of the file
             }
         }
 
@@ -1016,12 +1030,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 Buttons.Clear(); //remove all, then add particular ones back in
 
-                if (prefService.visibleButtons != null && prefService.visibleButtons.Count != 0)
+                if (prefService.visibleButtonsTeacher != null && prefService.visibleButtonsTeacher.Count != 0)
                 { //TODO: initialize this to make this if unnecessary
                     foreach (IPreferenceButton button in _buttonsList)
                     {
                         Console.WriteLine("button.buttonID: " + button.buttonID);
-                        if (prefService.visibleButtons.Contains(button.buttonID))
+                        if (prefService.visibleButtonsTeacher.Contains(button.buttonID))
                         {
                             Console.WriteLine("Adding button " + button.buttonID);
                             Buttons.Add((UIElement)button);
