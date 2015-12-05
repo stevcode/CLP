@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Collections;
 
 namespace CLP.Entities
@@ -801,6 +803,25 @@ namespace CLP.Entities
                 }
             }
 
+            if (historyItems.All(h => h is PageObjectResizeBatchHistoryItem))
+            {
+                var objectsResizedHistoryItems = historyItems.Cast<PageObjectResizeBatchHistoryItem>().ToList();
+
+                var firstID = objectsResizedHistoryItems.First().PageObjectID;
+                if (objectsResizedHistoryItems.All(h => h.PageObjectID == firstID))
+                {
+                    var nextResizedHistoryItem = nextHistoryItem as PageObjectResizeBatchHistoryItem;
+                    if (nextResizedHistoryItem != null &&
+                        firstID == nextResizedHistoryItem.PageObjectID)
+                    {
+                        return null;
+                    }
+
+                    var historyAction = ObjectCodedActions.Resize(page, objectsResizedHistoryItems);
+                    return historyAction;
+                }
+            }
+
             if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryItem))
             {
                 var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryItem>().ToList();
@@ -1117,6 +1138,8 @@ namespace CLP.Entities
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
+            AttemptRepresentationsUsedTag(page, historyActions);
+            AttemptArrayStrategiesTag(page, historyActions);
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
@@ -1192,6 +1215,77 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
+        public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var representations =
+                historyActions.Where(
+                                     h =>
+                                     h.CodedObjectAction == Codings.ACTION_OBJECT_ADD &&
+                                     (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE ||
+                                      h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
+
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
+            page.AddTag(tag);
+        }
+
+        // HACK: Add IsRepresentation to IPageObject
+        public static bool IsRepresentation(IPageObject pageObject)
+        {
+            return pageObject is CLPArray ||
+                   pageObject is Bin ||
+                   pageObject is NumberLine ||
+                   pageObject is Stamp ||
+                   pageObject is StampedObject;
+        }
+
+        public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var strategies =
+                historyActions.Where(
+                                     h =>
+                                     h.CodedObject == Codings.OBJECT_ARRAY &&
+                                     (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK ||
+                                      h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
+
+            if (!strategies.Any())
+            {
+                return;
+            }
+
+            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, strategies);
+            page.AddTag(tag);
+        }
+
         #endregion // Last Pass: Tag Generation
+
+        // TODO: Refactor this to someplace more relevant
+        public static string FindColorName(Color color)
+        {
+            var leastDifference = 0;
+            var colorName = string.Empty;
+
+            foreach (var systemColor in typeof(Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
+            {
+                var systemColorValue = (Color)systemColor.GetValue(null, null);
+
+                if (systemColorValue == color)
+                {
+                    colorName = systemColor.Name;
+                    break;
+                }
+
+                int a = color.A - systemColorValue.A, r = color.R - systemColorValue.R, g = color.G - systemColorValue.G, b = color.B - systemColorValue.B, difference = a * a + r * r + g * g + b * b;
+
+                if (difference >= leastDifference)
+                {
+                    continue;
+                }
+
+                colorName = systemColor.Name;
+                leastDifference = difference;
+            }
+
+            return colorName;
+        }
     }
 }

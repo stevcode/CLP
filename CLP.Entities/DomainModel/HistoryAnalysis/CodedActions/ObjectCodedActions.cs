@@ -128,6 +128,42 @@ namespace CLP.Entities
             return null;
         }
 
+        public static IHistoryAction Resize(CLPPage page, List<PageObjectResizeBatchHistoryItem> objectsResizedHistoryItems)
+        {
+            if (page == null ||
+                objectsResizedHistoryItems == null ||
+                !objectsResizedHistoryItems.Any())
+            {
+                return null;
+            }
+
+            var pageObjectID = objectsResizedHistoryItems.First().PageObjectID;
+            var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectID);
+            if (pageObject == null)
+            {
+                return null;
+            }
+
+            var historyIndex = objectsResizedHistoryItems.First().HistoryIndex;
+            var codedObject = pageObject.CodedName;
+            var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+            var historyAction = new HistoryAction(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
+            {
+                CodedObject = codedObject,
+                CodedObjectAction = Codings.ACTION_OBJECT_RESIZE,
+                CodedObjectID = codedObjectID,
+                CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                CodedObjectActionID =string.Format("({0}, {1}) to ({2}, {3})",
+                                                      Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
+                                                      Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
+                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().X),
+                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().Y))
+
+            };
+
+            return historyAction;
+        }
+
         #endregion // Verify And Generate Methods
 
         #region Utility Methods

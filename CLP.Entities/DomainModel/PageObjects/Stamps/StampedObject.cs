@@ -144,7 +144,7 @@ namespace CLP.Entities
         {
             get
             {
-                return "STAMP IMAGE";
+                return Codings.OBJECT_STAMPED_OBJECTS;
             }
         }
 
