@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public ObservableCollection<string> visibleButtonsStudent
+        public ObservableCollection<string> visibleButtonsStudent //TODO update this to separate from teacher
         {
             get
             {
@@ -86,14 +86,22 @@ namespace Classroom_Learning_Partner.Services
             { savedColorVal = value; }
         }
 
+        private string folderPath;
+
+        public string FolderPath
+        {
+            get { return folderPath; }
+            set { folderPath = value; }
+        }
+
         //private string path = "/users/dirk/desktop/prefs.xml"; //TODO: use name composite path
         private XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
         //private XmlSerializer serializer = new XmlSerializer(typeof(PreferencesService));
 
         //call this to save what preferences we currently have
-        public void savePreferencesToDisk(string folderPath)
+        public void savePreferencesToDisk()
         {
-
+            Console.WriteLine(this.folderPath);
             var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
             Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
@@ -109,7 +117,7 @@ namespace Classroom_Learning_Partner.Services
             stream.Close();
         }
 
-        public void loadPreferencesFromDisk(string folderPath)
+        public void loadPreferencesFromDisk()
         {
             var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
             var fileName = nameComposite.ToFileName();
@@ -155,6 +163,11 @@ namespace Classroom_Learning_Partner.Services
         
         public static PreferencesNameComposite ParseFilePath(string folderFilePath)
         {
+            if (folderFilePath == null)
+            {
+                Console.WriteLine("null folderpath");
+                return null;
+            }
             var fileInfo = new FileInfo(folderFilePath);
             var pageFileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             var pageFileParts = pageFileName.Split(';');

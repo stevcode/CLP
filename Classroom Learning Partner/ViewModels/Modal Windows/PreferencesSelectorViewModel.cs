@@ -60,15 +60,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public PreferencesSelectorViewModel(ObservableCollection<IPreferenceButton> buttonsIn)
         {
             Buttons = buttonsIn;
-            //PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertArrayButton"));
-            //PreferenceCheckboxes.Add(new ButtonPreferenceSelector("insertPileButton"));
-
+            
             foreach (IPreferenceButton pb in Buttons)
             {
                 PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID));
             }
-
-            PreferenceCheckboxes.First().IsVisibleOnTeacher = false;
         }
 
         private ObservableCollection<IPreferenceButton> buttons;

@@ -749,16 +749,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         prefService.addPreference(b.ID, PreferencesService.prefType.TEACHER);
                     }
+                    else
+                    {
+                        prefService.removePreference(b.ID, PreferencesService.prefType.TEACHER);
+                    }
                     if (b.IsVisibleOnStudent)
                     {
                         prefService.addPreference(b.ID, PreferencesService.prefType.STUDENT);
+                    }
+                    else
+                    {
+                        prefService.removePreference(b.ID, PreferencesService.prefType.STUDENT);
                     }
                     if (b.IsVisibleOnProjector)
                     {
                         prefService.addPreference(b.ID, PreferencesService.prefType.PROJECTOR);
                     }
+                    else
+                    {
+                        prefService.removePreference(b.ID, PreferencesService.prefType.PROJECTOR);
+                    }
                 }
-                //prefService.savePreferencesToDisk(); //TODO: do this on save of the file
+
+                prefService.savePreferencesToDisk(); //TODO: do this on save of the file
+                SetVisibleRibbonButtons();
             }
         }
 
@@ -1026,7 +1040,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if (prefService != null) //should only be null on initial startup
             {
                 Console.WriteLine("In SetVisibleRibbonButtons");
-                Console.WriteLine(prefService.GetHashCode());
 
                 Buttons.Clear(); //remove all, then add particular ones back in
 

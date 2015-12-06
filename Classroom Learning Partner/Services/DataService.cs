@@ -547,8 +547,6 @@ namespace Classroom_Learning_Partner.Services
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
 
-
-
             // Is Notebook already loaded in memory?
             var loadedNotebooks = LoadedNotebooksInfo.ToList();
             var existingNotebookInfo = loadedNotebooks.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
@@ -603,35 +601,17 @@ namespace Classroom_Learning_Partner.Services
                 SetCurrentNotebook(notebookInfo);
             }
 
-            Console.WriteLine("Opening notebook");
-
             PreferencesService prefService = (PreferencesService)ServiceLocator.Default.ResolveType<IPreferencesService>();
-            PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
+            //PreferencesNameComposite prefNameComp = PreferencesNameComposite.ParseFilePath(notebookInfo.NotebookFolderPath);
 
             //prefService.savePreferencesToDisk(notebookInfo.NotebookFolderPath); //initially save
             //TODO: will need to initially save a file there
-            /*
-            NotebookFolderPath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A
-               PagesFolderPath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A\Pages
-              NotebookFilePath: C:\Users\Dirk\Desktop\CLP\Caches\Cache.tes\Notebooks\test;c6cAjyNDf0WTrvdJ2rc2tg;AUTHOR;AUTHOR0000000000000000;A\notebook.xml
-            */
-
-            prefService.loadPreferencesFromDisk(notebookInfo.NotebookFolderPath);
-            
-            
-            //Remove these
-            /*
-            prefService.visibleButtonsTeacher.Add("setLassoModeButton");
-            prefService.visibleButtonsTeacher.Add("insertBinButton");
-            prefService.visibleButtonsTeacher.Add("setEraseModeButton");
-            prefService.savePreferencesToDisk("/users/dirk/desktop/");
-            prefService.visibleButtonsTeacher.Clear();
-            */
+            Console.WriteLine("setting folderpath to " + notebookInfo.NotebookFolderPath);
+            prefService.FolderPath = notebookInfo.NotebookFolderPath;
+            prefService.loadPreferencesFromDisk();
 
             //refresh the main ribbon
             App.MainWindowViewModel.MajorRibbon.SetVisibleRibbonButtons();
-            
-
 
         }
 
