@@ -1,52 +1,79 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
-using System.Windows.Ink;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    public enum MultipleChoiceOrientations
+    {
+        Horizontal,
+        Vertical
+    }
+
+    public enum MultipleChoiceLabelTypes
+    {
+        Numbers,
+        Letters
+    }
+
     [Serializable]
-    public class MultipleChoiceBubble : AEntityBase
+    public class ChoiceBubble : AEntityBase
     {
         #region Constructors
 
-        public MultipleChoiceBubble() { }
+        public ChoiceBubble() { }
 
-        public MultipleChoiceBubble(int index, MultipleChoiceLabelTypes labelType)
+        public ChoiceBubble(int index, MultipleChoiceLabelTypes labelType, string answer, string label = "")
         {
-            ChoiceBubbleIndex = index;
-            ChoiceBubbleLabel = labelType == MultipleChoiceLabelTypes.Numbers ? (index + 1).ToString() : IntToUpperLetter(index + 1);
+            BubbleContents = labelType == MultipleChoiceLabelTypes.Numbers ? (index + 1).ToString() : IntToUpperLetter(index + 1);
+            Answer = answer;
+            Label = label;
         }
 
-        public MultipleChoiceBubble(SerializationInfo info, StreamingContext context)
+        public ChoiceBubble(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
 
         #region Properties
 
-        /// <summary>Index location of the choice bubble.</summary>
-        public int ChoiceBubbleIndex
+        /// <summary>Bubble's offset from initial x/y position.</summary>
+        public double Offset
         {
-            get { return GetValue<int>(ChoiceBubbleIndexProperty); }
-            set { SetValue(ChoiceBubbleIndexProperty, value); }
+            get { return GetValue<double>(OffsetProperty); }
+            set { SetValue(OffsetProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleIndexProperty = RegisterProperty("ChoiceBubbleIndex", typeof (int), 0);
+        public static readonly PropertyData OffsetProperty = RegisterProperty("Offset", typeof (double), 0.0);
 
-        /// <summary>Label for the choice bubble.</summary>
-        public string ChoiceBubbleLabel
+        /// <summary>Label inside the choice bubble.</summary>
+        public string BubbleContents
         {
-            get { return GetValue<string>(ChoiceBubbleLabelProperty); }
-            set { SetValue(ChoiceBubbleLabelProperty, value); }
+            get { return GetValue<string>(BubbleContentsProperty); }
+            set { SetValue(BubbleContentsProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleLabelProperty = RegisterProperty("ChoiceBubbleLabel", typeof (string), string.Empty);
+        public static readonly PropertyData BubbleContentsProperty = RegisterProperty("BubbleContents", typeof (string), string.Empty);
+
+        /// <summary>The answer associated with the bubble.</summary>
+        public string Answer
+        {
+            get { return GetValue<string>(AnswerProperty); }
+            set { SetValue(AnswerProperty, value); }
+        }
+
+        public static readonly PropertyData AnswerProperty = RegisterProperty("Answer", typeof (string), string.Empty);
+
+        /// <summary>Extra, non-relevant answer data.</summary>
+        public string Label
+        {
+            get { return GetValue<string>(LabelProperty); }
+            set { SetValue(LabelProperty, value); }
+        }
+
+        public static readonly PropertyData LabelProperty = RegisterProperty("Label", typeof (string), string.Empty);
 
         /// <summary>Signifies the Bubble represents a correct answer.</summary>
         public bool IsACorrectValue
@@ -57,14 +84,23 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsACorrectValueProperty = RegisterProperty("IsACorrectValue", typeof (bool), false);
 
-        /// <summary>Indicates the choice bubble has been marked by ink.</summary>
-        public bool IsMarked
+        /// <summary>Indicates the choice bubble has been filled in by ink.</summary>
+        public bool IsFilledIn
         {
-            get { return GetValue<bool>(IsMarkedProperty); }
-            set { SetValue(IsMarkedProperty, value); }
+            get { return GetValue<bool>(IsFilledInProperty); }
+            set { SetValue(IsFilledInProperty, value); }
         }
 
-        public static readonly PropertyData IsMarkedProperty = RegisterProperty("IsMarked", typeof (bool), false);
+        public static readonly PropertyData IsFilledInProperty = RegisterProperty("IsFilledIn", typeof (bool), false);
+
+        #region Calculated Properties
+
+        public string BubbleCodedID
+        {
+            get { return string.Format("{0} \"{1}\"", BubbleContents, Answer); }
+        }
+
+        #endregion // Calculated Properties
 
         #endregion //Properties
 
@@ -85,30 +121,18 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class MultipleChoiceBox : AStrokeAccepter
+    public class MultipleChoice : AStrokeAccepter
     {
-        #region Constructor
+        #region Constructors
 
-        public MultipleChoiceBox() { }
+        public MultipleChoice() { }
 
-        public MultipleChoiceBox(CLPPage parentPage, int numberOfChoices, string correctAnswerLabel, MultipleChoiceOrientations orientation, MultipleChoiceLabelTypes labelType)
-            : base(parentPage)
-        {
-            Orientation = orientation;
-            Height = orientation == MultipleChoiceOrientations.Horizontal ? ChoiceBubbleDiameter : ChoiceBubbleDiameter * numberOfChoices + 5 * (numberOfChoices - 1);
-            Width = orientation == MultipleChoiceOrientations.Vertical ? ChoiceBubbleDiameter : ChoiceBubbleDiameter * numberOfChoices + 5 * (numberOfChoices - 1);
+        public MultipleChoice(int index, MultipleChoiceLabelTypes labelType) { }
 
-            foreach (var choiceBubble in Enumerable.Range(0, numberOfChoices).Select(i => new MultipleChoiceBubble(i, labelType)))
-            {
-                choiceBubble.IsACorrectValue = correctAnswerLabel == choiceBubble.ChoiceBubbleLabel;
-                ChoiceBubbles.Add(choiceBubble);
-            }
-        }
-
-        public MultipleChoiceBox(SerializationInfo info, StreamingContext context)
+        public MultipleChoice(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        #endregion //Constructor
+        #endregion //Constructors
 
         #region Properties
 
@@ -131,14 +155,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof (MultipleChoiceOrientations), MultipleChoiceOrientations.Horizontal);
 
-        /// <summary>List of the available choices for the Multiple Choice Box.</summary>
-        public List<MultipleChoiceBubble> ChoiceBubbles
+        /// <summary>List of the available choices.</summary>
+        public ObservableCollection<ChoiceBubble> ChoiceBubbles
         {
-            get { return GetValue<List<MultipleChoiceBubble>>(ChoiceBubblesProperty); }
+            get { return GetValue<ObservableCollection<ChoiceBubble>>(ChoiceBubblesProperty); }
             set { SetValue(ChoiceBubblesProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (List<MultipleChoiceBubble>), () => new List<MultipleChoiceBubble>());
+        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (ObservableCollection<ChoiceBubble>), () => new ObservableCollection<ChoiceBubble>());
 
         #endregion //Properties
 
@@ -146,25 +170,22 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Multiple Choice Box"; }
+            get { return "Multiple Choice"; }
         }
 
         public override string CodedName
         {
-            get
-            {
-                return "MC";
-            }
+            get { return "MC"; }
         }
 
         public override string CodedID
         {
             get
             {
-                return "[]"; //marked letter, incorrect/correct
+                var idParts = ChoiceBubbles.Where(b => b.IsACorrectValue).Select(b => b.BubbleCodedID).ToList();
+                return string.Join(", ", idParts);
             }
         }
-
 
         public override int ZIndex
         {
