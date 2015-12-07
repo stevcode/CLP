@@ -84,8 +84,8 @@
                 <views:TemporaryBoundaryView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="MultipleChoiceBoxTemplate">
-                <views:MultipleChoiceBoxView DataContext="{Binding}" />
+            <ControlTemplate x:Key="MultipleChoiceTemplate">
+                <views:MultipleChoiceView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="MarkTemplate">
@@ -200,11 +200,11 @@
                                 Value="{StaticResource TemporaryBoundaryTemplate}" />
                     </DataTrigger>
 
-                    <!-- MultipleChoiceBox trigger -->
+                    <!-- MultipleChoice trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
-                                 Value="MultipleChoiceBox">
+                                 Value="MultipleChoice">
                         <Setter Property="Template"
-                                Value="{StaticResource MultipleChoiceBoxTemplate}" />
+                                Value="{StaticResource MultipleChoiceTemplate}" />
                     </DataTrigger>
 
                     <!-- Mark trigger -->

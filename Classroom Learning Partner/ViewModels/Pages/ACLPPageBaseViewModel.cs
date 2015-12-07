@@ -1063,10 +1063,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var multipleChoiceBox = pageObject as MultipleChoiceBox;
-            if (multipleChoiceBox != null)
+            var multipleChoice = pageObject as MultipleChoice;
+            if (multipleChoice != null)
             {
-                didInteract = MultipleChoiceBoxViewModel.InteractWithAcceptedStrokes(multipleChoiceBox, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoice, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;

@@ -104,7 +104,7 @@ namespace CLP.Entities
             }
         }
 
-        public bool IsStrokeOverPageObject(Stroke stroke) { return stroke.HitTest(StrokeAcceptanceBoundingBox, StrokeHitTestPercentage); }
+        public virtual bool IsStrokeOverPageObject(Stroke stroke) { return stroke.HitTest(StrokeAcceptanceBoundingBox, StrokeHitTestPercentage); }
 
         public double PercentageOfStrokeOverPageObject(Stroke stroke) { return stroke.PercentContainedByBounds(StrokeAcceptanceBoundingBox); }
 

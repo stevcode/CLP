@@ -12,88 +12,26 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
-        public static void BoxConversions(CLPPage page)
+        public static void TagHacks(CLPPage page)
         {
-            CLPTextBox textBox;
-            IPageObject pageObjectToAdd = null;
-            ITag relationDefinitionToAdd = null;
-            var interpretationRegion = new InterpretationRegion(page)
-                                       {
-                                           CreatorID = "AUTHOR0000000000000000",
-                                           OwnerID = "AUTHOR0000000000000000",
-                                           VersionIndex = page.VersionIndex
-                                       };
-            interpretationRegion.Interpreters.Add(Interpreters.Handwriting);
-
-            var problemTypes = new List<ProblemTypes>();
-
             switch (page.ID)
             {
                 case "D2Op0HfG10aoQtL2W0BX6Q": // Page 1
                     break;
                 case "-zOauyypbEmgpo3f_dalNA": // Page 2
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "lpIezx13R0-fHaXnVqgT6A") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Division);
                     break;
                 }
                 case "UvLXlXlpCEuLF1309g5zPA": // Page 3
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "LZlupX4OskOkxC-VQv1pKg") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 }
                 case "526u6U8sQUqjFkCXTJZYiA": // Page 4
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "DvQf2cvBkU-WFEFmLBEuoA") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
                     break;
                 }
                 case "y-wako1KCk6Aurwrn5QbVg": // Page 5
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "JsuHVsdb6k2zYQGS8HdeJA") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "l-WC1c1mGkukYDgVm937KQ",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        Product = 64,
-                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication
-                    };
-
-                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "8L-RIJBn_06lpKH4yBlOzg",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        NumericValue = 8
-                    };
-
-                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "dk5lXzsvu0GHmpGgwoh-vA",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        NumericValue = 8
-                    };
-
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
-
-
                     if (page.Owner.FullName.Contains("John"))
                     {
                         var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
@@ -106,22 +44,6 @@ namespace CLP.Entities
                 }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "3A0ABSEEdUa487Mkvp9CcQ") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Division);
-                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
-                                              {
-                                                  ID = "U18DjuOfc0WJ7OIDClEC3A",
-                                                  OwnerID = Person.Author.ID,
-                                                  LastVersionIndex = page.LastVersionIndex,
-                                                  VersionIndex = page.VersionIndex,
-                                                  Dividend = 56,
-                                                  Divisor = 7,
-                                                  Quotient = 8,
-                                                  Remainder = 0,
-                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
-                                              };
 
                     if (page.Owner.FullName.Contains("John"))
                     {
@@ -132,210 +54,26 @@ namespace CLP.Entities
                 }
                 case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "bC1g8LJ6okmsezeVSRub4A") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    problemTypes.Add(ProblemTypes.Division);
-                    interpretationRegion.ID = "_ctKrAO-MEK-g9PtqpFmoo";
-                    interpretationRegion.XPosition = 235.3954;
-                    interpretationRegion.YPosition = 220.9490;
-                    interpretationRegion.Height = 80;
-                    interpretationRegion.Width = 80;
-                    pageObjectToAdd = interpretationRegion;
                     break;
                 }
                 case "gdruAzwX6kWe2k-etZ6gcQ": // Page 8
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "_0qgnvZ1EkyYgEU49l5dNw") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    interpretationRegion.ID = "gdruAzwX6kWe2k-etZ6moo";
-                    interpretationRegion.XPosition = 253.1625;
-                    interpretationRegion.YPosition = 221.9357;
-                    interpretationRegion.Height = 80;
-                    interpretationRegion.Width = 80;
-                    pageObjectToAdd = interpretationRegion;
                     break;
                 }
                 case "yzvpdIROIEOFrndOASGjvA": // Page 9
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "DisblHoHakqYkPzMu9_bxQ") as CLPTextBox;
-                    textBox.TextContext = TextContexts.NonWordProblem;
-                    problemTypes.Add(ProblemTypes.NonWordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    problemTypes.Add(ProblemTypes.Division);
-                    interpretationRegion.ID = "yzvpdIROIEOFrndOASGmoo";
-                    interpretationRegion.XPosition = 106.74036;
-                    interpretationRegion.YPosition = 223.4880;
-                    interpretationRegion.Height = 80;
-                    interpretationRegion.Width = 80;
-                    pageObjectToAdd = interpretationRegion;
                     break;
                 }
                 case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "GBXW7G0YmEKXQ4Q_MMIn5g") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    interpretationRegion.ID = "gsQu4sdxVEKGZsgCD_zmoo";
-                    interpretationRegion.XPosition = 98.90192;
-                    interpretationRegion.YPosition = 205.11349;
-                    interpretationRegion.Height = 102.1971;
-                    interpretationRegion.Width = 171.0040;
-                    pageObjectToAdd = interpretationRegion;
-                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "ZipMYNwixkq61bBN2_HD5g",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        Product = 28,
-                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                    };
-
-                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "WK6bKs_ByUCH8BOWgWxgUA",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        NumericValue = 4
-                    };
-
-                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                    {
-                        ID = "2Ra04Eclg06aMGDGKtZ6fQ",
-                        OwnerID = Person.Author.ID,
-                        LastVersionIndex = page.LastVersionIndex,
-                        VersionIndex = page.VersionIndex,
-                        NumericValue = 7
-                    };
-
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
-                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
                     break;
                 }
                 case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "oiQrn_vQbUOsbzWYtNIejA") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Division);
-                    interpretationRegion.ID = "MtZusuAFZEOqTr8KRlFmoo";
-                    interpretationRegion.XPosition = 103.60754;
-                    interpretationRegion.YPosition = 243.3032;
-                    interpretationRegion.Height = 93.2830;
-                    interpretationRegion.Width = 146.4150;
-                    pageObjectToAdd = interpretationRegion;
-                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
-                                              {
-                                                  ID = "J8Sflc0rWEyodHSiD6BOoQ",
-                                                  OwnerID = Person.Author.ID,
-                                                  LastVersionIndex = page.LastVersionIndex,
-                                                  VersionIndex = page.VersionIndex,
-                                                  Dividend = 48,
-                                                  Divisor = 8,
-                                                  Quotient = 6,
-                                                  Remainder = 0,
-                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
-                                              };
                     break;
                 }
                 case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "JleS1FBQiEGyoe4VseiPMA") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    interpretationRegion.ID = "QHJ7pFHY3ECr8u6bSFRmoo";
-                    interpretationRegion.XPosition = 234.6666;
-                    interpretationRegion.YPosition = 668.9809;
-                    interpretationRegion.Height = 116.3069;
-                    interpretationRegion.Width = 108.3371;
-                    pageObjectToAdd = interpretationRegion;
-                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(page, Origin.Author)
-                                              {
-                                                  ID = "TxyRU2oIuUek0hmqfV3wSQ",
-                                                  OwnerID = Person.Author.ID,
-                                                  LastVersionIndex = page.LastVersionIndex,
-                                                  VersionIndex = page.VersionIndex,
-                                                  Sum = 72,
-                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
-                                              };
-
-                    var firstPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                                    {
-                                        ID = "jzGI6KOkTUCr1PEohXIAtQ",
-                                        OwnerID = Person.Author.ID,
-                                        LastVersionIndex = page.LastVersionIndex,
-                                        VersionIndex = page.VersionIndex,
-                                        Product = 32,
-                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                                    };
-
-                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                      {
-                                          ID = "pY-jWRet_UyIeMSD6rpfzw",
-                                          OwnerID = Person.Author.ID,
-                                          LastVersionIndex = page.LastVersionIndex,
-                                          VersionIndex = page.VersionIndex,
-                                          NumericValue = 4
-                                      };
-
-                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                       {
-                                           ID = "xppeMKzxQ06UVwgBg0sR8Q",
-                                           OwnerID = Person.Author.ID,
-                                           LastVersionIndex = page.LastVersionIndex,
-                                           VersionIndex = page.VersionIndex,
-                                           NumericValue = 8
-                                       };
-
-                    firstPart.Factors.Clear();
-                    firstPart.Factors.Add(firstFactor);
-                    firstPart.Factors.Add(secondFactor);
-
-                    var secondPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                                     {
-                                         ID = "FoHyUvBjI0ONc8TF7vRmkw",
-                                         OwnerID = Person.Author.ID,
-                                         LastVersionIndex = page.LastVersionIndex,
-                                         VersionIndex = page.VersionIndex,
-                                         Product = 40,
-                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                                     };
-
-                    firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                  {
-                                      ID = "usHRHdsaiEao5KY8oxv-9g",
-                                      OwnerID = Person.Author.ID,
-                                      LastVersionIndex = page.LastVersionIndex,
-                                      VersionIndex = page.VersionIndex,
-                                      NumericValue = 5
-                                  };
-
-                    secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                   {
-                                       ID = "KMsWhQClX0KM0-vT_SvFOw",
-                                       OwnerID = Person.Author.ID,
-                                       LastVersionIndex = page.LastVersionIndex,
-                                       VersionIndex = page.VersionIndex,
-                                       NumericValue = 8
-                                   };
-
-                    secondPart.Factors.Clear();
-                    secondPart.Factors.Add(firstFactor);
-                    secondPart.Factors.Add(secondFactor);
-
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
-
-
                     if (page.Owner.FullName.Contains("Julia"))
                     {
                         var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
@@ -348,123 +86,16 @@ namespace CLP.Entities
                 }
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
                 {
-                    textBox = page.PageObjects.First(p => p.ID == "SNY1QJrMUUqUeK3hCIDDRA") as CLPTextBox;
-                    textBox.TextContext = TextContexts.WordProblem;
-                    problemTypes.Add(ProblemTypes.WordProblem);
-                    problemTypes.Add(ProblemTypes.Multiplication);
-                    interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
-                    interpretationRegion.XPosition = 240.3143;
-                    interpretationRegion.YPosition = 661.8379;
-                    interpretationRegion.Height = 131.1860;
-                    interpretationRegion.Width = 103.4241;
-                    pageObjectToAdd = interpretationRegion;
-                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(page, Origin.Author)
-                                              {
-                                                  ID = "qey_Bae27kmq42CLfvUg1Q",
-                                                  OwnerID = Person.Author.ID,
-                                                  LastVersionIndex = page.LastVersionIndex,
-                                                  VersionIndex = page.VersionIndex,
-                                                  Sum = 86,
-                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
-                                              };
-
-                    var firstPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                                    {
-                                        ID = "grr6c_grIEWYK8dsuRqtvA",
-                                        OwnerID = Person.Author.ID,
-                                        LastVersionIndex = page.LastVersionIndex,
-                                        VersionIndex = page.VersionIndex,
-                                        Product = 32,
-                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                                    };
-
-                    var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                      {
-                                          ID = "ZNl4KqUKgkytz4c1m0ehYw",
-                                          OwnerID = Person.Author.ID,
-                                          LastVersionIndex = page.LastVersionIndex,
-                                          VersionIndex = page.VersionIndex,
-                                          NumericValue = 4
-                                      };
-
-                    var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                       {
-                                           ID = "9MPttARngE24S-vrhnnnHQ",
-                                           OwnerID = Person.Author.ID,
-                                           LastVersionIndex = page.LastVersionIndex,
-                                           VersionIndex = page.VersionIndex,
-                                           NumericValue = 8
-                                       };
-
-                    firstPart.Factors.Clear();
-                    firstPart.Factors.Add(firstFactor);
-                    firstPart.Factors.Add(secondFactor);
-
-                    var secondPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                                     {
-                                         ID = "ayeqY8cbIEyJ8h7_4VM70Q",
-                                         OwnerID = Person.Author.ID,
-                                         LastVersionIndex = page.LastVersionIndex,
-                                         VersionIndex = page.VersionIndex,
-                                         Product = 54,
-                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                                     };
-
-                    firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                  {
-                                      ID = "BLEYzh9iekaPZAC-09sPyg",
-                                      OwnerID = Person.Author.ID,
-                                      LastVersionIndex = page.LastVersionIndex,
-                                      VersionIndex = page.VersionIndex,
-                                      NumericValue = 9
-                                  };
-
-                    secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                                   {
-                                       ID = "sTEDno-Uk0uxt3TupBNiYA",
-                                       OwnerID = Person.Author.ID,
-                                       LastVersionIndex = page.LastVersionIndex,
-                                       VersionIndex = page.VersionIndex,
-                                       NumericValue = 6
-                                   };
-
-                    secondPart.Factors.Clear();
-                    secondPart.Factors.Add(firstFactor);
-                    secondPart.Factors.Add(secondFactor);
-
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
-                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
                     break;
                 }
                 default:
                     return;
             }
-
-            if (relationDefinitionToAdd != null)
-            {
-                page.AddTag(relationDefinitionToAdd);
-            }
-
-            problemTypes = problemTypes.Distinct().ToList();
-            if (problemTypes.Any())
-            {
-                var problemTypesTag = new ProblemTypeTag(page, Origin.Author, problemTypes);
-                page.AddTag(problemTypesTag);
-            }
-
-            if (pageObjectToAdd == null ||
-                page.PageObjects.Any(p => p.ID == pageObjectToAdd.ID))
-            {
-                return;
-            }
-
-            page.PageObjects.Add(pageObjectToAdd);
         }
 
         public static void GenerateHistoryActions(CLPPage page)
         {
-            BoxConversions(page);
+            TagHacks(page);
 
             HistoryAction.CurrentIncrementID.Clear();
             HistoryAction.MaxIncrementID.Clear();
@@ -595,150 +226,149 @@ namespace CLP.Entities
             IHistoryAction historyAction = null;
             TypeSwitch.On(historyItem).Case<ObjectsOnPageChangedHistoryItem>(h =>
                                                                              {
-                                                                                 // HACK: Temporarily in place until MC Boxes are re-written and converted.
-                                                                                 if (h.IsUsingPageObjects ||
-                                                                                     !h.IsUsingStrokes)
-                                                                                 {
-                                                                                     historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
-                                                                                         // HACK: This is the only line that should be in here.
-                                                                                     return;
-                                                                                 }
+                                                                                 historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
+                                                                                 //// HACK: Temporarily in place until MC Boxes are re-written and converted.
+                                                                                 //if (h.IsUsingPageObjects ||
+                                                                                 //    !h.IsUsingStrokes)
+                                                                                 //{
+                                                                                 //    historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
+                                                                                 //        // HACK: This is the only line that should be in here.
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var strokes = h.StrokesAdded;
-                                                                                 var isInkAdd = true;
-                                                                                 if (!strokes.Any())
-                                                                                 {
-                                                                                     strokes = h.StrokesRemoved;
-                                                                                     isInkAdd = false;
-                                                                                 }
+                                                                                 //var strokes = h.StrokesAdded;
+                                                                                 //var isInkAdd = true;
+                                                                                 //if (!strokes.Any())
+                                                                                 //{
+                                                                                 //    strokes = h.StrokesRemoved;
+                                                                                 //    isInkAdd = false;
+                                                                                 //}
 
-                                                                                 var stroke = strokes.FirstOrDefault();
-                                                                                 if (stroke == null)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //var stroke = strokes.FirstOrDefault();
+                                                                                 //if (stroke == null)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, h.HistoryIndex, true);
-                                                                                 var currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page,
-                                                                                                                                                                             pageObjectsOnPage,
-                                                                                                                                                                             stroke,
-                                                                                                                                                                             h.HistoryIndex);
-                                                                                 var multipleChoiceBox = currentPageObjectReference as MultipleChoiceBox;
-                                                                                 if (multipleChoiceBox == null)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, h.HistoryIndex, true);
+                                                                                 //var currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page,
+                                                                                 //                                                                                            pageObjectsOnPage,
+                                                                                 //                                                                                            stroke,
+                                                                                 //                                                                                            h.HistoryIndex);
+                                                                                 //var multipleChoiceBox = currentPageObjectReference as MultipleChoiceBox;
+                                                                                 //if (multipleChoiceBox == null)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 CurrentMultipleChoiceBoxStrokes = new List<Stroke>();
-                                                                                 CurrentMostFilledBubbleIndex = -1;
-                                                                                 LastMarkedBubbleIndex = -1;
+                                                                                 //CurrentMultipleChoiceBoxStrokes = new List<Stroke>();
+                                                                                 //CurrentMostFilledBubbleIndex = -1;
+                                                                                 //LastMarkedBubbleIndex = -1;
 
-                                                                                 MultipleChoiceBubble mostFilledBubble = null;
-                                                                                 var previousStrokeLength = 0;
-                                                                                 var indexOfBubbleCurrentStrokeIsOver = -1;
-                                                                                 foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
-                                                                                 {
-                                                                                     multipleChoiceBubble.IsMarked = false;
+                                                                                 //MultipleChoiceBubble mostFilledBubble = null;
+                                                                                 //var previousStrokeLength = 0;
+                                                                                 //var indexOfBubbleCurrentStrokeIsOver = -1;
+                                                                                 //foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
+                                                                                 //{
+                                                                                 //    multipleChoiceBubble.IsMarked = false;
 
-                                                                                     var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength, multipleChoiceBox.YPosition, multipleChoiceBox.ChoiceBubbleDiameter, multipleChoiceBox.ChoiceBubbleDiameter);
-                                                                                     var isStrokeOverBubble = stroke.HitTest(bubbleBoundary, 80);
-                                                                                     if (isStrokeOverBubble)
-                                                                                     {
-                                                                                         indexOfBubbleCurrentStrokeIsOver = multipleChoiceBubble.ChoiceBubbleIndex;
-                                                                                         if (isInkAdd)
-                                                                                         {
-                                                                                             CurrentMultipleChoiceBoxStrokes.Add(stroke);
-                                                                                         }
-                                                                                         else
-                                                                                         {
-                                                                                             CurrentMultipleChoiceBoxStrokes.RemoveAll(s => s.GetStrokeID() == stroke.GetStrokeID());
-                                                                                         }
-                                                                                     }
+                                                                                 //    var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength, multipleChoiceBox.YPosition, multipleChoiceBox.ChoiceBubbleDiameter, multipleChoiceBox.ChoiceBubbleDiameter);
+                                                                                 //    var isStrokeOverBubble = stroke.HitTest(bubbleBoundary, 80);
+                                                                                 //    if (isStrokeOverBubble)
+                                                                                 //    {
+                                                                                 //        indexOfBubbleCurrentStrokeIsOver = multipleChoiceBubble.ChoiceBubbleIndex;
+                                                                                 //        if (isInkAdd)
+                                                                                 //        {
+                                                                                 //            CurrentMultipleChoiceBoxStrokes.Add(stroke);
+                                                                                 //        }
+                                                                                 //        else
+                                                                                 //        {
+                                                                                 //            CurrentMultipleChoiceBoxStrokes.RemoveAll(s => s.GetStrokeID() == stroke.GetStrokeID());
+                                                                                 //        }
+                                                                                 //    }
 
-                                                                                     var strokesOverBubble = CurrentMultipleChoiceBoxStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
+                                                                                 //    var strokesOverBubble = CurrentMultipleChoiceBoxStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
 
-                                                                                     var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                                                                     if (totalStrokeLength <= previousStrokeLength ||
-                                                                                         totalStrokeLength <= 100)
-                                                                                     {
-                                                                                         continue;
-                                                                                     }
+                                                                                 //    var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                                                                 //    if (totalStrokeLength <= previousStrokeLength ||
+                                                                                 //        totalStrokeLength <= 100)
+                                                                                 //    {
+                                                                                 //        continue;
+                                                                                 //    }
 
-                                                                                     mostFilledBubble = multipleChoiceBubble;
-                                                                                     previousStrokeLength = totalStrokeLength;
-                                                                                 }
+                                                                                 //    mostFilledBubble = multipleChoiceBubble;
+                                                                                 //    previousStrokeLength = totalStrokeLength;
+                                                                                 //}
 
-                                                                                 if (indexOfBubbleCurrentStrokeIsOver == -1)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //if (indexOfBubbleCurrentStrokeIsOver == -1)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var correctBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.IsACorrectValue);
-                                                                                 var currentBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver);
-                                                                                 if (correctBubble == null ||
-                                                                                     currentBubble == null)
-                                                                                 {
-                                                                                     Console.WriteLine("ERROR, no correct bubble marked");
-                                                                                     return;
-                                                                                 }
+                                                                                 //var correctBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.IsACorrectValue);
+                                                                                 //var currentBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver);
+                                                                                 //if (correctBubble == null ||
+                                                                                 //    currentBubble == null)
+                                                                                 //{
+                                                                                 //    Console.WriteLine("ERROR, no correct bubble marked");
+                                                                                 //    return;
+                                                                                 //}
 
 
-                                                                                 var correctness = correctBubble.ChoiceBubbleIndex == currentBubble.ChoiceBubbleIndex ? "COR" : "INC";
+                                                                                 //var correctness = correctBubble.ChoiceBubbleIndex == currentBubble.ChoiceBubbleIndex ? "COR" : "INC";
 
-                                                                                 var objectAction = string.Empty;
-                                                                                 if (isInkAdd)
-                                                                                 {
-                                                                                     if (CurrentMostFilledBubbleIndex == -1)
-                                                                                     {
-                                                                                         objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
-                                                                                     }
-                                                                                     else
-                                                                                     {
-                                                                                         if (mostFilledBubble.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
-                                                                                         {
-                                                                                             if (mostFilledBubble.ChoiceBubbleIndex == CurrentMostFilledBubbleIndex)
-                                                                                             {
-                                                                                                 if (LastMarkedBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
-                                                                                                 {
-                                                                                                     objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
-                                                                                                 }
-                                                                                                 else
-                                                                                                 {
-                                                                                                     objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_REPEAT;
-                                                                                                 }
-                                                                                             }
-                                                                                             else
-                                                                                             {
-                                                                                                 objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_CHANGE;
-                                                                                             }
-                                                                                         }
-                                                                                         else
-                                                                                         {
-                                                                                             objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_OTHER;
-                                                                                         }
-                                                                                     }
-                                                                                 }
-                                                                                 else
-                                                                                 {
-                                                                                     objectAction = mostFilledBubble == null
-                                                                                                        ? Codings.ACTION_MULTIPLE_CHOICE_ERASE
-                                                                                                        : indexOfBubbleCurrentStrokeIsOver == mostFilledBubble.ChoiceBubbleIndex
-                                                                                                              ? Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL
-                                                                                                              : Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER;
-                                                                                 }
-                                                                                 CurrentMostFilledBubbleIndex = mostFilledBubble == null ? -1 : mostFilledBubble.ChoiceBubbleIndex;
-                                                                                 LastMarkedBubbleIndex = indexOfBubbleCurrentStrokeIsOver;
+                                                                                 //var objectAction = string.Empty;
+                                                                                 //if (isInkAdd)
+                                                                                 //{
+                                                                                 //    if (CurrentMostFilledBubbleIndex == -1)
+                                                                                 //    {
+                                                                                 //        objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
+                                                                                 //    }
+                                                                                 //    else
+                                                                                 //    {
+                                                                                 //        if (mostFilledBubble.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
+                                                                                 //        {
+                                                                                 //            if (mostFilledBubble.ChoiceBubbleIndex == CurrentMostFilledBubbleIndex)
+                                                                                 //            {
+                                                                                 //                if (LastMarkedBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
+                                                                                 //                {
+                                                                                 //                    objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
+                                                                                 //                }
+                                                                                 //                else
+                                                                                 //                {
+                                                                                 //                    objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_REPEAT;
+                                                                                 //                }
+                                                                                 //            }
+                                                                                 //            else
+                                                                                 //            {
+                                                                                 //                objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_CHANGE;
+                                                                                 //            }
+                                                                                 //        }
+                                                                                 //        else
+                                                                                 //        {
+                                                                                 //            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_OTHER;
+                                                                                 //        }
+                                                                                 //    }
+                                                                                 //}
+                                                                                 //else
+                                                                                 //{
+                                                                                 //    objectAction = mostFilledBubble == null
+                                                                                 //                       ? Codings.ACTION_MULTIPLE_CHOICE_ERASE
+                                                                                 //                       : indexOfBubbleCurrentStrokeIsOver == mostFilledBubble.ChoiceBubbleIndex
+                                                                                 //                             ? Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL
+                                                                                 //                             : Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER;
+                                                                                 //}
+                                                                                 //CurrentMostFilledBubbleIndex = mostFilledBubble == null ? -1 : mostFilledBubble.ChoiceBubbleIndex;
+                                                                                 //LastMarkedBubbleIndex = indexOfBubbleCurrentStrokeIsOver;
 
-                                                                                 historyAction = new HistoryAction(page, h)
-                                                                                 {
-                                                                                     CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
-                                                                                     CodedObjectAction = objectAction,
-                                                                                     IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
-                                                                                     CodedObjectID = correctBubble.ChoiceBubbleLabel,
-                                                                                     CodedObjectActionID = string.Format("{0}, {1}", currentBubble.ChoiceBubbleLabel, correctness)
-                                                                                 };
-
-                                                                                 
+                                                                                 //historyAction = new HistoryAction(page, h)
+                                                                                 //{
+                                                                                 //    CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                                                                 //    CodedObjectAction = objectAction,
+                                                                                 //    IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
+                                                                                 //    CodedObjectID = correctBubble.ChoiceBubbleLabel,
+                                                                                 //    CodedObjectActionID = string.Format("{0}, {1}", currentBubble.ChoiceBubbleLabel, correctness)
+                                                                                 //};
                                                                              })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
@@ -747,10 +377,6 @@ namespace CLP.Entities
 
             return historyAction;
         }
-
-        private static List<Stroke> CurrentMultipleChoiceBoxStrokes { get; set; }
-        private static int CurrentMostFilledBubbleIndex = -1;
-        private static int LastMarkedBubbleIndex = -1;
 
         public static IHistoryAction VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
         {
@@ -860,6 +486,180 @@ namespace CLP.Entities
                     var historyAction = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
                     return historyAction;
                 }
+            }
+
+            if (historyItems.All(h => h is MultipleChoiceBubbleStatusChangedHistoryItem))
+            {
+                var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryItem>().ToList();
+                var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
+                var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
+                
+                if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
+                {
+                    var nextStatusChangedHistoryItems = nextHistoryItem as MultipleChoiceBubbleStatusChangedHistoryItem;
+
+                    if (_currentCompressedStatus == null)
+                    {
+                        _currentCompressedStatus = statusChangedHistoryItems.First().ChoiceBubbleStatus;
+                    }
+
+                    ChoiceBubbleStatuses? compressedStatus = null;
+                    if (nextStatusChangedHistoryItems !=null)
+                    {
+                        compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryItems.ChoiceBubbleStatus);
+                    }
+
+                    if (nextStatusChangedHistoryItems != null &&
+                        nextStatusChangedHistoryItems.MultipleChoiceID == currentMultipleChoiceID &&
+                        nextStatusChangedHistoryItems.ChoiceBubbleIndex == currentBubbleIndex &&
+                        compressedStatus != null)
+                    {
+                        _currentCompressedStatus = compressedStatus;
+                        return null;
+                    }
+
+                    var multipleChoice = page.GetPageObjectByIDOnPageOrInHistory(currentMultipleChoiceID);
+                    if (multipleChoice == null)
+                    {
+                        return null;
+                    }
+                    var bubble = statusChangedHistoryItems.First().Bubble;
+                    var correctness = bubble.IsACorrectValue ? "COR" : "INC";
+
+                    var objectAction = string.Empty;
+                    switch (_currentCompressedStatus)
+                    {
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
+                            break;
+                        case ChoiceBubbleStatuses.FilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
+                            break;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_ADDITIONAL;
+                            break;
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL;
+                            break;
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
+                            break;
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE;
+                            break;
+                        case null:
+                            return null;
+                        default:
+                            return null;
+                    }
+
+                    _currentCompressedStatus = null;
+                    var historyAction = new HistoryAction(page, historyItems)
+                                        {
+                                            CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                            CodedObjectAction = objectAction,
+                                            IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
+                                            CodedObjectID = multipleChoice.CodedID,
+                                            CodedObjectActionID = string.Format("{0}, {1}", bubble.BubbleCodedID, correctness)
+                                        };
+                    return historyAction;
+                }
+            }
+
+            return null;
+        }
+
+        private static ChoiceBubbleStatuses? _currentCompressedStatus;
+
+        private static ChoiceBubbleStatuses? CompressMultipleChoiceStatuses(ChoiceBubbleStatuses? currentStatus, ChoiceBubbleStatuses nextStatus)
+        {
+            switch (currentStatus)
+            {
+                case ChoiceBubbleStatuses.PartiallyFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                            return ChoiceBubbleStatuses.PartiallyFilledIn;
+                        case ChoiceBubbleStatuses.FilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.FilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.AdditionalFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            return ChoiceBubbleStatuses.AdditionalFilledIn;
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.FilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.IncompletelyErased:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                            return ChoiceBubbleStatuses.IncompletelyErased;
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return ChoiceBubbleStatuses.CompletelyErased;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.CompletelyErased:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return ChoiceBubbleStatuses.CompletelyErased;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case null:
+                    return null;
+                default:
+                    return null;
             }
 
             return null;
@@ -977,8 +777,7 @@ namespace CLP.Entities
                             var nextCentroid = nextStrokeCopy.WeightedCenter();
                             var distanceFromLastStroke = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentCentroid, nextCentroid));
                             var lastStrokeDistanceZScore = (distanceFromLastStroke - averageClosestStrokeDistance) / closestStrokeDistanceStandardDeviation;
-                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE || distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD ||
-                                                      distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
+                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE || distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD || distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
 
                             bool isCloseToCluster;
                             var distanceFromCluster = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
@@ -1035,10 +834,7 @@ namespace CLP.Entities
                 refinedHistoryAction.CodedObjectID = "A";
                 if (currentPageObjectReference != null)
                 {
-                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
-                                                                             currentLocationReference,
-                                                                             currentPageObjectReference.CodedName,
-                                                                             currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
+                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
                 refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
 
@@ -1201,51 +997,38 @@ namespace CLP.Entities
 
         public static void AttemptAnswerTag(CLPPage page, List<IHistoryAction> historyActions)
         {
+            // BUG: will miss instances where mc incorrect, mc correct, mc erase incorrect
             var lastAnswerAction = historyActions.LastOrDefault(Codings.IsAnswerObject);
             if (lastAnswerAction == null ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE ||
-                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_FILL_IN_ERASE)
             {
                 return;
             }
 
-            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction> { lastAnswerAction });
+            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction>
+                                                                                  {
+                                                                                      lastAnswerAction
+                                                                                  });
             page.AddTag(tag);
         }
 
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var representations =
-                historyActions.Where(
-                                     h =>
-                                     h.CodedObjectAction == Codings.ACTION_OBJECT_ADD &&
-                                     (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE ||
-                                      h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
+            var representations = historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE || h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
 
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
             page.AddTag(tag);
         }
 
         // HACK: Add IsRepresentation to IPageObject
-        public static bool IsRepresentation(IPageObject pageObject)
-        {
-            return pageObject is CLPArray ||
-                   pageObject is Bin ||
-                   pageObject is NumberLine ||
-                   pageObject is Stamp ||
-                   pageObject is StampedObject;
-        }
+        public static bool IsRepresentation(IPageObject pageObject) { return pageObject is CLPArray || pageObject is Bin || pageObject is NumberLine || pageObject is Stamp || pageObject is StampedObject; }
 
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var strategies =
-                historyActions.Where(
-                                     h =>
-                                     h.CodedObject == Codings.OBJECT_ARRAY &&
-                                     (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK ||
-                                      h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
+            var strategies = historyActions.Where(h => h.CodedObject == Codings.OBJECT_ARRAY && (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
 
             if (!strategies.Any())
             {
@@ -1264,7 +1047,7 @@ namespace CLP.Entities
             var leastDifference = 0;
             var colorName = string.Empty;
 
-            foreach (var systemColor in typeof(Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
+            foreach (var systemColor in typeof (Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
             {
                 var systemColorValue = (Color)systemColor.GetValue(null, null);
 

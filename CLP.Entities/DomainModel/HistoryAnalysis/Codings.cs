@@ -53,14 +53,12 @@ namespace CLP.Entities
 
         public const string ACTION_FILL_IN_ADD = "add";
         public const string ACTION_FILL_IN_ERASE = "erase";
-        public const string ACTION_MULTIPLE_CHOICE_ADD = "add";
         public const string ACTION_MULTIPLE_CHOICE_ADD_PARTIAL = "partial";
-        public const string ACTION_MULTIPLE_CHOICE_ADD_OTHER = "other";
-        public const string ACTION_MULTIPLE_CHOICE_ADD_CHANGE = "change";
-        public const string ACTION_MULTIPLE_CHOICE_ADD_REPEAT = "repeat";
-        public const string ACTION_MULTIPLE_CHOICE_ERASE = "erase";
+        public const string ACTION_MULTIPLE_CHOICE_ADD = "fill in";
+        public const string ACTION_MULTIPLE_CHOICE_ADD_ADDITIONAL = "additional";
         public const string ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL = "erase partial";
-        public const string ACTION_MULTIPLE_CHOICE_ERASE_OTHER = "erase other";
+        public const string ACTION_MULTIPLE_CHOICE_ERASE = "erase";
+        public const string ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE = "erase incomplete";
 
         #endregion // Answer Actions
 

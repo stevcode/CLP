@@ -10,18 +10,6 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
-    public enum MultipleChoiceOrientations
-    {
-        Horizontal,
-        Vertical
-    }
-
-    public enum MultipleChoiceLabelTypes
-    {
-        Numbers,
-        Letters
-    }
-
     [Serializable]
     public class MultipleChoiceBubble : AEntityBase
     {

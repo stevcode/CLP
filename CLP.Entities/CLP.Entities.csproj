@@ -118,6 +118,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\RemainderTilesVisibilityToggledHistoryItem.cs" />
+    <Compile Include="DomainModel\History\MultipleChoice\MultipleChoiceBubbleStatusChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineEndPointsChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineJumpSizesChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsMovedBatchHistoryItem.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="DomainModel\PageObjects\Bins\BinReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
     <Compile Include="DomainModel\PageObjects\Interpretation\InterpretationRegion.cs" />
+    <Compile Include="DomainModel\PageObjects\MultipleChoice.cs" />
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectAccepter.cs" />
