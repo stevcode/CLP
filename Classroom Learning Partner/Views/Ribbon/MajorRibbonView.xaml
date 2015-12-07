@@ -149,8 +149,8 @@
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
-            <customControls:ToggleRibbonButton UnCheckedText="Show Stage"
-                                               CheckedText="Hide Stage"
+            <customControls:ToggleRibbonButton UnCheckedText="Show Submissions"
+                                               CheckedText="Hide Submissions"
                                                LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
                                                IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
