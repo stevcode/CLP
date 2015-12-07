@@ -72,6 +72,7 @@ namespace ConsoleScripts
 
                     _isConvertingEmilyCache = false;
                     _isConvertingAssessmentCache = true;
+                    ReplaceMultipleChoiceBoxes(page);
                     ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
