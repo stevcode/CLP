@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -240,6 +243,14 @@ namespace CLP.Entities
 
         #region AStrokeAccepter Overrides
 
+        // TODO: Rename to IsStrokeAccepted
+        public override bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var choiceBubbleStrokeIsOver = ChoiceBubbleStrokeIsOver(stroke);
+
+            return choiceBubbleStrokeIsOver != null;
+        }
+
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
         public override int StrokeHitTestPercentage
         {
@@ -247,5 +258,29 @@ namespace CLP.Entities
         }
 
         #endregion //AStrokeAccepter Overrides
+
+        #region AStrokeAccepter Helpers
+
+        public ChoiceBubble ChoiceBubbleStrokeIsOver(Stroke stroke)
+        {
+            return (from choiceBubble in ChoiceBubbles
+                    let x = Orientation == MultipleChoiceOrientations.Horizontal ? XPosition + choiceBubble.Offset : XPosition
+                    let y = Orientation == MultipleChoiceOrientations.Vertical ? YPosition + choiceBubble.Offset : YPosition
+                    let rect = new Rect(x, y, ChoiceBubbleDiameter, ChoiceBubbleDiameter)
+                    where stroke.HitTest(rect, StrokeHitTestPercentage)
+                    select choiceBubble).FirstOrDefault();
+        }
+
+        public List<Stroke> StrokesOverChoiceBubble(ChoiceBubble choiceBubble)
+        {
+            var x = Orientation == MultipleChoiceOrientations.Horizontal ? XPosition + choiceBubble.Offset : XPosition;
+            var y = Orientation == MultipleChoiceOrientations.Vertical ? YPosition + choiceBubble.Offset : YPosition;
+            var bubbleBoundary = new Rect(x, y, ChoiceBubbleDiameter, ChoiceBubbleDiameter);
+
+            var strokesOverBubble = AcceptedStrokes.Where(s => s.HitTest(bubbleBoundary, StrokeHitTestPercentage)).ToList();
+            return strokesOverBubble;
+        } 
+
+        #endregion // AStrokeAccepter Helpers
     }
 }

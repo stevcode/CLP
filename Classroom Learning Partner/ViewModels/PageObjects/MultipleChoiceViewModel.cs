@@ -104,46 +104,100 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static bool InteractWithAcceptedStrokes(MultipleChoiceBox multipleChoiceBox, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
+        public static bool InteractWithAcceptedStrokes(MultipleChoice multipleChoice, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
         {
-            if (multipleChoiceBox == null)
+            if (multipleChoice == null)
             {
                 return false;
             }
 
             var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
             var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
-            multipleChoiceBox.ChangeAcceptedStrokes(addedStrokesList, removedStrokesList);
-            //TODO: Create HistoryItem for this change instead of ObjectsOnPageChanged.
-            ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoiceBox.ParentPage, new ObjectsOnPageChangedHistoryItem(multipleChoiceBox.ParentPage, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
 
-            MultipleChoiceBubble mostFilledBubble = null;
-            var previousStrokeLength = 0;
-            foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
+
+
+            //TODO: Write completely different interaction for point erase situation.
+            //  ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoiceBox.ParentPage, new ObjectsOnPageChangedHistoryItem(multipleChoiceBox.ParentPage, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
+
+            const int threshold = 80;
+            var status = ChoiceBubbleStatuses.PreFilledIn;
+            var isStatusSet = false;
+            if (addedStrokesList.Count == 1 &&
+                !removedStrokesList.Any())
             {
-                multipleChoiceBubble.IsMarked = false;
-
-                var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength,
-                                              multipleChoiceBox.YPosition,
-                                              multipleChoiceBox.ChoiceBubbleDiameter,
-                                              multipleChoiceBox.ChoiceBubbleDiameter);
-                var strokesOverBubble = multipleChoiceBox.AcceptedStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
-
-                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                if (totalStrokeLength <= previousStrokeLength ||
-                    totalStrokeLength <= 100)
+                var addedStroke = addedStrokesList.First();
+                var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
+                if (choiceBubbleStrokeIsOver == null)
                 {
-                    continue;
+                    return false;
                 }
-
-                mostFilledBubble = multipleChoiceBubble;
-                previousStrokeLength = totalStrokeLength;
+                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                if (totalStrokeLength >= threshold)
+                {
+                    status = ChoiceBubbleStatuses.AdditionalFilledIn;
+                }
+                else
+                {
+                    totalStrokeLength += addedStroke.StylusPoints.Count;
+                    if (totalStrokeLength >= threshold)
+                    {
+                        status = ChoiceBubbleStatuses.FilledIn;
+                        choiceBubbleStrokeIsOver.IsFilledIn = true;
+                    }
+                    else
+                    {
+                        status = ChoiceBubbleStatuses.PreFilledIn;
+                    }
+                }
+                isStatusSet = true;
             }
 
-            if (mostFilledBubble != null)
+            if (removedStrokesList.Count == 1 &&
+                !addedStrokesList.Any())
             {
-                mostFilledBubble.IsMarked = true;
+                var removedStroke = removedStrokesList.First();
+                var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
+                if (choiceBubbleStrokeIsOver == null)
+                {
+                    return false;
+                }
+                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
+                if (!isRemovedStrokeOverBubble)
+                {
+                    // TODO: Log error
+                    return false;
+                }
+                var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != removedStroke.GetStrokeID()).ToList();
+                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                if (totalStrokeLength < threshold)
+                {
+                    status = ChoiceBubbleStatuses.ErasedPreFilledIn;
+                }
+                else
+                {
+                    if (otherStrokesStrokeLength < threshold)
+                    {
+                        status = ChoiceBubbleStatuses.CompletelyErased;
+                        choiceBubbleStrokeIsOver.IsFilledIn = false;
+                    }
+                    else
+                    {
+                        status = ChoiceBubbleStatuses.PartiallyErased;
+                    }
+                }
+                isStatusSet = true;
             }
+
+            if (!isStatusSet)
+            {
+                return false;
+            }
+
+            multipleChoice.ChangeAcceptedStrokes(addedStrokesList, removedStrokesList);
 
             return true;
         }
