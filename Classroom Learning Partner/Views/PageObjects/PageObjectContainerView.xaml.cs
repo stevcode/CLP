@@ -66,9 +66,9 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(TemporaryBoundaryViewModel);
             }
-            if (dataContext is MultipleChoiceBox)
+            if (dataContext is MultipleChoice)
             {
-                return typeof(MultipleChoiceBoxViewModel);
+                return typeof(MultipleChoiceViewModel);
             }
             if (dataContext is Mark)
             {

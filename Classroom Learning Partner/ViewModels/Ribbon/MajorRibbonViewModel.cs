@@ -884,7 +884,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
 
                 case "MULTIPLECHOICEBOX":
-                    MultipleChoiceBoxViewModel.AddMultipleChoiceBoxToPage(CurrentPage);
+                    MultipleChoiceViewModel.AddMultipleChoiceToPage(CurrentPage);
                     break;
             }
 
@@ -943,7 +943,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(Separater);
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
-            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
         #endregion //Methods

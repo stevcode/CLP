@@ -25,11 +25,9 @@ namespace CLP.Entities
 
         public ChoiceBubble() { }
 
-        public ChoiceBubble(int index, MultipleChoiceLabelTypes labelType, string answer, string label = "")
+        public ChoiceBubble(int index, MultipleChoiceLabelTypes labelType)
         {
-            BubbleContents = labelType == MultipleChoiceLabelTypes.Numbers ? (index + 1).ToString() : IntToUpperLetter(index + 1);
-            Answer = answer;
-            Label = label;
+            BubbleContent = labelType == MultipleChoiceLabelTypes.Numbers ? (index + 1).ToString() : IntToUpperLetter(index + 1);
         }
 
         public ChoiceBubble(SerializationInfo info, StreamingContext context)
@@ -49,13 +47,13 @@ namespace CLP.Entities
         public static readonly PropertyData OffsetProperty = RegisterProperty("Offset", typeof (double), 0.0);
 
         /// <summary>Label inside the choice bubble.</summary>
-        public string BubbleContents
+        public string BubbleContent
         {
-            get { return GetValue<string>(BubbleContentsProperty); }
-            set { SetValue(BubbleContentsProperty, value); }
+            get { return GetValue<string>(BubbleContentProperty); }
+            set { SetValue(BubbleContentProperty, value); }
         }
 
-        public static readonly PropertyData BubbleContentsProperty = RegisterProperty("BubbleContents", typeof (string), string.Empty);
+        public static readonly PropertyData BubbleContentProperty = RegisterProperty("BubbleContent", typeof (string), string.Empty);
 
         /// <summary>The answer associated with the bubble.</summary>
         public string Answer
@@ -67,13 +65,13 @@ namespace CLP.Entities
         public static readonly PropertyData AnswerProperty = RegisterProperty("Answer", typeof (string), string.Empty);
 
         /// <summary>Extra, non-relevant answer data.</summary>
-        public string Label
+        public string AnswerLabel
         {
-            get { return GetValue<string>(LabelProperty); }
-            set { SetValue(LabelProperty, value); }
+            get { return GetValue<string>(AnswerLabelProperty); }
+            set { SetValue(AnswerLabelProperty, value); }
         }
 
-        public static readonly PropertyData LabelProperty = RegisterProperty("Label", typeof (string), string.Empty);
+        public static readonly PropertyData AnswerLabelProperty = RegisterProperty("AnswerLabel", typeof (string), string.Empty);
 
         /// <summary>Signifies the Bubble represents a correct answer.</summary>
         public bool IsACorrectValue
@@ -97,7 +95,7 @@ namespace CLP.Entities
 
         public string BubbleCodedID
         {
-            get { return string.Format("{0} \"{1}\"", BubbleContents, Answer); }
+            get { return string.Format("{0} \"{1}\"", BubbleContent, Answer); }
         }
 
         #endregion // Calculated Properties
@@ -127,7 +125,12 @@ namespace CLP.Entities
 
         public MultipleChoice() { }
 
-        public MultipleChoice(int index, MultipleChoiceLabelTypes labelType) { }
+        public MultipleChoice(CLPPage parentPage)
+            : base(parentPage)
+        {
+            Height = ChoiceBubbleDiameter;
+            Width = 165;
+        }
 
         public MultipleChoice(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
@@ -139,11 +142,6 @@ namespace CLP.Entities
         public double ChoiceBubbleDiameter
         {
             get { return 35.0; }
-        }
-
-        public double ChoiceBubbleGapLength
-        {
-            get { return ((Orientation == MultipleChoiceOrientations.Horizontal ? Width : Height) - ChoiceBubbleDiameter) / (ChoiceBubbles.Count - 1); }
         }
 
         /// <summary>Orientation of box.</summary>
@@ -165,6 +163,21 @@ namespace CLP.Entities
         public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (ObservableCollection<ChoiceBubble>), () => new ObservableCollection<ChoiceBubble>());
 
         #endregion //Properties
+
+        #region Methods
+
+        public void SetOffsets()
+        {
+            var segmentWidth = (Orientation == MultipleChoiceOrientations.Horizontal ? Width : Height) / ChoiceBubbles.Count;
+            var offset = 0.0;
+            foreach (var choiceBubble in ChoiceBubbles)
+            {
+                choiceBubble.Offset = offset;
+                offset += segmentWidth;
+            }
+        } 
+
+        #endregion // Methods
 
         #region APageObjectBase Overrides
 
@@ -202,7 +215,7 @@ namespace CLP.Entities
             if (e.PropertyName == "Width" ||
                 e.PropertyName == "Height")
             {
-                RaisePropertyChanged("ChoiceBubbleGapLength");
+                SetOffsets();
             }
             base.OnPropertyChanged(e);
         }

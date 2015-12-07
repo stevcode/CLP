@@ -1066,7 +1066,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var multipleChoiceBox = pageObject as MultipleChoiceBox;
             if (multipleChoiceBox != null)
             {
-                didInteract = MultipleChoiceBoxViewModel.InteractWithAcceptedStrokes(multipleChoiceBox, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoiceBox, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;

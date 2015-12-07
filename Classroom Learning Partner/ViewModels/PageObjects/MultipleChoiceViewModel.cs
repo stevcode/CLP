@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class MultipleChoiceBoxViewModel : APageObjectBaseViewModel
+    public class MultipleChoiceViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 
-        public MultipleChoiceBoxViewModel(MultipleChoiceBox multipleChoiceBox)
+        public MultipleChoiceViewModel(MultipleChoice multipleChoice)
         {
-            PageObject = multipleChoiceBox;
+            PageObject = multipleChoice;
             ResizeMultipleChoiceBoxCommand = new Command<DragDeltaEventArgs>(OnResizeMultipleChoiceBoxCommandExecute);
-            ChangeCorrectAnswerCommand = new Command(OnChangeCorrectAnswerCommandExecute);
+            EditCommand = new Command(OnEditCommandExecute);
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-            _contextButtons.Add(new RibbonButton("Change Correct Answer", "pack://application:,,,/Images/AddToDisplay.png", ChangeCorrectAnswerCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Edit", "pack://application:,,,/Images/AddToDisplay.png", EditCommand, null, true));
         }
 
         #endregion //Constructor
@@ -32,13 +34,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>List of the available choices for the Multiple Choice Box.</summary>
         [ViewModelToModel("PageObject")]
-        public List<MultipleChoiceBubble> ChoiceBubbles
+        public ObservableCollection<ChoiceBubble> ChoiceBubbles
         {
-            get { return GetValue<List<MultipleChoiceBubble>>(ChoiceBubblesProperty); }
+            get { return GetValue<ObservableCollection<ChoiceBubble>>(ChoiceBubblesProperty); }
             set { SetValue(ChoiceBubblesProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (List<MultipleChoiceBubble>));
+        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (ObservableCollection<ChoiceBubble>));
 
         #endregion //Model
 
@@ -49,15 +51,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeMultipleChoiceBoxCommandExecute(DragDeltaEventArgs e)
         {
-            var multipleChoiceBox = PageObject as MultipleChoiceBox;
-            if (multipleChoiceBox == null)
+            var multipleChoice = PageObject as MultipleChoice;
+            if (multipleChoice == null)
             {
                 return;
             }
             var initialWidth = Width;
             var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
-            var minSize = ChoiceBubbles.Count * multipleChoiceBox.ChoiceBubbleDiameter;
+            var minSize = ChoiceBubbles.Count * multipleChoice.ChoiceBubbleDiameter;
 
             var newWidth = Math.Max(minSize, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
@@ -65,7 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var newHeight = Math.Max(minSize, Height + e.VerticalChange);
             newHeight = Math.Min(newHeight, parentPage.Height - YPosition);
 
-            if (multipleChoiceBox.Orientation == MultipleChoiceOrientations.Horizontal)
+            if (multipleChoice.Orientation == MultipleChoiceOrientations.Horizontal)
             {
                 ChangePageObjectDimensions(PageObject, initialHeight, newWidth);
             }
@@ -78,34 +80,24 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Changes the Multiple Choice Box's correct answer.</summary>
-        public Command ChangeCorrectAnswerCommand { get; private set; }
+        public Command EditCommand { get; private set; }
 
-        private void OnChangeCorrectAnswerCommandExecute()
+        private void OnEditCommandExecute()
         {
-            var multipleChoiceBox = PageObject as MultipleChoiceBox;
-            if (multipleChoiceBox == null)
+            var multipleChoice = PageObject as MultipleChoice;
+            if (multipleChoice == null)
             {
                 return;
             }
 
-            var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
-                         {
-                             Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual
-                         };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
+            var creationViewModel = new MultipleChoiceCreationViewModel(multipleChoice);
+            var multiplicationView = new MultipleChoiceCreationView(creationViewModel)
             {
-                return;
-            }
+                Owner = Application.Current.MainWindow
+            };
+            multiplicationView.ShowDialog();
 
-            var correctAnswerIndex = Int32.Parse(keyPad.NumbersEntered.Text);
-            var correctAnswerValue = MultipleChoiceBubble.IntToUpperLetter(correctAnswerIndex);
-            foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
-            {
-                multipleChoiceBubble.IsACorrectValue = multipleChoiceBubble.ChoiceBubbleLabel == correctAnswerValue;
-            }
+            multipleChoice.SetOffsets();
         }
 
         #endregion //Commands
@@ -156,25 +148,24 @@ namespace Classroom_Learning_Partner.ViewModels
             return true;
         }
 
-        public static void AddMultipleChoiceBoxToPage(CLPPage page)
+        public static void AddMultipleChoiceToPage(CLPPage page)
         {
-            var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
-                         {
-                             Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual
-                         };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
+            var multipleChoice = new MultipleChoice(page);
+
+            var creationViewModel = new MultipleChoiceCreationViewModel(multipleChoice);
+            var multiplicationView = new MultipleChoiceCreationView(creationViewModel)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            multiplicationView.ShowDialog();
+
+            if (multiplicationView.DialogResult != true)
             {
                 return;
             }
 
-            var correctAnswerIndex = Int32.Parse(keyPad.NumbersEntered.Text);
-            var correctAnswerValue = MultipleChoiceBubble.IntToUpperLetter(correctAnswerIndex);
-
-            var multipleChoiceBox = new MultipleChoiceBox(page, 4, correctAnswerValue, MultipleChoiceOrientations.Horizontal, MultipleChoiceLabelTypes.Letters);
-            ACLPPageBaseViewModel.AddPageObjectToPage(multipleChoiceBox);
+            multipleChoice.SetOffsets();
+            ACLPPageBaseViewModel.AddPageObjectToPage(multipleChoice);
         }
 
         #endregion //Static Methods
