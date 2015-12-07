@@ -94,7 +94,6 @@ namespace Classroom_Learning_Partner.Services
             set { folderPath = value; }
         }
 
-        //private string path = "/users/dirk/desktop/prefs.xml"; //TODO: use name composite path
         private XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
         //private XmlSerializer serializer = new XmlSerializer(typeof(PreferencesService));
 
@@ -106,7 +105,14 @@ namespace Classroom_Learning_Partner.Services
             Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
+            FileInfo file = new FileInfo(filePath);
+            file.Delete();
+
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
+
+            //clear file
+            //stream.SetLength(0);
+            //stream.Close();
 
             //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
             //prefService.visibleButtonsTeacher.Add("TestingStringToVisibleButtons");
@@ -125,15 +131,17 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
             StreamReader reader = new StreamReader(filePath);
-            this.visibleButtonsTeacher = (ObservableCollection<string>)serializer.Deserialize(reader);
+            try
+            {
+                this.visibleButtonsTeacher = (ObservableCollection<string>)serializer.Deserialize(reader);
+            }
+            catch
+            {
+                //this.visibleButtonsTeacher = 
+            }
+            
             reader.Close();
 
-            
-            Console.WriteLine("visibleButtonsTeacher after loading:");
-            foreach (string s in this.visibleButtonsTeacher)
-            {
-                Console.WriteLine(s);
-            }
         }
     }
 

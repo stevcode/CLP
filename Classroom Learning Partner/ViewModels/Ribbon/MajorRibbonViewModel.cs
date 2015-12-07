@@ -734,14 +734,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPreferencesCommandExecute()
         {
-            var preferencesSelectorViewModel = new PreferencesSelectorViewModel(_buttonsList);
+            PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
+
+            var preferencesSelectorViewModel = new PreferencesSelectorViewModel(_buttonsList, prefService);
             var preferencesSelectorView = new PreferencesSelectorView(preferencesSelectorViewModel);
             preferencesSelectorView.Owner = Application.Current.MainWindow;
 
             preferencesSelectorView.ShowDialog(); //returns when window is closed
             if (preferencesSelectorView.DialogResult == true)
             {
-                PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
+                
                 //user clicked "okay" and not "cancel"
                 foreach (ButtonPreferenceSelector b in preferencesSelectorViewModel.PreferenceCheckboxes)
                 {
@@ -1039,18 +1041,14 @@ namespace Classroom_Learning_Partner.ViewModels
             PreferencesService prefService = (PreferencesService)DependencyResolver.Resolve<IPreferencesService>();
             if (prefService != null) //should only be null on initial startup
             {
-                Console.WriteLine("In SetVisibleRibbonButtons");
-
                 Buttons.Clear(); //remove all, then add particular ones back in
 
                 if (prefService.visibleButtonsTeacher != null && prefService.visibleButtonsTeacher.Count != 0)
                 { //TODO: initialize this to make this if unnecessary
                     foreach (IPreferenceButton button in _buttonsList)
                     {
-                        Console.WriteLine("button.buttonID: " + button.buttonID);
                         if (prefService.visibleButtonsTeacher.Contains(button.buttonID))
                         {
-                            Console.WriteLine("Adding button " + button.buttonID);
                             Buttons.Add((UIElement)button);
                         }
                     }
@@ -1106,9 +1104,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
-
-            Console.WriteLine("in viewmondel");
-            Console.WriteLine(_insertNumberLineButton);
 
             SetVisibleRibbonButtons();
         }

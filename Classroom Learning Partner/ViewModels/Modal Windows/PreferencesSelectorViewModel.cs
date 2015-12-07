@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.CustomControls.Button_Controls;
 using CLP.Entities;
 
@@ -14,9 +15,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class ButtonPreferenceSelector : AEntityBase
     {
-        public ButtonPreferenceSelector(string id)
+        public ButtonPreferenceSelector(string id, PreferencesService prefService)
         {
             ID = id;
+            IsVisibleOnTeacher = prefService.visibleButtonsTeacher.Contains(id);
+            IsVisibleOnStudent = prefService.visibleButtonsStudent.Contains(id);
+            IsVisibleOnProjector = prefService.visibleButtonsProjector.Contains(id);
         }
 
         public string ID
@@ -56,14 +60,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class PreferencesSelectorViewModel : ViewModelBase
     {
-
-        public PreferencesSelectorViewModel(ObservableCollection<IPreferenceButton> buttonsIn)
+        public PreferencesSelectorViewModel(ObservableCollection<IPreferenceButton> buttonsIn, PreferencesService prefService)
         {
             Buttons = buttonsIn;
             
             foreach (IPreferenceButton pb in Buttons)
             {
-                PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID));
+                PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID, prefService));
             }
         }
 
