@@ -114,13 +114,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
             var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
 
-
-
             //TODO: Write completely different interaction for point erase situation.
-            //  ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoiceBox.ParentPage, new ObjectsOnPageChangedHistoryItem(multipleChoiceBox.ParentPage, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
-
+            
             const int threshold = 80;
-            var status = ChoiceBubbleStatuses.PreFilledIn;
+            var status = ChoiceBubbleStatuses.PrartiallyFilledIn;
+            var index = -1;
             var isStatusSet = false;
             if (addedStrokesList.Count == 1 &&
                 !removedStrokesList.Any())
@@ -131,6 +129,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return false;
                 }
+                index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                 var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
                 var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
                 if (totalStrokeLength >= threshold)
@@ -147,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        status = ChoiceBubbleStatuses.PreFilledIn;
+                        status = ChoiceBubbleStatuses.PrartiallyFilledIn;
                     }
                 }
                 isStatusSet = true;
@@ -162,6 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return false;
                 }
+                index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                 var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
                 var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
                 if (!isRemovedStrokeOverBubble)
@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (totalStrokeLength < threshold)
                 {
-                    status = ChoiceBubbleStatuses.ErasedPreFilledIn;
+                    status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
                 }
                 else
                 {
@@ -186,18 +186,27 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        status = ChoiceBubbleStatuses.PartiallyErased;
+                        status = ChoiceBubbleStatuses.IncompletelyErased;
                     }
                 }
                 isStatusSet = true;
             }
 
-            if (!isStatusSet)
+            if (!isStatusSet ||
+                index == -1)
             {
                 return false;
             }
 
             multipleChoice.ChangeAcceptedStrokes(addedStrokesList, removedStrokesList);
+            ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoice.ParentPage,
+                                                       new MultipleChoiceBubbleStatusChangedHistoryItem(multipleChoice.ParentPage,
+                                                                                                        App.MainWindowViewModel.CurrentUser,
+                                                                                                        multipleChoice,
+                                                                                                        index,
+                                                                                                        status,
+                                                                                                        addedStrokesList,
+                                                                                                        removedStrokesList));
 
             return true;
         }

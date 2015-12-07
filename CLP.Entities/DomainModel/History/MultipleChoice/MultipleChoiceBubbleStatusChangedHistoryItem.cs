@@ -10,11 +10,11 @@ namespace CLP.Entities
 {
     public enum ChoiceBubbleStatuses
     {
-        PreFilledIn,
+        PrartiallyFilledIn,
         FilledIn,
         AdditionalFilledIn,
-        ErasedPreFilledIn,
-        PartiallyErased,
+        ErasedPartiallyFilledIn,
+        IncompletelyErased,
         CompletelyErased
     }
 
@@ -93,7 +93,7 @@ namespace CLP.Entities
             set { SetValue(ChoiceBubbleStatusProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof (ChoiceBubbleStatuses), ChoiceBubbleStatuses.PreFilledIn);
+        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof (ChoiceBubbleStatuses), ChoiceBubbleStatuses.PrartiallyFilledIn);
         
         
         #region Strokes
@@ -132,19 +132,9 @@ namespace CLP.Entities
         {
             get
             {
-                return String.Empty;
-                //var pageObjectsAdded = PageObjectsAdded;
-                //var pageObjectsRemoved = PageObjectsRemoved;
-
-                //var objectsAdded = pageObjectsAdded.Any() ? string.Format(" Added {0}.", string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))) : string.Empty;
-                //var objectsRemoved = pageObjectsRemoved.Any() ? string.Format(" Removed {0}.", string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))) : string.Empty;
-
-                //var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? " Added 1 stroke." : string.Format(" Added {0} strokes.", StrokeIDsAdded.Count) : string.Empty;
-                //var strokesRemoved = StrokeIDsRemoved.Any()
-                //                         ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : string.Format(" Removed {0} strokes.", StrokeIDsRemoved.Count)
-                //                         : string.Empty;
-
-                //return string.Format("Index #{0},{1}{2}{3}{4}", HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
+                var bubble = Bubble;
+                var formattedBubble = string.Format("{0} \"{1} {2}\", {3}", bubble.BubbleContent, bubble.Answer, bubble.AnswerLabel, bubble.IsACorrectValue ? "Correct" : "Incorrect");
+                return string.Format("Index #{0}, {1} Bubble {2}", HistoryIndex, ChoiceBubbleStatus, formattedBubble);
             }
         }
 
@@ -190,7 +180,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -203,7 +193,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -211,56 +201,28 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Add(stroke);
             }
 
-            foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
+            PageObject.ChangeAcceptedStrokes(removedStrokes, addedStrokes);
+
+            switch (ChoiceBubbleStatus)
             {
-                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), addedStrokes);
-            }
-
-            foreach (var stroke in removedStrokes)
-            {
-                var validStrokeAccepters =
-                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
-                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
-                              .ToList();
-
-                IStrokeAccepter closestPageObject = null;
-                foreach (var pageObject in validStrokeAccepters)
-                {
-                    if (closestPageObject == null)
-                    {
-                        closestPageObject = pageObject;
-                        continue;
-                    }
-
-                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
-                    {
-                        closestPageObject = pageObject;
-                    }
-                }
-
-                if (closestPageObject == null)
-                {
-                    continue;
-                }
-
-                closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
-                                                        {
-                                                            stroke
-                                                        },
-                                                        new List<Stroke>());
+                case ChoiceBubbleStatuses.CompletelyErased:
+                    Bubble.IsFilledIn = true;
+                    break;
+                case ChoiceBubbleStatuses.FilledIn:
+                    Bubble.IsFilledIn = false;
+                    break;
             }
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-
             var removedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -273,7 +235,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -281,43 +243,16 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Add(stroke);
             }
 
-            foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
+            PageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
+
+            switch (ChoiceBubbleStatus)
             {
-                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), removedStrokes);
-            }
-
-            foreach (var stroke in addedStrokes)
-            {
-                var validStrokeAccepters =
-                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
-                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
-                              .ToList();
-
-                IStrokeAccepter closestPageObject = null;
-                foreach (var pageObject in validStrokeAccepters)
-                {
-                    if (closestPageObject == null)
-                    {
-                        closestPageObject = pageObject;
-                        continue;
-                    }
-
-                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
-                    {
-                        closestPageObject = pageObject;
-                    }
-                }
-
-                if (closestPageObject == null)
-                {
-                    continue;
-                }
-
-                closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
-                                                        {
-                                                            stroke
-                                                        },
-                                                        new List<Stroke>());
+                case ChoiceBubbleStatuses.CompletelyErased:
+                    Bubble.IsFilledIn = false;
+                    break;
+                case ChoiceBubbleStatuses.FilledIn:
+                    Bubble.IsFilledIn = true;
+                    break;
             }
         }
 
