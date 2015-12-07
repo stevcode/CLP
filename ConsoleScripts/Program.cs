@@ -344,15 +344,6 @@ namespace ConsoleScripts
                         multipleChoice.ChoiceBubbles.Add(b3);
                         multipleChoice.ChoiceBubbles.Add(b4);
                         page.PageObjects.Insert(0, multipleChoice);
-
-                    //    if (page.Owner.FullName.Contains("John"))
-                    //{
-                    //    var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
-                    //    page.AddTag(tag);
-
-                    //    var tag2 = new NumberLineJumpEraseTag(page, Origin.StudentPageGenerated);
-                    //    page.AddTag(tag2);
-                    //}
                     break;
                 }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
@@ -414,12 +405,6 @@ namespace ConsoleScripts
                         multipleChoice.ChoiceBubbles.Add(b3);
                         multipleChoice.ChoiceBubbles.Add(b4);
                         page.PageObjects.Insert(0, multipleChoice);
-
-                        //if (page.Owner.FullName.Contains("John"))
-                        //{
-                        //    var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "OqQXQpO4ukq5IGg5Zyo6ig", 0, 56, 1, Correctness.Correct);
-                        //    page.AddTag(tag);
-                        //}
                         break;
                 }
                 case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
@@ -626,21 +611,6 @@ namespace ConsoleScripts
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
                     ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
-
-                    //if (page.Owner.FullName.Contains("Julia"))
-                    //{
-                    //    var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
-                    //    page.AddTag(tag1);
-
-                    //    var tag2 = new ArrayRepresentationCorrectnessTag(page,
-                    //                                                     Origin.StudentPageGenerated,
-                    //                                                     Correctness.Correct,
-                    //                                                     new List<IHistoryAction>
-                    //                                                     {
-                    //                                                         new HistoryAction()
-                    //                                                     });
-                    //    page.AddTag(tag2);
-                    //}
                     break;
                 }
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
@@ -1167,25 +1137,6 @@ namespace ConsoleScripts
                                 var status = ChoiceBubbleStatuses.FilledIn;
                                 var threshold = 80;
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
-                                //var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
-                                //var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                //if (totalStrokeLength >= threshold)
-                                //{
-                                //    status = ChoiceBubbleStatuses.AdditionalFilledIn;
-                                //}
-                                //else
-                                //{
-                                //    totalStrokeLength += addedStroke.StylusPoints.Count;
-                                //    if (totalStrokeLength >= threshold)
-                                //    {
-                                //        status = ChoiceBubbleStatuses.FilledIn;
-                                //        choiceBubbleStrokeIsOver.IsFilledIn = true;
-                                //    }
-                                //    else
-                                //    {
-                                //        status = ChoiceBubbleStatuses.PartiallyFilledIn;
-                                //    }
-                                //}
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
                                 var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
                                                                                                             page.Owner,
@@ -1276,34 +1227,6 @@ namespace ConsoleScripts
                             if (choiceBubbleStrokeIsOver != null)
                             {
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
-                                //var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
-                                //var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
-                                //if (!isRemovedStrokeOverBubble)
-                                //{
-                                //    // TODO: ERROR - This shouldn't be possible
-                                //    Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single remove that is over choice bubble, but not owned by MC");
-                                //    continue;
-                                //}
-                                //var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != removedStroke.GetStrokeID()).ToList();
-                                //var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                //var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
-
-                                //if (totalStrokeLength < threshold)
-                                //{
-                                //    status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
-                                //}
-                                //else
-                                //{
-                                //    if (otherStrokesStrokeLength < threshold)
-                                //    {
-                                //        status = ChoiceBubbleStatuses.CompletelyErased;
-                                //        choiceBubbleStrokeIsOver.IsFilledIn = false;
-                                //    }
-                                //    else
-                                //    {
-                                //        status = ChoiceBubbleStatuses.IncompletelyErased;
-                                //    }
-                                //}
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
                                 var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
                                                                                                             page.Owner,
