@@ -1105,29 +1105,22 @@ namespace ConsoleScripts
                     }
 
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(strokesChanged);
-                    if (objectsChanged.IsUsingPageObjects)
+                    var strokesAdded = objectsChanged.StrokesAdded;
+                    var strokesRemoved = objectsChanged.StrokesRemoved;
+
+                    // Single Add
+                    if (strokesAdded.Count == 1 &&
+                        !strokesRemoved.Any())
                     {
-                        page.History.UndoItems.Insert(0, objectsChanged);
-                        page.History.ConversionUndo(); //?
-                    }
+                        var strokeID = objectsChanged.StrokeIDsAdded.First();
+                        var addedStroke = page.GetVerifiedStrokeOnPageByID(strokeID);
 
-                    #region JumpSizeConversion
-
-                    var removedJumpStrokeIDs = new List<string>();
-                    var jumpsRemoved = new List<NumberLineJumpSize>();
-                    foreach (var strokeID in objectsChanged.StrokeIDsRemoved)
-                    {
-                        var stroke = page.GetVerifiedStrokeInHistoryByID(strokeID);
-                        if (stroke == null)
-                        {
-                            removedJumpStrokeIDs.Add(strokeID);
-                            continue;
-                        }
-
+                        // Check for Jump Added
+                        var wasJumpAdded = false;
                         foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
                         {
-                            var tickR = numberLine.FindClosestTickToArcStroke(stroke, true);
-                            var tickL = numberLine.FindClosestTickToArcStroke(stroke, false);
+                            var tickR = numberLine.FindClosestTickToArcStroke(addedStroke, true);
+                            var tickL = numberLine.FindClosestTickToArcStroke(addedStroke, false);
                             if (tickR == null ||
                                 tickL == null ||
                                 tickR == tickL)
@@ -1135,13 +1128,102 @@ namespace ConsoleScripts
                                 continue;
                             }
 
-                            removedJumpStrokeIDs.Add(stroke.GetStrokeID());
+                            var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
+                            var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
+                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
+                                                                                                    page.Owner,
+                                                                                                    numberLine.ID,
+                                                                                                    new List<Stroke>
+                                                                                                    {
+                                                                                                        addedStroke
+                                                                                                    },
+                                                                                                    new List<Stroke>(),
+                                                                                                    new List<NumberLineJumpSize>(),
+                                                                                                    new List<NumberLineJumpSize>(),
+                                                                                                    oldHeight,
+                                                                                                    oldYPosition,
+                                                                                                    numberLine.Height,
+                                                                                                    numberLine.YPosition,
+                                                                                                    true);
+
+                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
+                            page.History.ConversionUndo();
+                            wasJumpAdded = true;
+                            break;
+                        }
+
+                        if (wasJumpAdded)
+                        {
+                            continue;
+                        }
+
+                        // Check for Multiple Choice Fill-In
+                        var multipleChoice = page.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                        if (multipleChoice != null)
+                        {
+                            var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
+                            if (choiceBubbleStrokeIsOver != null)
+                            {
+                                ChoiceBubbleStatuses status;
+                                var threshold = 80;
+                                var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                if (totalStrokeLength >= threshold)
+                                {
+                                    status = ChoiceBubbleStatuses.AdditionalFilledIn;
+                                }
+                                else
+                                {
+                                    totalStrokeLength += addedStroke.StylusPoints.Count;
+                                    if (totalStrokeLength >= threshold)
+                                    {
+                                        status = ChoiceBubbleStatuses.FilledIn;
+                                        choiceBubbleStrokeIsOver.IsFilledIn = true;
+                                    }
+                                    else
+                                    {
+                                        status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                                    }
+                                }
+                                multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
+                                                                                                            page.Owner,
+                                                                                                            multipleChoice,
+                                                                                                            index,
+                                                                                                            status,
+                                                                                                            strokesAdded,
+                                                                                                            strokesRemoved);
+                                page.History.UndoItems.Insert(0, multipleChoiceStatus);
+                                page.History.ConversionUndo();
+                                continue;
+                            }
+                        }
+                    }
+                    else if (strokesRemoved.Count == 1 &&     //Single Remove
+                             !strokesAdded.Any())
+                    {
+                        var strokeID = objectsChanged.StrokeIDsRemoved.First();
+                        var removedStroke = page.GetVerifiedStrokeInHistoryByID(strokeID);
+
+                        // Check for Jump Removed
+                        var wasJumpRemoved = false;
+                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        {
+                            var tickR = numberLine.FindClosestTickToArcStroke(removedStroke, true);
+                            var tickL = numberLine.FindClosestTickToArcStroke(removedStroke, false);
+                            if (tickR == null ||
+                                tickL == null ||
+                                tickR == tickL)
+                            {
+                                continue;
+                            }
 
                             var oldHeight = numberLine.Height;
                             var oldYPosition = numberLine.YPosition;
                             if (numberLine.JumpSizes.Count == 0)
                             {
-                                var tallestPoint = stroke.GetBounds().Top;
+                                var tallestPoint = removedStroke.GetBounds().Top;
                                 tallestPoint = tallestPoint - 40;
 
                                 if (tallestPoint < 0)
@@ -1163,7 +1245,7 @@ namespace ConsoleScripts
                                                                                                     new List<Stroke>(),
                                                                                                     new List<Stroke>
                                                                                                     {
-                                                                                                        stroke
+                                                                                                        removedStroke
                                                                                                     },
                                                                                                     new List<NumberLineJumpSize>(),
                                                                                                     new List<NumberLineJumpSize>(),
@@ -1175,61 +1257,77 @@ namespace ConsoleScripts
 
                             page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
                             page.History.ConversionUndo();
+                            wasJumpRemoved = true;
                             break;
                         }
-                    }
 
-                    var addedJumpStrokeIDs = new List<string>();
-                    foreach (var strokeID in objectsChanged.StrokeIDsAdded)
-                    {
-                        var stroke = page.GetVerifiedStrokeOnPageByID(strokeID);
-                        if (stroke == null)
+                        if (wasJumpRemoved)
                         {
-                            addedJumpStrokeIDs.Add(strokeID);
                             continue;
                         }
 
-                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        // Check for Multiple Choice Fill-In
+                        var multipleChoice = page.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                        if (multipleChoice != null)
                         {
-                            var tickR = numberLine.FindClosestTickToArcStroke(stroke, true);
-                            var tickL = numberLine.FindClosestTickToArcStroke(stroke, false);
-                            if (tickR == null ||
-                                tickL == null ||
-                                tickR == tickL)
+                            ChoiceBubbleStatuses status;
+                            var threshold = 80;
+                            var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
+                            if (choiceBubbleStrokeIsOver != null)
                             {
+                                var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                                var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
+                                if (!isRemovedStrokeOverBubble)
+                                {
+                                    // TODO: ERROR - This shouldn't be possible
+                                    Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single remove that is over choice bubble, but not owned by MC");
+                                    continue;
+                                }
+                                var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != removedStroke.GetStrokeID()).ToList();
+                                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                                if (totalStrokeLength < threshold)
+                                {
+                                    status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                                }
+                                else
+                                {
+                                    if (otherStrokesStrokeLength < threshold)
+                                    {
+                                        status = ChoiceBubbleStatuses.CompletelyErased;
+                                        choiceBubbleStrokeIsOver.IsFilledIn = false;
+                                    }
+                                    else
+                                    {
+                                        status = ChoiceBubbleStatuses.IncompletelyErased;
+                                    }
+                                }
+                                multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
+                                                                                                            page.Owner,
+                                                                                                            multipleChoice,
+                                                                                                            index,
+                                                                                                            status,
+                                                                                                            strokesAdded,
+                                                                                                            strokesRemoved);
+                                page.History.UndoItems.Insert(0, multipleChoiceStatus);
+                                page.History.ConversionUndo();
                                 continue;
                             }
-
-                            addedJumpStrokeIDs.Add(stroke.GetStrokeID());
-
-                            var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
-                            var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
-                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
-                                                                                                    page.Owner,
-                                                                                                    numberLine.ID,
-                                                                                                    new List<Stroke>
-                                                                                                    {
-                                                                                                        stroke
-                                                                                                    },
-                                                                                                    new List<Stroke>(),
-                                                                                                    new List<NumberLineJumpSize>(),
-                                                                                                    new List<NumberLineJumpSize>(),
-                                                                                                    oldHeight,
-                                                                                                    oldYPosition,
-                                                                                                    numberLine.Height,
-                                                                                                    numberLine.YPosition,
-                                                                                                    true);
-
-                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
-                            page.History.ConversionUndo();
-                            break;
                         }
                     }
-
-                    objectsChanged.StrokeIDsRemoved.RemoveAll(removedJumpStrokeIDs.Contains);
-                    objectsChanged.StrokeIDsAdded.RemoveAll(addedJumpStrokeIDs.Contains);
-
-                    #endregion //JumpSizeConversion
+                    else if (strokesRemoved.Count == 1 &&     //Point Erase
+                             strokesAdded.Count == 2)
+                    {
+                        // TODO: Handle this use case?
+                    }
+                    else
+                    {
+                        // TODO: ERROR - This shouldn't be possible
+                        Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single add, single erase, or point erase!!!!!");
+                    }
 
                     if (objectsChanged.IsUsingStrokes)
                     {

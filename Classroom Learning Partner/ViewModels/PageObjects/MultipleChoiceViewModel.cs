@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: Write completely different interaction for point erase situation.
             
             const int threshold = 80;
-            var status = ChoiceBubbleStatuses.PrartiallyFilledIn;
+            var status = ChoiceBubbleStatuses.PartiallyFilledIn;
             var index = -1;
             var isStatusSet = false;
             if (addedStrokesList.Count == 1 &&
@@ -146,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        status = ChoiceBubbleStatuses.PrartiallyFilledIn;
+                        status = ChoiceBubbleStatuses.PartiallyFilledIn;
                     }
                 }
                 isStatusSet = true;

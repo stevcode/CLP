@@ -10,7 +10,7 @@ namespace CLP.Entities
 {
     public enum ChoiceBubbleStatuses
     {
-        PrartiallyFilledIn,
+        PartiallyFilledIn,
         FilledIn,
         AdditionalFilledIn,
         ErasedPartiallyFilledIn,
@@ -93,7 +93,7 @@ namespace CLP.Entities
             set { SetValue(ChoiceBubbleStatusProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof (ChoiceBubbleStatuses), ChoiceBubbleStatuses.PrartiallyFilledIn);
+        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof (ChoiceBubbleStatuses), ChoiceBubbleStatuses.PartiallyFilledIn);
         
         
         #region Strokes
