@@ -131,7 +131,7 @@ namespace CLP.Entities
 
         #endregion // Verify And Generate Methods
 
-            #region Utility Static Methods
+        #region Utility Static Methods
 
         public static double GetPercentageOfDigits(string s)
         {

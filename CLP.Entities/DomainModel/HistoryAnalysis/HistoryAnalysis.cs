@@ -226,150 +226,149 @@ namespace CLP.Entities
             IHistoryAction historyAction = null;
             TypeSwitch.On(historyItem).Case<ObjectsOnPageChangedHistoryItem>(h =>
                                                                              {
-                                                                                 // HACK: Temporarily in place until MC Boxes are re-written and converted.
-                                                                                 if (h.IsUsingPageObjects ||
-                                                                                     !h.IsUsingStrokes)
-                                                                                 {
-                                                                                     historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
-                                                                                         // HACK: This is the only line that should be in here.
-                                                                                     return;
-                                                                                 }
+                                                                                 historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
+                                                                                 //// HACK: Temporarily in place until MC Boxes are re-written and converted.
+                                                                                 //if (h.IsUsingPageObjects ||
+                                                                                 //    !h.IsUsingStrokes)
+                                                                                 //{
+                                                                                 //    historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h);
+                                                                                 //        // HACK: This is the only line that should be in here.
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var strokes = h.StrokesAdded;
-                                                                                 var isInkAdd = true;
-                                                                                 if (!strokes.Any())
-                                                                                 {
-                                                                                     strokes = h.StrokesRemoved;
-                                                                                     isInkAdd = false;
-                                                                                 }
+                                                                                 //var strokes = h.StrokesAdded;
+                                                                                 //var isInkAdd = true;
+                                                                                 //if (!strokes.Any())
+                                                                                 //{
+                                                                                 //    strokes = h.StrokesRemoved;
+                                                                                 //    isInkAdd = false;
+                                                                                 //}
 
-                                                                                 var stroke = strokes.FirstOrDefault();
-                                                                                 if (stroke == null)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //var stroke = strokes.FirstOrDefault();
+                                                                                 //if (stroke == null)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, h.HistoryIndex, true);
-                                                                                 var currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page,
-                                                                                                                                                                             pageObjectsOnPage,
-                                                                                                                                                                             stroke,
-                                                                                                                                                                             h.HistoryIndex);
-                                                                                 var multipleChoiceBox = currentPageObjectReference as MultipleChoiceBox;
-                                                                                 if (multipleChoiceBox == null)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, h.HistoryIndex, true);
+                                                                                 //var currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page,
+                                                                                 //                                                                                            pageObjectsOnPage,
+                                                                                 //                                                                                            stroke,
+                                                                                 //                                                                                            h.HistoryIndex);
+                                                                                 //var multipleChoiceBox = currentPageObjectReference as MultipleChoiceBox;
+                                                                                 //if (multipleChoiceBox == null)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 CurrentMultipleChoiceBoxStrokes = new List<Stroke>();
-                                                                                 CurrentMostFilledBubbleIndex = -1;
-                                                                                 LastMarkedBubbleIndex = -1;
+                                                                                 //CurrentMultipleChoiceBoxStrokes = new List<Stroke>();
+                                                                                 //CurrentMostFilledBubbleIndex = -1;
+                                                                                 //LastMarkedBubbleIndex = -1;
 
-                                                                                 MultipleChoiceBubble mostFilledBubble = null;
-                                                                                 var previousStrokeLength = 0;
-                                                                                 var indexOfBubbleCurrentStrokeIsOver = -1;
-                                                                                 foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
-                                                                                 {
-                                                                                     multipleChoiceBubble.IsMarked = false;
+                                                                                 //MultipleChoiceBubble mostFilledBubble = null;
+                                                                                 //var previousStrokeLength = 0;
+                                                                                 //var indexOfBubbleCurrentStrokeIsOver = -1;
+                                                                                 //foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
+                                                                                 //{
+                                                                                 //    multipleChoiceBubble.IsMarked = false;
 
-                                                                                     var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength, multipleChoiceBox.YPosition, multipleChoiceBox.ChoiceBubbleDiameter, multipleChoiceBox.ChoiceBubbleDiameter);
-                                                                                     var isStrokeOverBubble = stroke.HitTest(bubbleBoundary, 80);
-                                                                                     if (isStrokeOverBubble)
-                                                                                     {
-                                                                                         indexOfBubbleCurrentStrokeIsOver = multipleChoiceBubble.ChoiceBubbleIndex;
-                                                                                         if (isInkAdd)
-                                                                                         {
-                                                                                             CurrentMultipleChoiceBoxStrokes.Add(stroke);
-                                                                                         }
-                                                                                         else
-                                                                                         {
-                                                                                             CurrentMultipleChoiceBoxStrokes.RemoveAll(s => s.GetStrokeID() == stroke.GetStrokeID());
-                                                                                         }
-                                                                                     }
+                                                                                 //    var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength, multipleChoiceBox.YPosition, multipleChoiceBox.ChoiceBubbleDiameter, multipleChoiceBox.ChoiceBubbleDiameter);
+                                                                                 //    var isStrokeOverBubble = stroke.HitTest(bubbleBoundary, 80);
+                                                                                 //    if (isStrokeOverBubble)
+                                                                                 //    {
+                                                                                 //        indexOfBubbleCurrentStrokeIsOver = multipleChoiceBubble.ChoiceBubbleIndex;
+                                                                                 //        if (isInkAdd)
+                                                                                 //        {
+                                                                                 //            CurrentMultipleChoiceBoxStrokes.Add(stroke);
+                                                                                 //        }
+                                                                                 //        else
+                                                                                 //        {
+                                                                                 //            CurrentMultipleChoiceBoxStrokes.RemoveAll(s => s.GetStrokeID() == stroke.GetStrokeID());
+                                                                                 //        }
+                                                                                 //    }
 
-                                                                                     var strokesOverBubble = CurrentMultipleChoiceBoxStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
+                                                                                 //    var strokesOverBubble = CurrentMultipleChoiceBoxStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
 
-                                                                                     var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                                                                     if (totalStrokeLength <= previousStrokeLength ||
-                                                                                         totalStrokeLength <= 100)
-                                                                                     {
-                                                                                         continue;
-                                                                                     }
+                                                                                 //    var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                                                                 //    if (totalStrokeLength <= previousStrokeLength ||
+                                                                                 //        totalStrokeLength <= 100)
+                                                                                 //    {
+                                                                                 //        continue;
+                                                                                 //    }
 
-                                                                                     mostFilledBubble = multipleChoiceBubble;
-                                                                                     previousStrokeLength = totalStrokeLength;
-                                                                                 }
+                                                                                 //    mostFilledBubble = multipleChoiceBubble;
+                                                                                 //    previousStrokeLength = totalStrokeLength;
+                                                                                 //}
 
-                                                                                 if (indexOfBubbleCurrentStrokeIsOver == -1)
-                                                                                 {
-                                                                                     return;
-                                                                                 }
+                                                                                 //if (indexOfBubbleCurrentStrokeIsOver == -1)
+                                                                                 //{
+                                                                                 //    return;
+                                                                                 //}
 
-                                                                                 var correctBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.IsACorrectValue);
-                                                                                 var currentBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver);
-                                                                                 if (correctBubble == null ||
-                                                                                     currentBubble == null)
-                                                                                 {
-                                                                                     Console.WriteLine("ERROR, no correct bubble marked");
-                                                                                     return;
-                                                                                 }
+                                                                                 //var correctBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.IsACorrectValue);
+                                                                                 //var currentBubble = multipleChoiceBox.ChoiceBubbles.FirstOrDefault(c => c.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver);
+                                                                                 //if (correctBubble == null ||
+                                                                                 //    currentBubble == null)
+                                                                                 //{
+                                                                                 //    Console.WriteLine("ERROR, no correct bubble marked");
+                                                                                 //    return;
+                                                                                 //}
 
 
-                                                                                 var correctness = correctBubble.ChoiceBubbleIndex == currentBubble.ChoiceBubbleIndex ? "COR" : "INC";
+                                                                                 //var correctness = correctBubble.ChoiceBubbleIndex == currentBubble.ChoiceBubbleIndex ? "COR" : "INC";
 
-                                                                                 var objectAction = string.Empty;
-                                                                                 if (isInkAdd)
-                                                                                 {
-                                                                                     if (CurrentMostFilledBubbleIndex == -1)
-                                                                                     {
-                                                                                         objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
-                                                                                     }
-                                                                                     else
-                                                                                     {
-                                                                                         if (mostFilledBubble.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
-                                                                                         {
-                                                                                             if (mostFilledBubble.ChoiceBubbleIndex == CurrentMostFilledBubbleIndex)
-                                                                                             {
-                                                                                                 if (LastMarkedBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
-                                                                                                 {
-                                                                                                     objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
-                                                                                                 }
-                                                                                                 else
-                                                                                                 {
-                                                                                                     objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_REPEAT;
-                                                                                                 }
-                                                                                             }
-                                                                                             else
-                                                                                             {
-                                                                                                 objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_CHANGE;
-                                                                                             }
-                                                                                         }
-                                                                                         else
-                                                                                         {
-                                                                                             objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_OTHER;
-                                                                                         }
-                                                                                     }
-                                                                                 }
-                                                                                 else
-                                                                                 {
-                                                                                     objectAction = mostFilledBubble == null
-                                                                                                        ? Codings.ACTION_MULTIPLE_CHOICE_ERASE
-                                                                                                        : indexOfBubbleCurrentStrokeIsOver == mostFilledBubble.ChoiceBubbleIndex
-                                                                                                              ? Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL
-                                                                                                              : Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER;
-                                                                                 }
-                                                                                 CurrentMostFilledBubbleIndex = mostFilledBubble == null ? -1 : mostFilledBubble.ChoiceBubbleIndex;
-                                                                                 LastMarkedBubbleIndex = indexOfBubbleCurrentStrokeIsOver;
+                                                                                 //var objectAction = string.Empty;
+                                                                                 //if (isInkAdd)
+                                                                                 //{
+                                                                                 //    if (CurrentMostFilledBubbleIndex == -1)
+                                                                                 //    {
+                                                                                 //        objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
+                                                                                 //    }
+                                                                                 //    else
+                                                                                 //    {
+                                                                                 //        if (mostFilledBubble.ChoiceBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
+                                                                                 //        {
+                                                                                 //            if (mostFilledBubble.ChoiceBubbleIndex == CurrentMostFilledBubbleIndex)
+                                                                                 //            {
+                                                                                 //                if (LastMarkedBubbleIndex == indexOfBubbleCurrentStrokeIsOver)
+                                                                                 //                {
+                                                                                 //                    objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
+                                                                                 //                }
+                                                                                 //                else
+                                                                                 //                {
+                                                                                 //                    objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_REPEAT;
+                                                                                 //                }
+                                                                                 //            }
+                                                                                 //            else
+                                                                                 //            {
+                                                                                 //                objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_CHANGE;
+                                                                                 //            }
+                                                                                 //        }
+                                                                                 //        else
+                                                                                 //        {
+                                                                                 //            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_OTHER;
+                                                                                 //        }
+                                                                                 //    }
+                                                                                 //}
+                                                                                 //else
+                                                                                 //{
+                                                                                 //    objectAction = mostFilledBubble == null
+                                                                                 //                       ? Codings.ACTION_MULTIPLE_CHOICE_ERASE
+                                                                                 //                       : indexOfBubbleCurrentStrokeIsOver == mostFilledBubble.ChoiceBubbleIndex
+                                                                                 //                             ? Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL
+                                                                                 //                             : Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER;
+                                                                                 //}
+                                                                                 //CurrentMostFilledBubbleIndex = mostFilledBubble == null ? -1 : mostFilledBubble.ChoiceBubbleIndex;
+                                                                                 //LastMarkedBubbleIndex = indexOfBubbleCurrentStrokeIsOver;
 
-                                                                                 historyAction = new HistoryAction(page, h)
-                                                                                 {
-                                                                                     CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
-                                                                                     CodedObjectAction = objectAction,
-                                                                                     IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
-                                                                                     CodedObjectID = correctBubble.ChoiceBubbleLabel,
-                                                                                     CodedObjectActionID = string.Format("{0}, {1}", currentBubble.ChoiceBubbleLabel, correctness)
-                                                                                 };
-
-                                                                                 
+                                                                                 //historyAction = new HistoryAction(page, h)
+                                                                                 //{
+                                                                                 //    CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                                                                 //    CodedObjectAction = objectAction,
+                                                                                 //    IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
+                                                                                 //    CodedObjectID = correctBubble.ChoiceBubbleLabel,
+                                                                                 //    CodedObjectActionID = string.Format("{0}, {1}", currentBubble.ChoiceBubbleLabel, correctness)
+                                                                                 //};
                                                                              })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
@@ -378,10 +377,6 @@ namespace CLP.Entities
 
             return historyAction;
         }
-
-        private static List<Stroke> CurrentMultipleChoiceBoxStrokes { get; set; }
-        private static int CurrentMostFilledBubbleIndex = -1;
-        private static int LastMarkedBubbleIndex = -1;
 
         public static IHistoryAction VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
         {
@@ -491,6 +486,180 @@ namespace CLP.Entities
                     var historyAction = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
                     return historyAction;
                 }
+            }
+
+            if (historyItems.All(h => h is MultipleChoiceBubbleStatusChangedHistoryItem))
+            {
+                var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryItem>().ToList();
+                var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
+                var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
+                
+                if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
+                {
+                    var nextStatusChangedHistoryItems = nextHistoryItem as MultipleChoiceBubbleStatusChangedHistoryItem;
+
+                    if (_currentCompressedStatus == null)
+                    {
+                        _currentCompressedStatus = statusChangedHistoryItems.First().ChoiceBubbleStatus;
+                    }
+
+                    ChoiceBubbleStatuses? compressedStatus = null;
+                    if (nextStatusChangedHistoryItems !=null)
+                    {
+                        compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryItems.ChoiceBubbleStatus);
+                    }
+
+                    if (nextStatusChangedHistoryItems != null &&
+                        nextStatusChangedHistoryItems.MultipleChoiceID == currentMultipleChoiceID &&
+                        nextStatusChangedHistoryItems.ChoiceBubbleIndex == currentBubbleIndex &&
+                        compressedStatus != null)
+                    {
+                        _currentCompressedStatus = compressedStatus;
+                        return null;
+                    }
+
+                    var multipleChoice = page.GetPageObjectByIDOnPageOrInHistory(currentMultipleChoiceID);
+                    if (multipleChoice == null)
+                    {
+                        return null;
+                    }
+                    var bubble = statusChangedHistoryItems.First().Bubble;
+                    var correctness = bubble.IsACorrectValue ? "COR" : "INC";
+
+                    var objectAction = string.Empty;
+                    switch (_currentCompressedStatus)
+                    {
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_PARTIAL;
+                            break;
+                        case ChoiceBubbleStatuses.FilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD;
+                            break;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ADD_ADDITIONAL;
+                            break;
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL;
+                            break;
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
+                            break;
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            objectAction = Codings.ACTION_MULTIPLE_CHOICE_ERASE;
+                            break;
+                        case null:
+                            return null;
+                        default:
+                            return null;
+                    }
+
+                    _currentCompressedStatus = null;
+                    var historyAction = new HistoryAction(page, historyItems)
+                                        {
+                                            CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                            CodedObjectAction = objectAction,
+                                            IsObjectActionVisible = objectAction != Codings.ACTION_MULTIPLE_CHOICE_ADD,
+                                            CodedObjectID = multipleChoice.CodedID,
+                                            CodedObjectActionID = string.Format("{0}, {1}", bubble.BubbleCodedID, correctness)
+                                        };
+                    return historyAction;
+                }
+            }
+
+            return null;
+        }
+
+        private static ChoiceBubbleStatuses? _currentCompressedStatus;
+
+        private static ChoiceBubbleStatuses? CompressMultipleChoiceStatuses(ChoiceBubbleStatuses? currentStatus, ChoiceBubbleStatuses nextStatus)
+        {
+            switch (currentStatus)
+            {
+                case ChoiceBubbleStatuses.PartiallyFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                            return ChoiceBubbleStatuses.PartiallyFilledIn;
+                        case ChoiceBubbleStatuses.FilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.FilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.AdditionalFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                            return ChoiceBubbleStatuses.AdditionalFilledIn;
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.FilledIn:
+                            return ChoiceBubbleStatuses.FilledIn;
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.IncompletelyErased:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                            return ChoiceBubbleStatuses.IncompletelyErased;
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return ChoiceBubbleStatuses.CompletelyErased;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return null;
+                    }
+                    break;
+                case ChoiceBubbleStatuses.CompletelyErased:
+                    switch (nextStatus)
+                    {
+                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                            return ChoiceBubbleStatuses.CompletelyErased;
+                        case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        case ChoiceBubbleStatuses.FilledIn:
+                        case ChoiceBubbleStatuses.IncompletelyErased:
+                        case ChoiceBubbleStatuses.CompletelyErased:
+                            return null;
+                    }
+                    break;
+                case null:
+                    return null;
+                default:
+                    return null;
             }
 
             return null;
@@ -608,8 +777,7 @@ namespace CLP.Entities
                             var nextCentroid = nextStrokeCopy.WeightedCenter();
                             var distanceFromLastStroke = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentCentroid, nextCentroid));
                             var lastStrokeDistanceZScore = (distanceFromLastStroke - averageClosestStrokeDistance) / closestStrokeDistanceStandardDeviation;
-                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE || distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD ||
-                                                      distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
+                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE || distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD || distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
 
                             bool isCloseToCluster;
                             var distanceFromCluster = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
@@ -666,10 +834,7 @@ namespace CLP.Entities
                 refinedHistoryAction.CodedObjectID = "A";
                 if (currentPageObjectReference != null)
                 {
-                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
-                                                                             currentLocationReference,
-                                                                             currentPageObjectReference.CodedName,
-                                                                             currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
+                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
                 refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
 
@@ -832,51 +997,38 @@ namespace CLP.Entities
 
         public static void AttemptAnswerTag(CLPPage page, List<IHistoryAction> historyActions)
         {
+            // BUG: will miss instances where mc incorrect, mc correct, mc erase incorrect
             var lastAnswerAction = historyActions.LastOrDefault(Codings.IsAnswerObject);
             if (lastAnswerAction == null ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE ||
-                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_OTHER ||
+                lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_FILL_IN_ERASE)
             {
                 return;
             }
 
-            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction> { lastAnswerAction });
+            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction>
+                                                                                  {
+                                                                                      lastAnswerAction
+                                                                                  });
             page.AddTag(tag);
         }
 
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var representations =
-                historyActions.Where(
-                                     h =>
-                                     h.CodedObjectAction == Codings.ACTION_OBJECT_ADD &&
-                                     (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE ||
-                                      h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
+            var representations = historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE || h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
 
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
             page.AddTag(tag);
         }
 
         // HACK: Add IsRepresentation to IPageObject
-        public static bool IsRepresentation(IPageObject pageObject)
-        {
-            return pageObject is CLPArray ||
-                   pageObject is Bin ||
-                   pageObject is NumberLine ||
-                   pageObject is Stamp ||
-                   pageObject is StampedObject;
-        }
+        public static bool IsRepresentation(IPageObject pageObject) { return pageObject is CLPArray || pageObject is Bin || pageObject is NumberLine || pageObject is Stamp || pageObject is StampedObject; }
 
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var strategies =
-                historyActions.Where(
-                                     h =>
-                                     h.CodedObject == Codings.OBJECT_ARRAY &&
-                                     (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK ||
-                                      h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
+            var strategies = historyActions.Where(h => h.CodedObject == Codings.OBJECT_ARRAY && (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
 
             if (!strategies.Any())
             {
@@ -895,7 +1047,7 @@ namespace CLP.Entities
             var leastDifference = 0;
             var colorName = string.Empty;
 
-            foreach (var systemColor in typeof(Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
+            foreach (var systemColor in typeof (Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
             {
                 var systemColorValue = (Color)systemColor.GetValue(null, null);
 
