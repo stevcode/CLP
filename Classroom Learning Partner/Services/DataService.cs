@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -343,7 +344,7 @@ namespace Classroom_Learning_Partner.Services
         public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
         {
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
-            var pageIDs = new List<string>();
+            var pageIDs = new ConcurrentBag<string>();
 
             Parallel.ForEach(pageFilePaths,
                              pageFilePath =>
@@ -364,7 +365,7 @@ namespace Classroom_Learning_Partner.Services
         public static List<string> GetPageIDsFromPageNumbers(NotebookInfo notebookInfo, List<int> pageNumbers)
         {
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
-            var pageIDs = new List<string>();
+            var pageIDs = new ConcurrentBag<string>();
 
             Parallel.ForEach(pageFilePaths,
                              pageFilePath =>
@@ -420,7 +421,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static List<CLPPage> LoadGivenSubmissionsForLoadedPages(NotebookInfo notebookInfo, List<string> pageFilePathsToCheck)
         {
-            var submissions = new List<CLPPage>();
+            var submissions = new ConcurrentBag<CLPPage>();
 
             Parallel.ForEach(pageFilePathsToCheck,
                              pageFilePath =>
@@ -447,7 +448,7 @@ namespace Classroom_Learning_Partner.Services
                                  submissions.Add(page);
                              });
 
-            return submissions;
+            return submissions.ToList();
         }
 
         public static List<CLPPage> GetPagesToSave(NotebookInfo notebookInfo, bool isForcedFullSave)
@@ -845,7 +846,7 @@ namespace Classroom_Learning_Partner.Services
                 page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
             }
 
-            // BUG: Parellel calls invoke threading errors.
+            // BUG: Parellel calls invoke threading errors. see concurrentBag, or PLINQ AsParallel()
             //Parallel.ForEach(pageFilePaths,
             //                 pageFilePath =>
             //                 {
