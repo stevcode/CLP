@@ -254,7 +254,7 @@ namespace CLP.Entities
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
         public override int StrokeHitTestPercentage
         {
-            get { return 80; }
+            get { return 30; }
         }
 
         #endregion //AStrokeAccepter Overrides
