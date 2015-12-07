@@ -47,7 +47,10 @@ namespace CLP.Entities
             foreach (var stroke in strokesRemoved)
             {
                 StrokeIDsRemoved.Add(stroke.GetStrokeID());
-                ParentPage.History.TrashedInkStrokes.Add(stroke);
+                if (!ParentPage.History.TrashedInkStrokes.Contains(stroke))
+                {
+                    ParentPage.History.TrashedInkStrokes.Add(stroke);
+                }
             }
         }
 

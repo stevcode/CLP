@@ -1164,28 +1164,28 @@ namespace ConsoleScripts
                             var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
                             if (choiceBubbleStrokeIsOver != null)
                             {
-                                ChoiceBubbleStatuses status;
+                                var status = ChoiceBubbleStatuses.FilledIn;
                                 var threshold = 80;
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
-                                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
-                                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                if (totalStrokeLength >= threshold)
-                                {
-                                    status = ChoiceBubbleStatuses.AdditionalFilledIn;
-                                }
-                                else
-                                {
-                                    totalStrokeLength += addedStroke.StylusPoints.Count;
-                                    if (totalStrokeLength >= threshold)
-                                    {
-                                        status = ChoiceBubbleStatuses.FilledIn;
-                                        choiceBubbleStrokeIsOver.IsFilledIn = true;
-                                    }
-                                    else
-                                    {
-                                        status = ChoiceBubbleStatuses.PartiallyFilledIn;
-                                    }
-                                }
+                                //var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                                //var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                //if (totalStrokeLength >= threshold)
+                                //{
+                                //    status = ChoiceBubbleStatuses.AdditionalFilledIn;
+                                //}
+                                //else
+                                //{
+                                //    totalStrokeLength += addedStroke.StylusPoints.Count;
+                                //    if (totalStrokeLength >= threshold)
+                                //    {
+                                //        status = ChoiceBubbleStatuses.FilledIn;
+                                //        choiceBubbleStrokeIsOver.IsFilledIn = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                                //    }
+                                //}
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
                                 var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
                                                                                                             page.Owner,
@@ -1270,40 +1270,40 @@ namespace ConsoleScripts
                         var multipleChoice = page.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
                         if (multipleChoice != null)
                         {
-                            ChoiceBubbleStatuses status;
+                            var status = ChoiceBubbleStatuses.CompletelyErased;
                             var threshold = 80;
                             var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
                             if (choiceBubbleStrokeIsOver != null)
                             {
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
-                                var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
-                                var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
-                                if (!isRemovedStrokeOverBubble)
-                                {
-                                    // TODO: ERROR - This shouldn't be possible
-                                    Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single remove that is over choice bubble, but not owned by MC");
-                                    continue;
-                                }
-                                var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != removedStroke.GetStrokeID()).ToList();
-                                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                                var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+                                //var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                                //var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == removedStroke.GetStrokeID()) != null;
+                                //if (!isRemovedStrokeOverBubble)
+                                //{
+                                //    // TODO: ERROR - This shouldn't be possible
+                                //    Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single remove that is over choice bubble, but not owned by MC");
+                                //    continue;
+                                //}
+                                //var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != removedStroke.GetStrokeID()).ToList();
+                                //var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                                //var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
 
-                                if (totalStrokeLength < threshold)
-                                {
-                                    status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
-                                }
-                                else
-                                {
-                                    if (otherStrokesStrokeLength < threshold)
-                                    {
-                                        status = ChoiceBubbleStatuses.CompletelyErased;
-                                        choiceBubbleStrokeIsOver.IsFilledIn = false;
-                                    }
-                                    else
-                                    {
-                                        status = ChoiceBubbleStatuses.IncompletelyErased;
-                                    }
-                                }
+                                //if (totalStrokeLength < threshold)
+                                //{
+                                //    status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                                //}
+                                //else
+                                //{
+                                //    if (otherStrokesStrokeLength < threshold)
+                                //    {
+                                //        status = ChoiceBubbleStatuses.CompletelyErased;
+                                //        choiceBubbleStrokeIsOver.IsFilledIn = false;
+                                //    }
+                                //    else
+                                //    {
+                                //        status = ChoiceBubbleStatuses.IncompletelyErased;
+                                //    }
+                                //}
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
                                 var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
                                                                                                             page.Owner,
@@ -1346,6 +1346,66 @@ namespace ConsoleScripts
             page.History.RefreshHistoryIndexes();
             while (page.History.RedoItems.Any())
             {
+                if (_isConvertingAssessmentCache)
+                {
+                    var multipleChoiceStatus = page.History.RedoItems.FirstOrDefault() as MultipleChoiceBubbleStatusChangedHistoryItem;
+                    if (multipleChoiceStatus != null)
+                    {
+                        var threshold = 80;
+                        var multipleChoice = page.GetPageObjectByID(multipleChoiceStatus.MultipleChoiceID) as MultipleChoice;
+                        var stroke = multipleChoiceStatus.StrokeIDsAdded.Any() ? multipleChoiceStatus.StrokesAdded.First() : multipleChoiceStatus.StrokesRemoved.First();
+                        var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(stroke);
+                        var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                        var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                        if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.FilledIn)
+                        {
+                            if (totalStrokeLength >= threshold)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.AdditionalFilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                            else
+                            {
+                                totalStrokeLength += stroke.StylusPoints.Count;
+                                if (totalStrokeLength >= threshold)
+                                {
+                                    multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.FilledIn;
+                                    choiceBubbleStrokeIsOver.IsFilledIn = true;
+                                }
+                                else
+                                {
+                                    multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.PartiallyFilledIn;
+                                    choiceBubbleStrokeIsOver.IsFilledIn = false;
+                                }
+                            }
+                        }
+                        else if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.CompletelyErased)
+                        {
+                            var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != stroke.GetStrokeID()).ToList();
+                            var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                            if (totalStrokeLength < threshold)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                            else
+                            {
+                                if (otherStrokesStrokeLength < threshold)
+                                {
+                                    multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.CompletelyErased;
+                                    choiceBubbleStrokeIsOver.IsFilledIn = false;
+                                }
+                                else
+                                {
+                                    multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.IncompletelyErased;
+                                    choiceBubbleStrokeIsOver.IsFilledIn = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 page.History.Redo();
             }
 
