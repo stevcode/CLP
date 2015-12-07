@@ -143,18 +143,18 @@ namespace ConsoleScripts
                              };
                     var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 184.04362101313319,
                                  Answer = "5",
                                  IsACorrectValue = true
                              };
                     var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 368.08724202626638,
                                  Answer = "7"
                              };
                     var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 552.13086303939963,
                                  Answer = "9"
                              };
                     multipleChoice.ChoiceBubbles.Add(b1);
@@ -192,18 +192,18 @@ namespace ConsoleScripts
                              };
                     var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 225.09240150093819,
                                  Answer = "9 - 7"
                              };
                     var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 450.18480300187639,
                                  Answer = "7 x 9",
                                  IsACorrectValue = true
                              };
                     var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 0,
+                                 Offset = 675.27720450281458,
                                  Answer = "63 ÷ 9"
                              };
                     multipleChoice.ChoiceBubbles.Add(b1);
@@ -241,18 +241,18 @@ namespace ConsoleScripts
                         };
                         var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 182.99108818011251,
                             Answer = "3",
                             IsACorrectValue = true
                         };
                         var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 365.982176360225,
                             Answer = "5"
                         };
                         var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 548.9732645403376,
                             Answer = "8"
                         };
                         multipleChoice.ChoiceBubbles.Add(b1);
@@ -322,20 +322,20 @@ namespace ConsoleScripts
                         };
                         var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 247.51211019153436,
                             Answer = "24",
                             AnswerLabel = "years old"
                         };
                         var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 495.02422038306872,
                             Answer = "64",
                             AnswerLabel = "years old",
                             IsACorrectValue = true
                         };
                         var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 742.53633057460308,
                             Answer = "80",
                             AnswerLabel = "years old"
                         };
@@ -395,18 +395,18 @@ namespace ConsoleScripts
                         };
                         var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 194.56894934333971,
                             Answer = "$7"
                         };
                         var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 389.13789868667942,
                             Answer = "$8",
                             IsACorrectValue = true
                         };
                         var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                         {
-                            Offset = 0,
+                            Offset = 583.70684803001916,
                             Answer = "$55"
                         };
                         multipleChoice.ChoiceBubbles.Add(b1);
