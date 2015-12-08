@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase
+    public class DivisionRelationDefinitionTag : ATagBase, IRepresentationComparer
     {
         public enum RelationTypes
         {
@@ -99,5 +100,14 @@ namespace CLP.Entities
         #endregion //ATagBase Overrides
 
         #endregion //Properties
+
+        #region IRepresentationComparer Implementation
+
+        public Correctness CompareRelationToRepresentations(List<IPageObject> pageObjects)
+        {
+            return Correctness.Correct;
+        }
+
+        #endregion // IRepresentationComparer Implementation
     }
 }

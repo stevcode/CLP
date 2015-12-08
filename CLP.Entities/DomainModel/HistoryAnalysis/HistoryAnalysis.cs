@@ -911,6 +911,8 @@ namespace CLP.Entities
                 }
             }
 
+            // TODO: Attempt to interpret inked circles around a multiple choice bubbles
+
             if (!allInterpretedActions.Any())
             {
                 allInterpretedActions.Add(historyaction);
@@ -936,6 +938,11 @@ namespace CLP.Entities
             AttemptAnswerTag(page, historyActions);
             AttemptRepresentationsUsedTag(page, historyActions);
             AttemptArrayStrategiesTag(page, historyActions);
+        }
+
+        public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var relationDefinitions = page.Tags.Where(t => t is IRepresentationComparer).ToList();
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
