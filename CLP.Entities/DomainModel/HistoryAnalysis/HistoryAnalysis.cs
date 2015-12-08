@@ -34,8 +34,8 @@ namespace CLP.Entities
                 {
                     if (page.Owner.FullName.Contains("John"))
                     {
-                        var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
-                        page.AddTag(tag);
+                        //var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
+                        //page.AddTag(tag);
 
                         var tag2 = new NumberLineJumpEraseTag(page, Origin.StudentPageGenerated);
                         page.AddTag(tag2);
@@ -44,12 +44,11 @@ namespace CLP.Entities
                 }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
                 {
-
-                    if (page.Owner.FullName.Contains("John"))
-                    {
-                        var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "OqQXQpO4ukq5IGg5Zyo6ig", 0, 56, 1, Correctness.Correct);
-                        page.AddTag(tag);
-                    }
+                    //if (page.Owner.FullName.Contains("John"))
+                    //{
+                    //    var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "OqQXQpO4ukq5IGg5Zyo6ig", 0, 56, 1, Correctness.Correct);
+                    //    page.AddTag(tag);
+                    //}
                     break;
                 }
                 case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
@@ -74,14 +73,14 @@ namespace CLP.Entities
                 }
                 case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
                 {
-                    if (page.Owner.FullName.Contains("Julia"))
-                    {
-                        var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
-                        page.AddTag(tag1);
+                    //if (page.Owner.FullName.Contains("Julia"))
+                    //{
+                    //    var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
+                    //    page.AddTag(tag1);
 
-                        var tag2 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction> { new HistoryAction()});
-                        page.AddTag(tag2);
-                    }
+                    //    var tag2 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction> { new HistoryAction()});
+                    //    page.AddTag(tag2);
+                    //}
                     break;
                 }
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
