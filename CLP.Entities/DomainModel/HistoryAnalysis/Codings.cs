@@ -140,6 +140,14 @@ namespace CLP.Entities
 
         #endregion // Analysis Codes
 
+        #region Correctness
+
+        public const string CORRECTNESS_CORRECT = "COR";
+        public const string CORRECTNESS_PARTIAL = "PAR";
+        public const string CORRECTNESS_INCORRECT = "INC";
+
+        #endregion // Correctness
+
         public static bool IsAnswerObject(IHistoryAction historyAction) { return historyAction.CodedObject == OBJECT_FILL_IN || historyAction.CodedObject == OBJECT_MULTIPLE_CHOICE; }
 
         public static string GetAnswerObjectContent(IHistoryAction historyAction)

@@ -917,11 +917,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertAutoNumberLineButton);
-            //uttons.Add(_insertArrayButton);
+            Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            Buttons.Add(_insertObscurableArrayButton);
+            //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
@@ -943,7 +943,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(Separater);
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
-            Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
         #endregion //Methods

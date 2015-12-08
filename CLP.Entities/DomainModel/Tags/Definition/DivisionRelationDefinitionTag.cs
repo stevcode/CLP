@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -99,5 +100,14 @@ namespace CLP.Entities
         #endregion //ATagBase Overrides
 
         #endregion //Properties
+
+        #region IRepresentationComparer Implementation
+
+        public Correctness CompareRelationToRepresentations(List<IPageObject> pageObjects)
+        {
+            return Correctness.Correct;
+        }
+
+        #endregion // IRepresentationComparer Implementation
     }
 }
