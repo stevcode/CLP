@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase, IRepresentationComparer
+    public class DivisionRelationDefinitionTag : ATagBase
     {
         public enum RelationTypes
         {

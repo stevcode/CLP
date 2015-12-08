@@ -942,7 +942,135 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var relationDefinitions = page.Tags.Where(t => t is IRepresentationComparer).ToList();
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag ||
+                                                           t is MultiplicationRelationDefinitionTag ||
+                                                           t is AdditionRelationDefinitionTag);
+
+
+            var definitionRelation = new Relation();
+            var otherDefinitionRelation = new Relation();
+            var isOtherDefinitionUsed = false;
+
+            var div = relationDefinitionTag as DivisionRelationDefinitionTag;
+            if (div != null)
+            {
+                definitionRelation.groupSize = div.Divisor;
+                definitionRelation.numberOfGroups = div.Quotient;
+                definitionRelation.product = div.Dividend;
+                definitionRelation.isOrderedGroup = true;
+                definitionRelation.isProductImportant = true;
+            }
+
+            var mult = relationDefinitionTag as MultiplicationRelationDefinitionTag;
+            if (mult != null)
+            {
+                definitionRelation.groupSize = mult.Factors.First().RelationPartAnswerValue;
+                definitionRelation.numberOfGroups = mult.Factors.Last().RelationPartAnswerValue;
+                definitionRelation.product = mult.Product;
+                definitionRelation.isOrderedGroup = mult.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                definitionRelation.isProductImportant = true;
+            }
+
+            var add = relationDefinitionTag as AdditionRelationDefinitionTag;
+            if (add != null)
+            {
+                var m1 = add.Addends.First() as MultiplicationRelationDefinitionTag;
+                var m2 = add.Addends.Last() as MultiplicationRelationDefinitionTag;
+
+                definitionRelation.groupSize = m1.Factors.First().RelationPartAnswerValue;
+                definitionRelation.numberOfGroups = m1.Factors.Last().RelationPartAnswerValue;
+                definitionRelation.product = m1.Product;
+                definitionRelation.isOrderedGroup = m1.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                definitionRelation.isProductImportant = true;
+
+                isOtherDefinitionUsed = true;
+                otherDefinitionRelation.groupSize = m2.Factors.First().RelationPartAnswerValue;
+                otherDefinitionRelation.numberOfGroups = m2.Factors.Last().RelationPartAnswerValue;
+                otherDefinitionRelation.product = m2.Product;
+                otherDefinitionRelation.isOrderedGroup = m2.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                otherDefinitionRelation.isProductImportant = true;
+
+                // TODO: definte alt relation
+            }
+
+
+            IPageObject pageObject;
+            Relation representationRelation;
+            var array = pageObject as CLPArray;
+            if (array != null)
+            {
+                representationRelation = new Relation
+                               {
+                                   groupSize = array.Columns,
+                                   numberOfGroups = array.Rows,
+                                   product = array.Columns * array.Rows,
+                                   isOrderedGroup = false,
+                                   isProductImportant = false
+                               };
+            }
+
+            var numberLine = pageObject as NumberLine;
+            if (numberLine != null)
+            {
+                var firstGroupSize = -1;
+                var firstJump = numberLine.JumpSizes.FirstOrDefault();
+                if (firstJump != null)
+                {
+                    firstGroupSize = firstJump.JumpSize;
+                }
+                var isEqualGroups = numberLine.JumpSizes.All(j => j.JumpSize == firstGroupSize);
+
+                var product = -1;
+                var lastJump = numberLine.JumpSizes.LastOrDefault();
+                if (lastJump != null)
+                {
+                    product = lastJump.StartingTickIndex + lastJump.JumpSize;
+                }
+
+                representationRelation = new Relation
+                {
+                    groupSize = isEqualGroups ? firstGroupSize : -1,
+                    numberOfGroups = numberLine.JumpSizes.Count,
+                    product = product,
+                    isOrderedGroup = true,
+                    isProductImportant = true
+                };
+            }
+        }
+
+        private struct Relation
+        {
+            public double groupSize;
+            public double numberOfGroups;
+            public double product;
+            public bool isOrderedGroup;
+            public bool isProductImportant;
+        }
+
+        private static void CompareRelationToRepresentations(Relation representationRelation, Relation definitionRelation)
+        {
+            if (representationRelation.isOrderedGroup && definitionRelation.isOrderedGroup)
+            {
+                if (representationRelation.groupSize == definitionRelation.groupSize &&
+                    representationRelation.numberOfGroups == definitionRelation.numberOfGroups)
+                {
+                    if (representationRelation.isProductImportant && definitionRelation.isProductImportant)
+                    {
+                        // return representationRelation.product == definitionRelation.product ? COR : PAR
+                    }
+                    // return cor
+                }
+            }
+            else
+            {
+                if ((representationRelation.groupSize == definitionRelation.groupSize &&
+                     representationRelation.numberOfGroups == definitionRelation.numberOfGroups) ||
+                    (representationRelation.groupSize == definitionRelation.numberOfGroups &&
+                     representationRelation.numberOfGroups == definitionRelation.groupSize))
+                {
+
+                }
+            }
         }
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)

@@ -4,6 +4,6 @@ namespace CLP.Entities
 {
     public interface IRepresentationComparer
     {
-        Correctness CompareRelationToRepresentations(List<IPageObject> pageObjects);
+        Correctness CompareRelationToRepresentations(double groupSize, double numberOfGroups, double product, bool isProductImportant, bool isOrderedGroup);
     }
 }
