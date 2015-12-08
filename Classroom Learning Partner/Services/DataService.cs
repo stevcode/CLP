@@ -190,7 +190,7 @@ namespace Classroom_Learning_Partner.Services
                 Directory.CreateDirectory(CurrentCachesFolderPath);
             }
 
-            MigrateCaches();
+            //MigrateCaches();
         }
 
         #region Properties
