@@ -15,6 +15,7 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
+using Org.BouncyCastle.Cms;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -1371,8 +1372,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static bool CreateDivision(CLPArray array, Stroke dividingStroke)
         {
+            var pageInteractionService = Catel.IoC.ServiceLocator.Default.ResolveType<IPageInteractionService>();
             if (array == null ||
-                dividingStroke == null)
+                dividingStroke == null ||
+                array.ArrayType != ArrayTypes.Array ||
+                pageInteractionService == null ||
+                pageInteractionService.CurrentPageInteractionMode != PageInteractionModes.DividerCreation)
             {
                 return false;
             }
@@ -1386,11 +1391,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var cuttableBottom = cuttableTop + array.ArrayHeight;
             var cuttableLeft = array.XPosition + array.LabelLength;
             var cuttableRight = cuttableLeft + array.ArrayWidth;
-
-            if (array.ArrayType != ArrayTypes.Array)
-            {
-                return false;
-            }
 
             const double MIN_THRESHHOLD = 30.0;
 
