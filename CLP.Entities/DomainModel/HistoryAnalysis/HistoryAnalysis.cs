@@ -689,9 +689,9 @@ namespace CLP.Entities
                 refinedHistoryAction.CodedObjectID = "A";
                 if (currentPageObjectReference != null)
                 {
-                    var locationHack = currentPageObjectReference.CodedName == Codings.OBJECT_TEXT ? Codings.ACTIONID_INK_LOCATION_NEAR : currentLocationReference;
+                    //var locationHack = currentPageObjectReference.CodedName == Codings.OBJECT_TEXT ? Codings.ACTIONID_INK_LOCATION_NEAR : currentLocationReference;
 
-                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", locationHack, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
+                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
                 refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
 
