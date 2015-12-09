@@ -111,6 +111,7 @@ namespace CLP.Entities
         public const string ACTIONID_INK_LOCATION_TOP = "above";
         public const string ACTIONID_INK_LOCATION_BOTTOM = "below";
         public const string ACTIONID_INK_LOCATION_OVER = "over";
+        public const string ACTIONID_INK_LOCATION_NEAR = "near";
 
         #endregion // Ink ActionID Variables 
 
