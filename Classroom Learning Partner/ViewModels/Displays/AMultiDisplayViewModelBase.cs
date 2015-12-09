@@ -9,13 +9,13 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public abstract class AMultiDisplayViewModelBase : ViewModelBase
     {
-        protected INotebookService _notebookService;
+        protected IDataService _dataService;
 
         #region Constructor
 
         protected AMultiDisplayViewModelBase(IDisplay display)
         {
-            _notebookService = DependencyResolver.Resolve<INotebookService>();
+            _dataService = DependencyResolver.Resolve<IDataService>();
 
             MultiDisplay = display;
 
@@ -79,13 +79,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetPageAsCurrentPageCommandExecute(CLPPage page)
         {
-            if (_notebookService == null ||
+            if (_dataService == null ||
                 page == null)
             {
                 return;
             }
 
-            _notebookService.CurrentNotebook.CurrentPage = page;
+            _dataService.CurrentNotebook.CurrentPage = page;
         }
 
         /// <summary>Removes a specific page from the MultiDisplay.</summary>
