@@ -105,14 +105,11 @@ namespace Classroom_Learning_Partner.Services
             Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
+            //delete file to clear it (so buttons can be removed, and to stop duplicates in xml)
             FileInfo file = new FileInfo(filePath);
             file.Delete();
 
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
-
-            //clear file
-            //stream.SetLength(0);
-            //stream.Close();
 
             //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
             //prefService.visibleButtonsTeacher.Add("TestingStringToVisibleButtons");

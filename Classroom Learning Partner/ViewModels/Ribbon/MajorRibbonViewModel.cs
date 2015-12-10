@@ -238,11 +238,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertBinButton.buttonID = "insertBinButton";
             _buttonsList.Add(_insertBinButton);
 
-            //TESTING
-            _newTestingButton = new RibbonButton("Test Button", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
-            _newTestingButton.buttonID = "newTestingButton";
-            _buttonsList.Add(_newTestingButton);
-
             //Text
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
@@ -409,9 +404,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Bin
         private RibbonButton _insertBinButton;
-
-        //Testing
-        private RibbonButton _newTestingButton;
 
         private ObservableCollection<IPreferenceButton> _buttonsList = new ObservableCollection<IPreferenceButton>();
 
@@ -1084,7 +1076,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
-            Buttons.Add(_newTestingButton);
 
             // Insert Shapes
             //Buttons.Add(Separater);

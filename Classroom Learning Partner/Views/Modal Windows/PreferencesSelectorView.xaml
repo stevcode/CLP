@@ -5,29 +5,61 @@
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
-    <StackPanel>
+    <ScrollViewer>
+        <StackPanel>
+            <Grid Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
 
-        <ItemsControl ItemsSource="{Binding PreferenceCheckboxes}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel>
-                    </StackPanel>
-                </ItemsPanelTemplate>
-                
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding ID}" />
-                        <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnTeacher}" />
-                        <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnStudent}" />
-                        <CheckBox Margin="10, 0, 5, 0" IsChecked="{Binding IsVisibleOnProjector}" />
-                    </StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Button ID" Grid.Row="0" Grid.Column="0" />
+                <TextBlock Text="Teacher" Grid.Row="0" Grid.Column="1" />
+                <TextBlock Text="Student" Grid.Row="0" Grid.Column="2" />
+                <TextBlock Text="Projector" Grid.Row="0" Grid.Column="3" />
+            </Grid>
+            <ItemsControl ItemsSource="{Binding PreferenceCheckboxes}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel>
+                        </StackPanel>
+                    </ItemsPanelTemplate>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-    </StackPanel>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding ID}" Grid.Row="0" Grid.Column="0" />
+                                <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnTeacher}" Grid.Row="0" Grid.Column="1" />
+                                <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnStudent}" Grid.Row="0" Grid.Column="2" />
+                                <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnProjector}" Grid.Row="0" Grid.Column="3" />
+                            </Grid>
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+
+        </StackPanel>
+    </ScrollViewer>
+
 </catel:DataWindow>

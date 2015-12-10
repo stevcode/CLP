@@ -167,9 +167,15 @@
               StrokeThickness="1" />
 
         <!-- User and Network Controls -->
-        <StackPanel DockPanel.Dock="Right">
+        <Button Command="{Binding PreferencesCommand}"
+                       FontSize="9"
+                       Margin="5 2"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" 
+                       DockPanel.Dock="Right">
+            <StackPanel DockPanel.Dock="Right">
 
-            <TextBlock Text="{Binding MainWindowViewModel.CurrentUser.DisplayName, Source={x:Static Application.Current}}"
+                <TextBlock Text="{Binding MainWindowViewModel.CurrentUser.DisplayName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="12"
                        Margin="5 2"
@@ -177,7 +183,7 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
 
-            <TextBlock Text="{Binding MainWindowViewModel.CurrentNotebookName, Source={x:Static Application.Current}}"
+                <TextBlock Text="{Binding MainWindowViewModel.CurrentNotebookName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="9"
                        Margin="5 2"
@@ -185,19 +191,21 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
 
-            <TextBlock Text="{Binding ConnectionStatus}"
+                <TextBlock Text="{Binding ConnectionStatus}"
                        FontSize="9"
                        Margin="5 2"
                        TextAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
+                <!--
             <Button Command="{Binding PreferencesCommand}"
                        FontSize="9"
                        Margin="5 2"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
-
-        </StackPanel>
+-->
+            </StackPanel>
+        </Button>
 
         <Line DockPanel.Dock="Right"
               Stretch="Fill"
