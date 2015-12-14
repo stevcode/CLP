@@ -4,7 +4,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
+                  Height="300">
     <ScrollViewer>
         <StackPanel>
             <Grid Margin="0">
@@ -13,14 +14,15 @@
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="30"/>
                     <ColumnDefinition Width="30"/>
                     <ColumnDefinition Width="30"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Button ID" Grid.Row="0" Grid.Column="0" />
-                <TextBlock Text="Teacher" Grid.Row="0" Grid.Column="1" />
-                <TextBlock Text="Student" Grid.Row="0" Grid.Column="2" />
-                <TextBlock Text="Projector" Grid.Row="0" Grid.Column="3" />
+                <TextBlock Text="T" Grid.Row="0" Grid.Column="1" />
+                <TextBlock Text="S" Grid.Row="0" Grid.Column="2" />
+                <TextBlock Text="P" Grid.Row="0" Grid.Column="3" />
             </Grid>
             <ItemsControl ItemsSource="{Binding PreferenceCheckboxes}">
                 <ItemsControl.ItemsPanel>
@@ -35,8 +37,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="16"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 

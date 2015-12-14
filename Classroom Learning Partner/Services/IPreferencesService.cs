@@ -16,8 +16,5 @@ namespace Classroom_Learning_Partner.Services
         void addPreference(string ID, PreferencesService.prefType type);
         void removePreference(string ID, PreferencesService.prefType type);
 
-        string savedColor
-        { get; set; }
-
     }
 }

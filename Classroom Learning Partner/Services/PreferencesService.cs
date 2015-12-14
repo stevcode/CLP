@@ -13,8 +13,9 @@ namespace Classroom_Learning_Partner.Services
 {
     public class PreferencesService : IPreferencesService
     {
-        private ObservableCollection<string> buttonsToShow = new ObservableCollection<string>();
-        private string savedColorVal;
+        private ObservableCollection<string> buttonsToShowTeacher = new ObservableCollection<string>();
+        private ObservableCollection<string> buttonsToShowStudent = new ObservableCollection<string>();
+        private ObservableCollection<string> buttonsToShowProjector = new ObservableCollection<string>();
 
         public enum prefType
         {
@@ -25,23 +26,23 @@ namespace Classroom_Learning_Partner.Services
         {
             get
             {
-                return buttonsToShow;
+                return buttonsToShowTeacher;
             }
             set
             {
-                buttonsToShow = value;
+                buttonsToShowTeacher = value;
             }
         }
 
-        public ObservableCollection<string> visibleButtonsStudent //TODO update this to separate from teacher
+        public ObservableCollection<string> visibleButtonsStudent
         {
             get
             {
-                return buttonsToShow;
+                return buttonsToShowStudent;
             }
             set
             {
-                buttonsToShow = value;
+                buttonsToShowStudent = value;
             }
         }
 
@@ -49,11 +50,11 @@ namespace Classroom_Learning_Partner.Services
         {
             get
             {
-                return buttonsToShow;
+                return buttonsToShowProjector;
             }
             set
             {
-                buttonsToShow = value;
+                buttonsToShowProjector = value;
             }
         }
 
@@ -65,7 +66,14 @@ namespace Classroom_Learning_Partner.Services
             {
                 visibleButtonsTeacher.Add(ID);
             }
-            //TODO: implement the other types
+            if (type == PreferencesService.prefType.STUDENT)
+            {
+                visibleButtonsStudent.Add(ID);
+            }
+            if (type == PreferencesService.prefType.PROJECTOR)
+            {
+                visibleButtonsProjector.Add(ID);
+            }
         }
 
         public void removePreference(string ID, prefType type)
@@ -74,19 +82,17 @@ namespace Classroom_Learning_Partner.Services
             {
                 visibleButtonsTeacher.Remove(ID);
             }
-            //TODO: implement the other types
+            if (type == PreferencesService.prefType.STUDENT)
+            {
+                visibleButtonsStudent.Remove(ID);
+            }
+            if (type == PreferencesService.prefType.PROJECTOR)
+            {
+                visibleButtonsProjector.Remove(ID);
+            }
         }
 
-
-        public String savedColor
-        {
-            get
-            { return savedColorVal; }
-            set
-            { savedColorVal = value; }
-        }
-
-        private string folderPath;
+        private string folderPath = null;
 
         public string FolderPath
         {
@@ -97,11 +103,12 @@ namespace Classroom_Learning_Partner.Services
         private XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<string>));
         //private XmlSerializer serializer = new XmlSerializer(typeof(PreferencesService));
 
-        //call this to save what preferences we currently have
-        public void savePreferencesToDisk()
+
+        private void savePreferencesToDiskHelper(string folderPath, PreferencesService.prefType type)
         {
-            Console.WriteLine(this.folderPath);
-            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
+            //Do we ever need to load any of the three preferences seperately?
+
+            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath, type);
             Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
@@ -120,25 +127,42 @@ namespace Classroom_Learning_Partner.Services
             stream.Close();
         }
 
-        public void loadPreferencesFromDisk()
+        //call this to save what preferences we currently have
+        public void savePreferencesToDisk()
         {
-            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath);
+            if (this.folderPath != null)
+            {
+                savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.TEACHER);
+                savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.STUDENT);
+                savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.PROJECTOR);
+            }
+        }
+
+        private void loadPreferencesFromDiskHelper(PreferencesService.prefType type)
+        {
+            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath, type);//TODO
             var fileName = nameComposite.ToFileName();
 
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
-            StreamReader reader = new StreamReader(filePath);
+            
             try
             {
+                StreamReader reader = new StreamReader(filePath);
                 this.visibleButtonsTeacher = (ObservableCollection<string>)serializer.Deserialize(reader);
+                reader.Close();
             }
             catch
             {
                 //this.visibleButtonsTeacher = 
             }
-            
-            reader.Close();
+        }
 
+        public void loadPreferencesFromDisk()
+        {
+            loadPreferencesFromDiskHelper(PreferencesService.prefType.TEACHER);
+            loadPreferencesFromDiskHelper(PreferencesService.prefType.STUDENT);
+            loadPreferencesFromDiskHelper(PreferencesService.prefType.PROJECTOR);
         }
     }
 
@@ -150,9 +174,11 @@ namespace Classroom_Learning_Partner.Services
         { get; set; }
         public string CLASS_NAME
         { get; set; }
+        public string TYPE
+        { get; set; }
 
         public string ToFileName()
-        { return string.Format("{0};{1};{2};", QUALIFIER_TEXT, CLASS_NAME, ID); }
+        { return string.Format("{0};{1};{2};{3}", QUALIFIER_TEXT, CLASS_NAME, ID, TYPE); }
 
         /*
         public static PreferencesNameComposite ParsePreferences(PreferencesService prefService, string folderPath)
@@ -166,7 +192,7 @@ namespace Classroom_Learning_Partner.Services
             return nameComposite; 
         }*/
         
-        public static PreferencesNameComposite ParseFilePath(string folderFilePath)
+        public static PreferencesNameComposite ParseFilePath(string folderFilePath, PreferencesService.prefType type)
         {
             if (folderFilePath == null)
             {
@@ -187,6 +213,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 ID = pageFileParts[1],
                 CLASS_NAME = pageFileParts[3],
+                TYPE = type.ToString()
             };
 
             return nameComposite;
