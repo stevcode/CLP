@@ -5,8 +5,8 @@
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
-                  Height="300">
-    <ScrollViewer>
+                  Height="1000">
+    <ScrollViewer><!-- no scroll for report-->
         <StackPanel>
             <Grid Margin="0">
                 <Grid.RowDefinitions>
@@ -14,15 +14,15 @@
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="175"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Button ID" Grid.Row="0" Grid.Column="0" />
-                <TextBlock Text="T" Grid.Row="0" Grid.Column="1" />
-                <TextBlock Text="S" Grid.Row="0" Grid.Column="2" />
-                <TextBlock Text="P" Grid.Row="0" Grid.Column="3" />
+                <TextBlock Text="Button" Grid.Row="0" Grid.Column="0" FontWeight="Bold" />
+                <TextBlock Text="Teacher" Grid.Row="0" Grid.Column="1" FontWeight="Bold" />
+                <TextBlock Text="Student" Grid.Row="0" Grid.Column="2" FontWeight="Bold" />
+                <TextBlock Text="Projector" Grid.Row="0" Grid.Column="3" FontWeight="Bold" />
             </Grid>
             <ItemsControl ItemsSource="{Binding PreferenceCheckboxes}">
                 <ItemsControl.ItemsPanel>
@@ -42,13 +42,13 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="175"/>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding ID}" Grid.Row="0" Grid.Column="0" />
+                                <TextBlock Text="{Binding PrettyName}" Grid.Row="0" Grid.Column="0" />
                                 <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnTeacher}" Grid.Row="0" Grid.Column="1" />
                                 <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnStudent}" Grid.Row="0" Grid.Column="2" />
                                 <CheckBox Margin="0, 0, 0, 0" IsChecked="{Binding IsVisibleOnProjector}" Grid.Row="0" Grid.Column="3" />

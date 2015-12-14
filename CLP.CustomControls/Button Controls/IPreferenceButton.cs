@@ -10,5 +10,8 @@ namespace CLP.CustomControls.Button_Controls
     {
         string buttonID
         { get; set; }
+
+        string prettyName
+        { get; set; }
     }
 }

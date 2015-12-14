@@ -14,6 +14,13 @@ namespace CLP.CustomControls
             set { ID = value; }
         }
 
+        private string prettyNameStr;
+        public string prettyName
+        {
+            get { return prettyNameStr; }
+            set { prettyNameStr = value; }
+        }
+
         static ColorButton()
         {
             // Initialize as a lookless control.

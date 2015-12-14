@@ -11,12 +11,13 @@ using CLP.CustomControls.Button_Controls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
-{
+{ 
     public class ButtonPreferenceSelector : AEntityBase
     {
-        public ButtonPreferenceSelector(string id, PreferencesService prefService)
+        public ButtonPreferenceSelector(string id, string prettyName, PreferencesService prefService)
         {
             ID = id;
+            PrettyName = prettyName;
             IsVisibleOnTeacher = prefService.visibleButtonsTeacher.Contains(id);
             IsVisibleOnStudent = prefService.visibleButtonsStudent.Contains(id);
             IsVisibleOnProjector = prefService.visibleButtonsProjector.Contains(id);
@@ -29,6 +30,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        public string PrettyName
+        {
+            get { return GetValue<string>(PrettyNameProperty); }
+            set { SetValue(PrettyNameProperty, value); }
+        }
+
+        public static readonly PropertyData PrettyNameProperty = RegisterProperty("PrettyName", typeof(string));
 
         public bool IsVisibleOnTeacher
         {
@@ -65,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             foreach (IPreferenceButton pb in Buttons)
             {
-                PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID, prefService));
+                PreferenceCheckboxes.Add(new ButtonPreferenceSelector(pb.buttonID, pb.prettyName, prefService));
             }
         }
 
