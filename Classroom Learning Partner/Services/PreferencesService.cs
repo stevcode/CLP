@@ -125,11 +125,6 @@ namespace Classroom_Learning_Partner.Services
 
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
 
-            //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
-
-            Console.WriteLine("Serializing xml for preferences to " + filePath);
-            //serializer.Serialize(stream, prefService);
-
             if (type == PreferencesService.prefType.STUDENT)
             {
                 serializer.Serialize(stream, this.visibleButtonsStudent);

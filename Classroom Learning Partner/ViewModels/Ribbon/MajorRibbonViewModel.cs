@@ -1044,7 +1044,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             Buttons.Add((UIElement)button);
                         }
                     }
-                    //TODO: no addrange for observablecollection?
                 }
             }
         }

@@ -12,7 +12,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-
     public class ButtonPreferenceSelector : AEntityBase
     {
         public ButtonPreferenceSelector(string id, PreferencesService prefService)
