@@ -64,15 +64,24 @@ namespace Classroom_Learning_Partner.Services
         {
             if (type == PreferencesService.prefType.TEACHER)
             {
-                visibleButtonsTeacher.Add(ID);
+                if (!visibleButtonsTeacher.Contains(ID))
+                {
+                    visibleButtonsTeacher.Add(ID);
+                }
             }
             if (type == PreferencesService.prefType.STUDENT)
             {
-                visibleButtonsStudent.Add(ID);
+                if (!visibleButtonsStudent.Contains(ID))
+                {
+                    visibleButtonsStudent.Add(ID);
+                }
             }
             if (type == PreferencesService.prefType.PROJECTOR)
             {
-                visibleButtonsProjector.Add(ID);
+                if (!visibleButtonsProjector.Contains(ID))
+                {
+                    visibleButtonsProjector.Add(ID);
+                }
             }
         }
 
@@ -106,8 +115,6 @@ namespace Classroom_Learning_Partner.Services
 
         private void savePreferencesToDiskHelper(string folderPath, PreferencesService.prefType type)
         {
-            //Do we ever need to load any of the three preferences seperately?
-
             var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath, type);
             Console.WriteLine(nameComposite.ToFileName());
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
@@ -119,11 +126,23 @@ namespace Classroom_Learning_Partner.Services
             FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate);
 
             //var prefService = ServiceLocator.Default.ResolveType<IPreferencesService>();
-            //prefService.visibleButtonsTeacher.Add("TestingStringToVisibleButtons");
 
             Console.WriteLine("Serializing xml for preferences to " + filePath);
             //serializer.Serialize(stream, prefService);
-            serializer.Serialize(stream, this.visibleButtonsTeacher);
+
+            if (type == PreferencesService.prefType.STUDENT)
+            {
+                serializer.Serialize(stream, this.visibleButtonsStudent);
+            }
+            else if (type == PreferencesService.prefType.TEACHER)
+            {
+                serializer.Serialize(stream, this.visibleButtonsTeacher);
+            }
+            else if (type == PreferencesService.prefType.PROJECTOR)
+            {
+                serializer.Serialize(stream, this.visibleButtonsProjector);
+            }
+            
             stream.Close();
         }
 
@@ -132,6 +151,7 @@ namespace Classroom_Learning_Partner.Services
         {
             if (this.folderPath != null)
             {
+                //Do we ever need to load any of the three preferences seperately?
                 savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.TEACHER);
                 savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.STUDENT);
                 savePreferencesToDiskHelper(folderPath, PreferencesService.prefType.PROJECTOR);
@@ -140,12 +160,11 @@ namespace Classroom_Learning_Partner.Services
 
         private void loadPreferencesFromDiskHelper(PreferencesService.prefType type)
         {
-            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath, type);//TODO
+            var nameComposite = PreferencesNameComposite.ParseFilePath(folderPath, type);
             var fileName = nameComposite.ToFileName();
 
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
 
-            
             try
             {
                 StreamReader reader = new StreamReader(filePath);
@@ -154,7 +173,7 @@ namespace Classroom_Learning_Partner.Services
             }
             catch
             {
-                //this.visibleButtonsTeacher = 
+                
             }
         }
 
