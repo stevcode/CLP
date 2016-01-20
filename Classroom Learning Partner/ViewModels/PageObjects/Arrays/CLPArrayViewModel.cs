@@ -82,21 +82,21 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
                 {
-                    IsChecked = !IsColumnsObscured
+                    IsChecked = !array.IsColumnsObscured
                 };
 
                 _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
                 _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.IsEnabled = !IsRowsObscured;
+                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
                 _contextButtons.Add(_toggleObscureColumnsButton);
 
                 _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
                 {
-                    IsChecked = !IsRowsObscured
+                    IsChecked = !array.IsRowsObscured
                 };
                 _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
                 _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.IsEnabled = !IsColumnsObscured;
+                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
                 _contextButtons.Add(_toggleObscureRowsButton);
             }
 
@@ -109,7 +109,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(_toggleGridLinesButton);
 
             _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
-            //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
+            //_contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
         private void toggleLabelsButton_Checked(object sender, RoutedEventArgs e)
@@ -351,26 +351,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
-        /// <summary>Toggles visibility of Columns obscurer.</summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsColumnsObscured
-        {
-            get { return GetValue<bool>(IsColumnsObscuredProperty); }
-            set { SetValue(IsColumnsObscuredProperty, value); }
-        }
-
-        public static readonly PropertyData IsColumnsObscuredProperty = RegisterProperty("IsColumnsObscured", typeof (bool));
-
-        /// <summary>Toggles visibity of Row obscurer.</summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsRowsObscured
-        {
-            get { return GetValue<bool>(IsRowsObscuredProperty); }
-            set { SetValue(IsRowsObscuredProperty, value); }
-        }
-
-        public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool));
-
         /// <summary>The type of array.</summary>
         [ViewModelToModel("PageObject")]
         public ArrayTypes ArrayType
@@ -380,7 +360,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes));
-
 
         #endregion //Model
 

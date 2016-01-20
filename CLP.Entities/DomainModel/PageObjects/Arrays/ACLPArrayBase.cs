@@ -212,7 +212,12 @@ namespace CLP.Entities
         public bool IsGridOn
         {
             get { return GetValue<bool>(IsGridOnProperty); }
-            set { SetValue(IsGridOnProperty, value); }
+            set
+            {
+                SetValue(IsGridOnProperty, value);
+                RaisePropertyChanged("IsVerticalLinesVisible");
+                RaisePropertyChanged("IsHorizontalLinesVisible");
+            }
         }
 
         public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof (bool), true);
@@ -274,16 +279,28 @@ namespace CLP.Entities
 
         public abstract double MinimumGridSquareSize { get; }
 
+        public bool IsVerticalLinesVisible
+        {
+            get
+            {
+                return !IsColumnsObscured && IsGridOn;
+            }
+        }
+
+        public bool IsHorizontalLinesVisible
+        {
+            get
+            {
+                return !IsRowsObscured && IsGridOn;
+            }
+        }
+
         /// <summary>Signifies obscuring shape over Rows.</summary>
         public bool IsRowsObscured
         {
             get
             {
-                if (HorizontalDivisions == null)
-                {
-                    return false;
-                }
-                return HorizontalDivisions.Any(d => d.IsObscured);
+                return HorizontalDivisions != null && HorizontalDivisions.Any(d => d.IsObscured);
             }
         }
 
@@ -293,11 +310,7 @@ namespace CLP.Entities
 
             get
             {
-                if (VerticalDivisions == null)
-                {
-                    return false;
-                }
-                return VerticalDivisions.Any(d => d.IsObscured);
+                return VerticalDivisions != null && VerticalDivisions.Any(d => d.IsObscured);
             }
         }
 

@@ -265,7 +265,7 @@
                         <Setter Property="Visibility"
                                 Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsGridOn}"
+                            <DataTrigger Binding="{Binding PageObject.IsVerticalLinesVisible}"
                                          Value="True">
                                 <Setter Property="Visibility" 
                                         Value="Visible" />
@@ -315,7 +315,7 @@
                         <Setter Property="Visibility"
                                 Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsGridOn}"
+                            <DataTrigger Binding="{Binding PageObject.IsHorizontalLinesVisible}"
                                          Value="True">
                                 <Setter Property="Visibility" 
                                         Value="Visible" />

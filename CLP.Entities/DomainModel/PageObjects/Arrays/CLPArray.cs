@@ -142,6 +142,11 @@ namespace CLP.Entities
                                   };
                 HorizontalDivisions.Add(obscuredDiv);
             }
+
+            RaisePropertyChanged("IsVerticalLinesVisible");
+            RaisePropertyChanged("IsHorizontalLinesVisible");
+            RaisePropertyChanged("IsColumnsObscured");
+            RaisePropertyChanged("IsRowsObscured");
         }
 
         public void Unobscure(bool isColumnsUnobscured)
@@ -170,6 +175,11 @@ namespace CLP.Entities
                     division.IsObscured = false;
                 }
             }
+
+            RaisePropertyChanged("IsVerticalLinesVisible");
+            RaisePropertyChanged("IsHorizontalLinesVisible");
+            RaisePropertyChanged("IsColumnsObscured");
+            RaisePropertyChanged("IsRowsObscured");
         }
 
         public Point GetColumnsAndRowsAtHistoryIndex(int historyIndex)
