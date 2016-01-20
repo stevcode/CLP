@@ -45,6 +45,19 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=ToggleColumns}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -66,6 +79,19 @@
                 </Grid>
 
                 <Grid Grid.Column="0" Grid.Row="1">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=ToggleRows}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -152,6 +178,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid x:Name="KeyPadGrid" Grid.Row="0" Margin="20">
@@ -179,7 +206,24 @@
                 <Button Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Click="BackspaceButton_Click" Content="Backspace" />
             </Grid>
 
-            <Button Grid.Row="1" Height="30" Width="100"
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                <ToggleButton Name="ToggleRows" 
+                              Height="30"
+                              Width="90"
+                              Margin="10 -10 10 0"
+                              Click="ToggleRows_OnClick"
+                              Content="N Rows" />
+                <ToggleButton Name="ToggleColumns" 
+                              Height="30"
+                              Width="90"
+                              Margin="10 -10 10 0"
+                              Click="ToggleColumns_OnClick"
+                              Content="N Columns" />
+            </StackPanel>
+
+            <Button Grid.Row="2" Height="30" Width="100"
                     VerticalAlignment="Center" HorizontalAlignment="Right"
                     Content="Enter" Margin="10"
                     Click="EnterButton_Click" />
