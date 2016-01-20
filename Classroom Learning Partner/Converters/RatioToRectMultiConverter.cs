@@ -9,9 +9,9 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if(!(values[0] is double) ||
-               !(values[1] is double) ||
-               !(values[2] is double))
+            if (!(values[0] is double) ||
+                !(values[1] is double) ||
+                !(values[2] is double))
             {
                 return new Rect(0, 0, 0, 0);
             }

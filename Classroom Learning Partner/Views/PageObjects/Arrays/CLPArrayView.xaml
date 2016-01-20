@@ -190,7 +190,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!--Large Labels-->
+            <!-- Top Large Label -->
             <TextBlock Grid.Column="1"
                        Grid.Row="0"
                        IsHitTestVisible="False"
@@ -203,6 +203,7 @@
                        Width="{Binding ArrayWidth}"
                        Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+            <!-- Left Large Label -->
             <TextBlock Grid.Column="0"
                        Grid.Row="1"
                        IsHitTestVisible="False"
@@ -223,15 +224,106 @@
                     </TransformGroup>
                 </TextBlock.LayoutTransform>
             </TextBlock>
-
-            <Rectangle x:Name="ArrayBackground"
+            
+            <!-- Vertical Grid Lines -->
+            <Rectangle Grid.Column="1"
                        Grid.Row="1"
-                       Grid.Column="1"
                        Width="{Binding ArrayWidth}"
                        Height="{Binding ArrayHeight}"
-                       Fill="{Binding Transparency}"
-                       Stroke="Black"
-                       StrokeThickness="3" />
+                       StrokeThickness="0">
+                <Rectangle.Fill>
+                    <DrawingBrush TileMode="Tile" 
+                                  ViewportUnits="RelativeToBoundingBox"
+                                  AlignmentX="Left"
+                                  AlignmentY="Top">
+                        <DrawingBrush.Viewport>
+                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                <Binding Path="ArrayWidth" />
+                                <Binding Path="ArrayHeight" />
+                                <Binding Path="GridSquareSize" />
+                            </MultiBinding>
+                        </DrawingBrush.Viewport>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0 0 20 20"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing Geometry="M20,0 L20,20">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Thickness="1"
+                                                Brush="PowderBlue" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+                <Rectangle.Style>
+                    <Style TargetType="{x:Type Rectangle}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsGridOn}"
+                                         Value="True">
+                                <Setter Property="Visibility" 
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle>
+
+            <!-- Horizontal Grid Lines -->
+            <Rectangle Grid.Column="1"
+                       Grid.Row="1"
+                       Width="{Binding ArrayWidth}"
+                       Height="{Binding ArrayHeight}"
+                       StrokeThickness="0">
+                <Rectangle.Fill>
+                    <DrawingBrush TileMode="Tile" 
+                                  ViewportUnits="RelativeToBoundingBox"
+                                  AlignmentX="Left"
+                                  AlignmentY="Top">
+                        <DrawingBrush.Viewport>
+                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                <Binding Path="ArrayWidth" />
+                                <Binding Path="ArrayHeight" />
+                                <Binding Path="GridSquareSize" />
+                            </MultiBinding>
+                        </DrawingBrush.Viewport>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="Transparent">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0 0 20 20"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing Geometry="M0,20 L20,20">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Thickness="1"
+                                                Brush="PowderBlue" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+                <Rectangle.Style>
+                    <Style TargetType="{x:Type Rectangle}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsGridOn}"
+                                         Value="True">
+                                <Setter Property="Visibility" 
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle>
 
             <!--This is the actual array-->
             <Thumb Grid.Row="1"
@@ -244,57 +336,9 @@
                         <Rectangle x:Name="Array"
                                    Width="{Binding ArrayWidth}"
                                    Height="{Binding ArrayHeight}"
+                                   Fill="Transparent"
                                    Stroke="Black"
-                                   StrokeThickness="3">
-                            <Rectangle.Style>
-                                <Style TargetType="{x:Type Rectangle}">
-                                    <Setter Property="Fill"
-                                            Value="Transparent" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsGridOn}"
-                                                     Value="True">
-                                            <Setter Property="Fill">
-                                                <Setter.Value>
-                                                    <!--HACK: This throws errors because DrawingBrush does not inherit DataContext
-                                                    therefore, it's DataContext=null. It then uses something called an InheritedContext
-                                                    to attempt the data binding, that's why it succeeds. Need to find a way to try this
-                                                    better. Similarly, MultipleChoiceBox's VisualBrush does the same thing-->
-                                                    <DrawingBrush TileMode="Tile"
-                                                                  ViewportUnits="RelativeToBoundingBox">
-                                                        <DrawingBrush.Viewport>
-                                                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
-                                                                <Binding Path="ArrayWidth" />
-                                                                <Binding Path="ArrayHeight" />
-                                                                <Binding Path="GridSquareSize" />
-                                                            </MultiBinding>
-                                                        </DrawingBrush.Viewport>
-                                                        <DrawingBrush.Drawing>
-                                                            <DrawingGroup>
-                                                                <!--Horizontal Grid Line-->
-                                                                <GeometryDrawing Geometry="M0,20 L20,20">
-                                                                    <GeometryDrawing.Pen>
-                                                                        <Pen Thickness="1"
-                                                                             Brush="PowderBlue" />
-                                                                    </GeometryDrawing.Pen>
-                                                                </GeometryDrawing>
-                                                                <!--Vertical Grid Line-->
-                                                                <GeometryDrawing Geometry="M20,0 L20,20">
-                                                                    <GeometryDrawing.Pen>
-                                                                        <Pen Thickness="1"
-                                                                             Brush="PowderBlue" />
-                                                                    </GeometryDrawing.Pen>
-                                                                </GeometryDrawing>
-                                                            </DrawingGroup>
-                                                        </DrawingBrush.Drawing>
-                                                    </DrawingBrush>
-
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Rectangle.Style>
-                        </Rectangle>
+                                   StrokeThickness="3" />
                     </ControlTemplate>
                 </Thumb.Template>
                 <i:Interaction.Triggers>
