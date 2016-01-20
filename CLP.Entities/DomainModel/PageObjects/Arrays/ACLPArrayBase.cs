@@ -238,7 +238,7 @@ namespace CLP.Entities
             set { SetValue(IsSnappableProperty, value); }
         }
 
-        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);     
 
         /// <summary>Sets the visibility of the array's top label.</summary>
         public bool IsTopLabelVisible
@@ -257,6 +257,24 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof (bool), true);
+
+        /// <summary>SUMMARY</summary>
+        public string TopLabelVariable
+        {
+            get { return GetValue<string>(TopLabelVariableProperty); }
+            set { SetValue(TopLabelVariableProperty, value); }
+        }
+
+        public static readonly PropertyData TopLabelVariableProperty = RegisterProperty("TopLabelVariable", typeof (string), "N");
+
+        /// <summary>SUMMARY</summary>
+        public string LeftLabelVariable
+        {
+            get { return GetValue<string>(LeftLabelVariableProperty); }
+            set { SetValue(LeftLabelVariableProperty, value); }
+        }
+
+        public static readonly PropertyData LeftLabelVariableProperty = RegisterProperty("LeftLabelVariable", typeof (string), "N");
 
         #endregion //Behavior Properties
 
@@ -307,10 +325,25 @@ namespace CLP.Entities
         /// <summary>Signifies obscuring shape over Columns.</summary>
         public bool IsColumnsObscured
         {
-
             get
             {
                 return VerticalDivisions != null && VerticalDivisions.Any(d => d.IsObscured);
+            }
+        }
+
+        public string TopLabelText
+        {
+            get
+            {
+                return IsColumnsObscured ? TopLabelVariable : Columns.ToString();
+            }
+        }
+
+        public string LeftLabelText
+        {
+            get
+            {
+                return IsRowsObscured ? LeftLabelVariable : Rows.ToString();
             }
         }
 

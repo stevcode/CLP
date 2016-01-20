@@ -194,27 +194,25 @@
             <TextBlock Grid.Column="1"
                        Grid.Row="0"
                        IsHitTestVisible="False"
-                       Text="{Binding Columns}"
+                       Text="{Binding PageObject.TopLabelText}"
                        TextAlignment="Center"
                        FontWeight="Bold"
                        FontSize="20"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                       Width="{Binding ArrayWidth}" />
 
             <!-- Left Large Label -->
             <TextBlock Grid.Column="0"
                        Grid.Row="1"
                        IsHitTestVisible="False"
-                       Text="{Binding Rows}"
+                       Text="{Binding PageObject.LeftLabelText}"
                        TextAlignment="Center"
                        FontWeight="Bold"
                        FontSize="20"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsSideLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Width="{Binding ArrayHeight}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
