@@ -1552,8 +1552,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            var isColumnsHidden = arrayCreationView.ToggleColumns.IsChecked != null && (bool)arrayCreationView.ToggleColumns.IsChecked;
-            var isRowsHidden = arrayCreationView.ToggleRows.IsChecked != null && (bool)arrayCreationView.ToggleRows.IsChecked;
+            var isColumnsHidden = arrayCreationView.IsColumnsHidden;
+            var isRowsHidden = arrayCreationView.IsRowsHidden;
 
             //Match GridSquareSize if any Division Templates or Arrays are already on the page.
             //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.

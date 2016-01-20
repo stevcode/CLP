@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,8 +14,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public ArrayCreationView()
         {
-            //Left = 515;
-            //Top = 315;
             Top = SystemParameters.FullPrimaryScreenHeight / 2 - 150;
             Left = SystemParameters.FullPrimaryScreenWidth / 2 - 300;
             InitializeComponent();
@@ -92,35 +91,43 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
+        public bool IsColumnsHidden;
+        public bool IsRowsHidden;
+
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            int rowNum;
-            int colNum;
-            int numberOfArrays = 1;
-            const int MAX_ARRAY_ROWSCOLUMNS = 301;
             const int MAX_NUMBER_OF_ARRAYS = 10;
-            var isRowsNum = int.TryParse(Rows.Text, out rowNum);
-            var isColsNum = int.TryParse(Columns.Text, out colNum);
+            int numberOfArrays;
             int.TryParse(NumberOfArrays.Text, out numberOfArrays);
-            var isColumnsHidden = ToggleColumns.IsChecked != null && (bool)ToggleColumns.IsChecked;
-            var isRowsHidden = ToggleRows.IsChecked != null && (bool)ToggleRows.IsChecked;
 
-            if (isColumnsHidden &&
+            const int OBSCURED_DIMENSION_INCREMENT = 2;
+            const int MAX_ARRAY_ROWSCOLUMNS = 301;
+            int rowNum = 0;
+            int colNum = 0;
+            IsRowsHidden = Rows.Text == "N";
+            IsColumnsHidden = Columns.Text == "N";
+            var isRowsNum = !IsRowsHidden && int.TryParse(Rows.Text, out rowNum);
+            var isColsNum = !IsColumnsHidden && int.TryParse(Columns.Text, out colNum);
+
+            if (IsColumnsHidden &&
                 isRowsNum)
             {
-                colNum = rowNum + 1;
+                colNum = rowNum + OBSCURED_DIMENSION_INCREMENT;
                 Columns.Text = colNum.ToString();
                 isColsNum = true;
             }
-            else if (isRowsHidden &&
+            else if (IsRowsHidden &&
                      isColsNum)
             {
-                rowNum = colNum + 1;
+                rowNum = colNum + OBSCURED_DIMENSION_INCREMENT;
                 Rows.Text = rowNum.ToString();
                 isRowsNum = true;
             }
-
-            if (!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
+            if (IsColumnsHidden && IsRowsHidden)
+            {
+                MessageBox.Show("Oops, Rows and Columns can't both be N.", "Oops");
+            }
+            else if (!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
             {
                 MessageBox.Show("Oops, you need to put in a number.", "Oops");
             }
@@ -155,64 +162,6 @@ namespace Classroom_Learning_Partner.Views
                 {
                     DialogResult = true;
                 }
-            }
-        }
-
-        private void ToggleColumns_OnClick(object sender, RoutedEventArgs e)
-        {
-            var isOtherChecked = ToggleRows.IsChecked != null && (bool)ToggleRows.IsChecked;
-            if (isOtherChecked)
-            {
-                ToggleColumns.IsChecked = false;
-                return;
-            }
-
-            Columns.Background = new SolidColorBrush(Colors.White);
-            Rows.Background = new SolidColorBrush(Colors.White);
-            NumberOfArrays.Background = new SolidColorBrush(Colors.White);
-
-            var textBox = Rows;
-            if (textBox == null)
-            {
-                return;
-            }
-
-            _focusedTextBox = textBox;
-            textBox.CaretIndex = textBox.Text.Length;
-            textBox.Background = new SolidColorBrush(Colors.LightGray);
-
-            foreach (var button in KeyPadGrid.Children)
-            {
-                (button as Button).Foreground = textBox.Foreground;
-            }
-        }
-
-        private void ToggleRows_OnClick(object sender, RoutedEventArgs e)
-        {
-            var isOtherChecked = ToggleColumns.IsChecked != null && (bool)ToggleColumns.IsChecked;
-            if (isOtherChecked)
-            {
-                ToggleRows.IsChecked = false;
-                return;
-            }
-
-            Columns.Background = new SolidColorBrush(Colors.White);
-            Rows.Background = new SolidColorBrush(Colors.White);
-            NumberOfArrays.Background = new SolidColorBrush(Colors.White);
-
-            var textBox = Columns;
-            if (textBox == null)
-            {
-                return;
-            }
-
-            _focusedTextBox = textBox;
-            textBox.CaretIndex = textBox.Text.Length;
-            textBox.Background = new SolidColorBrush(Colors.LightGray);
-
-            foreach (var button in KeyPadGrid.Children)
-            {
-                (button as Button).Foreground = textBox.Foreground;
             }
         }
     }
