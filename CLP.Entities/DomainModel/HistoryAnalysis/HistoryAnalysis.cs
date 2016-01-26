@@ -1156,6 +1156,8 @@ namespace CLP.Entities
 
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {
+            var relevantHistoryactions = new List<IHistoryAction>();
+
             var strategies = historyActions.Where(h => h.CodedObject == Codings.OBJECT_ARRAY && (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
 
             if (!strategies.Any())
