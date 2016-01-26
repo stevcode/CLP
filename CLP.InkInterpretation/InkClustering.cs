@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
-using System.Windows.Ink;
 using System.Windows.Input;
+using Priority_Queue;
 
 namespace CLP.InkInterpretation
 {
-    public class ClusterPoint
+    public class ClusterPoint : PriorityQueueNode
     {
         public const double UNDEFINED = -1.0;
 
@@ -19,7 +18,7 @@ namespace CLP.InkInterpretation
             IsProcessed = false;
         }
 
-        private StylusPoint _point;
+        public StylusPoint _point;
 
         public double X { get { return _point.X; } }
         public double Y { get { return _point.Y; } }
@@ -55,11 +54,12 @@ namespace CLP.InkInterpretation
         // complexity  of the scan, should be called max_epsilon. set to width/heigh of page?
         //
         // min cluster size should be the number of points in the shortest stroke
-        public static void OPTICS_Clustering(List<StylusPoint> points, double epsilon, int minClusterSize = 1)
+        public static List<StylusPoint> OPTICS_Clustering(List<StylusPoint> points, double epsilon, int minClusterSize = 1)
         {
             var clusterPoints = points.Select(p => new ClusterPoint(p)).ToList();
-            var unprocessedPoints = clusterPoints.ToList();
             var epsilonSquared = epsilon * epsilon; //Squared to correctly compare against EuclideanDistanceSquared.
+            var seeds = new HeapPriorityQueue<ClusterPoint>(clusterPoints.Count);
+            var processedClusterPoints = new List<ClusterPoint>();
 
             foreach (var p in clusterPoints)
             {
@@ -71,17 +71,35 @@ namespace CLP.InkInterpretation
                 p.ReachabilityDistanceSquared = ClusterPoint.UNDEFINED;
                 var neighborhood = GetNeighbors(p, epsilonSquared, clusterPoints, minClusterSize);
                 p.IsProcessed = true;
+                processedClusterPoints.Add(p);
 
                 if (p.CoreDistanceSquared == ClusterPoint.UNDEFINED)
                 {
                     continue;
                 }
 
-                Update(p, neighborhood);
+                seeds.Clear();
+                Update(p, neighborhood, seeds);
+
+                var innerNeighborhood = new List<ClusterPoint>();
+                while (seeds.Count > 0)
+                {
+                    var pInner = seeds.Dequeue();
+                    innerNeighborhood = GetNeighbors(pInner, epsilonSquared, clusterPoints, minClusterSize);
+                    pInner.IsProcessed = true;
+                    processedClusterPoints.Add(pInner);
+
+                    if (pInner.CoreDistanceSquared != ClusterPoint.UNDEFINED)
+                    {
+                        Update(pInner, innerNeighborhood, seeds);
+                    }
+                }
             }
+
+            return processedClusterPoints.Select(p => p._point).ToList();
         }
 
-        private static void Update(ClusterPoint p1, List<ClusterPoint> neighborhood)
+        private static void Update(ClusterPoint p1, List<ClusterPoint> neighborhood, HeapPriorityQueue<ClusterPoint> seeds)
         {
             foreach (var p2 in neighborhood)
             {
@@ -95,12 +113,12 @@ namespace CLP.InkInterpretation
                 if (p2.ReachabilityDistanceSquared == ClusterPoint.UNDEFINED)
                 {
                     p2.ReachabilityDistanceSquared = newReachabilityDistanceSquared;
-                    //?
+                    seeds.Enqueue(p2, newReachabilityDistanceSquared);
                 }
                 else if (newReachabilityDistanceSquared < p2.ReachabilityDistanceSquared)
                 {
                     p2.ReachabilityDistanceSquared = newReachabilityDistanceSquared;
-                    //?
+                    seeds.UpdatePriority(p2, newReachabilityDistanceSquared);
                 }
             }
         }

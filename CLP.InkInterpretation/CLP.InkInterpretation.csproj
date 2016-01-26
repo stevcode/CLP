@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="InkClustering.cs" />
     <Compile Include="InkInterpreter.cs" />
+    <Compile Include="PriorityQueue\HeapPriorityQueue.cs" />
+    <Compile Include="PriorityQueue\PriorityQueueNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
