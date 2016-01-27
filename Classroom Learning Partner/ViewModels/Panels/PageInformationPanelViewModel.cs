@@ -89,6 +89,8 @@ namespace Classroom_Learning_Partner.ViewModels
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
             GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+
+            ClusterTestCommand = new Command(OnClusterTestCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1451,6 +1453,14 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGenerateHistoryActionsCommandExecute()
         {
             HistoryAnalysis.GenerateHistoryActions(CurrentPage);
+        }
+
+        public Command ClusterTestCommand
+        { get; private set; }
+
+        private void OnClusterTestCommandExecute()
+        {
+            InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
         }
     }
 }

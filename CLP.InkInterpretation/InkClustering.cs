@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Ink;
 using System.Windows.Input;
 using Priority_Queue;
 
@@ -25,6 +26,7 @@ namespace CLP.InkInterpretation
 
         public double CoreDistanceSquared { get; set; }
         public double ReachabilityDistanceSquared { get; set; }
+        public double ReachabilityDistance {  get { return Math.Sqrt(ReachabilityDistanceSquared); } }
         public bool IsProcessed { get; set; }
 
         // Distance squared is faster to calculate (by an order of magnitude) and is still accurate as a comparison of distance.
@@ -45,7 +47,19 @@ namespace CLP.InkInterpretation
 
     public static class InkClustering
     {
+        public static void ClusterStrokes(StrokeCollection strokes)
+        {
+            var allStrokePoints = strokes.SelectMany(s => s.StylusPoints).ToList();
+            var processedPoints = OPTICS_Clustering(allStrokePoints, 1000, 2);
 
+            foreach (var p in processedPoints)
+            {
+                Console.WriteLine("{0},{1} : {2}", p.X, p.Y, p.ReachabilityDistance);
+            }
+
+            // This is wrong return type needed. processedClusterPoints are ordered by p.ReachabilityDistanceSquared
+            // need to find threshold(s?) needed to divide processedClusterPoints into clusters
+        }
 
         // https://en.wikipedia.org/wiki/OPTICS_algorithm
         // https://github.com/Euphoric/OpticsClustering
@@ -54,7 +68,7 @@ namespace CLP.InkInterpretation
         // complexity  of the scan, should be called max_epsilon. set to width/heigh of page?
         //
         // min cluster size should be the number of points in the shortest stroke
-        public static List<StylusPoint> OPTICS_Clustering(List<StylusPoint> points, double epsilon, int minClusterSize = 1)
+        public static List<ClusterPoint> OPTICS_Clustering(List<StylusPoint> points, double epsilon, int minClusterSize = 1)
         {
             var clusterPoints = points.Select(p => new ClusterPoint(p)).ToList();
             var epsilonSquared = epsilon * epsilon; //Squared to correctly compare against EuclideanDistanceSquared.
@@ -96,7 +110,7 @@ namespace CLP.InkInterpretation
                 }
             }
 
-            return processedClusterPoints.Select(p => p._point).ToList();
+            return processedClusterPoints;
         }
 
         private static void Update(ClusterPoint p1, List<ClusterPoint> neighborhood, HeapPriorityQueue<ClusterPoint> seeds)
