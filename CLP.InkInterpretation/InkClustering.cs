@@ -100,11 +100,24 @@ namespace CLP.InkInterpretation
             foreach (var stroke in strokes)
             {
                 var strokePoints = stroke.StylusPoints;
-
+                var highestPercentageClusterID = 0;
+                var percentageOfStrokeInHighestMatchingCluster = 0.0;
+                for (var i = 0; i < pointClusters.Count; i++)
+                {
+                    var clusterPoints = pointClusters[0];
+                    var numberOfSharedPoints = (from pointCluster in clusterPoints
+                                                from strokePoint in strokePoints
+                                                where pointCluster.IsEqualToStylusPoint(strokePoint)
+                                                select pointCluster).Count();
+                    var percentageOfStrokeInCurrentCluster = numberOfSharedPoints / strokePoints.Count;
+                    if (percentageOfStrokeInCurrentCluster > percentageOfStrokeInHighestMatchingCluster)
+                    {
+                        percentageOfStrokeInHighestMatchingCluster = percentageOfStrokeInCurrentCluster;
+                        highestPercentageClusterID = i;
+                    }
+                }
+                strokeClusters[highestPercentageClusterID].Add(stroke);
             }
-            
-
-
 
             return strokeClusters;
         }
