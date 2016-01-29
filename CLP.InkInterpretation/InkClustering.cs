@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Ink;
 using System.Windows.Input;
+using Windows.Foundation;
 using Priority_Queue;
 
 namespace CLP.InkInterpretation
@@ -43,22 +44,69 @@ namespace CLP.InkInterpretation
             var diffY = p.Y - Y;
             return diffX + diffY;
         }
+
+        public bool IsEqualToStylusPoint(StylusPoint p) { return p.X == X && p.Y == Y; }
     }
 
     public static class InkClustering
     {
-        public static void ClusterStrokes(StrokeCollection strokes)
+        // TODO: ignore strokes that were used to highlight the entire page, or more than half?
+        public static List<StrokeCollection> ClusterStrokes(StrokeCollection strokes)
         {
             var allStrokePoints = strokes.SelectMany(s => s.StylusPoints).ToList();
             var processedPoints = OPTICS_Clustering(allStrokePoints, 1000, 2);
 
-            foreach (var p in processedPoints)
+            if (!processedPoints.Any())
             {
-                Console.WriteLine("{0},{1} : {2}", p.X, p.Y, p.ReachabilityDistance);
+                //ERROR?
+                return new List<StrokeCollection>();
             }
 
-            // This is wrong return type needed. processedClusterPoints are ordered by p.ReachabilityDistanceSquared
-            // need to find threshold(s?) needed to divide processedClusterPoints into clusters
+            var normalizedReachabilityPlot = processedPoints.Select(p => new Point(0, p.ReachabilityDistance)).Skip(1).ToList();
+            var rawData = new double[normalizedReachabilityPlot.Count][];
+            for (var i = 0; i < rawData.Length; i++)
+            {
+                rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y};
+            }
+            
+            var clustering = K_MEANS_Clustering(rawData, 3);
+
+            var pointClusters = new List<List<ClusterPoint>>();
+            var currentCluster = new List<ClusterPoint>
+                                 {
+                                     processedPoints.First()
+                                 };
+            for (var i = 0; i < clustering.Length; i++)
+            {
+                if (clustering[i] != 2)
+                {
+                    currentCluster.Add(processedPoints[i + 1]);
+                    continue;
+                }
+
+                var fullCluster = currentCluster.ToList();
+                currentCluster.Clear();
+                currentCluster.Add(processedPoints[i + 1]);
+                pointClusters.Add(fullCluster);
+            }
+            if (currentCluster.Any())
+            {
+                currentCluster.Add(processedPoints.Last());
+                var finalCluster = currentCluster.ToList();
+                pointClusters.Add(finalCluster);
+            }
+
+            var strokeClusters = pointClusters.Select(pointCluster => new StrokeCollection()).ToList();
+            foreach (var stroke in strokes)
+            {
+                var strokePoints = stroke.StylusPoints;
+
+            }
+            
+
+
+
+            return strokeClusters;
         }
 
         // https://en.wikipedia.org/wiki/OPTICS_algorithm
@@ -160,6 +208,165 @@ namespace CLP.InkInterpretation
             p1.CoreDistanceSquared = orderedNeighborhood[minClusterSize - 1].EuclideanDistanceSquared(p1);
 
             return orderedNeighborhood;
+        }
+
+        // https://visualstudiomagazine.com/articles/2013/12/01/k-means-data-clustering-using-c.aspx
+        private static int[] K_MEANS_Clustering(double[][] rawData, int numberOfClusters)
+        {
+            var k = numberOfClusters;
+
+            var random = new Random();
+            var clustering = new int[k];
+            for (var i = 0; i < k; i++)
+            {
+                clustering[i] = i; // guarantees at least one data point is assigned to each cluster
+            }
+            for (var i = k; i < clustering.Length; i++)
+            {
+                clustering[i] = random.Next(0, k); // assigns rest of the data points to a random cluster.
+            }
+
+            var means = new double[k][];
+            for (var i = 0; i < k; i++)
+            {
+                means[i] = new double[rawData[0].Length];
+            }
+
+            var maxIterations = rawData.Length * 10;
+            var iteration = 0;
+            var clusteringSuccessful = true;
+            var clusteringChanged = true;
+            
+            while (clusteringSuccessful && 
+                   clusteringChanged &&
+                   iteration < maxIterations)
+            {
+                ++iteration;
+                clusteringSuccessful = UpdateMeans(rawData, clustering, ref means);
+                clusteringChanged = UpdateClustering(rawData, clustering, means);
+            }
+
+            return clustering;
+        }
+
+        private static bool UpdateMeans(double[][] data, int[] clustering, ref double[][] means)
+        {
+            var numberOfClusters = means.Length;
+            var clusterCounts = new int[numberOfClusters];
+            for (var i = 0; i < data.Length; i++)
+            {
+                var cluster = clustering[i];
+                ++clusterCounts[cluster];
+            }
+
+            for (var i = 0; i < numberOfClusters; i++)
+            {
+                if (clusterCounts[i] == 0)
+                {
+                    return false;
+                }
+                    
+            }
+
+            for (var i = 0; i < means.Length; i++)
+            {
+                for (var j = 0; j < means[i].Length; j++)
+                {
+                    means[i][j] = 0.0;
+                }
+            }
+                
+            for (var i = 0; i < data.Length; i++)
+            {
+                var cluster = clustering[i];
+                for (var j = 0; j < data[i].Length; j++)
+                {
+                    means[cluster][j] += data[i][j]; // accumulate sum
+                }
+            }
+
+            for (var i = 0; i < means.Length; i++)
+            {
+                for (var j = 0; j < means[i].Length; j++)
+                {
+                    means[i][j] /= clusterCounts[i]; // danger of div by 0
+                }
+            }
+
+            return true;
+        }
+
+        private static bool UpdateClustering(double[][] data, int[] clustering, double[][] means)
+        {
+            var numberOfClusters = means.Length;
+            var changed = false;
+
+            var newClustering = new int[clustering.Length];
+            Array.Copy(clustering, newClustering, clustering.Length);
+
+            var distances = new double[numberOfClusters];
+
+            for (var i = 0; i < data.Length; i++)
+            {
+                for (var j = 0; j < numberOfClusters; j++)
+                {
+                    distances[j] = Distance(data[i], means[j]);
+                }
+
+                int newClusterID = MinIndex(distances);
+                if (newClusterID == newClustering[i])
+                {
+                    continue;
+                }
+
+                changed = true;
+                newClustering[i] = newClusterID;
+            }
+
+            if (changed == false)
+            {
+                return false;
+            }
+
+            var clusterCounts = new int[numberOfClusters];
+            for (var i = 0; i < data.Length; i++)
+            {
+                var cluster = newClustering[i];
+                ++clusterCounts[cluster];
+            }
+
+            for (var i = 0; i < numberOfClusters; i++)
+            {
+                if (clusterCounts[i] == 0)
+                {
+                    return false;
+                }
+            }
+                
+            Array.Copy(newClustering, clustering, newClustering.Length);
+            return true; // no zero-counts and at least one change
+        }
+
+        private static double Distance(double[] tuple, double[] mean)
+        {
+            var sumSquaredDiffs = tuple.Select((t, i) => Math.Pow(t - mean[i], 2)).Sum();
+            return Math.Sqrt(sumSquaredDiffs);
+        }
+
+        private static int MinIndex(double[] distances)
+        {
+            var indexOfMin = 0;
+            var smallDist = distances[0];
+            for (var i = 0; i < distances.Length; i++)
+            {
+                if (distances[i] < smallDist)
+                {
+                    smallDist = distances[i];
+                    indexOfMin = i;
+                }
+            }
+
+            return indexOfMin;
         }
     }
 }
