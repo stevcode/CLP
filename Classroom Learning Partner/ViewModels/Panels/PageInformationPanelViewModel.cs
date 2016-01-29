@@ -1460,7 +1460,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClusterTestCommandExecute()
         {
-            InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in tempBoundaries)
+            {
+                CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
+            var clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+            foreach (var strokes in clusteredStrokes)
+            {
+                var clusterBounds = strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width);
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
         }
     }
 }

@@ -141,7 +141,7 @@ namespace CLP.InkInterpretation
                 var percentageOfStrokeInHighestMatchingCluster = 0.0;
                 for (var i = 0; i < pointClusters.Count; i++)
                 {
-                    var clusterPoints = pointClusters[0];
+                    var clusterPoints = pointClusters[i];
                     var numberOfSharedPoints = (from pointCluster in clusterPoints
                                                 from strokePoint in strokePoints
                                                 where pointCluster.IsEqualToStylusPoint(strokePoint)
@@ -266,7 +266,7 @@ namespace CLP.InkInterpretation
             var k = numberOfClusters;
 
             var random = new Random();
-            var clustering = new int[k];
+            var clustering = new int[rawData.Length];
             for (var i = 0; i < k; i++)
             {
                 clustering[i] = i; // guarantees at least one data point is assigned to each cluster
