@@ -70,6 +70,43 @@ namespace CLP.InkInterpretation
             }
             
             var clustering = K_MEANS_Clustering(rawData, 3);
+            
+            var zeroCount = 0;
+            var zeroTotal = 0.0;
+            var oneCount = 0;
+            var oneTotal = 0.0;
+            var twoCount = 0;
+            var twoTotal = 0.0;
+            for (var i = 0; i < clustering.Length; i++)
+            {
+                if (clustering[i] == 0)
+                {
+                    zeroCount++;
+                    zeroTotal += normalizedReachabilityPlot[i].Y;
+                }
+                if (clustering[i] == 1)
+                {
+                    oneCount++;
+                    oneTotal += normalizedReachabilityPlot[i].Y;
+                }
+                if (clustering[i] == 2)
+                {
+                    twoCount++;
+                    twoTotal += normalizedReachabilityPlot[i].Y;
+                }
+            }
+            var zeroMean = zeroTotal / zeroCount;
+            var oneMean = oneTotal / oneCount;
+            var twoMean = twoTotal / twoCount;
+            var clusterWithHighestMean = -1;
+            if (zeroMean > oneMean)
+            {
+                clusterWithHighestMean = zeroMean > twoMean ? 0 : 2;
+            }
+            else
+            {
+                clusterWithHighestMean = oneMean > twoMean ? 1 : 2;
+            }
 
             var pointClusters = new List<List<ClusterPoint>>();
             var currentCluster = new List<ClusterPoint>
@@ -78,7 +115,7 @@ namespace CLP.InkInterpretation
                                  };
             for (var i = 0; i < clustering.Length; i++)
             {
-                if (clustering[i] != 2)
+                if (clustering[i] != clusterWithHighestMean)
                 {
                     currentCluster.Add(processedPoints[i + 1]);
                     continue;
