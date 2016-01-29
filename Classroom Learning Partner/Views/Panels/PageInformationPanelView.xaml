@@ -96,6 +96,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -247,6 +248,13 @@
                         Height="20"
                         Margin="1"
                         Visibility="Collapsed" />
+
+                <Button Content="Test Clustering"
+                        Command="{Binding ClusterTestCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Visible" />
 
                 <Rectangle Grid.ColumnSpan="2"
                            Height="1"
