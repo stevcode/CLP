@@ -256,7 +256,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
 
-        /// <summary>List of the IDs of any HistoryActions that make up this HistoryAction.</summary>
+        /// <summary>List of any HistoryActions that make up this HistoryAction.</summary>
         public List<IHistoryAction> HistoryActions
         {
             get { return GetValue<List<IHistoryAction>>(HistoryActionsProperty); }
