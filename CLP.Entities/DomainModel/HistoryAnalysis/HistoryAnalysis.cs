@@ -1403,15 +1403,94 @@ namespace CLP.Entities
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {
             var relevantHistoryactions = new List<IHistoryAction>();
+            var strategyCodes = new List<string>();
+            var ignoredHistoryIndexes = new List<int>();
 
-            var strategies = historyActions.Where(h => h.CodedObject == Codings.OBJECT_ARRAY && (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
-
-            if (!strategies.Any())
+            for (var i = 0; i < historyActions.Count; i++)
             {
-                return;
+                if (ignoredHistoryIndexes.Contains(i))
+                {
+                    continue;
+                }
+
+                var currentHistoryAction = historyActions[i];
+                var isLastHistoryAction = i + 1 >= historyActions.Count;
+
+                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARRAY)
+                {
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE_INK, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    {
+                        if (!isLastHistoryAction)
+                        {
+                            var nextHistoryAction = historyActions[i + 1];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                            {
+                                relevantHistoryactions.Add(currentHistoryAction);
+                                relevantHistoryactions.Add(nextHistoryAction);
+                                var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                                strategyCodes.Add(compoundCode);
+                                continue;
+                            }
+                        }
+
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
+                    {
+                        for (int j = i + 1; j < historyActions.Count; j++)
+                        {
+                            var nextHistoryAction = historyActions[j];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARRAY &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP &&
+                                nextHistoryAction.CodedObjectID == currentHistoryAction.CodedObjectID)
+                            {
+                                relevantHistoryactions.Add(currentHistoryAction);
+                                relevantHistoryactions.Add(nextHistoryAction);
+                                ignoredHistoryIndexes.Add(j);
+                                var compoundCode = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT_THEN_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                                strategyCodes.Add(compoundCode);
+                                continue;
+                            }
+                        }
+
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+                }
             }
 
-            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, strategies);
+            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, relevantHistoryactions, strategyCodes);
             page.AddTag(tag);
         }
 
