@@ -269,20 +269,49 @@ namespace CLP.Entities
             #region Skip Counting Interpretation
 
             var skipCountStrokes = new Dictionary<int, StrokeCollection>();
-            var currentRow = 1;
+            for (var i = 1; i <= expectedRowValues.Count; i++)
+            {
+                skipCountStrokes.Add(i, new StrokeCollection());
+            }
+            
+            var averageStrokeWidth = strokes.Select(s => s.GetBounds().Width).Average();
+            var averageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average();
+            var averageStrokeX = strokes.Select(s => s.GetBounds().X).Average();
+            var probablyStrokeCountPerRow = Math.Round(strokes.Count % array.Rows * 1.0);
+            var testBoundaryWidth = (probablyStrokeCountPerRow * averageStrokeWidth) + (1.5 * averageStrokeWidth);
+            var arrayVisualRight = array.XPosition + array.LabelLength + array.ArrayWidth;
+            var testBoundaryX = arrayVisualRight <= averageStrokeX ? arrayVisualRight - (0.5 * averageStrokeWidth) : arrayVisualRight - (probablyStrokeCountPerRow * averageStrokeWidth);
+            var testBoundaryBufferZoneSize = Math.Max(averageStrokeHeight, array.GridSquareSize) * 0.2;
 
+            var currentRow = 1;
             // Test for skip counts on right side only.
             for (var i = 0; i < strokes.Count; i++)
             {
-                
                 var stroke = strokes[i];
                 var strokeBounds = stroke.GetBounds();
                 var strokeCenter = strokeBounds.Center();
+                var strokeArea = strokeBounds.Area();
 
+                // TODO: Check if stroke is inside acceptable bounds for right-side skip counting.
+                // Do this outside of this for loop, if any strokes are outside acceptable bounds
+                // create list of stroke collections before and after outside stroke, then produce
+                // history action for each stroke collection, and IGNORE? the outside stroke.
+
+                // Compare current stroke against previous stroke.
                 var previousStroke = i <= 0 ? null : strokes[i - 1];
-                var angleToPreviousStroke = previousStroke == null ? 0.0 : previousStroke.GetBounds().Center().SlopeInDegrees(strokeCenter);
+                if (previousStroke != null)
+                {
+                    var previousStrokeBounds = previousStroke.GetBounds();
+                    var previousStrokeCenter = previousStrokeBounds.Center();
+                    var previousStrokeArea = previousStrokeBounds.Area();
+                    var angleToPreviousStroke = previousStrokeCenter.SlopeInDegrees(strokeCenter);
+                }
 
 
+                for (var row = 1; row <= array.Rows; row++)
+                {
+                    
+                }
             }
 
             var currentExpectedValue = expectedRowValues[currentRow - 1];
@@ -291,11 +320,6 @@ namespace CLP.Entities
             //--------------------------------------------------------------------------
             Stroke prevStroke = null;
             var prevRow = -2;
-
-            var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5),
-                                               array.YPosition - (array.LabelLength * 1.5),
-                                               array.Width + (array.LabelLength * 3),
-                                               array.Height + (array.LabelLength * 3));
 
             foreach (var stroke in strokes)
             {
@@ -308,23 +332,23 @@ namespace CLP.Entities
                 /*******************************/
                 /*   INSIDE GENERAL AREA TEST  */
                 /*******************************/
-                bool cont = false;
-                var generalBound = new Rect(array.XPosition + array.LabelLength,
-                                            array.YPosition + array.LabelLength - 0.1 * height,
-                                            array.ArrayWidth + 4.5 * array.LabelLength,
-                                            array.ArrayHeight + 0.2 * height);
+                bool cont = true; //false;
+                //var generalBound = new Rect(array.XPosition + array.LabelLength,
+                //                            array.YPosition + array.LabelLength - 0.1 * height,
+                //                            array.ArrayWidth + 4.5 * array.LabelLength,
+                //                            array.ArrayHeight + 0.2 * height);
 
-                if (stroke.HitTest(generalBound, 80))
-                {
-                    cont = true;
-                }
+                //if (stroke.HitTest(generalBound, 80))
+                //{
+                //    cont = true;
+                //}
 
                 /************************/
                 /* PREVIOUS STROKE TEST */
                 /************************/
 
                 //Creates fixed stroke bounds
-                var strokeBoundFixed = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
+                var strokeBoundFixed = stroke.GetBounds();
 
                 //Checks previous ink stroke's bounds
                 if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
@@ -332,9 +356,8 @@ namespace CLP.Entities
                     var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
       
                     //Finds intersection
-                    var strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
-                    strokeBound.Intersect(prevBound);
-                    var intersectArea = strokeBound.Height * strokeBound.Width;
+                    strokeBoundFixed.Intersect(prevBound);
+                    var intersectArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                     var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                     var percentIntersect = 100 * intersectArea / strokeArea;
 
@@ -351,11 +374,10 @@ namespace CLP.Entities
                     {
                         //Creates previous stroke's row bound
                         var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
-     
+
                         //Finds intersection
-                        strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
-                        strokeBound.Intersect(nextBound);
-                        intersectArea = strokeBound.Height * strokeBound.Width;
+                        strokeBoundFixed.Intersect(nextBound);
+                        intersectArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                         strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                         percentIntersect = 100 * intersectArea / strokeArea;
 
