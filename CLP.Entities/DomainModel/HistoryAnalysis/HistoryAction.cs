@@ -237,15 +237,7 @@ namespace CLP.Entities
 
         #endregion // Coded Portions
 
-        /// <summary>SUMMARY</summary>
-        public Dictionary<string,string> MetaData
-        {
-            get { return GetValue<Dictionary<string,string>>(MetaDataProperty); }
-            set { SetValue(MetaDataProperty, value); }
-        }
-
-        public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof (Dictionary<string,string>), () => new Dictionary<string,string>());
-        
+        #region Backing Properties
 
         /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
         public List<string> HistoryItemIDs
@@ -254,7 +246,7 @@ namespace CLP.Entities
             set { SetValue(HistoryItemIDsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of any HistoryActions that make up this HistoryAction.</summary>
         public List<IHistoryAction> HistoryActions
@@ -263,7 +255,7 @@ namespace CLP.Entities
             set { SetValue(HistoryActionsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (List<IHistoryAction>), () => new List<IHistoryAction>());
+        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof(List<IHistoryAction>), () => new List<IHistoryAction>());
 
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
@@ -274,7 +266,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
 
+        #endregion // Backing Properties
+
         #region Calculated Properties
+
+        /// <summary>List of the HistoryItems that make up this HistoryAction.</summary>
+        public List<IHistoryItem> HistoryItems
+        {
+            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
+        }
 
         /// <summary>
         /// Take the following form: OBJECT SUB_TYPE action [ID id_increment, SUB_ID sub_id_increment: action_id]
@@ -296,20 +296,43 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>List of the HistoryItems that make up this HistoryAction.</summary>
-        public List<IHistoryItem> HistoryItems
+        #endregion //Calculated Properties
+
+        #region Meta Data Properties
+
+        /// <summary>Storage dictionary  for all meta data.</summary>
+        public Dictionary<string, string> MetaData
         {
-            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
+            get { return GetValue<Dictionary<string, string>>(MetaDataProperty); }
+            set { SetValue(MetaDataProperty, value); }
         }
 
-        #endregion //Calculated Properties
+        public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
+
+        public string ReferencePageObjectID
+        {
+            get { return MetaData.ContainsKey(Codings.META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[Codings.META_REFERENCE_PAGE_OBJECT_ID] : null; }
+            set
+            {
+                if (!MetaData.ContainsKey(Codings.META_REFERENCE_PAGE_OBJECT_ID))
+                {
+                    MetaData.Add(Codings.META_REFERENCE_PAGE_OBJECT_ID, value);
+                }
+                else
+                {
+                    MetaData[Codings.META_REFERENCE_PAGE_OBJECT_ID] = value;
+                }
+            }
+        }
+
+        #endregion // Meta Data Properties
 
         #endregion //Properties
 
         #region Static Properties
 
         /// <summary>
-        /// Maps an "pageObjectID" or "pageObjectID_SUB" to its current IncrementID.
+        /// Maps a "pageObjectID" or "pageObjectID_SUB" to its current IncrementID.
         /// </summary>
         public static readonly Dictionary<string, int> CurrentIncrementID = new Dictionary<string, int>();
 
@@ -323,6 +346,11 @@ namespace CLP.Entities
         #endregion // Static Properties
 
         #region Static Methods
+
+        public static void InitializeIncrementIDs()
+        {
+            
+        }
 
         public static string GetIncrementID(string pageObjectID, string codedObject, string codedID, int subIndex = -1)
         {

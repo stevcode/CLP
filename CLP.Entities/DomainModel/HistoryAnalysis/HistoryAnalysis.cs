@@ -611,7 +611,7 @@ namespace CLP.Entities
 
                     refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
-                refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
+                refinedHistoryAction.ReferencePageObjectID = currentPageObjectReference.ID;
 
                 processedInkActions.Add(refinedHistoryAction);
                 historyItemBuffer.Clear();

@@ -237,7 +237,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            var referenceArrayID = inkAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+            var referenceArrayID = inkAction.ReferencePageObjectID;
+            if (referenceArrayID == null)
+            {
+                return null;
+            }
             var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
             if (array == null)
             {
@@ -465,7 +469,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            var referenceArrayID = inkAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+            var referenceArrayID = inkAction.ReferencePageObjectID;
+            if (referenceArrayID == null)
+            {
+                return null;
+            }
             var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
             if (array == null ||
                 array.ArrayType != ArrayTypes.Array ||

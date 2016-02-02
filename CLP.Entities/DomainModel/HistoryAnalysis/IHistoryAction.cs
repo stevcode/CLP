@@ -28,5 +28,6 @@ namespace CLP.Entities
         string CachedCodedValue { get; set; }
         string CodedValue { get; }
         List<IHistoryItem> HistoryItems { get; }
+        string ReferencePageObjectID { get; set; }
     }
 }

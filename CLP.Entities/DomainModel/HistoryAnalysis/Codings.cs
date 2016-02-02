@@ -138,6 +138,12 @@ namespace CLP.Entities
 
         #endregion // CodedActionIDVariables
 
+        #region Meta Data
+
+        public const string META_REFERENCE_PAGE_OBJECT_ID = "REFERENCE_PAGE_OBJECT_ID";
+
+        #endregion // Meta Data
+
         #region Analysis Codes
 
         public const string ANALYSIS_COR_BEFORE_REP = "ABR";
