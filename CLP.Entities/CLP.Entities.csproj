@@ -237,6 +237,7 @@
     <Compile Include="DomainModel\Tags\TempArrayDividersTag.cs" />
     <Compile Include="DomainModel\Tags\TempArraySkipCountingTag.cs" />
     <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\PointExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />
     <Compile Include="DomainModel\Utility\RollingStandardDeviation.cs" />
     <Compile Include="DomainModel\Utility\TypeSwitch.cs" />

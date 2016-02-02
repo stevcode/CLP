@@ -254,28 +254,56 @@ namespace CLP.Entities
             var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
 
             var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
+            var expectedRowValues = new List<int>();
+            for (var i = 1; i <= array.Rows; i++)
+            {
+                expectedRowValues.Add(i * array.Columns);
+            }
+
+            var expectedColumnValues = new List<int>();
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                expectedColumnValues.Add(i * array.Rows);
+            }
 
             #region Skip Counting Interpretation
 
             var skipCountStrokes = new Dictionary<int, StrokeCollection>();
+            var currentRow = 1;
+
+            // Test for skip counts on right side only.
+            for (var i = 0; i < strokes.Count; i++)
+            {
+                
+                var stroke = strokes[i];
+                var strokeBounds = stroke.GetBounds();
+                var strokeCenter = strokeBounds.Center();
+
+                var previousStroke = i <= 0 ? null : strokes[i - 1];
+                var angleToPreviousStroke = previousStroke == null ? 0.0 : previousStroke.GetBounds().Center().SlopeInDegrees(strokeCenter);
+
+
+            }
+
+            var currentExpectedValue = expectedRowValues[currentRow - 1];
+
+
+            //--------------------------------------------------------------------------
             Stroke prevStroke = null;
             var prevRow = -2;
-            //var prev_xpos = -2.0; 
 
             var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5),
                                                array.YPosition - (array.LabelLength * 1.5),
                                                array.Width + (array.LabelLength * 3),
                                                array.Height + (array.LabelLength * 3));
-            var inkCloseToArray = strokes;
 
-            foreach (var inkStroke in inkCloseToArray)
+            foreach (var stroke in strokes)
             {
                 //Defines location variables
                 var row = -2;
                 var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1 * array.GridSquareSize;
                 var width = (4.5 * array.LabelLength) + (1.1 * array.GridSquareSize);
                 var height = array.GridSquareSize;
-                //var curr_xpos = xpos;
 
                 /*******************************/
                 /*   INSIDE GENERAL AREA TEST  */
@@ -286,13 +314,9 @@ namespace CLP.Entities
                                             array.ArrayWidth + 4.5 * array.LabelLength,
                                             array.ArrayHeight + 0.2 * height);
 
-                if (inkStroke.HitTest(generalBound, 80))
+                if (stroke.HitTest(generalBound, 80))
                 {
                     cont = true;
-                }
-                else
-                {
-                    Console.WriteLine("Failed general bound test");
                 }
 
                 /************************/
@@ -300,20 +324,15 @@ namespace CLP.Entities
                 /************************/
 
                 //Creates fixed stroke bounds
-                var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                var strokeBoundFixed = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
 
                 //Checks previous ink stroke's bounds
                 if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
                 {
-                    var prev_y = prevStroke.GetBounds().Y;
-                    //var prev_height = prevStroke.GetBounds().Height;
-                    var curr_y = inkStroke.GetBounds().Y;
-                    //var curr_height = inkStroke.GetBounds().Height;
-
                     var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
       
                     //Finds intersection
-                    var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                    var strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
                     strokeBound.Intersect(prevBound);
                     var intersectArea = strokeBound.Height * strokeBound.Width;
                     var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
@@ -334,7 +353,7 @@ namespace CLP.Entities
                         var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
      
                         //Finds intersection
-                        strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                        strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
                         strokeBound.Intersect(nextBound);
                         intersectArea = strokeBound.Height * strokeBound.Width;
                         strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
@@ -363,7 +382,7 @@ namespace CLP.Entities
                         var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
              
                         //Finds intersection
-                        var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                        var strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
                         strokeBound.Intersect(rectBound);
                         var intersectArea = strokeBound.Height * strokeBound.Width;
                         var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
@@ -380,19 +399,6 @@ namespace CLP.Entities
                     }
                 }
 
-                /************************/
-                /*   INSIDE ARRAY TEST  */
-                /************************/
-                if (cont)
-                {
-                    var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
-                    if (inkStroke.HitTest(arrBound, 80))
-                    {
-                        row = -1;
-                        //curr_xpos = xpos - array.GridSquareSize;
-                    }
-                }
-
                 /***************/
                 /*  ROW MATCH  */
                 /***************/
@@ -403,31 +409,25 @@ namespace CLP.Entities
                     {
                         skipCountStrokes.Add(row, new StrokeCollection());
                     }
-                    skipCountStrokes[row].Add(inkStroke);
+                    skipCountStrokes[row].Add(stroke);
                     if (row > -1)
                     {
-                        prevStroke = inkStroke;
+                        prevStroke = stroke;
                         prevRow = row;
-                        //prev_xpos = curr_xpos;
                     }
 
                 }
+
+
             }
 
-            var equation = string.Empty;
+
             var skipCounts = new Dictionary<int, string>();
             //Writes row number and ink interpretation to txt file
             foreach (var row in skipCountStrokes.Keys)
             {
                 var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
-                if (row == -1)
-                {
-                    equation = interpretation;
-                }
-                else
-                {
-                    skipCounts.Add(row, interpretation);
-                }
+                skipCounts.Add(row, interpretation);
             }
 
             #endregion // Skip Counting Interpretation

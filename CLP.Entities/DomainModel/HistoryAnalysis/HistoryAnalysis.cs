@@ -1490,6 +1490,11 @@ namespace CLP.Entities
                 }
             }
 
+            if (!strategyCodes.Any())
+            {
+                return;
+            }
+
             var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, relevantHistoryactions, strategyCodes);
             page.AddTag(tag);
         }
