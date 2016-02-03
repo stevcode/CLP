@@ -817,5 +817,45 @@ namespace CLP.Entities
         }
 
         #endregion //AStrokeAccepter Overrides
+
+        #region Static Methods
+
+        public static string ConsolidateJumps(List<NumberLineJumpSize> jumps)
+        {
+            jumps = jumps.OrderBy(j => j.StartingTickIndex).ToList();
+            var groupedJumps = new List<List<NumberLineJumpSize>>();
+
+            var buffer = new List<NumberLineJumpSize>();
+            for (int i = 0; i < jumps.Count; i++)
+            {
+                var currentJump = jumps[i];
+                buffer.Add(currentJump);
+                if (buffer.Count == 1)
+                {
+                    continue;
+                }
+
+                var nextJump = i + 1 < jumps.Count ? jumps[i + 1] : null;
+                if (nextJump != null &&
+                    currentJump.JumpSize != nextJump.JumpSize)
+                {
+                    groupedJumps.Add(buffer);
+                    buffer = new List<NumberLineJumpSize>();
+                }
+            }
+
+            groupedJumps.Add(buffer);
+            var jumpSegments = new List<string>();
+            foreach (var jumpGroup in groupedJumps)
+            {
+                var firstJump = jumpGroup.First();
+                var jumpSegment = string.Format("{0}, {1}-{2}", firstJump.JumpSize, firstJump.StartingTickIndex, firstJump.StartingTickIndex + (firstJump.JumpSize * jumpGroup.Count));
+                jumpSegments.Add(jumpSegment);
+            }
+
+            return string.Join("; ", jumpSegments);
+        } 
+
+        #endregion // Static Methods
     }
 }

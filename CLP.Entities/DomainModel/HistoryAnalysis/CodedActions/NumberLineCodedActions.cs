@@ -79,38 +79,40 @@ namespace CLP.Entities
                 return null;
             }
 
-            allJumps = allJumps.OrderBy(j => j.StartingTickIndex).ToList();
-            var groupedJumps = new List<List<NumberLineJumpSize>>();
+            // TODO: Test then remove. Refactored this code to NumberLine.ConsolidateJumps()
+            //allJumps = allJumps.OrderBy(j => j.StartingTickIndex).ToList();
+            //var groupedJumps = new List<List<NumberLineJumpSize>>();
 
-            var buffer = new List<NumberLineJumpSize>();
-            for (int i = 0; i < allJumps.Count; i++)
-            {
-                var currentJump = allJumps[i];
-                buffer.Add(currentJump);
-                if (buffer.Count == 1)
-                {
-                    continue;
-                }
+            //var buffer = new List<NumberLineJumpSize>();
+            //for (int i = 0; i < allJumps.Count; i++)
+            //{
+            //    var currentJump = allJumps[i];
+            //    buffer.Add(currentJump);
+            //    if (buffer.Count == 1)
+            //    {
+            //        continue;
+            //    }
 
-                var nextJump = i + 1 < allJumps.Count ? allJumps[i + 1] : null;
-                if (nextJump != null &&
-                    currentJump.JumpSize != nextJump.JumpSize)
-                {
-                    groupedJumps.Add(buffer);
-                    buffer = new List<NumberLineJumpSize>();
-                }
-            }
+            //    var nextJump = i + 1 < allJumps.Count ? allJumps[i + 1] : null;
+            //    if (nextJump != null &&
+            //        currentJump.JumpSize != nextJump.JumpSize)
+            //    {
+            //        groupedJumps.Add(buffer);
+            //        buffer = new List<NumberLineJumpSize>();
+            //    }
+            //}
 
-            groupedJumps.Add(buffer);
-            var jumpSegments = new List<string>();
-            foreach (var jumps in groupedJumps)
-            {
-                var firstJump = jumps.First();
-                var jumpSegment = string.Format("{0}, {1}-{2}", firstJump.JumpSize, firstJump.StartingTickIndex, firstJump.StartingTickIndex + (firstJump.JumpSize * jumps.Count));
-                jumpSegments.Add(jumpSegment);
-            }
+            //groupedJumps.Add(buffer);
+            //var jumpSegments = new List<string>();
+            //foreach (var jumps in groupedJumps)
+            //{
+            //    var firstJump = jumps.First();
+            //    var jumpSegment = string.Format("{0}, {1}-{2}", firstJump.JumpSize, firstJump.StartingTickIndex, firstJump.StartingTickIndex + (firstJump.JumpSize * jumps.Count));
+            //    jumpSegments.Add(jumpSegment);
+            //}
 
-            var codedActionID = string.Join("; ", jumpSegments);
+            //var codedActionID = string.Join("; ", jumpSegments);
+            var codedActionID = NumberLine.ConsolidateJumps(allJumps);
 
             var historyAction = new HistoryAction(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
