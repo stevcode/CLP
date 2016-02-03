@@ -798,6 +798,8 @@ namespace CLP.Entities
             AttemptRepresentationCorrectness(page, historyActions);
         }
 
+        // TODO: Move each Attempt method to the Tag's class
+
         public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
         {
             if (!historyActions.Any())
@@ -1145,6 +1147,8 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
+            var finalRepresentations = page.PageObjects.Where(p => p is CLPArray || p is StampedObject || p is NumberLine || p is Bin);
+
             var representations = historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE || h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
 
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
