@@ -830,14 +830,11 @@ namespace CLP.Entities
             {
                 var currentJump = jumps[i];
                 buffer.Add(currentJump);
-                if (buffer.Count == 1)
-                {
-                    continue;
-                }
 
                 var nextJump = i + 1 < jumps.Count ? jumps[i + 1] : null;
                 if (nextJump != null &&
-                    currentJump.JumpSize != nextJump.JumpSize)
+                    (currentJump.JumpSize != nextJump.JumpSize ||
+                     currentJump.StartingTickIndex + currentJump.JumpSize != nextJump.StartingTickIndex))
                 {
                     groupedJumps.Add(buffer);
                     buffer = new List<NumberLineJumpSize>();
