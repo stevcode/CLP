@@ -61,6 +61,14 @@
                     Width="300"
                     Margin="10"
                     FontSize="22"
+                    FontWeight="Bold" /> 
+
+            <Button Content="Batch Representations Used"
+                    Command="{Binding BatchRepresentationsUsedTagCommand}"
+                    Height="80"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
                     FontWeight="Bold" />
 
         </StackPanel>
