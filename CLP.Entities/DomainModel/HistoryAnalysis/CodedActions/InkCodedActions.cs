@@ -142,6 +142,10 @@ namespace CLP.Entities
         public static Point GetAverageStrokeDimensions(CLPPage page)
         {
             var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            if (!strokes.Any())
+            {
+                return new Point(0.0, 0.0);
+            }
             var averageWidth = strokes.Average(s => s.GetBounds().Width);
             var averageHeight = strokes.Average(s => s.GetBounds().Height);
             return new Point(averageWidth, averageHeight);
@@ -150,6 +154,10 @@ namespace CLP.Entities
         public static double GetAverageClosestStrokeDistance(CLPPage page)
         {
             var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            if (!strokes.Any())
+            {
+                return 0.0;
+            }
             var allClosestDistances = (from stroke in strokes
                                        let centroid = stroke.WeightedCenter()
                                        select (from otherStroke in strokes
@@ -166,6 +174,10 @@ namespace CLP.Entities
         public static double GetStandardDeviationOfClosestStrokeDistance(CLPPage page)
         {
             var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
+            if (!strokes.Any())
+            {
+                return 0.0;
+            }
             var allClosestDistances = (from stroke in strokes
                                        let centroid = stroke.WeightedCenter()
                                        select (from otherStroke in strokes
