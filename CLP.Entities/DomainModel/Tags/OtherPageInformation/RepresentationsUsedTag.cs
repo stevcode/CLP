@@ -93,7 +93,10 @@ namespace CLP.Entities
                 }
 
                 var deletedSection = !DeletedCodedRepresentations.Any() ? string.Empty : string.Format("Deleted Representation(s):\n{0}", string.Join("\n", DeletedCodedRepresentations));
-                var finalSection = !FinalCodedRepresentations.Any() ? string.Empty : string.Format("Final Representation(s):\n{0}", string.Join("\n", FinalCodedRepresentations));
+                var finalSectionDelimiter = DeletedCodedRepresentations.Any() && FinalCodedRepresentations.Any() ? "\n" : string.Empty;
+                var finalSection = !FinalCodedRepresentations.Any()
+                                       ? string.Empty
+                                       : string.Format("{0}Final Representation(s):\n{1}", finalSectionDelimiter, string.Join("\n", FinalCodedRepresentations));
                 var codeSection = AllRepresentations.Count > 1 ? string.Format("\nCode: {0}", AnalysisCode) : string.Empty;
                 return string.Format("{0}{1}{2}", deletedSection, finalSection, codeSection);
             }
