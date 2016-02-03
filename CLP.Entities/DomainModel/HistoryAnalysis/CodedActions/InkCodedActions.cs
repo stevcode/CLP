@@ -154,7 +154,7 @@ namespace CLP.Entities
         public static double GetAverageClosestStrokeDistance(CLPPage page)
         {
             var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
-            if (!strokes.Any())
+            if (strokes.Count <= 1)
             {
                 return 0.0;
             }
@@ -174,7 +174,7 @@ namespace CLP.Entities
         public static double GetStandardDeviationOfClosestStrokeDistance(CLPPage page)
         {
             var strokes = page.InkStrokes.ToList().Concat(page.History.TrashedInkStrokes.ToList()).ToList();
-            if (!strokes.Any())
+            if (strokes.Count <= 1)
             {
                 return 0.0;
             }

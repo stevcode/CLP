@@ -1291,10 +1291,15 @@ namespace CLP.Entities
 
                         foreach (var jump in jumpsToRemove)
                         {
-                            jumpGroups[numberLineID].Remove(jump);
-                            if (!jumpGroups[numberLineID].Any())
+                            // BUG: Natalie page 12 has errors here if you don't check ContainsKey, shouldn't happen.
+                            if (jumpGroups.ContainsKey(numberLineID))
                             {
-                                jumpGroups.Remove(numberLineID);
+                                jumpGroups[numberLineID].Remove(jump);
+                                
+                                if (!jumpGroups[numberLineID].Any())
+                                {
+                                    jumpGroups.Remove(numberLineID);
+                                }
                             }
                         }
                     }

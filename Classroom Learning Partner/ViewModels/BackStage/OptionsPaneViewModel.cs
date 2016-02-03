@@ -110,8 +110,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var tagLine = string.Format("{0}, p {1}:\n{2}", page.Owner.FullName, page.PageNumber, tag.FormattedValue);
 
-                    File.AppendAllText(filePath, tagLine + "\n");
+                    File.AppendAllText(filePath, tagLine + "\n\n");
                 }
+
+                File.AppendAllText(filePath, "*****\n");
             }
         }
 
