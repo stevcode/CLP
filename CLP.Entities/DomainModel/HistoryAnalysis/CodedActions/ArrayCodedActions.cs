@@ -253,7 +253,12 @@ namespace CLP.Entities
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
 
+            // BUG: Doesn't deal with skip erase!
             var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
+            if (!strokes.Any())
+            {
+                return null;
+            }
             var expectedRowValues = new List<int>();
             for (var i = 1; i <= array.Rows; i++)
             {
@@ -268,22 +273,53 @@ namespace CLP.Entities
 
             #region Skip Counting Interpretation
 
+            // Initialize StrokeCollection for each row
             var skipCountStrokes = new Dictionary<int, StrokeCollection>();
             for (var i = 1; i <= expectedRowValues.Count; i++)
             {
                 skipCountStrokes.Add(i, new StrokeCollection());
             }
-            
+
+            // Place strokes in initial row groupings
+            var currentRow = 1;
+            var rowBufferSize = array.GridSquareSize * 0.2;
+            var averageStrokeCenterX = strokes.Select(s => s.GetBounds().Center().X).Average();
+            var arrayVisualRight = array.XPosition + array.LabelLength + array.ArrayWidth;
+            var relativeAverageStrokeCenterX = averageStrokeCenterX - arrayVisualRight;
+            var isSkipsOutsideArray = averageStrokeCenterX > arrayVisualRight;
+            var rowBoundaryX = isSkipsOutsideArray ? arrayVisualRight - (0.2 * relativeAverageStrokeCenterX) : arrayVisualRight + (2.0 * relativeAverageStrokeCenterX);
+            var rowBoundaryWidth = 2.4 * relativeAverageStrokeCenterX;
+            var rowBoundaryHeight = array.GridSquareSize + (2.0 * rowBufferSize);
+            for (var i = 0; i < strokes.Count; i++)
+            {
+                var stroke = strokes[i];
+                var strokeBounds = stroke.GetBounds();
+
+                for (var row = 1; row <= array.Rows; row++)
+                {
+
+                    var rowBoundary = new Rect
+                                      {
+                                          X = rowBoundaryX,
+                                          Y = array.YPosition + array.LabelLength - rowBufferSize + ((row - 1) * array.GridSquareSize),
+                                          Width = rowBoundaryWidth,
+                                          Height = rowBoundaryHeight
+                                      };
+                }
+            }
+
             var averageStrokeWidth = strokes.Select(s => s.GetBounds().Width).Average();
             var averageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average();
             var averageStrokeX = strokes.Select(s => s.GetBounds().X).Average();
             var probablyStrokeCountPerRow = Math.Round(strokes.Count % array.Rows * 1.0);
             var testBoundaryWidth = (probablyStrokeCountPerRow * averageStrokeWidth) + (1.5 * averageStrokeWidth);
-            var arrayVisualRight = array.XPosition + array.LabelLength + array.ArrayWidth;
+            
             var testBoundaryX = arrayVisualRight <= averageStrokeX ? arrayVisualRight - (0.5 * averageStrokeWidth) : arrayVisualRight - (probablyStrokeCountPerRow * averageStrokeWidth);
             var testBoundaryBufferZoneSize = Math.Max(averageStrokeHeight, array.GridSquareSize) * 0.2;
+            var testBoundaryInitialY = array.YPosition + array.LabelLength - testBoundaryBufferZoneSize;
+            var testBoundaryMaxHeight = array.GridSquareSize + (2.0 * testBoundaryBufferZoneSize);
 
-            var currentRow = 1;
+            
             // Test for skip counts on right side only.
             for (var i = 0; i < strokes.Count; i++)
             {
@@ -295,7 +331,13 @@ namespace CLP.Entities
                 // TODO: Check if stroke is inside acceptable bounds for right-side skip counting.
                 // Do this outside of this for loop, if any strokes are outside acceptable bounds
                 // create list of stroke collections before and after outside stroke, then produce
-                // history action for each stroke collection, and IGNORE? the outside stroke.
+                // history action for each stroke collection, and IGNORE? the outside stroke. Also
+                // check for strokes larger than GridSquareSize*2
+
+                // TODO: Make InkCluster class and after clustering, create one for each cluster, use this to label each cluster, as property of class
+                // also have flags for each ink cluster, so can flag this cluster as SKIP RIGHT on ARR uniqueID or ARR 8x8 (4x8 a), then can adaptively
+                // move strokes to different clusters, for instance in the above situation where we'd change this single cluster to 2 cluster, the ink
+                // in the skip and the ink out of the skip. can use to notice when erasing from a skp to generate ARR skip erase
 
                 // Compare current stroke against previous stroke.
                 var previousStroke = i <= 0 ? null : strokes[i - 1];
@@ -310,7 +352,17 @@ namespace CLP.Entities
 
                 for (var row = 1; row <= array.Rows; row++)
                 {
-                    
+                    var strokesInPreviousRow = row <= 1 ? new StrokeCollection() : skipCountStrokes[row - 1];
+                    var testBoundaryY = strokesInPreviousRow.Any() ? strokesInPreviousRow.GetBounds().Bottom : testBoundaryInitialY + ((row - 1) * array.GridSquareSize);
+                    var averageHeightOfStrokesInARow = skipCountStrokes.Values.Where(x => x.Any()).Select(x => x.GetBounds().Height).Average();
+                //    var testBoundaryMinBottom = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) +
+
+                    //var testBoundary = new Rect
+                    //                   {
+                    //                       X = testBoundaryX,
+                    //                       Y = testBoundaryY,
+                    //                       Width = testBoundaryWidth
+                    //                   };
                 }
             }
 
@@ -354,7 +406,7 @@ namespace CLP.Entities
                 if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
                 {
                     var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
-      
+
                     //Finds intersection
                     strokeBoundFixed.Intersect(prevBound);
                     var intersectArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
