@@ -1148,15 +1148,12 @@ namespace CLP.Entities
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
             var allRepresentations = new List<string>();
-
             var deletedCodedRepresentations = new List<string>();
-            //var deletedHistoryItems = historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE &&
-            //                                                     (h.CodedObject == Codings.OBJECT_ARRAY ||
-            //                                                      h.CodedObject == Codings.)
 
             var stampedObjectGroups = new Dictionary<string, int>();
             var maxStampedObjectGroups = new Dictionary<string, int>();
             var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
+            var subArrayGroups = new Dictionary<string,List<string>>();
             foreach (var historyAction in historyActions)
             {
                 #region Stamps
@@ -1295,6 +1292,10 @@ namespace CLP.Entities
                         foreach (var jump in jumpsToRemove)
                         {
                             jumpGroups[numberLineID].Remove(jump);
+                            if (!jumpGroups[numberLineID].Any())
+                            {
+                                jumpGroups.Remove(numberLineID);
+                            }
                         }
                     }
 
@@ -1328,6 +1329,84 @@ namespace CLP.Entities
                 }
 
                 #endregion // Number Line
+
+                #region Array
+
+                if (historyAction.CodedObject == Codings.OBJECT_ARRAY)
+                {
+                    if (historyAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var actionID = historyAction.CodedObjectActionID;
+                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        if (!subArrayGroups.ContainsKey(referenceArrayID))
+                        {
+                            subArrayGroups.Add(referenceArrayID, subArrays);
+                        }
+                        else
+                        {
+                            subArrayGroups[referenceArrayID].AddRange(subArrays);
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK_ERASE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var actionID = historyAction.CodedObjectActionID;
+                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        foreach (var subArray in subArrays)
+                        {
+                            if (subArrayGroups[referenceArrayID].Contains(subArray))
+                            {
+                                subArrayGroups[referenceArrayID].Remove(subArray);
+                                if (!subArrayGroups[referenceArrayID].Any())
+                                {
+                                    subArrayGroups.Remove(referenceArrayID);
+                                }
+                            }
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var array = objectsChanged.PageObjectsRemoved.First() as CLPArray;
+                        if (array == null)
+                        {
+                            continue;
+                        }
+
+                        var obj = array.CodedName;
+                        var id = historyAction.CodedObjectID;
+                        var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+
+                        var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                        deletedCodedRepresentations.Add(codedValue);
+                        allRepresentations.Add(obj);
+                    }
+                }
+
+                #endregion // Array
             }
 
             var finalCodedRepresentations = new List<string>();
@@ -1339,15 +1418,11 @@ namespace CLP.Entities
                 {
                     var obj = array.CodedName;
                     var id = array.CodedID;
-                    var horizontalRegions = array.HorizontalDivisions.Select(d => string.Format("{0}x{1}", d.Value, array.Columns)).ToList();
-                    if (!horizontalRegions.Any())
-                    {
-                        
-                    }
+                    var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
-                    //var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
-                    //finalCodedRepresentations.Add(codedValue);
-                    //allRepresentations.Add(obj);
+                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    finalCodedRepresentations.Add(codedValue);
+                    allRepresentations.Add(obj);
                 }
 
                 var numberLine = pageObject as NumberLine;
