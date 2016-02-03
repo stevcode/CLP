@@ -166,7 +166,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof (int), 1);
 
-        /// <summary>List of horizontal divisions in the array.</summary>
+        /// <summary>List of horizontal regions in the array. All regions have the same number of columns as the array. The dividing line is horizontal.</summary>
         public ObservableCollection<CLPArrayDivision> HorizontalDivisions
         {
             get
@@ -186,7 +186,7 @@ namespace CLP.Entities
                                                                                            typeof (ObservableCollection<CLPArrayDivision>),
                                                                                            () => new ObservableCollection<CLPArrayDivision>());
 
-        /// <summary>List of vertical divisions in the array.</summary>
+        /// <summary>List of vertical regions in the array. All regions have the same number of rows as the array. The dividing line is vertical.</summary>
         public ObservableCollection<CLPArrayDivision> VerticalDivisions
         {
             get
