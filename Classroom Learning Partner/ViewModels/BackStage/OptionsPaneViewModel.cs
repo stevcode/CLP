@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Windows;
@@ -17,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             BatchTagAnalysisCommand = new Command(OnBatchTagAnalysisCommandExecute);
+            BatchRepresentationsUsedTagCommand = new Command(OnBatchRepresentationsUsedTagCommandExecute);
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             ApplyRenameToCacheCommand = new Command(OnApplyRenameToCacheCommandExecute);
             ToggleBindingStyleCommand = new Command(OnToggleBindingStyleCommandExecute);
@@ -49,6 +53,68 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             dataService.Analyze();
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command BatchRepresentationsUsedTagCommand { get; private set; }
+
+        private void OnBatchRepresentationsUsedTagCommandExecute()
+        {
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "Batch Results");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, "Batch Representations Used Tags.txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            File.AppendAllText(filePath, "*****Representations Used Tags*****" + "\n\n");
+
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            {
+                var notebook = notebookInfo.Notebook;
+                if (notebook.OwnerID == Person.Author.ID ||
+                    !notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in notebook.Pages)
+                {
+                    var lastSubmission = page.Submissions.LastOrDefault();
+                    if (lastSubmission == null)
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine("Generating Representations Used Tag for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+                    HistoryAnalysis.GenerateHistoryActions(lastSubmission);
+                    Console.WriteLine("Finished generating Representations Used Tag.\n");
+
+                    var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag);
+                    if (tag == null)
+                    {
+                        continue;
+                    }
+
+                    var tagLine = string.Format("{0}, p {1}:\n{2}", page.Owner.FullName, page.PageNumber, tag.FormattedValue);
+
+                    File.AppendAllText(filePath, tagLine + "\n\n");
+                }
+
+                File.AppendAllText(filePath, "*****\n");
+            }
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>

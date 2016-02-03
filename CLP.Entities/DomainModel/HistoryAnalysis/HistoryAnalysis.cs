@@ -798,6 +798,8 @@ namespace CLP.Entities
             AttemptRepresentationCorrectness(page, historyActions);
         }
 
+        // TODO: Move each Attempt method to the Tag's class
+
         public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
         {
             if (!historyActions.Any())
@@ -1145,14 +1147,340 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
-            var representations = historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_BINS || h.CodedObject == Codings.OBJECT_NUMBER_LINE || h.CodedObject == Codings.OBJECT_STAMP || h.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)).Select(h => h.CodedObject).Distinct().ToList();
+            var allRepresentations = new List<string>();
+            var deletedCodedRepresentations = new List<string>();
 
-            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representations);
+            var stampedObjectGroups = new Dictionary<string, int>();
+            var maxStampedObjectGroups = new Dictionary<string, int>();
+            var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
+            var subArrayGroups = new Dictionary<string,List<string>>();
+            foreach (var historyAction in historyActions)
+            {
+                #region Stamps
+
+                if (historyAction.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)
+                {
+                    if (historyAction.CodedObjectAction == Codings.ACTION_OBJECT_ADD)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var stampedObject = objectsChanged.PageObjectsAdded.First() as StampedObject;
+                        if (stampedObject == null)
+                        {
+                            continue;
+                        }
+
+                        var parts = stampedObject.Parts;
+                        var parentStampID = stampedObject.ParentStampID;
+                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        if (stampedObjectGroups.ContainsKey(groupID))
+                        {
+                            stampedObjectGroups[groupID]++;
+                        }
+                        else
+                        {
+                            stampedObjectGroups.Add(groupID, 1);
+                        }
+
+                        maxStampedObjectGroups = stampedObjectGroups;
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var stampedObject = objectsChanged.PageObjectsRemoved.First() as StampedObject;
+                        if (stampedObject == null)
+                        {
+                            continue;
+                        }
+
+                        var parts = stampedObject.Parts;
+                        var parentStampID = stampedObject.ParentStampID;
+                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        stampedObjectGroups[groupID]--;
+                        if (stampedObjectGroups[groupID] <= 0)
+                        {
+                            stampedObjectGroups.Remove(groupID);
+                        }
+
+                        if (stampedObjectGroups.Keys.Count == 0)
+                        {
+                            // TODO: Ideally, build entirely off info inside history action.
+                            // Also just use this after the top level for-loop as an end case
+                            // test to generate the final reps used.
+                            foreach (var key in maxStampedObjectGroups.Keys)
+                            {
+                                var groupIDSections = key.Split(' ');
+                                var stampParts = groupIDSections[0];
+                                var obj = Codings.OBJECT_STAMP;
+                                var id = stampParts;
+                                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
+                                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                                deletedCodedRepresentations.Add(codedValue);
+                                allRepresentations.Add(obj);
+                            }
+                        }
+                    }
+                }
+
+                #endregion // Stamps
+
+                #region Number Line
+
+                if (historyAction.CodedObject == Codings.OBJECT_NUMBER_LINE)
+                {
+                    if (historyAction.CodedObjectAction == Codings.ACTION_NUMBER_LINE_JUMP)
+                    {
+                        var jumpSizesChangedHistoryItems = historyAction.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryItem).Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
+                        if (jumpSizesChangedHistoryItems == null ||
+                            !jumpSizesChangedHistoryItems.Any())
+                        {
+                            continue;
+                        }
+
+                        var numberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
+
+                        var allJumps = new List<NumberLineJumpSize>();
+                        foreach (var historyItem in jumpSizesChangedHistoryItems)
+                        {
+                            allJumps.AddRange(historyItem.JumpsAdded);
+                        }
+
+                        if (!jumpGroups.ContainsKey(numberLineID))
+                        {
+                            jumpGroups.Add(numberLineID, allJumps);
+                        }
+                        else
+                        {
+                            jumpGroups[numberLineID].AddRange(allJumps);
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_NUMBER_LINE_JUMP_ERASE)
+                    {
+                        var jumpSizesChangedHistoryItems = historyAction.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryItem).Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
+                        if (jumpSizesChangedHistoryItems == null ||
+                            !jumpSizesChangedHistoryItems.Any())
+                        {
+                            continue;
+                        }
+
+                        var numberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
+
+                        var allJumps = new List<NumberLineJumpSize>();
+                        foreach (var historyItem in jumpSizesChangedHistoryItems)
+                        {
+                            allJumps.AddRange(historyItem.JumpsRemoved);
+                        }
+                        
+                        var jumpsToRemove = (from jump in allJumps
+                                             from currentJump in jumpGroups[numberLineID]
+                                             where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
+                                             select currentJump).ToList();
+
+                        foreach (var jump in jumpsToRemove)
+                        {
+                            // BUG: Natalie page 12 has errors here if you don't check ContainsKey, shouldn't happen.
+                            if (jumpGroups.ContainsKey(numberLineID))
+                            {
+                                jumpGroups[numberLineID].Remove(jump);
+                                
+                                if (!jumpGroups[numberLineID].Any())
+                                {
+                                    jumpGroups.Remove(numberLineID);
+                                }
+                            }
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var numberLine = objectsChanged.PageObjectsRemoved.First() as NumberLine;
+                        if (numberLine == null)
+                        {
+                            continue;
+                        }
+
+                        // TODO: Just like Stamps, use this as end-case to generate final reps
+                        var numberLineID = numberLine.ID;
+
+                        var obj = numberLine.CodedName;
+                        var id = historyAction.CodedObjectID;
+                        var components = jumpGroups.ContainsKey(numberLineID) ? NumberLine.ConsolidateJumps(jumpGroups[numberLineID].ToList()) : string.Empty;
+                        var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
+                        var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                        deletedCodedRepresentations.Add(codedValue);
+                        if (!string.IsNullOrEmpty(componentSection))
+                        {
+                            allRepresentations.Add(obj);
+                        }
+                    }
+                    
+                }
+
+                #endregion // Number Line
+
+                #region Array
+
+                if (historyAction.CodedObject == Codings.OBJECT_ARRAY)
+                {
+                    if (historyAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var actionID = historyAction.CodedObjectActionID;
+                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        if (!subArrayGroups.ContainsKey(referenceArrayID))
+                        {
+                            subArrayGroups.Add(referenceArrayID, subArrays);
+                        }
+                        else
+                        {
+                            subArrayGroups[referenceArrayID].AddRange(subArrays);
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK_ERASE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var actionID = historyAction.CodedObjectActionID;
+                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        foreach (var subArray in subArrays)
+                        {
+                            if (subArrayGroups[referenceArrayID].Contains(subArray))
+                            {
+                                subArrayGroups[referenceArrayID].Remove(subArray);
+                                if (!subArrayGroups[referenceArrayID].Any())
+                                {
+                                    subArrayGroups.Remove(referenceArrayID);
+                                }
+                            }
+                        }
+                    }
+
+                    if (historyAction.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    {
+                        var historyItem = historyAction.HistoryItems.First();
+                        var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
+                        if (objectsChanged == null)
+                        {
+                            continue;
+                        }
+
+                        var array = objectsChanged.PageObjectsRemoved.First() as CLPArray;
+                        if (array == null)
+                        {
+                            continue;
+                        }
+
+                        var obj = array.CodedName;
+                        var id = historyAction.CodedObjectID;
+                        var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+
+                        var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                        deletedCodedRepresentations.Add(codedValue);
+                        allRepresentations.Add(obj);
+                    }
+                }
+
+                #endregion // Array
+            }
+
+            var finalCodedRepresentations = new List<string>();
+            stampedObjectGroups.Clear();
+            foreach (var pageObject in page.PageObjects)
+            {
+                var array = pageObject as CLPArray;
+                if (array != null)
+                {
+                    var obj = array.CodedName;
+                    var id = array.CodedID;
+                    var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+
+                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    finalCodedRepresentations.Add(codedValue);
+                    allRepresentations.Add(obj);
+                }
+
+                var numberLine = pageObject as NumberLine;
+                if (numberLine != null)
+                {
+                    var obj = numberLine.CodedName;
+                    var id = numberLine.CodedID;
+                    var components = NumberLine.ConsolidateJumps(numberLine.JumpSizes.ToList());
+                    var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
+                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    finalCodedRepresentations.Add(codedValue);
+                    if (!string.IsNullOrEmpty(componentSection))
+                    {
+                        allRepresentations.Add(obj);
+                    }
+                }
+
+                var stampedObject = pageObject as StampedObject;
+                if (stampedObject != null)
+                {
+                    var parts = stampedObject.Parts;
+                    var parentStampID = stampedObject.ParentStampID;
+                    var groupID = string.Format("{0} {1}", parts, parentStampID);
+                    if (stampedObjectGroups.ContainsKey(groupID))
+                    {
+                        stampedObjectGroups[groupID]++;
+                    }
+                    else
+                    {
+                        stampedObjectGroups.Add(groupID, 1);
+                    }
+                }
+            }
+
+            foreach (var key in stampedObjectGroups.Keys)
+            {
+                var groupIDSections = key.Split(' ');
+                var parts = groupIDSections[0];
+                var obj = Codings.OBJECT_STAMP;
+                var id = parts;
+                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
+                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                finalCodedRepresentations.Add(codedValue);
+                allRepresentations.Add(obj);
+            }
+
+            allRepresentations = allRepresentations.Distinct().ToList();
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, allRepresentations, deletedCodedRepresentations, finalCodedRepresentations);
             page.AddTag(tag);
         }
-
-        // HACK: Add IsRepresentation to IPageObject
-        public static bool IsRepresentation(IPageObject pageObject) { return pageObject is CLPArray || pageObject is Bin || pageObject is NumberLine || pageObject is Stamp || pageObject is StampedObject; }
 
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {

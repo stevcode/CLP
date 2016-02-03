@@ -562,6 +562,7 @@ namespace CLP.Entities
                     verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
                     var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
                     inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
+                    inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", referenceArrayID);
 
                     interpretedActions.Add(inkDivideAction);
                 }
@@ -608,10 +609,10 @@ namespace CLP.Entities
                     horizontalDividers.Add(dividerValue);
                     horizontalDividers.Add(array.Rows);
                     horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
-                    var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.X, x));
+                    var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
 
                     inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
-
+                    inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", referenceArrayID);
                     interpretedActions.Add(inkDivideAction);
                 }
             }

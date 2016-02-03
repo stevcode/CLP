@@ -37,18 +37,25 @@ namespace CLP.InkInterpretation
                 }
             }
 
-            //Asynchronously interpret strokes as text.
-            var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
-            var recognitionResults = recognitionTask.Result;
+            try
+            {
+                //Asynchronously interpret strokes as text.
+                var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
+                var recognitionResults = recognitionTask.Result;
 
-            //Doing a recognition does not update the storage of results (the results that are stored inside the ink manager). 
-            //We do that ourselves by calling this below method.
-            inkManager.UpdateRecognitionResults(recognitionResults);
+                //Doing a recognition does not update the storage of results (the results that are stored inside the ink manager). 
+                //We do that ourselves by calling this below method.
+                inkManager.UpdateRecognitionResults(recognitionResults);
 
-            // Aggregate the most likely result words, with spaces between.
-            var interpretation = recognitionResults.Select(result => result.GetTextCandidates()).Aggregate(string.Empty, (current, text) => current + " " + text[0]);
+                // Aggregate the most likely result words, with spaces between.
+                var interpretation = recognitionResults.Select(result => result.GetTextCandidates()).Aggregate(string.Empty, (current, text) => current + " " + text[0]);
 
-            return interpretation.Trim();
+                return interpretation.Trim();
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
     }
 }
