@@ -1328,7 +1328,10 @@ namespace CLP.Entities
                         var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
                         var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
                         deletedCodedRepresentations.Add(codedValue);
-                        allRepresentations.Add(obj);
+                        if (!string.IsNullOrEmpty(componentSection))
+                        {
+                            allRepresentations.Add(obj);
+                        }
                     }
                     
                 }
@@ -1439,7 +1442,10 @@ namespace CLP.Entities
                     var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
                     var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
                     finalCodedRepresentations.Add(codedValue);
-                    allRepresentations.Add(obj);
+                    if (!string.IsNullOrEmpty(componentSection))
+                    {
+                        allRepresentations.Add(obj);
+                    }
                 }
 
                 var stampedObject = pageObject as StampedObject;
