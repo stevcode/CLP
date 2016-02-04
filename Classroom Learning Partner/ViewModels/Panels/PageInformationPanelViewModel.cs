@@ -966,274 +966,490 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var debug = true;
-
-            //Makes .txt file to store data in
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "SkipCountLogs");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
-            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber + "_V6.txt");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
+            var DEBUG = true;
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var skipCountStrokes = new Dictionary<int, StrokeCollection>();
-                Stroke prevStroke = null;
-                var prevRow = -2;
+                var expandedArrayBounds = new Rect(array.XPosition + (array.Width / 2),
+                                                   array.YPosition - (array.LabelLength * 1.5),
+                                                   array.Width,
+                                                   array.Height + (array.LabelLength * 3));
+                
+                var strokes = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
+
+                if (DEBUG)
+                {
+                    CurrentPage.ClearBoundaries();
+                    CurrentPage.AddBoundary(expandedArrayBounds);
+                    PageHistory.UISleep(800);
+                    var heightWidths = new Dictionary<Stroke,Point>();
+                    foreach (var stroke in strokes)
+                    {
+                        var width = stroke.DrawingAttributes.Width;
+                        var height = stroke.DrawingAttributes.Height;
+                        heightWidths.Add(stroke, new Point(width, height));
+
+                        stroke.DrawingAttributes.Width = 8;
+                        stroke.DrawingAttributes.Height = 8;
+                    }
+                    PageHistory.UISleep(1000);
+                    foreach (var stroke in strokes)
+                    {
+                        var width = heightWidths[stroke].X;
+                        var height = heightWidths[stroke].Y;
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                    CurrentPage.ClearBoundaries();
+                }
+
+                #region New Skip Testing
+
+                // Initialize StrokeCollection for each row
+                var strokeGroupPerRow = new Dictionary<int, StrokeCollection>();
+                for (var i = 1; i <= array.Rows; i++)
+                {
+                    strokeGroupPerRow.Add(i, new StrokeCollection());
+                }
+
+                // Place strokes in initial row groupings
+                var rowHeightBuffer = array.GridSquareSize * 0.2;
+                var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
+                var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
+                var rowBoundaryHeight = array.GridSquareSize + (2.0 * rowHeightBuffer);
+                var ungroupedStrokes = new List<Stroke>();
+                foreach (var stroke in strokes)
+                {
+                    var strokeBounds = stroke.GetBounds();
+                    var isStrokeGroupedIntoRow = false;
+
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    if (DEBUG)
+                    {
+                        stroke.DrawingAttributes.Width = 4;
+                        stroke.DrawingAttributes.Height = 4;
+                        PageHistory.UISleep(600);
+                    }
+
+                    for (var row = 1; row <= array.Rows; row++)
+                    {
+                        // Include more vertical space for first and last rows.
+                        var edgeHeightBuffer = row == 1 || row == array.Rows ? array.GridSquareSize * 0.75 : 0.0;
+                        var edgeYBuffer = row == 1 ? array.GridSquareSize * 0.75 : 0.0;
+
+                        var rowBoundary = new Rect
+                                          {
+                                              X = rowBoundaryX,
+                                              Y = array.YPosition + array.LabelLength - rowHeightBuffer + ((row - 1) * array.GridSquareSize) - edgeYBuffer,
+                                              Width = rowBoundaryWidth,
+                                              Height = rowBoundaryHeight + edgeHeightBuffer
+                                          };
+
+                        if (DEBUG)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            CurrentPage.AddBoundary(rowBoundary);
+                            PageHistory.UISleep(600);
+                        }
+
+                        var intersect = Rect.Intersect(strokeBounds, rowBoundary);
+                        if (intersect.IsEmpty)
+                        {
+                            continue;
+                        }
+                        var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                        if (!(intersectPercentage >= 0.85))
+                        {
+                            continue;
+                        }
+
+                        if (DEBUG)
+                        {
+                            stroke.DrawingAttributes.Width = 8;
+                            stroke.DrawingAttributes.Height = 8;
+                            PageHistory.UISleep(600);
+                            stroke.DrawingAttributes.Width = width;
+                            stroke.DrawingAttributes.Height = height;
+                        }
+                        strokeGroupPerRow[row].Add(stroke);
+                        isStrokeGroupedIntoRow = true;
+                    }
+
+                    if (!isStrokeGroupedIntoRow)
+                    {
+                        ungroupedStrokes.Add(stroke);
+                    }
+
+                    if (DEBUG)
+                    {
+                        CurrentPage.ClearBoundaries();
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                }
+
+                var strokesGroupedCount = strokeGroupPerRow.Values.SelectMany(s => s).Count();
+                if (strokesGroupedCount < 3)
+                {
+                    // Not enough to be skip counting.
+                    return;
+                }
+
+                // Remove dupe strokes from all groupings before refining
+                var skipsWithStrokeGroups = strokeGroupPerRow.Values.Where(sc => sc.Any()).ToList();
+                var strokesSharedByGroupings = skipsWithStrokeGroups.SelectMany(s => s).GroupBy(s => s).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                foreach (var stroke in strokesSharedByGroupings)
+                {
+                    foreach (var rowGroup in strokeGroupPerRow.Values.Where(sc => sc.Contains(stroke)))
+                    {
+                        rowGroup.Remove(stroke);
+                    }
+                }
+
+                // Calculate adjusted row boundaries
+                var averageStrokeGroupingHeight = skipsWithStrokeGroups.Select(sc => sc.GetBounds().Height).Average();
+                var averageStrokeGroupingWidth = skipsWithStrokeGroups.Select(sc => sc.GetBounds().Width).Average();
+
+                // Re-try ungrouped strokes width adjusted boundaries
+                ungroupedStrokes.AddRange(strokesSharedByGroupings);
+                var nonSkipCountStrokes = new List<Stroke>();
+                foreach (var stroke in ungroupedStrokes)
+                {
+                    var strokeBounds = stroke.GetBounds();
+                    var isStrokeGroupedIntoRow = false;
+
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    if (DEBUG)
+                    {
+                        stroke.DrawingAttributes.Width = 4;
+                        stroke.DrawingAttributes.Height = 4;
+                        PageHistory.UISleep(600);
+                    }
+
+                    for (var row = 1; row <= array.Rows; row++)
+                    {
+                        
+                        var strokeGroup = strokeGroupPerRow[row];
+                        var nextStrokeGroup = strokeGroupPerRow[row + 1];
+
+
+                        var rowBoundary = new Rect
+                        {
+                            X = rowBoundaryX,
+                            Y = array.YPosition + array.LabelLength - rowHeightBuffer + ((row - 1) * array.GridSquareSize),
+                            Width = averageStrokeGroupingWidth,
+                            Height = averageStrokeGroupingHeight
+                        };
+
+                        if (DEBUG)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            CurrentPage.AddBoundary(rowBoundary);
+                            PageHistory.UISleep(600);
+                        }
+
+                        var intersect = Rect.Intersect(strokeBounds, rowBoundary);
+                        if (intersect.IsEmpty)
+                        {
+                            continue;
+                        }
+                        var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                        if (!(intersectPercentage >= 0.33))
+                        {
+                            continue;
+                        }
+
+                        if (DEBUG)
+                        {
+                            stroke.DrawingAttributes.Width = 8;
+                            stroke.DrawingAttributes.Height = 8;
+                            PageHistory.UISleep(600);
+                            stroke.DrawingAttributes.Width = width;
+                            stroke.DrawingAttributes.Height = height;
+                        }
+                        strokeGroupPerRow[row].Add(stroke);
+                        isStrokeGroupedIntoRow = true;
+
+                    }
+
+                    if (!isStrokeGroupedIntoRow)
+                    {
+                        nonSkipCountStrokes.Add(stroke);
+                    }
+
+                    if (DEBUG)
+                    {
+                        CurrentPage.ClearBoundaries();
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                }
+
+                // Interpret handwriting of each row's grouping of strokes.
+                var expectedRowValues = new List<int>();
+                for (var i = 1; i <= array.Rows; i++)
+                {
+                    expectedRowValues.Add(i * array.Columns);
+                }
+
+                #endregion // New Skip Testing
+
+                #region Original Skip Testing
+
+                //var inkCloseToArray = strokes;
+                //Stroke prevStroke = null;
+                //var prevRow = -2;
                 //var prev_xpos = -2.0; 
 
-                var expandedArrayBounds = new Rect(array.XPosition - (array.LabelLength * 1.5),
-                                                   array.YPosition - (array.LabelLength * 1.5),
-                                                   array.Width + (array.LabelLength * 3),
-                                                   array.Height + (array.LabelLength * 3));
-                var inkCloseToArray = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
+                //foreach (var inkStroke in inkCloseToArray)
+                //{
+                //    //Defines location variables
+                //    var row = -2;
+                //    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1 * array.GridSquareSize;
+                //    var width = (4.5 * array.LabelLength) + (1.1 * array.GridSquareSize);
+                //    var height = array.GridSquareSize;
+                //    //var curr_xpos = xpos;
 
-                foreach (var inkStroke in inkCloseToArray)
-                {
-                    //Defines location variables
-                    var row = -2;
-                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1 * array.GridSquareSize;
-                    var width = (4.5 * array.LabelLength) + (1.1 * array.GridSquareSize);
-                    var height = array.GridSquareSize;
-                    //var curr_xpos = xpos;
+                //    //Thickens ink stroke in consideration
+                //    if (debug)
+                //    {
+                //        inkStroke.DrawingAttributes.Height *= 2;
+                //        inkStroke.DrawingAttributes.Width *= 2;
+                //        PageHistory.UISleep(800);
+                //    }
 
-                    //Thickens ink stroke in consideration
-                    if (debug)
-                    {
-                        inkStroke.DrawingAttributes.Height *= 2;
-                        inkStroke.DrawingAttributes.Width *= 2;
-                        PageHistory.UISleep(800);
-                    }
+                //    /*******************************/
+                //    /*   INSIDE GENERAL AREA TEST  */
+                //    /*******************************/
+                //    bool cont = false;
+                //    var generalBound = new Rect(array.XPosition + array.LabelLength,
+                //                                array.YPosition + array.LabelLength - 0.1 * height,
+                //                                array.ArrayWidth + 4.5 * array.LabelLength,
+                //                                array.ArrayHeight + 0.2 * height);
+                //    if (debug)
+                //    {
+                //        CurrentPage.ClearBoundaries();
+                //        CurrentPage.AddBoundary(generalBound);
+                //        PageHistory.UISleep(800);
+                //    }
+                //    if (inkStroke.HitTest(generalBound, 80))
+                //        cont = true;
+                //    else
+                //        Console.WriteLine("Failed general bound test");
 
-                    /*******************************/
-                    /*   INSIDE GENERAL AREA TEST  */
-                    /*******************************/
-                    bool cont = false;
-                    var generalBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength - 0.1 * height, array.ArrayWidth + 4.5 * array.LabelLength, array.ArrayHeight + 0.2 * height);
-                    if (debug)
-                    {
-                        CurrentPage.ClearBoundaries();
-                        CurrentPage.AddBoundary(generalBound);
-                        PageHistory.UISleep(800);
-                    }
-                    if (inkStroke.HitTest(generalBound, 80))
-                        cont = true;
-                    else
-                        Console.WriteLine("Failed general bound test");
+                //    /************************/
+                //    /* PREVIOUS STROKE TEST */
+                //    /************************/
 
-                    /************************/
-                    /* PREVIOUS STROKE TEST */
-                    /************************/
+                //    //Creates fixed stroke bounds
+                //    var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
 
-                    //Creates fixed stroke bounds
-                    var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                //    //Checks previous ink stroke's bounds
+                //    if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
+                //    {
+                //        var prev_y = prevStroke.GetBounds().Y;
+                //        //var prev_height = prevStroke.GetBounds().Height;
+                //        var curr_y = inkStroke.GetBounds().Y;
+                //        //var curr_height = inkStroke.GetBounds().Height;
 
-                    //Checks previous ink stroke's bounds
-                    if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
-                    {
-                        var prev_y = prevStroke.GetBounds().Y;
-                        //var prev_height = prevStroke.GetBounds().Height;
-                        var curr_y = inkStroke.GetBounds().Y;
-                        //var curr_height = inkStroke.GetBounds().Height;
+                //        var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
+                //        if (debug)
+                //        {
+                //            CurrentPage.ClearBoundaries();
+                //            CurrentPage.AddBoundary(prevBound);
+                //            PageHistory.UISleep(800);
+                //        }
 
-                        var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
-                        if (debug)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            CurrentPage.AddBoundary(prevBound);
-                            PageHistory.UISleep(800);
-                        }
+                //        //Finds intersection
+                //        var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                //        strokeBound.Intersect(prevBound);
+                //        var intersectArea = strokeBound.Height * strokeBound.Width;
+                //        var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                //        var percentIntersect = 100 * intersectArea / strokeArea;
+                //        Console.WriteLine("Checking prevRow {0}. Percent intersect is {1}", prevRow, percentIntersect);
 
-                        //Finds intersection
-                        var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                        strokeBound.Intersect(prevBound);
-                        var intersectArea = strokeBound.Height * strokeBound.Width;
-                        var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
-                        var percentIntersect = 100 * intersectArea / strokeArea;
-                        Console.WriteLine("Checking prevRow {0}. Percent intersect is {1}", prevRow, percentIntersect);
+                //        //Checks if 80% inside row
+                //        if (percentIntersect >= 80 &&
+                //            percentIntersect <= 101)
+                //        {
+                //            row = prevRow;
+                //            cont = false;
+                //            Console.WriteLine("Passed prevRow test");
+                //        }
 
-                        //Checks if 80% inside row
-                        if (percentIntersect >= 80 && percentIntersect <= 101)
-                        {
-                            row = prevRow;
-                            cont = false;
-                            Console.WriteLine("Passed prevRow test");
-                        }
+                //        //Check if in row after previous stroke
+                //        else
+                //        {
+                //            //Creates previous stroke's row bound
+                //            var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
+                //            if (debug)
+                //            {
+                //                CurrentPage.ClearBoundaries();
+                //                CurrentPage.AddBoundary(nextBound);
+                //                PageHistory.UISleep(800);
+                //            }
 
-                        //Check if in row after previous stroke
-                        else
-                        {
-                            //Creates previous stroke's row bound
-                            var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
-                            if (debug)
-                            {
-                                CurrentPage.ClearBoundaries();
-                                CurrentPage.AddBoundary(nextBound);
-                                PageHistory.UISleep(800);
-                            }
+                //            //Finds intersection
+                //            strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                //            strokeBound.Intersect(nextBound);
+                //            intersectArea = strokeBound.Height * strokeBound.Width;
+                //            strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                //            percentIntersect = 100 * intersectArea / strokeArea;
+                //            Console.WriteLine("Checking prevRow+1 {0}. Percent intersect is {1}", prevRow + 1, percentIntersect);
 
-                            //Finds intersection
-                            strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                            strokeBound.Intersect(nextBound);
-                            intersectArea = strokeBound.Height * strokeBound.Width;
-                            strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
-                            percentIntersect = 100 * intersectArea / strokeArea;
-                            Console.WriteLine("Checking prevRow+1 {0}. Percent intersect is {1}", prevRow + 1, percentIntersect);
+                //            //Checks if 80% inside row
+                //            if (percentIntersect >= 80 &&
+                //                percentIntersect <= 101)
+                //            {
+                //                row = prevRow + 1;
+                //                cont = false;
+                //                Console.WriteLine("Passed prevRow+1 test");
+                //            }
+                //        }
+                //    }
 
-                            //Checks if 80% inside row
-                            if (percentIntersect >= 80 && percentIntersect <= 101)
-                            {
-                                row = prevRow + 1;
-                                cont = false;
-                                Console.WriteLine("Passed prevRow+1 test");
-                            }
-                        }
-                    }
+                //    /************************/
+                //    /*  ROW ITERATION TEST  */
+                //    /************************/
 
-                    /************************/
-                    /*  ROW ITERATION TEST  */
-                    /************************/
+                //    if (cont)
+                //    {
+                //        for (int i = 0; i < array.Rows; i++)
+                //        {
+                //            //Creates array row bound
+                //            var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
+                //            var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
+                //            if (debug)
+                //            {
+                //                //Console.WriteLine("Checking row iterations");
+                //                CurrentPage.ClearBoundaries();
+                //                CurrentPage.AddBoundary(rectBound);
+                //                PageHistory.UISleep(800);
+                //            }
 
-                    if (cont)
-                    {
-                        for (int i = 0; i < array.Rows; i++)
-                        {
-                            //Creates array row bound
-                            var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                            var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
-                            if (debug)
-                            {
-                                //Console.WriteLine("Checking row iterations");
-                                CurrentPage.ClearBoundaries();
-                                CurrentPage.AddBoundary(rectBound);
-                                PageHistory.UISleep(800);
-                            }
+                //            //Finds intersection
+                //            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                //            strokeBound.Intersect(rectBound);
+                //            var intersectArea = strokeBound.Height * strokeBound.Width;
+                //            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                //            var percentIntersect = 100 * intersectArea / strokeArea;
+                //            if (debug)
+                //                Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
-                            //Finds intersection
-                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                            strokeBound.Intersect(rectBound);
-                            var intersectArea = strokeBound.Height * strokeBound.Width;
-                            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
-                            var percentIntersect = 100 * intersectArea / strokeArea;
-                            if (debug)
-                                Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+                //            //Checks if 80% inside row
+                //            if (percentIntersect >= 80 &&
+                //                percentIntersect <= 101)
+                //            {
+                //                row = i;
+                //                cont = false;
+                //                break;
+                //            }
+                //        }
+                //    }
 
-                            //Checks if 80% inside row
-                            if (percentIntersect >= 80 && percentIntersect <= 101)
-                            {
-                                row = i;
-                                cont = false;
-                                break;
-                            }
-                        }
-                    }
+                //    /************************/
+                //    /*   INSIDE ARRAY TEST  */
+                //    /************************/
+                //    if (cont)
+                //    {
+                //        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
+                //        if (debug)
+                //        {
+                //            CurrentPage.ClearBoundaries();
+                //            CurrentPage.AddBoundary(arrBound);
+                //            PageHistory.UISleep(800);
+                //        }
+                //        if (inkStroke.HitTest(arrBound, 80))
+                //        {
+                //            row = -1;
+                //            //curr_xpos = xpos - array.GridSquareSize;
+                //        }
+                //    }
 
-                    /************************/
-                    /*   INSIDE ARRAY TEST  */
-                    /************************/
-                    if (cont)
-                    {
-                        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
-                        if (debug)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            CurrentPage.AddBoundary(arrBound);
-                            PageHistory.UISleep(800);
-                        }
-                        if (inkStroke.HitTest(arrBound, 80))
-                        {
-                            row = -1;
-                            //curr_xpos = xpos - array.GridSquareSize;
-                        }
-                    }
+                //    /***************/
+                //    /*  ROW MATCH  */
+                //    /***************/
+                //    if (row > -2)
+                //    {
+                //        Console.WriteLine("***Stroke added to row {0}***", row);
 
-                    /***************/
-                    /*  ROW MATCH  */
-                    /***************/
-                    if (row > -2)
-                    {
-                        Console.WriteLine("***Stroke added to row {0}***", row);
+                //        //Thickens stroke to indicate match
+                //        if (debug)
+                //        {
+                //            inkStroke.DrawingAttributes.Height *= 2;
+                //            inkStroke.DrawingAttributes.Width *= 2;
+                //            PageHistory.UISleep(800);
+                //        }
 
-                        //Thickens stroke to indicate match
-                        if (debug)
-                        {
-                            inkStroke.DrawingAttributes.Height *= 2;
-                            inkStroke.DrawingAttributes.Width *= 2;
-                            PageHistory.UISleep(800);
-                        }
+                //        //Adds stroke to dictionary
+                //        if (!skipCountStrokes.ContainsKey(row))
+                //        {
+                //            skipCountStrokes.Add(row, new StrokeCollection());
+                //        }
+                //        skipCountStrokes[row].Add(inkStroke);
+                //        if (row > -1)
+                //        {
+                //            prevStroke = inkStroke;
+                //            prevRow = row;
+                //            //prev_xpos = curr_xpos;
+                //        }
 
-                        //Adds stroke to dictionary
-                        if (!skipCountStrokes.ContainsKey(row))
-                        {
-                            skipCountStrokes.Add(row, new StrokeCollection());
-                        }
-                        skipCountStrokes[row].Add(inkStroke);
-                        if (row > -1)
-                        {
-                            prevStroke = inkStroke;
-                            prevRow = row;
-                            //prev_xpos = curr_xpos;
-                        }
+                //        if (debug)
+                //        {
+                //            CurrentPage.ClearBoundaries();
+                //            inkStroke.DrawingAttributes.Height /= 2;
+                //            inkStroke.DrawingAttributes.Width /= 2;
+                //        }
+                //    }
 
-                        if (debug)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            inkStroke.DrawingAttributes.Height /= 2;
-                            inkStroke.DrawingAttributes.Width /= 2;
-                        }
-                    }
+                //    //Clears visual markers
+                //    if (debug)
+                //    {
+                //        CurrentPage.ClearBoundaries();
+                //        inkStroke.DrawingAttributes.Height /= 2;
+                //        inkStroke.DrawingAttributes.Width /= 2;
+                //    }
+                //}
 
-                    //Clears visual markers
-                    if (debug)
-                    {
-                        CurrentPage.ClearBoundaries();
-                        inkStroke.DrawingAttributes.Height /= 2;
-                        inkStroke.DrawingAttributes.Width /= 2;
-                    }
-                }
+                //var equation = string.Empty;
+                //var skipCounts = new Dictionary<int, string>();
+                ////Writes row number and ink interpretation to txt file
+                //foreach (var row in skipCountStrokes.Keys)
+                //{
+                //    var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
+                //    if (row == -1)
+                //    {
+                //        equation = interpretation;
+                //    }
+                //    else
+                //    {
+                //        skipCounts.Add(row, interpretation);
+                //    }
+                //    File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
+                //    Console.WriteLine("{0},{1}", row, interpretation);
+                //}
 
-                var equation = string.Empty;
-                var skipCounts = new Dictionary<int,string>();
-                //Writes row number and ink interpretation to txt file
-                foreach (var row in skipCountStrokes.Keys)
-                {
-                    var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
-                    if (row == -1)
-                    {
-                        equation = interpretation;
-                    }
-                    else
-                    {
-                        skipCounts.Add(row, interpretation);
-                    }
-                    File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
-                    Console.WriteLine("{0},{1}", row, interpretation);
-                }
+                //if (!string.IsNullOrEmpty(equation) ||
+                //    skipCounts.Keys.Any())
+                //{
+                //    var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated);
+                //    tag.ArrayName = array.Rows + "x" + array.Columns;
+                //    tag.EquationInterpretation = equation;
+                //    var keys = skipCounts.Keys.ToList();
+                //    keys.Sort();
 
-                if (!string.IsNullOrEmpty(equation) ||
-                skipCounts.Keys.Any())
-                {
-                    var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated);
-                    tag.ArrayName = array.Rows + "x" + array.Columns;
-                    tag.EquationInterpretation = equation;
-                    var keys = skipCounts.Keys.ToList();
-                    keys.Sort();
+                //    foreach (var key in keys)
+                //    {
+                //        tag.SkipCountingValues.Add(skipCounts[key]);
+                //    }
 
-                    foreach (var key in keys)
-                    {
-                        tag.SkipCountingValues.Add(skipCounts[key]);
-                    }
+                //    CurrentPage.AddTag(tag);
+                //}
 
-                    CurrentPage.AddTag(tag);
-                }
+                #endregion // Original Skip Testing
             }
         }
 

@@ -226,6 +226,21 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static void FlashTempBoundary(CLPPage page, Rect boundary)
+        {
+            var isDebugging = true;
+
+            if (!isDebugging)
+            {
+                return;
+            }
+
+            page.ClearBoundaries();
+            page.AddBoundary(boundary);
+            PageHistory.UISleep(300);
+            page.ClearBoundaries();
+        }
+
         public static IHistoryAction SkipCounting(CLPPage page, IHistoryAction inkAction)
         {
             if (page == null ||
@@ -305,21 +320,31 @@ namespace CLP.Entities
                                           Width = rowBoundaryWidth,
                                           Height = rowBoundaryHeight
                                       };
+                    FlashTempBoundary(page, rowBoundary);
+
+                    var intersect = Rect.Intersect(strokeBounds, rowBoundary);
+                    var intersectPercentage = intersect.Area() / rowBoundary.Area();
+                    if (intersectPercentage >= 0.85)
+                    {
+                        stroke.DrawingAttributes.Width = 10;
+                        stroke.DrawingAttributes.Height = 10;
+                    }
                 }
             }
+
 
             var averageStrokeWidth = strokes.Select(s => s.GetBounds().Width).Average();
             var averageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average();
             var averageStrokeX = strokes.Select(s => s.GetBounds().X).Average();
             var probablyStrokeCountPerRow = Math.Round(strokes.Count % array.Rows * 1.0);
             var testBoundaryWidth = (probablyStrokeCountPerRow * averageStrokeWidth) + (1.5 * averageStrokeWidth);
-            
+
             var testBoundaryX = arrayVisualRight <= averageStrokeX ? arrayVisualRight - (0.5 * averageStrokeWidth) : arrayVisualRight - (probablyStrokeCountPerRow * averageStrokeWidth);
             var testBoundaryBufferZoneSize = Math.Max(averageStrokeHeight, array.GridSquareSize) * 0.2;
             var testBoundaryInitialY = array.YPosition + array.LabelLength - testBoundaryBufferZoneSize;
             var testBoundaryMaxHeight = array.GridSquareSize + (2.0 * testBoundaryBufferZoneSize);
 
-            
+
             // Test for skip counts on right side only.
             for (var i = 0; i < strokes.Count; i++)
             {
@@ -355,7 +380,7 @@ namespace CLP.Entities
                     var strokesInPreviousRow = row <= 1 ? new StrokeCollection() : skipCountStrokes[row - 1];
                     var testBoundaryY = strokesInPreviousRow.Any() ? strokesInPreviousRow.GetBounds().Bottom : testBoundaryInitialY + ((row - 1) * array.GridSquareSize);
                     var averageHeightOfStrokesInARow = skipCountStrokes.Values.Where(x => x.Any()).Select(x => x.GetBounds().Height).Average();
-                //    var testBoundaryMinBottom = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) +
+                    //    var testBoundaryMinBottom = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) +
 
                     //var testBoundary = new Rect
                     //                   {
@@ -454,14 +479,14 @@ namespace CLP.Entities
                         //Creates array row bound
                         var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                         var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
-             
+
                         //Finds intersection
                         var strokeBound = new Rect(stroke.GetBounds().X, stroke.GetBounds().Y, stroke.GetBounds().Width, stroke.GetBounds().Height);
                         strokeBound.Intersect(rectBound);
                         var intersectArea = strokeBound.Height * strokeBound.Width;
                         var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                         var percentIntersect = 100 * intersectArea / strokeArea;
-          
+
                         //Checks if 80% inside row
                         if (percentIntersect >= 80 &&
                             percentIntersect <= 101)
