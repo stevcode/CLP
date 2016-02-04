@@ -416,8 +416,8 @@ namespace CLP.Entities
             var strokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(halfWayIndex)));
 
             var otherHalfWayIndex = otherStroke.StylusPoints.Count / 2;
-            var otherStrokeFrontHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Take(otherHalfWayIndex)));
-            var otherStrokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(otherHalfWayIndex)));
+            var otherStrokeFrontHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Take(otherHalfWayIndex)));
+            var otherStrokeBackHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Skip(otherHalfWayIndex)));
 
             var averagePointDistances = new List<double>();
             averagePointDistances.Add(strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf));
