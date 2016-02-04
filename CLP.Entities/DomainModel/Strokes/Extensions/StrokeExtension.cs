@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Ink;
@@ -313,6 +315,183 @@ namespace CLP.Entities
         }
 
         #endregion //HitTesting
+
+        #region Distances Squared
+
+        /// <summary>
+        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
+        /// Distance Squared can still be used as a comparison for closeness.
+        /// </summary>
+        public static double DistanceSquaredByCenter(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var center = stroke.GetBounds().Center();
+            var otherCenter = otherStroke.GetBounds().Center();
+
+            var deltaX = center.X - otherCenter.X;
+            var deltaY = center.Y - otherCenter.Y;
+            var distanceSquared = (deltaX * deltaX) + (deltaY * deltaY);
+
+            return distanceSquared;
+        }
+
+        /// <summary>
+        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
+        /// Distance Squared can still be used as a comparison for closeness.
+        /// </summary>
+        public static double DistanceSquaredByWeightedCenter(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var center = stroke.WeightedCenter();
+            var otherCenter = otherStroke.WeightedCenter();
+
+            var deltaX = center.X - otherCenter.X;
+            var deltaY = center.Y - otherCenter.Y;
+            var distanceSquared = (deltaX * deltaX) + (deltaY * deltaY);
+
+            return distanceSquared;
+        }
+
+        /// <summary>
+        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
+        /// Distance Squared can still be used as a comparison for closeness.
+        /// </summary>
+        public static double DistanceSquaredByClosestPoint(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var smallestDistanceSquared = (from point in stroke.StylusPoints
+                                           from otherPoint in otherStroke.StylusPoints
+                                           let deltaX = point.X - otherPoint.X
+                                           let deltaY = point.Y - otherPoint.Y
+                                           select (deltaX * deltaX) + (deltaY * deltaY)).Min();
+
+            return smallestDistanceSquared;
+        }
+
+        /// <summary>
+        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
+        /// Distance Squared can still be used as a comparison for closeness.
+        /// </summary>
+        public static double DistanceSquaredByAveragePointDistance(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var allDistanceSquaredTotal = 0.0;
+            foreach (var point in stroke.StylusPoints)
+            {
+                var singleDistanceSquaredTotal = 0.0;
+                foreach (var otherPoint in otherStroke.StylusPoints)
+                {
+                    var deltaX = point.X - otherPoint.X;
+                    var deltaY = point.Y - otherPoint.Y;
+                    var distanceSquared = (deltaX * deltaX) + (deltaY * deltaY);
+                    singleDistanceSquaredTotal += distanceSquared;
+                }
+                var singleAverageDistanceSquared = singleDistanceSquaredTotal / otherStroke.StylusPoints.Count;
+                allDistanceSquaredTotal += singleAverageDistanceSquared;
+            }
+            var allAverageDistanceSquared = allDistanceSquaredTotal / stroke.StylusPoints.Count;
+
+            return allAverageDistanceSquared;
+        }
+
+        /// <summary>
+        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
+        /// Distance Squared can still be used as a comparison for closeness.
+        /// </summary>
+        public static double DistanceSquaredByAveragePointDistanceOfStrokeHalves(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var halfWayIndex = stroke.StylusPoints.Count / 2;
+            var strokeFrontHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Take(halfWayIndex)));
+            var strokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(halfWayIndex)));
+
+            var otherHalfWayIndex = otherStroke.StylusPoints.Count / 2;
+            var otherStrokeFrontHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Take(otherHalfWayIndex)));
+            var otherStrokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(otherHalfWayIndex)));
+
+            var averagePointDistances = new List<double>();
+            averagePointDistances.Add(strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf));
+            averagePointDistances.Add(strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf));
+            averagePointDistances.Add(strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf));
+            averagePointDistances.Add(strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf));
+
+            var minAveragePointDistance = averagePointDistances.Min();
+
+            return minAveragePointDistance;
+        }
+
+        public static Stroke FindClosestStroke(this Stroke stroke, List<Stroke> strokes)
+        {
+            Stroke closestStroke = null;
+            foreach (var otherStroke in strokes)
+            {
+                if (otherStroke == stroke)
+                {
+                    continue;
+                }
+
+                if (closestStroke == null)
+                {
+                    closestStroke = otherStroke;
+                    continue;
+                }
+
+                closestStroke = stroke.FindClosestStroke(closestStroke, otherStroke);
+            }
+
+            return closestStroke;
+        }
+
+        public static Stroke FindClosestStroke(this Stroke stroke, Stroke stroke1, Stroke stroke2)
+        {
+            var d1 = stroke.DistanceSquaredByCenter(stroke1);
+            var d2 = stroke.DistanceSquaredByWeightedCenter(stroke1);
+            var d3 = stroke.DistanceSquaredByClosestPoint(stroke1);
+            var d4 = stroke.DistanceSquaredByAveragePointDistance(stroke1);
+            var d5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke1);
+
+            var o1 = stroke.DistanceSquaredByCenter(stroke2);
+            var o2 = stroke.DistanceSquaredByWeightedCenter(stroke2);
+            var o3 = stroke.DistanceSquaredByClosestPoint(stroke2);
+            var o4 = stroke.DistanceSquaredByAveragePointDistance(stroke2);
+            var o5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke2);
+
+            var score = 0;
+            if (d1 < o1)
+            {
+                score++;
+            }
+            if (d2 < o2)
+            {
+                score++;
+            }
+            if (d3 < o3)
+            {
+                score++;
+            }
+            if (d4 < o4)
+            {
+                score++;
+            }
+            if (d5 < o5)
+            {
+                score++;
+            }
+
+            return score >= 3 ? stroke1 : stroke2;
+        }
+
+        #endregion // Distances
 
         #region History
 
