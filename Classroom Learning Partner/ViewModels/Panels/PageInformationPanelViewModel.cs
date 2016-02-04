@@ -977,8 +977,12 @@ namespace Classroom_Learning_Partner.ViewModels
                                                    array.Height + (array.LabelLength * 3));
                 
                 var strokes = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
+                if (strokes.Count < 2)
+                {
+                    continue;
+                }
 
-                if (DEBUG)
+                if (false)
                 {
                     CurrentPage.ClearBoundaries();
                     CurrentPage.AddBoundary(expandedArrayBounds);
@@ -1013,46 +1017,41 @@ namespace Classroom_Learning_Partner.ViewModels
                     strokeGroupPerRow.Add(i, new StrokeCollection());
                 }
 
-                // Place strokes in initial row groupings
-                var rowHeightBuffer = array.GridSquareSize * 0.2;
+                // Row boundaries
                 var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
                 var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
-                var rowBoundaryHeight = array.GridSquareSize + (2.0 * rowHeightBuffer);
-                var ungroupedStrokes = new List<Stroke>();
-                foreach (var stroke in strokes)
+                var rowBoundaryHeight = array.GridSquareSize * 2.0;
+
+                // Determine strokes to ignore or group later.
+                var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
+                if (notSkipCountStrokes.Any())
+                {
+                    Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                    // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
+                }
+
+                var cuttoffHeightByAverageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average() * 0.5;
+                var cuttoffHeightByGridSquareSize = array.GridSquareSize * 0.33;
+                var strokeCutOffHeight = Math.Max(cuttoffHeightByAverageStrokeHeight, cuttoffHeightByGridSquareSize);
+                var ungroupedStrokes = strokes.Where(s => s.GetBounds().Height < strokeCutOffHeight).ToList();
+                var skipCountStrokes = strokes.Where(s => s.GetBounds().Height >= strokeCutOffHeight).ToList();
+
+                // Place strokes in most likely row groupings
+                foreach (var stroke in skipCountStrokes)
                 {
                     var strokeBounds = stroke.GetBounds();
-                    var isStrokeGroupedIntoRow = false;
 
-                    var width = stroke.DrawingAttributes.Width;
-                    var height = stroke.DrawingAttributes.Height;
-                    if (DEBUG)
-                    {
-                        stroke.DrawingAttributes.Width = 4;
-                        stroke.DrawingAttributes.Height = 4;
-                        PageHistory.UISleep(600);
-                    }
-
+                    var highestIntersectPercentage = 0.0;
+                    var mostLikelyRow = 0;
                     for (var row = 1; row <= array.Rows; row++)
                     {
-                        // Include more vertical space for first and last rows.
-                        var edgeHeightBuffer = row == 1 || row == array.Rows ? array.GridSquareSize * 0.75 : 0.0;
-                        var edgeYBuffer = row == 1 ? array.GridSquareSize * 0.75 : 0.0;
-
                         var rowBoundary = new Rect
                                           {
                                               X = rowBoundaryX,
-                                              Y = array.YPosition + array.LabelLength - rowHeightBuffer + ((row - 1) * array.GridSquareSize) - edgeYBuffer,
+                                              Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
                                               Width = rowBoundaryWidth,
-                                              Height = rowBoundaryHeight + edgeHeightBuffer
+                                              Height = rowBoundaryHeight
                                           };
-
-                        if (DEBUG)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            CurrentPage.AddBoundary(rowBoundary);
-                            PageHistory.UISleep(600);
-                        }
 
                         var intersect = Rect.Intersect(strokeBounds, rowBoundary);
                         if (intersect.IsEmpty)
@@ -1060,33 +1059,43 @@ namespace Classroom_Learning_Partner.ViewModels
                             continue;
                         }
                         var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                        if (!(intersectPercentage >= 0.85))
+                        if (intersectPercentage > 0.9 &&
+                            highestIntersectPercentage > 0.9)
                         {
-                            continue;
+                            // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
+                            var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
+                            var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
+                            mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
+                            break;
                         }
-
-                        if (DEBUG)
+                        if (intersectPercentage > highestIntersectPercentage)
                         {
-                            stroke.DrawingAttributes.Width = 8;
-                            stroke.DrawingAttributes.Height = 8;
-                            PageHistory.UISleep(600);
-                            stroke.DrawingAttributes.Width = width;
-                            stroke.DrawingAttributes.Height = height;
+                            highestIntersectPercentage = intersectPercentage;
+                            mostLikelyRow = row;
                         }
-                        strokeGroupPerRow[row].Add(stroke);
-                        isStrokeGroupedIntoRow = true;
                     }
 
-                    if (!isStrokeGroupedIntoRow)
+                    if (mostLikelyRow == 0)
                     {
-                        ungroupedStrokes.Add(stroke);
+                        notSkipCountStrokes.Add(stroke);
+                        Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                        // TODO: re-cluster to ignore these strokes.
+                        continue;
                     }
 
-                    if (DEBUG)
+                    strokeGroupPerRow[mostLikelyRow].Add(stroke);
+                }
+
+                foreach (var stroke in ungroupedStrokes)
+                {
+                    var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
+                    for (var row = 1; row <= array.Rows; row++)
                     {
-                        CurrentPage.ClearBoundaries();
-                        stroke.DrawingAttributes.Width = width;
-                        stroke.DrawingAttributes.Height = height;
+                        if (strokeGroupPerRow[row].Contains(closestStroke))
+                        {
+                            strokeGroupPerRow[row].Add(stroke);
+                            break;
+                        }
                     }
                 }
 
@@ -1097,94 +1106,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                // Remove dupe strokes from all groupings before refining
-                var skipsWithStrokeGroups = strokeGroupPerRow.Values.Where(sc => sc.Any()).ToList();
-                var strokesSharedByGroupings = skipsWithStrokeGroups.SelectMany(s => s).GroupBy(s => s).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
-                foreach (var stroke in strokesSharedByGroupings)
+                if (DEBUG)
                 {
-                    foreach (var rowGroup in strokeGroupPerRow.Values.Where(sc => sc.Contains(stroke)))
+                    CurrentPage.ClearBoundaries();
+
+                    foreach (var strokeGroup in strokeGroupPerRow.Values)
                     {
-                        rowGroup.Remove(stroke);
-                    }
-                }
-
-                // Calculate adjusted row boundaries
-                var averageStrokeGroupingHeight = skipsWithStrokeGroups.Select(sc => sc.GetBounds().Height).Average();
-                var averageStrokeGroupingWidth = skipsWithStrokeGroups.Select(sc => sc.GetBounds().Width).Average();
-
-                // Re-try ungrouped strokes width adjusted boundaries
-                ungroupedStrokes.AddRange(strokesSharedByGroupings);
-                var nonSkipCountStrokes = new List<Stroke>();
-                foreach (var stroke in ungroupedStrokes)
-                {
-                    var strokeBounds = stroke.GetBounds();
-                    var isStrokeGroupedIntoRow = false;
-
-                    var width = stroke.DrawingAttributes.Width;
-                    var height = stroke.DrawingAttributes.Height;
-                    if (DEBUG)
-                    {
-                        stroke.DrawingAttributes.Width = 4;
-                        stroke.DrawingAttributes.Height = 4;
-                        PageHistory.UISleep(600);
-                    }
-
-                    for (var row = 1; row <= array.Rows; row++)
-                    {
-                        
-                        var strokeGroup = strokeGroupPerRow[row];
-                        var nextStrokeGroup = strokeGroupPerRow[row + 1];
-
-
-                        var rowBoundary = new Rect
+                        var heightWidths = new Dictionary<Stroke, Point>();
+                        foreach (var stroke in strokeGroup)
                         {
-                            X = rowBoundaryX,
-                            Y = array.YPosition + array.LabelLength - rowHeightBuffer + ((row - 1) * array.GridSquareSize),
-                            Width = averageStrokeGroupingWidth,
-                            Height = averageStrokeGroupingHeight
-                        };
+                            var width = stroke.DrawingAttributes.Width;
+                            var height = stroke.DrawingAttributes.Height;
+                            heightWidths.Add(stroke, new Point(width, height));
 
-                        if (DEBUG)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            CurrentPage.AddBoundary(rowBoundary);
-                            PageHistory.UISleep(600);
-                        }
-
-                        var intersect = Rect.Intersect(strokeBounds, rowBoundary);
-                        if (intersect.IsEmpty)
-                        {
-                            continue;
-                        }
-                        var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                        if (!(intersectPercentage >= 0.33))
-                        {
-                            continue;
-                        }
-
-                        if (DEBUG)
-                        {
                             stroke.DrawingAttributes.Width = 8;
                             stroke.DrawingAttributes.Height = 8;
-                            PageHistory.UISleep(600);
+                        }
+                        PageHistory.UISleep(1000);
+                        foreach (var stroke in strokeGroup)
+                        {
+                            var width = heightWidths[stroke].X;
+                            var height = heightWidths[stroke].Y;
                             stroke.DrawingAttributes.Width = width;
                             stroke.DrawingAttributes.Height = height;
                         }
-                        strokeGroupPerRow[row].Add(stroke);
-                        isStrokeGroupedIntoRow = true;
-
-                    }
-
-                    if (!isStrokeGroupedIntoRow)
-                    {
-                        nonSkipCountStrokes.Add(stroke);
-                    }
-
-                    if (DEBUG)
-                    {
-                        CurrentPage.ClearBoundaries();
-                        stroke.DrawingAttributes.Width = width;
-                        stroke.DrawingAttributes.Height = height;
                     }
                 }
 
