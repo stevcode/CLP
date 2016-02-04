@@ -966,7 +966,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var DEBUG = true;
+            var DEBUG = false;
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
@@ -982,7 +982,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                if (false)
+                if (DEBUG)
                 {
                     CurrentPage.ClearBoundaries();
                     CurrentPage.AddBoundary(expandedArrayBounds);
@@ -1026,7 +1026,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
                 if (notSkipCountStrokes.Any())
                 {
-                    Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                    //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
                     // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
                 }
 
@@ -1078,7 +1078,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (mostLikelyRow == 0)
                     {
                         notSkipCountStrokes.Add(stroke);
-                        Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                        //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
                         // TODO: re-cluster to ignore these strokes.
                         continue;
                     }
@@ -1134,11 +1134,32 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 // Interpret handwriting of each row's grouping of strokes.
-                var expectedRowValues = new List<int>();
-                for (var i = 1; i <= array.Rows; i++)
+                var interpretedRowValues = new List<string>();
+                for (var row = 1; row <= array.Rows; row++)
                 {
-                    expectedRowValues.Add(i * array.Columns);
+                    var expectedRowValue = row * array.Columns;
+                    var strokesInRow = strokeGroupPerRow[row];
+                    var interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+                    if (!interpretations.Any())
+                    {
+                        interpretedRowValues.Add(string.Empty);
+                        continue;
+                    }
+
+                    var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
+                    if (!string.IsNullOrEmpty(actualMatch))
+                    {
+                        interpretedRowValues.Add(actualMatch);
+                        continue;
+                    }
+
+                    var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    interpretedRowValues.Add(bestGuess);
                 }
+
+                var formattedSkips = string.Join("\" \"", interpretedRowValues);
+                var codedValue = string.Format("ARR skip [{0}: \"{1}\"]", array.CodedID, formattedSkips);
+                Console.WriteLine(codedValue);
 
                 #endregion // New Skip Testing
 
