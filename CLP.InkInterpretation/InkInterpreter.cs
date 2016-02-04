@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Windows.Ink;
 using Windows.Foundation;
 using Windows.UI.Input.Inking;
@@ -113,6 +114,49 @@ namespace CLP.InkInterpretation
             }
 
             return allInterpretations;
+        }
+
+        public static string MatchInterpretationToExpectedInt(List<string> interpretations, int number)
+        {
+            var trimmedInterpretations = interpretations.Select(i => i.Replace(" ", string.Empty)).ToList();
+            foreach (var trimmed in trimmedInterpretations)
+            {
+                int parsedInterpretation;
+                if (!int.TryParse(trimmed, out parsedInterpretation))
+                {
+                    continue;
+                }
+
+                if (parsedInterpretation == number)
+                {
+                    return trimmed;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        public static string InterpretationClosestToANumber(List<string> interpretations)
+        {
+            if (!interpretations.Any())
+            {
+                return string.Empty;
+            }
+
+            var mostNumbers = interpretations.First();
+            var percentageOfNumbers = 0.0;
+            interpretations.Reverse();
+            foreach (var interpretation in interpretations)
+            {
+                var numberOfDigits = interpretation.Count(char.IsDigit);
+                var percentage = numberOfDigits / interpretation.Length;
+                if (percentage >= percentageOfNumbers)
+                {
+                    mostNumbers = interpretation;
+                }
+            }
+
+            return mostNumbers;
         }
     }
 }
