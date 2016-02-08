@@ -412,18 +412,40 @@ namespace CLP.Entities
             Argument.IsNotNull("otherStroke", otherStroke);
 
             var halfWayIndex = stroke.StylusPoints.Count / 2;
-            var strokeFrontHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Take(halfWayIndex)));
-            var strokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(halfWayIndex)));
+            Stroke strokeFrontHalf;
+            Stroke strokeBackHalf;
+            if (halfWayIndex == 0)
+            {
+                strokeFrontHalf = stroke;
+                strokeBackHalf = stroke;
+            }
+            else
+            {
+                strokeFrontHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Take(halfWayIndex)));
+                strokeBackHalf = new Stroke(new StylusPointCollection(stroke.StylusPoints.Skip(halfWayIndex)));
+            }
 
             var otherHalfWayIndex = otherStroke.StylusPoints.Count / 2;
-            var otherStrokeFrontHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Take(otherHalfWayIndex)));
-            var otherStrokeBackHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Skip(otherHalfWayIndex)));
+            Stroke otherStrokeFrontHalf;
+            Stroke otherStrokeBackHalf;
+            if (otherHalfWayIndex == 0)
+            {
+                otherStrokeFrontHalf = otherStroke;
+                otherStrokeBackHalf = otherStroke;
+            }
+            else
+            {
+                otherStrokeFrontHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Take(otherHalfWayIndex)));
+                otherStrokeBackHalf = new Stroke(new StylusPointCollection(otherStroke.StylusPoints.Skip(otherHalfWayIndex)));
+            }
 
-            var averagePointDistances = new List<double>();
-            averagePointDistances.Add(strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf));
-            averagePointDistances.Add(strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf));
-            averagePointDistances.Add(strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf));
-            averagePointDistances.Add(strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf));
+            var averagePointDistances = new List<double>
+                                        {
+                                            strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf),
+                                            strokeFrontHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf),
+                                            strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeFrontHalf),
+                                            strokeBackHalf.DistanceSquaredByAveragePointDistance(otherStrokeBackHalf)
+                                        };
 
             var minAveragePointDistance = averagePointDistances.Min();
 
