@@ -19,11 +19,12 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesOnPageTag" /> belongs to.</param>
         /// <param name="origin"></param>
         /// <param name="currentUserID"></param>
-        public ArrayStrategiesTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions)
+        public ArrayStrategiesTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<string> strategyCodes)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
 
+            StrategyCodes = strategyCodes;
             HistoryActions = historyActions;
         }
 
@@ -37,6 +38,16 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>List of all the Array Strategies used on the page.</summary>
+        public List<string> StrategyCodes
+        {
+            get { return GetValue<List<string>>(StrategyCodesProperty); }
+            set { SetValue(StrategyCodesProperty, value); }
+        }
+
+        public static readonly PropertyData StrategyCodesProperty = RegisterProperty("StrategyCodes", typeof (List<string>), () => new List<string>());
+        
 
         /// <summary>List of all the Array Strategies used on the <see cref="CLPPage" />.</summary>
         public List<IHistoryAction> HistoryActions
@@ -63,7 +74,7 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Join("\n", HistoryActions.Select(h => h.CodedValue));
+                return string.Join("\n", StrategyCodes);
             }
         }
 

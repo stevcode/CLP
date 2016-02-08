@@ -49,6 +49,14 @@ namespace CLP.Entities
 
         #endregion // Arith Actions
 
+        #region Dot Actions
+
+        // TODO: actually define correctly.
+        public const string ACTION_DOTS_ADD = "add";
+        public const string ACTION_DOTS_ERASE = "erase";
+
+        #endregion // Dot Actions
+
         #region Answer Actions
 
         public const string ACTION_FILL_IN_ADD = "add";
@@ -130,6 +138,12 @@ namespace CLP.Entities
 
         #endregion // CodedActionIDVariables
 
+        #region Meta Data
+
+        public const string META_REFERENCE_PAGE_OBJECT_ID = "REFERENCE_PAGE_OBJECT_ID";
+
+        #endregion // Meta Data
+
         #region Analysis Codes
 
         public const string ANALYSIS_COR_BEFORE_REP = "ABR";
@@ -138,6 +152,22 @@ namespace CLP.Entities
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+
+        #region Array Strategies
+
+        public const string STRATEGY_ARRAY_NONE = "NO STRAT ARR";
+        public const string STRATEGY_ARRAY_DOTS = "STRAT COUNT dots ARR";
+        public const string STRATEGY_ARRAY_DOTS_PARTIAL = "STRAT COUNT dots part ARR";
+        public const string STRATEGY_ARRAY_SKIP = "STRAT COUNT skip ARR";
+        public const string STRATEGY_ARRAY_SKIP_PARTIAL = "STRAT COUNT skip part ARR";
+        public const string STRATEGY_ARRAY_DIVIDE = "STRAT PART divide ARR";
+        public const string STRATEGY_ARRAY_DIVIDE_INK = "STRAT PART divide ink ARR";
+        public const string STRATEGY_ARRAY_CUT = "STRAT PART cut ARR";
+        public const string STRATEGY_ARRAY_SNAP = "STRAT PART snap ARR";
+        public const string STRATEGY_ARRAY_CUT_THEN_SNAP = "STRAT PART cut snap ARR";
+        public const string STRATEGY_ARRAY_MULTIPLE = "STRAT PART mult ARR";
+
+        #endregion // Array Strategies
 
         #endregion // Analysis Codes
 

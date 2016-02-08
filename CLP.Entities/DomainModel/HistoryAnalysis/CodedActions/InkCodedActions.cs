@@ -103,7 +103,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            var referenceRegionID = inkAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+            var referenceRegionID = inkAction.ReferencePageObjectID;
+            if (referenceRegionID == null)
+            {
+                return null;
+            }
             var region = page.GetPageObjectByIDOnPageOrInHistory(referenceRegionID) as InterpretationRegion;
             if (region == null)
             {

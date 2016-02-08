@@ -12,90 +12,8 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
-        public static void TagHacks(CLPPage page)
-        {
-            switch (page.ID)
-            {
-                case "D2Op0HfG10aoQtL2W0BX6Q": // Page 1
-                    break;
-                case "-zOauyypbEmgpo3f_dalNA": // Page 2
-                {
-                    break;
-                }
-                case "UvLXlXlpCEuLF1309g5zPA": // Page 3
-                {
-                    break;
-                }
-                case "526u6U8sQUqjFkCXTJZYiA": // Page 4
-                {
-                    break;
-                }
-                case "y-wako1KCk6Aurwrn5QbVg": // Page 5
-                {
-                    if (page.Owner.FullName.Contains("John"))
-                    {
-                        //var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "AcYvs_jEXEW9sXBGZ4euyA", 0, 64, 1, Correctness.Correct);
-                        //page.AddTag(tag);
-
-                        var tag2 = new NumberLineJumpEraseTag(page, Origin.StudentPageGenerated);
-                        page.AddTag(tag2);
-                    }
-                    break;
-                }
-                case "_024ibxTi0qlw4gzCD7QXA": // Page 6
-                {
-                    //if (page.Owner.FullName.Contains("John"))
-                    //{
-                    //    var tag = new NumberLineRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, "OqQXQpO4ukq5IGg5Zyo6ig", 0, 56, 1, Correctness.Correct);
-                    //    page.AddTag(tag);
-                    //}
-                    break;
-                }
-                case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
-                {
-                    break;
-                }
-                case "gdruAzwX6kWe2k-etZ6gcQ": // Page 8
-                {
-                    break;
-                }
-                case "yzvpdIROIEOFrndOASGjvA": // Page 9
-                {
-                    break;
-                }
-                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
-                {
-                    break;
-                }
-                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
-                {
-                    break;
-                }
-                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
-                {
-                    //if (page.Owner.FullName.Contains("Julia"))
-                    //{
-                    //    var tag1 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction>());
-                    //    page.AddTag(tag1);
-
-                    //    var tag2 = new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, new List<IHistoryAction> { new HistoryAction()});
-                    //    page.AddTag(tag2);
-                    //}
-                    break;
-                }
-                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
-                {
-                    break;
-                }
-                default:
-                    return;
-            }
-        }
-
         public static void GenerateHistoryActions(CLPPage page)
         {
-            TagHacks(page);
-
             HistoryAction.CurrentIncrementID.Clear();
             HistoryAction.MaxIncrementID.Clear();
             page.History.HistoryActions.Clear();
@@ -693,7 +611,7 @@ namespace CLP.Entities
 
                     refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
                 }
-                refinedHistoryAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", currentPageObjectReference.ID);
+                refinedHistoryAction.ReferencePageObjectID = currentPageObjectReference.ID;
 
                 processedInkActions.Add(refinedHistoryAction);
                 historyItemBuffer.Clear();
@@ -739,6 +657,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
@@ -746,7 +665,11 @@ namespace CLP.Entities
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
                 var interpretedActions = ArrayCodedActions.InkDivide(page, historyaction); // TODO: Potentionally needs a recursive pass through.
-                allInterpretedActions.AddRange(interpretedActions);
+                if (interpretedActions.Any())
+                {
+                    allInterpretedActions.AddRange(interpretedActions);
+                    return allInterpretedActions;
+                }
             }
 
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
@@ -756,6 +679,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
@@ -765,6 +689,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
@@ -1485,15 +1410,99 @@ namespace CLP.Entities
         public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
         {
             var relevantHistoryactions = new List<IHistoryAction>();
+            var strategyCodes = new List<string>();
+            var ignoredHistoryIndexes = new List<int>();
 
-            var strategies = historyActions.Where(h => h.CodedObject == Codings.OBJECT_ARRAY && (h.CodedObjectAction == Codings.ACTION_ARRAY_CUT || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE || h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP || h.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)).ToList();
+            for (var i = 0; i < historyActions.Count; i++)
+            {
+                if (ignoredHistoryIndexes.Contains(i))
+                {
+                    continue;
+                }
 
-            if (!strategies.Any())
+                var currentHistoryAction = historyActions[i];
+                var isLastHistoryAction = i + 1 >= historyActions.Count;
+
+                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARRAY)
+                {
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE_INK, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    {
+                        if (!isLastHistoryAction)
+                        {
+                            var nextHistoryAction = historyActions[i + 1];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                            {
+                                relevantHistoryactions.Add(currentHistoryAction);
+                                relevantHistoryactions.Add(nextHistoryAction);
+                                var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                                strategyCodes.Add(compoundCode);
+                                continue;
+                            }
+                        }
+
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
+                    {
+                        for (int j = i + 1; j < historyActions.Count; j++)
+                        {
+                            var nextHistoryAction = historyActions[j];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARRAY &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP &&
+                                nextHistoryAction.CodedObjectID == currentHistoryAction.CodedObjectID)
+                            {
+                                relevantHistoryactions.Add(currentHistoryAction);
+                                relevantHistoryactions.Add(nextHistoryAction);
+                                ignoredHistoryIndexes.Add(j);
+                                var compoundCode = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT_THEN_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                                strategyCodes.Add(compoundCode);
+                                continue;
+                            }
+                        }
+
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
+                    {
+                        relevantHistoryactions.Add(currentHistoryAction);
+                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        strategyCodes.Add(code);
+                        continue;
+                    }
+                }
+            }
+
+            if (!strategyCodes.Any())
             {
                 return;
             }
 
-            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, strategies);
+            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, relevantHistoryactions, strategyCodes);
             page.AddTag(tag);
         }
 
