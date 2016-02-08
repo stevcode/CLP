@@ -657,6 +657,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
@@ -664,7 +665,11 @@ namespace CLP.Entities
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
                 var interpretedActions = ArrayCodedActions.InkDivide(page, historyaction); // TODO: Potentionally needs a recursive pass through.
-                allInterpretedActions.AddRange(interpretedActions);
+                if (interpretedActions.Any())
+                {
+                    allInterpretedActions.AddRange(interpretedActions);
+                    return allInterpretedActions;
+                }
             }
 
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
@@ -674,6 +679,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
@@ -683,6 +689,7 @@ namespace CLP.Entities
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
+                    return allInterpretedActions;
                 }
             }
 
