@@ -18,7 +18,7 @@ namespace CLP.MachineAnalysis
             }
         }
 
-        private class ItemRelationComparison : IComparer<ItemRelation>
+        private class ItemRelationComparer : IComparer<ItemRelation>
         {
             public int Compare(ItemRelation x, ItemRelation y)
             {
@@ -37,7 +37,7 @@ namespace CLP.MachineAnalysis
         readonly HeapPriorityQueue<Item<T>> _seeds;
         readonly Func<T, T, double> _distanceEquation;
 
-        private static readonly ItemRelationComparison ItemComparison = new ItemRelationComparison();
+        private static readonly ItemRelationComparer ItemComparer = new ItemRelationComparer();
 
         public OPTICS(double maximumEpsilon, int minimumItemsInCluster, List<T> internalItems, Func<T, T, double> distanceEquation)
         {
@@ -79,7 +79,7 @@ namespace CLP.MachineAnalysis
                 return double.NaN;
             }
 
-            neighbors.Sort(ItemComparison);
+            neighbors.Sort(ItemComparer);
             return neighbors[_minimumItemsInCluster - 1].DistanceToOtherItem;
         }
 
@@ -156,7 +156,7 @@ namespace CLP.MachineAnalysis
             }
         }
 
-        public IEnumerable<ItemReachability> ReachabilityPoints()
+        public IEnumerable<ItemReachability> ReachabilityDistances()
         {
             return _outputIndexes.Select(item => new ItemReachability(_items[item].OriginalIndex, _items[item].ReachabilityDistance));
         }

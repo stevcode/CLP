@@ -97,6 +97,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -210,11 +212,11 @@
                         Height="20"
                         Margin="1" />-->
 
-                <Button Content="Run Divider Interpretation"
+                <!--<Button Content="Run Divider Interpretation"
                         Command="{Binding InterpretArrayDividersCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />
+                        Margin="1" />-->
 
                 <Button Content="Run Skip Counting Analysis"
                         Command="{Binding AnalyzeSkipCountingCommand}"
@@ -229,12 +231,12 @@
                         Margin="1"
                         Visibility="Collapsed" />-->
 
-                <Button Content="Run History Analysis"
+                <!--<Button Content="Run History Analysis"
                         Command="{Binding HistoryActionAnaylsisCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1"
-                        Visibility="Collapsed" />
+                        Visibility="Collapsed" />-->
 
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
@@ -242,12 +244,12 @@
                         Height="20"
                         Margin="1" />
 
-                <Button Content="Fix DTs"
+                <!--<Button Content="Fix DTs"
                         Command="{Binding FixCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1"
-                        Visibility="Collapsed" />
+                        Visibility="Collapsed" />-->
 
                 <Button Content="Cluster: PointDensity"
                         Command="{Binding ClusterTestCommand}"
@@ -257,13 +259,51 @@
                         Margin="1"
                         Visibility="Visible" />
 
-                <Button Content="Cluster: PointDensity"
+                <Button Content="Cluster: CenterDistance"
                         Command="{Binding ClusterTestCommand}"
                         CommandParameter="CenterDistance"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1"
                         Visibility="Visible" />
+
+                <Button Content="Cluster: WeightedCenterDistance"
+                        Command="{Binding ClusterTestCommand}"
+                        CommandParameter="WeightedCenterDistance"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Visible" />
+
+                <Button Content="Cluster: ClosestPoint"
+                        Command="{Binding ClusterTestCommand}"
+                        CommandParameter="ClosestPoint"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Visible" />
+
+                <Button Content="Cluster: AveragePointDistance"
+                        Command="{Binding ClusterTestCommand}"
+                        CommandParameter="AveragePointDistance"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Visible" />
+
+                <Button Content="Cluster: StrokeHalves"
+                        Command="{Binding ClusterTestCommand}"
+                        CommandParameter="StrokeHalves"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Visible" />
+
+                <Button Content="Clear Temp Boundaries"
+                        Command="{Binding ClearTempBoundariesCommand}"
+                        Height="20"
+                        Margin="1"
+                        Grid.ColumnSpan="2" />
 
                 <Rectangle Grid.ColumnSpan="2"
                            Height="1"

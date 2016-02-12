@@ -271,7 +271,7 @@ namespace CLP.InkInterpretation
         }
 
         // https://visualstudiomagazine.com/articles/2013/12/01/k-means-data-clustering-using-c.aspx
-        private static int[] K_MEANS_Clustering(double[][] rawData, int numberOfClusters)
+        public static int[] K_MEANS_Clustering(double[][] rawData, int numberOfClusters)
         {
             var k = numberOfClusters;
 

@@ -1057,6 +1057,10 @@
       <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
       <Name>CLP.InkInterpretation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MachineAnalysis\CLP.MachineAnalysis.csproj">
+      <Project>{117c5f32-8808-4e42-9ac9-ceaaeb3e3875}</Project>
+      <Name>CLP.MachineAnalysis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
       <Name>ServiceModelEx</Name>
