@@ -1380,27 +1380,50 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command<string> ClusterTestCommand
         { get; private set; }
 
+        //public static List<StrokeCollection> Cluster(StrokeCollection strokes)
+        //{
+            
+        //}
+
         private void OnClusterTestCommandExecute(string clusterEquation)
         {
+            List<StrokeCollection> clusteredStrokes;
+            switch (clusterEquation)
+            {
+                case "PointDensity":
+                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+                    break;
+                //case "CenterDistance":
+                //    clusteredStrokes = Cluster(CurrentPage.InkStrokes);
+                //    break;
+                default:
+                    return;
+            }
+
+
+            
+
             var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
             foreach (var temporaryBoundary in tempBoundaries)
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
-            var clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+
             var regionCount = 1;
             foreach (var strokes in clusteredStrokes)
             {
                 var clusterBounds = strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width);
-                tempBoundary.RegionText = regionCount.ToString();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                                   {
+                                       RegionText = regionCount.ToString()
+                                   };
                 regionCount++;
                 CurrentPage.PageObjects.Add(tempBoundary);
             }
 
             // Screenshot Clusters
-            PageHistory.UISleep(800);
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+            PageHistory.UISleep(1000);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
 
             var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);

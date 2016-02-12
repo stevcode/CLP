@@ -2,13 +2,13 @@
 {
     public struct ItemReachability
     {
-        public ItemReachability(uint itemID, double reachabilityDistance)
+        public ItemReachability(uint originalIndex, double reachabilityDistance)
         {
-            ItemID = itemID;
+            OriginalIndex = originalIndex;
             ReachabilityDistance = reachabilityDistance;
         }
 
-        public readonly uint ItemID;
+        public readonly uint OriginalIndex;
         public readonly double ReachabilityDistance;
     }
 }
