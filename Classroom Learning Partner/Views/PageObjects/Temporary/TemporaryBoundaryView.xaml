@@ -3,15 +3,24 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com">
 
-    <Rectangle HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               IsHitTestVisible="False"
-               Width="{Binding Width}"
-               Height="{Binding Height}"
-               Opacity=".3"
-               Fill="PaleVioletRed"
-               Stroke="PaleVioletRed"
-               StrokeThickness="1"
-               Stretch="Fill" />
+    <Grid>
+        <Rectangle HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}"
+                   Opacity=".3"
+                   Fill="PaleVioletRed"
+                   Stroke="PaleVioletRed"
+                   StrokeThickness="1"
+                   Stretch="Fill" />
+
+        <TextBox Text="{Binding RegionText}"
+                 Background="White"
+                 Foreground="Black"
+                 FontSize="20"
+                 HorizontalAlignment="Left" 
+                 VerticalAlignment="Top" />
+    </Grid>
 
 </catel:UserControl>

@@ -1388,10 +1388,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
             var clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+            var regionCount = 1;
             foreach (var strokes in clusteredStrokes)
             {
                 var clusterBounds = strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width);
+                tempBoundary.RegionText = regionCount.ToString();
+                regionCount++;
                 CurrentPage.PageObjects.Add(tempBoundary);
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -28,6 +29,18 @@ namespace CLP.Entities
             : base(info, context) { }
 
         #endregion //Constructors
+
+        #region Properties
+
+        public string RegionText
+        {
+            get { return GetValue<string>(RegionTextProperty); }
+            set { SetValue(RegionTextProperty, value); }
+        }
+
+        public static readonly PropertyData RegionTextProperty = RegisterProperty("RegionText", typeof(string), string.Empty);
+
+        #endregion // Properties
 
         #region APageObjectBase Overrides
 
