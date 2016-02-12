@@ -41,9 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OPTICS.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="PointList.cs" />
-    <Compile Include="PointReachability.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemReachability.cs" />
     <Compile Include="PriorityQueue\HeapPriorityQueue.cs" />
     <Compile Include="PriorityQueue\PriorityQueueNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,194 +1,164 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CLP.MachineAnalysis
 {
-    public class OPTICS
+    public class OPTICS<T>
     {
-        private struct PointRelation
+        private struct ItemRelation
         {
-            public readonly uint To;
-            public readonly double Distance;
+            public readonly uint OtherItemIndex;
+            public readonly double DistanceToOtherItem;
 
-            public PointRelation(uint to, double distance)
+            public ItemRelation(uint otherItemIndex, double distanceToOtherItem)
             {
-                this.To = to;
-                this.Distance = distance;
+                OtherItemIndex = otherItemIndex;
+                DistanceToOtherItem = distanceToOtherItem;
             }
         }
 
-        readonly Point[] _points;
-        readonly double _eps;
-        readonly int _minPts;
-        readonly List<uint> _outputIndexes;
-        readonly HeapPriorityQueue<Point> _seeds;
-
-        private void AddOutputIndex(uint index)
+        private class ItemRelationComparison : IComparer<ItemRelation>
         {
-            _outputIndexes.Add(index);
-            if (_outputIndexes.Count % 250 == 0)
+            public int Compare(ItemRelation x, ItemRelation y)
             {
-                // TODO : add progress reporting interface
-                Console.WriteLine("Progress {0}/{1}", _outputIndexes.Count, _outputIndexes.Capacity);
-            }
-        }
-
-        public OPTICS(double eps, int minPts, PointsList points)
-        {
-            _points = points._points.ToArray();
-            _eps = eps;
-            _minPts = minPts;
-
-            _outputIndexes = new List<uint>(_points.Length);
-            _seeds = new HeapPriorityQueue<Point>(_points.Length);
-
-        }
-
-        public double EuclideanDistance(uint p1Index, uint p2Index)
-        {
-            double dist = 0;
-            var vec1 = _points[p1Index].Vector;
-            var vec2 = _points[p2Index].Vector;
-
-            for (int i = 0; i < vec1.Length; i++)
-            {
-                var diff = (vec1[i] - vec2[i]);
-                dist += diff * diff;
-            }
-
-            return Math.Sqrt(dist);
-        }
-
-        // TODO add way to select which distance to use
-        public double ManhattanDistance(uint p1Index, uint p2Index)
-        {
-            double dist = 0;
-            var vec1 = _points[p1Index].Vector;
-            var vec2 = _points[p2Index].Vector;
-
-            for (int i = 0; i < vec1.Length; i++)
-            {
-                var diff = Math.Abs(vec1[i] - vec2[i]);
-                dist += diff;
-            }
-
-            return dist;
-        }
-
-        private void GetNeighborhood(uint p1Index, List<PointRelation> neighborhoodOut)
-        {
-            neighborhoodOut.Clear();
-
-            for (uint p2Index = 0; p2Index < _points.Length; p2Index++)
-            {
-                var distance = EuclideanDistance(p1Index, p2Index);
-
-                if (distance <= _eps)
-                {
-                    neighborhoodOut.Add(new PointRelation(p2Index, distance));
-                }
-            }
-        }
-
-        private double CoreDistance(List<PointRelation> neighbors)
-        {
-            if (neighbors.Count < _minPts)
-                return double.NaN;
-
-            neighbors.Sort(pointComparison);
-            return neighbors[_minPts - 1].Distance;
-        }
-
-        private static PointRelationComparison pointComparison = new PointRelationComparison();
-
-        private class PointRelationComparison : IComparer<PointRelation>
-        {
-            public int Compare(PointRelation x, PointRelation y)
-            {
-                if (x.Distance == y.Distance)
+                if (Math.Abs(x.DistanceToOtherItem - y.DistanceToOtherItem) < 0.0001)
                 {
                     return 0;
                 }
-                return x.Distance > y.Distance ? 1 : -1;
+                return x.DistanceToOtherItem > y.DistanceToOtherItem ? 1 : -1;
             }
+        }
+
+        readonly Item<T>[] _items;
+        readonly double _maximumEpsilon;
+        readonly int _minimumItemsInCluster;
+        readonly List<uint> _outputIndexes;
+        readonly HeapPriorityQueue<Item<T>> _seeds;
+        readonly Func<T, T, double> _distanceEquation;
+
+        private static readonly ItemRelationComparison ItemComparison = new ItemRelationComparison();
+
+        public OPTICS(double maximumEpsilon, int minimumItemsInCluster, List<T> internalItems, Func<T, T, double> distanceEquation)
+        {
+            var items = new List<Item<T>>();
+            foreach (var internalItem in internalItems)
+            {
+                var item = new Item<T>((uint)items.Count, (uint)items.Count, internalItem);
+                items.Add(item);
+            }
+
+            _items = items.ToArray();
+            _maximumEpsilon = maximumEpsilon;
+            _minimumItemsInCluster = minimumItemsInCluster;
+            _distanceEquation = distanceEquation;
+
+            _outputIndexes = new List<uint>(_items.Length);
+            _seeds = new HeapPriorityQueue<Item<T>>(_items.Length);
+        }
+
+        private void GetNeighborhood(uint itemIndex, List<ItemRelation> neighborhood)
+        {
+            neighborhood.Clear();
+
+            for (uint otherItemIndex = 0; otherItemIndex < _items.Length; otherItemIndex++)
+            {
+                var distance = _distanceEquation(_items[itemIndex].InternalItem, _items[otherItemIndex].InternalItem);
+
+                if (distance <= _maximumEpsilon)
+                {
+                    neighborhood.Add(new ItemRelation(otherItemIndex, distance));
+                }
+            }
+        }
+
+        private double CoreDistance(List<ItemRelation> neighbors)
+        {
+            if (neighbors.Count < _minimumItemsInCluster)
+            {
+                return double.NaN;
+            }
+
+            neighbors.Sort(ItemComparison);
+            return neighbors[_minimumItemsInCluster - 1].DistanceToOtherItem;
         }
 
         public void BuildReachability()
         {
-            for (uint pIndex = 0; pIndex < _points.Length; pIndex++)
+            for (uint itemIndex = 0; itemIndex < _items.Length; itemIndex++)
             {
-                if (_points[pIndex].WasProcessed)
-                    continue;
-
-                List<PointRelation> neighborOfPoint = new List<PointRelation>();
-                GetNeighborhood(pIndex, neighborOfPoint);
-
-                _points[pIndex].WasProcessed = true;
-
-                AddOutputIndex(pIndex);
-
-                double coreDistance = CoreDistance(neighborOfPoint);
-
-                if (!double.IsNaN(coreDistance))
+                if (_items[itemIndex].WasProcessed)
                 {
-                    _seeds.Clear();
-                    Update(pIndex, neighborOfPoint, coreDistance);
+                    continue;
+                }
 
-                    List<PointRelation> neighborInner = new List<PointRelation>();
-                    while (_seeds.Count > 0)
+                var neighborhoodOfPoint = new List<ItemRelation>();
+                GetNeighborhood(itemIndex, neighborhoodOfPoint);
+
+                _items[itemIndex].WasProcessed = true;
+
+                _outputIndexes.Add(itemIndex);
+
+                var coreDistance = CoreDistance(neighborhoodOfPoint);
+
+                if (double.IsNaN(coreDistance))
+                {
+                    continue;
+                }
+
+                _seeds.Clear();
+                Update(neighborhoodOfPoint, coreDistance);
+
+                var innerNeighborhood = new List<ItemRelation>();
+                while (_seeds.Count > 0)
+                {
+                    var innerItemIndex = _seeds.Dequeue().CurrentIndex;
+
+                    GetNeighborhood(innerItemIndex, innerNeighborhood);
+
+                    _items[innerItemIndex].WasProcessed = true;
+
+                    _outputIndexes.Add(innerItemIndex);
+
+                    var innerCoreDistance = CoreDistance(innerNeighborhood);
+
+                    if (!double.IsNaN(innerCoreDistance))
                     {
-                        uint pInnerIndex = _seeds.Dequeue().Index;
-
-                        GetNeighborhood(pInnerIndex, neighborInner);
-
-                        _points[pInnerIndex].WasProcessed = true;
-
-                        AddOutputIndex(pInnerIndex);
-
-                        double coreDistanceInner = CoreDistance(neighborInner);
-
-                        if (!double.IsNaN(coreDistanceInner))
-                        {
-                            Update(pInnerIndex, neighborInner, coreDistanceInner);
-                        }
+                        Update(innerNeighborhood, innerCoreDistance);
                     }
                 }
             }
         }
 
-        private void Update(uint pIndex, List<PointRelation> neighbors, double coreDistance)
+        private void Update(List<ItemRelation> neighborhood, double coreDistance)
         {
-            for (int i = 0; i < neighbors.Count; i++)
+            for (var i = 0; i < neighborhood.Count; i++)
             {
-                uint p2Index = neighbors[i].To;
+                var otherItemIndex = neighborhood[i].OtherItemIndex;
 
-                if (_points[p2Index].WasProcessed)
+                if (_items[otherItemIndex].WasProcessed)
+                {
                     continue;
-
-                double newReachabilityDistance = Math.Max(coreDistance, neighbors[i].Distance);
-
-                if (double.IsNaN(_points[p2Index].ReachabilityDistance))
-                {
-                    _points[p2Index].ReachabilityDistance = newReachabilityDistance;
-                    _seeds.Enqueue(_points[p2Index], newReachabilityDistance);
                 }
-                else if (newReachabilityDistance < _points[p2Index].ReachabilityDistance)
+
+                var newReachabilityDistance = Math.Max(coreDistance, neighborhood[i].DistanceToOtherItem);
+
+                if (double.IsNaN(_items[otherItemIndex].ReachabilityDistance))
                 {
-                    _points[p2Index].ReachabilityDistance = newReachabilityDistance;
-                    _seeds.UpdatePriority(_points[p2Index], newReachabilityDistance);
+                    _items[otherItemIndex].ReachabilityDistance = newReachabilityDistance;
+                    _seeds.Enqueue(_items[otherItemIndex], newReachabilityDistance);
+                }
+                else if (newReachabilityDistance < _items[otherItemIndex].ReachabilityDistance)
+                {
+                    _items[otherItemIndex].ReachabilityDistance = newReachabilityDistance;
+                    _seeds.UpdatePriority(_items[otherItemIndex], newReachabilityDistance);
                 }
             }
         }
 
-        public IEnumerable<PointReachability> ReachabilityPoints()
+        public IEnumerable<ItemReachability> ReachabilityPoints()
         {
-            foreach (var item in _outputIndexes)
-            {
-                yield return new PointReachability(_points[item].Id, _points[item].ReachabilityDistance);
-            }
+            return _outputIndexes.Select(item => new ItemReachability(_items[item].OriginalIndex, _items[item].ReachabilityDistance));
         }
     }
 }

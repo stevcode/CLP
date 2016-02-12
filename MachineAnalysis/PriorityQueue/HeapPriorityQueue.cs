@@ -71,6 +71,7 @@ namespace CLP.MachineAnalysis
 #if NET_VERSION_4_5
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
+
         private void Swap(T node1, T node2)
         {
             //Swap the nodes
@@ -106,6 +107,7 @@ namespace CLP.MachineAnalysis
 #if NET_VERSION_4_5
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
+
         private void CascadeDown(T node)
         {
             //aka Heapify-down
