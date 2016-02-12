@@ -112,7 +112,7 @@ namespace CLP.MachineAnalysis
                 var innerNeighborhood = new List<ItemRelation>();
                 while (_seeds.Count > 0)
                 {
-                    var innerItemIndex = _seeds.Dequeue().CurrentIndex;
+                    var innerItemIndex = _seeds.Dequeue().OriginalIndex;
 
                     GetNeighborhood(innerItemIndex, innerNeighborhood);
 
