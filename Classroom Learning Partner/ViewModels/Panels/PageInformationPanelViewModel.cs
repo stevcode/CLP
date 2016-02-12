@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FixCommand = new Command(OnFixCommandExecute);
             GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
-            ClusterTestCommand = new Command(OnClusterTestCommandExecute);
+            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1321,9 +1321,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command GenerateStampGroupingsCommand { get; private set; }
 
         private void OnGenerateStampGroupingsCommandExecute()
@@ -1349,9 +1346,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command FixCommand { get; private set; }
 
         private void OnFixCommandExecute()
@@ -1383,10 +1377,10 @@ namespace Classroom_Learning_Partner.ViewModels
             HistoryAnalysis.GenerateHistoryActions(CurrentPage);
         }
 
-        public Command ClusterTestCommand
+        public Command<string> ClusterTestCommand
         { get; private set; }
 
-        private void OnClusterTestCommandExecute()
+        private void OnClusterTestCommandExecute(string clusterEquation)
         {
             var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
             foreach (var temporaryBoundary in tempBoundaries)
@@ -1399,6 +1393,44 @@ namespace Classroom_Learning_Partner.ViewModels
                 var clusterBounds = strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width);
                 CurrentPage.PageObjects.Add(tempBoundary);
+            }
+
+            // Screenshot Clusters
+            PageHistory.UISleep(800);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
+            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
             }
         }
     }

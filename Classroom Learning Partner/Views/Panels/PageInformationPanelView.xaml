@@ -249,8 +249,9 @@
                         Margin="1"
                         Visibility="Collapsed" />
 
-                <Button Content="Test Clustering"
+                <Button Content="Cluster: PointDensity"
                         Command="{Binding ClusterTestCommand}"
+                        CommandParameter="PointDensity"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1"
