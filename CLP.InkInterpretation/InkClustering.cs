@@ -8,6 +8,16 @@ using Priority_Queue;
 
 namespace CLP.InkInterpretation
 {
+    public class InkCluster
+    {
+        public InkCluster(StrokeCollection strokes) { Strokes = strokes; }
+
+        public StrokeCollection Strokes { get; set; }
+        public string ClusterName { get; set; }
+
+        public static int NumberOfClusters = 0;
+    }
+
     public class ClusterPoint : PriorityQueueNode
     {
         public const double UNDEFINED = -1.0;
@@ -261,7 +271,7 @@ namespace CLP.InkInterpretation
         }
 
         // https://visualstudiomagazine.com/articles/2013/12/01/k-means-data-clustering-using-c.aspx
-        private static int[] K_MEANS_Clustering(double[][] rawData, int numberOfClusters)
+        public static int[] K_MEANS_Clustering(double[][] rawData, int numberOfClusters)
         {
             var k = numberOfClusters;
 

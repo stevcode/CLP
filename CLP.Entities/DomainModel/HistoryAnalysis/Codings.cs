@@ -104,6 +104,8 @@ namespace CLP.Entities
         public const string ACTION_ARRAY_SNAP = "snap"; // ID = "{ArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}", ActionID = "{ArrayCodedID} {IncrementID}"
         public const string ACTION_ARRAY_SKIP = "skip";
         public const string ACTION_ARRAY_SKIP_ERASE = "skip erase";
+        public const string ACTION_ARRAY_EQN = "eqn";
+        public const string ACTION_ARRAY_EQN_ERASE = "eqn erase";
 
         #endregion // Array Actions
 

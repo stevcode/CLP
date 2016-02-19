@@ -248,13 +248,23 @@ namespace Classroom_Learning_Partner.Services
                 Directory.CreateDirectory(fileDirectory);
             }
 
-            var filePath = Path.Combine(fileDirectory, "BatchTags.txt");
+            var filePath = Path.Combine(fileDirectory, "BatchTags.tsv");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
             File.WriteAllText(filePath, "");
-            File.AppendAllText(filePath, "*****Tags*****" + "\n\n");
+
+            var columnHeaders = new List<string>
+                          {
+                              "STUDENT NAME",
+                              "PAGE NUMBER",
+                              "PASS 1",
+                              "PASS 2",
+                              "PASS 3"
+                          };
+            var tabbedColumnHeaders = string.Join("\t", columnHeaders);
+            File.AppendAllText(filePath, tabbedColumnHeaders);
 
             foreach (var notebookInfo in LoadedNotebooksInfo)
             {
@@ -273,35 +283,32 @@ namespace Classroom_Learning_Partner.Services
                         continue;
                     }
 
-                    Console.WriteLine("Generating Actions for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+                    var columns = new List<string>
+                                  {
+                                      page.Owner.FullName,
+                                      page.PageNumber.ToString()
+                                  };
+
+                    Console.WriteLine("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
                     HistoryAnalysis.GenerateHistoryActions(lastSubmission);
-                    Console.WriteLine("Finished generating Actions.\n");
+                    Console.WriteLine("Finished generating SEvents.\n");
 
-                    var tags = lastSubmission.Tags.Where(t => t is AnswerBeforeRepresentationTag || t is AnswerChangedAfterRepresentationTag).ToList();
-                    if (!tags.Any())
-                    {
-                        continue;
-                    }
+                    var pass2Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
+                    var pass2Index = lastSubmission.History.HistoryActions.IndexOf(pass2Action);
+                    var pass3Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
+                    var pass3Index = lastSubmission.History.HistoryActions.IndexOf(pass3Action);
 
-                    var codes = new List<string>();
-                    foreach (var tag in tags)
-                    {
-                        var t = tag as AnswerBeforeRepresentationTag;
-                        if (t != null)
-                        {
-                            codes.Add(t.AnalysisCode);
-                        }
+                    var pass1 = lastSubmission.History.HistoryActions.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();
+                    var pass2 = lastSubmission.History.HistoryActions.Skip(pass2Index + 1).Take(pass3Index - pass2Index - 1).Select(h => h.CodedValue).ToList();
+                    var pass3 = lastSubmission.History.HistoryActions.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
 
-                        var t2 = tag as AnswerChangedAfterRepresentationTag;
-                        if (t2 != null)
-                        {
-                            codes.Add(t2.AnalysisCode);
-                        }
-                    }
+                    columns.Add(string.Join(", ", pass1));
+                    columns.Add(string.Join(", ", pass2));
+                    columns.Add(string.Join(", ", pass3));
 
-                    var tagLine = string.Format("{0}, p {1}: {2}", page.Owner.FullName, page.PageNumber, string.Join("; ", codes));
-
-                    File.AppendAllText(filePath, tagLine + "\n");
+                    File.AppendAllText(filePath, "\n");
+                    var tabbedColumns = string.Join("\t", columns);
+                    File.AppendAllText(filePath, tabbedColumns);
                 }
             }
         } 

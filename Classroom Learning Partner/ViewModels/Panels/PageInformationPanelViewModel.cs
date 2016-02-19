@@ -19,6 +19,7 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using ServiceModelEx;
 using CLP.InkInterpretation;
+using CLP.MachineAnalysis;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -90,7 +91,8 @@ namespace Classroom_Learning_Partner.ViewModels
             FixCommand = new Command(OnFixCommandExecute);
             GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
-            ClusterTestCommand = new Command(OnClusterTestCommandExecute);
+            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -355,8 +357,8 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentAnalysisStepProperty, value); }
         }
 
-        public static readonly PropertyData CurrentAnalysisStepProperty = RegisterProperty("CurrentAnalysisStep", typeof (HistoryAnalysisSteps), HistoryAnalysisSteps.Tags);
-        
+        public static readonly PropertyData CurrentAnalysisStepProperty = RegisterProperty("CurrentAnalysisStep", typeof(HistoryAnalysisSteps), HistoryAnalysisSteps.Tags);
+
 
         #endregion //Bindings
 
@@ -537,17 +539,17 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDifferentiatePageCommandExecute()
         {
             var numberPageVersions = new KeypadWindowView
-                                     {
-                                         Owner = Application.Current.MainWindow,
-                                         QuestionText =
+            {
+                Owner = Application.Current.MainWindow,
+                QuestionText =
                                          {
                                              Text = "How many versions of the page?"
                                          },
-                                         NumbersEntered =
+                NumbersEntered =
                                          {
                                              Text = "4"
                                          }
-                                     };
+            };
 
             numberPageVersions.ShowDialog();
             if (numberPageVersions.DialogResult == true)
@@ -706,9 +708,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
                     var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel)
-                                             {
-                                                 Owner = Application.Current.MainWindow
-                                             };
+                    {
+                        Owner = Application.Current.MainWindow
+                    };
                     multiplicationView.ShowDialog();
 
                     if (multiplicationView.DialogResult != true)
@@ -729,9 +731,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var divisionViewModel = new DivisionRelationDefinitionTagViewModel(answerDefinition as DivisionRelationDefinitionTag);
                     var divisionView = new DivisionRelationDefinitionTagView(divisionViewModel)
-                                       {
-                                           Owner = Application.Current.MainWindow
-                                       };
+                    {
+                        Owner = Application.Current.MainWindow
+                    };
                     divisionView.ShowDialog();
 
                     if (divisionView.DialogResult != true)
@@ -745,9 +747,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var additionViewModel = new AdditionRelationDefinitionTagViewModel(answerDefinition as AdditionRelationDefinitionTag);
                     var additionView = new AdditionRelationDefinitionTagView(additionViewModel)
-                                       {
-                                           Owner = Application.Current.MainWindow
-                                       };
+                    {
+                        Owner = Application.Current.MainWindow
+                    };
                     additionView.ShowDialog();
 
                     if (additionView.DialogResult != true)
@@ -975,7 +977,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                    array.YPosition - (array.LabelLength * 1.5),
                                                    array.Width,
                                                    array.Height + (array.LabelLength * 3));
-                
+
                 var strokes = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
                 if (strokes.Count < 2)
                 {
@@ -987,7 +989,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CurrentPage.ClearBoundaries();
                     CurrentPage.AddBoundary(expandedArrayBounds);
                     PageHistory.UISleep(800);
-                    var heightWidths = new Dictionary<Stroke,Point>();
+                    var heightWidths = new Dictionary<Stroke, Point>();
                     foreach (var stroke in strokes)
                     {
                         var width = stroke.DrawingAttributes.Width;
@@ -1046,12 +1048,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     for (var row = 1; row <= array.Rows; row++)
                     {
                         var rowBoundary = new Rect
-                                          {
-                                              X = rowBoundaryX,
-                                              Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
-                                              Width = rowBoundaryWidth,
-                                              Height = rowBoundaryHeight
-                                          };
+                        {
+                            X = rowBoundaryX,
+                            Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
+                            Width = rowBoundaryWidth,
+                            Height = rowBoundaryHeight
+                        };
 
                         var intersect = Rect.Intersect(strokeBounds, rowBoundary);
                         if (intersect.IsEmpty)
@@ -1275,7 +1277,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
-            if(File.Exists(filePath))
+            if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
@@ -1321,14 +1323,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command GenerateStampGroupingsCommand { get; private set; }
 
         private void OnGenerateStampGroupingsCommandExecute()
         {
-            var stampGroups = new Dictionary<Tuple<string,int>,List<string>>();  //<ParentStampID,List of StampedObject IDs>
+            var stampGroups = new Dictionary<Tuple<string, int>, List<string>>();  //<ParentStampID,List of StampedObject IDs>
             foreach (var stampedObject in CurrentPage.PageObjects.OfType<StampedObject>())
             {
                 var parentID = stampedObject.ParentStampID;
@@ -1349,9 +1348,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command FixCommand { get; private set; }
 
         private void OnFixCommandExecute()
@@ -1383,22 +1379,210 @@ namespace Classroom_Learning_Partner.ViewModels
             HistoryAnalysis.GenerateHistoryActions(CurrentPage);
         }
 
-        public Command ClusterTestCommand
+        public static List<StrokeCollection> Cluster(List<Stroke> strokes, string clusterEquation)
+        {
+            Func<Stroke, Stroke, double> distanceEquation;
+            switch (clusterEquation)
+            {
+                case "CenterDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByCenter(s2));
+                    break;
+                case "WeightedCenterDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByWeightedCenter(s2));
+                    break;
+                case "ClosestPoint":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
+                    break;
+                case "AveragePointDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistance(s2));
+                    break;
+                case "StrokeHalves":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistanceOfStrokeHalves(s2));
+                    break;
+                default:
+                    return null;
+            }
+
+            var maxEpsilon = 1000;
+            var minimumStrokesInCluster = 2;
+            var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokes, distanceEquation);
+            optics.BuildReachability();
+            var reachabilityDistances = optics.ReachabilityDistances().ToList();
+
+            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var rawData = new double[normalizedReachabilityPlot.Count][];
+            for (var i = 0; i < rawData.Length; i++)
+            {
+                rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
+            }
+
+            var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+
+            var zeroCount = 0;
+            var zeroTotal = 0.0;
+            var oneCount = 0;
+            var oneTotal = 0.0;
+            for (var i = 0; i < clustering.Length; i++)
+            {
+                if (clustering[i] == 0)
+                {
+                    zeroCount++;
+                    zeroTotal += normalizedReachabilityPlot[i].Y;
+                }
+                if (clustering[i] == 1)
+                {
+                    oneCount++;
+                    oneTotal += normalizedReachabilityPlot[i].Y;
+                }
+            }
+            var zeroMean = zeroTotal / zeroCount;
+            var oneMean = oneTotal / oneCount;
+            var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+            var currentCluster = new StrokeCollection();
+            var allClusteredStrokes = new List<Stroke>();
+            var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
+            var firstStroke = strokes[firstStrokeIndex];
+            currentCluster.Add(firstStroke);
+            var strokeClusters = new List<StrokeCollection>();
+            for (var i = 1; i < reachabilityDistances.Count(); i++)
+            {
+                var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
+                var stroke = strokes[strokeIndex];
+
+                if (clustering[i - 1] != clusterWithHighestMean)
+                {
+                    currentCluster.Add(stroke);
+                    allClusteredStrokes.Add(stroke);
+                    continue;
+                }
+
+                var fullCluster = currentCluster.ToList();
+                currentCluster.Clear();
+                currentCluster.Add(stroke);
+                allClusteredStrokes.Add(stroke);
+                strokeClusters.Add(new StrokeCollection(fullCluster));
+            }
+            if (currentCluster.Any())
+            {
+                var finalCluster = currentCluster.ToList();
+                strokeClusters.Add(new StrokeCollection(finalCluster));
+            }
+
+            var unclusteredStrokes = new StrokeCollection();
+            foreach (var stroke in strokes)
+            {
+                if (allClusteredStrokes.Contains(stroke))
+                {
+                    continue;
+                }
+                unclusteredStrokes.Add(stroke); // TODO: do something with these.
+            }
+
+            return strokeClusters;
+        }
+
+        public Command<string> ClusterTestCommand
         { get; private set; }
 
-        private void OnClusterTestCommandExecute()
+        private void OnClusterTestCommandExecute(string clusterEquation)
         {
+            List<StrokeCollection> clusteredStrokes;
+            switch (clusterEquation)
+            {
+                case "PointDensity":
+                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+                    break;
+                case "CenterDistance":
+                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    break;
+                case "WeightedCenterDistance":
+                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    break;
+                case "ClosestPoint":
+                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    break;
+                case "AveragePointDistance":
+                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    break;
+                case "StrokeHalves":
+                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    break;
+                default:
+                    return;
+            }
+
+            if (clusteredStrokes == null ||
+                !clusteredStrokes.Any())
+            {
+                return;
+            }
+
             var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
             foreach (var temporaryBoundary in tempBoundaries)
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
-            var clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+
+            var regionCount = 1;
             foreach (var strokes in clusteredStrokes)
             {
                 var clusterBounds = strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width);
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = regionCount.ToString()
+                };
+                regionCount++;
                 CurrentPage.PageObjects.Add(tempBoundary);
+            }
+
+            // Screenshot Clusters
+            PageHistory.UISleep(1000);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
+
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
+            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        public Command ClearTempBoundariesCommand
+        { get; private set; }
+
+        private void OnClearTempBoundariesCommandExecute()
+        {
+            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in tempBoundaries)
+            {
+                CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
         }
     }

@@ -578,6 +578,49 @@ namespace CLP.Entities
             return interpretedActions;
         }
 
+        public static IHistoryAction ArrayEquation(CLPPage page, IHistoryAction inkAction)
+        {
+            const double INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD = 5.0;
+            const string MULTIPLICATION_SYMBOL = "×";
+            const string ADDITION_SYMBOL = "+";
+            const string EQUALS_SYMBOL = "=";
+
+            if (page == null ||
+                inkAction == null ||
+                inkAction.CodedObject != Codings.OBJECT_INK ||
+                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ||
+                  inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
+            {
+                return null;
+            }
+
+            var strokes = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD
+                              ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+
+            var interpretation = InkInterpreter.StrokesToBestGuessText(new StrokeCollection(strokes));
+
+            var definitelyInArith = new List<string> { MULTIPLICATION_SYMBOL, ADDITION_SYMBOL, EQUALS_SYMBOL };
+            var percentageOfDigits = InkCodedActions.GetPercentageOfDigits(interpretation);
+            var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
+
+            if (percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD &&
+                !isDefinitelyArith)
+            {
+                return null;
+            }
+
+            var historyAction = new HistoryAction(page, inkAction)
+            {
+                CodedObject = Codings.OBJECT_ARRAY,
+                CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                CodedObjectID = "A",
+                CodedObjectActionID = string.Format("\"{0}\"", interpretation)
+            };
+
+            return historyAction;
+        }
+
         #endregion // Static Methods
     }
 }
