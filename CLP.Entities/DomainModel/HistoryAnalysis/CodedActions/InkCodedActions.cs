@@ -69,7 +69,8 @@ namespace CLP.Entities
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
                               : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            var interpretation = InkInterpreter.StrokesToBestGuessText(new StrokeCollection(strokes));
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+            var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
 
             var definitelyInArith = new List<string> { MULTIPLICATION_SYMBOL, ADDITION_SYMBOL, EQUALS_SYMBOL };
             var percentageOfDigits = GetPercentageOfDigits(interpretation);
