@@ -20,7 +20,6 @@ namespace CLP.Entities
         public StrokeCollection Strokes { get; set; }
         public int ClusterNumber { get; set; }
         public string ClusterName { get; set; }
-
         public static int NumberOfClusters = 0;
     }
 
@@ -66,7 +65,12 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        public static readonly List<InkCluster> InkClusters = new List<InkCluster>(); 
+        public static readonly List<InkCluster> InkClusters = new List<InkCluster>();
+
+        public static InkCluster GetContainingCluster(Stroke stroke)
+        {
+            return InkClusters.FirstOrDefault(c => c.Strokes.Contains(stroke));
+        }
 
         public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
         {
@@ -152,8 +156,10 @@ namespace CLP.Entities
                 unclusteredStrokes.Add(stroke);
             }
 
-            var ignoredCluster = new InkCluster(unclusteredStrokes);
-            ignoredCluster.ClusterName = "IGNORED";
+            var ignoredCluster = new InkCluster(unclusteredStrokes)
+                                 {
+                                     ClusterName = "IGNORED"
+                                 };
 
             InkClusters.Add(ignoredCluster);
             foreach (var strokeCluster in strokeClusters)
@@ -172,18 +178,12 @@ namespace CLP.Entities
             var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyItems.First().HistoryIndex);
             // TODO: validation
 
-            var averageStrokeDimensions = GetAverageStrokeDimensions(page);
-            var averageClosestStrokeDistance = GetAverageClosestStrokeDistance(page);
-            var closestStrokeDistanceStandardDeviation = GetStandardDeviationOfClosestStrokeDistance(page);
-            var rollingStatsForDistanceFromCluster = new RollingStandardDeviation();
             var historyItemBuffer = new List<IHistoryItem>();
+            InkCluster currentClusterReference = null;
             IPageObject currentPageObjectReference = null;
             Stroke currentStrokeReference = null;
             var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
             var isInkAdd = true;
-            var currentClusterCentroid = new Point(0, 0);
-            var currentClusterWeight = 0.0;
-            var isMatchingAgainstCluster = false;
 
             for (var i = 0; i < historyItems.Count; i++)
             {
@@ -211,16 +211,12 @@ namespace CLP.Entities
                     // TODO: If strokes.count != 1, deal with point erase
                     // TODO: Validation (strokes is empty)
                     currentStrokeReference = strokes.First();
+                    currentClusterReference = GetContainingCluster(currentStrokeReference);
                     currentPageObjectReference = FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, currentStrokeReference, currentHistoryItem.HistoryIndex);
                     currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
-                    isMatchingAgainstCluster = false;
                     if (currentPageObjectReference == null)
                     {
-                        isMatchingAgainstCluster = true;
-
-                        var strokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
-                        currentClusterCentroid = strokeCopy.WeightedCenter();
-                        currentClusterWeight = strokeCopy.StrokeWeight();
+                        var currentClusterCentroid = currentClusterReference.Strokes.WeightedCentroid();
 
                         currentPageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, currentHistoryItem.HistoryIndex);
                         if (currentPageObjectReference != null)
@@ -241,57 +237,51 @@ namespace CLP.Entities
                     }
 
                     var nextStroke = nextStrokes.First();
+                    var nextClusterReference = GetContainingCluster(nextStroke);
                     var nextPageObjectReference = FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
                     var nextLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
                     var isNextPartOfCurrentCluster = false;
                     if (nextPageObjectReference == null)
                     {
-                        if (isMatchingAgainstCluster)
+                        var currentStrokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
+                        var currentCentroid = currentStrokeCopy.WeightedCenter();
+                        var nextStrokeCopy = nextStroke.GetStrokeCopyAtHistoryIndex(page, nextHistoryItem.HistoryIndex);
+                        var nextCentroid = nextStrokeCopy.WeightedCenter();
+
+
+                        bool isCloseToCluster;
+                        var distanceFromCluster = Math.Sqrt(DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
+                        if (historyItemBuffer.Count == 1)
                         {
-                            var currentStrokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
-                            var currentCentroid = currentStrokeCopy.WeightedCenter();
-                            var nextStrokeCopy = nextStroke.GetStrokeCopyAtHistoryIndex(page, nextHistoryItem.HistoryIndex);
-                            var nextCentroid = nextStrokeCopy.WeightedCenter();
-                            var distanceFromLastStroke = Math.Sqrt(DistanceSquaredBetweenPoints(currentCentroid, nextCentroid));
-                            var lastStrokeDistanceZScore = (distanceFromLastStroke - averageClosestStrokeDistance) / closestStrokeDistanceStandardDeviation;
-                            var isCloseToLastStroke = lastStrokeDistanceZScore <= HistoryAnalysis.MAX_DISTANCE_Z_SCORE ||
-                                                      distanceFromLastStroke <= averageStrokeDimensions.X * HistoryAnalysis.DIMENSION_MULTIPLIER_THRESHOLD ||
-                                                      distanceFromLastStroke <= averageStrokeDimensions.Y * HistoryAnalysis.DIMENSION_MULTIPLIER_THRESHOLD;
+                            isCloseToCluster = isCloseToLastStroke;
+                        }
+                        else
+                        {
+                            var clusterDistanceZScore = (distanceFromCluster - rollingStatsForDistanceFromCluster.Mean) / rollingStatsForDistanceFromCluster.StandardDeviation;
+                            isCloseToCluster = clusterDistanceZScore <= HistoryAnalysis.MAX_DISTANCE_Z_SCORE;
+                        }
 
-                            bool isCloseToCluster;
-                            var distanceFromCluster = Math.Sqrt(DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
-                            if (historyItemBuffer.Count == 1)
+                        if (isCloseToLastStroke || isCloseToCluster)
+                        {
+                            isNextPartOfCurrentCluster = true;
+
+                            nextPageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, nextHistoryItem.HistoryIndex);
+                            if (nextPageObjectReference != null)
                             {
-                                isCloseToCluster = isCloseToLastStroke;
-                            }
-                            else
-                            {
-                                var clusterDistanceZScore = (distanceFromCluster - rollingStatsForDistanceFromCluster.Mean) / rollingStatsForDistanceFromCluster.StandardDeviation;
-                                isCloseToCluster = clusterDistanceZScore <= HistoryAnalysis.MAX_DISTANCE_Z_SCORE;
+                                nextLocationReference = FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, currentClusterCentroid, nextHistoryItem.HistoryIndex);
                             }
 
-                            if (isCloseToLastStroke || isCloseToCluster)
-                            {
-                                isNextPartOfCurrentCluster = true;
+                            var oldClusterWeight = currentClusterWeight;
+                            var nextStrokeWeight = nextStrokeCopy.StrokeWeight();
+                            currentClusterWeight += nextStrokeWeight;
 
-                                nextPageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, nextHistoryItem.HistoryIndex);
-                                if (nextPageObjectReference != null)
-                                {
-                                    nextLocationReference = FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, currentClusterCentroid, nextHistoryItem.HistoryIndex);
-                                }
+                            var totalImportance = oldClusterWeight / currentClusterWeight;
+                            var importance = nextStrokeWeight / currentClusterWeight;
+                            var weightedXAverage = (totalImportance + currentClusterCentroid.X) + (importance * nextCentroid.X);
+                            var weightedYAverage = (totalImportance + currentClusterCentroid.Y) + (importance * nextCentroid.Y);
+                            currentClusterCentroid = new Point(weightedXAverage, weightedYAverage);
 
-                                var oldClusterWeight = currentClusterWeight;
-                                var nextStrokeWeight = nextStrokeCopy.StrokeWeight();
-                                currentClusterWeight += nextStrokeWeight;
-
-                                var totalImportance = oldClusterWeight / currentClusterWeight;
-                                var importance = nextStrokeWeight / currentClusterWeight;
-                                var weightedXAverage = (totalImportance + currentClusterCentroid.X) + (importance * nextCentroid.X);
-                                var weightedYAverage = (totalImportance + currentClusterCentroid.Y) + (importance * nextCentroid.Y);
-                                currentClusterCentroid = new Point(weightedXAverage, weightedYAverage);
-
-                                rollingStatsForDistanceFromCluster.Update(distanceFromCluster);
-                            }
+                            rollingStatsForDistanceFromCluster.Update(distanceFromCluster);
                         }
                     }
 
@@ -691,6 +681,5 @@ namespace CLP.Entities
         }
 
         #endregion // Utility Static Methods
-
     }
 }
