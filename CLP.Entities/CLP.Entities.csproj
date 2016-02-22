@@ -252,6 +252,10 @@
       <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
       <Name>CLP.InkInterpretation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MachineAnalysis\CLP.MachineAnalysis.csproj">
+      <Project>{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}</Project>
+      <Name>CLP.MachineAnalysis</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
