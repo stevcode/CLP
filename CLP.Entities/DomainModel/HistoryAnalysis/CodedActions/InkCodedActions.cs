@@ -115,10 +115,21 @@ namespace CLP.Entities
             }
 
             var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
-            var interpretation = InterpretationRegion.InterpretHandwriting(region, new StrokeCollection(strokes));
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+            string interpretation;
 
             var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IRelationPart || t is DivisionRelationDefinitionTag);
             var answer = relationDefinitionTag == null ? "UNDEFINED" : relationDefinitionTag is IRelationPart ? (relationDefinitionTag as IRelationPart).RelationPartAnswerValue.ToString() : (relationDefinitionTag as DivisionRelationDefinitionTag).Quotient.ToString();
+            if (answer == "UNDEFINED")
+            {
+                interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+            }
+            else
+            {
+                int expectedValue;
+                interpretation = int.TryParse(answer, out expectedValue) ? InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedValue) : InkInterpreter.InterpretationClosestToANumber(interpretations);
+            }
+
             var correctness =  answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "COR" : "INC";
 
             var historyAction = new HistoryAction(page, inkAction)
