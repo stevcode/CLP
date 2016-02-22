@@ -191,6 +191,15 @@ namespace CLP.Entities
                 historyItemBuffer.Add(currentHistoryItem);
                 if (historyItemBuffer.Count == 1)
                 {
+                    // First see if single stroke was an Ink Divide, if so, remove from clusters and create separate history event.
+                    var inkDivideAction = ArrayCodedActions.AttemptInkDivide(page, currentHistoryItem);
+                    if (inkDivideAction != null)
+                    {
+                        processedInkActions.Add(inkDivideAction);
+                        historyItemBuffer.Clear();
+                        continue;
+                    }
+
                     var strokes = currentHistoryItem.StrokesAdded;
                     isInkAdd = true;
                     if (!strokes.Any())

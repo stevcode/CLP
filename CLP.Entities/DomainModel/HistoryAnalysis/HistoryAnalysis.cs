@@ -509,13 +509,6 @@ namespace CLP.Entities
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedActions = ArrayCodedActions.InkDivide(page, historyaction); // TODO: Potentionally needs a recursive pass through.
-                if (interpretedActions.Any())
-                {
-                    allInterpretedActions.AddRange(interpretedActions);
-                    return allInterpretedActions;
-                }
-
                 var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
                 if (interpretedAction != null)
                 {
