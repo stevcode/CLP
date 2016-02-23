@@ -393,6 +393,9 @@
     <Compile Include="Views\Modal Windows\NumberLineCreationView.xaml.cs">
       <DependentUpon>NumberLineCreationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml.cs">
+      <DependentUpon>OPTICSReachabilityPlotView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
     </Compile>
@@ -705,6 +708,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NumberLineCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

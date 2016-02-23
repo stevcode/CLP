@@ -1413,6 +1413,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
             var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var plotView = new OPTICSReachabilityPlotView()
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Reachability = normalizedReachabilityPlot
+            };
+            plotView.Show();
+
             var rawData = new double[normalizedReachabilityPlot.Count][];
             for (var i = 0; i < rawData.Length; i++)
             {
