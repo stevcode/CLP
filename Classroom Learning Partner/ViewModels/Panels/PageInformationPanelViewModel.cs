@@ -93,6 +93,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+
+            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1583,6 +1585,19 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var temporaryBoundary in tempBoundaries)
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
+        }
+
+        public Command StrokeTestingCommand
+        { get; private set; }
+
+        private void OnStrokeTestingCommandExecute()
+        {
+            var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
+            var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            foreach (var line in output)
+            {
+                Console.WriteLine(line);
             }
         }
     }

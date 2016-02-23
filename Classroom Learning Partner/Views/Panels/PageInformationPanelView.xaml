@@ -99,6 +99,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -301,6 +302,12 @@
 
                 <Button Content="Clear Temp Boundaries"
                         Command="{Binding ClearTempBoundariesCommand}"
+                        Height="20"
+                        Margin="1"
+                        Grid.ColumnSpan="2" />
+
+                <Button Content="Stroke Testing"
+                        Command="{Binding StrokeTestingCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />

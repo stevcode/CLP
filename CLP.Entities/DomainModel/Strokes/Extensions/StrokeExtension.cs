@@ -523,5 +523,18 @@ namespace CLP.Entities
         }
 
         #endregion // History
+
+        #region Shape Detection
+
+        public static bool IsInvisiblySmall(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            const double MAX_STROKE_WEIGHT = 4.5;
+
+            return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT;
+        }
+
+        #endregion // Shape Detection
     }
 }
