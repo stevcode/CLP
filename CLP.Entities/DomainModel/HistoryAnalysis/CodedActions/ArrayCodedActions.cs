@@ -600,7 +600,7 @@ namespace CLP.Entities
             {
                 CodedObject = Codings.OBJECT_ARRAY,
                 CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
-                CodedObjectID = "A",
+                CodedObjectID = inkAction.CodedObjectID,
                 CodedObjectActionID = string.Format("\"{0}\"", interpretation)
             };
 

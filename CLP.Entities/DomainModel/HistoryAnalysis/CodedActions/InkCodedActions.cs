@@ -74,6 +74,13 @@ namespace CLP.Entities
             var inkActions = historyActions.Where(h => h.CodedObject == Codings.OBJECT_INK && h.CodedObjectAction == Codings.ACTION_INK_CHANGE).ToList();
             var historyItems = inkActions.SelectMany(h => h.HistoryItems).OfType<ObjectsOnPageChangedHistoryItem>().ToList();
             var strokesAdded = historyItems.SelectMany(i => i.StrokesAdded).ToList();
+            var unclusteredStrokes = new StrokeCollection();
+            var smallStrokes = strokesAdded.Where(s => s.IsInvisiblySmall()).ToList();
+            foreach (var smallStroke in smallStrokes)
+            {
+                strokesAdded.Remove(smallStroke);
+                unclusteredStrokes.Add(smallStroke);
+            }
 
             var maxEpsilon = 1000;
             var minimumStrokesInCluster = 2;
@@ -140,14 +147,9 @@ namespace CLP.Entities
                 var finalCluster = currentCluster.ToList();
                 strokeClusters.Add(new StrokeCollection(finalCluster));
             }
-
-            var unclusteredStrokes = new StrokeCollection();
-            foreach (var stroke in strokesAdded)
+            
+            foreach (var stroke in strokesAdded.Where(stroke => !allClusteredStrokes.Contains(stroke)))
             {
-                if (allClusteredStrokes.Contains(stroke))
-                {
-                    continue;
-                }
                 unclusteredStrokes.Add(stroke);
             }
 
@@ -381,7 +383,7 @@ namespace CLP.Entities
                                     CodedObject = Codings.OBJECT_ARITH,
                                     CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
                                     IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
-                                    CodedObjectID = "A",
+                                    CodedObjectID = inkAction.CodedObjectID,
                                     CodedObjectActionID = String.Format("\"{0}\"", interpretation)
                                 };
 
