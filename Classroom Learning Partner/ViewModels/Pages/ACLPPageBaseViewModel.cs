@@ -664,14 +664,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 var removedOwnerStrokes = new List<Stroke>();
                 foreach (var stroke in removedStrokesList)
                 {
-                    var strokeOwner = stroke.GetStrokeOwnerID();
-                    if (strokeOwner != App.MainWindowViewModel.CurrentUser.ID)
-                    {
-                        InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                        InkStrokes.Add(stroke);
-                        InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                        continue;
-                    }
+                    //var strokeOwner = stroke.GetStrokeOwnerID();
+                    //if (strokeOwner != App.MainWindowViewModel.CurrentUser.ID)
+                    //{
+                    //    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    //    InkStrokes.Add(stroke);
+                    //    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    //    continue;
+                    //}
                     removedOwnerStrokes.Add(stroke);
                 }
 

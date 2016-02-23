@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Input;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -70,6 +71,9 @@ namespace CLP.Entities
 
         public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
         {
+            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
+            var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0)});
+
             InkClusters.Clear();
             var inkActions = historyActions.Where(h => h.CodedObject == Codings.OBJECT_INK && h.CodedObjectAction == Codings.ACTION_INK_CHANGE).ToList();
             var historyItems = inkActions.SelectMany(h => h.HistoryItems).OfType<ObjectsOnPageChangedHistoryItem>().ToList();
@@ -81,6 +85,7 @@ namespace CLP.Entities
                 strokesAdded.Remove(smallStroke);
                 unclusteredStrokes.Add(smallStroke);
             }
+            strokesAdded.Add(referenceStroke);
 
             var maxEpsilon = 1000;
             var minimumStrokesInCluster = 2;
@@ -163,6 +168,18 @@ namespace CLP.Entities
             {
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
+
+            var referenceCluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(referenceStroke));
+            if (referenceCluster != null)
+            {
+                referenceCluster.Strokes.Remove(referenceStroke);
+                if (!referenceCluster.Strokes.Any())
+                {
+                    InkClusters.Remove(referenceCluster);
+                }
+            }
+
+            Console.WriteLine("Num of Clusters: {0}", InkClusters.Count);
         }
 
         /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>

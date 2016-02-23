@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -970,7 +971,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var DEBUG = false;
+            const bool DEBUG = false;
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
@@ -1489,25 +1490,29 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnClusterTestCommandExecute(string clusterEquation)
         {
             List<StrokeCollection> clusteredStrokes;
+            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
+            var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
+            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
+            strokesToCluster.Add(referenceStroke);
             switch (clusterEquation)
             {
                 case "PointDensity":
                     clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
                     break;
                 case "CenterDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "WeightedCenterDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "ClosestPoint":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "AveragePointDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "StrokeHalves":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 default:
                     return;
@@ -1524,6 +1529,16 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
+
+            //var referenceCluster = clusteredStrokes.FirstOrDefault(c => c.Contains(referenceStroke));
+            //if (referenceCluster != null)
+            //{
+            //    referenceCluster.Remove(referenceStroke);
+            //    if (!referenceCluster.Any())
+            //    {
+            //        clusteredStrokes.Remove(referenceCluster);
+            //    }
+            //}
 
             var regionCount = 1;
             foreach (var strokes in clusteredStrokes)
