@@ -211,12 +211,12 @@ namespace CLP.Entities
             Console.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
 
             // HACK: INK ignore testing
-            foreach (var stroke in ignoredCluster.Strokes)
-            {
-                stroke.DrawingAttributes.Width = 12;
-                stroke.DrawingAttributes.Height = 12;
-                stroke.DrawingAttributes.Color = Colors.DarkCyan;
-            }
+            //foreach (var stroke in ignoredCluster.Strokes)
+            //{
+            //    stroke.DrawingAttributes.Width = 12;
+            //    stroke.DrawingAttributes.Height = 12;
+            //    stroke.DrawingAttributes.Color = Colors.DarkCyan;
+            //}
         }
 
         /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>

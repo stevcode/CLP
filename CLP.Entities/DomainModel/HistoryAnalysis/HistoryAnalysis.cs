@@ -1148,12 +1148,15 @@ namespace CLP.Entities
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         foreach (var subArray in subArrays)
                         {
-                            if (subArrayGroups[referenceArrayID].Contains(subArray))
+                            if (subArrayGroups.ContainsKey(referenceArrayID))
                             {
-                                subArrayGroups[referenceArrayID].Remove(subArray);
-                                if (!subArrayGroups[referenceArrayID].Any())
+                                if (subArrayGroups[referenceArrayID].Contains(subArray))
                                 {
-                                    subArrayGroups.Remove(referenceArrayID);
+                                    subArrayGroups[referenceArrayID].Remove(subArray);
+                                    if (!subArrayGroups[referenceArrayID].Any())
+                                    {
+                                        subArrayGroups.Remove(referenceArrayID);
+                                    }
                                 }
                             }
                         }
