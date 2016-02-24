@@ -565,11 +565,6 @@ namespace CLP.Entities
 
         public static IHistoryAction ArrayEquation(CLPPage page, IHistoryAction inkAction)
         {
-            const double INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD = 5.0;
-            const string MULTIPLICATION_SYMBOL = "×";
-            const string ADDITION_SYMBOL = "+";
-            const string EQUALS_SYMBOL = "=";
-
             if (page == null ||
                 inkAction == null ||
                 inkAction.CodedObject != Codings.OBJECT_INK ||
@@ -583,15 +578,8 @@ namespace CLP.Entities
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
                               : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
-            var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
-
-            var definitelyInArith = new List<string> { MULTIPLICATION_SYMBOL, ADDITION_SYMBOL, EQUALS_SYMBOL };
-            var percentageOfDigits = InkCodedActions.GetPercentageOfDigits(interpretation);
-            var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
-
-            if (percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD &&
-                !isDefinitelyArith)
+            var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
+            if (interpretation == null)
             {
                 return null;
             }
