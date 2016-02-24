@@ -1414,14 +1414,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #region K-Means Clustering
 
-            //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            //var plotView = new OPTICSReachabilityPlotView()
-            //{
-            //    Owner = Application.Current.MainWindow,
-            //    WindowStartupLocation = WindowStartupLocation.Manual,
-            //    Reachability = normalizedReachabilityPlot
-            //};
-            //plotView.Show();
+            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var plotView = new OPTICSReachabilityPlotView()
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Reachability = normalizedReachabilityPlot
+            };
+            plotView.Show();
 
             //var rawData = new double[normalizedReachabilityPlot.Count][];
             //for (var i = 0; i < rawData.Length; i++)
@@ -1461,6 +1461,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
             var firstStroke = strokes[firstStrokeIndex];
             currentCluster.Add(firstStroke);
+            allClusteredStrokes.Add(firstStroke);
+
             var strokeClusters = new List<StrokeCollection>();
             for (var i = 1; i < reachabilityDistances.Count(); i++)
             {
@@ -1516,9 +1518,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             List<StrokeCollection> clusteredStrokes;
             // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
-            var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
+            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
             var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
-            strokesToCluster.Add(referenceStroke);
+            //strokesToCluster.Add(referenceStroke);
             switch (clusterEquation)
             {
                 case "PointDensity":

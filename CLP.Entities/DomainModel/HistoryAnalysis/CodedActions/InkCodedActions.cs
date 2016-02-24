@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -72,7 +73,7 @@ namespace CLP.Entities
         public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
         {
             // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
-            var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0)});
+            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0)});
 
             InkClusters.Clear();
             var inkActions = historyActions.Where(h => h.CodedObject == Codings.OBJECT_INK && h.CodedObjectAction == Codings.ACTION_INK_CHANGE).ToList();
@@ -85,94 +86,103 @@ namespace CLP.Entities
                 strokesAdded.Remove(smallStroke);
                 unclusteredStrokes.Add(smallStroke);
             }
-            strokesAdded.Add(referenceStroke);
-
-            var maxEpsilon = 1000;
-            var minimumStrokesInCluster = 2;
-            Func<Stroke, Stroke, double> distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
-            var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokesAdded, distanceEquation);
-            optics.BuildReachability();
-            var reachabilityDistances = optics.ReachabilityDistances().ToList();
-
-            #region Cluster by K-Means
-
-            //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            //var rawData = new double[normalizedReachabilityPlot.Count][];
-            //for (var i = 0; i < rawData.Length; i++)
-            //{
-            //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
-            //}
-
-            //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
-
-            //var zeroCount = 0;
-            //var zeroTotal = 0.0;
-            //var oneCount = 0;
-            //var oneTotal = 0.0;
-            //for (var i = 0; i < clustering.Length; i++)
-            //{
-            //    if (clustering[i] == 0)
-            //    {
-            //        zeroCount++;
-            //        zeroTotal += normalizedReachabilityPlot[i].Y;
-            //    }
-            //    if (clustering[i] == 1)
-            //    {
-            //        oneCount++;
-            //        oneTotal += normalizedReachabilityPlot[i].Y;
-            //    }
-            //}
-            //var zeroMean = zeroTotal / zeroCount;
-            //var oneMean = oneTotal / oneCount;
-            //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
-
-            #endregion // Cluster by K-Means
-
-            const double CLUSTERING_EPSILON = 51.0;
-
-            var currentCluster = new StrokeCollection();
-            var allClusteredStrokes = new List<Stroke>();
-            var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
-            var firstStroke = strokesAdded[firstStrokeIndex];
-            currentCluster.Add(firstStroke);
+            //strokesAdded.Add(referenceStroke);
             var strokeClusters = new List<StrokeCollection>();
-            for (var i = 1; i < reachabilityDistances.Count; i++)
-            {
-                var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
-                var stroke = strokesAdded[strokeIndex];
 
-                // K-Means cluster decision.
-                //if (clustering[i - 1] != clusterWithHighestMean)
+            if (strokesAdded.Count > 1)
+            {
+                var maxEpsilon = 1000;
+                var minimumStrokesInCluster = 2;
+                Func<Stroke, Stroke, double> distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
+                var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokesAdded, distanceEquation);
+                optics.BuildReachability();
+                var reachabilityDistances = optics.ReachabilityDistances().ToList();
+
+                #region Cluster by K-Means
+
+                //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+                //var rawData = new double[normalizedReachabilityPlot.Count][];
+                //for (var i = 0; i < rawData.Length; i++)
                 //{
-                //    currentCluster.Add(stroke);
-                //    allClusteredStrokes.Add(stroke);
-                //    continue;
+                //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
                 //}
 
-                // Epsilon cluster decision.
-                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
-                if (currentReachabilityDistance < CLUSTERING_EPSILON)
+                //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+
+                //var zeroCount = 0;
+                //var zeroTotal = 0.0;
+                //var oneCount = 0;
+                //var oneTotal = 0.0;
+                //for (var i = 0; i < clustering.Length; i++)
+                //{
+                //    if (clustering[i] == 0)
+                //    {
+                //        zeroCount++;
+                //        zeroTotal += normalizedReachabilityPlot[i].Y;
+                //    }
+                //    if (clustering[i] == 1)
+                //    {
+                //        oneCount++;
+                //        oneTotal += normalizedReachabilityPlot[i].Y;
+                //    }
+                //}
+                //var zeroMean = zeroTotal / zeroCount;
+                //var oneMean = oneTotal / oneCount;
+                //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+
+                #endregion // Cluster by K-Means
+
+                const double CLUSTERING_EPSILON = 51.0;
+
+                var currentCluster = new StrokeCollection();
+                var allClusteredStrokes = new List<Stroke>();
+                var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
+                var firstStroke = strokesAdded[firstStrokeIndex];
+                currentCluster.Add(firstStroke);
+                allClusteredStrokes.Add(firstStroke);
+
+                for (var i = 1; i < reachabilityDistances.Count; i++)
                 {
+                    var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
+                    var stroke = strokesAdded[strokeIndex];
+
+                    // K-Means cluster decision.
+                    //if (clustering[i - 1] != clusterWithHighestMean)
+                    //{
+                    //    currentCluster.Add(stroke);
+                    //    allClusteredStrokes.Add(stroke);
+                    //    continue;
+                    //}
+
+                    // Epsilon cluster decision.
+                    var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                    if (currentReachabilityDistance < CLUSTERING_EPSILON)
+                    {
+                        currentCluster.Add(stroke);
+                        allClusteredStrokes.Add(stroke);
+                        continue;
+                    }
+
+                    var fullCluster = currentCluster.ToList();
+                    currentCluster.Clear();
                     currentCluster.Add(stroke);
                     allClusteredStrokes.Add(stroke);
-                    continue;
+                    strokeClusters.Add(new StrokeCollection(fullCluster));
+                }
+                if (currentCluster.Any())
+                {
+                    var finalCluster = currentCluster.ToList();
+                    strokeClusters.Add(new StrokeCollection(finalCluster));
                 }
 
-                var fullCluster = currentCluster.ToList();
-                currentCluster.Clear();
-                currentCluster.Add(stroke);
-                allClusteredStrokes.Add(stroke);
-                strokeClusters.Add(new StrokeCollection(fullCluster));
+                foreach (var stroke in strokesAdded.Where(stroke => !allClusteredStrokes.Contains(stroke)))
+                {
+                    unclusteredStrokes.Add(stroke);
+                }
             }
-            if (currentCluster.Any())
+            else if (strokesAdded.Count == 1)
             {
-                var finalCluster = currentCluster.ToList();
-                strokeClusters.Add(new StrokeCollection(finalCluster));
-            }
-            
-            foreach (var stroke in strokesAdded.Where(stroke => !allClusteredStrokes.Contains(stroke)))
-            {
-                unclusteredStrokes.Add(stroke);
+                strokeClusters.Add(new StrokeCollection(strokesAdded));
             }
 
             var ignoredCluster = new InkCluster(unclusteredStrokes)
@@ -181,22 +191,32 @@ namespace CLP.Entities
                                  };
 
             InkClusters.Add(ignoredCluster);
+
             foreach (var strokeCluster in strokeClusters)
             {
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
 
-            var referenceCluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(referenceStroke));
-            if (referenceCluster != null)
-            {
-                referenceCluster.Strokes.Remove(referenceStroke);
-                if (!referenceCluster.Strokes.Any())
-                {
-                    InkClusters.Remove(referenceCluster);
-                }
-            }
+            //var referenceCluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(referenceStroke));
+            //if (referenceCluster != null)
+            //{
+            //    referenceCluster.Strokes.Remove(referenceStroke);
+            //    if (!referenceCluster.Strokes.Any())
+            //    {
+            //        InkClusters.Remove(referenceCluster);
+            //    }
+            //}
 
             Console.WriteLine("Num of Clusters: {0}", InkClusters.Count);
+            Console.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
+
+            // HACK: INK ignore testing
+            foreach (var stroke in ignoredCluster.Strokes)
+            {
+                stroke.DrawingAttributes.Width = 12;
+                stroke.DrawingAttributes.Height = 12;
+                stroke.DrawingAttributes.Color = Colors.DarkCyan;
+            }
         }
 
         /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>
@@ -294,44 +314,45 @@ namespace CLP.Entities
                     }
                     var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
 
-                    if (isNextStrokeCurrentStroke &&
-                        !isNextInkAddCurrentInkAdd &&
-                        currentClusterReference.ClusterName != "IGNORED" &&
-                        !(currentPageObjectReference is InterpretationRegion))
-                    {
-                        historyItemBuffer.Remove(currentHistoryItem);
-                        if (historyItemBuffer.Any())
-                        {
-                            if (string.IsNullOrEmpty(currentClusterReference.ClusterName))
-                            {
-                                var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName));
-                                currentClusterReference.ClusterName = numberOfNamedClusters.ToLetter().ToUpper();
-                            }
+                    // TODO: Fix this overzealous detection of INK ignore
+                    //if (isNextStrokeCurrentStroke &&
+                    //    !isNextInkAddCurrentInkAdd &&
+                    //    currentClusterReference.ClusterName != "IGNORED" &&
+                    //    !(currentPageObjectReference is InterpretationRegion))
+                    //{
+                    //    historyItemBuffer.Remove(currentHistoryItem);
+                    //    if (historyItemBuffer.Any())
+                    //    {
+                    //        if (string.IsNullOrEmpty(currentClusterReference.ClusterName))
+                    //        {
+                    //            var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName));
+                    //            currentClusterReference.ClusterName = numberOfNamedClusters.ToLetter().ToUpper();
+                    //        }
 
-                            var previousInkAction = GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isCurrentInkAdd);
-                            previousInkAction.CodedObjectID = currentClusterReference.ClusterName;
-                            if (currentPageObjectReference != null)
-                            {
-                                previousInkAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
-                                                                                         currentLocationReference,
-                                                                                         currentPageObjectReference.CodedName,
-                                                                                         currentPageObjectReference.GetCodedIDAtHistoryIndex(previousInkAction.HistoryItems.Last().HistoryIndex));
-                                previousInkAction.ReferencePageObjectID = currentPageObjectReference.ID;
-                            }
+                    //        var previousInkAction = GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isCurrentInkAdd);
+                    //        previousInkAction.CodedObjectID = currentClusterReference.ClusterName;
+                    //        if (currentPageObjectReference != null)
+                    //        {
+                    //            previousInkAction.CodedObjectActionID = string.Format("{0} {1} [{2}]",
+                    //                                                                     currentLocationReference,
+                    //                                                                     currentPageObjectReference.CodedName,
+                    //                                                                     currentPageObjectReference.GetCodedIDAtHistoryIndex(previousInkAction.HistoryItems.Last().HistoryIndex));
+                    //            previousInkAction.ReferencePageObjectID = currentPageObjectReference.ID;
+                    //        }
 
-                            processedInkActions.Add(previousInkAction);
-                            historyItemBuffer.Clear();
-                        }
+                    //        processedInkActions.Add(previousInkAction);
+                    //        historyItemBuffer.Clear();
+                    //    }
 
-                        var ignoreItems = new List<ObjectsOnPageChangedHistoryItem> { currentHistoryItem, nextHistoryItem };
-                        var ignoreAction = ChangeOrIgnore(page, ignoreItems, false);
-                        if (ignoreAction != null)
-                        {
-                            processedInkActions.Add(ignoreAction);
-                        }
-                        i++;
-                        continue;
-                    }
+                    //    var ignoreItems = new List<ObjectsOnPageChangedHistoryItem> { currentHistoryItem, nextHistoryItem };
+                    //    var ignoreAction = ChangeOrIgnore(page, ignoreItems, false);
+                    //    if (ignoreAction != null)
+                    //    {
+                    //        processedInkActions.Add(ignoreAction);
+                    //    }
+                    //    i++;
+                    //    continue;
+                    //}
 
                     if (isNextInkAddCurrentInkAdd &&
                         isNextPartOfCurrentCluster &&
