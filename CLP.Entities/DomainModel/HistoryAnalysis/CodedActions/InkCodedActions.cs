@@ -94,47 +94,64 @@ namespace CLP.Entities
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
-            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            var rawData = new double[normalizedReachabilityPlot.Count][];
-            for (var i = 0; i < rawData.Length; i++)
-            {
-                rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
-            }
+            #region Cluster by K-Means
 
-            var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+            //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            //var rawData = new double[normalizedReachabilityPlot.Count][];
+            //for (var i = 0; i < rawData.Length; i++)
+            //{
+            //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
+            //}
 
-            var zeroCount = 0;
-            var zeroTotal = 0.0;
-            var oneCount = 0;
-            var oneTotal = 0.0;
-            for (var i = 0; i < clustering.Length; i++)
-            {
-                if (clustering[i] == 0)
-                {
-                    zeroCount++;
-                    zeroTotal += normalizedReachabilityPlot[i].Y;
-                }
-                if (clustering[i] == 1)
-                {
-                    oneCount++;
-                    oneTotal += normalizedReachabilityPlot[i].Y;
-                }
-            }
-            var zeroMean = zeroTotal / zeroCount;
-            var oneMean = oneTotal / oneCount;
-            var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+            //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+
+            //var zeroCount = 0;
+            //var zeroTotal = 0.0;
+            //var oneCount = 0;
+            //var oneTotal = 0.0;
+            //for (var i = 0; i < clustering.Length; i++)
+            //{
+            //    if (clustering[i] == 0)
+            //    {
+            //        zeroCount++;
+            //        zeroTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //    if (clustering[i] == 1)
+            //    {
+            //        oneCount++;
+            //        oneTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //}
+            //var zeroMean = zeroTotal / zeroCount;
+            //var oneMean = oneTotal / oneCount;
+            //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+
+            #endregion // Cluster by K-Means
+
+            const double CLUSTERING_EPSILON = 51.0;
+
             var currentCluster = new StrokeCollection();
             var allClusteredStrokes = new List<Stroke>();
             var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
             var firstStroke = strokesAdded[firstStrokeIndex];
             currentCluster.Add(firstStroke);
             var strokeClusters = new List<StrokeCollection>();
-            for (var i = 1; i < reachabilityDistances.Count(); i++)
+            for (var i = 1; i < reachabilityDistances.Count; i++)
             {
                 var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
                 var stroke = strokesAdded[strokeIndex];
 
-                if (clustering[i - 1] != clusterWithHighestMean)
+                // K-Means cluster decision.
+                //if (clustering[i - 1] != clusterWithHighestMean)
+                //{
+                //    currentCluster.Add(stroke);
+                //    allClusteredStrokes.Add(stroke);
+                //    continue;
+                //}
+
+                // Epsilon cluster decision.
+                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                if (currentReachabilityDistance < CLUSTERING_EPSILON)
                 {
                     currentCluster.Add(stroke);
                     allClusteredStrokes.Add(stroke);

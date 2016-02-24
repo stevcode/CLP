@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -41,12 +43,23 @@ namespace Classroom_Learning_Partner.Views
             for (var i = 0; i < reachabilityDistances.Count; i++)
             {
                 var d = reachabilityDistances[i];
+                Console.WriteLine(d);
                 var x = i;
                 var y = d;
-                p1.Points.Add(NormalizePoint(new Point(x, y)));
+                var circle = new Ellipse
+                             {
+                                 Stroke = Brushes.Red,
+                                 Width = 8,
+                                 Height = 8
+                             };
+                var normalizedPoint = NormalizePoint(new Point(x, y));
+                Canvas.SetLeft(circle, normalizedPoint.X);
+                Canvas.SetTop(circle, normalizedPoint.Y);
+                chartCanvas.Children.Add(circle);
+                //p1.Points.Add(NormalizePoint(new Point(x, y)));
             }
 
-            chartCanvas.Children.Add(p1);
+           // chartCanvas.Children.Add(p1);
         }
 
         private Point NormalizePoint(Point pt)
@@ -63,6 +76,20 @@ namespace Classroom_Learning_Partner.Views
             chartCanvas.Height = chartGrid.ActualHeight;
             chartCanvas.Children.Clear();
             AddChart();
+        }
+
+        private void ChartCanvas_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            var canvas = sender as Canvas;
+            if (canvas == null)
+            {
+                return;
+            }
+
+            var mousePos = e.GetPosition(canvas);
+            var yMousePos = mousePos.Y;
+            var denormalizedY = ((chartCanvas.Height - yMousePos) * (yMax - yMin) / chartCanvas.Height) + yMin;
+            Title = string.Format("OPTICS, epsilon: {0}", denormalizedY);
         }
     }
 }
