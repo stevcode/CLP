@@ -310,8 +310,8 @@ namespace CLP.Entities
                         var strokesInThreshold = strokesInCluster.Where(s => s.HitTest(skipCountRegionThreshold, 80)).ToList();
                         var strokesOutsideThreshold = strokesInCluster.Where(s => !strokesInThreshold.Contains(s)).ToList();
                         var arrayVisualXPosition = position.X + dimensions.X - array.LabelLength;
-                        var strokesOverArray = strokesInThreshold.Where(s => s.WeightedCenter().X >= arrayVisualXPosition).ToList();
-                        var strokesRightOfArray = strokesInThreshold.Where(s => s.WeightedCenter().X < arrayVisualXPosition).ToList();
+                        var strokesOverArray = strokesInThreshold.Where(s => s.WeightedCenter().X < arrayVisualXPosition).ToList();
+                        var strokesRightOfArray = strokesInThreshold.Where(s => s.WeightedCenter().X >= arrayVisualXPosition).ToList();
 
                         if (strokesRightOfArray.Count >= strokesOverArray.Count)
                         {

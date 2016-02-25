@@ -93,6 +93,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
 
             StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
@@ -1615,6 +1616,21 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 pngEncoder.Save(outputStream);
                 File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        public Command ShowAnalysisClustersCommand { get; private set; }
+
+        private void OnShowAnalysisClustersCommandExecute()
+        {
+            foreach (var cluster in InkCodedActions.InkClusters)
+            {
+                var clusterBounds = cluster.Strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
+                };
+                CurrentPage.PageObjects.Add(tempBoundary);
             }
         }
 
