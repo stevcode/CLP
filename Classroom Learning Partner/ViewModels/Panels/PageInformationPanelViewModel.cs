@@ -1623,7 +1623,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowAnalysisClustersCommandExecute()
         {
-            foreach (var cluster in InkCodedActions.InkClusters)
+            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
             {
                 var clusterBounds = cluster.Strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
