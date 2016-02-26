@@ -99,7 +99,7 @@ namespace CLP.InkInterpretation
 
             // Aggregate the 3 most likely result words, with spaces between.
             var allInterpretations = new List<string>();
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 10; i++)
             {
                 try
                 {
@@ -152,6 +152,7 @@ namespace CLP.InkInterpretation
                 var percentage = numberOfDigits / interpretation.Length;
                 if (percentage >= percentageOfNumbers)
                 {
+                    percentageOfNumbers = percentage;
                     mostNumbers = interpretation;
                 }
             }

@@ -574,25 +574,92 @@ namespace CLP.Entities
                 return null;
             }
 
-            var strokes = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD
-                              ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
-                              : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
-
-            var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
-            if (interpretation == null)
+            var referenceArrayID = inkAction.ReferencePageObjectID;
+            if (referenceArrayID == null)
+            {
+                return null;
+            }
+            var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
+            if (array == null)
             {
                 return null;
             }
 
-            var historyAction = new HistoryAction(page, inkAction)
-            {
-                CodedObject = Codings.OBJECT_ARRAY,
-                CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
-                CodedObjectID = inkAction.CodedObjectID,
-                CodedObjectActionID = string.Format("\"{0}\"", interpretation)
-            };
+            var objectID = array.GetCodedIDAtHistoryIndex(inkAction.HistoryItems.First().HistoryIndex);
+            var isEqnAdd = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD;
 
-            return historyAction;
+            var strokes = isEqnAdd
+                              ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+            
+            var firstStroke = strokes.First();
+            var cluster = InkCodedActions.GetContainingCluster(firstStroke);
+            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARReqn)
+            {
+                var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
+                if (interpretation == null ||
+                    !isEqnAdd)
+                {
+                    return null;
+                }
+
+                foreach (var stroke in strokes)
+                {
+                    cluster.StrokesOnPage.Add(stroke);
+                }
+
+                cluster.ClusterType = InkCluster.ClusterTypes.ARReqn;
+
+                var historyAction = new HistoryAction(page, inkAction)
+                {
+                    CodedObject = Codings.OBJECT_ARRAY,
+                    CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                    CodedObjectID = objectID,
+                    CodedObjectActionID = string.Format("\"{0}\"", interpretation)
+                };
+
+                return historyAction;
+            }
+
+            if (cluster.ClusterType == InkCluster.ClusterTypes.ARReqn)
+            {
+                //strokes.Reverse();
+                var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+                var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                var changedInterpretation = string.Format("\"{0}\"", interpretation);
+                
+                if (!isEqnAdd)
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                        cluster.StrokesErased.Add(stroke);
+                    }
+                }
+                else
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Add(stroke);
+                    }
+                }
+
+                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
+                onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
+                var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
+
+                var historyAction = new HistoryAction(page, inkAction)
+                {
+                    CodedObject = Codings.OBJECT_ARRAY,
+                    CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                    CodedObjectID = objectID,
+                    CodedObjectActionID = formattedInterpretation
+                };
+
+                return historyAction;
+            }
+
+            return null;
         }
 
         #endregion // Static Methods

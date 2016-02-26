@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -38,6 +36,7 @@ namespace CLP.Entities
         public StrokeCollection StrokesErased { get; set; }
         public string ClusterName { get; set; }
         public ClusterTypes ClusterType { get; set; }
+        public string CurrentInterpretedValue { get; set; }
     }
 
     public static class InkCodedActions
@@ -306,17 +305,28 @@ namespace CLP.Entities
                         var position = array.GetPositionAtHistoryIndex(currentHistoryItem.HistoryIndex);
 
                         var skipCountRegionThreshold = new Rect(position.X + (dimensions.X / 2), position.Y - (array.LabelLength * 1.5), dimensions.X, dimensions.Y + (array.LabelLength * 3));
+                        var arrayVisualRegion = new Rect(position.X + array.LabelLength, position.Y + array.LabelLength, dimensions.X - (2 * array.LabelLength), dimensions.Y - (2 * array.LabelLength));
                         var strokesInCluster = currentClusterReference.Strokes.ToList();
                         var strokesInThreshold = strokesInCluster.Where(s => s.HitTest(skipCountRegionThreshold, 80)).ToList();
                         var strokesOutsideThreshold = strokesInCluster.Where(s => !strokesInThreshold.Contains(s)).ToList();
-                        var arrayVisualXPosition = position.X + dimensions.X - array.LabelLength;
+                        var arrayVisualXPosition = arrayVisualRegion.Right; // position.X + dimensions.X - array.LabelLength;
                         var strokesOverArray = strokesInThreshold.Where(s => s.WeightedCenter().X < arrayVisualXPosition).ToList();
                         var strokesRightOfArray = strokesInThreshold.Where(s => s.WeightedCenter().X >= arrayVisualXPosition).ToList();
 
                         if (strokesRightOfArray.Count >= strokesOverArray.Count)
                         {
                             var skipStrokes = strokesInThreshold.Where(s => s.WeightedCenter().X >= arrayVisualXPosition - 15.0).ToList();
-                            var arrayStrokes = strokesInThreshold.Where(s => s.WeightedCenter().X > arrayVisualXPosition - 15.0).ToList();
+                            var arrayStrokes = strokesInThreshold.Where(s => s.WeightedCenter().X < arrayVisualXPosition - 15.0).ToList();
+                            var otherArrayStrokes =
+                                strokesOutsideThreshold.Where(
+                                                              s =>
+                                                              s.WeightedCenter().X < arrayVisualXPosition - 15.0 && s.WeightedCenter().X >= arrayVisualRegion.Left &&
+                                                              s.WeightedCenter().Y >= arrayVisualRegion.Top && s.WeightedCenter().Y <= arrayVisualRegion.Bottom).ToList();
+                            arrayStrokes.AddRange(otherArrayStrokes);
+                            foreach (var stroke in otherArrayStrokes)
+                            {
+                                strokesOutsideThreshold.Remove(stroke);
+                            }
                             var isCurrentStrokeASkipStroke = skipStrokes.Contains(currentStrokeReference);
                             var isCurrentStrokeOutsideThreshold = strokesOutsideThreshold.Contains(currentStrokeReference);
 
