@@ -110,7 +110,7 @@ namespace CLP.Entities
             if (strokesAdded.Count > 1)
             {
                 var maxEpsilon = 1000;
-                var minimumStrokesInCluster = 2;
+                var minimumStrokesInCluster = 1;
                 Func<Stroke, Stroke, double> distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
                 var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokesAdded, distanceEquation);
                 optics.BuildReachability();

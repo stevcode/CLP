@@ -1408,7 +1408,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var maxEpsilon = 1000;
-            var minimumStrokesInCluster = 2;
+            var minimumStrokesInCluster = 1;
             var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokes, distanceEquation);
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
