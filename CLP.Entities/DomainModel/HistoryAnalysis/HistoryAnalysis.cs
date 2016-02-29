@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Collections;
 
@@ -442,12 +440,12 @@ namespace CLP.Entities
 
         #region Second Pass: Ink Refinement
 
-        // HANNAH CHANGES HERE
         public const double MAX_DISTANCE_Z_SCORE = 3.0;
         public const double DIMENSION_MULTIPLIER_THRESHOLD = 3.0;
 
         public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
+            InkCodedActions.GenerateInitialClusterings(page, historyActions);
             var refinedHistoryActions = new List<IHistoryAction>();
 
             foreach (var historyAction in historyActions)
@@ -455,7 +453,7 @@ namespace CLP.Entities
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    var refinedInkActions = ProcessInkChangeHistoryAction(page, historyAction);
+                    var refinedInkActions = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
                     refinedHistoryActions.AddRange(refinedInkActions);
                 }
                 else
@@ -465,159 +463,6 @@ namespace CLP.Entities
             }
 
             return refinedHistoryActions;
-        }
-
-        /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>
-        /// <param name="page">Parent page the history action belongs to.</param>
-        /// <param name="historyAction">"INK change" history action to process</param>
-        public static List<IHistoryAction> ProcessInkChangeHistoryAction(CLPPage page, IHistoryAction historyAction)
-        {
-            var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
-            var processedInkActions = new List<IHistoryAction>();
-            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyItems.First().HistoryIndex);
-            // TODO: validation
-
-            var averageStrokeDimensions = InkCodedActions.GetAverageStrokeDimensions(page);
-            var averageClosestStrokeDistance = InkCodedActions.GetAverageClosestStrokeDistance(page);
-            var closestStrokeDistanceStandardDeviation = InkCodedActions.GetStandardDeviationOfClosestStrokeDistance(page);
-            var rollingStatsForDistanceFromCluster = new RollingStandardDeviation();
-            var historyItemBuffer = new List<IHistoryItem>();
-            IPageObject currentPageObjectReference = null;
-            Stroke currentStrokeReference = null;
-            var currentLocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
-            var isInkAdd = true;
-            var currentClusterCentroid = new Point(0, 0);
-            var currentClusterWeight = 0.0;
-            var isMatchingAgainstCluster = false;
-
-            for (var i = 0; i < historyItems.Count; i++)
-            {
-                var currentHistoryItem = historyItems[i];
-                historyItemBuffer.Add(currentHistoryItem);
-                if (historyItemBuffer.Count == 1)
-                {
-                    var strokes = currentHistoryItem.StrokesAdded;
-                    isInkAdd = true;
-                    if (!strokes.Any())
-                    {
-                        strokes = currentHistoryItem.StrokesRemoved;
-                        isInkAdd = false;
-                    }
-
-                    // TODO: If strokes.count != 1, deal with point erase
-                    // TODO: Validation (strokes is empty)
-                    currentStrokeReference = strokes.First();
-                    currentPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, currentStrokeReference, currentHistoryItem.HistoryIndex);
-                    currentLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
-                    isMatchingAgainstCluster = false;
-                    if (currentPageObjectReference == null)
-                    {
-                        isMatchingAgainstCluster = true;
-
-                        var strokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
-                        currentClusterCentroid = strokeCopy.WeightedCenter();
-                        currentClusterWeight = strokeCopy.StrokeWeight();
-
-                        currentPageObjectReference = InkCodedActions.FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, currentHistoryItem.HistoryIndex);
-                        if (currentPageObjectReference != null)
-                        {
-                            currentLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, currentPageObjectReference, currentClusterCentroid, currentHistoryItem.HistoryIndex);
-                        }
-                    }
-                }
-
-                var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
-                if (nextHistoryItem != null)
-                {
-                    var nextStrokes = nextHistoryItem.StrokesAdded;
-
-                    if (!nextStrokes.Any())
-                    {
-                        nextStrokes = nextHistoryItem.StrokesRemoved;
-                    }
-
-                    var nextStroke = nextStrokes.First();
-                    var nextPageObjectReference = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, nextStroke, nextHistoryItem.HistoryIndex);
-                    var nextLocationReference = Codings.ACTIONID_INK_LOCATION_OVER;
-                    var isNextPartOfCurrentCluster = false;
-                    if (nextPageObjectReference == null)
-                    {
-                        if (isMatchingAgainstCluster)
-                        {
-                            var currentStrokeCopy = currentStrokeReference.GetStrokeCopyAtHistoryIndex(page, currentHistoryItem.HistoryIndex);
-                            var currentCentroid = currentStrokeCopy.WeightedCenter();
-                            var nextStrokeCopy = nextStroke.GetStrokeCopyAtHistoryIndex(page, nextHistoryItem.HistoryIndex);
-                            var nextCentroid = nextStrokeCopy.WeightedCenter();
-                            var distanceFromLastStroke = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentCentroid, nextCentroid));
-                            var lastStrokeDistanceZScore = (distanceFromLastStroke - averageClosestStrokeDistance) / closestStrokeDistanceStandardDeviation;
-                            var isCloseToLastStroke = lastStrokeDistanceZScore <= MAX_DISTANCE_Z_SCORE || distanceFromLastStroke <= averageStrokeDimensions.X * DIMENSION_MULTIPLIER_THRESHOLD || distanceFromLastStroke <= averageStrokeDimensions.Y * DIMENSION_MULTIPLIER_THRESHOLD;
-
-                            bool isCloseToCluster;
-                            var distanceFromCluster = Math.Sqrt(InkCodedActions.DistanceSquaredBetweenPoints(currentClusterCentroid, nextCentroid));
-                            if (historyItemBuffer.Count == 1)
-                            {
-                                isCloseToCluster = isCloseToLastStroke;
-                            }
-                            else
-                            {
-                                var clusterDistanceZScore = (distanceFromCluster - rollingStatsForDistanceFromCluster.Mean) / rollingStatsForDistanceFromCluster.StandardDeviation;
-                                isCloseToCluster = clusterDistanceZScore <= MAX_DISTANCE_Z_SCORE;
-                            }
-
-                            if (isCloseToLastStroke || isCloseToCluster)
-                            {
-                                isNextPartOfCurrentCluster = true;
-
-                                nextPageObjectReference = InkCodedActions.FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, currentClusterCentroid, nextHistoryItem.HistoryIndex);
-                                if (nextPageObjectReference != null)
-                                {
-                                    nextLocationReference = InkCodedActions.FindLocationReferenceAtHistoryLocation(page, nextPageObjectReference, currentClusterCentroid, nextHistoryItem.HistoryIndex);
-                                }
-
-                                var oldClusterWeight = currentClusterWeight;
-                                var nextStrokeWeight = nextStrokeCopy.StrokeWeight();
-                                currentClusterWeight += nextStrokeWeight;
-
-                                var totalImportance = oldClusterWeight / currentClusterWeight;
-                                var importance = nextStrokeWeight / currentClusterWeight;
-                                var weightedXAverage = (totalImportance + currentClusterCentroid.X) + (importance * nextCentroid.X);
-                                var weightedYAverage = (totalImportance + currentClusterCentroid.Y) + (importance * nextCentroid.Y);
-                                currentClusterCentroid = new Point(weightedXAverage, weightedYAverage);
-
-                                rollingStatsForDistanceFromCluster.Update(distanceFromCluster);
-                            }
-                        }
-                    }
-
-                    var isNextInkPartOfCurrent = isInkAdd == nextHistoryItem.StrokesAdded.Any() && isInkAdd == !nextHistoryItem.StrokesRemoved.Any();
-                    var isNextPageObjectReferencePartOfCurrent = nextPageObjectReference == null && currentPageObjectReference == null;
-                    if (nextPageObjectReference != null &&
-                        currentPageObjectReference != null)
-                    {
-                        isNextPageObjectReferencePartOfCurrent = nextPageObjectReference.ID == currentPageObjectReference.ID;
-                    }
-                    var isNextLocationReferencePartOfCurrent = nextLocationReference == currentLocationReference;
-                    if (isNextInkPartOfCurrent && (isNextPartOfCurrentCluster || (currentLocationReference == Codings.ACTIONID_INK_LOCATION_OVER && isNextPageObjectReferencePartOfCurrent)))
-                    {
-                        continue;
-                    }
-                }
-
-                var refinedHistoryAction = InkCodedActions.GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isInkAdd);
-                refinedHistoryAction.CodedObjectID = "A";
-                if (currentPageObjectReference != null)
-                {
-                    //var locationHack = currentPageObjectReference.CodedName == Codings.OBJECT_TEXT ? Codings.ACTIONID_INK_LOCATION_NEAR : currentLocationReference;
-
-                    refinedHistoryAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", currentLocationReference, currentPageObjectReference.CodedName, currentPageObjectReference.GetCodedIDAtHistoryIndex(refinedHistoryAction.HistoryItems.Last().HistoryIndex));
-                }
-                refinedHistoryAction.ReferencePageObjectID = currentPageObjectReference.ID;
-
-                processedInkActions.Add(refinedHistoryAction);
-                historyItemBuffer.Clear();
-            }
-
-            return processedInkActions;
         }
 
         #endregion // Second Pass: Ink Refinement
@@ -664,13 +509,6 @@ namespace CLP.Entities
             if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedActions = ArrayCodedActions.InkDivide(page, historyaction); // TODO: Potentionally needs a recursive pass through.
-                if (interpretedActions.Any())
-                {
-                    allInterpretedActions.AddRange(interpretedActions);
-                    return allInterpretedActions;
-                }
-
                 var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
                 if (interpretedAction != null)
                 {
@@ -1310,12 +1148,15 @@ namespace CLP.Entities
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         foreach (var subArray in subArrays)
                         {
-                            if (subArrayGroups[referenceArrayID].Contains(subArray))
+                            if (subArrayGroups.ContainsKey(referenceArrayID))
                             {
-                                subArrayGroups[referenceArrayID].Remove(subArray);
-                                if (!subArrayGroups[referenceArrayID].Any())
+                                if (subArrayGroups[referenceArrayID].Contains(subArray))
                                 {
-                                    subArrayGroups.Remove(referenceArrayID);
+                                    subArrayGroups[referenceArrayID].Remove(subArray);
+                                    if (!subArrayGroups[referenceArrayID].Any())
+                                    {
+                                        subArrayGroups.Remove(referenceArrayID);
+                                    }
                                 }
                             }
                         }

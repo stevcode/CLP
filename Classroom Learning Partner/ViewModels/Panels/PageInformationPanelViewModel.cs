@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -92,7 +93,10 @@ namespace Classroom_Learning_Partner.ViewModels
             GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+
+            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -968,7 +972,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var DEBUG = false;
+            const bool DEBUG = false;
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
@@ -1404,52 +1408,79 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var maxEpsilon = 1000;
-            var minimumStrokesInCluster = 2;
+            var minimumStrokesInCluster = 1;
             var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokes, distanceEquation);
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
+            #region K-Means Clustering
+
             var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            var rawData = new double[normalizedReachabilityPlot.Count][];
-            for (var i = 0; i < rawData.Length; i++)
+            var plotView = new OPTICSReachabilityPlotView()
             {
-                rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
-            }
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Reachability = normalizedReachabilityPlot
+            };
+            plotView.Show();
 
-            var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+            //var rawData = new double[normalizedReachabilityPlot.Count][];
+            //for (var i = 0; i < rawData.Length; i++)
+            //{
+            //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
+            //}
 
-            var zeroCount = 0;
-            var zeroTotal = 0.0;
-            var oneCount = 0;
-            var oneTotal = 0.0;
-            for (var i = 0; i < clustering.Length; i++)
-            {
-                if (clustering[i] == 0)
-                {
-                    zeroCount++;
-                    zeroTotal += normalizedReachabilityPlot[i].Y;
-                }
-                if (clustering[i] == 1)
-                {
-                    oneCount++;
-                    oneTotal += normalizedReachabilityPlot[i].Y;
-                }
-            }
-            var zeroMean = zeroTotal / zeroCount;
-            var oneMean = oneTotal / oneCount;
-            var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+            //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+
+            //var zeroCount = 0;
+            //var zeroTotal = 0.0;
+            //var oneCount = 0;
+            //var oneTotal = 0.0;
+            //for (var i = 0; i < clustering.Length; i++)
+            //{
+            //    if (clustering[i] == 0)
+            //    {
+            //        zeroCount++;
+            //        zeroTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //    if (clustering[i] == 1)
+            //    {
+            //        oneCount++;
+            //        oneTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //}
+            //var zeroMean = zeroTotal / zeroCount;
+            //var oneMean = oneTotal / oneCount;
+            //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+
+            #endregion // K-Means Clustering
+
+            const double CLUSTERING_EPSILON = 51.0;
+
             var currentCluster = new StrokeCollection();
             var allClusteredStrokes = new List<Stroke>();
             var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
             var firstStroke = strokes[firstStrokeIndex];
             currentCluster.Add(firstStroke);
+            allClusteredStrokes.Add(firstStroke);
+
             var strokeClusters = new List<StrokeCollection>();
             for (var i = 1; i < reachabilityDistances.Count(); i++)
             {
                 var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
                 var stroke = strokes[strokeIndex];
 
-                if (clustering[i - 1] != clusterWithHighestMean)
+                // K-Means cluster decision.
+                //if (clustering[i - 1] != clusterWithHighestMean)
+                //{
+                //    currentCluster.Add(stroke);
+                //    allClusteredStrokes.Add(stroke);
+                //    continue;
+                //}
+
+                // Epsilon cluster decision.
+                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                if (currentReachabilityDistance < CLUSTERING_EPSILON)
                 {
                     currentCluster.Add(stroke);
                     allClusteredStrokes.Add(stroke);
@@ -1487,25 +1518,29 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnClusterTestCommandExecute(string clusterEquation)
         {
             List<StrokeCollection> clusteredStrokes;
+            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
+            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
+            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
+            //strokesToCluster.Add(referenceStroke);
             switch (clusterEquation)
             {
                 case "PointDensity":
                     clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
                     break;
                 case "CenterDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "WeightedCenterDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "ClosestPoint":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "AveragePointDistance":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 case "StrokeHalves":
-                    clusteredStrokes = Cluster(CurrentPage.InkStrokes.ToList(), clusterEquation);
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
                     break;
                 default:
                     return;
@@ -1522,6 +1557,16 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
+
+            //var referenceCluster = clusteredStrokes.FirstOrDefault(c => c.Contains(referenceStroke));
+            //if (referenceCluster != null)
+            //{
+            //    referenceCluster.Remove(referenceStroke);
+            //    if (!referenceCluster.Any())
+            //    {
+            //        clusteredStrokes.Remove(referenceCluster);
+            //    }
+            //}
 
             var regionCount = 1;
             foreach (var strokes in clusteredStrokes)
@@ -1574,6 +1619,21 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public Command ShowAnalysisClustersCommand { get; private set; }
+
+        private void OnShowAnalysisClustersCommandExecute()
+        {
+            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
+            {
+                var clusterBounds = cluster.Strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
+                };
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
+        }
+
         public Command ClearTempBoundariesCommand
         { get; private set; }
 
@@ -1583,6 +1643,19 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var temporaryBoundary in tempBoundaries)
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
+        }
+
+        public Command StrokeTestingCommand
+        { get; private set; }
+
+        private void OnStrokeTestingCommandExecute()
+        {
+            var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
+            var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            foreach (var line in output)
+            {
+                Console.WriteLine(line);
             }
         }
     }

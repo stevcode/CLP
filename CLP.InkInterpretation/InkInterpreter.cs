@@ -99,7 +99,7 @@ namespace CLP.InkInterpretation
 
             // Aggregate the 3 most likely result words, with spaces between.
             var allInterpretations = new List<string>();
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 10; i++)
             {
                 try
                 {
@@ -152,11 +152,47 @@ namespace CLP.InkInterpretation
                 var percentage = numberOfDigits / interpretation.Length;
                 if (percentage >= percentageOfNumbers)
                 {
+                    percentageOfNumbers = percentage;
                     mostNumbers = interpretation;
                 }
             }
 
             return mostNumbers;
+        }
+
+        /// <summary>
+        /// Interprets strokes as arithmetic. Returns null if no valid representation of arithmetic.
+        /// </summary>
+        /// <param name="strokes"></param>
+        /// <returns></returns>
+        public static string StrokesToArithmetic(StrokeCollection strokes)
+        {
+            const double INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD = 5.0;
+            const string MULTIPLICATION_SYMBOL = "×";
+            const string ADDITION_SYMBOL = "+";
+            const string EQUALS_SYMBOL = "=";
+            const string DIVISION_SYMBOL = "÷";
+
+            var interpretations = StrokesToAllGuessesText(strokes);
+            var interpretation = InterpretationClosestToANumber(interpretations);
+
+            var definitelyInArith = new List<string> { MULTIPLICATION_SYMBOL, ADDITION_SYMBOL, EQUALS_SYMBOL, DIVISION_SYMBOL };
+            var percentageOfDigits = GetPercentageOfDigits(interpretation);
+            var isDefinitelyArith = definitelyInArith.Any(s => interpretation.Contains(s));
+
+            if (percentageOfDigits < INTERPRET_AS_ARITH_DIGIT_PERCENTAGE_THRESHOLD &&
+                !isDefinitelyArith)
+            {
+                return null;
+            }
+
+            return interpretation;
+        }
+
+        public static double GetPercentageOfDigits(string s)
+        {
+            var numberOfDigits = s.Where(char.IsDigit).Count();
+            return numberOfDigits * 100.0 / s.Length;
         }
     }
 }

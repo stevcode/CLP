@@ -15,12 +15,17 @@
                    StrokeThickness="1"
                    Stretch="Fill" />
 
-        <TextBox Text="{Binding RegionText}"
-                 Background="White"
-                 Foreground="Black"
-                 FontSize="20"
-                 HorizontalAlignment="Left" 
-                 VerticalAlignment="Top" />
+        <Canvas ClipToBounds="False">
+            <TextBox Text="{Binding RegionText}"
+                     Background="White"
+                     Opacity="0.8"
+                     Foreground="Black"
+                     FontSize="20"
+                     Margin="0 -28 0 0"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top" />
+        </Canvas>
+
     </Grid>
 
 </catel:UserControl>

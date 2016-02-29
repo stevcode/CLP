@@ -50,46 +50,57 @@
 
         <DockPanel LastChildFill="True">
 
-            <ToggleButton DockPanel.Dock="Top"
-                          Name="PageCommandsToggleButton"
+            <UniformGrid DockPanel.Dock="Top"
+                         Columns="2">
+
+                <ToggleButton Name="EditCommandsToggleButton"
                           IsChecked="False"
                           Height="20"
                           Margin="1">
-                <ToggleButton.Style>
-                    <Style TargetType="{x:Type ToggleButton}">
-                        <Setter Property="Content"
-                                Value="Show Page Commands" />
-                        <Style.Triggers>
-                            <Trigger Property="IsChecked"
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Content"
+                                Value="Show Edit Commands" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
                                      Value="True">
-                                <Setter Property="Content"
-                                        Value="Hide Page Commands" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToggleButton.Style>
-            </ToggleButton>
+                                    <Setter Property="Content"
+                                        Value="Hide Edit Commands" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+
+                <ToggleButton Name="AnalysisCommandsToggleButton"
+                          IsChecked="False"
+                          Height="20"
+                          Margin="1">
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Content"
+                                Value="Show Analysis Commands" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                     Value="True">
+                                    <Setter Property="Content"
+                                        Value="Hide Analysis Commands" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+            </UniformGrid>
 
             <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=PageCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=EditCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -200,23 +211,37 @@
                            Margin="1 5"
                            Stroke="{StaticResource GrayBorderColor}" />
 
+            </catel:StackGrid>
+
+            <catel:StackGrid DockPanel.Dock="Top"
+                             Margin="5 0"
+                             Visibility="{Binding IsChecked, ElementName=AnalysisCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <Button Content="Run Page Analysis"
                         Command="{Binding GenerateHistoryActionsCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
-
-                <!--<Button Content="Run History Analysis"
-                        Command="{Binding AnalyzePageHistoryCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />-->
-
-                <!--<Button Content="Run Divider Interpretation"
-                        Command="{Binding InterpretArrayDividersCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />-->
 
                 <Button Content="Run Skip Counting Analysis"
                         Command="{Binding AnalyzeSkipCountingCommand}"
@@ -224,32 +249,11 @@
                         Height="20"
                         Margin="1" />
 
-                <!--<Button Content="Print Histories"
-                        Command="{Binding PrintAllHistoryItemsCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
-
-                <!--<Button Content="Run History Analysis"
-                        Command="{Binding HistoryActionAnaylsisCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
-
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />
-
-                <!--<Button Content="Fix DTs"
-                        Command="{Binding FixCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
 
                 <Button Content="Cluster: PointDensity"
                         Command="{Binding ClusterTestCommand}"
@@ -299,8 +303,20 @@
                         Margin="1"
                         Visibility="Visible" />
 
+                <Button Content="Show Analysis Clusters"
+                        Command="{Binding ShowAnalysisClustersCommand}"
+                        Height="20"
+                        Margin="1"
+                        Grid.ColumnSpan="2" />
+
                 <Button Content="Clear Temp Boundaries"
                         Command="{Binding ClearTempBoundariesCommand}"
+                        Height="20"
+                        Margin="1"
+                        Grid.ColumnSpan="2" />
+
+                <Button Content="Stroke Testing"
+                        Command="{Binding StrokeTestingCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
@@ -309,6 +325,39 @@
                            Height="1"
                            Margin="1 5"
                            Stroke="{StaticResource GrayBorderColor}" />
+
+                <!--<Button Content="Run History Analysis"
+                        Command="{Binding AnalyzePageHistoryCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />-->
+
+                <!--<Button Content="Run Divider Interpretation"
+                        Command="{Binding InterpretArrayDividersCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />-->
+
+                <!--<Button Content="Print Histories"
+                        Command="{Binding PrintAllHistoryItemsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Collapsed" />-->
+
+                <!--<Button Content="Run History Analysis"
+                        Command="{Binding HistoryActionAnaylsisCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Collapsed" />-->
+
+                <!--<Button Content="Fix DTs"
+                        Command="{Binding FixCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1"
+                        Visibility="Collapsed" />-->
 
             </catel:StackGrid>
 
@@ -328,12 +377,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
-                <!--
-                <TextBlock Text="ID:" />
-                <TextBox Text="{Binding ID}"
-                         IsReadOnly="True" />
-                -->
 
                 <TextBlock Grid.ColumnSpan="2"
                            TextAlignment="Center"
@@ -445,17 +488,17 @@
                                 <Style.Triggers>
                                     <Trigger Property="IsChecked"
                                              Value="True">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                        <TextBlock Text="TAGS"
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <TextBlock Text="TAGS"
                                                                    FontWeight="Bold"
                                                                    FontSize="16"
                                                                    HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center"/>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                         <Setter Property="IsEnabled"
                                                 Value="False" />
                                     </Trigger>

@@ -9,6 +9,11 @@ namespace CLP.Entities
         private const int DIGIT_MAX = 7;
         private const string DIGITS = "abcdefghijklmnopqrstuvwxyz";
 
+        /// <summary>
+        /// Converts int to a lowercase letter representation, where 1 = "a", 2 = "b", 27 = "aa", etc.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
         public static string ToLetter(this int number)
         {
             Argument.IsNotNull("number", number);
