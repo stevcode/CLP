@@ -596,6 +596,64 @@ namespace CLP.Entities
             return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT;
         }
 
+        public static bool IsEnclosedShape(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
+        public static bool IsStrokeEnclosure(this Stroke stroke, StrokeCollection strokes)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("strokes", strokes);
+
+            return false;
+        }
+
+        public static bool IsPageObjectEnclosure(this Stroke stroke, List<IPageObject> pageObjects)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("pageObjects", pageObjects);
+
+            return false;
+        }
+
+        public static bool IsHorizontalLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
+        public static bool IsVerticalLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
+        public static bool IsLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
+        public static bool IsDot(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
+        public static bool IsCircle(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
         #endregion // Shape Detection
     }
 }
