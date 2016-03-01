@@ -599,7 +599,7 @@ namespace CLP.Entities
         public static bool IsEnclosedShape(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
-
+            // ALEX
             return false;
         }
 

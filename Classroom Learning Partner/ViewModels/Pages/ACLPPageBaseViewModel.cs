@@ -826,6 +826,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void LassoStroke(Stroke stroke)
         {
+            // ALEX
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
 
