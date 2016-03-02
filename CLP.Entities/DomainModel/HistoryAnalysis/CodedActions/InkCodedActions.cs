@@ -90,9 +90,6 @@ namespace CLP.Entities
 
         public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
         {
-            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
-            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0)});
-
             InkClusters.Clear();
             var inkActions = historyActions.Where(h => h.CodedObject == Codings.OBJECT_INK && h.CodedObjectAction == Codings.ACTION_INK_CHANGE).ToList();
             var historyItems = inkActions.SelectMany(h => h.HistoryItems).OfType<ObjectsOnPageChangedHistoryItem>().ToList();
@@ -104,7 +101,6 @@ namespace CLP.Entities
                 strokesAdded.Remove(smallStroke);
                 unclusteredStrokes.Add(smallStroke);
             }
-            //strokesAdded.Add(referenceStroke);
             var strokeClusters = new List<StrokeCollection>();
 
             if (strokesAdded.Count > 1)
@@ -215,16 +211,6 @@ namespace CLP.Entities
             {
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
-
-            //var referenceCluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(referenceStroke));
-            //if (referenceCluster != null)
-            //{
-            //    referenceCluster.Strokes.Remove(referenceStroke);
-            //    if (!referenceCluster.Strokes.Any())
-            //    {
-            //        InkClusters.Remove(referenceCluster);
-            //    }
-            //}
 
             //Console.WriteLine("Num of Clusters: {0}", InkClusters.Count);
             //Console.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
