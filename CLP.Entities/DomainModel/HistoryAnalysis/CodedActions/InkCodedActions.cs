@@ -301,7 +301,15 @@ namespace CLP.Entities
 
                         if (strokesRightOfArray.Count >= strokesOverArray.Count)
                         {
+                            const double SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD = 80.0;
                             var skipStrokes = strokesInThreshold.Where(s => s.WeightedCenter().X >= arrayVisualXPosition - 15.0).ToList();
+                            var skipStrokesOutsideThreshold = skipStrokes.Where(s => s.WeightedCenter().X - arrayVisualXPosition > SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD).ToList();
+                            strokesOutsideThreshold.AddRange(skipStrokesOutsideThreshold);
+                            foreach (var stroke in skipStrokesOutsideThreshold)
+                            {
+                                skipStrokes.Remove(stroke);
+                            }
+
                             var arrayStrokes = strokesInThreshold.Where(s => s.WeightedCenter().X < arrayVisualXPosition - 15.0).ToList();
                             var otherArrayStrokes =
                                 strokesOutsideThreshold.Where(
