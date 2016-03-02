@@ -231,10 +231,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Run Page Analysis"
@@ -243,71 +239,31 @@
                         Margin="1"
                         Grid.ColumnSpan="2" />
 
-                <Button Content="Run Skip Counting Analysis"
-                        Command="{Binding AnalyzeSkipCountingCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
-
-                <Button Content="Generate Stamp Groupings"
-                        Command="{Binding GenerateStampGroupingsCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
-
-                <Button Content="Cluster: PointDensity"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="PointDensity"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
-                <Button Content="Cluster: CenterDistance"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="CenterDistance"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
-                <Button Content="Cluster: WeightedCenterDistance"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="WeightedCenterDistance"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
-                <Button Content="Cluster: ClosestPoint"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="ClosestPoint"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
-                <Button Content="Cluster: AveragePointDistance"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="AveragePointDistance"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
-                <Button Content="Cluster: StrokeHalves"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="StrokeHalves"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Visible" />
-
                 <Button Content="Show Analysis Clusters"
                         Command="{Binding ShowAnalysisClustersCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
+
+                <Button Content="Cluster:"
+                        Command="{Binding ClusterTestCommand}"
+                        CommandParameter="{Binding SelectedItem, ElementName=ClusterTypes}"
+                        Height="20"
+                        Margin="1" />
+
+                <ComboBox x:Name="ClusterTypes" 
+                          ItemsSource="{Binding ClusterTypes}"
+                          FontSize="12"
+                          Height="18"
+                          Margin="1"
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
                 <Button Content="Clear Temp Boundaries"
                         Command="{Binding ClearTempBoundariesCommand}"
@@ -321,43 +277,28 @@
                         Margin="1"
                         Grid.ColumnSpan="2" />
 
+                <Button Content="Run Skip Counting Analysis"
+                        Command="{Binding AnalyzeSkipCountingCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Run Divider Interpretation"
+                        Command="{Binding InterpretArrayDividersCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Generate Stamp Groupings"
+                        Command="{Binding GenerateStampGroupingsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
                 <Rectangle Grid.ColumnSpan="2"
                            Height="1"
                            Margin="1 5"
                            Stroke="{StaticResource GrayBorderColor}" />
-
-                <!--<Button Content="Run History Analysis"
-                        Command="{Binding AnalyzePageHistoryCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />-->
-
-                <!--<Button Content="Run Divider Interpretation"
-                        Command="{Binding InterpretArrayDividersCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />-->
-
-                <!--<Button Content="Print Histories"
-                        Command="{Binding PrintAllHistoryItemsCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
-
-                <!--<Button Content="Run History Analysis"
-                        Command="{Binding HistoryActionAnaylsisCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
-
-                <!--<Button Content="Fix DTs"
-                        Command="{Binding FixCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1"
-                        Visibility="Collapsed" />-->
 
             </catel:StackGrid>
 

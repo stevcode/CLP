@@ -65,6 +65,13 @@ namespace Classroom_Learning_Partner.ViewModels
             PageOrientations.Add("Animation - Portrait");
             SelectedPageOrientation = PageOrientations.First();
 
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
+            #region Edit Commands
+
             AddPageCommand = new Command(OnAddPageCommandExecute);
             MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
             MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
@@ -80,23 +87,30 @@ namespace Classroom_Learning_Partner.ViewModels
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
             AddTagCommand = new Command(OnAddTagCommandExecute);
+
+            #endregion // Edit Commands
+
+            #region Analysis Commands
+
+            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
+            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
+            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
+            GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
+
+            #region Obsolete Commands
+
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
-            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
-
-            //TEMP
-            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
-            HistoryActionAnaylsisCommand = new Command(OnHistoryActionAnaylsisCommandExecute);
-            GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
-            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
-            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
-            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
-            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+            #endregion // Obsolete Commands
 
-            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            #endregion // Analysis Commands
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -367,6 +381,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        #region Edit Commands
 
         /// <summary>Adds a new page to the notebook.</summary>
         public Command AddPageCommand { get; private set; }
@@ -833,134 +849,309 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(tag);
         }
 
-        /// <summary>Runs analysis routines on the page.</summary>
-        public Command AnalyzePageCommand { get; private set; }
+        #endregion // Edit Commands
 
-        private void OnAnalyzePageCommandExecute()
+        #region Analysis Commands
+
+        public Command GenerateHistoryActionsCommand { get; private set; }
+
+        private void OnGenerateHistoryActionsCommandExecute()
         {
-            PageAnalysis.Analyze(CurrentPage);
+            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
+        }
 
-            var definitionTags = CurrentPage.Tags.Where(t => t.Category == Category.Definition).ToList();
+        public Command ShowAnalysisClustersCommand { get; private set; }
 
-            if (definitionTags.Any(t => t is AdditionRelationDefinitionTag))
+        private void OnShowAnalysisClustersCommandExecute()
+        {
+            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
             {
-                AdditionRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is MultiplicationRelationDefinitionTag))
-            {
-                MultiplicationRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is DivisionRelationDefinitionTag))
-            {
-                DivisionRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is FactorsOfProductDefinitionTag))
-            {
-                FactorsOfProductAnalysis.Analyze(CurrentPage);
-            }
-
-            ArrayAnalysis.Analyze(CurrentPage);
-            DivisionTemplateAnalysis.Analyze(CurrentPage);
-            StampAnalysis.Analyze(CurrentPage);
-            NumberLineAnalysis.Analyze(CurrentPage);
-            ApplyInterpretedCorrectness(CurrentPage);
-
-            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
-            {
-                return;
-            }
-
-            foreach (var submission in CurrentPage.Submissions)
-            {
-                PageAnalysis.Analyze(submission);
-                ArrayAnalysis.Analyze(submission);
-                DivisionTemplateAnalysis.Analyze(submission);
-                StampAnalysis.Analyze(submission);
-                NumberLineAnalysis.Analyze(CurrentPage);
-                ApplyInterpretedCorrectness(submission);
+                var clusterBounds = cluster.Strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
+                };
+                CurrentPage.PageObjects.Add(tempBoundary);
             }
         }
 
-        public static void ApplyInterpretedCorrectness(CLPPage page)
+        public List<string> ClusterTypes
         {
-            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-            if (correctnessTag != null &&
-                correctnessTag.IsCorrectnessManuallySet)
+            get
             {
-                return;
+                return new List<string>
+                       {
+                           "PointDensity",
+                           "CenterDistance",
+                           "WeightedCenterDistance",
+                           "ClosestPoint",
+                           "AveragePointDistance",
+                           "StrokeHalves"
+                       };
             }
-
-            var correctnessTags =
-                page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
-                    .ToList();
-            correctnessTags.AddRange(
-                                     page.Tags.OfType<ArrayCorrectnessSummaryTag>()
-                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
-
-            if (!correctnessTags.Any())
-            {
-                return;
-            }
-
-            var correctnessSum = Correctness.Unknown;
-            foreach (var tag in correctnessTags)
-            {
-                if (correctnessSum == tag.Correctness)
-                {
-                    continue;
-                }
-
-                if (correctnessSum == Correctness.Unknown)
-                {
-                    correctnessSum = tag.Correctness;
-                    continue;
-                }
-
-                if (correctnessSum == Correctness.Correct &&
-                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
-
-                if (tag.Correctness == Correctness.Correct &&
-                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
-            }
-
-            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
         }
 
-        /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
-        public Command AnalyzePageHistoryCommand { get; private set; }
+        public Command<string> ClusterTestCommand { get; private set; }
 
-        private void OnAnalyzePageHistoryCommandExecute()
+        private void OnClusterTestCommandExecute(string clusterEquation)
         {
-            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
-            CurrentPage.Tags = null;
-            CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
-            //     SortedTags.Source = CurrentPage.Tags;
+            List<StrokeCollection> clusteredStrokes;
+            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
+            switch (clusterEquation)
+            {
+                case "PointDensity":
+                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+                    break;
+                case "CenterDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "WeightedCenterDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "ClosestPoint":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "AveragePointDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "StrokeHalves":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                default:
+                    return;
+            }
 
-            ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
-
-            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            if (clusteredStrokes == null ||
+                !clusteredStrokes.Any())
             {
                 return;
             }
 
-            foreach (var submission in CurrentPage.Submissions)
+            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in tempBoundaries)
             {
-                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
-                submission.Tags = null;
-                submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
+                CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
 
-                ArrayAnalysis.AnalyzeHistory(submission);
-                DivisionTemplateAnalysis.AnalyzeHistory(submission);
+            var regionCount = 1;
+            foreach (var strokes in clusteredStrokes)
+            {
+                var clusterBounds = strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = regionCount.ToString()
+                };
+                regionCount++;
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
+
+            // Screenshot Clusters
+            PageHistory.UISleep(1000);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
+
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
+            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        public static List<StrokeCollection> Cluster(List<Stroke> strokes, string clusterEquation)
+        {
+            Func<Stroke, Stroke, double> distanceEquation;
+            switch (clusterEquation)
+            {
+                case "CenterDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByCenter(s2));
+                    break;
+                case "WeightedCenterDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByWeightedCenter(s2));
+                    break;
+                case "ClosestPoint":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
+                    break;
+                case "AveragePointDistance":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistance(s2));
+                    break;
+                case "StrokeHalves":
+                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistanceOfStrokeHalves(s2));
+                    break;
+                default:
+                    return null;
+            }
+
+            var maxEpsilon = 1000;
+            var minimumStrokesInCluster = 1;
+            var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokes, distanceEquation);
+            optics.BuildReachability();
+            var reachabilityDistances = optics.ReachabilityDistances().ToList();
+
+            #region K-Means Clustering
+
+            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var plotView = new OPTICSReachabilityPlotView()
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Reachability = normalizedReachabilityPlot
+            };
+            plotView.Show();
+
+            //var rawData = new double[normalizedReachabilityPlot.Count][];
+            //for (var i = 0; i < rawData.Length; i++)
+            //{
+            //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
+            //}
+
+            //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
+
+            //var zeroCount = 0;
+            //var zeroTotal = 0.0;
+            //var oneCount = 0;
+            //var oneTotal = 0.0;
+            //for (var i = 0; i < clustering.Length; i++)
+            //{
+            //    if (clustering[i] == 0)
+            //    {
+            //        zeroCount++;
+            //        zeroTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //    if (clustering[i] == 1)
+            //    {
+            //        oneCount++;
+            //        oneTotal += normalizedReachabilityPlot[i].Y;
+            //    }
+            //}
+            //var zeroMean = zeroTotal / zeroCount;
+            //var oneMean = oneTotal / oneCount;
+            //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
+
+            #endregion // K-Means Clustering
+
+            const double CLUSTERING_EPSILON = 51.0;
+
+            var currentCluster = new StrokeCollection();
+            var allClusteredStrokes = new List<Stroke>();
+            var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
+            var firstStroke = strokes[firstStrokeIndex];
+            currentCluster.Add(firstStroke);
+            allClusteredStrokes.Add(firstStroke);
+
+            var strokeClusters = new List<StrokeCollection>();
+            for (var i = 1; i < reachabilityDistances.Count(); i++)
+            {
+                var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
+                var stroke = strokes[strokeIndex];
+
+                // K-Means cluster decision.
+                //if (clustering[i - 1] != clusterWithHighestMean)
+                //{
+                //    currentCluster.Add(stroke);
+                //    allClusteredStrokes.Add(stroke);
+                //    continue;
+                //}
+
+                // Epsilon cluster decision.
+                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                if (currentReachabilityDistance < CLUSTERING_EPSILON)
+                {
+                    currentCluster.Add(stroke);
+                    allClusteredStrokes.Add(stroke);
+                    continue;
+                }
+
+                var fullCluster = currentCluster.ToList();
+                currentCluster.Clear();
+                currentCluster.Add(stroke);
+                allClusteredStrokes.Add(stroke);
+                strokeClusters.Add(new StrokeCollection(fullCluster));
+            }
+            if (currentCluster.Any())
+            {
+                var finalCluster = currentCluster.ToList();
+                strokeClusters.Add(new StrokeCollection(finalCluster));
+            }
+
+            var unclusteredStrokes = new StrokeCollection();
+            foreach (var stroke in strokes)
+            {
+                if (allClusteredStrokes.Contains(stroke))
+                {
+                    continue;
+                }
+                unclusteredStrokes.Add(stroke); // TODO: do something with these.
+            }
+
+            return strokeClusters;
+        }
+
+        public Command ClearTempBoundariesCommand { get; private set; }
+
+        private void OnClearTempBoundariesCommandExecute()
+        {
+            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in tempBoundaries)
+            {
+                CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
+        }
+
+        public Command StrokeTestingCommand { get; private set; }
+
+        private void OnStrokeTestingCommandExecute()
+        {
+            var strokes = CurrentPage.InkStrokes.ToList();
+            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var distanceFromArray = new List<double>();
+
+            foreach (var stroke in strokes)
+            {
+                var minDistance = double.MaxValue;
+                foreach (var array in arrays)
+                {
+                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
+                    var deltaX = stroke.GetBounds().Right - arrayVisualRight;
+                    if (deltaX < minDistance &&
+                        deltaX >= 0)
+                    {
+                        minDistance = deltaX;
+                    }
+                }
+                distanceFromArray.Add(minDistance);
+            }
+
+            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
+            foreach (var line in output)
+            {
+                Console.WriteLine(line);
             }
         }
 
@@ -1171,9 +1362,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #endregion //Commands
-
-        /// <summary>TEMP</summary>
+        /// <summary>Attempts to interpret ink strokes over an array as an Ink Divider</summary>
         public Command InterpretArrayDividersCommand { get; private set; }
 
         private void OnInterpretArrayDividersCommandExecute()
@@ -1269,64 +1458,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command PrintAllHistoryItemsCommand { get; private set; }
-
-        private void OnPrintAllHistoryItemsCommandExecute()
-        {
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
-
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
-            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
-
-            foreach (var item in historyItems)
-            {
-                File.AppendAllText(filePath, item.FormattedValue + "\n");
-            }
-        }
-
-        /// <summary>
-        /// Analysizes the HistoryItems to generate appropriate HistoryActions and Tags.
-        /// </summary>
-        public Command HistoryActionAnaylsisCommand { get; private set; }
-
-        private void OnHistoryActionAnaylsisCommandExecute()
-        {
-            //HistoryAnalysis.GenerateInitialHistoryActions(CurrentPage);
-
-            //HistoryAnalysis.AnalyzeHistoryActions(CurrentPage);
-
-            ////Prints HistoryAction Coded Values to .txt file
-            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //var fileDirectory = Path.Combine(desktopDirectory, "CodedHistoryLogs");
-            //if (!Directory.Exists(fileDirectory))
-            //{
-            //    Directory.CreateDirectory(fileDirectory);
-            //}
-
-            //var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + CurrentPage.Owner.FullName + ".txt");
-            //if (File.Exists(filePath))
-            //{
-            //    File.Delete(filePath);
-            //}
-            //File.WriteAllText(filePath, "");
-            //var historyActions = CurrentPage.History.HistoryActions;
-
-            //foreach (var action in historyActions)
-            //{
-            //    File.AppendAllText(filePath, action.CodedValue + "\n");
-            //}
-        }
-
         public Command GenerateStampGroupingsCommand { get; private set; }
 
         private void OnGenerateStampGroupingsCommandExecute()
@@ -1349,6 +1480,164 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var tag = new StampGroupTag(CurrentPage, Origin.StudentPageGenerated, stampGroup.Key.Item1, stampGroup.Key.Item2, stampGroup.Value);
                 CurrentPage.AddTag(tag);
+            }
+        }
+
+        #region Obsolete Commands
+
+        /// <summary>Runs analysis routines on the page.</summary>
+        public Command AnalyzePageCommand { get; private set; }
+
+        private void OnAnalyzePageCommandExecute()
+        {
+            PageAnalysis.Analyze(CurrentPage);
+
+            var definitionTags = CurrentPage.Tags.Where(t => t.Category == Category.Definition).ToList();
+
+            if (definitionTags.Any(t => t is AdditionRelationDefinitionTag))
+            {
+                AdditionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is MultiplicationRelationDefinitionTag))
+            {
+                MultiplicationRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is DivisionRelationDefinitionTag))
+            {
+                DivisionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is FactorsOfProductDefinitionTag))
+            {
+                FactorsOfProductAnalysis.Analyze(CurrentPage);
+            }
+
+            ArrayAnalysis.Analyze(CurrentPage);
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
+            StampAnalysis.Analyze(CurrentPage);
+            NumberLineAnalysis.Analyze(CurrentPage);
+            ApplyInterpretedCorrectness(CurrentPage);
+
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach (var submission in CurrentPage.Submissions)
+            {
+                PageAnalysis.Analyze(submission);
+                ArrayAnalysis.Analyze(submission);
+                DivisionTemplateAnalysis.Analyze(submission);
+                StampAnalysis.Analyze(submission);
+                NumberLineAnalysis.Analyze(CurrentPage);
+                ApplyInterpretedCorrectness(submission);
+            }
+        }
+
+        public static void ApplyInterpretedCorrectness(CLPPage page)
+        {
+            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+            if (correctnessTag != null &&
+                correctnessTag.IsCorrectnessManuallySet)
+            {
+                return;
+            }
+
+            var correctnessTags =
+                page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
+                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+                    .ToList();
+            correctnessTags.AddRange(
+                                     page.Tags.OfType<ArrayCorrectnessSummaryTag>()
+                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
+
+            if (!correctnessTags.Any())
+            {
+                return;
+            }
+
+            var correctnessSum = Correctness.Unknown;
+            foreach (var tag in correctnessTags)
+            {
+                if (correctnessSum == tag.Correctness)
+                {
+                    continue;
+                }
+
+                if (correctnessSum == Correctness.Unknown)
+                {
+                    correctnessSum = tag.Correctness;
+                    continue;
+                }
+
+                if (correctnessSum == Correctness.Correct &&
+                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+
+                if (tag.Correctness == Correctness.Correct &&
+                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+            }
+
+            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
+        }
+
+        /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
+        public Command AnalyzePageHistoryCommand { get; private set; }
+
+        private void OnAnalyzePageHistoryCommandExecute()
+        {
+            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+            CurrentPage.Tags = null;
+            CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
+            //     SortedTags.Source = CurrentPage.Tags;
+
+            ArrayAnalysis.AnalyzeHistory(CurrentPage);
+            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
+
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach (var submission in CurrentPage.Submissions)
+            {
+                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+                submission.Tags = null;
+                submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
+
+                ArrayAnalysis.AnalyzeHistory(submission);
+                DivisionTemplateAnalysis.AnalyzeHistory(submission);
+            }
+        }
+
+        public Command PrintAllHistoryItemsCommand { get; private set; }
+
+        private void OnPrintAllHistoryItemsCommandExecute()
+        {
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+
+            foreach (var item in historyItems)
+            {
+                File.AppendAllText(filePath, item.FormattedValue + "\n");
             }
         }
 
@@ -1375,307 +1664,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command GenerateHistoryActionsCommand
-        { get; private set; }
+        #endregion // Obsolete Commands 
 
-        private void OnGenerateHistoryActionsCommandExecute()
-        {
-            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
-        }
+        #endregion // Analysis Commands
 
-        public static List<StrokeCollection> Cluster(List<Stroke> strokes, string clusterEquation)
-        {
-            Func<Stroke, Stroke, double> distanceEquation;
-            switch (clusterEquation)
-            {
-                case "CenterDistance":
-                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByCenter(s2));
-                    break;
-                case "WeightedCenterDistance":
-                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByWeightedCenter(s2));
-                    break;
-                case "ClosestPoint":
-                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
-                    break;
-                case "AveragePointDistance":
-                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistance(s2));
-                    break;
-                case "StrokeHalves":
-                    distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByAveragePointDistanceOfStrokeHalves(s2));
-                    break;
-                default:
-                    return null;
-            }
+        #endregion //Commands
 
-            var maxEpsilon = 1000;
-            var minimumStrokesInCluster = 1;
-            var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokes, distanceEquation);
-            optics.BuildReachability();
-            var reachabilityDistances = optics.ReachabilityDistances().ToList();
-
-            #region K-Means Clustering
-
-            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            var plotView = new OPTICSReachabilityPlotView()
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                Reachability = normalizedReachabilityPlot
-            };
-            plotView.Show();
-
-            //var rawData = new double[normalizedReachabilityPlot.Count][];
-            //for (var i = 0; i < rawData.Length; i++)
-            //{
-            //    rawData[i] = new[] { 0.0, normalizedReachabilityPlot[i].Y };
-            //}
-
-            //var clustering = InkClustering.K_MEANS_Clustering(rawData, 2);
-
-            //var zeroCount = 0;
-            //var zeroTotal = 0.0;
-            //var oneCount = 0;
-            //var oneTotal = 0.0;
-            //for (var i = 0; i < clustering.Length; i++)
-            //{
-            //    if (clustering[i] == 0)
-            //    {
-            //        zeroCount++;
-            //        zeroTotal += normalizedReachabilityPlot[i].Y;
-            //    }
-            //    if (clustering[i] == 1)
-            //    {
-            //        oneCount++;
-            //        oneTotal += normalizedReachabilityPlot[i].Y;
-            //    }
-            //}
-            //var zeroMean = zeroTotal / zeroCount;
-            //var oneMean = oneTotal / oneCount;
-            //var clusterWithHighestMean = zeroMean > oneMean ? 0 : 1;
-
-            #endregion // K-Means Clustering
-
-            const double CLUSTERING_EPSILON = 51.0;
-
-            var currentCluster = new StrokeCollection();
-            var allClusteredStrokes = new List<Stroke>();
-            var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
-            var firstStroke = strokes[firstStrokeIndex];
-            currentCluster.Add(firstStroke);
-            allClusteredStrokes.Add(firstStroke);
-
-            var strokeClusters = new List<StrokeCollection>();
-            for (var i = 1; i < reachabilityDistances.Count(); i++)
-            {
-                var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
-                var stroke = strokes[strokeIndex];
-
-                // K-Means cluster decision.
-                //if (clustering[i - 1] != clusterWithHighestMean)
-                //{
-                //    currentCluster.Add(stroke);
-                //    allClusteredStrokes.Add(stroke);
-                //    continue;
-                //}
-
-                // Epsilon cluster decision.
-                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
-                if (currentReachabilityDistance < CLUSTERING_EPSILON)
-                {
-                    currentCluster.Add(stroke);
-                    allClusteredStrokes.Add(stroke);
-                    continue;
-                }
-
-                var fullCluster = currentCluster.ToList();
-                currentCluster.Clear();
-                currentCluster.Add(stroke);
-                allClusteredStrokes.Add(stroke);
-                strokeClusters.Add(new StrokeCollection(fullCluster));
-            }
-            if (currentCluster.Any())
-            {
-                var finalCluster = currentCluster.ToList();
-                strokeClusters.Add(new StrokeCollection(finalCluster));
-            }
-
-            var unclusteredStrokes = new StrokeCollection();
-            foreach (var stroke in strokes)
-            {
-                if (allClusteredStrokes.Contains(stroke))
-                {
-                    continue;
-                }
-                unclusteredStrokes.Add(stroke); // TODO: do something with these.
-            }
-
-            return strokeClusters;
-        }
-
-        public Command<string> ClusterTestCommand
-        { get; private set; }
-
-        private void OnClusterTestCommandExecute(string clusterEquation)
-        {
-            List<StrokeCollection> clusteredStrokes;
-            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
-            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
-            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
-            //strokesToCluster.Add(referenceStroke);
-            switch (clusterEquation)
-            {
-                case "PointDensity":
-                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
-                    break;
-                case "CenterDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "WeightedCenterDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "ClosestPoint":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "AveragePointDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "StrokeHalves":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                default:
-                    return;
-            }
-
-            if (clusteredStrokes == null ||
-                !clusteredStrokes.Any())
-            {
-                return;
-            }
-
-            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
-            foreach (var temporaryBoundary in tempBoundaries)
-            {
-                CurrentPage.PageObjects.Remove(temporaryBoundary);
-            }
-
-            //var referenceCluster = clusteredStrokes.FirstOrDefault(c => c.Contains(referenceStroke));
-            //if (referenceCluster != null)
-            //{
-            //    referenceCluster.Remove(referenceStroke);
-            //    if (!referenceCluster.Any())
-            //    {
-            //        clusteredStrokes.Remove(referenceCluster);
-            //    }
-            //}
-
-            var regionCount = 1;
-            foreach (var strokes in clusteredStrokes)
-            {
-                var clusterBounds = strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = regionCount.ToString()
-                };
-                regionCount++;
-                CurrentPage.PageObjects.Add(tempBoundary);
-            }
-
-            // Screenshot Clusters
-            PageHistory.UISleep(1000);
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
-
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
-            var views = viewManager.GetViewsOfViewModel(pageViewModel);
-            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-            if (pageView == null)
-            {
-                return;
-            }
-
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
-
-            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
-            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
-            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
-
-            if (!Directory.Exists(thumbnailsFolderPath))
-            {
-                Directory.CreateDirectory(thumbnailsFolderPath);
-            }
-
-            var pngEncoder = new PngBitmapEncoder();
-            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            using (var outputStream = new MemoryStream())
-            {
-                pngEncoder.Save(outputStream);
-                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-            }
-        }
-
-        public Command ShowAnalysisClustersCommand { get; private set; }
-
-        private void OnShowAnalysisClustersCommandExecute()
-        {
-            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
-            {
-                var clusterBounds = cluster.Strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
-                };
-                CurrentPage.PageObjects.Add(tempBoundary);
-            }
-        }
-
-        public Command ClearTempBoundariesCommand
-        { get; private set; }
-
-        private void OnClearTempBoundariesCommandExecute()
-        {
-            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
-            foreach (var temporaryBoundary in tempBoundaries)
-            {
-                CurrentPage.PageObjects.Remove(temporaryBoundary);
-            }
-        }
-
-        public Command StrokeTestingCommand
-        { get; private set; }
-
-        private void OnStrokeTestingCommandExecute()
-        {
-            var strokes = CurrentPage.InkStrokes.ToList();
-            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var distanceFromArray = new List<double>();
-
-            foreach (var stroke in strokes)
-            {
-                var minDistance = double.MaxValue;
-                foreach (var array in arrays)
-                {
-                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
-                    var deltaX = stroke.GetBounds().Right - arrayVisualRight;
-                    if (deltaX < minDistance &&
-                        deltaX >= 0)
-                    {
-                        minDistance = deltaX;
-                    }
-                }
-                distanceFromArray.Add(minDistance);
-            }
-
-            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
-            foreach (var line in output)
-            {
-                Console.WriteLine(line);
-            }
-        }
     }
 }
