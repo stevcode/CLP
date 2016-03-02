@@ -248,12 +248,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            // BUG: Doesn't deal with skip erase!
-            var strokes = inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList();
-            if (strokes.Count < 2)
-            {
-                return null;
-            }
+            var isSkipAdd = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD;
+
+            var strokes = isSkipAdd
+                              ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
             #region Skip Counting Interpretation
 
@@ -273,7 +272,7 @@ namespace CLP.Entities
             var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
             if (notSkipCountStrokes.Any())
             {
-                //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
                 // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
             }
 
@@ -359,7 +358,18 @@ namespace CLP.Entities
             {
                 var expectedRowValue = row * array.Columns;
                 var strokesInRow = strokeGroupPerRow[row];
-                var interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+
+                List<string> interpretations;
+                if (!isSkipAdd)
+                {
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokesInRow.ToList());
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                }
+                else
+                {
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+                }
+
                 if (!interpretations.Any())
                 {
                     interpretedRowValues.Add(string.Empty);
@@ -381,8 +391,23 @@ namespace CLP.Entities
 
             #endregion // Skip Counting Interpretation
 
-            if (strokeGroupPerRow.Keys.Any())
+            var firstStroke = strokes.First();
+            var cluster = InkCodedActions.GetContainingCluster(firstStroke);
+            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARRskip)
             {
+                if (!strokeGroupPerRow.Keys.Any() ||
+                    !isSkipAdd)
+                {
+                    return null;
+                }
+
+                foreach (var stroke in strokes)
+                {
+                    cluster.StrokesOnPage.Add(stroke);
+                }
+
+                cluster.ClusterType = InkCluster.ClusterTypes.ARRskip;
+
                 var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
@@ -394,7 +419,49 @@ namespace CLP.Entities
                 var historyAction = new HistoryAction(page, inkAction)
                 {
                     CodedObject = codedObject,
-                    CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
+                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
+                    CodedObjectID = codedID,
+                    CodedObjectIDIncrement = incrementID,
+                    CodedObjectActionID = codedActionID
+                };
+
+                return historyAction;
+            }
+
+            if (cluster.ClusterType == InkCluster.ClusterTypes.ARRskip)
+            {
+                if (!isSkipAdd)
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                        cluster.StrokesErased.Add(stroke);
+                    }
+                }
+                else
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Add(stroke);
+                    }
+                }
+
+                //var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
+                //onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
+                //var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
+
+                var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
+                var codedObject = Codings.OBJECT_ARRAY;
+                var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+                var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
+                var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ? "right" : "left";
+
+                var codedActionID = string.Format("{0}, {1}", formattedSkips, location);
+
+                var historyAction = new HistoryAction(page, inkAction)
+                {
+                    CodedObject = codedObject,
+                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
                     CodedObjectID = codedID,
                     CodedObjectIDIncrement = incrementID,
                     CodedObjectActionID = codedActionID
@@ -613,7 +680,7 @@ namespace CLP.Entities
                 var historyAction = new HistoryAction(page, inkAction)
                 {
                     CodedObject = Codings.OBJECT_ARRAY,
-                    CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                    CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
                     CodedObjectID = objectID,
                     CodedObjectActionID = string.Format("\"{0}\"", interpretation)
                 };
