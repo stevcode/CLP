@@ -1651,8 +1651,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnStrokeTestingCommandExecute()
         {
-            var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
-            var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            var strokes = CurrentPage.InkStrokes.ToList();
+            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var distanceFromArray = new List<double>();
+
+            foreach (var stroke in strokes)
+            {
+                var minDistance = double.MaxValue;
+                foreach (var array in arrays)
+                {
+                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
+                    var deltaX = stroke.GetBounds().Right - arrayVisualRight;
+                    if (deltaX < minDistance &&
+                        deltaX >= 0)
+                    {
+                        minDistance = deltaX;
+                    }
+                }
+                distanceFromArray.Add(minDistance);
+            }
+
+            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
             foreach (var line in output)
             {
                 Console.WriteLine(line);
