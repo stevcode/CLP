@@ -97,9 +97,9 @@ namespace CLP.InkInterpretation
             //We do that ourselves by calling this below method.
             inkManager.UpdateRecognitionResults(recognitionResults);
 
-            // Aggregate the 3 most likely result words, with spaces between.
+            // Aggregate the 5 most likely result words, with spaces between.
             var allInterpretations = new List<string>();
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 5; i++)
             {
                 try
                 {
@@ -122,14 +122,19 @@ namespace CLP.InkInterpretation
             foreach (var trimmed in trimmedInterpretations)
             {
                 int parsedInterpretation;
-                if (!int.TryParse(trimmed, out parsedInterpretation))
+                var adjustedInterpretation = trimmed;
+                if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
                 {
-                    continue;
+                    adjustedInterpretation = trimmed.Replace("~", "2");
+                    if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
+                    {
+                        continue;
+                    }
                 }
 
                 if (parsedInterpretation == number)
                 {
-                    return trimmed;
+                    return adjustedInterpretation;
                 }
             }
 
