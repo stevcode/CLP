@@ -623,8 +623,17 @@ namespace CLP.Entities
 
             if (cluster.ClusterType == InkCluster.ClusterTypes.ARReqn)
             {
-                //strokes.Reverse();
-                var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+                List<string> interpretations;
+                if (!isEqnAdd)
+                {
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokes);
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                }
+                else
+                {
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+                }
+                
                 var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
                 var changedInterpretation = string.Format("\"{0}\"", interpretation);
                 

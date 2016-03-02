@@ -652,7 +652,9 @@ namespace CLP.Entities
                 return null;
             }
 
-            var strokes = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD
+            var isArithAdd = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD;
+
+            var strokes = isArithAdd
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
                               : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
@@ -665,8 +667,8 @@ namespace CLP.Entities
             var historyAction = new HistoryAction(page, inkAction)
                                 {
                                     CodedObject = Codings.OBJECT_ARITH,
-                                    CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
-                                    IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
+                                    CodedObjectAction = isArithAdd ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
+                                    IsObjectActionVisible = !isArithAdd,
                                     CodedObjectID = inkAction.CodedObjectID,
                                     CodedObjectActionID = string.Format("\"{0}\"", interpretation)
                                 };
@@ -734,6 +736,15 @@ namespace CLP.Entities
         #endregion // Verify And Generate Methods
 
         #region Utility Static Methods
+
+        public static List<Stroke> GetOrderStrokesWhereAddedToPage(CLPPage page, List<Stroke> strokes)
+        {
+            var historyItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().Where(h => h.StrokesAdded.Any()).ToList();
+            var strokesAdded = historyItems.SelectMany(h => h.StrokesAdded).ToList();
+            var orderedStrokes = strokesAdded.Where(strokes.Contains).ToList();
+
+            return orderedStrokes;
+        } 
 
         public static Point GetAverageStrokeDimensions(CLPPage page)
         {
