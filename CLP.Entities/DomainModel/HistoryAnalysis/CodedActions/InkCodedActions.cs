@@ -658,22 +658,86 @@ namespace CLP.Entities
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
                               : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
-            if (interpretation == null)
+            var firstStroke = strokes.First();
+            var cluster = GetContainingCluster(firstStroke);
+            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARITH || 
+                cluster.ClusterType == InkCluster.ClusterTypes.Unknown)
             {
-                return null;
+                var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
+                if (interpretation == null ||
+                    !isArithAdd)
+                {
+                    return null;
+                }
+
+                foreach (var stroke in strokes)
+                {
+                    cluster.StrokesOnPage.Add(stroke);
+                }
+
+                cluster.ClusterType = InkCluster.ClusterTypes.ARITH;
+
+                var historyAction = new HistoryAction(page, inkAction)
+                {
+                    CodedObject = Codings.OBJECT_ARITH,
+                    CodedObjectAction = isArithAdd ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
+                    IsObjectActionVisible = !isArithAdd,
+                    CodedObjectID = inkAction.CodedObjectID,
+                    CodedObjectActionID = string.Format("\"{0}\"", interpretation)
+                };
+
+                return historyAction;
             }
 
-            var historyAction = new HistoryAction(page, inkAction)
-                                {
-                                    CodedObject = Codings.OBJECT_ARITH,
-                                    CodedObjectAction = isArithAdd ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
-                                    IsObjectActionVisible = !isArithAdd,
-                                    CodedObjectID = inkAction.CodedObjectID,
-                                    CodedObjectActionID = string.Format("\"{0}\"", interpretation)
-                                };
+            if (cluster.ClusterType == InkCluster.ClusterTypes.ARITH)
+            {
+                List<string> interpretations;
+                if (!isArithAdd)
+                {
+                    var orderedStrokes = GetOrderStrokesWhereAddedToPage(page, strokes);
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                }
+                else
+                {
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+                }
 
-            return historyAction;
+                var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                var changedInterpretation = string.Format("\"{0}\"", interpretation);
+
+                if (!isArithAdd)
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                        cluster.StrokesErased.Add(stroke);
+                    }
+                }
+                else
+                {
+                    foreach (var stroke in strokes)
+                    {
+                        cluster.StrokesOnPage.Add(stroke);
+                    }
+                }
+
+                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
+                onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
+                var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
+
+                var historyAction = new HistoryAction(page, inkAction)
+                {
+                    CodedObject = Codings.OBJECT_ARITH,
+                    CodedObjectAction = isArithAdd ? Codings.ACTION_ARITH_ADD : Codings.ACTION_ARITH_ERASE,
+                    IsObjectActionVisible = !isArithAdd,
+                    CodedObjectID = inkAction.CodedObjectID,
+                    CodedObjectActionID = formattedInterpretation
+                };
+
+                return historyAction;
+            }
+
+            return null;
         }
 
         public static IHistoryAction FillInInterpretation(CLPPage page, IHistoryAction inkAction)
