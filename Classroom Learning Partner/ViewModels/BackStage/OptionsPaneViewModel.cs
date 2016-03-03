@@ -81,6 +81,17 @@ namespace Classroom_Learning_Partner.ViewModels
             File.WriteAllText(filePath, "");
             File.AppendAllText(filePath, "*****Representations Used Tags*****" + "\n\n");
 
+            var totalARR = 0;
+            var totalSKIP = 0;
+            var totalStampedImages = 0;
+            var totalNL = 0;
+            var pagesWithARR = 0;
+            var pagesWithStampedImages = 0;
+            var pagesWithNL = 0;
+            var pageWithSKIP = 0;
+            var totalPages = 0;
+            var totalPagesWithReps = 0;
+
             foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
             {
                 var notebook = notebookInfo.Notebook;
@@ -98,14 +109,46 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
+                    totalPages++;
+
                     Console.WriteLine("Generating Representations Used Tag for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
                     HistoryAnalysis.GenerateHistoryActions(lastSubmission);
                     Console.WriteLine("Finished generating Representations Used Tag.\n");
 
-                    var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag);
+                    var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag) as RepresentationsUsedTag;
                     if (tag == null)
                     {
                         continue;
+                    }
+
+                    if (tag.AllRepresentations.Any())
+                    {
+                        totalPagesWithReps++;
+                    }
+
+                    totalARR += tag.DeletedCodedRepresentations.Count(c => c.Contains("ARR"));
+                    totalARR += tag.FinalCodedRepresentations.Count(c => c.Contains("ARR"));
+                    totalSKIP += tag.FinalCodedRepresentations.Count(c => c.Contains("ARR skip"));
+                    totalStampedImages += tag.DeletedCodedRepresentations.Count(c => c.Contains("STAMP"));
+                    totalStampedImages += tag.FinalCodedRepresentations.Count(c => c.Contains("STAMP"));
+                    totalNL += tag.DeletedCodedRepresentations.Count(c => c.Contains("NL"));
+                    totalNL += tag.FinalCodedRepresentations.Count(c => c.Contains("NL"));
+
+                    if (tag.AllRepresentations.Any(c => c.Contains("ARR")))
+                    {
+                        pagesWithARR++;
+                    }
+                    if (tag.FinalCodedRepresentations.Any(c => c.Contains("ARR skip")))
+                    {
+                        pageWithSKIP++;
+                    }
+                    if (tag.AllRepresentations.Any(c => c.Contains("STAMP")))
+                    {
+                        pagesWithStampedImages++;
+                    }
+                    if (tag.AllRepresentations.Any(c => c.Contains("NL")))
+                    {
+                        pagesWithNL++;
                     }
 
                     var tagLine = string.Format("{0}, p {1}:\n{2}", page.Owner.FullName, page.PageNumber, tag.FormattedValue);
@@ -115,6 +158,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 File.AppendAllText(filePath, "*****\n");
             }
+
+            File.AppendAllText(filePath, "\n*****Page Stats*****\n\n");
+
+            File.AppendAllText(filePath, string.Format("Total Pages: {0}\n", totalPages));
+            File.AppendAllText(filePath, string.Format("Total Pages with Representations Used: {0}\n", totalPagesWithReps));
+            File.AppendAllText(filePath, string.Format("Total Pages with Ink Only: {0}\n", totalPages - totalPagesWithReps));
+            File.AppendAllText(filePath, string.Format("Total ARR instances: {0}\n", totalARR));
+            File.AppendAllText(filePath, string.Format("Total ARR skip instances (in Final Representations): {0}\n", totalSKIP));
+            File.AppendAllText(filePath, string.Format("Total NL instances: {0}\n", totalNL));
+            File.AppendAllText(filePath, string.Format("Total STAMP instances: {0}\n", totalStampedImages));
+            File.AppendAllText(filePath, string.Format("Number of Pages with ARR instances: {0}\n", pagesWithARR));
+            File.AppendAllText(filePath, string.Format("Number of Pages with ARR skip instances (in Final Representations): {0}\n", pageWithSKIP));
+            File.AppendAllText(filePath, string.Format("Number of Pages with NL instances: {0}\n", pagesWithNL));
+            File.AppendAllText(filePath, string.Format("Number of Pages with STAMP instances: {0}\n", pagesWithStampedImages));
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
