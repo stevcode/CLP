@@ -128,7 +128,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     totalARR += tag.DeletedCodedRepresentations.Count(c => c.Contains("ARR"));
                     totalARR += tag.FinalCodedRepresentations.Count(c => c.Contains("ARR"));
-                    totalSKIP += tag.FinalCodedRepresentations.Count(c => c.Contains("ARR skip"));
+                    totalSKIP += tag.FinalCodedRepresentations.Count(c => c.Contains("skip"));
                     totalStampedImages += tag.DeletedCodedRepresentations.Count(c => c.Contains("STAMP"));
                     totalStampedImages += tag.FinalCodedRepresentations.Count(c => c.Contains("STAMP"));
                     totalNL += tag.DeletedCodedRepresentations.Count(c => c.Contains("NL"));
@@ -138,7 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         pagesWithARR++;
                     }
-                    if (tag.FinalCodedRepresentations.Any(c => c.Contains("ARR skip")))
+                    if (tag.FinalCodedRepresentations.Any(c => c.Contains("skip")))
                     {
                         pageWithSKIP++;
                     }

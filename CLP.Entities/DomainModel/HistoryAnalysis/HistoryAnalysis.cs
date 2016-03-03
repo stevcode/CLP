@@ -1410,8 +1410,8 @@ namespace CLP.Entities
                     var formattedSkips = AnalyzeSkipCounting(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
-                        var skipCodedValue = string.Format("ARR skip [{0}: \"{1}\"]", id, formattedSkips);
-                        codedValue = string.Format("{0}, {1}", codedValue, skipCodedValue);
+                        var skipCodedValue = string.Format("\n  - skip [\"{0}\"]", formattedSkips);
+                        codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
                     }
 
                     finalCodedRepresentations.Add(codedValue);
