@@ -85,7 +85,28 @@ namespace CLP.Entities
 
         public static InkCluster GetContainingCluster(Stroke stroke)
         {
-            return InkClusters.FirstOrDefault(c => c.Strokes.Contains(stroke));
+            var cluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(stroke));
+            if (cluster != null)
+            {
+                return cluster;
+            }
+
+            var ignoreCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.Ignore);
+            if (ignoreCluster == null)
+            {
+                cluster = new InkCluster(new StrokeCollection())
+                {
+                    ClusterType = InkCluster.ClusterTypes.Ignore
+                };
+                InkClusters.Add(cluster);
+            }
+            else
+            {
+                cluster = ignoreCluster;
+            }
+            cluster.Strokes.Add(stroke);
+
+            return cluster;
         }
 
         public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
