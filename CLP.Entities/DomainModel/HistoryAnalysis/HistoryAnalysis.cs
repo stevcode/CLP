@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Collections;
+using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -915,6 +918,207 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
+        public static string AnalyzeSkipCounting(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            //var expandedArrayBounds = new Rect(array.XPosition + (array.Width / 2),
+            //                                   array.YPosition - (array.LabelLength * 1.5),
+            //                                   array.Width,
+            //                                   array.Height + (array.LabelLength * 3));
+
+            const double SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD = 80.0;
+            var expandedArrayBounds = new Rect(array.XPosition + array.Width - array.LabelLength,
+                                               array.YPosition - (array.LabelLength * 1.5),
+                                               array.XPosition + SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD,
+                                               array.Height + (array.LabelLength * 3));
+
+            var strokes = page.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
+            if (strokes.Count < 2)
+            {
+                return string.Empty;
+            }
+
+            if (isDebugging)
+            {
+                page.ClearBoundaries();
+                page.AddBoundary(expandedArrayBounds);
+                PageHistory.UISleep(800);
+                var heightWidths = new Dictionary<Stroke, Point>();
+                foreach (var stroke in strokes)
+                {
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    heightWidths.Add(stroke, new Point(width, height));
+
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                }
+                PageHistory.UISleep(1000);
+                foreach (var stroke in strokes)
+                {
+                    var width = heightWidths[stroke].X;
+                    var height = heightWidths[stroke].Y;
+                    stroke.DrawingAttributes.Width = width;
+                    stroke.DrawingAttributes.Height = height;
+                }
+                page.ClearBoundaries();
+            }
+
+            #region New Skip Testing
+
+            // Initialize StrokeCollection for each row
+            var strokeGroupPerRow = new Dictionary<int, StrokeCollection>();
+            for (var i = 1; i <= array.Rows; i++)
+            {
+                strokeGroupPerRow.Add(i, new StrokeCollection());
+            }
+
+            // Row boundaries
+            var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
+            var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
+            var rowBoundaryHeight = array.GridSquareSize * 2.0;
+
+            // Determine strokes to ignore or group later.
+            var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
+            if (notSkipCountStrokes.Any())
+            {
+                //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
+            }
+
+            var cuttoffHeightByAverageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average() * 0.5;
+            var cuttoffHeightByGridSquareSize = array.GridSquareSize * 0.33;
+            var strokeCutOffHeight = Math.Max(cuttoffHeightByAverageStrokeHeight, cuttoffHeightByGridSquareSize);
+            var ungroupedStrokes = strokes.Where(s => s.GetBounds().Height < strokeCutOffHeight).ToList();
+            var skipCountStrokes = strokes.Where(s => s.GetBounds().Height >= strokeCutOffHeight).ToList();
+
+            // Place strokes in most likely row groupings
+            foreach (var stroke in skipCountStrokes)
+            {
+                var strokeBounds = stroke.GetBounds();
+
+                var highestIntersectPercentage = 0.0;
+                var mostLikelyRow = 0;
+                for (var row = 1; row <= array.Rows; row++)
+                {
+                    var rowBoundary = new Rect
+                    {
+                        X = rowBoundaryX,
+                        Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
+                        Width = rowBoundaryWidth,
+                        Height = rowBoundaryHeight
+                    };
+
+                    var intersect = Rect.Intersect(strokeBounds, rowBoundary);
+                    if (intersect.IsEmpty)
+                    {
+                        continue;
+                    }
+                    var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                    if (intersectPercentage > 0.9 &&
+                        highestIntersectPercentage > 0.9)
+                    {
+                        // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
+                        var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
+                        var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
+                        mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
+                        break;
+                    }
+                    if (intersectPercentage > highestIntersectPercentage)
+                    {
+                        highestIntersectPercentage = intersectPercentage;
+                        mostLikelyRow = row;
+                    }
+                }
+
+                if (mostLikelyRow == 0)
+                {
+                    notSkipCountStrokes.Add(stroke);
+                    //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
+                    // TODO: re-cluster to ignore these strokes.
+                    continue;
+                }
+
+                strokeGroupPerRow[mostLikelyRow].Add(stroke);
+            }
+
+            foreach (var stroke in ungroupedStrokes)
+            {
+                var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
+                for (var row = 1; row <= array.Rows; row++)
+                {
+                    if (strokeGroupPerRow[row].Contains(closestStroke))
+                    {
+                        strokeGroupPerRow[row].Add(stroke);
+                        break;
+                    }
+                }
+            }
+
+            var strokesGroupedCount = strokeGroupPerRow.Values.SelectMany(s => s).Count();
+            if (strokesGroupedCount < 3)
+            {
+                // Not enough to be skip counting.
+                return string.Empty;
+            }
+
+            #endregion // New Skip Testing
+
+            if (isDebugging)
+            {
+                page.ClearBoundaries();
+
+                foreach (var strokeGroup in strokeGroupPerRow.Values)
+                {
+                    var heightWidths = new Dictionary<Stroke, Point>();
+                    foreach (var stroke in strokeGroup)
+                    {
+                        var width = stroke.DrawingAttributes.Width;
+                        var height = stroke.DrawingAttributes.Height;
+                        heightWidths.Add(stroke, new Point(width, height));
+
+                        stroke.DrawingAttributes.Width = 8;
+                        stroke.DrawingAttributes.Height = 8;
+                    }
+                    PageHistory.UISleep(1000);
+                    foreach (var stroke in strokeGroup)
+                    {
+                        var width = heightWidths[stroke].X;
+                        var height = heightWidths[stroke].Y;
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                }
+            }
+
+            // Interpret handwriting of each row's grouping of strokes.
+            var interpretedRowValues = new List<string>();
+            for (var row = 1; row <= array.Rows; row++)
+            {
+                var expectedRowValue = row * array.Columns;
+                var strokesInRow = strokeGroupPerRow[row];
+                var interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+                if (!interpretations.Any())
+                {
+                    interpretedRowValues.Add(string.Empty);
+                    continue;
+                }
+
+                var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
+                if (!string.IsNullOrEmpty(actualMatch))
+                {
+                    interpretedRowValues.Add(actualMatch);
+                    continue;
+                }
+
+                var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                interpretedRowValues.Add(bestGuess);
+            }
+
+            var formattedSkips = string.Join("\" \"", interpretedRowValues);
+
+            return formattedSkips;
+        }
+
         public static void AttemptRepresentationsUsedTag(CLPPage page, List<IHistoryAction> historyActions)
         {
             var allRepresentations = new List<string>();
@@ -1202,6 +1406,14 @@ namespace CLP.Entities
                     var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
                     var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+
+                    var formattedSkips = AnalyzeSkipCounting(page, array);
+                    if (!string.IsNullOrEmpty(formattedSkips))
+                    {
+                        var skipCodedValue = string.Format("ARR skip [{0}: \"{1}\"]", id, formattedSkips);
+                        codedValue = string.Format("{0}, {1}", codedValue, skipCodedValue);
+                    }
+
                     finalCodedRepresentations.Add(codedValue);
                     allRepresentations.Add(obj);
                 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 using System.Windows.Ink;
 using Windows.Foundation;
 using Windows.UI.Input.Inking;
@@ -89,9 +90,18 @@ namespace CLP.InkInterpretation
                 }
             }
 
-            //Asynchronously interpret strokes as text.
-            var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
-            var recognitionResults = recognitionTask.Result;
+            IReadOnlyList<InkRecognitionResult> recognitionResults;
+
+            try
+            {
+                //Asynchronously interpret strokes as text.
+                var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
+                recognitionResults = recognitionTask.Result;
+            }
+            catch (Exception)
+            {
+                return new List<string>();
+            }
 
             //Doing a recognition does not update the storage of results (the results that are stored inside the ink manager). 
             //We do that ourselves by calling this below method.
