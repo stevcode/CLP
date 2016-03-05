@@ -140,6 +140,12 @@ namespace CLP.InkInterpretation
                     {
                         continue;
                     }
+
+                    adjustedInterpretation = trimmed.Replace("&", "8");
+                    if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
+                    {
+                        continue;
+                    }
                 }
 
                 if (parsedInterpretation == number)
