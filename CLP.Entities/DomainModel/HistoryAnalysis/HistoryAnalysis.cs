@@ -928,7 +928,7 @@ namespace CLP.Entities
             const double SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD = 80.0;
             var expandedArrayBounds = new Rect(array.XPosition + array.Width - array.LabelLength,
                                                array.YPosition - (array.LabelLength * 1.5),
-                                               array.XPosition + SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD,
+                                               SKIP_STROKES_DISTANCE_FROM_ARRAY_THRESHOLD,
                                                array.Height + (array.LabelLength * 3));
 
             var strokes = page.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
