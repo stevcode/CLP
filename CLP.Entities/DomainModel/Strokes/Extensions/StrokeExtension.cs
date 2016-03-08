@@ -598,8 +598,27 @@ namespace CLP.Entities
 
         public static bool IsEnclosedShape(this Stroke stroke)
         {
+            const int BUCKET_SIZE = 5;
+            const int QUEUE_SIZE = 5;
+
             Argument.IsNotNull("stroke", stroke);
-            // ALEX
+            var previousPoints = new PointCollection();
+            var previousPointsQueue = new Queue<Point>();
+            foreach (var stylusPoint in stroke.StylusPoints)
+            {
+                // Bucketing points by casting to nearest BUCKET_SIZE
+                var newPoint = stylusPoint.ToPoint();
+                newPoint.X = (int)(newPoint.X/BUCKET_SIZE);
+                newPoint.Y = (int)(newPoint.Y/BUCKET_SIZE);
+
+                if (previousPoints.Contains(newPoint)) { return true;}
+
+                previousPointsQueue.Enqueue(newPoint);
+                if (previousPointsQueue.Count() > QUEUE_SIZE) {
+                    previousPoints.Add(previousPointsQueue.Dequeue());
+                }
+                Console.WriteLine(newPoint.ToString());
+            }
             return false;
         }
 

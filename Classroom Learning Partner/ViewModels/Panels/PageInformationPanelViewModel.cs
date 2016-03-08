@@ -1714,6 +1714,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 dt.RaiseAllPropertiesChanged();
             }
+            // var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            // foreach (var line in output)
+            // {
+                // Console.WriteLine(line);
+            // }
         }
 
         #endregion // Obsolete Commands 
