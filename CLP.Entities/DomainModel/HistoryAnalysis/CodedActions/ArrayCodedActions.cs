@@ -1027,8 +1027,8 @@ namespace CLP.Entities
                         highestIntersectPercentage > 0.9)
                     {
                         // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
-                        var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
-                        var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
+                        var distanceToRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - rowBoundary.Center().Y);
+                        var distanceToPreviousRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - (rowBoundary.Center().Y - array.GridSquareSize));
                         mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
                         break;
                     }
@@ -1172,6 +1172,7 @@ namespace CLP.Entities
             // Larger than 1 gap between interpreted values
             // Includes case where no strokes in first 2 rows
             var gapCount = 0;
+            var actualGapCount = 0;
             foreach (var interpretedRowValue in interpretedRowValues)
             {
                 if (string.IsNullOrEmpty(interpretedRowValue))
@@ -1180,16 +1181,12 @@ namespace CLP.Entities
                 }
                 else
                 {
+                    actualGapCount = gapCount;
                     gapCount = 0;
-                }
-
-                if (gapCount > 1)
-                {
-                    return false;
                 }
             }
 
-            return true;
+            return actualGapCount < 2;
         }
 
         #endregion // Utility Methods
