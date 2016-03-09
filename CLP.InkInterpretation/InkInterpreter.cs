@@ -132,25 +132,27 @@ namespace CLP.InkInterpretation
             foreach (var trimmed in trimmedInterpretations)
             {
                 int parsedInterpretation;
-                var adjustedInterpretation = trimmed;
-                if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
+                var adjustedInterpretation = trimmed.Replace("~", "2");
+                adjustedInterpretation = adjustedInterpretation.Replace("&", "8");
+                adjustedInterpretation = adjustedInterpretation.Replace(">", "7");
+                if (int.TryParse(adjustedInterpretation, out parsedInterpretation))
                 {
-                    adjustedInterpretation = trimmed.Replace("~", "2");
-                    if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
+                    if (parsedInterpretation == number)
                     {
-                        continue;
-                    }
-
-                    adjustedInterpretation = trimmed.Replace("&", "8");
-                    if (!int.TryParse(adjustedInterpretation, out parsedInterpretation))
-                    {
-                        continue;
+                        return adjustedInterpretation;
                     }
                 }
 
-                if (parsedInterpretation == number)
+                if (number == 18 &&
+                    adjustedInterpretation == "if")
                 {
-                    return adjustedInterpretation;
+                    return number.ToString();
+                }
+
+                if (number > 10 &&
+                    adjustedInterpretation.Contains(number.ToString()))
+                {
+                    return number.ToString();
                 }
             }
 
