@@ -468,49 +468,51 @@ namespace CLP.Entities
                     continue;
                 }
 
-                closestStroke = stroke.FindClosestStroke(closestStroke, otherStroke);
+                closestStroke = stroke.FindCloserStroke(closestStroke, otherStroke);
             }
 
             return closestStroke;
         }
 
-        public static Stroke FindClosestStroke(this Stroke stroke, Stroke stroke1, Stroke stroke2)
+        public static Stroke FindCloserStroke(this Stroke stroke, Stroke stroke1, Stroke stroke2)
         {
-            var d1 = stroke.DistanceSquaredByCenter(stroke1);
-            var d2 = stroke.DistanceSquaredByWeightedCenter(stroke1);
-            var d3 = stroke.DistanceSquaredByClosestPoint(stroke1);
-            var d4 = stroke.DistanceSquaredByAveragePointDistance(stroke1);
-            var d5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke1);
+            //var d1 = stroke.DistanceSquaredByCenter(stroke1);
+            //var d2 = stroke.DistanceSquaredByWeightedCenter(stroke1);
+            //var d3 = stroke.DistanceSquaredByClosestPoint(stroke1);
+            //var d4 = stroke.DistanceSquaredByAveragePointDistance(stroke1);
+            //var d5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke1);
 
-            var o1 = stroke.DistanceSquaredByCenter(stroke2);
-            var o2 = stroke.DistanceSquaredByWeightedCenter(stroke2);
-            var o3 = stroke.DistanceSquaredByClosestPoint(stroke2);
-            var o4 = stroke.DistanceSquaredByAveragePointDistance(stroke2);
-            var o5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke2);
+            //var o1 = stroke.DistanceSquaredByCenter(stroke2);
+            //var o2 = stroke.DistanceSquaredByWeightedCenter(stroke2);
+            //var o3 = stroke.DistanceSquaredByClosestPoint(stroke2);
+            //var o4 = stroke.DistanceSquaredByAveragePointDistance(stroke2);
+            //var o5 = stroke.DistanceSquaredByAveragePointDistanceOfStrokeHalves(stroke2);
 
-            var score = 0;
-            if (d1 < o1)
-            {
-                score++;
-            }
-            if (d2 < o2)
-            {
-                score++;
-            }
-            if (d3 < o3)
-            {
-                score++;
-            }
-            if (d4 < o4)
-            {
-                score++;
-            }
-            if (d5 < o5)
-            {
-                score++;
-            }
+            //var score = 0;
+            //if (d1 < o1)
+            //{
+            //    score++;
+            //}
+            //if (d2 < o2)
+            //{
+            //    score++;
+            //}
+            //if (d3 < o3)
+            //{
+            //    score++;
+            //}
+            //if (d4 < o4)
+            //{
+            //    score++;
+            //}
+            //if (d5 < o5)
+            //{
+            //    score++;
+            //}
 
-            return score >= 3 ? stroke1 : stroke2;
+            //return score >= 3 ? stroke1 : stroke2;
+
+            return stroke.DistanceSquaredByClosestPoint(stroke1) < stroke.DistanceSquaredByClosestPoint(stroke2) ? stroke1 : stroke2;
         }
 
         #endregion // Distances
