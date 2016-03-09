@@ -1138,7 +1138,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var array in arrays)
                 {
                     var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
-                    var deltaX = stroke.GetBounds().Right - arrayVisualRight;
+                    var deltaX = arrayVisualRight - stroke.GetBounds().Left;
                     if (deltaX < minDistance &&
                         deltaX >= 0)
                     {
@@ -1167,7 +1167,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = HistoryAnalysis.AnalyzeSkipCounting(CurrentPage, array);
+                var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;

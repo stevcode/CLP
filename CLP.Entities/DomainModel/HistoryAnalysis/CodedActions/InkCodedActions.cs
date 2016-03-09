@@ -260,7 +260,7 @@ namespace CLP.Entities
 
             foreach (var currentHistoryItem in historyItems)
             {
-                var inkDivideAction = ArrayCodedActions.AttemptInkDivide(page, currentHistoryItem);
+                var inkDivideAction = ArrayCodedActions.InkDivide(page, currentHistoryItem);
                 if (inkDivideAction != null)
                 {
                     if (historyItemBuffer.Any())

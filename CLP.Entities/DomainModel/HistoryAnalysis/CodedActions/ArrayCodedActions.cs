@@ -226,6 +226,191 @@ namespace CLP.Entities
             return historyAction;
         }
 
+        public static IHistoryAction InkDivide(CLPPage page, IHistoryItem historyItem)
+        {
+            if (page == null)
+            {
+                return null;
+            }
+
+            var objectsChangedHistoryItem = historyItem as ObjectsOnPageChangedHistoryItem;
+            if (objectsChangedHistoryItem == null ||
+                objectsChangedHistoryItem.IsUsingPageObjects ||
+                !objectsChangedHistoryItem.IsUsingStrokes)
+            {
+                return null;
+            }
+
+            var strokes = objectsChangedHistoryItem.StrokesAdded;
+            var isAddedStroke = true;
+            if (!strokes.Any())
+            {
+                isAddedStroke = false;
+                strokes = objectsChangedHistoryItem.StrokesRemoved;
+            }
+
+            if (strokes.Count != 1)
+            {
+                // TODO: Throw error?
+                return null;
+            }
+
+            var stroke = strokes.First();
+
+            var historyIndex = objectsChangedHistoryItem.HistoryIndex;
+            var arraysOnPage =
+                ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex)
+                                  .OfType<CLPArray>()
+                                  .Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn)
+                                  .ToList();
+
+            if (!arraysOnPage.Any())
+            {
+                return null;
+            }
+
+            var array = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, arraysOnPage.Cast<IPageObject>().ToList(), stroke, historyIndex) as CLPArray;
+            if (array == null)
+            {
+                return null;
+            }
+
+            var codedObject = Codings.OBJECT_ARRAY;
+            var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
+
+            #region Ink Divide Interpretation
+
+            var verticalDividers = new List<int> { 0 };
+            var horizontalDividers = new List<int> { 0 };
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var cuttableTop = arrayPosition.Y + array.LabelLength;
+            var cuttableBottom = cuttableTop + arrayDimensions.Y - (2 * array.LabelLength);
+            var cuttableLeft = arrayPosition.X + array.LabelLength;
+            var cuttableRight = cuttableLeft + arrayDimensions.X - (2 * array.LabelLength);
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var referenceStrokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
+
+            var strokeTop = referenceStrokeCopy.GetBounds().Top;
+            var strokeBottom = referenceStrokeCopy.GetBounds().Bottom;
+            var strokeLeft = referenceStrokeCopy.GetBounds().Left;
+            var strokeRight = referenceStrokeCopy.GetBounds().Right;
+
+            const double SMALL_THRESHOLD = 5.0;
+            const double LARGE_THRESHOLD = 15.0;
+
+            if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                strokeRight <= cuttableRight &&
+                strokeLeft >= cuttableLeft &&
+                (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
+                cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
+                (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
+                cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
+                strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
+                arrayColumnsAndRows.X > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - array.LabelLength - arrayPosition.X;
+                var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                if (dividerValue == 0 ||
+                    dividerValue == arrayColumnsAndRows.X)
+                {
+                    return null;
+                }
+
+                var inkDivideAction = new HistoryAction(page, historyItem)
+                {
+                    CodedObject = codedObject,
+                    CodedObjectAction = codedDescription,
+                    CodedObjectID = codedID,
+                    CodedObjectIDIncrement = incrementID
+                };
+
+                verticalDividers.Add(dividerValue);
+                verticalDividers.Add(array.Columns);  // TODO: Fix for if multiple ink dividers are made in a row
+                verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
+                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
+                inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
+                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
+
+                var cluster = InkCodedActions.GetContainingCluster(stroke);
+                if (cluster != null)
+                {
+                    cluster.Strokes.Remove(stroke);
+                    if (cluster.StrokesOnPage.Contains(stroke))
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                    }
+                    if (cluster.StrokesErased.Contains(stroke))
+                    {
+                        cluster.StrokesErased.Remove(stroke);
+                    }
+                }
+
+                return inkDivideAction;
+            }
+
+            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                        strokeBottom <= cuttableBottom &&
+                        strokeTop >= cuttableTop &&
+                        (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
+                        strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
+                        (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
+                        strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
+                        strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
+                        arrayColumnsAndRows.Y > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeTop + strokeBottom) / 2;
+                var relativeAverage = average - array.LabelLength - arrayPosition.Y;
+                var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                if (dividerValue == 0 ||
+                    dividerValue == arrayColumnsAndRows.Y)
+                {
+                    return null;
+                }
+
+                var inkDivideAction = new HistoryAction(page, historyItem)
+                {
+                    CodedObject = codedObject,
+                    CodedObjectAction = codedDescription,
+                    CodedObjectID = codedID,
+                    CodedObjectIDIncrement = incrementID
+                };
+
+                horizontalDividers.Add(dividerValue);
+                horizontalDividers.Add(array.Rows);
+                horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
+                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
+
+                inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
+                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
+
+                var cluster = InkCodedActions.GetContainingCluster(stroke);
+                if (cluster != null)
+                {
+                    cluster.Strokes.Remove(stroke);
+                    if (cluster.StrokesOnPage.Contains(stroke))
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                    }
+                    if (cluster.StrokesErased.Contains(stroke))
+                    {
+                        cluster.StrokesErased.Remove(stroke);
+                    }
+                }
+
+                return inkDivideAction;
+            }
+
+            #endregion // Ink Divide Interpretation
+
+            return null;
+        }
+
         public static IHistoryAction SkipCounting(CLPPage page, IHistoryAction inkAction)
         {
             if (page == null ||
@@ -473,191 +658,6 @@ namespace CLP.Entities
             return null;
         }
 
-        public static IHistoryAction AttemptInkDivide(CLPPage page, IHistoryItem historyItem)
-        {
-            if (page == null)
-            {
-                return null;
-            }
-
-            var objectsChangedHistoryItem = historyItem as ObjectsOnPageChangedHistoryItem;
-            if (objectsChangedHistoryItem == null ||
-                objectsChangedHistoryItem.IsUsingPageObjects ||
-                !objectsChangedHistoryItem.IsUsingStrokes)
-            {
-                return null;
-            }
-
-            var strokes = objectsChangedHistoryItem.StrokesAdded;
-            var isAddedStroke = true;
-            if (!strokes.Any())
-            {
-                isAddedStroke = false;
-                strokes = objectsChangedHistoryItem.StrokesRemoved;
-            }
-
-            if (strokes.Count != 1)
-            {
-                // TODO: Throw error?
-                return null;
-            }
-
-            var stroke = strokes.First();
-
-            var historyIndex = objectsChangedHistoryItem.HistoryIndex;
-            var arraysOnPage =
-                ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex)
-                                  .OfType<CLPArray>()
-                                  .Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn)
-                                  .ToList();
-
-            if (!arraysOnPage.Any())
-            {
-                return null;
-            }
-
-            var array = InkCodedActions.FindMostOverlappedPageObjectAtHistoryIndex(page, arraysOnPage.Cast<IPageObject>().ToList(), stroke, historyIndex) as CLPArray;
-            if (array == null)
-            {
-                return null;
-            }
-
-            var codedObject = Codings.OBJECT_ARRAY;
-            var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
-            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
-
-            #region Ink Divide Interpretation
-
-            var verticalDividers = new List<int> { 0 };
-            var horizontalDividers = new List<int> { 0 };
-
-            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
-            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
-            var cuttableTop = arrayPosition.Y + array.LabelLength;
-            var cuttableBottom = cuttableTop + arrayDimensions.Y - (2 * array.LabelLength);
-            var cuttableLeft = arrayPosition.X + array.LabelLength;
-            var cuttableRight = cuttableLeft + arrayDimensions.X - (2 * array.LabelLength);
-
-            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
-            var referenceStrokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
-
-            var strokeTop = referenceStrokeCopy.GetBounds().Top;
-            var strokeBottom = referenceStrokeCopy.GetBounds().Bottom;
-            var strokeLeft = referenceStrokeCopy.GetBounds().Left;
-            var strokeRight = referenceStrokeCopy.GetBounds().Right;
-
-            const double SMALL_THRESHOLD = 5.0;
-            const double LARGE_THRESHOLD = 15.0;
-
-            if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
-                strokeRight <= cuttableRight &&
-                strokeLeft >= cuttableLeft &&
-                (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
-                cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
-                (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
-                cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
-                strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
-                arrayColumnsAndRows.X > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
-            {
-                var average = (strokeRight + strokeLeft) / 2;
-                var relativeAverage = average - array.LabelLength - arrayPosition.X;
-                var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                if (dividerValue == 0 ||
-                    dividerValue == arrayColumnsAndRows.X)
-                {
-                    return null;
-                }
-
-                var inkDivideAction = new HistoryAction(page, historyItem)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = codedDescription,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID
-                };
-
-                verticalDividers.Add(dividerValue);
-                verticalDividers.Add(array.Columns);  // TODO: Fix for if multiple ink dividers are made in a row
-                verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
-                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
-                inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
-                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
-
-                var cluster = InkCodedActions.GetContainingCluster(stroke);
-                if (cluster != null)
-                {
-                    cluster.Strokes.Remove(stroke);
-                    if (cluster.StrokesOnPage.Contains(stroke))
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                    }
-                    if (cluster.StrokesErased.Contains(stroke))
-                    {
-                        cluster.StrokesErased.Remove(stroke);
-                    }
-                }
-
-                return inkDivideAction;
-            }
-
-            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                        strokeBottom <= cuttableBottom &&
-                        strokeTop >= cuttableTop &&
-                        (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
-                        strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
-                        (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
-                        strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
-                        strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
-                        arrayColumnsAndRows.Y > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
-            {
-                var average = (strokeTop + strokeBottom) / 2;
-                var relativeAverage = average - array.LabelLength - arrayPosition.Y;
-                var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                if (dividerValue == 0 ||
-                    dividerValue == arrayColumnsAndRows.Y)
-                {
-                    return null;
-                }
-
-                var inkDivideAction = new HistoryAction(page, historyItem)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = codedDescription,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID
-                };
-
-                horizontalDividers.Add(dividerValue);
-                horizontalDividers.Add(array.Rows);
-                horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
-                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
-
-                inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
-                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
-
-                var cluster = InkCodedActions.GetContainingCluster(stroke);
-                if (cluster != null)
-                {
-                    cluster.Strokes.Remove(stroke);
-                    if (cluster.StrokesOnPage.Contains(stroke))
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                    }
-                    if (cluster.StrokesErased.Contains(stroke))
-                    {
-                        cluster.StrokesErased.Remove(stroke);
-                    }
-                }
-
-                return inkDivideAction;
-            }
-
-            #endregion // Ink Divide Interpretation
-
-            return null;
-        }
-
         public static IHistoryAction ArrayEquation(CLPPage page, IHistoryAction inkAction)
         {
             if (page == null ||
@@ -767,5 +767,393 @@ namespace CLP.Entities
         }
 
         #endregion // Static Methods
+
+        #region Utility Methods
+
+        public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            var historyIndex = 0;
+            var lastHistoryItem = page.History.CompleteOrderedHistoryItems.LastOrDefault();
+            if (lastHistoryItem != null)
+            {
+                historyIndex = lastHistoryItem.HistoryIndex;
+            }
+
+            var strokes = page.InkStrokes.ToList();
+
+            var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex, isDebugging);
+            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
+            var isSkipCounting = IsSkipCounting(interpretedRowValues);
+
+            return isSkipCounting ? FormatInterpretedSkipCountGroups(interpretedRowValues) : string.Empty;
+        }
+
+        // Dictionary key "-1" contains all rejected strokes.
+        public static Dictionary<int, StrokeCollection> GroupPossibleSkipCountStrokes(CLPPage page, CLPArray array, List<Stroke> strokes, int historyIndex, bool isDebugging = false)
+        {
+            const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
+            const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var arrayVisualRight = arrayPosition.X + arrayDimensions.X - array.LabelLength;
+            var arrayVisualTop = arrayPosition.Y + array.LabelLength;
+            var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+            // Initialize StrokeCollection for each row
+            var strokeGroupPerRow = new Dictionary<int, StrokeCollection>();
+            for (var i = 1; i <= arrayColumnsAndRows.Y; i++)
+            {
+                strokeGroupPerRow.Add(i, new StrokeCollection());
+            }
+
+            // Separate strokes into rejected, skip count, or ungrouped
+            // Ungrouped will later be grouped via closeness because they are likely to be 100% intersected with 2 rows
+            var rejectedStrokes = new List<Stroke>();
+            var acceptedStrokes = new List<Stroke>();
+            var skipCountStrokes = new List<Stroke>();
+            var ungroupedStrokes = new List<Stroke>();
+            var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
+                                            arrayVisualTop - halfGridSquareSize,
+                                            LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
+                                            array.GridSquareSize * (arrayColumnsAndRows.Y + 1));
+            
+            foreach (var stroke in strokes)
+            {
+                var strokeBounds = stroke.GetBounds();
+
+                // Rejected for being outside the accepted skip counting bounds
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.90)
+                {
+                    var weightedCenterX = stroke.WeightedCenter().X;
+                    if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
+                        weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
+                    {
+                        rejectedStrokes.Add(stroke);
+                        continue;
+                    }
+                }
+
+                // Rejected for being a dot
+                if (stroke.IsInvisiblySmall())
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
+                acceptedStrokes.Add(stroke);
+            }
+
+            // No strokes at all inside acceptable boundary
+            if (!acceptedStrokes.Any())
+            {
+                strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
+                return strokeGroupPerRow;
+            }
+
+            var averageStrokeHeight = acceptedStrokes.Select(s => s.GetBounds().Height).Average();
+            var ungroupedCutOffHeight = Math.Max(averageStrokeHeight * 0.50, array.GridSquareSize * 0.33);
+            foreach (var stroke in acceptedStrokes)
+            {
+                var strokeBounds = stroke.GetBounds();
+
+                // Rejected for being too tall
+                if (strokeBounds.Height >= array.GridSquareSize * 2.0 ||
+                    strokeBounds.Height > averageStrokeHeight * 2.16)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
+                // Ungrouped for being too small
+                if (strokeBounds.Height < ungroupedCutOffHeight)
+                {
+                    ungroupedStrokes.Add(stroke);
+                    continue;
+                }
+
+                skipCountStrokes.Add(stroke);
+            }
+
+            #region Debug
+
+            if (isDebugging)
+            {
+                var sleepTime = 3000;
+                page.ClearBoundaries();
+                var tempBoundary = new TemporaryBoundary(page, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
+                {
+                    RegionText = "Accepted Boundary"
+                };
+                page.PageObjects.Add(tempBoundary);
+                PageHistory.UISleep(800);
+                var heightWidths = new Dictionary<Stroke, Point>();
+                foreach (var stroke in acceptedStrokes)
+                {
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    heightWidths.Add(stroke, new Point(width, height));
+
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                }
+                PageHistory.UISleep(sleepTime);
+                foreach (var stroke in acceptedStrokes)
+                {
+                    var width = heightWidths[stroke].X;
+                    var height = heightWidths[stroke].Y;
+                    stroke.DrawingAttributes.Width = width;
+                    stroke.DrawingAttributes.Height = height;
+                }
+                tempBoundary.RegionText = "Skip Strokes";
+                heightWidths.Clear();
+                foreach (var stroke in skipCountStrokes)
+                {
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    heightWidths.Add(stroke, new Point(width, height));
+
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                }
+                PageHistory.UISleep(sleepTime);
+                foreach (var stroke in skipCountStrokes)
+                {
+                    var width = heightWidths[stroke].X;
+                    var height = heightWidths[stroke].Y;
+                    stroke.DrawingAttributes.Width = width;
+                    stroke.DrawingAttributes.Height = height;
+                }
+                tempBoundary.RegionText = "Ungrouped Strokes";
+                heightWidths.Clear();
+                foreach (var stroke in ungroupedStrokes)
+                {
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    heightWidths.Add(stroke, new Point(width, height));
+
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                }
+                PageHistory.UISleep(sleepTime);
+                foreach (var stroke in ungroupedStrokes)
+                {
+                    var width = heightWidths[stroke].X;
+                    var height = heightWidths[stroke].Y;
+                    stroke.DrawingAttributes.Width = width;
+                    stroke.DrawingAttributes.Height = height;
+                }
+                page.ClearBoundaries();
+            }
+
+            #endregion // Debug
+
+            // Row boundaries
+            var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
+            var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
+            var rowBoundaryHeight = array.GridSquareSize * 2.0;
+
+            // Place strokes in most likely row groupings
+            foreach (var stroke in skipCountStrokes)
+            {
+                var strokeBounds = stroke.GetBounds();
+
+                var highestIntersectPercentage = 0.0;
+                var mostLikelyRow = 0;
+                for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
+                {
+                    var rowBoundary = new Rect
+                                      {
+                                          X = rowBoundaryX,
+                                          Y = arrayVisualTop + ((row - 1) * array.GridSquareSize) - halfGridSquareSize,
+                                          Width = rowBoundaryWidth,
+                                          Height = rowBoundaryHeight
+                                      };
+
+                    var intersect = Rect.Intersect(strokeBounds, rowBoundary);
+                    if (intersect.IsEmpty)
+                    {
+                        continue;
+                    }
+                    var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                    if (intersectPercentage > 0.9 &&
+                        highestIntersectPercentage > 0.9)
+                    {
+                        // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
+                        var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
+                        var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
+                        mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
+                        break;
+                    }
+                    if (intersectPercentage > highestIntersectPercentage)
+                    {
+                        highestIntersectPercentage = intersectPercentage;
+                        mostLikelyRow = row;
+                    }
+                }
+
+                if (mostLikelyRow == 0)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
+                strokeGroupPerRow[mostLikelyRow].Add(stroke);
+            }
+
+            foreach (var stroke in ungroupedStrokes)
+            {
+                var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
+                for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
+                {
+                    if (strokeGroupPerRow[row].Contains(closestStroke))
+                    {
+                        strokeGroupPerRow[row].Add(stroke);
+                        break;
+                    }
+                }
+            }
+
+            strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
+
+            #region Debug
+
+            if (isDebugging)
+            {
+                page.ClearBoundaries();
+
+                foreach (var strokeGroupKey in strokeGroupPerRow.Keys)
+                {
+                    if (strokeGroupKey == -1)
+                    {
+                        continue;
+                    }
+
+                    var strokeGroup = strokeGroupPerRow[strokeGroupKey];
+
+                    var heightWidths = new Dictionary<Stroke, Point>();
+                    foreach (var stroke in strokeGroup)
+                    {
+                        var width = stroke.DrawingAttributes.Width;
+                        var height = stroke.DrawingAttributes.Height;
+                        heightWidths.Add(stroke, new Point(width, height));
+
+                        stroke.DrawingAttributes.Width = 8;
+                        stroke.DrawingAttributes.Height = 8;
+                    }
+                    PageHistory.UISleep(1000);
+                    foreach (var stroke in strokeGroup)
+                    {
+                        var width = heightWidths[stroke].X;
+                        var height = heightWidths[stroke].Y;
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                }
+            }
+
+            #endregion // Debug
+
+            return strokeGroupPerRow;
+        }
+
+        // Interpret handwriting of each row's grouping of strokes.
+        public static List<string> InterpretSkipCountGroups(CLPPage page, CLPArray array, Dictionary<int, StrokeCollection> strokeGroupPerRow, int historyIndex, bool isSkipAdd = true)
+        {
+            var interpretedRowValues = new List<string>();
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
+            {
+                var expectedRowValue = row * (int)arrayColumnsAndRows.X;
+                var strokesInRow = strokeGroupPerRow[row];
+
+                List<string> interpretations;
+                if (!isSkipAdd)
+                {
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokesInRow.ToList());
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                }
+                else
+                {
+                    interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+                }
+
+                if (!interpretations.Any())
+                {
+                    interpretedRowValues.Add(string.Empty);
+                    continue;
+                }
+
+                var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
+                if (!string.IsNullOrEmpty(actualMatch))
+                {
+                    interpretedRowValues.Add(actualMatch);
+                    continue;
+                }
+
+                var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                interpretedRowValues.Add(bestGuess);
+            }
+
+            return interpretedRowValues;
+        }
+
+        public static string FormatInterpretedSkipCountGroups(List<string> interpretedRowValues)
+        {
+            var formattedSkips = string.Format("\"{0}\"", string.Join("\" \"", interpretedRowValues));
+            return formattedSkips;
+        }
+
+        public static bool IsSkipCounting(List<string> interpretedRowValues)
+        {
+            // Not enough rows for skip counting (AKA only 1 row)
+            if (interpretedRowValues == null || 
+                interpretedRowValues.Count < 2)
+            {
+                return false;
+            }
+
+            // Not enough numeric interpretations
+            var nonEmptyInterpretationsCount = interpretedRowValues.Count(s => !string.IsNullOrEmpty(s));
+            var numericInterpreationsCount = interpretedRowValues.Count(s => s.All(char.IsDigit));
+            if (numericInterpreationsCount == 0 ||
+                numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
+            {
+                return false;
+            }
+
+            // Larger than 1 gap between interpreted values
+            // Includes case where no strokes in first 2 rows
+            var gapCount = 0;
+            foreach (var interpretedRowValue in interpretedRowValues)
+            {
+                if (string.IsNullOrEmpty(interpretedRowValue))
+                {
+                    gapCount++;
+                }
+                else
+                {
+                    gapCount = 0;
+                }
+
+                if (gapCount > 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        #endregion // Utility Methods
     }
 }
