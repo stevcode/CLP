@@ -449,9 +449,24 @@ namespace CLP.Entities
         public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
             InkCodedActions.GenerateInitialClusterings(page, historyActions);
-            var refinedHistoryActions = new List<IHistoryAction>();
 
+            var preProcessedInkActions = new List<IHistoryAction>();
             foreach (var historyAction in historyActions)
+            {
+                if (historyAction.CodedObject == Codings.OBJECT_INK &&
+                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
+                {
+                    var refinedInkActions = InkCodedActions.PreProcessInkChangeHistoryActions(page, historyAction);
+                    preProcessedInkActions.AddRange(refinedInkActions);
+                }
+                else
+                {
+                    preProcessedInkActions.Add(historyAction);
+                }
+            }
+
+            var refinedHistoryActions = new List<IHistoryAction>();
+            foreach (var historyAction in preProcessedInkActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)

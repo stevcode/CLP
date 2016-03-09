@@ -584,6 +584,20 @@ namespace CLP.Entities
                 inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
                 inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
 
+                var cluster = InkCodedActions.GetContainingCluster(stroke);
+                if (cluster != null)
+                {
+                    cluster.Strokes.Remove(stroke);
+                    if (cluster.StrokesOnPage.Contains(stroke))
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                    }
+                    if (cluster.StrokesErased.Contains(stroke))
+                    {
+                        cluster.StrokesErased.Remove(stroke);
+                    }
+                }
+
                 return inkDivideAction;
             }
 
@@ -621,6 +635,20 @@ namespace CLP.Entities
 
                 inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
                 inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
+
+                var cluster = InkCodedActions.GetContainingCluster(stroke);
+                if (cluster != null)
+                {
+                    cluster.Strokes.Remove(stroke);
+                    if (cluster.StrokesOnPage.Contains(stroke))
+                    {
+                        cluster.StrokesOnPage.Remove(stroke);
+                    }
+                    if (cluster.StrokesErased.Contains(stroke))
+                    {
+                        cluster.StrokesErased.Remove(stroke);
+                    }
+                }
 
                 return inkDivideAction;
             }

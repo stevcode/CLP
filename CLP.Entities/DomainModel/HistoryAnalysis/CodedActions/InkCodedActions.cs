@@ -245,6 +245,56 @@ namespace CLP.Entities
             //}
         }
 
+        public static List<IHistoryAction> PreProcessInkChangeHistoryActions(CLPPage page, IHistoryAction historyAction)
+        {
+            if (page == null ||
+                historyAction == null ||
+                historyAction.CodedObjectAction != Codings.ACTION_INK_CHANGE)
+            {
+                return new List<IHistoryAction>();
+            }
+
+            var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
+            var preProcessedInkActions = new List<IHistoryAction>();
+            var historyItemBuffer = new List<IHistoryItem>();
+
+            foreach (var currentHistoryItem in historyItems)
+            {
+                var inkDivideAction = ArrayCodedActions.AttemptInkDivide(page, currentHistoryItem);
+                if (inkDivideAction != null)
+                {
+                    if (historyItemBuffer.Any())
+                    {
+                        var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
+                                                    {
+                                                        CodedObject = Codings.OBJECT_INK,
+                                                        CodedObjectAction = Codings.ACTION_INK_CHANGE
+                                                    };
+                        preProcessedInkActions.Add(bufferedHistoryAction);
+                        historyItemBuffer.Clear();
+                    }
+
+                    preProcessedInkActions.Add(inkDivideAction);
+                    continue;
+                }
+
+                historyItemBuffer.Add(currentHistoryItem);
+            }
+
+            if (historyItemBuffer.Any())
+            {
+                var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
+                                            {
+                                                CodedObject = Codings.OBJECT_INK,
+                                                CodedObjectAction = Codings.ACTION_INK_CHANGE
+                                            };
+                preProcessedInkActions.Add(bufferedHistoryAction);
+                historyItemBuffer.Clear();
+            }
+
+            return preProcessedInkActions;
+        }
+
         /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>
         /// <param name="page">Parent page the history action belongs to.</param>
         /// <param name="historyAction">"INK change" history action to process</param>
@@ -268,15 +318,6 @@ namespace CLP.Entities
                 historyItemBuffer.Add(currentHistoryItem);
                 if (historyItemBuffer.Count == 1)
                 {
-                    // First see if single stroke was an Ink Divide, if so, remove from clusters and create separate history event.
-                    var inkDivideAction = ArrayCodedActions.AttemptInkDivide(page, currentHistoryItem);
-                    if (inkDivideAction != null)
-                    {
-                        processedInkActions.Add(inkDivideAction);
-                        historyItemBuffer.Clear();
-                        continue;
-                    }
-
                     var strokes = currentHistoryItem.StrokesAdded;
                     isCurrentInkAdd = true;
                     if (!strokes.Any())
