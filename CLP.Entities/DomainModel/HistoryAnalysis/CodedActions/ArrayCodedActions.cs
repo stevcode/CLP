@@ -821,6 +821,13 @@ namespace CLP.Entities
             
             foreach (var stroke in strokes)
             {
+                // Rejected for being a dot
+                if (stroke.IsInvisiblySmall())
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
                 var strokeBounds = stroke.GetBounds();
 
                 // Rejected for being outside the accepted skip counting bounds
@@ -843,13 +850,6 @@ namespace CLP.Entities
                     }
                 }
 
-                // Rejected for being a dot
-                if (stroke.IsInvisiblySmall())
-                {
-                    rejectedStrokes.Add(stroke);
-                    continue;
-                }
-
                 acceptedStrokes.Add(stroke);
             }
 
@@ -862,6 +862,7 @@ namespace CLP.Entities
 
             var averageStrokeHeight = acceptedStrokes.Select(s => s.GetBounds().Height).Average();
             var ungroupedCutOffHeight = Math.Max(averageStrokeHeight * 0.50, array.GridSquareSize * 0.33);
+            var probableSkipCountStrokes = new List<Stroke>();
             foreach (var stroke in acceptedStrokes)
             {
                 var strokeBounds = stroke.GetBounds();
@@ -872,6 +873,43 @@ namespace CLP.Entities
                 {
                     rejectedStrokes.Add(stroke);
                     continue;
+                }
+
+                
+
+                probableSkipCountStrokes.Add(stroke);
+            }
+
+            // No probably skip strokes
+            if (!probableSkipCountStrokes.Any())
+            {
+                strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
+                return strokeGroupPerRow;
+            }
+
+            var averageClosestDistance = probableSkipCountStrokes.Select(s => Math.Sqrt(s.DistanceSquaredByClosestPoint(s.FindClosestStroke(probableSkipCountStrokes)))).Average();
+            foreach (var stroke in probableSkipCountStrokes)
+            {
+                var strokeBounds = stroke.GetBounds();
+
+                // Rejected for being too far away from other probable strokes
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.90)
+                {
+                    var closestStroke = stroke.FindClosestStroke(probableSkipCountStrokes);
+                    var distance = Math.Sqrt(stroke.DistanceSquaredByClosestPoint(closestStroke));
+                    if (distance > averageClosestDistance * 4.0)
+                    {
+                        rejectedStrokes.Add(stroke);
+                        continue;
+                    }
                 }
 
                 // Ungrouped for being too small
@@ -888,7 +926,7 @@ namespace CLP.Entities
 
             if (isDebugging)
             {
-                var sleepTime = 3000;
+                var sleepTime = 2500;
                 page.ClearBoundaries();
                 var tempBoundary = new TemporaryBoundary(page, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
                 {
