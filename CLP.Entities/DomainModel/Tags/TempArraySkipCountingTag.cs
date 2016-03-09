@@ -72,7 +72,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("ARR skip [{0}: \"{1}\"]", ArrayName, EquationInterpretation); }
+            get { return string.Format("ARR skip [{0}: {1}]", ArrayName, EquationInterpretation); }
         }
 
         #endregion //ATagBase Overrides
