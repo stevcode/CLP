@@ -525,10 +525,11 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
+            if ((historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ||
+                historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
+                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -536,10 +537,10 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+                var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);

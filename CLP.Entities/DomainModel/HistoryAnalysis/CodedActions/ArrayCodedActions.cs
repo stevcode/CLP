@@ -439,223 +439,57 @@ namespace CLP.Entities
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
                               : inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            #region Skip Counting Interpretation
-
-            // Initialize StrokeCollection for each row
-            var strokeGroupPerRow = new Dictionary<int, StrokeCollection>();
-            for (var i = 1; i <= array.Rows; i++)
+            var firstStroke = strokes.First();
+            var cluster = InkCodedActions.GetContainingCluster(firstStroke);
+            if (cluster.ClusterType != InkCluster.ClusterTypes.ARRskip)
             {
-                strokeGroupPerRow.Add(i, new StrokeCollection());
-            }
-
-            // Row boundaries
-            var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
-            var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
-            var rowBoundaryHeight = array.GridSquareSize * 2.0;
-
-            // Determine strokes to ignore or group later.
-            var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
-            if (notSkipCountStrokes.Any())
-            {
-                Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
-                // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
-            }
-
-            var cuttoffHeightByAverageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average() * 0.5;
-            var cuttoffHeightByGridSquareSize = array.GridSquareSize * 0.33;
-            var strokeCutOffHeight = Math.Max(cuttoffHeightByAverageStrokeHeight, cuttoffHeightByGridSquareSize);
-            var ungroupedStrokes = strokes.Where(s => s.GetBounds().Height < strokeCutOffHeight).ToList();
-            var skipCountStrokes = strokes.Where(s => s.GetBounds().Height >= strokeCutOffHeight).ToList();
-
-            // Place strokes in most likely row groupings
-            foreach (var stroke in skipCountStrokes)
-            {
-                var strokeBounds = stroke.GetBounds();
-
-                var highestIntersectPercentage = 0.0;
-                var mostLikelyRow = 0;
-                for (var row = 1; row <= array.Rows; row++)
-                {
-                    var rowBoundary = new Rect
-                    {
-                        X = rowBoundaryX,
-                        Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
-                        Width = rowBoundaryWidth,
-                        Height = rowBoundaryHeight
-                    };
-
-                    var intersect = Rect.Intersect(strokeBounds, rowBoundary);
-                    if (intersect.IsEmpty)
-                    {
-                        continue;
-                    }
-                    var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                    if (intersectPercentage > 0.9 &&
-                        highestIntersectPercentage > 0.9)
-                    {
-                        // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
-                        var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
-                        var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
-                        mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
-                        break;
-                    }
-                    if (intersectPercentage > highestIntersectPercentage)
-                    {
-                        highestIntersectPercentage = intersectPercentage;
-                        mostLikelyRow = row;
-                    }
-                }
-
-                if (mostLikelyRow == 0)
-                {
-                    notSkipCountStrokes.Add(stroke);
-                    //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
-                    // TODO: re-cluster to ignore these strokes.
-                    continue;
-                }
-
-                strokeGroupPerRow[mostLikelyRow].Add(stroke);
-            }
-
-            foreach (var stroke in ungroupedStrokes)
-            {
-                var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
-                for (var row = 1; row <= array.Rows; row++)
-                {
-                    if (strokeGroupPerRow[row].Contains(closestStroke))
-                    {
-                        strokeGroupPerRow[row].Add(stroke);
-                        break;
-                    }
-                }
-            }
-
-            var strokesGroupedCount = strokeGroupPerRow.Values.SelectMany(s => s).Count();
-            if (strokesGroupedCount < 3)
-            {
-                // Not enough to be skip counting.
                 return null;
             }
 
-            // Interpret handwriting of each row's grouping of strokes.
-            var interpretedRowValues = new List<string>();
-            for (var row = 1; row <= array.Rows; row++)
+            if (!isSkipAdd)
             {
-                var expectedRowValue = row * array.Columns;
-                var strokesInRow = strokeGroupPerRow[row];
-
-                List<string> interpretations;
-                if (!isSkipAdd)
+                foreach (var stroke in strokes)
                 {
-                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokesInRow.ToList());
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                    cluster.StrokesOnPage.Remove(stroke);
+                    cluster.StrokesErased.Add(stroke);
                 }
-                else
-                {
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
-                }
-
-                if (!interpretations.Any())
-                {
-                    interpretedRowValues.Add(string.Empty);
-                    continue;
-                }
-
-                var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
-                if (!string.IsNullOrEmpty(actualMatch))
-                {
-                    interpretedRowValues.Add(actualMatch);
-                    continue;
-                }
-
-                var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
-                interpretedRowValues.Add(bestGuess);
             }
-
-            var formattedSkips = string.Format("\"{0}\"", string.Join("\" \"", interpretedRowValues));
-
-            #endregion // Skip Counting Interpretation
-
-            var firstStroke = strokes.First();
-            var cluster = InkCodedActions.GetContainingCluster(firstStroke);
-            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARRskip)
+            else
             {
-                if (!strokeGroupPerRow.Keys.Any() ||
-                    !isSkipAdd)
-                {
-                    return null;
-                }
-
                 foreach (var stroke in strokes)
                 {
                     cluster.StrokesOnPage.Add(stroke);
                 }
-
-                cluster.ClusterType = InkCluster.ClusterTypes.ARRskip;
-
-                var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
-                var codedObject = Codings.OBJECT_ARRAY;
-                var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-                var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
-                var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ? "right" : "left";
-
-                var codedActionID = string.Format("{0}, {1}", formattedSkips, location);
-
-                var historyAction = new HistoryAction(page, inkAction)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID,
-                    CodedObjectActionID = codedActionID
-                };
-
-                return historyAction;
             }
 
-            if (cluster.ClusterType == InkCluster.ClusterTypes.ARRskip)
-            {
-                if (!isSkipAdd)
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                        cluster.StrokesErased.Add(stroke);
-                    }
-                }
-                else
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Add(stroke);
-                    }
-                }
+            var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
 
-                //var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
-                //onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
-                //var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
+            var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex);
+            var strokeGroupPerRowOnPage = GroupPossibleSkipCountStrokes(page, array, cluster.StrokesOnPage.ToList(), historyIndex);
+            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex, isSkipAdd);
+            var interpretedRowValuesOnPage = InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, historyIndex);
+            var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
+            var formattedSkipsOnPage = FormatInterpretedSkipCountGroups(interpretedRowValuesOnPage);
 
-                var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
-                var codedObject = Codings.OBJECT_ARRAY;
-                var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-                var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
-                var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ? "right" : "left";
+            var formattedInterpretation = string.Format("{0}; OP {1}", formattedSkips, formattedSkipsOnPage);
 
-                var codedActionID = string.Format("{0}, {1}", formattedSkips, location);
+            var codedObject = Codings.OBJECT_ARRAY;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
+            var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) || inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) ? "right" : "left";
 
-                var historyAction = new HistoryAction(page, inkAction)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID,
-                    CodedObjectActionID = codedActionID
-                };
+            var codedActionID = string.Format("{0}, {1}", formattedInterpretation, location);
 
-                return historyAction;
-            }
+            var historyAction = new HistoryAction(page, inkAction)
+                                {
+                                    CodedObject = codedObject,
+                                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    CodedObjectActionID = codedActionID
+                                };
 
-            return null;
+            return historyAction;
         }
 
         public static IHistoryAction ArrayEquation(CLPPage page, IHistoryAction inkAction)
@@ -841,6 +675,7 @@ namespace CLP.Entities
                 var intersectPercentage = intersect.Area() / strokeBounds.Area();
                 if (intersectPercentage <= 0.90)
                 {
+                    // TODO: Only if intersectPercentage > .50?
                     var weightedCenterX = stroke.WeightedCenter().X;
                     if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
                         weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
@@ -875,8 +710,6 @@ namespace CLP.Entities
                     continue;
                 }
 
-                
-
                 probableSkipCountStrokes.Add(stroke);
             }
 
@@ -903,6 +736,7 @@ namespace CLP.Entities
                 var intersectPercentage = intersect.Area() / strokeBounds.Area();
                 if (intersectPercentage <= 0.90)
                 {
+                    // TODO: Possibly don't bother checking for percentage, just check for outliers that are too far away.
                     var closestStroke = stroke.FindClosestStroke(probableSkipCountStrokes);
                     var distance = Math.Sqrt(stroke.DistanceSquaredByClosestPoint(closestStroke));
                     if (distance > averageClosestDistance * 4.0)
