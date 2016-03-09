@@ -231,6 +231,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Run Page Analysis"
@@ -276,6 +277,14 @@
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
+                
+                <StackPanel Orientation="Horizontal"
+                            Height="20"
+                            Margin="1"
+                            Grid.ColumnSpan="2">
+                    <CheckBox IsChecked="{Binding IsDebuggingFlag}" />
+                    <TextBlock Text="Debug" />
+                </StackPanel>
 
                 <Button Content="Run Skip Counting Analysis"
                         Command="{Binding AnalyzeSkipCountingCommand}"

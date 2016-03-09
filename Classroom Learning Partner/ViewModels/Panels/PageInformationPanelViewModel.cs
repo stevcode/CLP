@@ -1183,6 +1183,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public bool IsDebuggingFlag
+        {
+            get { return GetValue<bool>(IsDebuggingFlagProperty); }
+            set { SetValue(IsDebuggingFlagProperty, value); }
+        }
+
+        public static readonly PropertyData IsDebuggingFlagProperty = RegisterProperty("IsDebuggingFlag", typeof (bool), false);
+
         /// <summary>Attempts to interpret ink strokes over an array as an Ink Divider</summary>
         public Command InterpretArrayDividersCommand { get; private set; }
 
