@@ -528,6 +528,8 @@ namespace CLP.Entities
 
         #region Shape Detection
 
+        public static double AbsoluteAngleBetweenStroke(this Stroke stroke, Stroke otherStroke) { return stroke.WeightedCenter().AbsoluteSlopeBetweenPointsInDegrees(otherStroke.WeightedCenter()); }
+
         public static bool IsInvisiblySmall(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
