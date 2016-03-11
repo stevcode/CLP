@@ -842,6 +842,7 @@ namespace CLP.Entities
             var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
             var rowBoundaryHeight = array.GridSquareSize * 2.0;
 
+            var overlapStrokes = new List<Stroke>();
             // Place strokes in most likely row groupings
             foreach (var stroke in skipCountStrokes)
             {
@@ -871,11 +872,14 @@ namespace CLP.Entities
                         highestIntersectPercentage > 0.9)
                     {
                         DebugCountStrokeInTwoRows++;
-                        Console.WriteLine("DebugCountStrokeInTwoRows: {0}", DebugCountStrokeInTwoRows);
-
-                        var distanceToRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - rowBoundary.Center().Y);
-                        var distanceToPreviousRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - (rowBoundary.Center().Y - array.GridSquareSize));
-                        mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
+                        
+                        overlapStrokes.Add(stroke);
+                        strokeGroupPerRow[row].Add(stroke);
+                        strokeGroupPerRow[row - 1].Add(stroke);
+                        mostLikelyRow = -1;
+                        //var distanceToRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - rowBoundary.Center().Y);
+                        //var distanceToPreviousRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - (rowBoundary.Center().Y - array.GridSquareSize));
+                        //mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
                         break;
                     }
                     if (intersectPercentage > highestIntersectPercentage)
@@ -885,18 +889,50 @@ namespace CLP.Entities
                     }
                 }
 
-                if (mostLikelyRow == 0)
+                switch (mostLikelyRow)
                 {
-                    rejectedStrokes.Add(stroke);
-                    continue;
+                    case -1:
+                        continue;
+                    case 0:
+                        rejectedStrokes.Add(stroke);
+                        continue;
                 }
 
                 strokeGroupPerRow[mostLikelyRow].Add(stroke);
             }
 
+            // Match overlapping strokes
+            //var allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
+            //foreach (var stroke in overlapStrokes)
+            //{
+            //    var minAbsoluteAngle = double.MaxValue;
+            //    Stroke mostLikelyStroke = null;
+            //    foreach (var groupedStroke in allGroupedStrokes)
+            //    {
+            //        var absoluteAngle = stroke.AbsoluteAngleBetweenStroke(groupedStroke);
+            //        if (absoluteAngle < minAbsoluteAngle &&
+            //            absoluteAngle < 25.0)
+            //        {
+            //            minAbsoluteAngle = absoluteAngle;
+            //            mostLikelyStroke = groupedStroke;
+            //        }
+            //    }
+
+            //    if (mostLikelyStroke == null)
+            //    {
+
+            //    }
+            //    else
+            //    {
+
+            //    }
+            //}
+
+            // Match ungrouped strokes to row with closest stroke
+            var allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
             foreach (var stroke in ungroupedStrokes)
             {
-                var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
+                var closestStroke = stroke.FindClosestStroke(allGroupedStrokes);
                 for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
                 {
                     if (strokeGroupPerRow[row].Contains(closestStroke))
@@ -907,7 +943,7 @@ namespace CLP.Entities
                 }
             }
 
-            var allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
+            allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
             var numberOfStrokesOverArray = allGroupedStrokes.Count(s => s.WeightedCenter().X < arrayVisualRight);
             var numberOfStrokesRightOfArray = allGroupedStrokes.Count(s => s.WeightedCenter().X >= arrayVisualRight);
             if (numberOfStrokesRightOfArray > numberOfStrokesOverArray)
@@ -971,42 +1007,126 @@ namespace CLP.Entities
         public static List<string> InterpretSkipCountGroups(CLPPage page, CLPArray array, Dictionary<int, StrokeCollection> strokeGroupPerRow, int historyIndex, bool isSkipAdd = true)
         {
             var interpretedRowValues = new List<string>();
+            var allGroupedStrokes = strokeGroupPerRow.Where(kv => kv.Key != -1).SelectMany(kv => kv.Value).ToList();
+            var overlappingStrokes = allGroupedStrokes.GroupBy(i => i).Where(i => i.Count() > 1).Select(i => i.Key).ToList();
+            if (allGroupedStrokes.Count == overlappingStrokes.Count)
+            {
+                return interpretedRowValues;
+            }
+
+            
             var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
             for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
             {
                 var expectedRowValue = row * (int)arrayColumnsAndRows.X;
+
+                // Generate all subsets of strokes in the current row.
                 var strokesInRow = strokeGroupPerRow[row];
+                var overlapStrokesInRow = overlappingStrokes.Where(s => strokesInRow.Contains(s)).ToList();
+                var nonOverlapStrokesInRow = strokesInRow.Where(s => !overlapStrokesInRow.Contains(s)).ToList();
+                var strokeCombinations = new List<List<Stroke>>();
+                var subsets = SubSetsOf(overlapStrokesInRow);
+                strokeCombinations.AddRange(subsets.Select(subset => nonOverlapStrokesInRow.Concat(subset).ToList()));
 
-                List<string> interpretations;
-                if (!isSkipAdd)
+                // Get best interpretation from subsets.
+                var bestGuess = string.Empty;
+                var highestPercentageOfCorrectDigits = 0.0;
+                foreach (var strokeCombination in strokeCombinations)
                 {
-                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokesInRow.ToList());
+                    List<string> interpretations;
+
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokeCombination.ToList());
                     interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
-                }
-                else
-                {
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
+                    //if (!isSkipAdd)
+                    //{
+                    //    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokeCombination.ToList());
+                    //    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                    //}
+                    //else
+                    //{
+                    //    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokeCombination));
+                    //}
+
+                    if (!interpretations.Any())
+                    {
+                        continue;
+                    }
+
+                    var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
+                    if (!string.IsNullOrEmpty(actualMatch))
+                    {
+                        bestGuess = actualMatch;
+                        break;
+                    }
+
+                    //if (row == 3)
+                    //{
+                    //    var heightWidths = new Dictionary<Stroke, Point>();
+                    //    foreach (var stroke in strokeCombination)
+                    //    {
+                    //        var width = stroke.DrawingAttributes.Width;
+                    //        var height = stroke.DrawingAttributes.Height;
+                    //        heightWidths.Add(stroke, new Point(width, height));
+
+                    //        stroke.DrawingAttributes.Width = 8;
+                    //        stroke.DrawingAttributes.Height = 8;
+                    //    }
+                    //    PageHistory.UISleep(2000);
+                    //    foreach (var stroke in strokeCombination)
+                    //    {
+                    //        var width = heightWidths[stroke].X;
+                    //        var height = heightWidths[stroke].Y;
+                    //        stroke.DrawingAttributes.Width = width;
+                    //        stroke.DrawingAttributes.Height = height;
+                    //    }
+                    //}
+
+                    var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    if (string.IsNullOrEmpty(bestGuess))
+                    {
+                        bestGuess = guess;
+                    }
+
+                    var comparableGuess = guess;
+                    var numberOfDigits = guess.Count(char.IsDigit);
+                    var numberOfCorrectDigits = 0;
+                    foreach (var c in expectedRowValue.ToString())
+                    {
+                        if (comparableGuess.Contains(c))
+                        {
+                            numberOfCorrectDigits++;
+                            var index = comparableGuess.IndexOf(c);
+                            var clippedComparableGuess = comparableGuess.Skip(index + 1).ToList();
+                            comparableGuess = !clippedComparableGuess.Any() ? string.Empty : new string(clippedComparableGuess.ToArray());
+                        }
+                    }
+
+                    var percentageOfCorrectDigits = numberOfCorrectDigits / (numberOfDigits * 1.0);
+                    if (percentageOfCorrectDigits > highestPercentageOfCorrectDigits)
+                    {
+                        highestPercentageOfCorrectDigits = percentageOfCorrectDigits;
+                        bestGuess = guess;
+                    }
                 }
 
-                if (!interpretations.Any())
-                {
-                    interpretedRowValues.Add(string.Empty);
-                    continue;
-                }
-
-                var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
-                if (!string.IsNullOrEmpty(actualMatch))
-                {
-                    interpretedRowValues.Add(actualMatch);
-                    continue;
-                }
-
-                var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
                 interpretedRowValues.Add(bestGuess);
             }
 
             return interpretedRowValues;
         }
+
+        private static IEnumerable<IEnumerable<T>> SubSetsOf<T>(IEnumerable<T> source)
+        {
+            if (!source.Any())
+                return Enumerable.Repeat(Enumerable.Empty<T>(), 1);
+
+            var element = source.Take(1);
+
+            var haveNots = SubSetsOf(source.Skip(1));
+            var haves = haveNots.Select(set => element.Concat(set));
+
+            return haves.Concat(haveNots);
+        } 
 
         public static string FormatInterpretedSkipCountGroups(List<string> interpretedRowValues)
         {
@@ -1050,7 +1170,9 @@ namespace CLP.Entities
                 }
             }
 
-            return actualGapCount < 2;
+            var maxDuplicateCount = interpretedRowValues.Where(s => !string.IsNullOrEmpty(s)).GroupBy(i => i).Select(i => i.Count()).Max();
+
+            return actualGapCount < 2 && maxDuplicateCount < 3;
         }
 
         #endregion // Utility Methods
