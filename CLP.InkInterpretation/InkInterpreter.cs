@@ -135,6 +135,8 @@ namespace CLP.InkInterpretation
                 var adjustedInterpretation = trimmed.Replace("~", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("&", "8");
                 adjustedInterpretation = adjustedInterpretation.Replace(">", "7");
+                adjustedInterpretation = adjustedInterpretation.Replace("l", "1");
+                adjustedInterpretation = adjustedInterpretation.Replace("|", "1");
                 if (int.TryParse(adjustedInterpretation, out parsedInterpretation))
                 {
                     if (parsedInterpretation == number)
