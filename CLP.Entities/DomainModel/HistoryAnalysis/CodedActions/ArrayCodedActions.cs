@@ -604,6 +604,8 @@ namespace CLP.Entities
 
         #region Utility Methods
 
+        public static int DebugCountStrokeInTwoRows = 0;
+
         public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
         {
             var historyIndex = 0;
@@ -664,6 +666,13 @@ namespace CLP.Entities
 
                 var strokeBounds = stroke.GetBounds();
 
+                // Rejected for being too tall
+                if (strokeBounds.Height >= array.GridSquareSize * 2.0)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
                 // Rejected for being outside the accepted skip counting bounds
                 var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
                 if (intersect.IsEmpty)
@@ -673,9 +682,14 @@ namespace CLP.Entities
                 }
 
                 var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.50)
+                {
+                    rejectedStrokes.Add(stroke);
+                    continue;
+                }
+
                 if (intersectPercentage <= 0.90)
                 {
-                    // TODO: Only if intersectPercentage > .50?
                     var weightedCenterX = stroke.WeightedCenter().X;
                     if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
                         weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
@@ -702,9 +716,8 @@ namespace CLP.Entities
             {
                 var strokeBounds = stroke.GetBounds();
 
-                // Rejected for being too tall
-                if (strokeBounds.Height >= array.GridSquareSize * 2.0 ||
-                    strokeBounds.Height > averageStrokeHeight * 2.16)
+                // Rejected that deviate too much from average height
+                if (strokeBounds.Height > averageStrokeHeight * 2.16)
                 {
                     rejectedStrokes.Add(stroke);
                     continue;
@@ -720,23 +733,18 @@ namespace CLP.Entities
                 return strokeGroupPerRow;
             }
 
-            var averageClosestDistance = probableSkipCountStrokes.Select(s => Math.Sqrt(s.DistanceSquaredByClosestPoint(s.FindClosestStroke(probableSkipCountStrokes)))).Average();
-            foreach (var stroke in probableSkipCountStrokes)
+            if (probableSkipCountStrokes.Count == 1)
             {
-                var strokeBounds = stroke.GetBounds();
-
-                // Rejected for being too far away from other probable strokes
-                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
-                if (intersect.IsEmpty)
+                skipCountStrokes.Add(probableSkipCountStrokes.First());
+            }
+            else
+            {
+                var averageClosestDistance = probableSkipCountStrokes.Select(s => Math.Sqrt(s.DistanceSquaredByClosestPoint(s.FindClosestStroke(probableSkipCountStrokes)))).Average();
+                foreach (var stroke in probableSkipCountStrokes)
                 {
-                    rejectedStrokes.Add(stroke);
-                    continue;
-                }
+                    var strokeBounds = stroke.GetBounds();
 
-                var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                if (intersectPercentage <= 0.90)
-                {
-                    // TODO: Possibly don't bother checking for percentage, just check for outliers that are too far away.
+                    // Rejected for being too far away from other probable strokes
                     var closestStroke = stroke.FindClosestStroke(probableSkipCountStrokes);
                     var distance = Math.Sqrt(stroke.DistanceSquaredByClosestPoint(closestStroke));
                     if (distance > averageClosestDistance * 4.0)
@@ -744,16 +752,16 @@ namespace CLP.Entities
                         rejectedStrokes.Add(stroke);
                         continue;
                     }
-                }
 
-                // Ungrouped for being too small
-                if (strokeBounds.Height < ungroupedCutOffHeight)
-                {
-                    ungroupedStrokes.Add(stroke);
-                    continue;
-                }
+                    // Ungrouped for being too small
+                    if (strokeBounds.Height < ungroupedCutOffHeight)
+                    {
+                        ungroupedStrokes.Add(stroke);
+                        continue;
+                    }
 
-                skipCountStrokes.Add(stroke);
+                    skipCountStrokes.Add(stroke);
+                }
             }
 
             #region Debug
@@ -857,10 +865,14 @@ namespace CLP.Entities
                         continue;
                     }
                     var intersectPercentage = intersect.Area() / strokeBounds.Area();
+
+                    // Should only happen whe stroke is 90% intersected by 2 rows
                     if (intersectPercentage > 0.9 &&
                         highestIntersectPercentage > 0.9)
                     {
-                        // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
+                        DebugCountStrokeInTwoRows++;
+                        Console.WriteLine("DebugCountStrokeInTwoRows: {0}", DebugCountStrokeInTwoRows);
+
                         var distanceToRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - rowBoundary.Center().Y);
                         var distanceToPreviousRowMidPoint = Math.Abs(stroke.WeightedCenter().Y - (rowBoundary.Center().Y - array.GridSquareSize));
                         mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
@@ -891,6 +903,23 @@ namespace CLP.Entities
                     {
                         strokeGroupPerRow[row].Add(stroke);
                         break;
+                    }
+                }
+            }
+
+            var allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
+            var numberOfStrokesOverArray = allGroupedStrokes.Count(s => s.WeightedCenter().X < arrayVisualRight);
+            var numberOfStrokesRightOfArray = allGroupedStrokes.Count(s => s.WeightedCenter().X >= arrayVisualRight);
+            if (numberOfStrokesRightOfArray > numberOfStrokesOverArray)
+            {
+                Console.WriteLine("Didn't skip count inside");
+                var strokesToReject = allGroupedStrokes.Where(s => s.WeightedCenter().X < arrayVisualRight - 5.0).ToList();
+                foreach (var strokesInRow in strokeGroupPerRow.Values)
+                {
+                    foreach (var stroke in strokesToReject.Where(stroke => strokesInRow.Contains(stroke)))
+                    {
+                        strokesInRow.Remove(stroke);
+                        rejectedStrokes.Add(stroke);
                     }
                 }
             }
@@ -997,7 +1026,8 @@ namespace CLP.Entities
             // Not enough numeric interpretations
             var nonEmptyInterpretationsCount = interpretedRowValues.Count(s => !string.IsNullOrEmpty(s));
             var numericInterpreationsCount = interpretedRowValues.Count(s => s.All(char.IsDigit));
-            if (numericInterpreationsCount == 0 ||
+            if (nonEmptyInterpretationsCount < 2 ||
+                numericInterpreationsCount == 0 ||
                 numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
             {
                 return false;

@@ -1179,6 +1179,8 @@ namespace Classroom_Learning_Partner.ViewModels
                               EquationInterpretation = formattedSkips
                           };
 
+                Console.WriteLine(tag.FormattedValue);
+
                 CurrentPage.AddTag(tag);
             }
         }
