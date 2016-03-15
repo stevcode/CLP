@@ -1239,31 +1239,64 @@ namespace CLP.Entities
 
         public static bool IsSkipCounting(List<string> interpretedRowValues)
         {
-            // Not enough rows for skip counting (AKA only 1 row)
-            if (interpretedRowValues == null || 
-                interpretedRowValues.Count < 2)
+            // Rule 0: Passed null value.
+            if (interpretedRowValues == null)
             {
+                ArraysRule0++;
                 return false;
             }
 
-            // Not enough numeric interpretations
+            // Rule 1: Not enough rows for skip counting (AKA only 1 row in the array).
+            if (interpretedRowValues.Count < 2)
+            {
+                SkipCountRejectedTotal++;
+                ArraysRule1++;
+                return false;
+            }
+
             var nonEmptyInterpretationsCount = interpretedRowValues.Count(s => !string.IsNullOrEmpty(s));
             var numericInterpreationsCount = interpretedRowValues.Count(s => s.All(char.IsDigit) && !string.IsNullOrEmpty(s));
-            if (nonEmptyInterpretationsCount < 2 ||
-                numericInterpreationsCount == 0 ||
-                numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
+
+            // Rule 2: Fewer than 2 rows have an interpreted value.
+            if (nonEmptyInterpretationsCount < 2)
             {
+                SkipCountRejectedTotal++;
+                ArraysRule2++;
                 return false;
             }
 
-            // No interpreted value in 1st row
+            // Rule 3: No rows have an interpreted value that is a number.
+            if (numericInterpreationsCount == 0)
+            {
+                SkipCountRejectedTotal++;
+                ArraysRule4++;
+                return false;
+            }
+
+            // Rule 4: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.
+            if (numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
+            {
+                SkipCountRejectedTotal++;
+                ArraysRule5++;
+                return false;
+            }
+
+            // Rule 5: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.
             if (string.IsNullOrEmpty(interpretedRowValues.First()) &&
                 nonEmptyInterpretationsCount / (interpretedRowValues.Count * 1.0) <= .5)
             {
+                SkipCountRejectedTotal++;
+                ArraysRule9++;
                 return false;
             }
 
-            // No more than 1 single gap.
+            // Rule 6: The first 2 rows do not have interpreted values.
+            if (string.IsNullOrEmpty(interpretedRowValues[0]) &&
+                string.IsNullOrEmpty(interpretedRowValues[1]))
+            {
+                return false;
+            }
+
             var numberOfSingleGaps = 0;
             for (int i = 0; i < interpretedRowValues.Count; i++)
             {
@@ -1273,8 +1306,8 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var isGap = string.IsNullOrEmpty(interpretedRowValues[i]) &&
-                            !string.IsNullOrEmpty(interpretedRowValues[i - 1]) &&
+                var isGap = !string.IsNullOrEmpty(interpretedRowValues[i - 1]) && 
+                            string.IsNullOrEmpty(interpretedRowValues[i]) &&
                             !string.IsNullOrEmpty(interpretedRowValues[i + 1]);
 
                 if (isGap)
@@ -1283,28 +1316,114 @@ namespace CLP.Entities
                 }
             }
 
-            // Larger than 1 gap between interpreted values
-            // Includes case where no strokes in first 2 rows
-            var gapCount = 0;
-            var actualGapCount = 0;
-            foreach (var interpretedRowValue in interpretedRowValues)
+            // Rule 7: This is more than 1 gap of 1 row between interpreted values.
+            if (numberOfSingleGaps > 1)
             {
-                if (string.IsNullOrEmpty(interpretedRowValue))
+                SkipCountRejectedTotal++;
+                ArraysRule7++;
+                return false;
+            }
+            
+            var numberOfDoubleGaps = 0;
+            for (int i = 0; i < interpretedRowValues.Count; i++)
+            {
+                if (i == 0 ||
+                    i >= interpretedRowValues.Count - 2)
                 {
-                    gapCount++;
+                    continue;
                 }
-                else
+
+                var isDoubleGap = !string.IsNullOrEmpty(interpretedRowValues[i - 1]) &&
+                                  string.IsNullOrEmpty(interpretedRowValues[i]) &&
+                                  string.IsNullOrEmpty(interpretedRowValues[i + 1]) &&
+                                  !string.IsNullOrEmpty(interpretedRowValues[i + 2]);
+
+                if (isDoubleGap)
                 {
-                    actualGapCount = gapCount;
-                    gapCount = 0;
+                    numberOfDoubleGaps++;
                 }
             }
 
-            var maxDuplicateCount = interpretedRowValues.Where(s => !string.IsNullOrEmpty(s)).GroupBy(i => i).Select(i => i.Count()).Max();
+            // Rule 8: There is a gap of more than 1 row between interpreted values.
+            if (numberOfDoubleGaps > 0)
+            {
+                SkipCountRejectedTotal++;
+                ArraysRule6++;
+                return false;
+            }
 
-            return actualGapCount < 2 && maxDuplicateCount < 3 && numberOfSingleGaps < 2;
+            // Rule 9: More than 2 rows share the same interpreted value.
+            var maxDuplicateCount = interpretedRowValues.Where(s => !string.IsNullOrEmpty(s)).GroupBy(i => i).Select(i => i.Count()).Max();
+            if (maxDuplicateCount > 2)
+            {
+                SkipCountRejectedTotal++;
+                ArraysRule10++;
+                return false;
+            }
+
+            return true;
         }
 
         #endregion // Utility Methods
+
+        #region Logging
+
+        public static int SkipCountRejectedTotal = 0;
+
+        public static int ArraysRule0 = 0;
+        public static int ArraysRule1 = 0;
+        public static int ArraysRule2 = 0;
+        public static int ArraysRule3 = 0;
+        public static int ArraysRule4 = 0;
+        public static int ArraysRule5 = 0;
+        public static int ArraysRule6 = 0;
+        public static int ArraysRule7 = 0;
+        public static int ArraysRule8 = 0;
+        public static int ArraysRule9 = 0;
+        public static int ArraysRule10 = 0;
+        public static int PagesRule1 = 0;
+
+
+        public static void PrintLogs()
+        {
+            Console.WriteLine("***Is Skip Counting Rejections***");
+            Console.WriteLine("Number of Arrays not recognized as Skip Counting: {0}", SkipCountRejectedTotal);
+            Console.WriteLine("Number of Pages with Arrays not recognized as Skip Counting: {0}", SkipCountRejectedTotal);
+
+            Console.WriteLine("Rejected Reasons:");
+            Console.WriteLine("Rule 0: Passed null value (ERROR).");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule0);
+
+            Console.WriteLine("Rule 1: Only 1 row in the array.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule1);
+
+            Console.WriteLine("Rule 2: No rows have an interpreted value.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule2);
+
+            Console.WriteLine("Rule 3: Only 1 row has an interpreted value.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule3);
+
+            Console.WriteLine("Rule 4: No rows have an interpreted value that is a number.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule4);
+
+            Console.WriteLine("Rule 5: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule5);
+
+            Console.WriteLine("Rule 6: There is a gap of more than 1 row between interpreted values.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule7);
+
+            Console.WriteLine("Rule 7: This is more than 1 gap of 1 row between interpreted values.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule6);
+
+
+
+            Console.WriteLine("Rule 9: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule9);
+
+            Console.WriteLine("Rule 10: More than 2 rows share the same interpreted value.");
+            Console.WriteLine("Total Arrays: {0}", ArraysRule10);
+        }
+
+        #endregion // Logging
     }
 }
