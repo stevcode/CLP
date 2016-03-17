@@ -479,6 +479,31 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Total Skip Count Rows Tested (that have an interpreted value): {0}\n", totalSkipCountRowsWithInterpretations));
             File.AppendAllText(filePath, string.Format("Total Skip Count Rows Matched Correctly: {0}\n", totalSkipCountRowsMatchedCorrectly));
 
+            File.AppendAllText(filePath, string.Format("\n***Stroke Grouping***\n\n"));
+            File.AppendAllText(filePath, string.Format("Skip Counting Strokes Count: {0}\n", ArrayCodedActions.SkipStrokesCount));
+            File.AppendAllText(filePath, string.Format("Rejected Strokes Count: {0}\n", ArrayCodedActions.RejectedStrokesCount));
+            File.AppendAllText(filePath, string.Format("Overlapping Strokes Count: {0}\n", ArrayCodedActions.OverlappingStrokesCount));
+            File.AppendAllText(filePath, string.Format("Initially Ungrouped Strokes Count: {0}\n", ArrayCodedActions.UngroupedStrokesCount));
+
+            File.AppendAllText(filePath, string.Format("Number of strokes rejected (or alternatively grouped) by a rule:\n"));
+            File.AppendAllText(filePath, string.Format("Rule 1: Stroke is invisibly small: {0}\n", ArrayCodedActions.Rule1Count));
+            File.AppendAllText(filePath, string.Format("Rule 2: Stroke is too tall (taller than 2 row heights): {0}\n", ArrayCodedActions.Rule2Count));
+            File.AppendAllText(filePath, string.Format("Rule 3b: Stroke intersects less than 50% of initial boundary: {0}\n", ArrayCodedActions.Rule3bCount));
+            File.AppendAllText(filePath, string.Format("Rule 3c: Stroke intersects less than 90% of initial boundary and weighted center is not in the initial boundary: {0}\n", ArrayCodedActions.Rule3cCount));
+            File.AppendAllText(filePath, string.Format("Rule 3a: Number of strokes that have NOT been rejected after Rule 3 applied: {0}\n", ArrayCodedActions.Rule3aCount));
+            File.AppendAllText(filePath, string.Format("Number of times all strokes have been rejected after Rule 3 (aka, no strokes in initial boundary): {0}\n", ArrayCodedActions.AllStrokesAreOutsideOfAcceptableBoundary));
+            File.AppendAllText(filePath, string.Format("Rule 4: Stroke is too tall (deviates from average height): {0}\n", ArrayCodedActions.Rule4Count));
+            File.AppendAllText(filePath, string.Format("Rule 5: Stroke ungrouped for being too short (should match Initially Ungrouped Strokes Count above): {0}\n", ArrayCodedActions.Rule5Count));
+            File.AppendAllText(filePath, string.Format("Rule 6: Stroke is too far away from other strokes: {0}\n", ArrayCodedActions.Rule6Count));
+            File.AppendAllText(filePath, string.Format("Rule 7c: Stroke is placed in initial overlap group: {0}\n", ArrayCodedActions.Rule7cCount));
+            File.AppendAllText(filePath, string.Format("Rule 7d: Stroke does not overlap any row: {0}\n", ArrayCodedActions.Rule7dCount));
+            File.AppendAllText(filePath, string.Format("Rule 8a: Overlap stroke intersects with an already grouped stroke: {0}\n", ArrayCodedActions.Rule8aCount));
+            File.AppendAllText(filePath, string.Format("Rule 8b: Overlap stroke intersects 75% with a row: {0}\n", ArrayCodedActions.Rule8bCount));
+            File.AppendAllText(filePath, string.Format("Rule 8c: Overlap stroke remains an overlap stroke: {0}\n", ArrayCodedActions.Rule8cCount));
+            File.AppendAllText(filePath, string.Format("Rule 9: Ungrouped stroke matched with a grouped stroke: {0}\n", ArrayCodedActions.Rule9Count));
+            File.AppendAllText(filePath, string.Format("Rule 10: Number of times strokes are rejected for being on the inside of an array when the skip counting stroke are on the outside: {0}\n", ArrayCodedActions.Rule10Count));
+            File.AppendAllText(filePath, string.Format("Rule 10: Number strokes rejected because of Rule 10: {0}\n", ArrayCodedActions.Rule10RejectedStrokesCount));
+
             File.AppendAllText(filePath, string.Format("\n***Ink Interpretation***\n\n"));
 
             File.AppendAllText(filePath, "\nBefore Skip Count Test, all for non-empty strings\n\n");

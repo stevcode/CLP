@@ -604,8 +604,6 @@ namespace CLP.Entities
 
         #region Utility Methods
 
-        public static int DebugCountStrokeInTwoRows = 0;
-
         public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
         {
             var historyIndex = 0;
@@ -623,6 +621,33 @@ namespace CLP.Entities
 
             return isSkipCounting ? FormatInterpretedSkipCountGroups(interpretedRowValues) : string.Empty;
         }
+
+        #region Logging
+
+        public static int Rule1Count = 0;
+        public static int Rule2Count = 0;
+        public static int Rule3aCount = 0;
+        public static int Rule3bCount = 0;
+        public static int Rule3cCount = 0;
+        public static int Rule4Count = 0;
+        public static int Rule5Count = 0;
+        public static int Rule6Count = 0;
+        public static int Rule7cCount = 0;
+        public static int Rule7dCount = 0;
+        public static int Rule8aCount = 0;
+        public static int Rule8bCount = 0;
+        public static int Rule8cCount = 0;
+        public static int Rule9Count = 0;
+        public static int Rule10Count = 0;
+        public static int Rule10RejectedStrokesCount = 0;
+        public static int RejectedStrokesCount = 0;
+        public static int SkipStrokesCount = 0;
+        public static int UngroupedStrokesCount = 0;
+        public static int OverlappingStrokesCount = 0;
+        public static int AllStrokesAreOutsideOfAcceptableBoundary = 0;
+        
+
+        #endregion // Logging
 
         // Dictionary key "-1" contains all rejected strokes.
         public static Dictionary<int, StrokeCollection> GroupPossibleSkipCountStrokes(CLPPage page, CLPArray array, List<Stroke> strokes, int historyIndex, bool isDebugging = false)
@@ -657,26 +682,29 @@ namespace CLP.Entities
             
             foreach (var stroke in strokes)
             {
-                // Rejected for being a dot
+                // Rule 1: Rejected for being invisibly small.
                 if (stroke.IsInvisiblySmall())
                 {
+                    Rule1Count++;
                     rejectedStrokes.Add(stroke);
                     continue;
                 }
 
                 var strokeBounds = stroke.GetBounds();
 
-                // Rejected for being too tall
+                // Rule 2: Rejected for being too tall.
                 if (strokeBounds.Height >= array.GridSquareSize * 2.0)
                 {
+                    Rule2Count++;
                     rejectedStrokes.Add(stroke);
                     continue;
                 }
 
-                // Rejected for being outside the accepted skip counting bounds
+                // Rule 3: Rejected for being outside the accepted skip counting bounds
                 var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
                 if (intersect.IsEmpty)
                 {
+                    Rule3bCount++;
                     rejectedStrokes.Add(stroke);
                     continue;
                 }
@@ -684,6 +712,7 @@ namespace CLP.Entities
                 var intersectPercentage = intersect.Area() / strokeBounds.Area();
                 if (intersectPercentage <= 0.50)
                 {
+                    Rule3bCount++;
                     rejectedStrokes.Add(stroke);
                     continue;
                 }
@@ -694,17 +723,20 @@ namespace CLP.Entities
                     if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
                         weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
                     {
+                        Rule3cCount++;
                         rejectedStrokes.Add(stroke);
                         continue;
                     }
                 }
 
+                Rule3aCount++;
                 acceptedStrokes.Add(stroke);
             }
 
             // No strokes at all inside acceptable boundary
             if (!acceptedStrokes.Any())
             {
+                AllStrokesAreOutsideOfAcceptableBoundary++;
                 strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
                 return strokeGroupPerRow;
             }
@@ -719,6 +751,7 @@ namespace CLP.Entities
                 // Rejected that deviate too much from average height
                 if (strokeBounds.Height > averageStrokeHeight * 2.16)
                 {
+                    Rule4Count++;
                     rejectedStrokes.Add(stroke);
                     continue;
                 }
@@ -726,7 +759,7 @@ namespace CLP.Entities
                 probableSkipCountStrokes.Add(stroke);
             }
 
-            // No probably skip strokes
+            // No probably skip strokes, shouldn't ever happen
             if (!probableSkipCountStrokes.Any())
             {
                 strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
@@ -749,6 +782,7 @@ namespace CLP.Entities
                     var distance = Math.Sqrt(stroke.DistanceSquaredByClosestPoint(closestStroke));
                     if (distance > averageClosestDistance * 4.0)
                     {
+                        Rule6Count++;
                         rejectedStrokes.Add(stroke);
                         continue;
                     }
@@ -756,6 +790,7 @@ namespace CLP.Entities
                     // Ungrouped for being too small
                     if (strokeBounds.Height < ungroupedCutOffHeight)
                     {
+                        Rule5Count++;
                         ungroupedStrokes.Add(stroke);
                         continue;
                     }
@@ -890,8 +925,8 @@ namespace CLP.Entities
                             }
                         }
 
-                        DebugCountStrokeInTwoRows++;
-                        
+                        Rule7cCount++;
+
                         overlapStrokes.Add(stroke);
                         strokeGroupPerRow[row].Add(stroke);
                         strokeGroupPerRow[row - 1].Add(stroke);
@@ -913,6 +948,7 @@ namespace CLP.Entities
                     case -1:
                         continue;
                     case 0:
+                        Rule7dCount++;
                         rejectedStrokes.Add(stroke);
                         continue;
                 }
@@ -922,6 +958,7 @@ namespace CLP.Entities
 
             // Match overlapping strokes
             var allGroupedStrokes = strokeGroupPerRow.Values.SelectMany(s => s).ToList();
+            var finalOverlapStrokes = new List<Stroke>();
             foreach (var stroke in overlapStrokes)
             {
                 var strokeBounds = stroke.GetBounds();
@@ -987,9 +1024,12 @@ namespace CLP.Entities
 
                     if (mostLikelyRow == 0)
                     {
+                        finalOverlapStrokes.Add(stroke);
+                        Rule8cCount++;
                         continue;
                     }
 
+                    Rule8bCount++;
                     foreach (var strokesInRow in strokeGroupPerRow.Values)
                     {
                         if (strokesInRow.Contains(stroke))
@@ -1002,6 +1042,7 @@ namespace CLP.Entities
                 }
                 else
                 {
+                    Rule8aCount++;
                     foreach (var strokesInRow in strokeGroupPerRow.Values)
                     {
                         if (strokesInRow.Contains(stroke) &&
@@ -1022,6 +1063,7 @@ namespace CLP.Entities
                 {
                     if (strokeGroupPerRow[row].Contains(closestStroke))
                     {
+                        Rule9Count++;
                         strokeGroupPerRow[row].Add(stroke);
                     }
                 }
@@ -1032,17 +1074,26 @@ namespace CLP.Entities
             var numberOfStrokesRightOfArray = allGroupedStrokes.Count(s => s.WeightedCenter().X >= arrayVisualRight);
             if (numberOfStrokesRightOfArray > numberOfStrokesOverArray)
             {
-                Console.WriteLine("Didn't skip count inside");
                 var strokesToReject = allGroupedStrokes.Where(s => s.WeightedCenter().X < arrayVisualRight - 5.0).ToList();
+                if (strokesToReject.Any())
+                {
+                    Rule10Count++;
+                }
                 foreach (var strokesInRow in strokeGroupPerRow.Values)
                 {
                     foreach (var stroke in strokesToReject.Where(stroke => strokesInRow.Contains(stroke)))
                     {
+                        Rule10RejectedStrokesCount++;
                         strokesInRow.Remove(stroke);
                         rejectedStrokes.Add(stroke);
                     }
                 }
             }
+
+            UngroupedStrokesCount += ungroupedStrokes.Distinct().Count();
+            RejectedStrokesCount += rejectedStrokes.Distinct().Count();
+            SkipStrokesCount += strokeGroupPerRow.Values.SelectMany(s => s).Distinct().Count();
+            OverlappingStrokesCount += finalOverlapStrokes.Distinct().Count();
 
             strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes.Distinct()));
 
