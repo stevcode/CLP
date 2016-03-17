@@ -285,6 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var correctedNotMatchedExpectedCountAfter = 0;
             var uncorrectedNotMatchedExpectedCountAfter = 0;
             var correctedImprovedExpectedCountAfter = 0;
+            var correctedImprovedExpectedCountAfterRows = new List<string>();
 
             var correctedNotMatchedExpectedCountAfterExamples = new List<string>();
 
@@ -423,6 +424,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                     if (expectedValue.ToString() == interpretedValue)
                                     {
                                         correctedImprovedExpectedCountAfter++;
+                                        correctedImprovedExpectedCountAfterRows.Add(string.Format("{0}, page {1}. [{2}x{3}]. Expected: {4}, Interpreted (Corrected): {5}, Interpreted (Uncorrected): {6}",
+                                                                                                  lastSubmission.Owner.FullName,
+                                                                                                  lastSubmission.PageNumber,
+                                                                                                  array.Rows,
+                                                                                                  array.Columns,
+                                                                                                  expectedValue,
+                                                                                                  interpretedValue,
+                                                                                                  interpretedValueUncorrected));
                                     }
                                 }
 
@@ -485,7 +494,7 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Overlapping Strokes Count: {0}\n", ArrayCodedActions.OverlappingStrokesCount));
             File.AppendAllText(filePath, string.Format("Initially Ungrouped Strokes Count: {0}\n", ArrayCodedActions.UngroupedStrokesCount));
 
-            File.AppendAllText(filePath, string.Format("Number of strokes rejected (or alternatively grouped) by a rule:\n"));
+            File.AppendAllText(filePath, string.Format("\nNumber of strokes rejected (or alternatively grouped) by a rule:\n"));
             File.AppendAllText(filePath, string.Format("Rule 1: Stroke is invisibly small: {0}\n", ArrayCodedActions.Rule1Count));
             File.AppendAllText(filePath, string.Format("Rule 2: Stroke is too tall (taller than 2 row heights): {0}\n", ArrayCodedActions.Rule2Count));
             File.AppendAllText(filePath, string.Format("Rule 3b: Stroke intersects less than 50% of initial boundary: {0}\n", ArrayCodedActions.Rule3bCount));
@@ -506,7 +515,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             File.AppendAllText(filePath, string.Format("\n***Ink Interpretation***\n\n"));
 
-            File.AppendAllText(filePath, "\nBefore Skip Count Test, all for non-empty strings\n\n");
+            File.AppendAllText(filePath, "\nBefore Skip Count Identification Test, all for non-empty strings\n\n");
             File.AppendAllText(filePath, string.Format("Number of Rows uncorrected interpretation matched corrected: {0}\n", correctedMatchedUncorrectedCount));
             File.AppendAllText(filePath, string.Format("Number of Rows uncorrected interpretation did not matched corrected: {0}\n", correctedNotMatchedUncorrectedCount));
             File.AppendAllText(filePath, string.Format("Number of Rows uncorrected matched expected value: {0}\n", uncorrectedMatchedExpectedCount));
@@ -515,7 +524,7 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Number of Rows corrected matched expected value: {0}\n", correctedMatchedExpectedCount));
             File.AppendAllText(filePath, string.Format("Number of Rows corrected did not match expected value: {0}\n", correctedNotMatchedExpectedCount));
 
-            File.AppendAllText(filePath, "\nAfter Skip Count Test\n\n");
+            File.AppendAllText(filePath, "\nAfter Skip Count Identification Test\n\n");
             File.AppendAllText(filePath, string.Format("Number of Times correct recognized as skip when uncorrected not recognized as skip: {0}\n", 0));
             File.AppendAllText(filePath, "Note on above stat, current value hardcoded after testing. Have to run IsSkipCounting() twice and that doubles the rejection rules counts.\n");
 
@@ -524,6 +533,7 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Number of Rows uncorrected matched expected value: {0}\n", uncorrectedMatchedExpectedCountAfter));
             File.AppendAllText(filePath, string.Format("Number of Rows uncorrected did not match expected value: {0}\n", uncorrectedNotMatchedExpectedCountAfter));
             File.AppendAllText(filePath, string.Format("Number of Rows corrected matched expected when uncorrected did not (aka an improvement): {0}\n", correctedImprovedExpectedCountAfter));
+            File.AppendAllText(filePath, string.Format("\t{0}\n\n", string.Join("\n\t", correctedImprovedExpectedCountAfterRows)));
             File.AppendAllText(filePath, string.Format("Number of Rows corrected matched expected value: {0}\n", correctedMatchedExpectedCountAfter));
             File.AppendAllText(filePath, string.Format("Number of Rows corrected did not match expected value: {0}\n", correctedNotMatchedExpectedCountAfter));
             File.AppendAllText(filePath, string.Format("\t{0}\n\n", string.Join("\n\t", correctedNotMatchedExpectedCountAfterExamples)));
@@ -553,7 +563,7 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Rule 6: The first 2 rows do not have interpreted values.\n"));
             File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule6));
 
-            File.AppendAllText(filePath, string.Format("Rule 7: This is more than 1 gap of 1 row between interpreted values.\n"));
+            File.AppendAllText(filePath, string.Format("Rule 7: There is more than 1 gap of 1 row between interpreted values.\n"));
             File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule7));
 
             File.AppendAllText(filePath, string.Format("Rule 8: There is a gap of more than 1 row between interpreted values.\n"));

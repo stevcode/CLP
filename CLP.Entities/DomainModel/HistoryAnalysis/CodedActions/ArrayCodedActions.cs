@@ -738,6 +738,7 @@ namespace CLP.Entities
             {
                 AllStrokesAreOutsideOfAcceptableBoundary++;
                 strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
+                RejectedStrokesCount += rejectedStrokes.Distinct().Count();
                 return strokeGroupPerRow;
             }
 
@@ -763,6 +764,7 @@ namespace CLP.Entities
             if (!probableSkipCountStrokes.Any())
             {
                 strokeGroupPerRow.Add(-1, new StrokeCollection(rejectedStrokes));
+                RejectedStrokesCount += rejectedStrokes.Distinct().Count();
                 return strokeGroupPerRow;
             }
 
