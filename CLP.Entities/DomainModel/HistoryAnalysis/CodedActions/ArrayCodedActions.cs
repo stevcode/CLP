@@ -466,7 +466,7 @@ namespace CLP.Entities
 
             var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex);
             var strokeGroupPerRowOnPage = GroupPossibleSkipCountStrokes(page, array, cluster.StrokesOnPage.ToList(), historyIndex);
-            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex, isSkipAdd);
+            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
             var interpretedRowValuesOnPage = InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, historyIndex);
             var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
             var formattedSkipsOnPage = FormatInterpretedSkipCountGroups(interpretedRowValuesOnPage);
@@ -1088,7 +1088,7 @@ namespace CLP.Entities
         }
 
         // Interpret handwriting of each row's grouping of strokes.
-        public static List<string> InterpretSkipCountGroups(CLPPage page, CLPArray array, Dictionary<int, StrokeCollection> strokeGroupPerRow, int historyIndex, bool isSkipAdd = true)
+        public static List<string> InterpretSkipCountGroups(CLPPage page, CLPArray array, Dictionary<int, StrokeCollection> strokeGroupPerRow, int historyIndex, bool isIgnoringInterpretationImprovements = false)
         {
             var interpretedRowValues = new List<string>();
             var allGroupedStrokes = strokeGroupPerRow.Where(kv => kv.Key != -1).SelectMany(kv => kv.Value).ToList();
@@ -1122,26 +1122,20 @@ namespace CLP.Entities
 
                     var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokeCombination.ToList());
                     interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
-                    //if (!isSkipAdd)
-                    //{
-                    //    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokeCombination.ToList());
-                    //    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
-                    //}
-                    //else
-                    //{
-                    //    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokeCombination));
-                    //}
 
                     if (!interpretations.Any())
                     {
                         continue;
                     }
 
-                    var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
-                    if (!string.IsNullOrEmpty(actualMatch))
+                    if (!isIgnoringInterpretationImprovements)
                     {
-                        bestGuess = actualMatch;
-                        break;
+                        var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
+                        if (!string.IsNullOrEmpty(actualMatch))
+                        {
+                            bestGuess = actualMatch;
+                            break;
+                        }
                     }
 
                     #region Debugging
@@ -1245,10 +1239,15 @@ namespace CLP.Entities
                 return false;
             }
 
-            // Rule 1: Not enough rows for skip counting (AKA only 1 row in the array).
+            if (!interpretedRowValues.Any())
+            {
+                ArraysRule2++;
+                return false;
+            }
+
+            // Rule 1: Only 1 row in the array.
             if (interpretedRowValues.Count < 2)
             {
-                SkipCountRejectedTotal++;
                 ArraysRule1++;
                 return false;
             }
@@ -1259,7 +1258,6 @@ namespace CLP.Entities
             // Rule 2: Fewer than 2 rows have an interpreted value.
             if (nonEmptyInterpretationsCount < 2)
             {
-                SkipCountRejectedTotal++;
                 ArraysRule2++;
                 return false;
             }
@@ -1267,16 +1265,14 @@ namespace CLP.Entities
             // Rule 3: No rows have an interpreted value that is a number.
             if (numericInterpreationsCount == 0)
             {
-                SkipCountRejectedTotal++;
-                ArraysRule4++;
+                ArraysRule3++;
                 return false;
             }
 
             // Rule 4: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.
             if (numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
             {
-                SkipCountRejectedTotal++;
-                ArraysRule5++;
+                ArraysRule4++;
                 return false;
             }
 
@@ -1284,8 +1280,7 @@ namespace CLP.Entities
             if (string.IsNullOrEmpty(interpretedRowValues.First()) &&
                 nonEmptyInterpretationsCount / (interpretedRowValues.Count * 1.0) <= .5)
             {
-                SkipCountRejectedTotal++;
-                ArraysRule9++;
+                ArraysRule5++;
                 return false;
             }
 
@@ -1293,6 +1288,7 @@ namespace CLP.Entities
             if (string.IsNullOrEmpty(interpretedRowValues[0]) &&
                 string.IsNullOrEmpty(interpretedRowValues[1]))
             {
+                ArraysRule6++;
                 return false;
             }
 
@@ -1318,7 +1314,6 @@ namespace CLP.Entities
             // Rule 7: This is more than 1 gap of 1 row between interpreted values.
             if (numberOfSingleGaps > 1)
             {
-                SkipCountRejectedTotal++;
                 ArraysRule7++;
                 return false;
             }
@@ -1346,8 +1341,7 @@ namespace CLP.Entities
             // Rule 8: There is a gap of more than 1 row between interpreted values.
             if (numberOfDoubleGaps > 0)
             {
-                SkipCountRejectedTotal++;
-                ArraysRule6++;
+                ArraysRule8++;
                 return false;
             }
 
@@ -1355,8 +1349,7 @@ namespace CLP.Entities
             var maxDuplicateCount = interpretedRowValues.Where(s => !string.IsNullOrEmpty(s)).GroupBy(i => i).Select(i => i.Count()).Max();
             if (maxDuplicateCount > 2)
             {
-                SkipCountRejectedTotal++;
-                ArraysRule10++;
+                ArraysRule9++;
                 return false;
             }
 
@@ -1366,8 +1359,6 @@ namespace CLP.Entities
         #endregion // Utility Methods
 
         #region Logging
-
-        public static int SkipCountRejectedTotal = 0;
 
         public static int ArraysRule0 = 0;
         public static int ArraysRule1 = 0;
@@ -1379,49 +1370,6 @@ namespace CLP.Entities
         public static int ArraysRule7 = 0;
         public static int ArraysRule8 = 0;
         public static int ArraysRule9 = 0;
-        public static int ArraysRule10 = 0;
-        public static int PagesRule1 = 0;
-
-
-        public static void PrintLogs()
-        {
-            Console.WriteLine("***Is Skip Counting Rejections***");
-            Console.WriteLine("Number of Arrays not recognized as Skip Counting: {0}", SkipCountRejectedTotal);
-            Console.WriteLine("Number of Pages with Arrays not recognized as Skip Counting: {0}", SkipCountRejectedTotal);
-
-            Console.WriteLine("Rejected Reasons:");
-            Console.WriteLine("Rule 0: Passed null value (ERROR).");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule0);
-
-            Console.WriteLine("Rule 1: Only 1 row in the array.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule1);
-
-            Console.WriteLine("Rule 2: No rows have an interpreted value.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule2);
-
-            Console.WriteLine("Rule 3: Only 1 row has an interpreted value.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule3);
-
-            Console.WriteLine("Rule 4: No rows have an interpreted value that is a number.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule4);
-
-            Console.WriteLine("Rule 5: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule5);
-
-            Console.WriteLine("Rule 6: There is a gap of more than 1 row between interpreted values.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule7);
-
-            Console.WriteLine("Rule 7: This is more than 1 gap of 1 row between interpreted values.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule6);
-
-
-
-            Console.WriteLine("Rule 9: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule9);
-
-            Console.WriteLine("Rule 10: More than 2 rows share the same interpreted value.");
-            Console.WriteLine("Total Arrays: {0}", ArraysRule10);
-        }
 
         #endregion // Logging
     }
