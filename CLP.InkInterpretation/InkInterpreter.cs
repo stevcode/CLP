@@ -148,7 +148,7 @@ namespace CLP.InkInterpretation
                 }
 
                 if (number == 18 &&
-                    adjustedInterpretation == "if")
+                    adjustedInterpretation.Contains("if"))
                 {
                     return number.ToString();
                 }
