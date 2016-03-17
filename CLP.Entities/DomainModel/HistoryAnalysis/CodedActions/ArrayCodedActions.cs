@@ -1023,7 +1023,6 @@ namespace CLP.Entities
                     if (strokeGroupPerRow[row].Contains(closestStroke))
                     {
                         strokeGroupPerRow[row].Add(stroke);
-                        break;
                     }
                 }
             }
