@@ -65,6 +65,13 @@ namespace Classroom_Learning_Partner.ViewModels
             PageOrientations.Add("Animation - Portrait");
             SelectedPageOrientation = PageOrientations.First();
 
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
+            #region Edit Commands
+
             AddPageCommand = new Command(OnAddPageCommandExecute);
             MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
             MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
@@ -80,23 +87,30 @@ namespace Classroom_Learning_Partner.ViewModels
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
             AddTagCommand = new Command(OnAddTagCommandExecute);
+
+            #endregion // Edit Commands
+
+            #region Analysis Commands
+
+            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
+            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
+            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
+            GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
+
+            #region Obsolete Commands
+
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
-            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
-
-            //TEMP
-            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
-            HistoryActionAnaylsisCommand = new Command(OnHistoryActionAnaylsisCommandExecute);
-            GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
-            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
 
-            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
-            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
-            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+            #endregion // Obsolete Commands
 
-            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            #endregion // Analysis Commands
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -367,6 +381,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        #region Edit Commands
 
         /// <summary>Adds a new page to the notebook.</summary>
         public Command AddPageCommand { get; private set; }
@@ -833,554 +849,139 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(tag);
         }
 
-        /// <summary>Runs analysis routines on the page.</summary>
-        public Command AnalyzePageCommand { get; private set; }
+        #endregion // Edit Commands
 
-        private void OnAnalyzePageCommandExecute()
-        {
-            PageAnalysis.Analyze(CurrentPage);
+        #region Analysis Commands
 
-            var definitionTags = CurrentPage.Tags.Where(t => t.Category == Category.Definition).ToList();
-
-            if (definitionTags.Any(t => t is AdditionRelationDefinitionTag))
-            {
-                AdditionRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is MultiplicationRelationDefinitionTag))
-            {
-                MultiplicationRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is DivisionRelationDefinitionTag))
-            {
-                DivisionRelationAnalysis.Analyze(CurrentPage);
-            }
-            if (definitionTags.Any(t => t is FactorsOfProductDefinitionTag))
-            {
-                FactorsOfProductAnalysis.Analyze(CurrentPage);
-            }
-
-            ArrayAnalysis.Analyze(CurrentPage);
-            DivisionTemplateAnalysis.Analyze(CurrentPage);
-            StampAnalysis.Analyze(CurrentPage);
-            NumberLineAnalysis.Analyze(CurrentPage);
-            ApplyInterpretedCorrectness(CurrentPage);
-
-            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
-            {
-                return;
-            }
-
-            foreach (var submission in CurrentPage.Submissions)
-            {
-                PageAnalysis.Analyze(submission);
-                ArrayAnalysis.Analyze(submission);
-                DivisionTemplateAnalysis.Analyze(submission);
-                StampAnalysis.Analyze(submission);
-                NumberLineAnalysis.Analyze(CurrentPage);
-                ApplyInterpretedCorrectness(submission);
-            }
-        }
-
-        public static void ApplyInterpretedCorrectness(CLPPage page)
-        {
-            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-            if (correctnessTag != null &&
-                correctnessTag.IsCorrectnessManuallySet)
-            {
-                return;
-            }
-
-            var correctnessTags =
-                page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
-                    .ToList();
-            correctnessTags.AddRange(
-                                     page.Tags.OfType<ArrayCorrectnessSummaryTag>()
-                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
-
-            if (!correctnessTags.Any())
-            {
-                return;
-            }
-
-            var correctnessSum = Correctness.Unknown;
-            foreach (var tag in correctnessTags)
-            {
-                if (correctnessSum == tag.Correctness)
-                {
-                    continue;
-                }
-
-                if (correctnessSum == Correctness.Unknown)
-                {
-                    correctnessSum = tag.Correctness;
-                    continue;
-                }
-
-                if (correctnessSum == Correctness.Correct &&
-                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
-
-                if (tag.Correctness == Correctness.Correct &&
-                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
-            }
-
-            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
-        }
-
-        /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
-        public Command AnalyzePageHistoryCommand { get; private set; }
-
-        private void OnAnalyzePageHistoryCommandExecute()
-        {
-            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
-            CurrentPage.Tags = null;
-            CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
-            //     SortedTags.Source = CurrentPage.Tags;
-
-            ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
-
-            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
-            {
-                return;
-            }
-
-            foreach (var submission in CurrentPage.Submissions)
-            {
-                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
-                submission.Tags = null;
-                submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
-
-                ArrayAnalysis.AnalyzeHistory(submission);
-                DivisionTemplateAnalysis.AnalyzeHistory(submission);
-            }
-        }
-
-        /// <summary>
-        /// Analyzes ink strokes near array objects to determine if skip counting was used
-        /// </summary>
-        public Command AnalyzeSkipCountingCommand { get; private set; }
-
-        private void OnAnalyzeSkipCountingCommandExecute()
-        {
-            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            const bool DEBUG = false;
-
-            //Iterates over arrays on page
-            foreach (var array in arraysOnPage)
-            {
-                var expandedArrayBounds = new Rect(array.XPosition + (array.Width / 2),
-                                                   array.YPosition - (array.LabelLength * 1.5),
-                                                   array.Width,
-                                                   array.Height + (array.LabelLength * 3));
-
-                var strokes = CurrentPage.InkStrokes.Where(s => s.HitTest(expandedArrayBounds, 80)).ToList();
-                if (strokes.Count < 2)
-                {
-                    continue;
-                }
-
-                if (DEBUG)
-                {
-                    CurrentPage.ClearBoundaries();
-                    CurrentPage.AddBoundary(expandedArrayBounds);
-                    PageHistory.UISleep(800);
-                    var heightWidths = new Dictionary<Stroke, Point>();
-                    foreach (var stroke in strokes)
-                    {
-                        var width = stroke.DrawingAttributes.Width;
-                        var height = stroke.DrawingAttributes.Height;
-                        heightWidths.Add(stroke, new Point(width, height));
-
-                        stroke.DrawingAttributes.Width = 8;
-                        stroke.DrawingAttributes.Height = 8;
-                    }
-                    PageHistory.UISleep(1000);
-                    foreach (var stroke in strokes)
-                    {
-                        var width = heightWidths[stroke].X;
-                        var height = heightWidths[stroke].Y;
-                        stroke.DrawingAttributes.Width = width;
-                        stroke.DrawingAttributes.Height = height;
-                    }
-                    CurrentPage.ClearBoundaries();
-                }
-
-                #region New Skip Testing
-
-                // Initialize StrokeCollection for each row
-                var strokeGroupPerRow = new Dictionary<int, StrokeCollection>();
-                for (var i = 1; i <= array.Rows; i++)
-                {
-                    strokeGroupPerRow.Add(i, new StrokeCollection());
-                }
-
-                // Row boundaries
-                var rowBoundaryX = strokes.Select(s => s.GetBounds().Left).Min() - 5;
-                var rowBoundaryWidth = strokes.Select(s => s.GetBounds().Right).Max() - rowBoundaryX + 10;
-                var rowBoundaryHeight = array.GridSquareSize * 2.0;
-
-                // Determine strokes to ignore or group later.
-                var notSkipCountStrokes = strokes.Where(s => s.GetBounds().Height >= array.GridSquareSize * 2.0).ToList();
-                if (notSkipCountStrokes.Any())
-                {
-                    //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
-                    // TODO: establish other exclusion factors and re-cluster to ignore these strokes.
-                }
-
-                var cuttoffHeightByAverageStrokeHeight = strokes.Select(s => s.GetBounds().Height).Average() * 0.5;
-                var cuttoffHeightByGridSquareSize = array.GridSquareSize * 0.33;
-                var strokeCutOffHeight = Math.Max(cuttoffHeightByAverageStrokeHeight, cuttoffHeightByGridSquareSize);
-                var ungroupedStrokes = strokes.Where(s => s.GetBounds().Height < strokeCutOffHeight).ToList();
-                var skipCountStrokes = strokes.Where(s => s.GetBounds().Height >= strokeCutOffHeight).ToList();
-
-                // Place strokes in most likely row groupings
-                foreach (var stroke in skipCountStrokes)
-                {
-                    var strokeBounds = stroke.GetBounds();
-
-                    var highestIntersectPercentage = 0.0;
-                    var mostLikelyRow = 0;
-                    for (var row = 1; row <= array.Rows; row++)
-                    {
-                        var rowBoundary = new Rect
-                        {
-                            X = rowBoundaryX,
-                            Y = array.YPosition + array.LabelLength + ((row - 1) * array.GridSquareSize) - (0.5 * array.GridSquareSize),
-                            Width = rowBoundaryWidth,
-                            Height = rowBoundaryHeight
-                        };
-
-                        var intersect = Rect.Intersect(strokeBounds, rowBoundary);
-                        if (intersect.IsEmpty)
-                        {
-                            continue;
-                        }
-                        var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                        if (intersectPercentage > 0.9 &&
-                            highestIntersectPercentage > 0.9)
-                        {
-                            // TODO: Log how often this happens. Should only happen whe stroke is 90% intersected by 2 rows.
-                            var distanceToRowMidPoint = Math.Abs(strokeBounds.Bottom - rowBoundary.Center().Y);
-                            var distanceToPreviousRowMidPoint = Math.Abs(strokeBounds.Bottom - (rowBoundary.Center().Y - array.GridSquareSize));
-                            mostLikelyRow = distanceToRowMidPoint < distanceToPreviousRowMidPoint ? row : row - 1;
-                            break;
-                        }
-                        if (intersectPercentage > highestIntersectPercentage)
-                        {
-                            highestIntersectPercentage = intersectPercentage;
-                            mostLikelyRow = row;
-                        }
-                    }
-
-                    if (mostLikelyRow == 0)
-                    {
-                        notSkipCountStrokes.Add(stroke);
-                        //Console.WriteLine("*****NO SKIP COUNT STROKES TO IGNORE*****");
-                        // TODO: re-cluster to ignore these strokes.
-                        continue;
-                    }
-
-                    strokeGroupPerRow[mostLikelyRow].Add(stroke);
-                }
-
-                foreach (var stroke in ungroupedStrokes)
-                {
-                    var closestStroke = stroke.FindClosestStroke(skipCountStrokes);
-                    for (var row = 1; row <= array.Rows; row++)
-                    {
-                        if (strokeGroupPerRow[row].Contains(closestStroke))
-                        {
-                            strokeGroupPerRow[row].Add(stroke);
-                            break;
-                        }
-                    }
-                }
-
-                var strokesGroupedCount = strokeGroupPerRow.Values.SelectMany(s => s).Count();
-                if (strokesGroupedCount < 3)
-                {
-                    // Not enough to be skip counting.
-                    return;
-                }
-
-                if (DEBUG)
-                {
-                    CurrentPage.ClearBoundaries();
-
-                    foreach (var strokeGroup in strokeGroupPerRow.Values)
-                    {
-                        var heightWidths = new Dictionary<Stroke, Point>();
-                        foreach (var stroke in strokeGroup)
-                        {
-                            var width = stroke.DrawingAttributes.Width;
-                            var height = stroke.DrawingAttributes.Height;
-                            heightWidths.Add(stroke, new Point(width, height));
-
-                            stroke.DrawingAttributes.Width = 8;
-                            stroke.DrawingAttributes.Height = 8;
-                        }
-                        PageHistory.UISleep(1000);
-                        foreach (var stroke in strokeGroup)
-                        {
-                            var width = heightWidths[stroke].X;
-                            var height = heightWidths[stroke].Y;
-                            stroke.DrawingAttributes.Width = width;
-                            stroke.DrawingAttributes.Height = height;
-                        }
-                    }
-                }
-
-                // Interpret handwriting of each row's grouping of strokes.
-                var interpretedRowValues = new List<string>();
-                for (var row = 1; row <= array.Rows; row++)
-                {
-                    var expectedRowValue = row * array.Columns;
-                    var strokesInRow = strokeGroupPerRow[row];
-                    var interpretations = InkInterpreter.StrokesToAllGuessesText(strokesInRow);
-                    if (!interpretations.Any())
-                    {
-                        interpretedRowValues.Add(string.Empty);
-                        continue;
-                    }
-
-                    var actualMatch = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedRowValue);
-                    if (!string.IsNullOrEmpty(actualMatch))
-                    {
-                        interpretedRowValues.Add(actualMatch);
-                        continue;
-                    }
-
-                    var bestGuess = InkInterpreter.InterpretationClosestToANumber(interpretations);
-                    interpretedRowValues.Add(bestGuess);
-                }
-
-                var formattedSkips = string.Join("\" \"", interpretedRowValues);
-                var codedValue = string.Format("ARR skip [{0}: \"{1}\"]", array.CodedID, formattedSkips);
-                Console.WriteLine(codedValue);
-
-                #endregion // New Skip Testing
-            }
-        }
-
-        #endregion //Commands
-
-        /// <summary>TEMP</summary>
-        public Command InterpretArrayDividersCommand { get; private set; }
-
-        private void OnInterpretArrayDividersCommandExecute()
-        {
-            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-
-            foreach (var array in arraysOnPage)
-            {
-                if (array.ArrayType != ArrayTypes.Array ||
-                        !array.IsGridOn)
-                {
-                    continue;
-                }
-
-                var verticalDividers = new List<int> { 0 };
-                var horizontalDividers = new List<int> { 0 };
-                var cuttableTop = array.YPosition + array.LabelLength;
-                var cuttableBottom = cuttableTop + array.ArrayHeight;
-                var cuttableLeft = array.XPosition + array.LabelLength;
-                var cuttableRight = cuttableLeft + array.ArrayWidth;
-                foreach (var stroke in CurrentPage.InkStrokes)
-                {
-                    var strokeTop = stroke.GetBounds().Top;
-                    var strokeBottom = stroke.GetBounds().Bottom;
-                    var strokeLeft = stroke.GetBounds().Left;
-                    var strokeRight = stroke.GetBounds().Right;
-
-                    const double SMALL_THRESHOLD = 5.0;
-                    const double LARGE_THRESHOLD = 15.0;
-
-                    if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
-                        strokeRight <= cuttableRight &&
-                        strokeLeft >= cuttableLeft &&
-                        (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
-                        cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
-                        (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
-                        cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
-                        strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
-                        array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
-                    {
-                        var average = (strokeRight + strokeLeft) / 2;
-                        var relativeAverage = average - array.LabelLength - array.XPosition;
-                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                        if (dividerValue == 0 ||
-                            dividerValue == array.Columns)
-                        {
-                            continue;
-                        }
-                        verticalDividers.Add(dividerValue);
-                    }
-
-                    if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                             strokeBottom <= cuttableBottom &&
-                             strokeTop >= cuttableTop &&
-                             (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
-                             strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
-                             (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
-                             strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
-                             strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
-                             array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
-                    {
-                        var average = (strokeTop + strokeBottom) / 2;
-                        var relativeAverage = average - array.LabelLength - array.YPosition;
-                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                        if (dividerValue == 0 ||
-                            dividerValue == array.Rows)
-                        {
-                            continue;
-                        }
-                        horizontalDividers.Add(dividerValue);
-                    }
-                }
-
-                verticalDividers.Add(array.Columns);
-                verticalDividers = verticalDividers.Distinct().Sort().ToList();
-                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).ToList();
-
-                horizontalDividers.Add(array.Rows);
-                horizontalDividers = horizontalDividers.Distinct().Sort().ToList();
-                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).ToList();
-
-                if (verticalDivisions.Count > 1 ||
-                    horizontalDivisions.Count > 1)
-                {
-                    var tag = new TempArrayDividersTag(CurrentPage, Origin.StudentPageGenerated);
-                    tag.ArrayName = array.Rows + "x" + array.Columns;
-                    if (horizontalDivisions.Count > 1)
-                        tag.VerticalDividers = horizontalDivisions;
-                    if (verticalDivisions.Count > 1)
-                        tag.HorizontalDividers = verticalDivisions;
-                    CurrentPage.AddTag(tag);
-                }
-            }
-        }
-
-        public Command PrintAllHistoryItemsCommand { get; private set; }
-
-        private void OnPrintAllHistoryItemsCommandExecute()
-        {
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
-
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
-            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
-
-            foreach (var item in historyItems)
-            {
-                File.AppendAllText(filePath, item.FormattedValue + "\n");
-            }
-        }
-
-        /// <summary>
-        /// Analysizes the HistoryItems to generate appropriate HistoryActions and Tags.
-        /// </summary>
-        public Command HistoryActionAnaylsisCommand { get; private set; }
-
-        private void OnHistoryActionAnaylsisCommandExecute()
-        {
-            //HistoryAnalysis.GenerateInitialHistoryActions(CurrentPage);
-
-            //HistoryAnalysis.AnalyzeHistoryActions(CurrentPage);
-
-            ////Prints HistoryAction Coded Values to .txt file
-            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //var fileDirectory = Path.Combine(desktopDirectory, "CodedHistoryLogs");
-            //if (!Directory.Exists(fileDirectory))
-            //{
-            //    Directory.CreateDirectory(fileDirectory);
-            //}
-
-            //var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + CurrentPage.Owner.FullName + ".txt");
-            //if (File.Exists(filePath))
-            //{
-            //    File.Delete(filePath);
-            //}
-            //File.WriteAllText(filePath, "");
-            //var historyActions = CurrentPage.History.HistoryActions;
-
-            //foreach (var action in historyActions)
-            //{
-            //    File.AppendAllText(filePath, action.CodedValue + "\n");
-            //}
-        }
-
-        public Command GenerateStampGroupingsCommand { get; private set; }
-
-        private void OnGenerateStampGroupingsCommandExecute()
-        {
-            var stampGroups = new Dictionary<Tuple<string, int>, List<string>>();  //<ParentStampID,List of StampedObject IDs>
-            foreach (var stampedObject in CurrentPage.PageObjects.OfType<StampedObject>())
-            {
-                var parentID = stampedObject.ParentStampID;
-                var parts = stampedObject.Parts;
-                var key = new Tuple<string, int>(parentID, parts);
-                if (!stampGroups.ContainsKey(key))
-                {
-                    stampGroups.Add(key, new List<string>());
-                }
-
-                stampGroups[key].Add(stampedObject.ID);
-            }
-
-            foreach (var stampGroup in stampGroups)
-            {
-                var tag = new StampGroupTag(CurrentPage, Origin.StudentPageGenerated, stampGroup.Key.Item1, stampGroup.Key.Item2, stampGroup.Value);
-                CurrentPage.AddTag(tag);
-            }
-        }
-
-        public Command FixCommand { get; private set; }
-
-        private void OnFixCommandExecute()
-        {
-            foreach (var dt in CurrentPage.PageObjects.OfType<FuzzyFactorCard>())
-            {
-                var gridSize = dt.ArrayHeight / dt.Rows;
-
-
-                dt.SizeArrayToGridLevel(gridSize, false);
-
-                var position = 0.0;
-                foreach (var division in dt.VerticalDivisions)
-                {
-                    division.Position = position;
-                    division.Length = dt.GridSquareSize * division.Value;
-                    position = division.Position + division.Length;
-                }
-
-                dt.RaiseAllPropertiesChanged();
-            }
-        }
-
-        public Command GenerateHistoryActionsCommand
-        { get; private set; }
+        public Command GenerateHistoryActionsCommand { get; private set; }
 
         private void OnGenerateHistoryActionsCommandExecute()
         {
             HistoryAnalysis.GenerateHistoryActions(CurrentPage);
+        }
+
+        public Command ShowAnalysisClustersCommand { get; private set; }
+
+        private void OnShowAnalysisClustersCommandExecute()
+        {
+            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
+            {
+                var clusterBounds = cluster.Strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
+                };
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
+        }
+
+        public List<string> ClusterTypes
+        {
+            get
+            {
+                return new List<string>
+                       {
+                           "PointDensity",
+                           "CenterDistance",
+                           "WeightedCenterDistance",
+                           "ClosestPoint",
+                           "AveragePointDistance",
+                           "StrokeHalves"
+                       };
+            }
+        }
+
+        public Command<string> ClusterTestCommand { get; private set; }
+
+        private void OnClusterTestCommandExecute(string clusterEquation)
+        {
+            List<StrokeCollection> clusteredStrokes;
+            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
+            switch (clusterEquation)
+            {
+                case "PointDensity":
+                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
+                    break;
+                case "CenterDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "WeightedCenterDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "ClosestPoint":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "AveragePointDistance":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                case "StrokeHalves":
+                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
+                    break;
+                default:
+                    return;
+            }
+
+            if (clusteredStrokes == null ||
+                !clusteredStrokes.Any())
+            {
+                return;
+            }
+
+            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in tempBoundaries)
+            {
+                CurrentPage.PageObjects.Remove(temporaryBoundary);
+            }
+
+            var regionCount = 1;
+            foreach (var strokes in clusteredStrokes)
+            {
+                var clusterBounds = strokes.GetBounds();
+                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
+                {
+                    RegionText = regionCount.ToString()
+                };
+                regionCount++;
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
+
+            // Screenshot Clusters
+            PageHistory.UISleep(1000);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
+
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
+            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
         }
 
         public static List<StrokeCollection> Cluster(List<Stroke> strokes, string clusterEquation)
@@ -1512,130 +1113,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return strokeClusters;
         }
 
-        public Command<string> ClusterTestCommand
-        { get; private set; }
-
-        private void OnClusterTestCommandExecute(string clusterEquation)
-        {
-            List<StrokeCollection> clusteredStrokes;
-            // HACK: Reference stroke is a hack to correctly generate smaller numbers of clusters.
-            //var referenceStroke = new Stroke(new StylusPointCollection { new StylusPoint(0.0, 0.0), new StylusPoint(1.0, 1.0) });
-            var strokesToCluster = CurrentPage.InkStrokes.Where(s => !s.IsInvisiblySmall()).ToList();
-            //strokesToCluster.Add(referenceStroke);
-            switch (clusterEquation)
-            {
-                case "PointDensity":
-                    clusteredStrokes = InkClustering.ClusterStrokes(CurrentPage.InkStrokes);
-                    break;
-                case "CenterDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "WeightedCenterDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "ClosestPoint":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "AveragePointDistance":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                case "StrokeHalves":
-                    clusteredStrokes = Cluster(strokesToCluster, clusterEquation);
-                    break;
-                default:
-                    return;
-            }
-
-            if (clusteredStrokes == null ||
-                !clusteredStrokes.Any())
-            {
-                return;
-            }
-
-            var tempBoundaries = CurrentPage.PageObjects.OfType<TemporaryBoundary>().ToList();
-            foreach (var temporaryBoundary in tempBoundaries)
-            {
-                CurrentPage.PageObjects.Remove(temporaryBoundary);
-            }
-
-            //var referenceCluster = clusteredStrokes.FirstOrDefault(c => c.Contains(referenceStroke));
-            //if (referenceCluster != null)
-            //{
-            //    referenceCluster.Remove(referenceStroke);
-            //    if (!referenceCluster.Any())
-            //    {
-            //        clusteredStrokes.Remove(referenceCluster);
-            //    }
-            //}
-
-            var regionCount = 1;
-            foreach (var strokes in clusteredStrokes)
-            {
-                var clusterBounds = strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = regionCount.ToString()
-                };
-                regionCount++;
-                CurrentPage.PageObjects.Add(tempBoundary);
-            }
-
-            // Screenshot Clusters
-            PageHistory.UISleep(1000);
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
-
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
-            var views = viewManager.GetViewsOfViewModel(pageViewModel);
-            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-            if (pageView == null)
-            {
-                return;
-            }
-
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
-
-            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
-            var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);
-            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, thumbnailFileName);
-
-            if (!Directory.Exists(thumbnailsFolderPath))
-            {
-                Directory.CreateDirectory(thumbnailsFolderPath);
-            }
-
-            var pngEncoder = new PngBitmapEncoder();
-            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            using (var outputStream = new MemoryStream())
-            {
-                pngEncoder.Save(outputStream);
-                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-            }
-        }
-
-        public Command ShowAnalysisClustersCommand { get; private set; }
-
-        private void OnShowAnalysisClustersCommandExecute()
-        {
-            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
-            {
-                var clusterBounds = cluster.Strokes.GetBounds();
-                var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
-                };
-                CurrentPage.PageObjects.Add(tempBoundary);
-            }
-        }
-
-        public Command ClearTempBoundariesCommand
-        { get; private set; }
+        public Command ClearTempBoundariesCommand { get; private set; }
 
         private void OnClearTempBoundariesCommandExecute()
         {
@@ -1646,17 +1124,381 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command StrokeTestingCommand
-        { get; private set; }
+        public Command StrokeTestingCommand { get; private set; }
 
         private void OnStrokeTestingCommandExecute()
         {
-            var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
-            var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            var strokes = CurrentPage.InkStrokes.ToList();
+            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var distanceFromArray = new List<double>();
+
+            foreach (var stroke in strokes)
+            {
+                var minDistance = double.MaxValue;
+                foreach (var array in arrays)
+                {
+                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
+                    var deltaX = arrayVisualRight - stroke.GetBounds().Left;
+                    if (deltaX < minDistance &&
+                        deltaX >= 0)
+                    {
+                        minDistance = deltaX;
+                    }
+                }
+                distanceFromArray.Add(minDistance);
+            }
+
+            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
             foreach (var line in output)
             {
                 Console.WriteLine(line);
             }
         }
+
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command AnalyzeSkipCountingCommand { get; private set; }
+
+        private void OnAnalyzeSkipCountingCommandExecute()
+        {
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                if (string.IsNullOrEmpty(formattedSkips))
+                {
+                    continue;
+                }
+
+                var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
+                          {
+                              ArrayName = array.CodedID,
+                              EquationInterpretation = formattedSkips
+                          };
+
+                Console.WriteLine(tag.FormattedValue);
+
+                CurrentPage.AddTag(tag);
+            }
+        }
+
+        public bool IsDebuggingFlag
+        {
+            get { return GetValue<bool>(IsDebuggingFlagProperty); }
+            set { SetValue(IsDebuggingFlagProperty, value); }
+        }
+
+        public static readonly PropertyData IsDebuggingFlagProperty = RegisterProperty("IsDebuggingFlag", typeof (bool), false);
+
+        /// <summary>Attempts to interpret ink strokes over an array as an Ink Divider</summary>
+        public Command InterpretArrayDividersCommand { get; private set; }
+
+        private void OnInterpretArrayDividersCommandExecute()
+        {
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+
+            foreach (var array in arraysOnPage)
+            {
+                if (array.ArrayType != ArrayTypes.Array ||
+                        !array.IsGridOn)
+                {
+                    continue;
+                }
+
+                var verticalDividers = new List<int> { 0 };
+                var horizontalDividers = new List<int> { 0 };
+                var cuttableTop = array.YPosition + array.LabelLength;
+                var cuttableBottom = cuttableTop + array.ArrayHeight;
+                var cuttableLeft = array.XPosition + array.LabelLength;
+                var cuttableRight = cuttableLeft + array.ArrayWidth;
+                foreach (var stroke in CurrentPage.InkStrokes)
+                {
+                    var strokeTop = stroke.GetBounds().Top;
+                    var strokeBottom = stroke.GetBounds().Bottom;
+                    var strokeLeft = stroke.GetBounds().Left;
+                    var strokeRight = stroke.GetBounds().Right;
+
+                    const double SMALL_THRESHOLD = 5.0;
+                    const double LARGE_THRESHOLD = 15.0;
+
+                    if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                        strokeRight <= cuttableRight &&
+                        strokeLeft >= cuttableLeft &&
+                        (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
+                        cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
+                        (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
+                        cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
+                        strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
+                        array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+                    {
+                        var average = (strokeRight + strokeLeft) / 2;
+                        var relativeAverage = average - array.LabelLength - array.XPosition;
+                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                        if (dividerValue == 0 ||
+                            dividerValue == array.Columns)
+                        {
+                            continue;
+                        }
+                        verticalDividers.Add(dividerValue);
+                    }
+
+                    if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                             strokeBottom <= cuttableBottom &&
+                             strokeTop >= cuttableTop &&
+                             (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
+                             strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
+                             (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
+                             strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
+                             strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
+                             array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                    {
+                        var average = (strokeTop + strokeBottom) / 2;
+                        var relativeAverage = average - array.LabelLength - array.YPosition;
+                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                        if (dividerValue == 0 ||
+                            dividerValue == array.Rows)
+                        {
+                            continue;
+                        }
+                        horizontalDividers.Add(dividerValue);
+                    }
+                }
+
+                verticalDividers.Add(array.Columns);
+                verticalDividers = verticalDividers.Distinct().Sort().ToList();
+                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).ToList();
+
+                horizontalDividers.Add(array.Rows);
+                horizontalDividers = horizontalDividers.Distinct().Sort().ToList();
+                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).ToList();
+
+                if (verticalDivisions.Count > 1 ||
+                    horizontalDivisions.Count > 1)
+                {
+                    var tag = new TempArrayDividersTag(CurrentPage, Origin.StudentPageGenerated);
+                    tag.ArrayName = array.Rows + "x" + array.Columns;
+                    if (horizontalDivisions.Count > 1)
+                        tag.VerticalDividers = horizontalDivisions;
+                    if (verticalDivisions.Count > 1)
+                        tag.HorizontalDividers = verticalDivisions;
+                    CurrentPage.AddTag(tag);
+                }
+            }
+        }
+
+        public Command GenerateStampGroupingsCommand { get; private set; }
+
+        private void OnGenerateStampGroupingsCommandExecute()
+        {
+            var stampGroups = new Dictionary<Tuple<string, int>, List<string>>();  //<ParentStampID,List of StampedObject IDs>
+            foreach (var stampedObject in CurrentPage.PageObjects.OfType<StampedObject>())
+            {
+                var parentID = stampedObject.ParentStampID;
+                var parts = stampedObject.Parts;
+                var key = new Tuple<string, int>(parentID, parts);
+                if (!stampGroups.ContainsKey(key))
+                {
+                    stampGroups.Add(key, new List<string>());
+                }
+
+                stampGroups[key].Add(stampedObject.ID);
+            }
+
+            foreach (var stampGroup in stampGroups)
+            {
+                var tag = new StampGroupTag(CurrentPage, Origin.StudentPageGenerated, stampGroup.Key.Item1, stampGroup.Key.Item2, stampGroup.Value);
+                CurrentPage.AddTag(tag);
+            }
+        }
+
+        #region Obsolete Commands
+
+        /// <summary>Runs analysis routines on the page.</summary>
+        public Command AnalyzePageCommand { get; private set; }
+
+        private void OnAnalyzePageCommandExecute()
+        {
+            PageAnalysis.Analyze(CurrentPage);
+
+            var definitionTags = CurrentPage.Tags.Where(t => t.Category == Category.Definition).ToList();
+
+            if (definitionTags.Any(t => t is AdditionRelationDefinitionTag))
+            {
+                AdditionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is MultiplicationRelationDefinitionTag))
+            {
+                MultiplicationRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is DivisionRelationDefinitionTag))
+            {
+                DivisionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is FactorsOfProductDefinitionTag))
+            {
+                FactorsOfProductAnalysis.Analyze(CurrentPage);
+            }
+
+            ArrayAnalysis.Analyze(CurrentPage);
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
+            StampAnalysis.Analyze(CurrentPage);
+            NumberLineAnalysis.Analyze(CurrentPage);
+            ApplyInterpretedCorrectness(CurrentPage);
+
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach (var submission in CurrentPage.Submissions)
+            {
+                PageAnalysis.Analyze(submission);
+                ArrayAnalysis.Analyze(submission);
+                DivisionTemplateAnalysis.Analyze(submission);
+                StampAnalysis.Analyze(submission);
+                NumberLineAnalysis.Analyze(CurrentPage);
+                ApplyInterpretedCorrectness(submission);
+            }
+        }
+
+        public static void ApplyInterpretedCorrectness(CLPPage page)
+        {
+            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+            if (correctnessTag != null &&
+                correctnessTag.IsCorrectnessManuallySet)
+            {
+                return;
+            }
+
+            var correctnessTags =
+                page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
+                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+                    .ToList();
+            correctnessTags.AddRange(
+                                     page.Tags.OfType<ArrayCorrectnessSummaryTag>()
+                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
+
+            if (!correctnessTags.Any())
+            {
+                return;
+            }
+
+            var correctnessSum = Correctness.Unknown;
+            foreach (var tag in correctnessTags)
+            {
+                if (correctnessSum == tag.Correctness)
+                {
+                    continue;
+                }
+
+                if (correctnessSum == Correctness.Unknown)
+                {
+                    correctnessSum = tag.Correctness;
+                    continue;
+                }
+
+                if (correctnessSum == Correctness.Correct &&
+                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+
+                if (tag.Correctness == Correctness.Correct &&
+                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+            }
+
+            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
+        }
+
+        /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
+        public Command AnalyzePageHistoryCommand { get; private set; }
+
+        private void OnAnalyzePageHistoryCommandExecute()
+        {
+            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+            CurrentPage.Tags = null;
+            CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
+            //     SortedTags.Source = CurrentPage.Tags;
+
+            ArrayAnalysis.AnalyzeHistory(CurrentPage);
+            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
+
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach (var submission in CurrentPage.Submissions)
+            {
+                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+                submission.Tags = null;
+                submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
+
+                ArrayAnalysis.AnalyzeHistory(submission);
+                DivisionTemplateAnalysis.AnalyzeHistory(submission);
+            }
+        }
+
+        public Command PrintAllHistoryItemsCommand { get; private set; }
+
+        private void OnPrintAllHistoryItemsCommandExecute()
+        {
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+
+            foreach (var item in historyItems)
+            {
+                File.AppendAllText(filePath, item.FormattedValue + "\n");
+            }
+        }
+
+        public Command FixCommand { get; private set; }
+
+        private void OnFixCommandExecute()
+        {
+            foreach (var dt in CurrentPage.PageObjects.OfType<FuzzyFactorCard>())
+            {
+                var gridSize = dt.ArrayHeight / dt.Rows;
+
+
+                dt.SizeArrayToGridLevel(gridSize, false);
+
+                var position = 0.0;
+                foreach (var division in dt.VerticalDivisions)
+                {
+                    division.Position = position;
+                    division.Length = dt.GridSquareSize * division.Value;
+                    position = division.Position + division.Length;
+                }
+
+                dt.RaiseAllPropertiesChanged();
+            }
+        }
+
+        #endregion // Obsolete Commands 
+
+        #endregion // Analysis Commands
+
+        #endregion //Commands
     }
 }

@@ -731,11 +731,14 @@ namespace CLP.Entities
             Tags.Remove(tag);
         }
 
-        public void AddBoundary(Rect rect) { AddBoundary(rect.X, rect.Y, rect.Height, rect.Width); }
+        public void AddBoundary(Rect rect, string regionText = "") { AddBoundary(rect.X, rect.Y, rect.Height, rect.Width, regionText); }
 
-        public void AddBoundary(double xPos, double yPos, double height, double width)
+        public void AddBoundary(double xPos, double yPos, double height, double width, string  regionText = "")
         {
-            var boundary = new TemporaryBoundary(this, xPos, yPos, height, width);
+            var boundary = new TemporaryBoundary(this, xPos, yPos, height, width)
+                           {
+                               RegionText = regionText
+                           };
             PageObjects.Add(boundary);
         }
 

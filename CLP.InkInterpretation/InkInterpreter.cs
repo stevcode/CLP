@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 using System.Windows.Ink;
 using Windows.Foundation;
 using Windows.UI.Input.Inking;
@@ -89,17 +90,26 @@ namespace CLP.InkInterpretation
                 }
             }
 
-            //Asynchronously interpret strokes as text.
-            var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
-            var recognitionResults = recognitionTask.Result;
+            IReadOnlyList<InkRecognitionResult> recognitionResults;
+
+            try
+            {
+                //Asynchronously interpret strokes as text.
+                var recognitionTask = inkManager.RecognizeAsync(InkRecognitionTarget.All).AsTask();
+                recognitionResults = recognitionTask.Result;
+            }
+            catch (Exception)
+            {
+                return new List<string>();
+            }
 
             //Doing a recognition does not update the storage of results (the results that are stored inside the ink manager). 
             //We do that ourselves by calling this below method.
             inkManager.UpdateRecognitionResults(recognitionResults);
 
-            // Aggregate the 3 most likely result words, with spaces between.
+            // Aggregate the 5 most likely result words, with spaces between.
             var allInterpretations = new List<string>();
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 5; i++)
             {
                 try
                 {
@@ -122,14 +132,31 @@ namespace CLP.InkInterpretation
             foreach (var trimmed in trimmedInterpretations)
             {
                 int parsedInterpretation;
-                if (!int.TryParse(trimmed, out parsedInterpretation))
+                var adjustedInterpretation = trimmed.Replace("~", "2");
+                adjustedInterpretation = adjustedInterpretation.Replace("&", "8");
+                adjustedInterpretation = adjustedInterpretation.Replace(">", "7");
+                adjustedInterpretation = adjustedInterpretation.Replace("l", "1");
+                adjustedInterpretation = adjustedInterpretation.Replace("|", "1");
+                adjustedInterpretation = adjustedInterpretation.Replace("Z", "2");
+                adjustedInterpretation = adjustedInterpretation.Replace("z", "2");
+                if (int.TryParse(adjustedInterpretation, out parsedInterpretation))
                 {
-                    continue;
+                    if (parsedInterpretation == number)
+                    {
+                        return adjustedInterpretation;
+                    }
                 }
 
-                if (parsedInterpretation == number)
+                if (number == 18 &&
+                    adjustedInterpretation.Contains("if"))
                 {
-                    return trimmed;
+                    return number.ToString();
+                }
+
+                if (number > 10 &&
+                    adjustedInterpretation.Contains(number.ToString()))
+                {
+                    return number.ToString();
                 }
             }
 

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Collections;
+using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -446,9 +449,25 @@ namespace CLP.Entities
         public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
             InkCodedActions.GenerateInitialClusterings(page, historyActions);
-            var refinedHistoryActions = new List<IHistoryAction>();
 
+            // TODO: Do this before clustering.
+            var preProcessedInkActions = new List<IHistoryAction>();
             foreach (var historyAction in historyActions)
+            {
+                if (historyAction.CodedObject == Codings.OBJECT_INK &&
+                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
+                {
+                    var refinedInkActions = InkCodedActions.PreProcessInkChangeHistoryActions(page, historyAction);
+                    preProcessedInkActions.AddRange(refinedInkActions);
+                }
+                else
+                {
+                    preProcessedInkActions.Add(historyAction);
+                }
+            }
+
+            var refinedHistoryActions = new List<IHistoryAction>();
+            foreach (var historyAction in preProcessedInkActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
@@ -506,10 +525,11 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
+            if ((historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ||
+                historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
+                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -517,10 +537,10 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) &&
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+                var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -1202,6 +1222,14 @@ namespace CLP.Entities
                     var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
                     var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+
+                    var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
+                    if (!string.IsNullOrEmpty(formattedSkips))
+                    {
+                        var skipCodedValue = string.Format("\n  - skip [\"{0}\"]", formattedSkips);
+                        codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
+                    }
+
                     finalCodedRepresentations.Add(codedValue);
                     allRepresentations.Add(obj);
                 }

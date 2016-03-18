@@ -241,6 +241,8 @@ namespace Classroom_Learning_Partner.Services
 
         public void Analyze()
         {
+            #region TSV Batch
+
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
             if (!Directory.Exists(fileDirectory))
@@ -311,6 +313,8 @@ namespace Classroom_Learning_Partner.Services
                     File.AppendAllText(filePath, tabbedColumns);
                 }
             }
+
+            #endregion // TSV Batch
         } 
 
         #endregion // Batch Methods

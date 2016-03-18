@@ -56,17 +56,7 @@ namespace CLP.Entities
             set { SetValue(EquationInterpretationProperty, value); }
         }
 
-        public static readonly PropertyData EquationInterpretationProperty = RegisterProperty("EquationInterpretation", typeof (string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public List<string> SkipCountingValues
-        {
-            get { return GetValue<List<string>>(SkipCountingValuesProperty); }
-            set { SetValue(SkipCountingValuesProperty, value); }
-        }
-
-        public static readonly PropertyData SkipCountingValuesProperty = RegisterProperty("SkipCountingValues", typeof (List<string>), () => new List<string>());
-        
+        public static readonly PropertyData EquationInterpretationProperty = RegisterProperty("EquationInterpretation", typeof (string), string.Empty);      
 
         #region ATagBase Overrides
 
@@ -82,7 +72,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0} Array\n" + "Equation: {1}\n" + "Skip Count: {2}", ArrayName, EquationInterpretation, string.Join(",", SkipCountingValues)); }
+            get { return string.Format("ARR skip [{0}: {1}]", ArrayName, EquationInterpretation); }
         }
 
         #endregion //ATagBase Overrides
