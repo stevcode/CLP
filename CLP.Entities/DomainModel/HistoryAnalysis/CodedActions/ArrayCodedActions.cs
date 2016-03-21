@@ -275,12 +275,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            var codedObject = Codings.OBJECT_ARRAY;
-            var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
-            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
+            var actionID = string.Empty;
 
             #region Ink Divide Interpretation
+
+            var isInkDivide = false;
 
             var verticalDividers = new List<int> { 0 };
             var horizontalDividers = new List<int> { 0 };
@@ -322,36 +321,12 @@ namespace CLP.Entities
                     return null;
                 }
 
-                var inkDivideAction = new HistoryAction(page, historyItem)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = codedDescription,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID
-                };
-
                 verticalDividers.Add(dividerValue);
                 verticalDividers.Add(array.Columns);  // TODO: Fix for if multiple ink dividers are made in a row
                 verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
                 var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
-                inkDivideAction.CodedObjectActionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
-                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
-
-                var cluster = InkCodedActions.GetContainingCluster(stroke);
-                if (cluster != null)
-                {
-                    cluster.Strokes.Remove(stroke);
-                    if (cluster.StrokesOnPage.Contains(stroke))
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                    }
-                    if (cluster.StrokesErased.Contains(stroke))
-                    {
-                        cluster.StrokesErased.Remove(stroke);
-                    }
-                }
-
-                return inkDivideAction;
+                actionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
+                isInkDivide = true;
             }
 
             if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
@@ -373,42 +348,53 @@ namespace CLP.Entities
                     return null;
                 }
 
-                var inkDivideAction = new HistoryAction(page, historyItem)
-                {
-                    CodedObject = codedObject,
-                    CodedObjectAction = codedDescription,
-                    CodedObjectID = codedID,
-                    CodedObjectIDIncrement = incrementID
-                };
-
                 horizontalDividers.Add(dividerValue);
                 horizontalDividers.Add(array.Rows);
                 horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
                 var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
 
-                inkDivideAction.CodedObjectActionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
-                inkDivideAction.MetaData.Add("REFERENCE_PAGE_OBJECT_ID", array.ID);
-
-                var cluster = InkCodedActions.GetContainingCluster(stroke);
-                if (cluster != null)
-                {
-                    cluster.Strokes.Remove(stroke);
-                    if (cluster.StrokesOnPage.Contains(stroke))
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                    }
-                    if (cluster.StrokesErased.Contains(stroke))
-                    {
-                        cluster.StrokesErased.Remove(stroke);
-                    }
-                }
-
-                return inkDivideAction;
+                actionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
+                isInkDivide = true;
             }
 
             #endregion // Ink Divide Interpretation
+            
+            if (!isInkDivide)
+            {
+                return null;
+            }
 
-            return null;
+            var codedObject = Codings.OBJECT_ARRAY;
+            var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
+
+            var inkDivideAction = new HistoryAction(page, historyItem)
+            {
+                CodedObject = codedObject,
+                CodedObjectAction = codedDescription,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                CodedObjectActionID = actionID
+            };
+
+            inkDivideAction.ReferencePageObjectID = array.ID;
+
+            var cluster = InkCodedActions.GetContainingCluster(stroke);
+            if (cluster != null)
+            {
+                cluster.Strokes.Remove(stroke);
+                if (cluster.StrokesOnPage.Contains(stroke))
+                {
+                    cluster.StrokesOnPage.Remove(stroke);
+                }
+                if (cluster.StrokesErased.Contains(stroke))
+                {
+                    cluster.StrokesErased.Remove(stroke);
+                }
+            }
+
+            return inkDivideAction;
         }
 
         public static IHistoryAction SkipCounting(CLPPage page, IHistoryAction inkAction)
