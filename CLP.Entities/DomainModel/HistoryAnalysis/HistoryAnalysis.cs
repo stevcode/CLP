@@ -56,13 +56,13 @@ namespace CLP.Entities
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "2"
                                             });
-            var refinedInkHistoryActions = RefineInkHistoryActions(page, initialHistoryActions);
-            page.History.HistoryActions.AddRange(refinedInkHistoryActions);
+            var clusteredInkHistoryActions = ClusterInkHistoryActions(page, initialHistoryActions);
+            page.History.HistoryActions.AddRange(clusteredInkHistoryActions);
 
             File.AppendAllText(filePath, "\nPASS [2]" + "\n");
-            foreach (var item in refinedInkHistoryActions)
+            foreach (var item in clusteredInkHistoryActions)
             {
-                var semi = item == refinedInkHistoryActions.Last() ? string.Empty : "; ";
+                var semi = item == clusteredInkHistoryActions.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
@@ -72,18 +72,18 @@ namespace CLP.Entities
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "3"
                                             });
-            var interpretedHistoryActions = InterpretHistoryActions(page, refinedInkHistoryActions);
-            page.History.HistoryActions.AddRange(interpretedHistoryActions);
+            var interpretedInkHistoryActions = InterpretInkHistoryActions(page, clusteredInkHistoryActions);
+            page.History.HistoryActions.AddRange(interpretedInkHistoryActions);
 
             File.AppendAllText(filePath, "\nPASS [3]" + "\n");
-            foreach (var item in interpretedHistoryActions)
+            foreach (var item in interpretedInkHistoryActions)
             {
-                var semi = item == interpretedHistoryActions.Last() ? string.Empty : "; ";
+                var semi = item == interpretedInkHistoryActions.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
             // Last Pass
-            GenerateTags(page, interpretedHistoryActions);
+            GenerateTags(page, interpretedInkHistoryActions);
 
             File.AppendAllText(filePath, "\n\n\n*****Tags*****" + "\n\n");
             foreach (var tag in page.Tags)
@@ -448,14 +448,14 @@ namespace CLP.Entities
 
         #endregion // First Pass: Initialization
 
-        #region Second Pass: Ink Refinement
+        #region Second Pass: Ink Clustering
 
         public const double MAX_DISTANCE_Z_SCORE = 3.0;
         public const double DIMENSION_MULTIPLIER_THRESHOLD = 3.0;
 
-        public static List<IHistoryAction> RefineInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        public static List<IHistoryAction> ClusterInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
-            InkCodedActions.GenerateInitialClusterings(page, historyActions);
+            InkCodedActions.GenerateInitialInkClusters(page, historyActions);
 
             // TODO: Do this before clustering.
             var preProcessedInkActions = new List<IHistoryAction>();
@@ -464,7 +464,7 @@ namespace CLP.Entities
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    var refinedInkActions = InkCodedActions.PreProcessInkChangeHistoryActions(page, historyAction);
+                    var refinedInkActions = InkCodedActions.RefineInkClusters(page, historyAction);
                     preProcessedInkActions.AddRange(refinedInkActions);
                 }
                 else
@@ -491,11 +491,11 @@ namespace CLP.Entities
             return refinedHistoryActions;
         }
 
-        #endregion // Second Pass: Ink Refinement
+        #endregion // Second Pass: Ink Clustering
 
-        #region Third Pass: Interpretation
+        #region Third Pass: Ink Interpretation
 
-        public static List<IHistoryAction> InterpretHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        public static List<IHistoryAction> InterpretInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
             var allInterpretedHistoryActions = new List<IHistoryAction>();
 
@@ -575,13 +575,32 @@ namespace CLP.Entities
             return allInterpretedActions;
         }
 
-        #endregion // Third Pass: Interpretation
+        #endregion // Third Pass: Ink Interpretation
 
-        // 4th pass: simple pattern interpretations
+        #region Fourth Pass: Refinement
 
-        // 5th pass: complex pattern interpretations
+        public static List<IHistoryAction> RefineHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        {
+            var allRefinedHistoryActions = new List<IHistoryAction>();
 
-        // 6th pass: Tag generation
+            // TODO: Combine ARR skip + Ink ignore + ARR skip into single ARR skip
+            //foreach (var historyAction in historyActions)
+            //{
+            //    if (historyAction.CodedObject == Codings.OBJECT_INK)
+            //    {
+            //        var refinedHistoryActions = AttemptHistoryActionInterpretation(page, historyAction);
+            //        allRefinedHistoryActions.AddRange(refinedHistoryActions);
+            //    }
+            //    else
+            //    {
+            //        allRefinedHistoryActions.Add(historyAction);
+            //    }
+            //}
+
+            return allRefinedHistoryActions;
+        }
+
+        #endregion // Fourth Pass: Refinement
 
         #region Last Pass: Tag Generation
 

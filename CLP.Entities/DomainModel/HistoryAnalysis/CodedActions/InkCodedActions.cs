@@ -109,7 +109,7 @@ namespace CLP.Entities
             return cluster;
         }
 
-        public static void GenerateInitialClusterings(CLPPage page, List<IHistoryAction> historyActions)
+        public static void GenerateInitialInkClusters(CLPPage page, List<IHistoryAction> historyActions)
         {
             InkClusters.Clear();
             var inkActions = historyActions.Where(h => h.CodedObject == Codings.OBJECT_INK && h.CodedObjectAction == Codings.ACTION_INK_CHANGE).ToList();
@@ -245,7 +245,7 @@ namespace CLP.Entities
             //}
         }
 
-        public static List<IHistoryAction> PreProcessInkChangeHistoryActions(CLPPage page, IHistoryAction historyAction)
+        public static List<IHistoryAction> RefineInkClusters(CLPPage page, IHistoryAction historyAction)
         {
             if (page == null ||
                 historyAction == null ||
