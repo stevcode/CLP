@@ -1737,35 +1737,5 @@ namespace CLP.Entities
         }
 
         #endregion // Last Pass: Tag Generation
-
-        // TODO: Refactor this to someplace more relevant
-        public static string FindColorName(Color color)
-        {
-            var leastDifference = 0;
-            var colorName = string.Empty;
-
-            foreach (var systemColor in typeof (Color).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy))
-            {
-                var systemColorValue = (Color)systemColor.GetValue(null, null);
-
-                if (systemColorValue == color)
-                {
-                    colorName = systemColor.Name;
-                    break;
-                }
-
-                int a = color.A - systemColorValue.A, r = color.R - systemColorValue.R, g = color.G - systemColorValue.G, b = color.B - systemColorValue.B, difference = a * a + r * r + g * g + b * b;
-
-                if (difference >= leastDifference)
-                {
-                    continue;
-                }
-
-                colorName = systemColor.Name;
-                leastDifference = difference;
-            }
-
-            return colorName;
-        }
     }
 }
