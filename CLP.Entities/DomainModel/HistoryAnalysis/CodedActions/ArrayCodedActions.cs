@@ -458,7 +458,7 @@ namespace CLP.Entities
                                     CodedObjectIDIncrement = incrementID,
                                     CodedObjectActionID = codedActionID,
                                     ReferencePageObjectID = referenceArrayID
-            };
+                                };
 
             return historyAction;
         }

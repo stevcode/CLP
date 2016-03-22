@@ -539,6 +539,26 @@ namespace CLP.Entities
             return stroke.Clone();
         }
 
+        public static bool IsOnPageAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("page", page);
+            Argument.IsNotNull("historyIndex", historyIndex);
+
+            var strokeID = stroke.GetStrokeID();
+
+            var addedAtAnyPointHistoryItem = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
+            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+
+            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
+                page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>()
+                    .FirstOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
+
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.StrokeIDsAdded.Contains(strokeID);
+
+            return isOnPageBefore || !isPartOfHistory;
+        }
+
         #endregion // History
 
         #region Shape Detection

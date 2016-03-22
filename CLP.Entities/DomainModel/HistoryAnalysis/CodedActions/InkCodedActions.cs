@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media.TextFormatting;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -18,7 +19,6 @@ namespace CLP.Entities
             ARITH,
             PossibleARReqn,
             ARReqn,
-            PossibleARRskip,
             ARRskip
         }
 
@@ -29,6 +29,8 @@ namespace CLP.Entities
             StrokesErased = new StrokeCollection();
             ClusterName = string.Empty;
             ClusterType = ClusterTypes.Unknown;
+            PageObjectReferenceID = string.Empty;
+            LocationReference = Codings.ACTIONID_INK_LOCATION_NONE;
         }
 
         public StrokeCollection Strokes { get; set; }
@@ -36,7 +38,10 @@ namespace CLP.Entities
         public StrokeCollection StrokesErased { get; set; }
         public string ClusterName { get; set; }
         public ClusterTypes ClusterType { get; set; }
-        public string CurrentInterpretedValue { get; set; }
+        public string PageObjectReferenceID { get; set; }
+        public string LocationReference { get; set; }
+
+        public List<Stroke> GetStrokesOnPageAtHistoryIndex(CLPPage page, int historyIndex) { return page.GetStrokesOnPageAtHistoryIndex(historyIndex).Where(s => Strokes.Contains(s)).ToList(); }
     }
 
     public static class InkCodedActions
@@ -308,7 +313,59 @@ namespace CLP.Entities
 
         public static List<IHistoryAction> RefineSkipCountClusters(CLPPage page, List<IHistoryAction> historyActions)
         {
+            /*
+            Look for historyAction patterns
 
+            ARR add, INK change, ARR remove/End/ARR move
+            ARR move, INK change, ARR remove/End/ARR move
+            Record list of tuples/anonymous lambdas that store startHistoryIndex and endHistoryIndex and arrayID (probably only need endHistoryIndex)
+
+            get array dimensions/size/location at historyIndex
+            get strokes on page at historyIndex
+            run through IsSkipCounting()
+
+            if false do nothing with clusters?
+            else all grouped strokes in single cluster, defined as ARRskip
+                 all rejected subdivided into appropriate clusters
+            */
+
+            var testData = new[] { new
+                                   {
+                                       ArrayID = "blah",
+                                       HistoryIndex = 3
+                                   },
+                                   new
+                                   {
+                                       ArrayID = "blarg",
+                                       HistoryIndex = 7
+                                   } }.ToList();
+
+            foreach (var item in testData)
+            {
+                var arrayID = item.ArrayID;
+                var historyIndex = item.HistoryIndex;
+
+                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
+                if (array == null)
+                {
+                    continue;
+                }
+
+
+                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(historyIndex);
+                var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, historyIndex);
+
+
+
+
+                var rejectedStrokes = strokeGroupPerRow[-1].ToList();
+                if (strokeGroupPerRow.ContainsKey(0))
+                {
+                    rejectedStrokes = rejectedStrokes.Concat(strokeGroupPerRow[0]).Distinct().ToList();
+                }
+                var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 || kv.Key != -1).SelectMany(kv => kv.Value).ToList();
+               // var
+            }
 
             //var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
             //var historyIndex = historyItems.First().HistoryIndex;
