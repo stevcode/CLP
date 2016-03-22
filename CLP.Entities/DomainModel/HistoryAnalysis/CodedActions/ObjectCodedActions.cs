@@ -218,16 +218,6 @@ namespace CLP.Entities
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
         }
 
-        public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(CLPPage page, int historyIndex, bool isIncludingMC = false)
-        {
-            if (isIncludingMC)
-            {
-                return page.PageObjects.Where(p => p.IsOnPageAtHistoryIndex(historyIndex)).ToList();
-            }
-
-            return page.PageObjects.Where(p => p.IsOnPageAtHistoryIndex(historyIndex) && !(p is MultipleChoiceBox)).ToList();
-        }
-
         public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)
         {
             var position = pageObject.GetPositionAtHistoryIndex(historyIndex);

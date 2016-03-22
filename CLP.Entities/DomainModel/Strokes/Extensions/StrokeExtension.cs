@@ -142,6 +142,21 @@ namespace CLP.Entities
 
         #endregion //ExtendedProperties
 
+        #region Equality
+
+        public static bool IsEqualByID(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var strokeID = stroke.GetStrokeID();
+            var otherID = otherStroke.GetStrokeID();
+
+            return strokeID == otherID && strokeID != "noStrokeID" && otherID != "noStrokeID";
+        } 
+
+        #endregion // Equality
+
         #region Transformation
 
         /// <summary>

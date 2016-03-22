@@ -302,7 +302,7 @@ namespace CLP.Entities
         {
             var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
             var processedInkActions = new List<IHistoryAction>();
-            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyItems.First().HistoryIndex);
+            var pageObjectsOnPage = page.GetPageObjectsOnPageAtHistoryIndex(historyItems.First().HistoryIndex);
             // TODO: validation
 
             var historyItemBuffer = new List<IHistoryItem>();

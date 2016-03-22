@@ -258,11 +258,7 @@ namespace CLP.Entities
             var stroke = strokes.First();
 
             var historyIndex = objectsChangedHistoryItem.HistoryIndex;
-            var arraysOnPage =
-                ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex)
-                                  .OfType<CLPArray>()
-                                  .Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn)
-                                  .ToList();
+            var arraysOnPage = page.GetPageObjectsOnPageAtHistoryIndex(historyIndex).OfType<CLPArray>().Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn).ToList();
 
             if (!arraysOnPage.Any())
             {
@@ -1173,7 +1169,7 @@ namespace CLP.Entities
                 var overlapStrokesInRow = overlappingStrokes.Where(s => strokesInRow.Contains(s)).ToList();
                 var nonOverlapStrokesInRow = strokesInRow.Where(s => !overlapStrokesInRow.Contains(s)).ToList();
                 var strokeCombinations = new List<List<Stroke>>();
-                var subsets = SubSetsOf(overlapStrokesInRow);
+                var subsets = overlapStrokesInRow.SubSetsOf();
                 strokeCombinations.AddRange(subsets.Select(subset => nonOverlapStrokesInRow.Concat(subset).ToList()));
 
                 // Get best interpretation from subsets.
@@ -1275,19 +1271,6 @@ namespace CLP.Entities
 
             return interpretedRowValues;
         }
-
-        private static IEnumerable<IEnumerable<T>> SubSetsOf<T>(IEnumerable<T> source)
-        {
-            if (!source.Any())
-                return Enumerable.Repeat(Enumerable.Empty<T>(), 1);
-
-            var element = source.Take(1);
-
-            var haveNots = SubSetsOf(source.Skip(1));
-            var haves = haveNots.Select(set => element.Concat(set));
-
-            return haves.Concat(haveNots);
-        } 
 
         public static string FormatInterpretedSkipCountGroups(List<string> interpretedRowValues)
         {

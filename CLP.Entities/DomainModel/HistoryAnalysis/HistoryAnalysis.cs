@@ -702,7 +702,7 @@ namespace CLP.Entities
             var analysisCodes = new List<string>();
             foreach (var index in keyIndexes)
             {
-                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject || p is Bin).ToList();
+                var pageObjectOnPage = page.GetPageObjectsOnPageAtHistoryIndex(index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject || p is Bin).ToList();
                 var stampedObjectGroups = new Dictionary<string, int>();
                 foreach (var pageObject in pageObjectOnPage)
                 {
