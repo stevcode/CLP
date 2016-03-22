@@ -450,45 +450,32 @@ namespace CLP.Entities
 
         #region Second Pass: Ink Clustering
 
-        public const double MAX_DISTANCE_Z_SCORE = 3.0;
-        public const double DIMENSION_MULTIPLIER_THRESHOLD = 3.0;
-
         public static List<IHistoryAction> ClusterInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
-            InkCodedActions.GenerateInitialInkClusters(page, historyActions);
+            var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, historyActions);
 
-            // TODO: Do this before clustering.
-            var preProcessedInkActions = new List<IHistoryAction>();
-            foreach (var historyAction in historyActions)
+            InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
+
+            // TODO: Refine ANS FI Clusters
+            refinedInkActions = InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
+
+            // TODO: Rename/fix - Refine Temporal Clusters
+            var skipCountActions = new List<IHistoryAction>();
+            foreach (var historyAction in refinedInkActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    var refinedInkActions = InkCodedActions.RefineInkClusters(page, historyAction);
-                    preProcessedInkActions.AddRange(refinedInkActions);
+                    var refinedInkActionsq = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
+                    skipCountActions.AddRange(refinedInkActionsq);
                 }
                 else
                 {
-                    preProcessedInkActions.Add(historyAction);
+                    skipCountActions.Add(historyAction);
                 }
             }
 
-            var refinedHistoryActions = new List<IHistoryAction>();
-            foreach (var historyAction in preProcessedInkActions)
-            {
-                if (historyAction.CodedObject == Codings.OBJECT_INK &&
-                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
-                {
-                    var refinedInkActions = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
-                    refinedHistoryActions.AddRange(refinedInkActions);
-                }
-                else
-                {
-                    refinedHistoryActions.Add(historyAction);
-                }
-            }
-
-            return refinedHistoryActions;
+            return skipCountActions;
         }
 
         #endregion // Second Pass: Ink Clustering

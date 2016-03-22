@@ -42,7 +42,8 @@ namespace CLP.Entities
                                     CodedObjectAction = Codings.ACTION_ARRAY_ROTATE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID
+                                    CodedObjectActionID = codedActionID,
+                                    ReferencePageObjectID = arrayID
                                 };
 
             return historyAction;
@@ -106,8 +107,9 @@ namespace CLP.Entities
                                     CodedObjectAction = Codings.ACTION_ARRAY_CUT,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID
-                                };
+                                    CodedObjectActionID = codedActionID,
+                                    ReferencePageObjectID = cutArrayID
+            };
 
             return historyAction;
         }
@@ -220,7 +222,8 @@ namespace CLP.Entities
                                     CodedObjectAction = Codings.ACTION_ARRAY_DIVIDE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID
+                                    CodedObjectActionID = codedActionID,
+                                    ReferencePageObjectID = dividedArrayID
                                 };
 
             return historyAction;
@@ -366,29 +369,14 @@ namespace CLP.Entities
             var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
 
             var inkDivideAction = new HistoryAction(page, historyItem)
-            {
-                CodedObject = codedObject,
-                CodedObjectAction = codedDescription,
-                CodedObjectID = codedID,
-                CodedObjectIDIncrement = incrementID,
-                CodedObjectActionID = actionID
-            };
-
-            inkDivideAction.ReferencePageObjectID = array.ID;
-
-            var cluster = InkCodedActions.GetContainingCluster(stroke);
-            if (cluster != null)
-            {
-                cluster.Strokes.Remove(stroke);
-                if (cluster.StrokesOnPage.Contains(stroke))
-                {
-                    cluster.StrokesOnPage.Remove(stroke);
-                }
-                if (cluster.StrokesErased.Contains(stroke))
-                {
-                    cluster.StrokesErased.Remove(stroke);
-                }
-            }
+                                  {
+                                      CodedObject = codedObject,
+                                      CodedObjectAction = codedDescription,
+                                      CodedObjectID = codedID,
+                                      CodedObjectIDIncrement = incrementID,
+                                      CodedObjectActionID = actionID,
+                                      ReferencePageObjectID = array.ID
+                                  };
 
             return inkDivideAction;
         }
@@ -468,8 +456,9 @@ namespace CLP.Entities
                                     CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID
-                                };
+                                    CodedObjectActionID = codedActionID,
+                                    ReferencePageObjectID = referenceArrayID
+            };
 
             return historyAction;
         }
@@ -522,12 +511,13 @@ namespace CLP.Entities
                 cluster.ClusterType = InkCluster.ClusterTypes.ARReqn;
 
                 var historyAction = new HistoryAction(page, inkAction)
-                {
-                    CodedObject = Codings.OBJECT_ARRAY,
-                    CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
-                    CodedObjectID = objectID,
-                    CodedObjectActionID = string.Format("\"{0}\"", interpretation)
-                };
+                                    {
+                                        CodedObject = Codings.OBJECT_ARRAY,
+                                        CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                                        CodedObjectID = objectID,
+                                        CodedObjectActionID = string.Format("\"{0}\"", interpretation),
+                                        ReferencePageObjectID = referenceArrayID
+                                    };
 
                 return historyAction;
             }
@@ -569,12 +559,13 @@ namespace CLP.Entities
                 var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
 
                 var historyAction = new HistoryAction(page, inkAction)
-                {
-                    CodedObject = Codings.OBJECT_ARRAY,
-                    CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
-                    CodedObjectID = objectID,
-                    CodedObjectActionID = formattedInterpretation
-                };
+                                    {
+                                        CodedObject = Codings.OBJECT_ARRAY,
+                                        CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                                        CodedObjectID = objectID,
+                                        CodedObjectActionID = formattedInterpretation,
+                                        ReferencePageObjectID = referenceArrayID
+                                    };
 
                 return historyAction;
             }
@@ -603,33 +594,6 @@ namespace CLP.Entities
 
             return isSkipCounting ? FormatInterpretedSkipCountGroups(interpretedRowValues) : string.Empty;
         }
-
-        #region Logging
-
-        public static int Rule1Count = 0;
-        public static int Rule2Count = 0;
-        public static int Rule3aCount = 0;
-        public static int Rule3bCount = 0;
-        public static int Rule3cCount = 0;
-        public static int Rule4Count = 0;
-        public static int Rule5Count = 0;
-        public static int Rule6Count = 0;
-        public static int Rule7cCount = 0;
-        public static int Rule7dCount = 0;
-        public static int Rule8aCount = 0;
-        public static int Rule8bCount = 0;
-        public static int Rule8cCount = 0;
-        public static int Rule9Count = 0;
-        public static int Rule10Count = 0;
-        public static int Rule10RejectedStrokesCount = 0;
-        public static int RejectedStrokesCount = 0;
-        public static int SkipStrokesCount = 0;
-        public static int UngroupedStrokesCount = 0;
-        public static int OverlappingStrokesCount = 0;
-        public static int AllStrokesAreOutsideOfAcceptableBoundary = 0;
-        
-
-        #endregion // Logging
 
         // Dictionary key "-1" contains all rejected strokes.
         public static Dictionary<int, StrokeCollection> GroupPossibleSkipCountStrokes(CLPPage page, CLPArray array, List<Stroke> strokes, int historyIndex, bool isDebugging = false)
@@ -1407,6 +1371,28 @@ namespace CLP.Entities
         #endregion // Utility Methods
 
         #region Logging
+
+        public static int Rule1Count = 0;
+        public static int Rule2Count = 0;
+        public static int Rule3aCount = 0;
+        public static int Rule3bCount = 0;
+        public static int Rule3cCount = 0;
+        public static int Rule4Count = 0;
+        public static int Rule5Count = 0;
+        public static int Rule6Count = 0;
+        public static int Rule7cCount = 0;
+        public static int Rule7dCount = 0;
+        public static int Rule8aCount = 0;
+        public static int Rule8bCount = 0;
+        public static int Rule8cCount = 0;
+        public static int Rule9Count = 0;
+        public static int Rule10Count = 0;
+        public static int Rule10RejectedStrokesCount = 0;
+        public static int RejectedStrokesCount = 0;
+        public static int SkipStrokesCount = 0;
+        public static int UngroupedStrokesCount = 0;
+        public static int OverlappingStrokesCount = 0;
+        public static int AllStrokesAreOutsideOfAcceptableBoundary = 0;
 
         public static int ArraysRule0 = 0;
         public static int ArraysRule1 = 0;

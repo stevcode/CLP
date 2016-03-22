@@ -41,7 +41,7 @@ namespace CLP.Entities
 
     public static class InkCodedActions
     {
-        #region Verify And Generate Methods
+        #region Initialization
 
         public static IHistoryAction ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isChange = true)
         {
@@ -54,15 +54,15 @@ namespace CLP.Entities
             }
 
             var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
-                                {
-                                    CodedObject = Codings.OBJECT_INK,
-                                    CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
-                                };
+            {
+                CodedObject = Codings.OBJECT_INK,
+                CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
+            };
 
             return historyAction;
         }
 
-        public static IHistoryAction GroupAddOrErase(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isAdd = true)
+        public static IHistoryAction StrokesAddOrErase(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isAdd = true)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItems == null ||
@@ -73,13 +73,17 @@ namespace CLP.Entities
             }
 
             var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
-                                {
-                                    CodedObject = Codings.OBJECT_INK,
-                                    CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE
-                                };
+            {
+                CodedObject = Codings.OBJECT_INK,
+                CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE
+            };
 
             return historyAction;
         }
+
+        #endregion // Initialization
+
+        #region Clustering
 
         public static readonly List<InkCluster> InkClusters = new List<InkCluster>();
 
@@ -221,10 +225,10 @@ namespace CLP.Entities
             }
 
             var ignoredCluster = new InkCluster(unclusteredStrokes)
-                                 {
-                                     ClusterName = "IGNORED",
-                                     ClusterType = InkCluster.ClusterTypes.Ignore
-                                 };
+            {
+                ClusterName = "IGNORED",
+                ClusterType = InkCluster.ClusterTypes.Ignore
+            };
 
             InkClusters.Add(ignoredCluster);
 
@@ -245,55 +249,115 @@ namespace CLP.Entities
             //}
         }
 
-        public static List<IHistoryAction> RefineInkClusters(CLPPage page, IHistoryAction historyAction)
+        public static List<IHistoryAction> RefineInkDivideClusters(CLPPage page, List<IHistoryAction> historyActions)
         {
-            if (page == null ||
-                historyAction == null ||
-                historyAction.CodedObjectAction != Codings.ACTION_INK_CHANGE)
+            var allRefinedActions = new List<IHistoryAction>();
+            foreach (var historyAction in historyActions)
             {
-                return new List<IHistoryAction>();
-            }
-
-            var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
-            var preProcessedInkActions = new List<IHistoryAction>();
-            var historyItemBuffer = new List<IHistoryItem>();
-
-            foreach (var currentHistoryItem in historyItems)
-            {
-                var inkDivideAction = ArrayCodedActions.InkDivide(page, currentHistoryItem);
-                if (inkDivideAction != null)
+                if (historyAction.CodedObject == Codings.OBJECT_INK &&
+                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
+                    var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
+                    var refinedInkActions = new List<IHistoryAction>();
+                    var historyItemBuffer = new List<IHistoryItem>();
+
+                    foreach (var currentHistoryItem in historyItems)
+                    {
+                        var inkDivideAction = ArrayCodedActions.InkDivide(page, currentHistoryItem);
+                        if (inkDivideAction != null)
+                        {
+                            if (historyItemBuffer.Any())
+                            {
+                                var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
+                                {
+                                    CodedObject = Codings.OBJECT_INK,
+                                    CodedObjectAction = Codings.ACTION_INK_CHANGE
+                                };
+                                refinedInkActions.Add(bufferedHistoryAction);
+                                historyItemBuffer.Clear();
+                            }
+
+                            refinedInkActions.Add(inkDivideAction);
+                            continue;
+                        }
+
+                        historyItemBuffer.Add(currentHistoryItem);
+                    }
+
                     if (historyItemBuffer.Any())
                     {
                         var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
-                                                    {
-                                                        CodedObject = Codings.OBJECT_INK,
-                                                        CodedObjectAction = Codings.ACTION_INK_CHANGE
-                                                    };
-                        preProcessedInkActions.Add(bufferedHistoryAction);
+                        {
+                            CodedObject = Codings.OBJECT_INK,
+                            CodedObjectAction = Codings.ACTION_INK_CHANGE
+                        };
+                        refinedInkActions.Add(bufferedHistoryAction);
                         historyItemBuffer.Clear();
                     }
 
-                    preProcessedInkActions.Add(inkDivideAction);
-                    continue;
+                    allRefinedActions.AddRange(refinedInkActions);
                 }
-
-                historyItemBuffer.Add(currentHistoryItem);
+                else
+                {
+                    allRefinedActions.Add(historyAction);
+                }
             }
 
-            if (historyItemBuffer.Any())
-            {
-                var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
-                                            {
-                                                CodedObject = Codings.OBJECT_INK,
-                                                CodedObjectAction = Codings.ACTION_INK_CHANGE
-                                            };
-                preProcessedInkActions.Add(bufferedHistoryAction);
-                historyItemBuffer.Clear();
-            }
-
-            return preProcessedInkActions;
+            return allRefinedActions;
         }
+
+        public static List<IHistoryAction> RefineSkipCountClusters(CLPPage page, List<IHistoryAction> historyActions)
+        {
+
+
+            //var historyItems = historyAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
+            //var historyIndex = historyItems.First().HistoryIndex;
+
+            //var arraysOnPage = page.GetPageObjectsOnPageAtHistoryIndex(historyIndex).OfType<CLPArray>().ToList();
+
+            //var refinedInkActions = new List<IHistoryAction>();
+            //var historyItemBuffer = new List<IHistoryItem>();
+
+            //foreach (var currentHistoryItem in historyItems)
+            //{
+            //    var inkDivideAction = ArrayCodedActions.InkDivide(page, currentHistoryItem);
+            //    if (inkDivideAction != null)
+            //    {
+            //        if (historyItemBuffer.Any())
+            //        {
+            //            var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
+            //            {
+            //                CodedObject = Codings.OBJECT_INK,
+            //                CodedObjectAction = Codings.ACTION_INK_CHANGE
+            //            };
+            //            refinedInkActions.Add(bufferedHistoryAction);
+            //            historyItemBuffer.Clear();
+            //        }
+
+            //        refinedInkActions.Add(inkDivideAction);
+            //        continue;
+            //    }
+
+            //    historyItemBuffer.Add(currentHistoryItem);
+            //}
+
+            //if (historyItemBuffer.Any())
+            //{
+            //    var bufferedHistoryAction = new HistoryAction(page, historyItemBuffer)
+            //    {
+            //        CodedObject = Codings.OBJECT_INK,
+            //        CodedObjectAction = Codings.ACTION_INK_CHANGE
+            //    };
+            //    refinedInkActions.Add(bufferedHistoryAction);
+            //    historyItemBuffer.Clear();
+            //}
+
+            //return refinedInkActions;
+
+            return null;
+        }
+
+        #endregion // Clustering
 
         /// <summary>Processes "INK change" action into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" actions</summary>
         /// <param name="page">Parent page the history action belongs to.</param>
@@ -560,7 +624,7 @@ namespace CLP.Entities
                     currentClusterReference.ClusterName = numberOfNamedClusters.ToLetter().ToUpper();
                 }
 
-                var refinedHistoryAction = GroupAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isCurrentInkAdd);
+                var refinedHistoryAction = StrokesAddOrErase(page, historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().ToList(), isCurrentInkAdd);
                 refinedHistoryAction.CodedObjectID = currentClusterReference.ClusterName;
                 if (currentPageObjectReference != null)
                 {
@@ -742,7 +806,6 @@ namespace CLP.Entities
             return historyAction;
         }
 
-        #endregion // Verify And Generate Methods
 
         #region Utility Static Methods
 
