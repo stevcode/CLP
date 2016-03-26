@@ -171,6 +171,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                   "pack://application:,,,/Resources/Images/TempIcon32.png",
                                                                   AddPageObjectToPageCommand,
                                                                   "MULTIPLECHOICEBOX");
+
+            // Recognition
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -325,6 +328,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Bin
         private RibbonButton _insertBinButton;
+
+        // Recognition Regions
+        private RibbonButton _insertRecognitionRegionButton;
 
         #endregion //Insert PageObject Buttons
 
@@ -886,6 +892,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "MULTIPLECHOICEBOX":
                     MultipleChoiceViewModel.AddMultipleChoiceToPage(CurrentPage);
                     break;
+
+                // Recognition
+                case "ANSWERFILLIN":
+                    InterpretationRegionViewModel.AddInterpretationRegionToPage(CurrentPage);
+                    break;
             }
 
             PageInteractionMode = PageInteractionModes.Select;
@@ -904,12 +915,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // Page Interaction Modes
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
-            Buttons.Add(_setEraseModeButton);
-            Buttons.Add(_setMarkModeButton);
+            //Buttons.Add(_setEraseModeButton);
+            //Buttons.Add(_setMarkModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
-            Buttons.Add(_setDividerCreationModeButton);
+            //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
@@ -923,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertDivisionTemplateButton);
-            Buttons.Add(_insertPileButton);
+            //Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
 
             // Insert Shapes
@@ -940,9 +951,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
+            Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
