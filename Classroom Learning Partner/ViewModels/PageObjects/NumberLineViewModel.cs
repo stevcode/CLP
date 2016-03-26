@@ -446,7 +446,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var oldHeight = numberLine.Height;
                 var oldYPosition = numberLine.YPosition;
-                if (!numberLine.JumpSizes.Any())
+                if (!numberLine.JumpSizes.Any() &&
+                    numberLine.NumberLineType != NumberLineTypes.AutoArcs)
                 {
                     numberLine.Height = numberLine.NumberLineHeight;
                     numberLine.YPosition += (oldHeight - numberLine.Height);
