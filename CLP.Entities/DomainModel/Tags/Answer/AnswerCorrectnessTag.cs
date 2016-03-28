@@ -8,6 +8,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class AnswerCorrectnessTag : ATagBase
     {
         #region Constructors

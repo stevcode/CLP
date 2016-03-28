@@ -9,6 +9,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class Bin : AStrokeAndPageObjectAccepter, ICountable
     {
         #region Constructors

@@ -51,7 +51,6 @@ namespace CLP.Entities
         #region Navigation Properties
 
         /// <summary>Location of the <see cref="IHistoryAction" /> in the list of <see cref="IHistoryAction" />s.</summary>
-        [XmlAttribute]
         public int HistoryActionIndex
         {
             get { return GetValue<int>(HistoryActionIndexProperty); }
@@ -124,7 +123,6 @@ namespace CLP.Entities
         #region Coded Portions
 
         /// <summary>CodedObject portion of the CodedHistoryAction report.</summary>
-        [XmlAttribute]
         public string CodedObject
         {
             get { return GetValue<string>(CodedObjectProperty); }
@@ -162,7 +160,6 @@ namespace CLP.Entities
         public static readonly PropertyData IsSubTypeForcedVisibleProperty = RegisterProperty("IsSubTypeForcedVisible", typeof(bool), false);
 
         /// <summary>ObjectAction portion of the CodedHistoryAction report.</summary>
-        [XmlAttribute]
         public string CodedObjectAction
         {
             get { return GetValue<string>(CodedObjectActionProperty); }

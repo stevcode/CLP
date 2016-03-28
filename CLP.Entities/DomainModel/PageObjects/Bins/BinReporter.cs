@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class BinReporter : APageObjectBase, IReporter
     {
         #region Constructors

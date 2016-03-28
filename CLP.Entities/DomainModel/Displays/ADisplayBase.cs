@@ -10,6 +10,7 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public abstract class ADisplayBase : AEntityBase, IDisplay
     {
         #region Constructors
