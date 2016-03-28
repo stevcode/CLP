@@ -253,6 +253,8 @@ namespace CLP.Entities
             RefreshParts();
         }
 
+        public override bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject) { return pageObject is Mark; }
+
         #endregion //APageObjectAccepter Overrides
 
         #region ICountable Implementation
