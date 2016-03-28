@@ -296,11 +296,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-
+            
             var index = Notebook.Pages.IndexOf(currentPage);
 
             if (index > 0)
             {
+                ACLPPageBaseViewModel.ClearAdorners(currentPage);
                 var page = panel.Notebook.Pages[index - 1];
                 panel.CurrentPage = page;
             }
@@ -336,6 +337,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = panel.Notebook.Pages.IndexOf(currentPage);
             if (index < panel.Notebook.Pages.Count - 1)
             {
+                ACLPPageBaseViewModel.ClearAdorners(currentPage);
                 var page = panel.Notebook.Pages[index + 1];
                 panel.CurrentPage = page;
             }
@@ -389,6 +391,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
             Notebook.CurrentPage = newPage;
         }
 

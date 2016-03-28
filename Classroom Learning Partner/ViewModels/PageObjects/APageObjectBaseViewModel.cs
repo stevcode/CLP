@@ -207,8 +207,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Gets the DragStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
 
-        
-
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {

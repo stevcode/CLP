@@ -407,7 +407,6 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs.Distinct().ToList();
         }
 
-
         public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
         {
             var submissions = new List<CLPPage>();
@@ -575,6 +574,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var oldPage = CurrentNotebook.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(oldPage);
             AutoSavePage(oldPage);
             CurrentNotebook.CurrentPage = page;
         }
