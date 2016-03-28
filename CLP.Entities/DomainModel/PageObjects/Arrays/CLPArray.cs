@@ -417,7 +417,19 @@ namespace CLP.Entities
             ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false) { }
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            //if (!CanAcceptStrokes ||
+            //    !AcceptedStrokes.Any())
+            //{
+            //    return;
+            //}
+
+            //var scaleX = (Width - 2 * LabelLength) / (oldWidth - 2 * LabelLength);
+            //var scaleY = (Height - 2 * LabelLength) / (oldHeight - 2 * LabelLength);
+
+            //AcceptedStrokes.StretchAll(scaleX, scaleY, XPosition + LabelLength, YPosition + LabelLength);
+        }
 
         public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
@@ -442,7 +454,7 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
-            base.OnResized(oldX, oldY, fromHistory);
+            base.OnMoved(oldX, oldY, fromHistory);
 
             OnMoving(oldX, oldY, fromHistory);
         }

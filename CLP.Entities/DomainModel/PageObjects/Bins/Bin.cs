@@ -142,6 +142,27 @@ namespace CLP.Entities
             base.OnDeleted(fromHistory);
         }
 
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var scaleX = Width / oldWidth;
+            var scaleY = Height / oldHeight;
+
+            AcceptedStrokes.StretchAll(scaleX, scaleY, XPosition, YPosition);
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+
+            OnResizing(oldWidth, oldHeight, fromHistory);
+        }
+
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
