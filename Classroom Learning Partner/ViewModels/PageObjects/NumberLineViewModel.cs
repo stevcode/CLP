@@ -308,15 +308,30 @@ namespace Classroom_Learning_Partner.ViewModels
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
 
-            if (_initialWidth + numberLine.TickLength > newWidth ||
-                !IsArrowDraggingAllowed)
+            if (!IsArrowDraggingAllowed)
             {
                 return;
             }
 
-            _isClicked = false;
-            _initialWidth += numberLine.TickLength;
-            ChangeNumberLineEndPoints(NumberLineSize + 1);
+            if (newWidth >= _initialWidth + numberLine.TickLength)
+            {
+                _isClicked = false;
+                _initialWidth += numberLine.TickLength;
+                ChangeNumberLineEndPoints(NumberLineSize + 1);
+            }
+            else if (newWidth <= _initialWidth - numberLine.TickLength &&
+                     NumberLineSize > 5)
+            {
+                var newNumberLineSize = NumberLineSize - 1;
+                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
+                if (lastMarkedTick == null ||
+                    lastMarkedTick.TickValue <= newNumberLineSize)
+                {
+                    _isClicked = false;
+                    _initialWidth -= numberLine.TickLength;
+                    ChangeNumberLineEndPoints(newNumberLineSize);
+                }
+            }
 
             //TODO: Use for conversion
             //if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
@@ -332,9 +347,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command CheckArrayCompletenessCommand { get; private set; }
 
         private void OnCheckArrayCompletenessCommandExecute()
