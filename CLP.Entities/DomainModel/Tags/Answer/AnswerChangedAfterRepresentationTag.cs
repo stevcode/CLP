@@ -112,7 +112,9 @@ namespace CLP.Entities
             {
                 var firstAnswer = FirstAnswer;
                 var lastAnswer = LastAnswer;
-                if (firstAnswer.ID == lastAnswer.ID)
+                if (firstAnswer == null ||
+                    lastAnswer == null ||
+                    firstAnswer.ID == lastAnswer.ID)
                 {
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }

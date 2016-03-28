@@ -26,6 +26,7 @@ namespace CLP.Entities
                                          int oldColumns)
             : base(parentPage, owner)
         {
+            // TODO: Need old height/width
             ArrayID = arrayID;
             OldXPosition = oldXPosition;
             OldYPosition = oldYPosition;
