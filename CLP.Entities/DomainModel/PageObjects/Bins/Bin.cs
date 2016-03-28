@@ -69,6 +69,18 @@ namespace CLP.Entities
             get { return true; }
         }
 
+        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
+        public override double MinimumHeight
+        {
+            get { return 35 + PartsHeight; }
+        }
+
+        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
+        public override double MinimumWidth
+        {
+            get { return 100; }
+        }
+
         public override void OnAdded(bool fromHistory = false)
         {
             if (CanAcceptStrokes &&

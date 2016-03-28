@@ -159,13 +159,13 @@ namespace CLP.Entities
         /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
         public virtual double MinimumHeight
         {
-            get { return 10; }
+            get { return 20; }
         }
 
         /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
         public virtual double MinimumWidth
         {
-            get { return 10; }
+            get { return 20; }
         }
 
         /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>

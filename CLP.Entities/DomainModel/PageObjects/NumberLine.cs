@@ -662,6 +662,18 @@ namespace CLP.Entities
             get { return true; }
         }
 
+        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
+        public override double MinimumHeight
+        {
+            get { return NumberLineHeight; }
+        }
+
+        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
+        public override double MinimumWidth
+        {
+            get { return 10; }
+        }
+
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Width")
