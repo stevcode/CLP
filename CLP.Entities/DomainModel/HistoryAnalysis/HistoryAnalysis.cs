@@ -676,7 +676,7 @@ namespace CLP.Entities
             var analysisCodes = new List<string>();
             foreach (var index in keyIndexes)
             {
-                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject).ToList();
+                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject || p is Bin).ToList();
                 var stampedObjectGroups = new Dictionary<string, int>();
                 foreach (var pageObject in pageObjectOnPage)
                 {
@@ -812,12 +812,79 @@ namespace CLP.Entities
                     analysisCodes.Add(analysisCode);
                 }
 
+                var binsOnPage = pageObjectOnPage.OfType<Bin>().Where(b => b.Parts > 0).ToList();
+                if (binsOnPage.Any())
+                {
+                    var numberOfGroups = binsOnPage.Count();
+                    var product = binsOnPage.Select(b => b.Parts).Sum();
+                    var firstGroupSize = binsOnPage.First().Parts;
+                    var isEqualGroups = binsOnPage.All(b => b.Parts == firstGroupSize);
+
+                    var representationRelation = new Relation
+                                                 {
+                                                     groupSize = isEqualGroups ? firstGroupSize : -1,
+                                                     numberOfGroups = numberOfGroups,
+                                                     product = product,
+                                                     isOrderedGroup = true,
+                                                     isProductImportant = true
+                                                 };
+
+                    var altCorrectness = Correctness.Unknown;
+                    var otherCorrectness = Correctness.Unknown;
+                    if (isAltDefinitionUsed)
+                    {
+                        altCorrectness = CompareRelationToRepresentations(representationRelation, altDefinitionRelation);
+                    }
+                    if (isOtherDefinitionUsed)
+                    {
+                        otherCorrectness = CompareRelationToRepresentations(representationRelation, otherDefinitionRelation);
+                    }
+                    var relationCorrectness = CompareRelationToRepresentations(representationRelation, definitionRelation);
+
+                    Correctness correctness;
+                    if (altCorrectness == Correctness.Correct ||
+                        otherCorrectness == Correctness.Correct ||
+                        relationCorrectness == Correctness.Correct)
+                    {
+                        correctness = Correctness.Correct;
+                    }
+                    else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                            relationCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        correctness = Correctness.PartiallyCorrect;
+                    }
+                    else
+                    {
+                        correctness = relationCorrectness;
+                    }
+
+                    var codedCorrectness = string.Empty;
+                    switch (correctness)
+                    {
+                        case Correctness.Correct:
+                            codedCorrectness = Codings.CORRECTNESS_CORRECT;
+                            break;
+                        case Correctness.PartiallyCorrect:
+                            codedCorrectness = Codings.CORRECTNESS_PARTIAL;
+                            break;
+                        case Correctness.Incorrect:
+                            codedCorrectness = Codings.CORRECTNESS_INCORRECT;
+                            break;
+                        case Correctness.Unknown:
+                            codedCorrectness = "UNKNOWN";
+                            break;
+                    }
+
+                    var codedObject = Codings.OBJECT_BINS;
+                    var codedID = numberOfGroups;
+                    var analysisCode = string.Format("{0} [{1}: {2}], final", codedObject, codedID, codedCorrectness);
+                    analysisCodes.Add(analysisCode);
+                }
+
                 if (stampedObjectGroups.Keys.Any())
                 {
                     foreach (var key in stampedObjectGroups.Keys)
                     {
-                        // STAMP [
-
                         var groupIDSections = key.Split(' ');
                         var parts = int.Parse(groupIDSections[0]);
                         var numberOfGroups = stampedObjectGroups[key];
