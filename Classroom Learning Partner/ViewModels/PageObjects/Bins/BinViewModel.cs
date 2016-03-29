@@ -37,8 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemoveBinCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-
-            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateBinCommand, null, true));
+            
             _contextButtons.Add(new RibbonButton("Empty Bin", "pack://application:,,,/Resources/Images/Trash32.png", EmptyBinCommand, null, true));
         }
 

@@ -933,7 +933,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
-            Buttons.Add(_insertDivisionTemplateButton);
+            //Buttons.Add(_insertDivisionTemplateButton);
             //Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
 
