@@ -580,11 +580,11 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
         {
+            AttemptArrayStrategiesTag(page, historyActions);
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
             AttemptRepresentationsUsedTag(page, historyActions);
-            AttemptArrayStrategiesTag(page, historyActions);
             AttemptRepresentationCorrectness(page, historyActions);
         }
 
@@ -1228,6 +1228,19 @@ namespace CLP.Entities
                     {
                         var skipCodedValue = string.Format("\n  - skip [\"{0}\"]", formattedSkips);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
+
+                        // HACK: Added for demo.
+                        var strategyCode = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, id);
+                        var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
+                        if (existingArrayStrategiesTag != null)
+                        {
+                            existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                        }
+                        else
+                        {
+                            var arrayStrategiesTag = new ArrayStrategiesTag(page, Origin.StudentPageObjectGenerated, new List<IHistoryAction>(), new List<string> { strategyCode });
+                            page.AddTag(arrayStrategiesTag);
+                        }
                     }
 
                     finalCodedRepresentations.Add(codedValue);
@@ -1273,7 +1286,9 @@ namespace CLP.Entities
                 var obj = Codings.OBJECT_STAMP;
                 var id = parts;
                 var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
-                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
+                var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
                 finalCodedRepresentations.Add(codedValue);
                 allRepresentations.Add(obj);
             }
