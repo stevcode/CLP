@@ -48,7 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool OnNotebookExportCanExecute() { return false; }
+        private bool OnNotebookExportCanExecute() { return true; }
 
         /// <summary>Converts Notebook Pages to PDF.</summary>
         public Command ConvertNotebookToPDFCommand { get; private set; }

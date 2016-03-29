@@ -597,6 +597,8 @@ namespace CLP.Entities
                 return;
             }
 
+            #region Answer Definition Relation
+
             var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag ||
                                                            t is MultiplicationRelationDefinitionTag ||
                                                            t is AdditionRelationDefinitionTag);
@@ -657,6 +659,8 @@ namespace CLP.Entities
                 }
             }
 
+            #endregion // Answer Definition Relation
+
             var keyIndexes =
                 historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
                               .Select(h => h.HistoryItems.First().HistoryIndex - 1).ToList();
@@ -664,16 +668,38 @@ namespace CLP.Entities
             {
                 return;
             }
-            keyIndexes.Add(page.History.CompleteOrderedHistoryItems.Last().HistoryIndex + 1);
+            var lastHistoryIndex = page.History.CompleteOrderedHistoryItems.Last().HistoryIndex + 1;
+            keyIndexes.Add(lastHistoryIndex);
             keyIndexes.Reverse();
             var usedPageObjectIDs = new List<string>();
             var finalPageObjectIDs = page.PageObjects.Where(p => p is CLPArray || p is NumberLine).Select(p => p.ID).ToList();
             var analysisCodes = new List<string>();
             foreach (var index in keyIndexes)
             {
-                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine).ToList();
+                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject).ToList();
+                var stampedObjectGroups = new Dictionary<string, int>();
                 foreach (var pageObject in pageObjectOnPage)
                 {
+                    var stampedObject = pageObject as StampedObject;
+                    if (stampedObject != null &&
+                        index == lastHistoryIndex)
+                    {
+                        var parts = stampedObject.Parts;
+                        var parentStampID = stampedObject.ParentStampID;
+                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        if (stampedObjectGroups.ContainsKey(groupID))
+                        {
+                            stampedObjectGroups[groupID]++;
+                        }
+                        else
+                        {
+                            stampedObjectGroups.Add(groupID, 1);
+                        }
+
+                        usedPageObjectIDs.Add(stampedObject.ID);
+                        continue;
+                    }
+
                     Relation representationRelation = null;
                     var usedID = string.Empty;
                     var codedObject = string.Empty;
@@ -719,13 +745,13 @@ namespace CLP.Entities
                         var jumpSizesIgnoringOverlaps = numberLine.JumpSizes.GroupBy(j => j.StartingTickIndex).Select(g => g.First()).ToList();
 
                         representationRelation = new Relation
-                        {
-                            groupSize = isEqualGroups ? firstGroupSize : -1,
-                            numberOfGroups = jumpSizesIgnoringOverlaps.Count,
-                            product = product,
-                            isOrderedGroup = true,
-                            isProductImportant = true
-                        };
+                                                 {
+                                                     groupSize = isEqualGroups ? firstGroupSize : -1,
+                                                     numberOfGroups = jumpSizesIgnoringOverlaps.Count,
+                                                     product = product,
+                                                     isOrderedGroup = true,
+                                                     isProductImportant = true
+                                                 };
                     }
 
                     if (representationRelation == null || usedPageObjectIDs.Contains(usedID))
@@ -784,6 +810,82 @@ namespace CLP.Entities
 
                     var analysisCode = string.Format("{0} [{1}: {2}]{3}", codedObject, codedID, codedCorrectness, isFinal ? ", final" : string.Empty);
                     analysisCodes.Add(analysisCode);
+                }
+
+                if (stampedObjectGroups.Keys.Any())
+                {
+                    foreach (var key in stampedObjectGroups.Keys)
+                    {
+                        // STAMP [
+
+                        var groupIDSections = key.Split(' ');
+                        var parts = int.Parse(groupIDSections[0]);
+                        var numberOfGroups = stampedObjectGroups[key];
+                        var codedObject = Codings.OBJECT_STAMP;
+                        var codedID = parts;
+                        //var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
+                        //var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                        //var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
+                        //var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
+
+                        var representationRelation = new Relation
+                                                     {
+                                                         groupSize = parts,
+                                                         numberOfGroups = numberOfGroups,
+                                                         product = numberOfGroups * parts,
+                                                         isOrderedGroup = parts != 1,
+                                                         isProductImportant = true
+                                                     };
+
+                        var altCorrectness = Correctness.Unknown;
+                        var otherCorrectness = Correctness.Unknown;
+                        if (isAltDefinitionUsed)
+                        {
+                            altCorrectness = CompareRelationToRepresentations(representationRelation, altDefinitionRelation);
+                        }
+                        if (isOtherDefinitionUsed)
+                        {
+                            otherCorrectness = CompareRelationToRepresentations(representationRelation, otherDefinitionRelation);
+                        }
+                        var relationCorrectness = CompareRelationToRepresentations(representationRelation, definitionRelation);
+
+                        Correctness correctness;
+                        if (altCorrectness == Correctness.Correct ||
+                            otherCorrectness == Correctness.Correct ||
+                            relationCorrectness == Correctness.Correct)
+                        {
+                            correctness = Correctness.Correct;
+                        }
+                        else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                                relationCorrectness == Correctness.PartiallyCorrect)
+                        {
+                            correctness = Correctness.PartiallyCorrect;
+                        }
+                        else
+                        {
+                            correctness = relationCorrectness;
+                        }
+
+                        var codedCorrectness = string.Empty;
+                        switch (correctness)
+                        {
+                            case Correctness.Correct:
+                                codedCorrectness = Codings.CORRECTNESS_CORRECT;
+                                break;
+                            case Correctness.PartiallyCorrect:
+                                codedCorrectness = Codings.CORRECTNESS_PARTIAL;
+                                break;
+                            case Correctness.Incorrect:
+                                codedCorrectness = Codings.CORRECTNESS_INCORRECT;
+                                break;
+                            case Correctness.Unknown:
+                                codedCorrectness = "UNKNOWN";
+                                break;
+                        }
+
+                        var analysisCode = string.Format("{0} [{1}, {2} images: {3}], final", codedObject, codedID, numberOfGroups, codedCorrectness);
+                        analysisCodes.Add(analysisCode);
+                    }
                 }
             }
 
