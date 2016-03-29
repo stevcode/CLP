@@ -24,6 +24,7 @@ namespace CLP.Entities
         Definition,
         CurriculumInformation,
         OtherPageInformation,
+        Representation,
         Answer
     }
 
