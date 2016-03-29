@@ -136,13 +136,13 @@
                         Height="20"
                         Margin="1" />
 
-                <Button Content="Move Page Down"
-                        Command="{Binding MovePageDownCommand}"
-                        Height="20"
-                        Margin="1" />
-
                 <Button Content="Make Page Longer"
                         Command="{Binding MakePageLongerCommand}"
+                        Height="20"
+                        Margin="1" />
+                
+                <Button Content="Move Page Down"
+                        Command="{Binding MovePageDownCommand}"
                         Height="20"
                         Margin="1" />
 
