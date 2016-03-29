@@ -1162,6 +1162,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAnalyzeSkipCountingCommandExecute()
         {
+            var existingTags = CurrentPage.Tags.OfType<TempArraySkipCountingTag>().ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
 
             //Iterates over arrays on page
