@@ -857,6 +857,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnGenerateHistoryActionsCommandExecute()
         {
+            var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
             HistoryAnalysis.GenerateHistoryActions(CurrentPage);
         }
 
