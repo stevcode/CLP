@@ -1367,7 +1367,7 @@ namespace CLP.Entities
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
                     {
                         relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        var code = string.Format("{0} [{1}, {2} {3}: {4}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectSubID, currentHistoryAction.CodedObjectSubIDIncrement, currentHistoryAction.CodedObjectActionID);
                         strategyCodes.Add(code);
                         continue;
                     }
