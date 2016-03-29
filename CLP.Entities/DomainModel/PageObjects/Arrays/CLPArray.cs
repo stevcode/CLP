@@ -192,11 +192,11 @@ namespace CLP.Entities
                                                                              {
                                                                                  if (h.IsHorizontal)
                                                                                  {
-                                                                                     columns = h.PersistingArrayRowsOrColumns;
+                                                                                     rows = h.PersistingArrayRowsOrColumns;
                                                                                  }
                                                                                  else
                                                                                  {
-                                                                                     rows = h.PersistingArrayRowsOrColumns;
+                                                                                     columns = h.PersistingArrayRowsOrColumns;
                                                                                  }
                                                                              }
                                                                          });
