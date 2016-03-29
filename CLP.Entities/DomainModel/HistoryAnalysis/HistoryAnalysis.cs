@@ -620,8 +620,8 @@ namespace CLP.Entities
             var mult = relationDefinitionTag as MultiplicationRelationDefinitionTag;
             if (mult != null)
             {
-                definitionRelation.groupSize = mult.Factors.First().RelationPartAnswerValue;
-                definitionRelation.numberOfGroups = mult.Factors.Last().RelationPartAnswerValue;
+                definitionRelation.numberOfGroups = mult.Factors.First().RelationPartAnswerValue;
+                definitionRelation.groupSize = mult.Factors.Last().RelationPartAnswerValue;
                 definitionRelation.product = mult.Product;
                 definitionRelation.isOrderedGroup = mult.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
                 definitionRelation.isProductImportant = true;
