@@ -1317,27 +1317,28 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    {
-                        if (!isLastHistoryAction)
-                        {
-                            var nextHistoryAction = historyActions[i + 1];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                            {
-                                relevantHistoryactions.Add(currentHistoryAction);
-                                relevantHistoryactions.Add(nextHistoryAction);
-                                var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                                strategyCodes.Add(compoundCode);
-                                continue;
-                            }
-                        }
+                    // HACK: Removed for demo.
+                    //if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    //{
+                    //    if (!isLastHistoryAction)
+                    //    {
+                    //        var nextHistoryAction = historyActions[i + 1];
+                    //        if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                    //            nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                    //        {
+                    //            relevantHistoryactions.Add(currentHistoryAction);
+                    //            relevantHistoryactions.Add(nextHistoryAction);
+                    //            var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                    //            strategyCodes.Add(compoundCode);
+                    //            continue;
+                    //        }
+                    //    }
 
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
+                    //    relevantHistoryactions.Add(currentHistoryAction);
+                    //    var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                    //    strategyCodes.Add(code);
+                    //    continue;
+                    //}
 
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
                     {
