@@ -1226,7 +1226,7 @@ namespace CLP.Entities
                     var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
-                        var skipCodedValue = string.Format("\n  - skip [\"{0}\"]", formattedSkips);
+                        var skipCodedValue = string.Format("\n  - skip [{0}]", formattedSkips);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
 
                         // HACK: Added for demo.
@@ -1254,7 +1254,37 @@ namespace CLP.Entities
                     var id = numberLine.CodedID;
                     var components = NumberLine.ConsolidateJumps(numberLine.JumpSizes.ToList());
                     var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
-                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    var englishValue = string.Empty;
+                    if (!string.IsNullOrEmpty(components))
+                    {
+                        var jumpsInEnglish = new List<string>();
+                        foreach (var codedJump in components.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            try
+                            {
+                                var jumpSegments = codedJump.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                                var jumpSize = int.Parse(jumpSegments[0]);
+                                var jumpRange = jumpSegments[1].Split('-');
+                                var start = int.Parse(jumpRange[0]);
+                                var stop = int.Parse(jumpRange[1]);
+                                var numberOfJumps = (stop - start) / jumpSize;
+                                var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
+                                var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
+                                jumpsInEnglish.Add(jumpInEnglish);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                        englishValue = string.Join("\n  - ", jumpsInEnglish);
+                        if (!string.IsNullOrEmpty(englishValue))
+                        {
+                            englishValue = "\n  - " + englishValue;
+                        }
+                    }
+
+                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
                     finalCodedRepresentations.Add(codedValue);
                     if (!string.IsNullOrEmpty(componentSection))
                     {
