@@ -262,32 +262,33 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _initialWidth = 0;
-            var changeSize = NumberLineSize - _oldEnd;
-            var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
+            // HACK: Removed for demo.
+            //var changeSize = NumberLineSize - _oldEnd;
+            //var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
 
-            var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
+            //var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
 
-            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-            {
-                var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
-                var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+            //foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+            //{
+            //    var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
+            //    var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
 
-                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
-                                                             Origin.StudentPageObjectGenerated,
-                                                             PageObject.ID,
-                                                             0,
-                                                             _oldEnd,
-                                                             numberLineIDsInHistory.IndexOf(PageObject.ID),
-                                                             0,
-                                                             NumberLineSize,
-                                                             changeSize,
-                                                             _isClicked,
-                                                             oldDistanceFromAnswer,
-                                                             newDistanceFromAnswer,
-                                                             tooLowNumber);
-                PageObject.ParentPage.AddTag(tag);
-            }
+            //    var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
+            //                                                 Origin.StudentPageObjectGenerated,
+            //                                                 PageObject.ID,
+            //                                                 0,
+            //                                                 _oldEnd,
+            //                                                 numberLineIDsInHistory.IndexOf(PageObject.ID),
+            //                                                 0,
+            //                                                 NumberLineSize,
+            //                                                 changeSize,
+            //                                                 _isClicked,
+            //                                                 oldDistanceFromAnswer,
+            //                                                 newDistanceFromAnswer,
+            //                                                 tooLowNumber);
+            //    PageObject.ParentPage.AddTag(tag);
+            //}
         }
 
         /// <summary>Change the length of the number line</summary>

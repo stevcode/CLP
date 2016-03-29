@@ -692,16 +692,17 @@ namespace CLP.Entities
             {
                 ApplyDistinctPosition(this);
 
-                var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+                // HACK: Removed for demo
+                //var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+                //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
 
-                foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-                {
-                    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+                //foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+                //{
+                //    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
 
-                    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
-                    ParentPage.AddTag(tag);
-                }
+                //    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
+                //    ParentPage.AddTag(tag);
+                //}
 
                 return;
             }
@@ -727,17 +728,18 @@ namespace CLP.Entities
         {
             base.OnDeleted(fromHistory);
 
-            if (!fromHistory)
-            {
-                var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
+            // HACK: Removed for demo.
+            //if (!fromHistory)
+            //{
+            //    var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
 
-                var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
-                var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
+            //    var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
+            //    var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
 
-                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-                var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
-                ParentPage.AddTag(tag);
-            }
+            //    var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+            //    var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
+            //    ParentPage.AddTag(tag);
+            //}
 
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
