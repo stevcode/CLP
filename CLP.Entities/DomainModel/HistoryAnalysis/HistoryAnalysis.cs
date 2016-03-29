@@ -664,7 +664,7 @@ namespace CLP.Entities
             {
                 return;
             }
-            keyIndexes.Add(page.History.CompleteOrderedHistoryItems.Last().HistoryIndex);
+            keyIndexes.Add(page.History.CompleteOrderedHistoryItems.Last().HistoryIndex + 1);
             keyIndexes.Reverse();
             var usedPageObjectIDs = new List<string>();
             var finalPageObjectIDs = page.PageObjects.Where(p => p is CLPArray || p is NumberLine).Select(p => p.ID).ToList();
