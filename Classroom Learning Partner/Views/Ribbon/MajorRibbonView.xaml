@@ -284,8 +284,6 @@
                                          Command="{Binding SubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
 
-            
-
         </StackPanel>
 
         <Line DockPanel.Dock="Right"
