@@ -66,7 +66,7 @@
 
             <customControls:RibbonButton DockPanel.Dock="Right"
                                          Text="Reset Demo"
-                                         Command="{Binding GoToPageCommand}"
+                                         Command="{Binding ResetDemoCommand}"
                                          LargeImageSource="pack://application:,,,/Images/LargeIcon.png"
                                          IsContextButton="True" />
 

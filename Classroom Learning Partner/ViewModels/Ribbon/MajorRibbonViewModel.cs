@@ -664,6 +664,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
             notebookWorkspace.Notebook.AddPage(newPage);
+            notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -36,6 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
+            ResetDemoCommand = new Command(OnResetDemoCommandExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
             GoToPageCommand = new Command(OnGoToPageCommandExecute);
@@ -282,6 +284,65 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        public List<CLPPage> PagesAddedThisSession = new List<CLPPage>();
+
+        /// <summary>SUMMARY</summary>
+        public Command ResetDemoCommand { get; private set; }
+
+        private void OnResetDemoCommandExecute()
+        {
+            if (MessageBox.Show("Are you sure you want to completely reset the notebook?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            foreach (var page in PagesAddedThisSession)
+            {
+                if (Notebook.Pages.Contains(page))
+                {
+                    Notebook.Pages.Remove(page);
+                }
+            }
+
+            PagesAddedThisSession.Clear();
+
+            foreach (var page in Notebook.Pages)
+            {
+                var pageObjectsToDelete = page.PageObjects.Where(p => p.CreatorID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+                foreach (var pageObject in pageObjectsToDelete)
+                {
+                    page.PageObjects.Remove(pageObject);
+                }
+
+                var strokesToDelete = page.InkStrokes.Where(s => s.GetStrokeOwnerID() == App.MainWindowViewModel.CurrentUser.ID).ToList();
+                foreach (var stroke in strokesToDelete)
+                {
+                    if (page.InkStrokes.Contains(stroke))
+                    {
+                        page.InkStrokes.Remove(stroke);
+                    }
+                }
+
+                page.History.ClearHistory();
+                page.History.HistoryActions.Clear();
+
+                var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
+                foreach (var tempArraySkipCountingTag in existingTags)
+                {
+                    page.RemoveTag(tempArraySkipCountingTag);
+                }
+            }
+
+            ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
+            var newPage = Notebook.Pages.FirstOrDefault();
+            if (newPage == null)
+            {
+                return;
+            }
+            
+            Notebook.CurrentPage = newPage;
+        }
 
         /// <summary>
         /// Navigates to previous page in the notebook.
