@@ -40,6 +40,24 @@ namespace CLP.Entities
 
                 return historyAction;
             }
+            else
+            {
+                // HACK
+                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var pageObject = addedPageObjects.First();
+                var codedObject = pageObject.CodedName;
+                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                {
+                    CodedObject = codedObject,
+                    CodedObjectAction = Codings.ACTION_OBJECT_ADD,
+                    IsObjectActionVisible = false,
+                    CodedObjectID = codedObjectID,
+                    CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                };
+
+                return historyAction;
+            }
 
             // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
             // special case for Bins
@@ -71,6 +89,23 @@ namespace CLP.Entities
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
                                     };
+
+                return historyAction;
+            }
+            else
+            {
+                // HACK
+                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var pageObject = removedPageObjects.First();
+                var codedObject = pageObject.CodedName;
+                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                {
+                    CodedObject = codedObject,
+                    CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
+                    CodedObjectID = codedObjectID,
+                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                };
 
                 return historyAction;
             }

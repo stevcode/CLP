@@ -129,12 +129,6 @@ namespace CLP.Entities
                     initialHistoryActions.Add(compoundHistoryAction);
                     historyItemBuffer.Clear();
                 }
-                else
-                {
-                    // Should act as a catch-all to just ignore historyItems not coded against,
-                    // like for now, bins and stamps.
-                    historyItemBuffer.Remove(currentHistoryItem);
-                }
             }
 
             return initialHistoryActions;
@@ -150,6 +144,13 @@ namespace CLP.Entities
             IHistoryAction historyAction = null;
             TypeSwitch.On(historyItem)
                       .Case<ObjectsOnPageChangedHistoryItem>(h => { historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
+                      .Case<PartsValueChangedHistoryItem>(h =>
+                                                          {
+                                                              historyAction = new HistoryAction(page, h);
+                                                              historyAction.CodedObject = Codings.OBJECT_STAMP;
+                                                              historyAction.CodedObjectAction = "parts";
+                                                              historyAction.CodedObjectID = "CHANGED";
+                                                          })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
                       .Case<CLPArraySnapHistoryItem>(h => { historyAction = ArrayCodedActions.Snap(page, h); })

@@ -39,6 +39,16 @@ namespace CLP.Entities
             get { return string.Format("Bin Reporter reporting: {0}", FormattedReport); }
         }
 
+        public override string CodedName
+        {
+            get { return "BIN REPORTER"; }
+        }
+
+        public override string CodedID
+        {
+            get { return "A"; }
+        }
+
         public override int ZIndex
         {
             get { return 70; }
