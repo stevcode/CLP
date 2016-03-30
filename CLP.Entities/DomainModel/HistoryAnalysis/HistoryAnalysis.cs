@@ -592,10 +592,10 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
         {
-            if (!historyActions.Any())
-            {
-                return;
-            }
+            //if (!historyActions.Any())
+            //{
+            //    return;
+            //}
 
             #region Answer Definition Relation
 
@@ -1110,6 +1110,7 @@ namespace CLP.Entities
             var deletedCodedRepresentations = new List<string>();
 
             var stampedObjectGroups = new Dictionary<string, int>();
+            var binGroups = new Dictionary<int, int>();
             var maxStampedObjectGroups = new Dictionary<string, int>();
             var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
             var subArrayGroups = new Dictionary<string,List<string>>();
@@ -1505,6 +1506,19 @@ namespace CLP.Entities
                         stampedObjectGroups.Add(groupID, 1);
                     }
                 }
+
+                var bin = pageObject as Bin;
+                if (bin != null)
+                {
+                    if (binGroups.ContainsKey(bin.Parts))
+                    {
+                        binGroups[bin.Parts]++;
+                    }
+                    else
+                    {
+                        binGroups.Add(bin.Parts, 1);
+                    }
+                }
             }
 
             foreach (var key in stampedObjectGroups.Keys)
@@ -1517,6 +1531,27 @@ namespace CLP.Entities
                 var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
                 var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
                 var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
+                finalCodedRepresentations.Add(codedValue);
+                allRepresentations.Add(obj);
+            }
+
+            if (binGroups.Keys.Any())
+            {
+                var id = 0;
+                var obj = Codings.OBJECT_BINS;
+                var englishValues = new List<string>();
+                foreach (var key in binGroups.Keys)
+                {
+                    var parts = key;
+                    var count = binGroups[key];
+                    id += count;
+                    var binString = count == 1 ? "bin" : "bins";
+                    var englishValue = string.Format("{0} {1} of {2}", count, binString, parts);
+                    englishValues.Add(englishValue);
+                }
+
+                var formattedEnglishValue = string.Join("\n  - ", englishValues);
+                var codedValue = string.Format("{0} [{1}]\n  - {2}", obj, id, formattedEnglishValue);
                 finalCodedRepresentations.Add(codedValue);
                 allRepresentations.Add(obj);
             }
