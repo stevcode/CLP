@@ -71,7 +71,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, "SingleDisplay");
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                //
+            }
         }
 
         #endregion //Model

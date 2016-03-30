@@ -70,14 +70,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription RepresentationTypeAscendingSort = new SortDescription("RepresentationType", ListSortDirection.Ascending);
         private static readonly SortDescription RepresentationTypeDescendingSort = new SortDescription("RepresentationType", ListSortDirection.Descending);
 
-        private readonly INotebookService _notebookService;
-
         #region Constructor
 
         public StagingPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            _notebookService = DependencyResolver.Resolve<INotebookService>();
 
             SortedAndGroupedPages.Source = FilteredPages;
 
