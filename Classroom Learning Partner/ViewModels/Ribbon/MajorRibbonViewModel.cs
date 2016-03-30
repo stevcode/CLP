@@ -56,6 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
+            ReconnectCommand = new Command(OnReconnectCommandExecute);
             ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
             ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
@@ -494,6 +495,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Commands
+
+        /// <summary>Restarts the network.</summary>
+        public Command ReconnectCommand { get; private set; }
+
+        private void OnReconnectCommandExecute()
+        {
+            if (MessageBox.Show("Are you sure you want to restart the network connection?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            App.Network.StopNetworking();
+            App.Network.StartNetworking();
+
+            //CLPServiceAgent.Instance.NetworkReconnect();  ?
+        }
 
         /// <summary>Brings up the BackStage.</summary>
         public Command ShowBackStageCommand { get; private set; }

@@ -235,7 +235,10 @@ namespace Classroom_Learning_Partner
                     (InstructorProxy as ICommunicationObject).Close();
                     InstructorProxy = null;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    InstructorProxy = null;
+                }
             }
 
             if (ProjectorProxy != null)
@@ -245,7 +248,10 @@ namespace Classroom_Learning_Partner
                     (ProjectorProxy as ICommunicationObject).Close();
                     ProjectorProxy = null;
                 }
-                catch (Exception) { }
+                catch (Exception)
+                {
+                    ProjectorProxy = null;
+                }
             }
 
             foreach (var host in RunningServices)
