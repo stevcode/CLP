@@ -540,6 +540,12 @@ namespace CLP.Entities
                         objectTypes.Add("Shapes");
                         continue;
                     }
+
+                    if (pageObject is Bin)
+                    {
+                        objectTypes.Add("Bins");
+                        continue;
+                    }
                 }
 
                 var usedRepresentationTypes = objectTypes.Distinct().ToList();
@@ -555,6 +561,92 @@ namespace CLP.Entities
                 }
 
                 return InkStrokes.Count > 2 ? "Ink" : "None";
+            }
+        }
+
+        public virtual string RepresentationCorrectness
+        {
+            get
+            {
+                var representationCorrectnessTag = Tags.FirstOrDefault(x => x is RepresentationCorrectnessTag) as RepresentationCorrectnessTag;
+                if (representationCorrectnessTag == null)
+                {
+                    return "None";
+                }
+
+                var codes = representationCorrectnessTag.AnalysisCodes;
+                if (codes.All(c => c.Contains("COR")))
+                {
+                    return "Correct";
+                }
+                if (codes.All(c => c.Contains("PAR")))
+                {
+                    return "Partially Correct";
+                }
+                if (codes.All(c => c.Contains("INC")))
+                {
+                    return "Incorrect";
+                }
+
+                return "Mixed";
+            }
+        }
+
+        public virtual string AnswerCorrectness
+        {
+            get
+            {
+                var answerCorrectnessTag = Tags.FirstOrDefault(x => x is AnswerCorrectnessTag) as AnswerCorrectnessTag;
+                if (answerCorrectnessTag == null)
+                {
+                    return "None";
+                }
+
+                var code = answerCorrectnessTag.AnalysisCode;
+                if (code.Contains("COR"))
+                {
+                    return "Correct";
+                }
+                if (code.Contains("INC"))
+                {
+                    return "Incorrect";
+                }
+
+                return "Partially Correct";
+            }
+        }
+
+        public virtual string ABR
+        {
+            get
+            {
+                var abrTag = Tags.FirstOrDefault(x => x is AnswerBeforeRepresentationTag) as AnswerBeforeRepresentationTag;
+                if (abrTag == null)
+                {
+                    return "None";
+                }
+
+                var code = abrTag.AnalysisCode;
+                if (code.Contains("ABR-I"))
+                {
+                    return "ABR-I";
+                }
+
+                return "ABR-C";
+            }
+        }
+
+        public virtual string ARIC
+        {
+            get
+            {
+                var aricTag = Tags.FirstOrDefault(x => x is AnswerChangedAfterRepresentationTag) as AnswerChangedAfterRepresentationTag;
+                if (aricTag == null)
+                {
+                    return "None";
+                }
+
+                return aricTag.AnalysisCode;
             }
         }
 
