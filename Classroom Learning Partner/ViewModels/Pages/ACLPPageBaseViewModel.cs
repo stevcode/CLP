@@ -321,10 +321,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 var count =
                     dataService.LoadedNotebooksInfo.Where(n => n.Notebook.Owner.IsStudent)
                                .Select(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Notebook.Owner.FullName : string.Empty)
+                               .Where(s => !string.IsNullOrEmpty(s))
                                .Distinct()
                                .Count();
 
-                return Math.Max(0, count - 1);
+                return Math.Max(0, count);
             }
         }
 
