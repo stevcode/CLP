@@ -644,8 +644,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        },
                                                        null);
 
-                                   var notebookService = DependencyResolver.Resolve<INotebookService>();
-                                   if (notebookService == null)
+                                   var dataService = DependencyResolver.Resolve<IDataService>();
+                                   if (dataService == null)
                                    {
                                        Logger.Instance.WriteToLog("notebook service null on submission");
                                        return;
@@ -666,7 +666,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                        //var sPage = ObjectSerializer.ToString(submission);
                                        var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
 
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
                                    }
                                    catch (Exception ex)
                                    {
@@ -965,7 +965,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraseModeButton);
             //Buttons.Add(_setMarkModeButton);
             Buttons.Add(Separater);
-            //Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
@@ -989,7 +989,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
@@ -998,10 +998,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
-            //Buttons.Add(_insertRecognitionRegionButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
+            Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 

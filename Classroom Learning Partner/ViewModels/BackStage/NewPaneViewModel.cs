@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Catel.Collections;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
@@ -173,12 +174,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             classSubject.Projector = classSubject.Teacher;
-            //var classesFolderPath = Path.Combine(SelectedCacheDirectory, "Classes");
-            //if (!Directory.Exists(classesFolderPath))
-            //{
-            //    Directory.CreateDirectory(classesFolderPath);
-            //}
-            //ClassInformation.SaveClassSubject(classesFolderPath);
+
+            var classesFolderPath = SelectedCache.ClassesFolderPath;
+            if (!Directory.Exists(classesFolderPath))
+            {
+                Directory.CreateDirectory(classesFolderPath);
+            }
+            classSubject.SaveToXML(classesFolderPath);
         }
 
         #endregion //Commands

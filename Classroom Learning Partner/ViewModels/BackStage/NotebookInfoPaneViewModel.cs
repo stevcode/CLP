@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveNotebookForStudentCommand = new Command(OnSaveNotebookForStudentCommandExecute, OnSaveNotebookForStudentCanExecute);
             ForceSaveCurrentNotebookCommand = new Command(OnForceSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            GenerateStudentNotebooksCommand = new Command(OnGenerateStudentNotebooksCommandExecute);
         }
 
         #endregion //Constructor
@@ -204,5 +205,51 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool OnClearHistoryCommandCanExecute() { return Notebook != null; }
+
+        /// <summary>SUMMARY</summary>
+        public Command GenerateStudentNotebooksCommand { get; private set; }
+
+        private void OnGenerateStudentNotebooksCommandExecute()
+        {
+            // HACK: This is very hardcoded.
+            if (DataService == null ||
+                DataService.CurrentCacheInfo == null ||
+                DataService.CurrentNotebookInfo == null ||
+                DataService.CurrentNotebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            var classInfoPath = Path.Combine(DataService.CurrentCacheInfo.ClassesFolderPath, "classInfo;KK;S1nEmeKiYkSuPPo3t2nWXQ.xml");
+            var classInfo = ClassInformation.LoadFromXML(classInfoPath);
+            if (classInfo == null)
+            {
+                return;
+            }
+
+            var teacher = classInfo.Teacher;
+            var copiedNotebookT = DataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(teacher);
+            copiedNotebookT.CurrentPage = copiedNotebookT.Pages.FirstOrDefault();
+            var notebookCompositeT = NotebookNameComposite.ParseNotebook(copiedNotebookT);
+            var notebookPathT = Path.Combine(DataService.CurrentCacheInfo.NotebooksFolderPath, notebookCompositeT.ToFolderName());
+            var notebookInfoT = new NotebookInfo(DataService.CurrentCacheInfo, notebookPathT)
+                                {
+                                    Notebook = copiedNotebookT
+                                };
+            PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(notebookInfoT, true), null, "Saving Notebook for " + teacher.FullName);
+
+            foreach (var person in classInfo.StudentList)
+            {
+                var copiedNotebook = DataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
+                copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+                var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+                var notebookPath = Path.Combine(DataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+                var notebookInfo = new NotebookInfo(DataService.CurrentCacheInfo, notebookPath)
+                {
+                    Notebook = copiedNotebook
+                };
+                PleaseWaitHelper.Show(() => DataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook for " + person.FullName);
+            }
+        }
     }
 }

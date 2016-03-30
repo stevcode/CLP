@@ -6,14 +6,12 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public abstract class APaneBaseViewModel : ViewModelBase
     {
-        protected readonly INotebookService LoadedNotebookService;
         protected readonly IDataService DataService;
 
         #region Constructor
 
         protected APaneBaseViewModel()
         {
-            LoadedNotebookService = DependencyResolver.Resolve<INotebookService>();
             DataService = DependencyResolver.Resolve<IDataService>();
         }
 
