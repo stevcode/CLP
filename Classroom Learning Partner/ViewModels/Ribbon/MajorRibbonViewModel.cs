@@ -137,9 +137,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                              "DIVISIONTEMPLATE");
 
             //NumberLine
-            _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
+            _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine64New.png", AddPageObjectToPageCommand, "NUMBERLINE");
             _insertAutoNumberLineButton = new RibbonButton("Auto Number Line",
-                                                           "pack://application:,,,/Resources/Images/NumberLine32.png",
+                                                           "pack://application:,,,/Resources/Images/NumberLineAuto64.png",
                                                            AddPageObjectToPageCommand,
                                                            "AUTO_NUMBERLINE");
 
@@ -163,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                "LEFT_DIAGONAL_DASHED");
 
             //Bin
-            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
+            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
 
             //Text
             //TODO: Better Icons

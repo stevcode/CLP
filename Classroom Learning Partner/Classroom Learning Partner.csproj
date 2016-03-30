@@ -1112,6 +1112,9 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\NumberLine64New.png" />
+    <Resource Include="Resources\Images\NumberLineAuto64.png" />
+    <Resource Include="Resources\Images\AddBin180.png" />
     <Resource Include="Resources\Images\Steps512.png" />
     <Resource Include="Resources\Images\Tags128.png" />
     <Resource Include="Resources\Images\Hourglass256.png" />
