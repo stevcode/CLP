@@ -156,22 +156,27 @@ namespace Classroom_Learning_Partner
             var pageFilePath = Path.Combine(pagesPath, submissionNameComposite.ToFileName() + ".xml");
             submission.ToXML(pageFilePath);
 
+            var studentNotebookInfo = dataService.LoadedNotebooksInfo.FirstOrDefault(ni => ni.Notebook != null && ni.Notebook.OwnerID == submission.OwnerID);
+            if (studentNotebookInfo == null ||
+                studentNotebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            var studentNotebook = studentNotebookInfo.Notebook;
+            var studentPage = studentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            if (studentPage == null ||
+                !studentPage.Owner.IsStudent)
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
                                                                                         try
                                                                                         {
-                                                                                            var page =
-                                                                                                    currentNotebook.Pages.FirstOrDefault(
-                                                                                                                                         x =>
-                                                                                                                                         x.ID == submission.ID &&
-                                                                                                                                         x.DifferentiationLevel ==
-                                                                                                                                         submission.DifferentiationLevel);
-                                                                                            if (page == null)
-                                                                                            {
-                                                                                                return null;
-                                                                                            }
-                                                                                            page.Submissions.Add(submission);
+                                                                                            studentPage.Submissions.Add(submission);
                                                                                         }
                                                                                         catch (Exception e)
                                                                                         {
