@@ -980,7 +980,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraseModeButton);
             //Buttons.Add(_setMarkModeButton);
             Buttons.Add(Separater);
-            Buttons.Add(_setLassoModeButton);
+            //Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
@@ -1004,7 +1004,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
-            Buttons.Add(_insertHorizontalLineButton);
+            //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
@@ -1013,10 +1013,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            Buttons.Add(Separater);
-            Buttons.Add(_insertImageButton);
-            Buttons.Add(_insertTextBoxButton);
-            Buttons.Add(_insertRecognitionRegionButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertImageButton);
+            //Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
