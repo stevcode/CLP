@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -599,43 +600,67 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentPage.TrimPage();
             var submission = CurrentPage.NextVersionCopy();
-            string sPage = string.Empty;
-            try
-            {
-                sPage = ObjectSerializer.ToString(submission);
-            }
-            catch (Exception e)
-            {
-                Logger.Instance.WriteToLog("Failed To stringify submission");
-                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
-                Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
-                Logger.Instance.WriteToLog("[Source]: " + e.Source);
-                Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
-                Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
-            }
 
-            CurrentPage.Submissions.Add(submission);
-            CurrentPage.IsCached = true;
-
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService == null)
-            {
-                Logger.Instance.WriteToLog("notebook service null on submission");
-                return;
-            }
-            if (string.IsNullOrEmpty(sPage))
-            {
-                Logger.Instance.WriteToLog("sPage null or empty on submission");
-                return;
-            }
-            if (App.Network.InstructorProxy == null)
-            {
-                Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-                return;
-            }
-
-            var t = new Thread(() =>
+            var tBackground = new Thread(() =>
                                {
+                                   var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                                   foreach (var tempArraySkipCountingTag in existingTags)
+                                   {
+                                       submission.RemoveTag(tempArraySkipCountingTag);
+                                   }
+
+                                   HistoryAnalysis.GenerateHistoryActions(submission);
+
+                                   string sPage = string.Empty;
+                                   try
+                                   {
+                                       sPage = ObjectSerializer.ToString(submission);
+                                   }
+                                   catch (Exception e)
+                                   {
+                                       Logger.Instance.WriteToLog("Failed To stringify submission");
+                                       Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
+                                       Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
+                                       Logger.Instance.WriteToLog("[Source]: " + e.Source);
+                                       Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
+                                       Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
+                                   }
+
+                                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           try
+                                                           {
+                                                               CurrentPage.Submissions.Add(submission);
+                                                               CurrentPage.IsCached = true;
+                                                           }
+                                                           catch (Exception e)
+                                                           {
+                                                               Logger.Instance.WriteToLog("[ERROR] Error adding submission to current page on submit: " +
+                                                                                          e.Message);
+                                                           }
+
+                                                           return null;
+                                                       },
+                                                       null);
+
+                                   var notebookService = DependencyResolver.Resolve<INotebookService>();
+                                   if (notebookService == null)
+                                   {
+                                       Logger.Instance.WriteToLog("notebook service null on submission");
+                                       return;
+                                   }
+                                   if (string.IsNullOrEmpty(sPage))
+                                   {
+                                       Logger.Instance.WriteToLog("sPage null or empty on submission");
+                                       return;
+                                   }
+                                   if (App.Network.InstructorProxy == null)
+                                   {
+                                       Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
+                                       return;
+                                   }
+
                                    try
                                    {
                                        //var sPage = ObjectSerializer.ToString(submission);
@@ -652,15 +677,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         IsBackground = true
                     };
-            t.Start();
+            tBackground.Start();
         }
 
         private bool OnSubmitPageCanExecute()
         {
-            if (CurrentPage == null)
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null ||
+                CurrentPage == null ||
+                notebookWorkspace.PagesAddedThisSession.Contains(CurrentPage))
             {
                 return false;
             }
+
             return !CurrentPage.IsCached;
         }
 
