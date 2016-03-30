@@ -171,12 +171,28 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
+            var teacherPage = currentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
                                                                                         try
                                                                                         {
                                                                                             studentPage.Submissions.Add(submission);
+
+                                                                                            if (teacherPage != null)
+                                                                                            {
+                                                                                                var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(teacherPage);
+                                                                                                foreach (var pageViewModel in pageViewModels)
+                                                                                                {
+                                                                                                    var pageVM = pageViewModel as ACLPPageBaseViewModel;
+                                                                                                    if (pageVM == null)
+                                                                                                    {
+                                                                                                        continue;
+                                                                                                    }
+                                                                                                    pageVM.UpdateSubmissionCount();
+                                                                                                }
+                                                                                            }
                                                                                         }
                                                                                         catch (Exception e)
                                                                                         {
