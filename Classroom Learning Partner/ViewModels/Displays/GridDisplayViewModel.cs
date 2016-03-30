@@ -11,8 +11,6 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class GridDisplayViewModel : AMultiDisplayViewModelBase
     {
-        
-
         #region Constructor
 
         /// <summary>Initializes a new instance of the GridDisplayViewModel class.</summary>

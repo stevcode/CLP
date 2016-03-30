@@ -535,6 +535,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             notebookWorkspace.CurrentDisplay = null;
             CurrentRightPanel = null;
+
+            if (App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                const string DISPLAY_ID = "SingleDisplay";
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
+            }
+            catch (Exception ex)
+            {
+                //
+            }
         }
 
         private bool OnExitMultiDisplayCanExecute()
