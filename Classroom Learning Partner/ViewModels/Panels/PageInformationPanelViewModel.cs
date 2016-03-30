@@ -98,6 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
             StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
+            AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
 
@@ -377,6 +378,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentAnalysisStepProperty = RegisterProperty("CurrentAnalysisStep", typeof(HistoryAnalysisSteps), HistoryAnalysisSteps.Tags);
 
+        public bool IsDebuggingFlag
+        {
+            get { return GetValue<bool>(IsDebuggingFlagProperty); }
+            set { SetValue(IsDebuggingFlagProperty, value); }
+        }
+
+        public static readonly PropertyData IsDebuggingFlagProperty = RegisterProperty("IsDebuggingFlag", typeof(bool), false);
 
         #endregion //Bindings
 
@@ -1197,13 +1205,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public bool IsDebuggingFlag
-        {
-            get { return GetValue<bool>(IsDebuggingFlagProperty); }
-            set { SetValue(IsDebuggingFlagProperty, value); }
-        }
+        /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used, with forced Debug Mode</summary>
+        public Command AnalyzeSkipCountingWithDebugCommand { get; private set; }
 
-        public static readonly PropertyData IsDebuggingFlagProperty = RegisterProperty("IsDebuggingFlag", typeof (bool), false);
+        private void OnAnalyzeSkipCountingWithDebugCommandExecute()
+        {
+            IsDebuggingFlag = true;
+            OnAnalyzeSkipCountingCommandExecute();
+        }
 
         /// <summary>Attempts to interpret ink strokes over an array as an Ink Divider</summary>
         public Command InterpretArrayDividersCommand { get; private set; }
