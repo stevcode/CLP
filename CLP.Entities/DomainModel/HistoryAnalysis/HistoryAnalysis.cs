@@ -129,6 +129,12 @@ namespace CLP.Entities
                     initialHistoryActions.Add(compoundHistoryAction);
                     historyItemBuffer.Clear();
                 }
+                else
+                {
+                    // Should act as a catch-all to just ignore historyItems not coded against,
+                    // like for now, bins and stamps.
+                    historyItemBuffer.Remove(currentHistoryItem);
+                }
             }
 
             return initialHistoryActions;
