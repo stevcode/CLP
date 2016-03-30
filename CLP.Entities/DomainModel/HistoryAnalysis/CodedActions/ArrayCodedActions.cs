@@ -1103,6 +1103,33 @@ namespace CLP.Entities
 
             if (isDebugging)
             {
+                var sleepTime = 2500;
+                page.ClearBoundaries();
+                var tempBoundary = new TemporaryBoundary(page, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
+                {
+                    RegionText = "Overlapping Strokes"
+                };
+                page.PageObjects.Add(tempBoundary);
+                var heightWidths = new Dictionary<Stroke, Point>();
+                foreach (var stroke in overlapStrokes)
+                {
+                    var width = stroke.DrawingAttributes.Width;
+                    var height = stroke.DrawingAttributes.Height;
+                    heightWidths.Add(stroke, new Point(width, height));
+
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                }
+                PageHistory.UISleep(sleepTime);
+                foreach (var stroke in overlapStrokes)
+                {
+                    var width = heightWidths[stroke].X;
+                    var height = heightWidths[stroke].Y;
+                    stroke.DrawingAttributes.Width = width;
+                    stroke.DrawingAttributes.Height = height;
+                }
+
+                heightWidths.Clear();
                 page.ClearBoundaries();
 
                 foreach (var strokeGroupKey in strokeGroupPerRow.Keys)
@@ -1114,7 +1141,6 @@ namespace CLP.Entities
 
                     var strokeGroup = strokeGroupPerRow[strokeGroupKey];
 
-                    var heightWidths = new Dictionary<Stroke, Point>();
                     foreach (var stroke in strokeGroup)
                     {
                         var width = stroke.DrawingAttributes.Width;
