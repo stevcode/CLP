@@ -603,7 +603,11 @@ namespace Classroom_Learning_Partner.Services
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
 
             var pagesToSave = GetPagesToSave(notebookInfo, isForcedFullSave);
-            Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
+            //Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
+            foreach (var page in pagesToSave)
+            {
+                page.SaveToXML(notebookInfo.PagesFolderPath);
+            }
         }
 
         #endregion //Save Methods
