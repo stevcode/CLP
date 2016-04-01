@@ -124,7 +124,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                   {
                                       DataService.LoadPages(SelectedNotebook, pageIDs, true);
                                       DataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, true);
-                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher && IsIncludeSubmissionsChecked && SelectedNotebook.NameComposite.OwnerTypeTag == "T")
+                                      if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher || App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) && IsIncludeSubmissionsChecked && SelectedNotebook.NameComposite.OwnerTypeTag == "T")
                                       {
                                           Parallel.ForEach(AvailableNotebooks,
                                                            notebookInfo =>
