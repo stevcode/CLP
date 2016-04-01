@@ -614,6 +614,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSubmitPageCommandExecute()
         {
             CurrentPage.TrimPage();
+            var page = CurrentPage;
             var submission = CurrentPage.NextVersionCopy();
 
             var tBackground = new Thread(() =>
@@ -646,8 +647,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        {
                                                            try
                                                            {
-                                                               CurrentPage.Submissions.Add(submission);
-                                                               CurrentPage.IsCached = true;
+                                                               page.Submissions.Add(submission);
+                                                               page.IsCached = true;
                                                            }
                                                            catch (Exception e)
                                                            {
