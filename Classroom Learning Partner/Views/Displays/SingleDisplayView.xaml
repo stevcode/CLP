@@ -108,8 +108,7 @@
                           VerticalAlignment="Top"
                           IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
                           IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                          >
-                <!--Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"-->
+                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
