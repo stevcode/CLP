@@ -1138,37 +1138,86 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
+
+            var tempRectangles = CurrentPage.PageObjects.OfType<TemporaryShape>().ToList();
+            foreach (var temporaryRectangle in tempRectangles)
+            {
+                CurrentPage.PageObjects.Remove(temporaryRectangle);
+            }
+
+            foreach (var stroke in CurrentPage.InkStrokes)
+            {
+                var drawingAttributes = stroke.DrawingAttributes;
+                var color = drawingAttributes.Color;
+                color.A = 255;
+                drawingAttributes.Color = color;
+                stroke.DrawingAttributes = drawingAttributes;
+            }
         }
 
         public Command StrokeTestingCommand { get; private set; }
 
         private void OnStrokeTestingCommandExecute()
         {
-            var strokes = CurrentPage.InkStrokes.ToList();
-            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var distanceFromArray = new List<double>();
-
+            Console.WriteLine("NEW STROKE TEST");
+            // var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
+            var strokes = CurrentPage.InkStrokes;
             foreach (var stroke in strokes)
             {
-                var minDistance = double.MaxValue;
-                foreach (var array in arrays)
+                var strokeStartPoint = stroke.StylusPoints.First();
+                Console.WriteLine("Stroke starting at (" + ((int)(strokeStartPoint.X)).ToString() +
+                    ", " + ((int)(strokeStartPoint.Y)).ToString() + ") IsEnclosedShape: " + stroke.IsEnclosedShape().ToString());
+
+                /*
+                foreach (var stylusPoint in stroke.StylusPoints)
                 {
-                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
-                    var deltaX = arrayVisualRight - stroke.GetBounds().Left;
-                    if (deltaX < minDistance &&
-                        deltaX >= 0)
-                    {
-                        minDistance = deltaX;
-                    }
+                    var tempShape = new Shape(CurrentPage, ShapeType.Rectangle);
+                    // var tempBoundary = new TemporaryBoundary(CurrentPage, stylusPoint.ToPoint().X, stylusPoint.ToPoint().Y, 2, 2)
+                    // tempShape.Color = Color.Pink;
+                    tempShape.XPosition = stylusPoint.ToPoint().X;
+                    tempShape.YPosition = stylusPoint.ToPoint().Y;
+                    tempShape.Height = 2;
+                    tempShape.Width = 2;
+                    CurrentPage.PageObjects.Add(tempShape);
                 }
-                distanceFromArray.Add(minDistance);
+
+                var drawingAttributes = stroke.DrawingAttributes;
+                var color = drawingAttributes.Color;
+                color.A = 0;
+                drawingAttributes.Color = color;
+                stroke.DrawingAttributes = drawingAttributes;
+                */
+
+                drawGrid(stroke.GetBounds());
+
             }
 
-            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
-            foreach (var line in output)
+        }
+
+        private void drawGrid(Rect bounds)
+        {
+            const int CELL_SIZE = 30;
+
+            for (var i=((int)(bounds.Left/CELL_SIZE))*CELL_SIZE; i < bounds.Right; i += CELL_SIZE)
             {
-                Console.WriteLine(line);
+                var tempLine = new Shape(CurrentPage, ShapeType.VerticalLine);
+                tempLine.XPosition = i;
+                tempLine.YPosition = bounds.Top;
+                tempLine.Height = bounds.Height;
+                tempLine.Width = 1;
+                CurrentPage.PageObjects.Add(tempLine);
             }
+
+            for (var i = ((int)(bounds.Top / CELL_SIZE)) * CELL_SIZE; i < bounds.Bottom; i += CELL_SIZE)
+            {
+                var tempLine = new Shape(CurrentPage, ShapeType.HorizontalLine);
+                tempLine.XPosition = bounds.Left;
+                tempLine.YPosition = i;
+                tempLine.Width = bounds.Width;
+                tempLine.Height = tempLine.MinimumHeight;
+                CurrentPage.PageObjects.Add(tempLine);
+            }
+
         }
 
         /// <summary>

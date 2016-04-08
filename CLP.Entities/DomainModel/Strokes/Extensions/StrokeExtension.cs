@@ -598,28 +598,144 @@ namespace CLP.Entities
 
         public static bool IsEnclosedShape(this Stroke stroke)
         {
-            const int BUCKET_SIZE = 5;
-            const int QUEUE_SIZE = 5;
+            const int CELL_SIZE = 30;
 
             Argument.IsNotNull("stroke", stroke);
-            var previousPoints = new PointCollection();
-            var previousPointsQueue = new Queue<Point>();
-            foreach (var stylusPoint in stroke.StylusPoints)
+            var occupiedCells = FindCellsOccupiedByStroke(stroke, CELL_SIZE);
+            Console.WriteLine("found " + occupiedCells.Count.ToString() + " occupied cells");
+
+            return DetectCycle(occupiedCells);
+        }
+
+        /*
+            Need to do DFS for cycle detection
+            TODO once we detect on multiple strokes, we'll have to pass in starting 
+            points for DFS on each stroke to be extra careful in case there are 
+            disconnected graphs
+        */
+
+        private static bool DetectCycle(PointCollection occupiedCells)
+        {
+            var visited = new PointCollection();
+            var cellStack = new Stack<Tuple<Point, Point>>();
+
+            var thisCell = occupiedCells[0]; //there has to be at least one occupied cell
+            var immediateAncestor = thisCell;
+
+            cellStack.Push(new Tuple<Point, Point>(thisCell, immediateAncestor));
+            while (cellStack.Count > 0)
             {
-                // Bucketing points by casting to nearest BUCKET_SIZE
-                var newPoint = stylusPoint.ToPoint();
-                newPoint.X = (int)(newPoint.X/BUCKET_SIZE);
-                newPoint.Y = (int)(newPoint.Y/BUCKET_SIZE);
-
-                if (previousPoints.Contains(newPoint)) { return true;}
-
-                previousPointsQueue.Enqueue(newPoint);
-                if (previousPointsQueue.Count() > QUEUE_SIZE) {
-                    previousPoints.Add(previousPointsQueue.Dequeue());
+                var nextTuple = cellStack.Pop();
+                thisCell = nextTuple.Item1;
+                immediateAncestor = nextTuple.Item2;
+                if (visited.Contains(thisCell))
+                {
+                    return true;
                 }
-                Console.WriteLine(newPoint.ToString());
+                visited.Add(thisCell);
+                var neighbors = GetNeighbors(thisCell, immediateAncestor);
+                foreach (var neighbor in neighbors)
+                {
+                    if (occupiedCells.Contains(neighbor))
+                    {
+                        cellStack.Push(new Tuple<Point, Point>(neighbor, thisCell));
+                    }
+                }
             }
+
             return false;
+        }
+
+        private static PointCollection GetNeighbors(Point thisPoint, Point immediateAncestor)
+        {
+            var neighbors = new PointCollection();
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + 1));
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - 1));
+            neighbors.Add(new Point(thisPoint.X + 1, thisPoint.Y));
+            neighbors.Add(new Point(thisPoint.X - 1, thisPoint.Y));
+            neighbors.Remove(immediateAncestor); // Make sure this works with object equality
+            return neighbors;
+        }
+
+        private static PointCollection FindCellsOccupiedByStroke(Stroke stroke, int CELL_SIZE)
+        {
+            var occupiedCells = new PointCollection();
+            int i = 1;
+            var stylusPoints = stroke.StylusPoints;
+            var thisPoint = stylusPoints[0].ToPoint();
+            thisPoint.X = (int)(thisPoint.X / CELL_SIZE);
+            thisPoint.Y = (int)(thisPoint.Y / CELL_SIZE);
+            var nextPoint = new Point();
+            while (i < stylusPoints.Count)
+            {
+                int cellCountBefore = occupiedCells.Count;
+                nextPoint = stylusPoints[i].ToPoint();
+                nextPoint.X = (int)(nextPoint.X / CELL_SIZE);
+                nextPoint.Y = (int)(nextPoint.Y / CELL_SIZE);
+
+
+                // TODO the following is a complete guess about the shape of the curve
+                // We can do better by using the bezzier curve, but this might not be easily exposed
+                if (thisPoint.Y <= nextPoint.Y)
+                {
+                    int j = (int)thisPoint.Y;
+                    while (j <= nextPoint.Y)
+                    {
+                        var occupiedCell = new Point((int)thisPoint.X, j);
+                        if (!occupiedCells.Contains(occupiedCell))
+                        {
+                            occupiedCells.Add(occupiedCell);
+                        }
+                        j++;
+                    }
+                }
+                else {
+                    int j = (int)nextPoint.Y;
+                    while (j <= thisPoint.Y)
+                    {
+                        var occupiedCell = new Point((int)nextPoint.X, j);
+                        if (!occupiedCells.Contains(occupiedCell))
+                        {
+                            occupiedCells.Add(occupiedCell);
+                        }
+                        j++;
+                    }
+                }
+
+                if (thisPoint.X <= nextPoint.X)
+                {
+                    int k = (int)thisPoint.X;
+                    while (k <= nextPoint.X)
+                    {
+                        var occupiedCell = new Point(k, (int)thisPoint.Y);
+                        if (!occupiedCells.Contains(occupiedCell))
+                        {
+                            occupiedCells.Add(occupiedCell);
+                        }
+                        k++;
+                    }
+                }
+                else {
+                    int k = (int)nextPoint.X;
+                    while (k <= thisPoint.X)
+                    {
+                        var occupiedCell = new Point(k, (int)nextPoint.Y);
+                        if (!occupiedCells.Contains(occupiedCell))
+                        {
+                            occupiedCells.Add(occupiedCell);
+                        }
+                        k++;
+                    }
+                }
+
+                int cellCountAfter = occupiedCells.Count;
+                int cellsAdded = cellCountAfter - cellCountBefore;
+                Console.WriteLine("added " + cellsAdded.ToString() + "cells b/w " + thisPoint.ToString() + " and " + nextPoint.ToString());
+                thisPoint = nextPoint;
+                i++;
+            }
+
+            return occupiedCells;
         }
 
         public static bool IsStrokeEnclosure(this Stroke stroke, StrokeCollection strokes)
