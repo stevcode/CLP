@@ -363,6 +363,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                       if (secondChildNode.Name == "FullName")
                                                       {
                                                           secondChildNode.InnerText = newName;
+                                                      }
+                                                      if (secondChildNode.Name == "Alias")
+                                                      {
+                                                          secondChildNode.InnerText = string.Empty;
                                                           break;
                                                       }
                                                   }
