@@ -9,6 +9,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class Bin : AStrokeAndPageObjectAccepter, ICountable
     {
         #region Constructors
@@ -67,6 +68,18 @@ namespace CLP.Entities
         public override bool IsBackgroundInteractable
         {
             get { return true; }
+        }
+
+        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
+        public override double MinimumHeight
+        {
+            get { return 35 + PartsHeight; }
+        }
+
+        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
+        public override double MinimumWidth
+        {
+            get { return 100; }
         }
 
         public override void OnAdded(bool fromHistory = false)
@@ -140,6 +153,27 @@ namespace CLP.Entities
             }
 
             base.OnDeleted(fromHistory);
+        }
+
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var scaleX = Width / oldWidth;
+            var scaleY = Height / oldHeight;
+
+            AcceptedStrokes.StretchAll(scaleX, scaleY, XPosition, YPosition);
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+
+            OnResizing(oldWidth, oldHeight, fromHistory);
         }
 
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
@@ -219,6 +253,8 @@ namespace CLP.Entities
 
             RefreshParts();
         }
+
+        public override bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject) { return pageObject is Mark; }
 
         #endregion //APageObjectAccepter Overrides
 

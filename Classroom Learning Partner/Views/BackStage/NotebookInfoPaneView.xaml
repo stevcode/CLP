@@ -171,10 +171,84 @@
                 </StackPanel>
             </Button>
 
+            <Button Command="{Binding GenerateStudentNotebooksCommand}"
+                    Width="110"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="true" />
+                        <Setter Property="OverridesDefaultStyle"
+                                Value="true" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="ButtonBorder"
+                                            CornerRadius="2"
+                                            BorderThickness="1"
+                                            Background="White"
+                                            BorderBrush="{DynamicResource DynamicMainColor}">
+                                        <ContentPresenter Margin="5"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsPressed"
+                                                 Value="True">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.25'}" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Opacity"
+                                                    Value=".15" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                </Button.Style>
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
+                           Height="32"
+                           Width="32"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="5" />
+
+                    <TextBlock Text="Generate Class Notebooks"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Center"
+                               FontFamily="Segoe UI"
+                               FontSize="9pt"
+                               FontWeight="Bold"
+                               Foreground="Black"
+                               TextWrapping="Wrap"
+                               TextOptions.TextRenderingMode="Auto"
+                               TextOptions.TextFormattingMode="Ideal" />
+
+                </StackPanel>
+            </Button>
+
             <Button Command="{Binding ClearPagesNonAnimationHistoryCommand}"
                     Width="150"
                     Height="84"
-                    Margin="200 0 20 0"
+                    Margin="70 0 20 0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">

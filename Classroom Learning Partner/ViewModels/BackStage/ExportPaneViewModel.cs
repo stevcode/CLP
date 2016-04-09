@@ -48,14 +48,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool OnNotebookExportCanExecute() { return false; }
+        private bool OnNotebookExportCanExecute() { return true; }
 
         /// <summary>Converts Notebook Pages to PDF.</summary>
         public Command ConvertNotebookToPDFCommand { get; private set; }
 
         private void OnConvertNotebookToPDFCommandExecute()
         {
-            var notebook = LoadedNotebookService.CurrentNotebook;
+            var notebook = DataService.CurrentNotebook;
 
             ConvertPagesToPDF(notebook.Pages, notebook);
         }
@@ -65,7 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertPageSubmissionsToPDFCommandExecute()
         {
-            var notebook = LoadedNotebookService.CurrentNotebook;
+            var notebook = DataService.CurrentNotebook;
             var sortedPages = notebook.CurrentPage.Submissions.ToList().OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
             var pageNumber = "" + notebook.CurrentPage.PageNumber;
             if (notebook.CurrentPage.DifferentiationLevel != "0")
@@ -81,7 +81,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertAllSubmissionsToPDFCommandExecute()
         {
-            var notebook = LoadedNotebookService.CurrentNotebook;
+            var notebook = DataService.CurrentNotebook;
             var allPages = new List<CLPPage>();
             CLPPage lastSubmissionAdded = null;
             foreach (var page in notebook.Pages)
@@ -200,6 +200,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCopyNotebookForNewOwnerCommandExecute()
         {
+            // TODO: Utilize NotebookInfoPane's OnSaveNotebookForStudentCommandExecute
+
             var person = new Person();
             var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
             personCreationView.ShowDialog();
@@ -210,10 +212,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var copiedNotebook = LoadedNotebookService.CurrentNotebook.CopyForNewOwner(person);
+            var copiedNotebook = DataService.CurrentNotebook.CopyForNewOwner(person);
             copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-            LoadedNotebookService.OpenNotebooks.Add(copiedNotebook);
-            LoadedNotebookService.CurrentNotebook = copiedNotebook;
+     
             App.MainWindowViewModel.CurrentUser = person;
             App.MainWindowViewModel.IsAuthoring = false;
             App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();

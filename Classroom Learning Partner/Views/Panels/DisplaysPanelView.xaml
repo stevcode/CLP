@@ -44,25 +44,23 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <!--<RowDefinition Height="Auto" />-->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="1"
+            <Button Grid.Row="0"
+                    Content="New Grid Display"
                     VerticalAlignment="Bottom"
                     Height="32"
-                    Command="{Binding AddGridDisplayCommand}">
-            New Grid Display
-            </Button>
+                    Command="{Binding AddGridDisplayCommand}" />
 
-            <Button Grid.Row="2"
+            <!--<Button Grid.Row="2"
                     VerticalAlignment="Bottom"
                     Height="32">
                 New Column Display
-            </Button>
+            </Button>-->
 
-            <ListBox Grid.Row="3"
+            <ListBox Grid.Row="1"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      ItemsSource="{Binding Displays}"
@@ -71,7 +69,6 @@
                      SelectionMode="Single"
                      extenders:ListBoxExtenders.AutoScrollToCurrentItem="True"
                      ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
-
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Visibility="{Binding IsHidden, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
@@ -97,8 +94,6 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-
-                            
 
                             <TextBlock x:Name="DisplayLabel"
                                        Grid.Column="0"
@@ -227,43 +222,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <Thumb Grid.Row="0"
-                   Grid.RowSpan="6"
-                   Cursor="ScrollWE"
-                   Width="{StaticResource PanelBorderThickeness}"
-                   Margin="-10 0 0 0"
-                   VerticalAlignment="Stretch"
-                   HorizontalAlignment="Left">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <Thumb.Template>
-                    <ControlTemplate>
-                        <Grid VerticalAlignment="Stretch" Background="Transparent">
-                            <UniformGrid Columns="1"
-                                         Height="30"
-                                         Background="Transparent">
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                            </UniformGrid>
-                        </Grid>
-                    </ControlTemplate>
-                </Thumb.Template>
-            </Thumb>
 
         </Grid>
 

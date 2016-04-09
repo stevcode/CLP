@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -36,8 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemoveBinCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-
-            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateBinCommand, null, true));
+            
             _contextButtons.Add(new RibbonButton("Empty Bin", "pack://application:,,,/Resources/Images/Trash32.png", EmptyBinCommand, null, true));
         }
 
@@ -167,8 +167,31 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var parentPage = bin.ParentPage;
+            if (parentPage == null)
+            {
+                return;
+            }
+
             var marksToDelete = bin.AcceptedPageObjects.OfType<Mark>().Cast<IPageObject>().ToList();
-            ACLPPageBaseViewModel.RemovePageObjectsFromPage(bin.ParentPage, marksToDelete);
+            if (marksToDelete.Any())
+            {
+                ACLPPageBaseViewModel.RemovePageObjectsFromPage(bin.ParentPage, marksToDelete);
+            }
+            
+            var strokesToTrash = new StrokeCollection();
+            foreach (var stroke in bin.AcceptedStrokes.Where(stroke => parentPage.InkStrokes.Contains(stroke)))
+            {
+                strokesToTrash.Add(stroke);
+            }
+
+            if (strokesToTrash.Any())
+            {
+                parentPage.InkStrokes.Remove(strokesToTrash);
+                bin.ChangeAcceptedStrokes(new List<Stroke>(), strokesToTrash);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(parentPage, new ObjectsOnPageChangedHistoryItem(parentPage, App.MainWindowViewModel.CurrentUser, new List<Stroke>(), strokesToTrash));
+            }
         }
 
         #endregion //Commands

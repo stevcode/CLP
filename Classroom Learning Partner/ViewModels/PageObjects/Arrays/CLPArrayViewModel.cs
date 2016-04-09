@@ -982,6 +982,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var initXPos = array.XPosition;
             var initYPos = array.YPosition;
+            var oldWidth = array.Width;
+            var oldHeight = array.Height;
             array.RotateArray();
 
             if (array.ArrayType == ArrayTypes.ObscurableArray)
@@ -1009,6 +1011,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                      initYPos,
                                                                                      array.XPosition,
                                                                                      array.YPosition,
+                                                                                     oldWidth,
+                                                                                     oldHeight,
                                                                                      array.Columns,
                                                                                      array.Rows));
 

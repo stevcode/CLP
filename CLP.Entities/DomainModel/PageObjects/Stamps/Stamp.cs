@@ -189,6 +189,18 @@ namespace CLP.Entities
             get { return true; }
         }
 
+        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
+        public override double MinimumHeight
+        {
+            get { return 25 + PartsHeight + HandleHeight; }
+        }
+
+        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
+        public override double MinimumWidth
+        {
+            get { return 25; }
+        }
+
         public override void OnAdded(bool fromHistory = false)
         {
             base.OnAdded(fromHistory);
@@ -236,6 +248,27 @@ namespace CLP.Entities
 
             ParentPage.InkStrokes.Remove(strokesToTrash);
             ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
+        }
+
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var scaleX = Width / oldWidth;
+            var scaleY = (Height - HandleHeight - PartsHeight) / (oldHeight - HandleHeight - PartsHeight);
+
+            AcceptedStrokes.StretchAll(scaleX, scaleY, XPosition, YPosition + HandleHeight);
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+
+            OnResizing(oldWidth, oldHeight, fromHistory);
         }
 
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)

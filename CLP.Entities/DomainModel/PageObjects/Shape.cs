@@ -130,7 +130,7 @@ namespace CLP.Entities
 
         public override bool IsBackgroundInteractable
         {
-            get { return true; }
+            get { return false; }
         }
 
         public override IPageObject Duplicate()

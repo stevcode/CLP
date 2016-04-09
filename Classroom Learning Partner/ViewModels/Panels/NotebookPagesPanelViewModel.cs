@@ -202,6 +202,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //Take thumbnail of page before navigating away from it.
                 ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
+                ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
                 CurrentPage = page;
                 return;
             }

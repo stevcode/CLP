@@ -284,6 +284,7 @@
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\InterpretationRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
@@ -413,6 +414,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\Bins\MarkView.xaml.cs">
       <DependentUpon>MarkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\InterpretationRegionView.xaml.cs">
+      <DependentUpon>InterpretationRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\MultipleChoiceView.xaml.cs">
       <DependentUpon>MultipleChoiceView.xaml</DependentUpon>
@@ -736,6 +740,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\Bins\MarkView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\InterpretationRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1104,6 +1112,10 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\FuzzyArray32.png" />
+    <Resource Include="Resources\Images\NumberLine64New.png" />
+    <Resource Include="Resources\Images\NumberLineAuto64.png" />
+    <Resource Include="Resources\Images\AddBin180.png" />
     <Resource Include="Resources\Images\Steps512.png" />
     <Resource Include="Resources\Images\Tags128.png" />
     <Resource Include="Resources\Images\Hourglass256.png" />

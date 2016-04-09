@@ -16,6 +16,7 @@ namespace CLP.Entities
         Custom
     }
 
+    [Serializable]
     public class Mark : APageObjectBase, ICountable
     {
         #region Constructors

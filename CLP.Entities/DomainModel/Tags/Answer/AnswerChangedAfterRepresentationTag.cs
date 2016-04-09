@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class AnswerChangedAfterRepresentationTag : ATagBase
     {
         #region Constructors
@@ -110,7 +112,9 @@ namespace CLP.Entities
             {
                 var firstAnswer = FirstAnswer;
                 var lastAnswer = LastAnswer;
-                if (firstAnswer.ID == lastAnswer.ID)
+                if (firstAnswer == null ||
+                    lastAnswer == null ||
+                    firstAnswer.ID == lastAnswer.ID)
                 {
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }

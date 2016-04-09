@@ -262,32 +262,33 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _initialWidth = 0;
-            var changeSize = NumberLineSize - _oldEnd;
-            var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
+            // HACK: Removed for demo.
+            //var changeSize = NumberLineSize - _oldEnd;
+            //var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
 
-            var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
+            //var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
 
-            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-            {
-                var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
-                var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+            //foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+            //{
+            //    var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
+            //    var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
 
-                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
-                                                             Origin.StudentPageObjectGenerated,
-                                                             PageObject.ID,
-                                                             0,
-                                                             _oldEnd,
-                                                             numberLineIDsInHistory.IndexOf(PageObject.ID),
-                                                             0,
-                                                             NumberLineSize,
-                                                             changeSize,
-                                                             _isClicked,
-                                                             oldDistanceFromAnswer,
-                                                             newDistanceFromAnswer,
-                                                             tooLowNumber);
-                PageObject.ParentPage.AddTag(tag);
-            }
+            //    var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
+            //                                                 Origin.StudentPageObjectGenerated,
+            //                                                 PageObject.ID,
+            //                                                 0,
+            //                                                 _oldEnd,
+            //                                                 numberLineIDsInHistory.IndexOf(PageObject.ID),
+            //                                                 0,
+            //                                                 NumberLineSize,
+            //                                                 changeSize,
+            //                                                 _isClicked,
+            //                                                 oldDistanceFromAnswer,
+            //                                                 newDistanceFromAnswer,
+            //                                                 tooLowNumber);
+            //    PageObject.ParentPage.AddTag(tag);
+            //}
         }
 
         /// <summary>Change the length of the number line</summary>
@@ -308,15 +309,30 @@ namespace Classroom_Learning_Partner.ViewModels
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
 
-            if (_initialWidth + numberLine.TickLength > newWidth ||
-                !IsArrowDraggingAllowed)
+            if (!IsArrowDraggingAllowed)
             {
                 return;
             }
 
-            _isClicked = false;
-            _initialWidth += numberLine.TickLength;
-            ChangeNumberLineEndPoints(NumberLineSize + 1);
+            if (newWidth >= _initialWidth + numberLine.TickLength)
+            {
+                _isClicked = false;
+                _initialWidth += numberLine.TickLength;
+                ChangeNumberLineEndPoints(NumberLineSize + 1);
+            }
+            else if (newWidth <= _initialWidth - numberLine.TickLength &&
+                     NumberLineSize > 5)
+            {
+                var newNumberLineSize = NumberLineSize - 1;
+                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
+                if (lastMarkedTick == null ||
+                    lastMarkedTick.TickValue <= newNumberLineSize)
+                {
+                    _isClicked = false;
+                    _initialWidth -= numberLine.TickLength;
+                    ChangeNumberLineEndPoints(newNumberLineSize);
+                }
+            }
 
             //TODO: Use for conversion
             //if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
@@ -332,9 +348,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
         public Command CheckArrayCompletenessCommand { get; private set; }
 
         private void OnCheckArrayCompletenessCommandExecute()
@@ -446,7 +459,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var oldHeight = numberLine.Height;
                 var oldYPosition = numberLine.YPosition;
-                if (!numberLine.JumpSizes.Any())
+                if (!numberLine.JumpSizes.Any() &&
+                    numberLine.NumberLineType != NumberLineTypes.AutoArcs)
                 {
                     numberLine.Height = numberLine.NumberLineHeight;
                     numberLine.YPosition += (oldHeight - numberLine.Height);

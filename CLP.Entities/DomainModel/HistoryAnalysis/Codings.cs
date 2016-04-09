@@ -158,16 +158,16 @@ namespace CLP.Entities
         #region Array Strategies
 
         public const string STRATEGY_ARRAY_NONE = "NO STRAT ARR";
-        public const string STRATEGY_ARRAY_DOTS = "STRAT COUNT dots ARR";
-        public const string STRATEGY_ARRAY_DOTS_PARTIAL = "STRAT COUNT dots part ARR";
-        public const string STRATEGY_ARRAY_SKIP = "STRAT COUNT skip ARR";
-        public const string STRATEGY_ARRAY_SKIP_PARTIAL = "STRAT COUNT skip part ARR";
-        public const string STRATEGY_ARRAY_DIVIDE = "STRAT PART divide ARR";
-        public const string STRATEGY_ARRAY_DIVIDE_INK = "STRAT PART divide ink ARR";
-        public const string STRATEGY_ARRAY_CUT = "STRAT PART cut ARR";
-        public const string STRATEGY_ARRAY_SNAP = "STRAT PART snap ARR";
-        public const string STRATEGY_ARRAY_CUT_THEN_SNAP = "STRAT PART cut snap ARR";
-        public const string STRATEGY_ARRAY_MULTIPLE = "STRAT PART mult ARR";
+        public const string STRATEGY_ARRAY_DOTS = "COUNT dots ARR";
+        public const string STRATEGY_ARRAY_DOTS_PARTIAL = "COUNT dots part ARR";
+        public const string STRATEGY_ARRAY_SKIP = "COUNT skip ARR";
+        public const string STRATEGY_ARRAY_SKIP_PARTIAL = "COUNT skip part ARR";
+        public const string STRATEGY_ARRAY_DIVIDE = "PART divide ARR";
+        public const string STRATEGY_ARRAY_DIVIDE_INK = "PART divide ink ARR";
+        public const string STRATEGY_ARRAY_CUT = "PART cut ARR";
+        public const string STRATEGY_ARRAY_SNAP = "PART snap ARR";
+        public const string STRATEGY_ARRAY_CUT_THEN_SNAP = "PART cut snap ARR";
+        public const string STRATEGY_ARRAY_MULTIPLE = "PART mult ARR";
 
         #endregion // Array Strategies
 

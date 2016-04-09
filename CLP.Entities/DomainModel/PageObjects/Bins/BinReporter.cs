@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class BinReporter : APageObjectBase, IReporter
     {
         #region Constructors
@@ -36,6 +37,16 @@ namespace CLP.Entities
         public override string FormattedName
         {
             get { return string.Format("Bin Reporter reporting: {0}", FormattedReport); }
+        }
+
+        public override string CodedName
+        {
+            get { return "BIN REPORTER"; }
+        }
+
+        public override string CodedID
+        {
+            get { return "A"; }
         }
 
         public override int ZIndex

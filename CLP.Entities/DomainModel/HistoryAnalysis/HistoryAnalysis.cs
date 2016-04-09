@@ -144,6 +144,13 @@ namespace CLP.Entities
             IHistoryAction historyAction = null;
             TypeSwitch.On(historyItem)
                       .Case<ObjectsOnPageChangedHistoryItem>(h => { historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
+                      .Case<PartsValueChangedHistoryItem>(h =>
+                                                          {
+                                                              historyAction = new HistoryAction(page, h);
+                                                              historyAction.CodedObject = Codings.OBJECT_STAMP;
+                                                              historyAction.CodedObjectAction = "parts";
+                                                              historyAction.CodedObjectID = "CHANGED";
+                                                          })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
                       .Case<CLPArraySnapHistoryItem>(h => { historyAction = ArrayCodedActions.Snap(page, h); })
@@ -580,11 +587,11 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
         {
+            AttemptArrayStrategiesTag(page, historyActions);
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
             AttemptRepresentationsUsedTag(page, historyActions);
-            AttemptArrayStrategiesTag(page, historyActions);
             AttemptRepresentationCorrectness(page, historyActions);
         }
 
@@ -592,10 +599,12 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
         {
-            if (!historyActions.Any())
-            {
-                return;
-            }
+            //if (!historyActions.Any())
+            //{
+            //    return;
+            //}
+
+            #region Answer Definition Relation
 
             var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag ||
                                                            t is MultiplicationRelationDefinitionTag ||
@@ -610,18 +619,18 @@ namespace CLP.Entities
             var div = relationDefinitionTag as DivisionRelationDefinitionTag;
             if (div != null)
             {
-                definitionRelation.groupSize = div.Divisor;
-                definitionRelation.numberOfGroups = div.Quotient;
+                definitionRelation.groupSize = div.Quotient;
+                definitionRelation.numberOfGroups = div.Divisor;
                 definitionRelation.product = div.Dividend;
-                definitionRelation.isOrderedGroup = true;
+                definitionRelation.isOrderedGroup = false; // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
                 definitionRelation.isProductImportant = true;
             }
 
             var mult = relationDefinitionTag as MultiplicationRelationDefinitionTag;
             if (mult != null)
             {
-                definitionRelation.groupSize = mult.Factors.First().RelationPartAnswerValue;
-                definitionRelation.numberOfGroups = mult.Factors.Last().RelationPartAnswerValue;
+                definitionRelation.numberOfGroups = mult.Factors.First().RelationPartAnswerValue;
+                definitionRelation.groupSize = mult.Factors.Last().RelationPartAnswerValue;
                 definitionRelation.product = mult.Product;
                 definitionRelation.isOrderedGroup = mult.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
                 definitionRelation.isProductImportant = true;
@@ -657,6 +666,8 @@ namespace CLP.Entities
                 }
             }
 
+            #endregion // Answer Definition Relation
+
             var keyIndexes =
                 historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
                               .Select(h => h.HistoryItems.First().HistoryIndex - 1).ToList();
@@ -664,16 +675,38 @@ namespace CLP.Entities
             {
                 return;
             }
-            keyIndexes.Add(page.History.CompleteOrderedHistoryItems.Last().HistoryIndex);
+            var lastHistoryIndex = page.History.CompleteOrderedHistoryItems.Last().HistoryIndex + 1;
+            keyIndexes.Add(lastHistoryIndex);
             keyIndexes.Reverse();
             var usedPageObjectIDs = new List<string>();
             var finalPageObjectIDs = page.PageObjects.Where(p => p is CLPArray || p is NumberLine).Select(p => p.ID).ToList();
             var analysisCodes = new List<string>();
             foreach (var index in keyIndexes)
             {
-                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine).ToList();
+                var pageObjectOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, index).Where(p => p is CLPArray || p is NumberLine || p is StampedObject || p is Bin).ToList();
+                var stampedObjectGroups = new Dictionary<string, int>();
                 foreach (var pageObject in pageObjectOnPage)
                 {
+                    var stampedObject = pageObject as StampedObject;
+                    if (stampedObject != null &&
+                        index == lastHistoryIndex)
+                    {
+                        var parts = stampedObject.Parts;
+                        var parentStampID = stampedObject.ParentStampID;
+                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        if (stampedObjectGroups.ContainsKey(groupID))
+                        {
+                            stampedObjectGroups[groupID]++;
+                        }
+                        else
+                        {
+                            stampedObjectGroups.Add(groupID, 1);
+                        }
+
+                        usedPageObjectIDs.Add(stampedObject.ID);
+                        continue;
+                    }
+
                     Relation representationRelation = null;
                     var usedID = string.Empty;
                     var codedObject = string.Empty;
@@ -719,13 +752,13 @@ namespace CLP.Entities
                         var jumpSizesIgnoringOverlaps = numberLine.JumpSizes.GroupBy(j => j.StartingTickIndex).Select(g => g.First()).ToList();
 
                         representationRelation = new Relation
-                        {
-                            groupSize = isEqualGroups ? firstGroupSize : -1,
-                            numberOfGroups = jumpSizesIgnoringOverlaps.Count,
-                            product = product,
-                            isOrderedGroup = true,
-                            isProductImportant = true
-                        };
+                                                 {
+                                                     groupSize = isEqualGroups ? firstGroupSize : -1,
+                                                     numberOfGroups = jumpSizesIgnoringOverlaps.Count,
+                                                     product = product,
+                                                     isOrderedGroup = true,
+                                                     isProductImportant = true
+                                                 };
                     }
 
                     if (representationRelation == null || usedPageObjectIDs.Contains(usedID))
@@ -784,6 +817,149 @@ namespace CLP.Entities
 
                     var analysisCode = string.Format("{0} [{1}: {2}]{3}", codedObject, codedID, codedCorrectness, isFinal ? ", final" : string.Empty);
                     analysisCodes.Add(analysisCode);
+                }
+
+                var binsOnPage = pageObjectOnPage.OfType<Bin>().Where(b => b.Parts > 0).ToList();
+                if (binsOnPage.Any())
+                {
+                    var numberOfGroups = binsOnPage.Count();
+                    var product = binsOnPage.Select(b => b.Parts).Sum();
+                    var firstGroupSize = binsOnPage.First().Parts;
+                    var isEqualGroups = binsOnPage.All(b => b.Parts == firstGroupSize);
+
+                    var representationRelation = new Relation
+                                                 {
+                                                     groupSize = isEqualGroups ? firstGroupSize : -1,
+                                                     numberOfGroups = numberOfGroups,
+                                                     product = product,
+                                                     isOrderedGroup = true,
+                                                     isProductImportant = true
+                                                 };
+
+                    var altCorrectness = Correctness.Unknown;
+                    var otherCorrectness = Correctness.Unknown;
+                    if (isAltDefinitionUsed)
+                    {
+                        altCorrectness = CompareRelationToRepresentations(representationRelation, altDefinitionRelation);
+                    }
+                    if (isOtherDefinitionUsed)
+                    {
+                        otherCorrectness = CompareRelationToRepresentations(representationRelation, otherDefinitionRelation);
+                    }
+                    var relationCorrectness = CompareRelationToRepresentations(representationRelation, definitionRelation);
+
+                    Correctness correctness;
+                    if (altCorrectness == Correctness.Correct ||
+                        otherCorrectness == Correctness.Correct ||
+                        relationCorrectness == Correctness.Correct)
+                    {
+                        correctness = Correctness.Correct;
+                    }
+                    else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                            relationCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        correctness = Correctness.PartiallyCorrect;
+                    }
+                    else
+                    {
+                        correctness = relationCorrectness;
+                    }
+
+                    var codedCorrectness = string.Empty;
+                    switch (correctness)
+                    {
+                        case Correctness.Correct:
+                            codedCorrectness = Codings.CORRECTNESS_CORRECT;
+                            break;
+                        case Correctness.PartiallyCorrect:
+                            codedCorrectness = Codings.CORRECTNESS_PARTIAL;
+                            break;
+                        case Correctness.Incorrect:
+                            codedCorrectness = Codings.CORRECTNESS_INCORRECT;
+                            break;
+                        case Correctness.Unknown:
+                            codedCorrectness = "UNKNOWN";
+                            break;
+                    }
+
+                    var codedObject = Codings.OBJECT_BINS;
+                    var codedID = numberOfGroups;
+                    var analysisCode = string.Format("{0} [{1}: {2}], final", codedObject, codedID, codedCorrectness);
+                    analysisCodes.Add(analysisCode);
+                }
+
+                if (stampedObjectGroups.Keys.Any())
+                {
+                    foreach (var key in stampedObjectGroups.Keys)
+                    {
+                        var groupIDSections = key.Split(' ');
+                        var parts = int.Parse(groupIDSections[0]);
+                        var numberOfGroups = stampedObjectGroups[key];
+                        var codedObject = Codings.OBJECT_STAMP;
+                        var codedID = parts;
+                        //var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
+                        //var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                        //var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
+                        //var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
+
+                        var representationRelation = new Relation
+                                                     {
+                                                         groupSize = parts,
+                                                         numberOfGroups = numberOfGroups,
+                                                         product = numberOfGroups * parts,
+                                                         isOrderedGroup = parts != 1,
+                                                         isProductImportant = true
+                                                     };
+
+                        var altCorrectness = Correctness.Unknown;
+                        var otherCorrectness = Correctness.Unknown;
+                        if (isAltDefinitionUsed)
+                        {
+                            altCorrectness = CompareRelationToRepresentations(representationRelation, altDefinitionRelation);
+                        }
+                        if (isOtherDefinitionUsed)
+                        {
+                            otherCorrectness = CompareRelationToRepresentations(representationRelation, otherDefinitionRelation);
+                        }
+                        var relationCorrectness = CompareRelationToRepresentations(representationRelation, definitionRelation);
+
+                        Correctness correctness;
+                        if (altCorrectness == Correctness.Correct ||
+                            otherCorrectness == Correctness.Correct ||
+                            relationCorrectness == Correctness.Correct)
+                        {
+                            correctness = Correctness.Correct;
+                        }
+                        else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                                relationCorrectness == Correctness.PartiallyCorrect)
+                        {
+                            correctness = Correctness.PartiallyCorrect;
+                        }
+                        else
+                        {
+                            correctness = relationCorrectness;
+                        }
+
+                        var codedCorrectness = string.Empty;
+                        switch (correctness)
+                        {
+                            case Correctness.Correct:
+                                codedCorrectness = Codings.CORRECTNESS_CORRECT;
+                                break;
+                            case Correctness.PartiallyCorrect:
+                                codedCorrectness = Codings.CORRECTNESS_PARTIAL;
+                                break;
+                            case Correctness.Incorrect:
+                                codedCorrectness = Codings.CORRECTNESS_INCORRECT;
+                                break;
+                            case Correctness.Unknown:
+                                codedCorrectness = "UNKNOWN";
+                                break;
+                        }
+
+                        var analysisCode = string.Format("{0} [{1}, {2} images: {3}], final", codedObject, codedID, numberOfGroups, codedCorrectness);
+                        analysisCodes.Add(analysisCode);
+                    }
                 }
             }
 
@@ -941,6 +1117,7 @@ namespace CLP.Entities
             var deletedCodedRepresentations = new List<string>();
 
             var stampedObjectGroups = new Dictionary<string, int>();
+            var binGroups = new Dictionary<int, int>();
             var maxStampedObjectGroups = new Dictionary<string, int>();
             var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
             var subArrayGroups = new Dictionary<string,List<string>>();
@@ -1116,7 +1293,36 @@ namespace CLP.Entities
                         var id = historyAction.CodedObjectID;
                         var components = jumpGroups.ContainsKey(numberLineID) ? NumberLine.ConsolidateJumps(jumpGroups[numberLineID].ToList()) : string.Empty;
                         var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
-                        var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                        var englishValue = string.Empty;
+                        if (!string.IsNullOrEmpty(components))
+                        {
+                            var jumpsInEnglish = new List<string>();
+                            foreach (var codedJump in components.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                try
+                                {
+                                    var jumpSegments = codedJump.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                                    var jumpSize = int.Parse(jumpSegments[0]);
+                                    var jumpRange = jumpSegments[1].Split('-');
+                                    var start = int.Parse(jumpRange[0]);
+                                    var stop = int.Parse(jumpRange[1]);
+                                    var numberOfJumps = (stop - start) / jumpSize;
+                                    var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
+                                    var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
+                                    jumpsInEnglish.Add(jumpInEnglish);
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
+                            englishValue = string.Join("\n  - ", jumpsInEnglish);
+                            if (!string.IsNullOrEmpty(englishValue))
+                            {
+                                englishValue = "\n  - " + englishValue;
+                            }
+                        }
+                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
                         deletedCodedRepresentations.Add(codedValue);
                         if (!string.IsNullOrEmpty(componentSection))
                         {
@@ -1226,8 +1432,21 @@ namespace CLP.Entities
                     var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
-                        var skipCodedValue = string.Format("\n  - skip [\"{0}\"]", formattedSkips);
+                        var skipCodedValue = string.Format("\n  - skip [{0}]", formattedSkips);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
+
+                        // HACK: Added for demo.
+                        var strategyCode = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, id);
+                        var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
+                        if (existingArrayStrategiesTag != null)
+                        {
+                            existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                        }
+                        else
+                        {
+                            var arrayStrategiesTag = new ArrayStrategiesTag(page, Origin.StudentPageObjectGenerated, new List<IHistoryAction>(), new List<string> { strategyCode });
+                            page.AddTag(arrayStrategiesTag);
+                        }
                     }
 
                     finalCodedRepresentations.Add(codedValue);
@@ -1241,7 +1460,37 @@ namespace CLP.Entities
                     var id = numberLine.CodedID;
                     var components = NumberLine.ConsolidateJumps(numberLine.JumpSizes.ToList());
                     var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
-                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    var englishValue = string.Empty;
+                    if (!string.IsNullOrEmpty(components))
+                    {
+                        var jumpsInEnglish = new List<string>();
+                        foreach (var codedJump in components.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            try
+                            {
+                                var jumpSegments = codedJump.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                                var jumpSize = int.Parse(jumpSegments[0]);
+                                var jumpRange = jumpSegments[1].Split('-');
+                                var start = int.Parse(jumpRange[0]);
+                                var stop = int.Parse(jumpRange[1]);
+                                var numberOfJumps = (stop - start) / jumpSize;
+                                var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
+                                var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
+                                jumpsInEnglish.Add(jumpInEnglish);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                        englishValue = string.Join("\n  - ", jumpsInEnglish);
+                        if (!string.IsNullOrEmpty(englishValue))
+                        {
+                            englishValue = "\n  - " + englishValue;
+                        }
+                    }
+
+                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
                     finalCodedRepresentations.Add(codedValue);
                     if (!string.IsNullOrEmpty(componentSection))
                     {
@@ -1264,6 +1513,19 @@ namespace CLP.Entities
                         stampedObjectGroups.Add(groupID, 1);
                     }
                 }
+
+                var bin = pageObject as Bin;
+                if (bin != null)
+                {
+                    if (binGroups.ContainsKey(bin.Parts))
+                    {
+                        binGroups[bin.Parts]++;
+                    }
+                    else
+                    {
+                        binGroups.Add(bin.Parts, 1);
+                    }
+                }
             }
 
             foreach (var key in stampedObjectGroups.Keys)
@@ -1273,7 +1535,30 @@ namespace CLP.Entities
                 var obj = Codings.OBJECT_STAMP;
                 var id = parts;
                 var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
-                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
+                var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
+                finalCodedRepresentations.Add(codedValue);
+                allRepresentations.Add(obj);
+            }
+
+            if (binGroups.Keys.Any())
+            {
+                var id = 0;
+                var obj = Codings.OBJECT_BINS;
+                var englishValues = new List<string>();
+                foreach (var key in binGroups.Keys)
+                {
+                    var parts = key;
+                    var count = binGroups[key];
+                    id += count;
+                    var binString = count == 1 ? "bin" : "bins";
+                    var englishValue = string.Format("{0} {1} of {2}", count, binString, parts);
+                    englishValues.Add(englishValue);
+                }
+
+                var formattedEnglishValue = string.Join("\n  - ", englishValues);
+                var codedValue = string.Format("{0} [{1}]\n  - {2}", obj, id, formattedEnglishValue);
                 finalCodedRepresentations.Add(codedValue);
                 allRepresentations.Add(obj);
             }
@@ -1317,27 +1602,28 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    {
-                        if (!isLastHistoryAction)
-                        {
-                            var nextHistoryAction = historyActions[i + 1];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                            {
-                                relevantHistoryactions.Add(currentHistoryAction);
-                                relevantHistoryactions.Add(nextHistoryAction);
-                                var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                                strategyCodes.Add(compoundCode);
-                                continue;
-                            }
-                        }
+                    // HACK: Removed for demo.
+                    //if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    //{
+                    //    if (!isLastHistoryAction)
+                    //    {
+                    //        var nextHistoryAction = historyActions[i + 1];
+                    //        if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                    //            nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                    //        {
+                    //            relevantHistoryactions.Add(currentHistoryAction);
+                    //            relevantHistoryactions.Add(nextHistoryAction);
+                    //            var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                    //            strategyCodes.Add(compoundCode);
+                    //            continue;
+                    //        }
+                    //    }
 
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
+                    //    relevantHistoryactions.Add(currentHistoryAction);
+                    //    var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                    //    strategyCodes.Add(code);
+                    //    continue;
+                    //}
 
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
                     {
@@ -1366,7 +1652,7 @@ namespace CLP.Entities
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
                     {
                         relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
+                        var code = string.Format("{0} [{1}, {2} {3}: {4}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectSubID, currentHistoryAction.CodedObjectSubIDIncrement, currentHistoryAction.CodedObjectActionID);
                         strategyCodes.Add(code);
                         continue;
                     }

@@ -22,13 +22,17 @@ namespace Classroom_Learning_Partner.ViewModels
         //PageNumber,   //Hack: For Demo
         SubmissionTime,
         RepresentationType,
+        RepresentationCorrectness,
+        AnswerCorrectness,
+        ABR,
+        ARIC,
         //TroubleWithFactorPairs,        //Hack: For Demo
-        TroubleWithRemainders,
-        TroubleWithDivision,
-        DivisionTemplateStrategy,
+        //TroubleWithRemainders,
+        //TroubleWithDivision,
+        //DivisionTemplateStrategy,
         Starred,
         HadHelp,
-        Correctness
+        //Correctness
     }
 
     public class StagingPanelViewModel : APanelBaseViewModel
@@ -44,6 +48,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionTemplateIncorrectArrayCreation");
         private static readonly PropertyGroupDescription DivisionTemplateStrategyGroup = new PropertyGroupDescription("DivisionTemplateStrategy");
         private static readonly PropertyGroupDescription RepresentationTypeGroup = new PropertyGroupDescription("RepresentationType");
+
+        private static readonly PropertyGroupDescription RepresentationCorrectnessGroup = new PropertyGroupDescription("RepresentationCorrectness");
+        private static readonly PropertyGroupDescription AnswerCorrectnessGroup = new PropertyGroupDescription("AnswerCorrectness");
+        private static readonly PropertyGroupDescription ABRGroup = new PropertyGroupDescription("ABR");
+        private static readonly PropertyGroupDescription ARICGroup = new PropertyGroupDescription("ARIC");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Descending);
@@ -70,14 +79,16 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription RepresentationTypeAscendingSort = new SortDescription("RepresentationType", ListSortDirection.Ascending);
         private static readonly SortDescription RepresentationTypeDescendingSort = new SortDescription("RepresentationType", ListSortDirection.Descending);
 
-        private readonly INotebookService _notebookService;
+        private static readonly SortDescription RepresentationCorrectnessAscendingSort = new SortDescription("RepresentationCorrectness", ListSortDirection.Ascending);
+        private static readonly SortDescription AnswerCorrectnessAscendingSort = new SortDescription("AnswerCorrectness", ListSortDirection.Ascending);
+        private static readonly SortDescription ABRAscendingSort = new SortDescription("ABR", ListSortDirection.Ascending);
+        private static readonly SortDescription ARICAscendingSort = new SortDescription("ARIC", ListSortDirection.Ascending);
 
         #region Constructor
 
         public StagingPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            _notebookService = DependencyResolver.Resolve<INotebookService>();
 
             SortedAndGroupedPages.Source = FilteredPages;
 
@@ -449,23 +460,35 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.HadHelp:
                     ApplySortAndGroupByHadHelp();
                     break;
-                case SortAndGroupTypes.Correctness:
-                    ApplySortAndGroupByCorrectness();
-                    break;
+                //case SortAndGroupTypes.Correctness:
+                //    ApplySortAndGroupByCorrectness();
+                //    break;
                 //case SortAndGroupTypes.TroubleWithFactorPairs:    //Hack: For Demo
                 //    ApplySortAndGroupByTroubleWithFactorPairs();
                 //    break;
-                case SortAndGroupTypes.TroubleWithRemainders:
-                    ApplySortAndGroupByTroubleWithRemainders();
-                    break;
-                case SortAndGroupTypes.TroubleWithDivision:
-                    ApplySortAndGroupByTroubleWithDivision();
-                    break;
-                case SortAndGroupTypes.DivisionTemplateStrategy:
-                    ApplySortAndGroupByDivisionTemplateStrategy();
-                    break;
+                //case SortAndGroupTypes.TroubleWithRemainders:
+                //    ApplySortAndGroupByTroubleWithRemainders();
+                //    break;
+                //case SortAndGroupTypes.TroubleWithDivision:
+                //    ApplySortAndGroupByTroubleWithDivision();
+                //    break;
+                //case SortAndGroupTypes.DivisionTemplateStrategy:
+                //    ApplySortAndGroupByDivisionTemplateStrategy();
+                //    break;
                 case SortAndGroupTypes.RepresentationType:
                     ApplySortAndGroupByRepresentationType();
+                    break;
+                case SortAndGroupTypes.RepresentationCorrectness:
+                    ApplySortAndGroupByRepresentationCorrectness();
+                    break;
+                case SortAndGroupTypes.AnswerCorrectness:
+                    ApplySortAndGroupByAnswerCorrectness();
+                    break;
+                case SortAndGroupTypes.ABR:
+                    ApplySortAndGroupByABR();
+                    break;
+                case SortAndGroupTypes.ARIC:
+                    ApplySortAndGroupByARIC();
                     break;
                 default:
                     ApplySortAndGroupByName();
@@ -624,6 +647,70 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(RepresentationTypeGroup);
             SortedAndGroupedPages.SortDescriptions.Add(RepresentationTypeAscendingSort);
+
+            //HACK: for demo video
+            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByRepresentationCorrectness()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(RepresentationCorrectnessGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(RepresentationCorrectnessAscendingSort);
+
+            //HACK: for demo video
+            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByAnswerCorrectness()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(AnswerCorrectnessGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(AnswerCorrectnessAscendingSort);
+
+            //HACK: for demo video
+            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByABR()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(ABRGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(ABRAscendingSort);
+
+            //HACK: for demo video
+            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByARIC()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(ARICGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(ARICAscendingSort);
 
             //HACK: for demo video
             //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);

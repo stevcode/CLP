@@ -232,7 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hash = md5.ComputeHash(bytes);
                 var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
                 var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(Catel.IoC.ServiceLocator.Default.ResolveType<INotebookService>().CurrentImageCacheDirectory, newFileName);
+                var newFilePath = Path.Combine(Catel.IoC.ServiceLocator.Default.ResolveType<IDataService>().CurrentCacheInfo.ImagesFolderPath, newFileName);
 
                 try
                 {

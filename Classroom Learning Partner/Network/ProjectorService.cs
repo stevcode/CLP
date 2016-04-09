@@ -162,15 +162,20 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
             CLPPage page = null;
-            foreach (var notebook in notebookService.OpenNotebooks)
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
             {
+                var notebook = notebookInfo.Notebook;
+                if (notebook == null)
+                {
+                    continue;
+                }
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
                 if(page != null)
@@ -213,15 +218,20 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
             CLPPage page = null;
-            foreach (var notebook in notebookService.OpenNotebooks)
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
             {
+                var notebook = notebookInfo.Notebook;
+                if (notebook == null)
+                {
+                    continue;
+                }
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
                 if(page != null)
@@ -266,15 +276,20 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
             CLPPage page = null;
-            foreach (var notebook in notebookService.OpenNotebooks)
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
             {
+                var notebook = notebookInfo.Notebook;
+                if (notebook == null)
+                {
+                    continue;
+                }
                 page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
                 if(page != null)
@@ -312,8 +327,8 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
@@ -330,9 +345,7 @@ namespace Classroom_Learning_Partner
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
 
-            var currentNotebook =
-                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
-
+            var currentNotebook = dataService.CurrentNotebook;
             if (currentNotebook == null)
             {
                 return;

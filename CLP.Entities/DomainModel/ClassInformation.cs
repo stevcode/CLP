@@ -272,7 +272,7 @@ namespace CLP.Entities
 
                 return classInformation;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }

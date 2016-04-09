@@ -143,7 +143,7 @@
                     Cursor="Hand"
                     Command="{Binding ReplayHistoryCommand}"
                     VerticalAlignment="Top"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                    Visibility="{Binding MainWindowViewModel.NotStudentVisibility, Source={x:Static Application.Current}}">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Image Source="pack://application:,,,/Images/video.png" />

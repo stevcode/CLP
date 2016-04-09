@@ -51,7 +51,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var singleDisplayViewModel = sender as SingleDisplayViewModel;
-            if (singleDisplayViewModel == null ||
+            var notebookWorkspace = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null ||
+                notebookWorkspace.CurrentDisplay != null ||
+                singleDisplayViewModel == null ||
                 singleDisplayViewModel.CurrentPage == null)
             {
                 return;
@@ -71,7 +74,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, "SingleDisplay");
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                //
+            }
         }
 
         #endregion //Model

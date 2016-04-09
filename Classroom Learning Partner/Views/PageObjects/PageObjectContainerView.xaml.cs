@@ -82,6 +82,10 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(BinReporterViewModel);
             }
+            if (dataContext is InterpretationRegion)
+            {
+                return typeof(InterpretationRegionViewModel);
+            }
 
             return null;
         }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -56,6 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
+            ReconnectCommand = new Command(OnReconnectCommandExecute);
             ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
             ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
@@ -126,7 +128,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
-            _insertObscurableArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
+            _insertObscurableArrayButton = new RibbonButton("Fuzzy Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Template",
@@ -135,9 +137,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                              "DIVISIONTEMPLATE");
 
             //NumberLine
-            _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
+            _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine64New.png", AddPageObjectToPageCommand, "NUMBERLINE");
             _insertAutoNumberLineButton = new RibbonButton("Auto Number Line",
-                                                           "pack://application:,,,/Resources/Images/NumberLine32.png",
+                                                           "pack://application:,,,/Resources/Images/NumberLineAuto64.png",
                                                            AddPageObjectToPageCommand,
                                                            "AUTO_NUMBERLINE");
 
@@ -161,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                "LEFT_DIAGONAL_DASHED");
 
             //Bin
-            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
+            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
 
             //Text
             //TODO: Better Icons
@@ -171,6 +173,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                   "pack://application:,,,/Resources/Images/TempIcon32.png",
                                                                   AddPageObjectToPageCommand,
                                                                   "MULTIPLECHOICEBOX");
+
+            // Recognition
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -325,6 +330,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Bin
         private RibbonButton _insertBinButton;
+
+        // Recognition Regions
+        private RibbonButton _insertRecognitionRegionButton;
 
         #endregion //Insert PageObject Buttons
 
@@ -489,6 +497,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        /// <summary>Restarts the network.</summary>
+        public Command ReconnectCommand { get; private set; }
+
+        private void OnReconnectCommandExecute()
+        {
+            if (MessageBox.Show("Are you sure you want to restart the network connection?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            App.Network.StopNetworking();
+            App.Network.StartNetworking();
+
+            //CLPServiceAgent.Instance.NetworkReconnect();  ?
+        }
+
         /// <summary>Brings up the BackStage.</summary>
         public Command ShowBackStageCommand { get; private set; }
 
@@ -511,6 +535,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             notebookWorkspace.CurrentDisplay = null;
             CurrentRightPanel = null;
+
+            if (App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                const string DISPLAY_ID = "SingleDisplay";
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
+            }
+            catch (Exception ex)
+            {
+                //
+            }
         }
 
         private bool OnExitMultiDisplayCanExecute()
@@ -575,50 +614,75 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSubmitPageCommandExecute()
         {
             CurrentPage.TrimPage();
+            var page = CurrentPage;
             var submission = CurrentPage.NextVersionCopy();
-            string sPage = string.Empty;
-            try
-            {
-                sPage = ObjectSerializer.ToString(submission);
-            }
-            catch (Exception e)
-            {
-                Logger.Instance.WriteToLog("Failed To stringify submission");
-                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
-                Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
-                Logger.Instance.WriteToLog("[Source]: " + e.Source);
-                Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
-                Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
-            }
 
-            CurrentPage.Submissions.Add(submission);
-            CurrentPage.IsCached = true;
-
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService == null)
-            {
-                Logger.Instance.WriteToLog("notebook service null on submission");
-                return;
-            }
-            if (string.IsNullOrEmpty(sPage))
-            {
-                Logger.Instance.WriteToLog("sPage null or empty on submission");
-                return;
-            }
-            if (App.Network.InstructorProxy == null)
-            {
-                Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-                return;
-            }
-
-            var t = new Thread(() =>
+            var tBackground = new Thread(() =>
                                {
+                                   var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                                   foreach (var tempArraySkipCountingTag in existingTags)
+                                   {
+                                       submission.RemoveTag(tempArraySkipCountingTag);
+                                   }
+
+                                   HistoryAnalysis.GenerateHistoryActions(submission);
+
+                                   string sPage = string.Empty;
+                                   try
+                                   {
+                                       sPage = ObjectSerializer.ToString(submission);
+                                   }
+                                   catch (Exception e)
+                                   {
+                                       Logger.Instance.WriteToLog("Failed To stringify submission");
+                                       Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
+                                       Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
+                                       Logger.Instance.WriteToLog("[Source]: " + e.Source);
+                                       Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
+                                       Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
+                                   }
+
+                                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           try
+                                                           {
+                                                               page.Submissions.Add(submission);
+                                                               page.IsCached = true;
+                                                           }
+                                                           catch (Exception e)
+                                                           {
+                                                               Logger.Instance.WriteToLog("[ERROR] Error adding submission to current page on submit: " +
+                                                                                          e.Message);
+                                                           }
+
+                                                           return null;
+                                                       },
+                                                       null);
+
+                                   var dataService = DependencyResolver.Resolve<IDataService>();
+                                   if (dataService == null)
+                                   {
+                                       Logger.Instance.WriteToLog("notebook service null on submission");
+                                       return;
+                                   }
+                                   if (string.IsNullOrEmpty(sPage))
+                                   {
+                                       Logger.Instance.WriteToLog("sPage null or empty on submission");
+                                       return;
+                                   }
+                                   if (App.Network.InstructorProxy == null)
+                                   {
+                                       Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
+                                       return;
+                                   }
+
                                    try
                                    {
                                        //var sPage = ObjectSerializer.ToString(submission);
                                        var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
 
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
                                    }
                                    catch (Exception ex)
                                    {
@@ -629,15 +693,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         IsBackground = true
                     };
-            t.Start();
+            tBackground.Start();
         }
 
         private bool OnSubmitPageCanExecute()
         {
-            if (CurrentPage == null)
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null ||
+                CurrentPage == null ||
+                notebookWorkspace.PagesAddedThisSession.Contains(CurrentPage))
             {
                 return false;
             }
+
             return !CurrentPage.IsCached;
         }
 
@@ -658,6 +726,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
             notebookWorkspace.Notebook.AddPage(newPage);
+            notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 
         /// <summary>
@@ -886,6 +955,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "MULTIPLECHOICEBOX":
                     MultipleChoiceViewModel.AddMultipleChoiceToPage(CurrentPage);
                     break;
+
+                // Recognition
+                case "ANSWERFILLIN":
+                    InterpretationRegionViewModel.AddInterpretationRegionToPage(CurrentPage);
+                    break;
             }
 
             PageInteractionMode = PageInteractionModes.Select;
@@ -905,7 +979,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            Buttons.Add(_setMarkModeButton);
+            //Buttons.Add(_setMarkModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
@@ -921,10 +995,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            //Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertBinButton);
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertPileButton);
-            Buttons.Add(_insertBinButton);
 
             // Insert Shapes
             //Buttons.Add(Separater);
@@ -943,6 +1017,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(Separater);
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 

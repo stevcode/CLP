@@ -207,8 +207,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Gets the DragStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
 
-        
-
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
@@ -328,8 +326,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialWidth = Width;
             var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
-            var MIN_WIDTH = 20.0;
-            var MIN_HEIGHT = PageObject is Stamp ? (PageObject as Stamp).PartsHeight + (PageObject as Stamp).HandleHeight + 20 : 20;
+            var MIN_WIDTH = PageObject.MinimumWidth;
+            var MIN_HEIGHT = PageObject.MinimumHeight;
 
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);

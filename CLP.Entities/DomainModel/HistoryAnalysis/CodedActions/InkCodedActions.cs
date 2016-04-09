@@ -714,9 +714,18 @@ namespace CLP.Entities
             else
             {
                 int expectedValue;
-                interpretation = Int32.TryParse(answer, out expectedValue)
-                                     ? InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedValue)
-                                     : InkInterpreter.InterpretationClosestToANumber(interpretations);
+                if (int.TryParse(answer, out expectedValue))
+                {
+                    interpretation = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedValue);
+                    if (string.IsNullOrEmpty(interpretation))
+                    {
+                        interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    }
+                }
+                else
+                {
+                    interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                }
             }
 
             var correctness = answer == "UNDEFINED" ? "unknown" : answer == interpretation ? "COR" : "INC";
@@ -727,7 +736,7 @@ namespace CLP.Entities
                                     CodedObjectAction = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ? Codings.ACTION_FILL_IN_ADD : Codings.ACTION_FILL_IN_ERASE,
                                     IsObjectActionVisible = inkAction.CodedObjectAction != Codings.ACTION_INK_ADD,
                                     CodedObjectID = answer,
-                                    CodedObjectActionID = String.Format("\"{0}\", {1}", interpretation, correctness)
+                                    CodedObjectActionID = string.Format("\"{0}\", {1}", interpretation, correctness)
                                 };
 
             return historyAction;

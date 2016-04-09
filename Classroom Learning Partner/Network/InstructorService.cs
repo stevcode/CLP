@@ -54,15 +54,15 @@ namespace Classroom_Learning_Partner
         public Dictionary<string, byte[]> SendImages(List<string> imageHashIDs)
         {
             var imageList = new Dictionary<string, byte[]>();
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return imageList;
             }
             
-            if (Directory.Exists(notebookService.CurrentImageCacheDirectory))
+            if (Directory.Exists(dataService.CurrentCacheInfo.ImagesFolderPath))
             {
-                var localImageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
+                var localImageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
                 foreach (var localImageFilePath in localImageFilePaths)
                 {
                     var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
@@ -80,31 +80,32 @@ namespace Classroom_Learning_Partner
 
         public void SendClassPeriod(string machineAddress)
         {
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null || notebookService.CurrentClassPeriod == null)
-            {
-                Logger.Instance.WriteToLog("Failed to send classperiod, currentclassperiod is null.");
-                return;
-            }
-            try
-            {
-                var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
-                var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            // TODO: reimplement classPeriods
+            //if (dataService == null || dataService.CurrentClassPeriod == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to send classperiod, currentclassperiod is null.");
+            //    return;
+            //}
+            //try
+            //{
+            //    var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
+            //    var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassInformation);
-                var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
+            //    var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassInformation);
+            //    var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
-                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(machineAddress));
-                studentProxy.OpenClassPeriod(classPeriod, classsubject);
-                (studentProxy as ICommunicationObject).Close();
-            }
-            catch (Exception) { }
+            //    var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(machineAddress));
+            //    studentProxy.OpenClassPeriod(classPeriod, classsubject);
+            //    (studentProxy as ICommunicationObject).Close();
+            //}
+            //catch (Exception) { }
         }
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
@@ -120,8 +121,7 @@ namespace Classroom_Learning_Partner
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
 
-            var currentNotebook =
-                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+            var currentNotebook = dataService.CurrentNotebook;
 
             if (currentNotebook == null)
             {
@@ -156,22 +156,43 @@ namespace Classroom_Learning_Partner
             var pageFilePath = Path.Combine(pagesPath, submissionNameComposite.ToFileName() + ".xml");
             submission.ToXML(pageFilePath);
 
+            var studentNotebookInfo = dataService.LoadedNotebooksInfo.FirstOrDefault(ni => ni.Notebook != null && ni.Notebook.OwnerID == submission.OwnerID);
+            if (studentNotebookInfo == null ||
+                studentNotebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            var studentNotebook = studentNotebookInfo.Notebook;
+            var studentPage = studentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            if (studentPage == null ||
+                !studentPage.Owner.IsStudent)
+            {
+                return;
+            }
+
+            var teacherPage = currentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
                                                                                         try
                                                                                         {
-                                                                                            var page =
-                                                                                                    currentNotebook.Pages.FirstOrDefault(
-                                                                                                                                         x =>
-                                                                                                                                         x.ID == submission.ID &&
-                                                                                                                                         x.DifferentiationLevel ==
-                                                                                                                                         submission.DifferentiationLevel);
-                                                                                            if (page == null)
+                                                                                            studentPage.Submissions.Add(submission);
+
+                                                                                            if (teacherPage != null)
                                                                                             {
-                                                                                                return null;
+                                                                                                var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(teacherPage);
+                                                                                                foreach (var pageViewModel in pageViewModels)
+                                                                                                {
+                                                                                                    var pageVM = pageViewModel as ACLPPageBaseViewModel;
+                                                                                                    if (pageVM == null)
+                                                                                                    {
+                                                                                                        continue;
+                                                                                                    }
+                                                                                                    pageVM.UpdateSubmissionCount();
+                                                                                                }
                                                                                             }
-                                                                                            page.Submissions.Add(submission);
                                                                                         }
                                                                                         catch (Exception e)
                                                                                         {
@@ -209,14 +230,13 @@ namespace Classroom_Learning_Partner
         public void AddSerializedPages(string zippedPages, string notebookID)
         {
             Logger.Instance.WriteToLog("received pages");
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
-            var currentNotebook =
-                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+            var currentNotebook = dataService.CurrentNotebook;
 
             if (currentNotebook == null)
             {
@@ -271,8 +291,8 @@ namespace Classroom_Learning_Partner
         {
             Task.Factory.StartNew(() =>
                                   {
-                                      var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                      if (notebookService == null)
+                                      var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+                                      if (dataService == null)
                                       {
                                           return;
                                       }
@@ -286,8 +306,7 @@ namespace Classroom_Learning_Partner
                                           return;
                                       }
 
-                                      var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
-                                      var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
+                                      var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
                                       notebook.SavePartialNotebook(notebookFolderPath, false);
                                   });
         }
@@ -296,8 +315,8 @@ namespace Classroom_Learning_Partner
         {
             Task.Factory.StartNew(() =>
             {
-                var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                if (notebookService == null)
+                var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+                if (dataService == null)
                 {
                     return;
                 }
@@ -311,8 +330,7 @@ namespace Classroom_Learning_Partner
                     return;
                 }
 
-                var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
-                var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
+                var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
                 notebook.SavePartialNotebook(notebookFolderPath, false);
             });
         }
@@ -419,20 +437,21 @@ namespace Classroom_Learning_Partner
 
         public void StudentLogout(string studentID)
         {
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
-            var student = notebookService.CurrentClassPeriod.ClassInformation.StudentList.FirstOrDefault(x => x.ID == studentID);
-            if (student == null)
-            {
-                Logger.Instance.WriteToLog("Failed to log out student. student is null.");
-                return;
-            }
+            // TODO: reimplement classPeriod
+            //var student = dataService.CurrentClassPeriod.ClassInformation.StudentList.FirstOrDefault(x => x.ID == studentID);
+            //if (student == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to log out student. student is null.");
+            //    return;
+            //}
 
-            student.IsConnected = false;
+            //student.IsConnected = false;
         }
 
         #endregion

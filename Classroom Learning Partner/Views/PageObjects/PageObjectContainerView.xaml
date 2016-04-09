@@ -100,6 +100,10 @@
                 <views:BinReporterView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="InterpretationRegionTemplate">
+                <views:InterpretationRegionView DataContext="{Binding}" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -226,6 +230,13 @@
                                  Value="BinReporter">
                         <Setter Property="Template"
                                 Value="{StaticResource BinReporterTemplate}" />
+                    </DataTrigger>
+
+                    <!-- InterpretationRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="InterpretationRegion">
+                        <Setter Property="Template"
+                                Value="{StaticResource InterpretationRegionTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>

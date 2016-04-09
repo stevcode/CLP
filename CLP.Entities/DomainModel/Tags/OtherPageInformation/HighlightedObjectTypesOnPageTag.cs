@@ -52,7 +52,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.OtherPageInformation; }
+            get { return Category.Representation; }
         }
 
         public override string FormattedName

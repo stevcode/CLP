@@ -181,12 +181,12 @@
             <ToggleButton.Style>
                 <Style TargetType="ToggleButton">
                     <Setter Property="Content"
-                            Value="Open History" />
+                            Value="Show Submission History" />
                     <Style.Triggers>
                         <Trigger Property="IsChecked"
                                  Value="True">
                             <Setter Property="Content"
-                                    Value="Close History" />
+                                    Value="Hide Submission History" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>

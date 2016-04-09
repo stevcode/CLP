@@ -60,8 +60,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof (ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
-        
-        
 
         #endregion // Properties
 

@@ -26,16 +26,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void init()
         {
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService == null)
+            var dataService = DependencyResolver.Resolve<IDataService>();
+            if (dataService == null)
             {
                 return;
             }
 
-            if (notebookService.CurrentClassPeriod != null)
-            {
-                StudentsNotInGroup = new ObservableCollection<Person>(notebookService.CurrentClassPeriod.ClassInformation.StudentList);
-            }
+            //if (dataService.CurrentClassPeriod != null)
+            //{
+            //    StudentsNotInGroup = new ObservableCollection<Person>(dataService.CurrentClassPeriod.ClassInformation.StudentList);
+            //}
 
             SortedStudentsNotInGroup.Source = StudentsNotInGroup;
             SortDescription StudentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);

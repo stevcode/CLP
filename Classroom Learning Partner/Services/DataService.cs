@@ -315,7 +315,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             #endregion // TSV Batch
-        } 
+        }
 
         #endregion // Batch Methods
 
@@ -406,7 +406,6 @@ namespace Classroom_Learning_Partner.Services
 
             return pageIDs.Distinct().ToList();
         }
-
 
         public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
         {
@@ -575,6 +574,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var oldPage = CurrentNotebook.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(oldPage);
             AutoSavePage(oldPage);
             CurrentNotebook.CurrentPage = page;
         }
@@ -603,7 +603,11 @@ namespace Classroom_Learning_Partner.Services
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
 
             var pagesToSave = GetPagesToSave(notebookInfo, isForcedFullSave);
-            Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
+            //Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
+            foreach (var page in pagesToSave)
+            {
+                page.SaveToXML(notebookInfo.PagesFolderPath);
+            }
         }
 
         #endregion //Save Methods

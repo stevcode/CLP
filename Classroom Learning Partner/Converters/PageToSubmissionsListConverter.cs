@@ -19,17 +19,18 @@ namespace Classroom_Learning_Partner.Converters
 
             var pageSubmissions = values[0] as ObservableCollection<CLPPage>;
             var submissionsWithBlanks = new ObservableCollection<StudentProgressInfo>();
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
             {
                 return submissionsWithBlanks;
             }
 
             var studentList = new ObservableCollection<Person>();
-            if (notebookService.CurrentClassPeriod != null)
-            {
-                studentList = notebookService.CurrentClassPeriod.ClassInformation.StudentList;
-            }
+            // TODO: Reimplement ClassInformation
+            //if (dataService.CurrentClassPeriod != null)
+            //{
+            //    studentList = notebookService.CurrentClassPeriod.ClassInformation.StudentList;
+            //}
 
             var allSubmissions = new List<CLPPage>();
             var latestSubmissions = new List<CLPPage>();

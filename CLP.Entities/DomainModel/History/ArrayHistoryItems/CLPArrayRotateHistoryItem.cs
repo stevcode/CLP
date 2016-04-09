@@ -22,15 +22,20 @@ namespace CLP.Entities
                                          double oldYPosition,
                                          double newXPosition,
                                          double newYPosition,
+                                         double oldWidth,
+                                         double oldHeight,
                                          int oldRows,
                                          int oldColumns)
             : base(parentPage, owner)
         {
+            // TODO: Need old height/width
             ArrayID = arrayID;
             OldXPosition = oldXPosition;
             OldYPosition = oldYPosition;
             NewXPosition = newXPosition;
             NewYPosition = newYPosition;
+            OldWidth = oldWidth;
+            OldHeight = oldHeight;
             OldRows = oldRows;
             OldColumns = oldColumns;
         }
