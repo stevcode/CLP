@@ -66,6 +66,10 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(TemporaryBoundaryViewModel);
             }
+            if (dataContext is TemporaryGrid)
+            {
+                return typeof(TemporaryGridViewModel);
+            }
             if (dataContext is MultipleChoice)
             {
                 return typeof(MultipleChoiceViewModel);

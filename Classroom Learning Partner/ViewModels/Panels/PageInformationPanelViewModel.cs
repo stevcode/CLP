@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -1139,10 +1140,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
 
-            var tempRectangles = CurrentPage.PageObjects.OfType<TemporaryShape>().ToList();
-            foreach (var temporaryRectangle in tempRectangles)
+            var tempGrids = CurrentPage.PageObjects.OfType<TemporaryGrid>().ToList();
+            foreach (var tempGrid in tempGrids)
             {
-                CurrentPage.PageObjects.Remove(temporaryRectangle);
+                CurrentPage.PageObjects.Remove(tempGrid);
             }
 
             foreach (var stroke in CurrentPage.InkStrokes)
@@ -1165,8 +1166,8 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in strokes)
             {
                 var strokeStartPoint = stroke.StylusPoints.First();
-                Console.WriteLine("Stroke starting at (" + ((int)(strokeStartPoint.X)).ToString() +
-                    ", " + ((int)(strokeStartPoint.Y)).ToString() + ") IsEnclosedShape: " + stroke.IsEnclosedShape().ToString());
+                var isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
 
                 /*
                 foreach (var stylusPoint in stroke.StylusPoints)
@@ -1188,36 +1189,31 @@ namespace Classroom_Learning_Partner.ViewModels
                 stroke.DrawingAttributes = drawingAttributes;
                 */
 
-                drawGrid(stroke.GetBounds());
-
+                #region Debugging
+                if (IsDebuggingFlag)
+                {
+                    PageHistory.UISleep(3000);
+                    var oldWidth = stroke.DrawingAttributes.Width;
+                    var oldHeight = stroke.DrawingAttributes.Height;
+                    var oldColor = stroke.DrawingAttributes.Color;
+                    stroke.DrawingAttributes.Width = 8;
+                    stroke.DrawingAttributes.Height = 8;
+                    PageHistory.UISleep(3000);
+                    if (isEnclosed)
+                    {
+                        stroke.DrawingAttributes.Color = Colors.Green;
+                    }
+                    else
+                    {
+                        stroke.DrawingAttributes.Color = Colors.Crimson;
+                    }
+                    PageHistory.UISleep(3000);
+                    stroke.DrawingAttributes.Width = oldWidth;
+                    stroke.DrawingAttributes.Height = oldHeight;
+                    stroke.DrawingAttributes.Color = oldColor;
+                }
+                #endregion // Debugging
             }
-
-        }
-
-        private void drawGrid(Rect bounds)
-        {
-            const int CELL_SIZE = 30;
-
-            for (var i=((int)(bounds.Left/CELL_SIZE))*CELL_SIZE; i < bounds.Right; i += CELL_SIZE)
-            {
-                var tempLine = new Shape(CurrentPage, ShapeType.VerticalLine);
-                tempLine.XPosition = i;
-                tempLine.YPosition = bounds.Top;
-                tempLine.Height = bounds.Height;
-                tempLine.Width = 1;
-                CurrentPage.PageObjects.Add(tempLine);
-            }
-
-            for (var i = ((int)(bounds.Top / CELL_SIZE)) * CELL_SIZE; i < bounds.Bottom; i += CELL_SIZE)
-            {
-                var tempLine = new Shape(CurrentPage, ShapeType.HorizontalLine);
-                tempLine.XPosition = bounds.Left;
-                tempLine.YPosition = i;
-                tempLine.Width = bounds.Width;
-                tempLine.Height = tempLine.MinimumHeight;
-                CurrentPage.PageObjects.Add(tempLine);
-            }
-
         }
 
         /// <summary>

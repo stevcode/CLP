@@ -596,13 +596,20 @@ namespace CLP.Entities
             return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT;
         }
 
-        public static bool IsEnclosedShape(this Stroke stroke)
+        public static bool IsEnclosedShape(this Stroke stroke, CLPPage page = null)
         {
-            const int CELL_SIZE = 30;
-
             Argument.IsNotNull("stroke", stroke);
+
+            const int CELL_SIZE = 30;
             var occupiedCells = FindCellsOccupiedByStroke(stroke, CELL_SIZE);
-            Console.WriteLine("found " + occupiedCells.Count.ToString() + " occupied cells");
+            if (page != null)
+            {
+                var strokeBounds = stroke.GetBounds();
+                var tempGrid = new TemporaryGrid(page, strokeBounds.X, strokeBounds.Y, strokeBounds.Height, strokeBounds.Width, CELL_SIZE, occupiedCells);
+                page.PageObjects.Add(tempGrid);
+            }
+
+            Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
 
             return DetectCycle(occupiedCells);
         }
@@ -614,7 +621,7 @@ namespace CLP.Entities
             disconnected graphs
         */
 
-        private static bool DetectCycle(PointCollection occupiedCells)
+        private static bool DetectCycle(List<Point> occupiedCells)
         {
             var visited = new PointCollection();
             var cellStack = new Stack<Tuple<Point, Point>>();
@@ -646,9 +653,9 @@ namespace CLP.Entities
             return false;
         }
 
-        private static PointCollection GetNeighbors(Point thisPoint, Point immediateAncestor)
+        private static List<Point> GetNeighbors(Point thisPoint, Point immediateAncestor)
         {
-            var neighbors = new PointCollection();
+            var neighbors = new List<Point>();
             neighbors.Add(new Point(thisPoint.X, thisPoint.Y + 1));
             neighbors.Add(new Point(thisPoint.X, thisPoint.Y - 1));
             neighbors.Add(new Point(thisPoint.X + 1, thisPoint.Y));
@@ -657,9 +664,9 @@ namespace CLP.Entities
             return neighbors;
         }
 
-        private static PointCollection FindCellsOccupiedByStroke(Stroke stroke, int CELL_SIZE)
+        private static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_SIZE)
         {
-            var occupiedCells = new PointCollection();
+            var occupiedCells = new List<Point>();
             int i = 1;
             var stylusPoints = stroke.StylusPoints;
             var thisPoint = stylusPoints[0].ToPoint();
@@ -735,7 +742,7 @@ namespace CLP.Entities
                 i++;
             }
 
-            return occupiedCells;
+            return occupiedCells.Distinct().ToList();
         }
 
         public static bool IsStrokeEnclosure(this Stroke stroke, StrokeCollection strokes)

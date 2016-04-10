@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -13,13 +15,15 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="TemporaryBoundary" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="TemporaryGrid" /> belongs to.</param>
-        public TemporaryGrid(CLPPage parentPage, double xPosition, double yPosition, double height, double width)
+        public TemporaryGrid(CLPPage parentPage, double xPosition, double yPosition, double height, double width, int cellSize, List<Point> occupiedCells)
             : base(parentPage)
         {
             XPosition = xPosition;
             YPosition = yPosition;
             Height = height;
             Width = width;
+            CellSize = cellSize;
+            OccupiedCells = occupiedCells;
         }
 
         /// <summary>Initializes <see cref="TemporaryBoundary" /> based on <see cref="SerializationInfo" />.</summary>
@@ -32,13 +36,21 @@ namespace CLP.Entities
 
         #region Properties
 
-        public string RegionText
+        public int CellSize
         {
-            get { return GetValue<string>(RegionTextProperty); }
-            set { SetValue(RegionTextProperty, value); }
+            get { return GetValue<int>(CellSizeProperty); }
+            set { SetValue(CellSizeProperty, value); }
         }
 
-        public static readonly PropertyData RegionTextProperty = RegisterProperty("RegionText", typeof(string), string.Empty);
+        public static readonly PropertyData CellSizeProperty = RegisterProperty("CellSize", typeof(int), 0);
+
+        public List<Point> OccupiedCells
+        {
+            get { return GetValue<List<Point>>(OccupiedCellsProperty); }
+            set { SetValue(OccupiedCellsProperty, value); }
+        }
+
+        public static readonly PropertyData OccupiedCellsProperty = RegisterProperty("OccupiedCells", typeof(List<Point>), () => new List<Point>());
 
         #endregion // Properties
 
