@@ -1166,7 +1166,16 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in strokes)
             {
                 var strokeStartPoint = stroke.StylusPoints.First();
-                var isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                bool isEnclosed;
+                if (IsDebuggingFlag)
+                {
+                    isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                }
+                else
+                {
+                    isEnclosed = stroke.IsEnclosedShape();
+                }
+                
                 Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
 
                 /*
