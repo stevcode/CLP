@@ -1432,7 +1432,53 @@ namespace CLP.Entities
                     var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
-                        var skipCodedValue = string.Format("\n  - skip [{0}]", formattedSkips);
+                        // HACK: temporary print out of Wrong Dimension analysis
+                        var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                        var skips = new List<int>();
+                        foreach (var skip in skipStrings)
+                        {
+                            if (string.IsNullOrEmpty(skip))
+                            {
+                                skips.Add(-1);
+                                continue;
+                            }
+
+                            int number;
+                            var isNumber = int.TryParse(skip, out number);
+                            if (isNumber)
+                            {
+                                skips.Add(number);
+                                continue;
+                            }
+
+                            skips.Add(-1);
+                        }
+
+                        var wrongDimensionMatches = 0;
+                        for (int i = 0; i < skips.Count - 1; i++)
+                        {
+                            var currentValue = skips[i];
+                            var nextValue = skips[i + 1];
+                            if (currentValue == -1 ||
+                                nextValue == -1)
+                            {
+                                continue;
+                            }
+                            var difference = nextValue - currentValue;
+                            if (difference == array.Rows)
+                            {
+                                wrongDimensionMatches++;
+                            }
+                        }
+
+                        var wrongDimensionText = string.Empty;
+                        var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                        if (percentMatchWrongDimensions >= 0.80)
+                        {
+                            wrongDimensionText = ", wrong dimension";
+                        }
+
+                        var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
 
                         // HACK: Added for demo.
