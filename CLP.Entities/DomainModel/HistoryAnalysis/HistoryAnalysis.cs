@@ -1487,7 +1487,10 @@ namespace CLP.Entities
                         var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
                         if (existingArrayStrategiesTag != null)
                         {
-                            existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                            if (!existingArrayStrategiesTag.StrategyCodes.Any(c => c.Contains("skip +arith")))
+                            {
+                                existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                            }
                         }
                         else
                         {
@@ -1620,6 +1623,7 @@ namespace CLP.Entities
             var relevantHistoryactions = new List<IHistoryAction>();
             var strategyCodes = new List<string>();
             var ignoredHistoryIndexes = new List<int>();
+            var skipArithCount = new Dictionary<string,int>();
 
             for (var i = 0; i < historyActions.Count; i++)
             {
@@ -1649,28 +1653,37 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    // HACK: Removed for demo.
-                    //if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    //{
-                    //    if (!isLastHistoryAction)
-                    //    {
-                    //        var nextHistoryAction = historyActions[i + 1];
-                    //        if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                    //            nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                    //        {
-                    //            relevantHistoryactions.Add(currentHistoryAction);
-                    //            relevantHistoryactions.Add(nextHistoryAction);
-                    //            var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                    //            strategyCodes.Add(compoundCode);
-                    //            continue;
-                    //        }
-                    //    }
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    {
+                        if (!isLastHistoryAction)
+                        {
+                            var nextHistoryAction = historyActions[i + 1];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                            {
+                                //relevantHistoryactions.Add(currentHistoryAction);
+                                //relevantHistoryactions.Add(nextHistoryAction);
+                                //var compoundCode = string.Format("+arith {0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                                //strategyCodes.Add(compoundCode);
+                          
+                                if (!skipArithCount.ContainsKey(currentHistoryAction.CodedObjectID))
+                                {
+                                    skipArithCount.Add(currentHistoryAction.CodedObjectID, 1);
+                                }
+                                else
+                                {
+                                    skipArithCount[currentHistoryAction.CodedObjectID]++;
+                                }
 
-                    //    relevantHistoryactions.Add(currentHistoryAction);
-                    //    var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                    //    strategyCodes.Add(code);
-                    //    continue;
-                    //}
+                                continue;
+                            }
+                        }
+
+                        //relevantHistoryactions.Add(currentHistoryAction);
+                        //var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                        //strategyCodes.Add(code);
+                        //continue;
+                    }
 
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
                     {
@@ -1704,6 +1717,14 @@ namespace CLP.Entities
                         continue;
                     }
                 }
+            }
+
+            foreach (var key in skipArithCount.Keys)
+            {
+                var objectID = key;
+                var count = skipArithCount[key];
+                var compoundCode = string.Format("COUNT skip +arith ({0}) ARR [{1}]", count, objectID);
+                strategyCodes.Add(compoundCode);
             }
 
             if (!strategyCodes.Any())
