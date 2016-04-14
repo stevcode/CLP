@@ -145,11 +145,11 @@ namespace CLP.Entities
 
                 var representationsAdded =
                     HistoryActions.Where(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && Codings.FriendlyObjects.ContainsKey(h.CodedObject))
-                                  .Select(h => Codings.FriendlyObjects[h.CodedObject]);
+                                  .Select(h => string.Format("{0} [{1}]", h.CodedObject, h.CodedObjectID));
 
-                return string.Format("{0}\nRepresentations:\n{1}{2}",
+                return string.Format("{0}\nRepresentations:{1}{2}",
                                      answerChanged,
-                                     string.Join("\n", representationsAdded),
+                                     string.Join(", ", representationsAdded),
                                      string.IsNullOrWhiteSpace(analysisCode) ? string.Empty : "\nCode: " + analysisCode);
             }
         }
