@@ -1465,7 +1465,8 @@ namespace CLP.Entities
                                 continue;
                             }
                             var difference = nextValue - currentValue;
-                            if (difference == array.Rows)
+                            if (difference == array.Rows &&
+                                array.Rows != array.Columns)
                             {
                                 wrongDimensionMatches++;
                             }
