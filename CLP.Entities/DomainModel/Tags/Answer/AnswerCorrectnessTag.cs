@@ -66,7 +66,7 @@ namespace CLP.Entities
         {
             get
             {
-                return Answer.CodedValue;
+                return Answer.CodedValue.Replace("additional", string.Empty); // HACK: Should be combining Events instead of just replacing the word "additional"
             }
         }
 
