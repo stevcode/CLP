@@ -1149,10 +1149,10 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in CurrentPage.InkStrokes)
             {
                 var drawingAttributes = stroke.DrawingAttributes;
-                var color = drawingAttributes.Color;
-                color.A = 255;
-                drawingAttributes.Color = color;
-                stroke.DrawingAttributes = drawingAttributes;
+                // var color = drawingAttributes.Color;
+                // color.A = 255;
+                drawingAttributes.Color = Colors.Black;
+                // stroke.DrawingAttributes = drawingAttributes;
             }
         }
 
@@ -1176,38 +1176,17 @@ namespace Classroom_Learning_Partner.ViewModels
                     isEnclosed = stroke.IsEnclosedShape();
                 }
                 
-                Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
-
-                /*
-                foreach (var stylusPoint in stroke.StylusPoints)
-                {
-                    var tempShape = new Shape(CurrentPage, ShapeType.Rectangle);
-                    // var tempBoundary = new TemporaryBoundary(CurrentPage, stylusPoint.ToPoint().X, stylusPoint.ToPoint().Y, 2, 2)
-                    // tempShape.Color = Color.Pink;
-                    tempShape.XPosition = stylusPoint.ToPoint().X;
-                    tempShape.YPosition = stylusPoint.ToPoint().Y;
-                    tempShape.Height = 2;
-                    tempShape.Width = 2;
-                    CurrentPage.PageObjects.Add(tempShape);
-                }
-
-                var drawingAttributes = stroke.DrawingAttributes;
-                var color = drawingAttributes.Color;
-                color.A = 0;
-                drawingAttributes.Color = color;
-                stroke.DrawingAttributes = drawingAttributes;
-                */
+                // Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
 
                 #region Debugging
                 if (IsDebuggingFlag)
                 {
-                    PageHistory.UISleep(3000);
                     var oldWidth = stroke.DrawingAttributes.Width;
                     var oldHeight = stroke.DrawingAttributes.Height;
                     var oldColor = stroke.DrawingAttributes.Color;
-                    stroke.DrawingAttributes.Width = 8;
-                    stroke.DrawingAttributes.Height = 8;
-                    PageHistory.UISleep(3000);
+                    // stroke.DrawingAttributes.Width = 8;
+                    // stroke.DrawingAttributes.Height = 8;
+                    // PageHistory.UISleep(1000);
                     if (isEnclosed)
                     {
                         stroke.DrawingAttributes.Color = Colors.Green;
@@ -1216,10 +1195,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         stroke.DrawingAttributes.Color = Colors.Crimson;
                     }
-                    PageHistory.UISleep(3000);
-                    stroke.DrawingAttributes.Width = oldWidth;
-                    stroke.DrawingAttributes.Height = oldHeight;
-                    stroke.DrawingAttributes.Color = oldColor;
+                    // PageHistory.UISleep(3000);
+                    // stroke.DrawingAttributes.Width = oldWidth;
+                    // DrawingAttributes.Height = oldHeight;
+                    // stroke.DrawingAttributes.Color = oldColor;
                 }
                 #endregion // Debugging
             }

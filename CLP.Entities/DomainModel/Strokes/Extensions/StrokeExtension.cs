@@ -601,6 +601,13 @@ namespace CLP.Entities
             Argument.IsNotNull("stroke", stroke);
 
             const int CELL_SIZE = 30;
+
+            // reusing CELL_SIZE as a minimum value for height and width. It can be a different value.
+            if (stroke.GetBounds().X < CELL_SIZE*3 || stroke.GetBounds().Y < CELL_SIZE*3)
+            {
+                return false;
+            }
+
             var occupiedCells = FindCellsOccupiedByStroke(stroke, CELL_SIZE);
             if (page != null)
             {
@@ -611,7 +618,12 @@ namespace CLP.Entities
 
             Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
 
-            return DetectCycle(occupiedCells);
+            return DetectCycle(occupiedCells, CELL_SIZE);
+        }
+
+        private static int roundToNearestCell(double pos, int CELL_SIZE)
+        {
+            return (int)(pos / CELL_SIZE) * CELL_SIZE;
         }
 
         /*
@@ -621,31 +633,72 @@ namespace CLP.Entities
             disconnected graphs
         */
 
-        private static bool DetectCycle(List<Point> occupiedCells)
+        private static bool DetectCycle(List<Point> occupiedCells, int CELL_SIZE)
         {
-            var visited = new PointCollection();
-            var cellStack = new Stack<Tuple<Point, Point>>();
+            // var visited = new PointCollection();
+            var cellStack = new Stack<List<Point>>();
 
-            var thisCell = occupiedCells[0]; //there has to be at least one occupied cell
-            var immediateAncestor = thisCell;
-
-            cellStack.Push(new Tuple<Point, Point>(thisCell, immediateAncestor));
-            while (cellStack.Count > 0)
+            if (occupiedCells.Count() < 4)
             {
-                var nextTuple = cellStack.Pop();
-                thisCell = nextTuple.Item1;
-                immediateAncestor = nextTuple.Item2;
-                if (visited.Contains(thisCell))
-                {
-                    return true;
-                }
-                visited.Add(thisCell);
-                var neighbors = GetNeighbors(thisCell, immediateAncestor);
+                return false;
+            }
+            var thisCell = occupiedCells.First(); //there has to be at least one occupied cell
+            // var immediateAncestor = thisCell;
+            var startCellList = new List<Point>();
+            startCellList.Add(thisCell);
+
+            cellStack.Push(startCellList);
+            while (cellStack.Count() > 0)
+            {
+                var thisPath = cellStack.Pop();
+                thisCell = thisPath.Last();
+                // immediateAncestor = nextTuple.Item2;
+                // if (thisPath.FindIndex(thisCell))
+                // {
+                //     return true;
+                // }
+                // visited.Add(thisCell);
+                var neighbors = GetNeighbors(thisCell, CELL_SIZE);
                 foreach (var neighbor in neighbors)
                 {
                     if (occupiedCells.Contains(neighbor))
                     {
-                        cellStack.Push(new Tuple<Point, Point>(neighbor, thisCell));
+                        if (thisPath.Contains(neighbor))
+                        {
+                            var cycle = thisPath.Skip(thisPath.IndexOf(neighbor)).Take(thisPath.Count() - thisPath.IndexOf(neighbor)).ToArray();
+                            if (CycleBoundsLargeEnough(cycle, 3*CELL_SIZE))
+                            {
+                                var i = 0;
+                                while (i < cycle.Count())
+                                {
+                                    Console.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
+                                    i++;
+                                }
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            var neighborsNeighbors = GetNeighbors(neighbor, CELL_SIZE);
+                            int adj = 0;
+                            foreach (var neighborNeighbor in neighborsNeighbors)
+                            {
+                                if (thisPath.Contains(neighborNeighbor))
+                                {
+                                    adj++;
+                                }
+                            }
+
+                            if (adj < 3)
+                            {
+                                var newPath = new List<Point>();
+                                newPath.AddRange(thisPath);
+                                newPath.Add(neighbor);
+                                cellStack.Push(newPath);
+                            }
+
+                        }
+                        
                     }
                 }
             }
@@ -653,33 +706,55 @@ namespace CLP.Entities
             return false;
         }
 
-        private static List<Point> GetNeighbors(Point thisPoint, Point immediateAncestor)
+        private static bool CycleBoundsLargeEnough(IEnumerable<Point> cycle, int threshold)
+        {
+            int minX = 1000000, minY = 1000000;
+            int maxX = 0, maxY = 0;
+
+            foreach (var cell in cycle) {
+                minX = Math.Min(minX, (int)cell.X);
+                minY = Math.Min(minY, (int)cell.Y);
+                maxX = Math.Max(maxX, (int)cell.X);
+                maxY = Math.Max(maxY, (int)cell.Y);
+            }
+            return (maxX - minX >= threshold && maxY - minY >= threshold); 
+        }
+
+        private static List<Point> GetNeighbors(Point thisPoint, int CELL_SIZE)
         {
             var neighbors = new List<Point>();
-            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + 1));
-            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - 1));
-            neighbors.Add(new Point(thisPoint.X + 1, thisPoint.Y));
-            neighbors.Add(new Point(thisPoint.X - 1, thisPoint.Y));
-            neighbors.Remove(immediateAncestor); // Make sure this works with object equality
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + CELL_SIZE));
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - CELL_SIZE));
+            neighbors.Add(new Point(thisPoint.X + CELL_SIZE, thisPoint.Y));
+            neighbors.Add(new Point(thisPoint.X - CELL_SIZE, thisPoint.Y));
+
+            neighbors.Add(new Point(thisPoint.X - CELL_SIZE, thisPoint.Y + CELL_SIZE));
+            neighbors.Add(new Point(thisPoint.X + CELL_SIZE, thisPoint.Y + CELL_SIZE));
+            neighbors.Add(new Point(thisPoint.X + CELL_SIZE, thisPoint.Y - CELL_SIZE));
+            neighbors.Add(new Point(thisPoint.X - CELL_SIZE, thisPoint.Y - CELL_SIZE));
+
+            // neighbors.Remove(immediateAncestor); // Make sure this works with object equality
             return neighbors;
         }
 
         private static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_SIZE)
         {
+            int xOffset = (int)stroke.GetBounds().X;
+            int yOffset = (int)stroke.GetBounds().Y;
             var occupiedCells = new List<Point>();
             int i = 1;
             var stylusPoints = stroke.StylusPoints;
             var thisPoint = stylusPoints[0].ToPoint();
-            thisPoint.X = (int)(thisPoint.X / CELL_SIZE);
-            thisPoint.Y = (int)(thisPoint.Y / CELL_SIZE);
+            thisPoint.X = roundToNearestCell(thisPoint.X, CELL_SIZE) - xOffset;
+            thisPoint.Y = roundToNearestCell(thisPoint.Y, CELL_SIZE) - yOffset;
             var nextPoint = new Point();
             while (i < stylusPoints.Count)
             {
-                int cellCountBefore = occupiedCells.Count;
                 nextPoint = stylusPoints[i].ToPoint();
-                nextPoint.X = (int)(nextPoint.X / CELL_SIZE);
-                nextPoint.Y = (int)(nextPoint.Y / CELL_SIZE);
-
+                // Console.WriteLine("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
+                // Console.WriteLine("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
+                nextPoint.X = roundToNearestCell(nextPoint.X, CELL_SIZE) - xOffset;
+                nextPoint.Y = roundToNearestCell(nextPoint.Y, CELL_SIZE) - yOffset;
 
                 // TODO the following is a complete guess about the shape of the curve
                 // We can do better by using the bezzier curve, but this might not be easily exposed
@@ -689,23 +764,17 @@ namespace CLP.Entities
                     while (j <= nextPoint.Y)
                     {
                         var occupiedCell = new Point((int)thisPoint.X, j);
-                        if (!occupiedCells.Contains(occupiedCell))
-                        {
-                            occupiedCells.Add(occupiedCell);
-                        }
-                        j++;
+                        occupiedCells.Add(occupiedCell);
+                        j += CELL_SIZE;
                     }
                 }
                 else {
                     int j = (int)nextPoint.Y;
                     while (j <= thisPoint.Y)
                     {
-                        var occupiedCell = new Point((int)nextPoint.X, j);
-                        if (!occupiedCells.Contains(occupiedCell))
-                        {
-                            occupiedCells.Add(occupiedCell);
-                        }
-                        j++;
+                        var occupiedCell = new Point((int)thisPoint.X, j);
+                        occupiedCells.Add(occupiedCell);
+                        j += CELL_SIZE;
                     }
                 }
 
@@ -715,11 +784,8 @@ namespace CLP.Entities
                     while (k <= nextPoint.X)
                     {
                         var occupiedCell = new Point(k, (int)thisPoint.Y);
-                        if (!occupiedCells.Contains(occupiedCell))
-                        {
-                            occupiedCells.Add(occupiedCell);
-                        }
-                        k++;
+                        occupiedCells.Add(occupiedCell);
+                        k += CELL_SIZE;
                     }
                 }
                 else {
@@ -727,17 +793,11 @@ namespace CLP.Entities
                     while (k <= thisPoint.X)
                     {
                         var occupiedCell = new Point(k, (int)nextPoint.Y);
-                        if (!occupiedCells.Contains(occupiedCell))
-                        {
-                            occupiedCells.Add(occupiedCell);
-                        }
-                        k++;
+                        occupiedCells.Add(occupiedCell);
+                        k += CELL_SIZE;
                     }
                 }
 
-                int cellCountAfter = occupiedCells.Count;
-                int cellsAdded = cellCountAfter - cellCountBefore;
-                Console.WriteLine("added " + cellsAdded.ToString() + "cells b/w " + thisPoint.ToString() + " and " + nextPoint.ToString());
                 thisPoint = nextPoint;
                 i++;
             }
