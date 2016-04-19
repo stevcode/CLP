@@ -161,6 +161,7 @@ namespace CLP.Entities
         public const string STRATEGY_ARRAY_DOTS = "COUNT dots ARR";
         public const string STRATEGY_ARRAY_DOTS_PARTIAL = "COUNT dots part ARR";
         public const string STRATEGY_ARRAY_SKIP = "COUNT skip ARR";
+        public const string STRATEGY_ARRAY_SKIP_ARITH = "COUNT skip +arith ARR";
         public const string STRATEGY_ARRAY_SKIP_PARTIAL = "COUNT skip part ARR";
         public const string STRATEGY_ARRAY_DIVIDE = "PART divide ARR";
         public const string STRATEGY_ARRAY_DIVIDE_INK = "PART divide ink ARR";

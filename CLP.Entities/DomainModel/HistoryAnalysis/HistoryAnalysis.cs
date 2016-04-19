@@ -1432,7 +1432,54 @@ namespace CLP.Entities
                     var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
-                        var skipCodedValue = string.Format("\n  - skip [{0}]", formattedSkips);
+                        // HACK: temporary print out of Wrong Dimension analysis
+                        var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                        var skips = new List<int>();
+                        foreach (var skip in skipStrings)
+                        {
+                            if (string.IsNullOrEmpty(skip))
+                            {
+                                skips.Add(-1);
+                                continue;
+                            }
+
+                            int number;
+                            var isNumber = int.TryParse(skip, out number);
+                            if (isNumber)
+                            {
+                                skips.Add(number);
+                                continue;
+                            }
+
+                            skips.Add(-1);
+                        }
+
+                        var wrongDimensionMatches = 0;
+                        for (int i = 0; i < skips.Count - 1; i++)
+                        {
+                            var currentValue = skips[i];
+                            var nextValue = skips[i + 1];
+                            if (currentValue == -1 ||
+                                nextValue == -1)
+                            {
+                                continue;
+                            }
+                            var difference = nextValue - currentValue;
+                            if (difference == array.Rows &&
+                                array.Rows != array.Columns)
+                            {
+                                wrongDimensionMatches++;
+                            }
+                        }
+
+                        var wrongDimensionText = string.Empty;
+                        var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                        if (percentMatchWrongDimensions >= 0.80)
+                        {
+                            wrongDimensionText = ", wrong dimension";
+                        }
+
+                        var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
 
                         // HACK: Added for demo.
@@ -1440,7 +1487,10 @@ namespace CLP.Entities
                         var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
                         if (existingArrayStrategiesTag != null)
                         {
-                            existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                            if (!existingArrayStrategiesTag.StrategyCodes.Any(c => c.Contains("skip +arith")))
+                            {
+                                existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
+                            }
                         }
                         else
                         {
@@ -1573,6 +1623,7 @@ namespace CLP.Entities
             var relevantHistoryactions = new List<IHistoryAction>();
             var strategyCodes = new List<string>();
             var ignoredHistoryIndexes = new List<int>();
+            var skipArithCount = new Dictionary<string,int>();
 
             for (var i = 0; i < historyActions.Count; i++)
             {
@@ -1602,28 +1653,37 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    // HACK: Removed for demo.
-                    //if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    //{
-                    //    if (!isLastHistoryAction)
-                    //    {
-                    //        var nextHistoryAction = historyActions[i + 1];
-                    //        if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                    //            nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                    //        {
-                    //            relevantHistoryactions.Add(currentHistoryAction);
-                    //            relevantHistoryactions.Add(nextHistoryAction);
-                    //            var compoundCode = string.Format("{0} +arith [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                    //            strategyCodes.Add(compoundCode);
-                    //            continue;
-                    //        }
-                    //    }
+                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    {
+                        if (!isLastHistoryAction)
+                        {
+                            var nextHistoryAction = historyActions[i + 1];
+                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
+                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                            {
+                                //relevantHistoryactions.Add(currentHistoryAction);
+                                //relevantHistoryactions.Add(nextHistoryAction);
+                                //var compoundCode = string.Format("+arith {0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                                //strategyCodes.Add(compoundCode);
+                          
+                                if (!skipArithCount.ContainsKey(currentHistoryAction.CodedObjectID))
+                                {
+                                    skipArithCount.Add(currentHistoryAction.CodedObjectID, 1);
+                                }
+                                else
+                                {
+                                    skipArithCount[currentHistoryAction.CodedObjectID]++;
+                                }
 
-                    //    relevantHistoryactions.Add(currentHistoryAction);
-                    //    var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                    //    strategyCodes.Add(code);
-                    //    continue;
-                    //}
+                                continue;
+                            }
+                        }
+
+                        //relevantHistoryactions.Add(currentHistoryAction);
+                        //var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
+                        //strategyCodes.Add(code);
+                        //continue;
+                    }
 
                     if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
                     {
@@ -1657,6 +1717,14 @@ namespace CLP.Entities
                         continue;
                     }
                 }
+            }
+
+            foreach (var key in skipArithCount.Keys)
+            {
+                var objectID = key;
+                var count = skipArithCount[key];
+                var compoundCode = string.Format("COUNT skip +arith ({0}) ARR [{1}]", count, objectID);
+                strategyCodes.Add(compoundCode);
             }
 
             if (!strategyCodes.Any())
