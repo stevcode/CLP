@@ -99,7 +99,6 @@ namespace Classroom_Learning_Partner.ViewModels
             StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
-            GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
 
             #region Obsolete Commands
 
@@ -1211,31 +1210,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             IsDebuggingFlag = true;
             OnAnalyzeSkipCountingCommandExecute();
-        }
-
-        public Command GenerateStampGroupingsCommand { get; private set; }
-
-        private void OnGenerateStampGroupingsCommandExecute()
-        {
-            var stampGroups = new Dictionary<Tuple<string, int>, List<string>>();  //<ParentStampID,List of StampedObject IDs>
-            foreach (var stampedObject in CurrentPage.PageObjects.OfType<StampedObject>())
-            {
-                var parentID = stampedObject.ParentStampID;
-                var parts = stampedObject.Parts;
-                var key = new Tuple<string, int>(parentID, parts);
-                if (!stampGroups.ContainsKey(key))
-                {
-                    stampGroups.Add(key, new List<string>());
-                }
-
-                stampGroups[key].Add(stampedObject.ID);
-            }
-
-            foreach (var stampGroup in stampGroups)
-            {
-                var tag = new StampGroupTag(CurrentPage, Origin.StudentPageGenerated, stampGroup.Key.Item1, stampGroup.Key.Item2, stampGroup.Value);
-                CurrentPage.AddTag(tag);
-            }
         }
 
         #region Obsolete Commands

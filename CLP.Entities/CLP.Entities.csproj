@@ -232,7 +232,6 @@
     <Compile Include="DomainModel\Tags\OtherPageInformation\ProblemTypeTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\TagAnalysis.cs" />
-    <Compile Include="DomainModel\Tags\Stamps\StampGroupTag.cs" />
     <Compile Include="DomainModel\Tags\Stamps\StampTroubleWithGroupingTag.cs" />
     <Compile Include="DomainModel\Tags\Stamps\TroubleWithMultiplicationTag.cs" />
     <Compile Include="DomainModel\Tags\DemoAndTemp\TempArraySkipCountingTag.cs" />
