@@ -152,7 +152,7 @@ namespace CLP.Entities
 
         #region Analysis Codes
 
-        public const string ANALYSIS_COR_BEFORE_REP = "ABR";
+        public const string ANALYSIS_COR_BEFORE_REP = "ABR-C";
         public const string ANALYSIS_INC_BEFORE_REP = "ABR-I";
         public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
