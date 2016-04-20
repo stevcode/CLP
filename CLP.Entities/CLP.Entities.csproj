@@ -223,10 +223,8 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\HighlightedObjectTypesOnPageTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\RepresentationCorrectnessTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\RepresentationsUsedTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesInHistoryTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPageTag.cs" />
+    <Compile Include="DomainModel\Tags\Representation\RepresentationCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Representation\RepresentationsUsedTag.cs" />
     <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\ProblemTypeTag.cs" />
