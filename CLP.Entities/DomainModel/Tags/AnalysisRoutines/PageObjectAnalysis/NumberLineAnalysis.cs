@@ -13,14 +13,14 @@ namespace CLP.Entities
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
             // First, clear out any old DivisionTemplateTags generated via Analysis.
-            foreach (var tag in
-                page.Tags.ToList()
-                    .Where(
-                           tag =>
-                           tag is NumberLineCompletenessTag || tag is NumberLineRepresentationCorrectnessTag))
-            {
-                page.RemoveTag(tag);
-            }
+            //foreach (var tag in
+            //    page.Tags.ToList()
+            //        .Where(
+            //               tag =>
+            //               tag is NumberLineCompletenessTag || tag is NumberLineRepresentationCorrectnessTag))
+            //{
+            //    page.RemoveTag(tag);
+            //}
 
             var numberLineDefinitionsTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var numberLines = page.PageObjects.OfType<NumberLine>().ToList();
@@ -92,139 +92,139 @@ namespace CLP.Entities
 
 
 
-            if (!numberLine.JumpSizes.Any())
-            {
-                var tag = new NumberLineCompletenessTag(page,
-                                                        Origin.StudentPageObjectGenerated,
-                                                        numberLine.ID,
-                                                        0,
-                                                        numberLine.NumberLineSize,
-                                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
-                                                        false,
-                                                        true,
-                                                        0,
-                                                        0);
-                page.AddTag(tag);
-                incomplete = true;
-            }
-            else if(gaps != 0 || overlaps != 0)
-            {
-                var tag = new NumberLineCompletenessTag(page,
-                                                        Origin.StudentPageObjectGenerated,
-                                                        numberLine.ID,
-                                                        0,
-                                                        numberLine.NumberLineSize,
-                                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
-                                                        false,
-                                                        false,
-                                                        gaps,
-                                                        overlaps);
-                page.AddTag(tag);
-                incomplete = true;
-            }
-            else
-            {
-                var tag = new NumberLineCompletenessTag(page,
-                                        Origin.StudentPageObjectGenerated,
-                                        numberLine.ID,
-                                        0,
-                                        numberLine.NumberLineSize,
-                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
-                                        true,
-                                        false,
-                                        0,
-                                        0);
-                page.AddTag(tag);
-            }
+            //if (!numberLine.JumpSizes.Any())
+            //{
+            //    var tag = new NumberLineCompletenessTag(page,
+            //                                            Origin.StudentPageObjectGenerated,
+            //                                            numberLine.ID,
+            //                                            0,
+            //                                            numberLine.NumberLineSize,
+            //                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                                            false,
+            //                                            true,
+            //                                            0,
+            //                                            0);
+            //    page.AddTag(tag);
+            //    incomplete = true;
+            //}
+            //else if(gaps != 0 || overlaps != 0)
+            //{
+            //    var tag = new NumberLineCompletenessTag(page,
+            //                                            Origin.StudentPageObjectGenerated,
+            //                                            numberLine.ID,
+            //                                            0,
+            //                                            numberLine.NumberLineSize,
+            //                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                                            false,
+            //                                            false,
+            //                                            gaps,
+            //                                            overlaps);
+            //    page.AddTag(tag);
+            //    incomplete = true;
+            //}
+            //else
+            //{
+            //    var tag = new NumberLineCompletenessTag(page,
+            //                            Origin.StudentPageObjectGenerated,
+            //                            numberLine.ID,
+            //                            0,
+            //                            numberLine.NumberLineSize,
+            //                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                            true,
+            //                            false,
+            //                            0,
+            //                            0);
+            //    page.AddTag(tag);
+            //}
 
             //Correctness
-            var incorrectReasons = new List<NumberLineRepresentationIncorrectReasons>();
+            //var incorrectReasons = new List<NumberLineRepresentationIncorrectReasons>();
 
-            if (incomplete)
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.Incomplete);
-            }
+            //if (incomplete)
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.Incomplete);
+            //}
 
-            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
-                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue || numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
-            }
-            else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
-                && (numberLine.JumpSizes.Count == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.ReversedGrouping);
-            }
-            else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
-                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue))
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
-            }
+            //if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
+            //    && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue || numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
+            //}
+            //else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+            //    && (numberLine.JumpSizes.Count == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.ReversedGrouping);
+            //}
+            //else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+            //    && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue))
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
+            //}
 
-            var isWrongJumpSize = false;
-            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups))
-            {
-                foreach (var jump in numberLine.JumpSizes)
-                {
-                    if (numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue) ||
-                        numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
-                    {
-                        isWrongJumpSize = false;
-                    }
-                    else
-                    {
-                        isWrongJumpSize = true;
-                    }
-                }
-            }
+            //var isWrongJumpSize = false;
+            //if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups))
+            //{
+            //    foreach (var jump in numberLine.JumpSizes)
+            //    {
+            //        if (numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue) ||
+            //            numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
+            //        {
+            //            isWrongJumpSize = false;
+            //        }
+            //        else
+            //        {
+            //            isWrongJumpSize = true;
+            //        }
+            //    }
+            //}
 
-            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups))
-            {
-                foreach (var jump in numberLine.JumpSizes)
-                {
-                    if (jump.JumpSize != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue)
-                    {
-                        isWrongJumpSize = true;
-                    }
-                }
-            }
+            //if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups))
+            //{
+            //    foreach (var jump in numberLine.JumpSizes)
+            //    {
+            //        if (jump.JumpSize != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue)
+            //        {
+            //            isWrongJumpSize = true;
+            //        }
+            //    }
+            //}
 
-            if (isWrongJumpSize)
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongJumpSizes);
-            }
+            //if (isWrongJumpSize)
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongJumpSizes);
+            //}
 
-            var lastMarkedTick = numberLine.Ticks.LastOrDefault(x => x.IsMarked);
-            if (lastMarkedTick != null &&
-                lastMarkedTick.TickValue != multiplicationRelationDefinition.Product)
-            {
-                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongLastMarkedTick);
-            }
+            //var lastMarkedTick = numberLine.Ticks.LastOrDefault(x => x.IsMarked);
+            //if (lastMarkedTick != null &&
+            //    lastMarkedTick.TickValue != multiplicationRelationDefinition.Product)
+            //{
+            //    incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongLastMarkedTick);
+            //}
 
-            if (incorrectReasons.Any())
-            {
-                var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
-                                            Origin.StudentPageObjectGenerated,
-                                            numberLine.ID,
-                                            0,
-                                            numberLine.NumberLineSize,
-                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
-                                            Correctness.Incorrect,
-                                            incorrectReasons);
-                page.AddTag(incorrectTag);
-            }
-            else
-            {
-                var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
-                            Origin.StudentPageObjectGenerated,
-                            numberLine.ID,
-                            0,
-                            numberLine.NumberLineSize,
-                            numberLineIDsInHistory.IndexOf(numberLine.ID),
-                            Correctness.Correct,
-                            incorrectReasons);
-                page.AddTag(incorrectTag);
-            }
+            //if (incorrectReasons.Any())
+            //{
+            //    var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
+            //                                Origin.StudentPageObjectGenerated,
+            //                                numberLine.ID,
+            //                                0,
+            //                                numberLine.NumberLineSize,
+            //                                numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                                Correctness.Incorrect,
+            //                                incorrectReasons);
+            //    page.AddTag(incorrectTag);
+            //}
+            //else
+            //{
+            //    var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
+            //                Origin.StudentPageObjectGenerated,
+            //                numberLine.ID,
+            //                0,
+            //                numberLine.NumberLineSize,
+            //                numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                Correctness.Correct,
+            //                incorrectReasons);
+            //    page.AddTag(incorrectTag);
+            //}
         }
     }
 }

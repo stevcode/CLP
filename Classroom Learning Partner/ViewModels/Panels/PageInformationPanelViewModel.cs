@@ -1264,56 +1264,56 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ApplyInterpretedCorrectness(CLPPage page)
         {
-            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-            if (correctnessTag != null &&
-                correctnessTag.IsCorrectnessManuallySet)
-            {
-                return;
-            }
+            //var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+            //if (correctnessTag != null &&
+            //    correctnessTag.IsCorrectnessManuallySet)
+            //{
+            //    return;
+            //}
 
-            var correctnessTags =
-                page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
-                    .ToList();
-            correctnessTags.AddRange(
-                                     page.Tags.OfType<ArrayCorrectnessSummaryTag>()
-                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
+            //var correctnessTags =
+            //    page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
+            //        .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+            //        .ToList();
+            //correctnessTags.AddRange(
+            //                         page.Tags.OfType<ArrayCorrectnessSummaryTag>()
+            //                             .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
 
-            if (!correctnessTags.Any())
-            {
-                return;
-            }
+            //if (!correctnessTags.Any())
+            //{
+            //    return;
+            //}
 
-            var correctnessSum = Correctness.Unknown;
-            foreach (var tag in correctnessTags)
-            {
-                if (correctnessSum == tag.Correctness)
-                {
-                    continue;
-                }
+            //var correctnessSum = Correctness.Unknown;
+            //foreach (var tag in correctnessTags)
+            //{
+            //    if (correctnessSum == tag.Correctness)
+            //    {
+            //        continue;
+            //    }
 
-                if (correctnessSum == Correctness.Unknown)
-                {
-                    correctnessSum = tag.Correctness;
-                    continue;
-                }
+            //    if (correctnessSum == Correctness.Unknown)
+            //    {
+            //        correctnessSum = tag.Correctness;
+            //        continue;
+            //    }
 
-                if (correctnessSum == Correctness.Correct &&
-                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
+            //    if (correctnessSum == Correctness.Correct &&
+            //        (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
+            //    {
+            //        correctnessSum = Correctness.PartiallyCorrect;
+            //        break;
+            //    }
 
-                if (tag.Correctness == Correctness.Correct &&
-                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
-                {
-                    correctnessSum = Correctness.PartiallyCorrect;
-                    break;
-                }
-            }
+            //    if (tag.Correctness == Correctness.Correct &&
+            //        (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
+            //    {
+            //        correctnessSum = Correctness.PartiallyCorrect;
+            //        break;
+            //    }
+            //}
 
-            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
+            //page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
         }
 
         /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
