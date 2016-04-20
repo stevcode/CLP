@@ -603,6 +603,11 @@ namespace CLP.Entities
                                                            t is MultiplicationRelationDefinitionTag ||
                                                            t is AdditionRelationDefinitionTag);
 
+            if (relationDefinitionTag == null)
+            {
+                return;
+            }
+
             var definitionRelation = new Relation();
             var otherDefinitionRelation = new Relation();
             var isOtherDefinitionUsed = false;
