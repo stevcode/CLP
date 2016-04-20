@@ -99,7 +99,6 @@ namespace Classroom_Learning_Partner.ViewModels
             StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
-            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
 
             #region Obsolete Commands
@@ -1195,8 +1194,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                           {
-                              ArrayName = array.CodedID,
-                              EquationInterpretation = formattedSkips
+                              CodedID = array.CodedID,
+                              RowInterpretations = formattedSkips
                           };
 
                 Console.WriteLine(tag.FormattedValue);
@@ -1212,102 +1211,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             IsDebuggingFlag = true;
             OnAnalyzeSkipCountingCommandExecute();
-        }
-
-        /// <summary>Attempts to interpret ink strokes over an array as an Ink Divider</summary>
-        public Command InterpretArrayDividersCommand { get; private set; }
-
-        private void OnInterpretArrayDividersCommandExecute()
-        {
-            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-
-            foreach (var array in arraysOnPage)
-            {
-                if (array.ArrayType != ArrayTypes.Array ||
-                        !array.IsGridOn)
-                {
-                    continue;
-                }
-
-                var verticalDividers = new List<int> { 0 };
-                var horizontalDividers = new List<int> { 0 };
-                var cuttableTop = array.YPosition + array.LabelLength;
-                var cuttableBottom = cuttableTop + array.ArrayHeight;
-                var cuttableLeft = array.XPosition + array.LabelLength;
-                var cuttableRight = cuttableLeft + array.ArrayWidth;
-                foreach (var stroke in CurrentPage.InkStrokes)
-                {
-                    var strokeTop = stroke.GetBounds().Top;
-                    var strokeBottom = stroke.GetBounds().Bottom;
-                    var strokeLeft = stroke.GetBounds().Left;
-                    var strokeRight = stroke.GetBounds().Right;
-
-                    const double SMALL_THRESHOLD = 5.0;
-                    const double LARGE_THRESHOLD = 15.0;
-
-                    if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
-                        strokeRight <= cuttableRight &&
-                        strokeLeft >= cuttableLeft &&
-                        (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
-                        cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
-                        (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
-                        cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
-                        strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
-                        array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
-                    {
-                        var average = (strokeRight + strokeLeft) / 2;
-                        var relativeAverage = average - array.LabelLength - array.XPosition;
-                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                        if (dividerValue == 0 ||
-                            dividerValue == array.Columns)
-                        {
-                            continue;
-                        }
-                        verticalDividers.Add(dividerValue);
-                    }
-
-                    if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                             strokeBottom <= cuttableBottom &&
-                             strokeTop >= cuttableTop &&
-                             (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
-                             strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
-                             (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
-                             strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
-                             strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
-                             array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
-                    {
-                        var average = (strokeTop + strokeBottom) / 2;
-                        var relativeAverage = average - array.LabelLength - array.YPosition;
-                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
-                        if (dividerValue == 0 ||
-                            dividerValue == array.Rows)
-                        {
-                            continue;
-                        }
-                        horizontalDividers.Add(dividerValue);
-                    }
-                }
-
-                verticalDividers.Add(array.Columns);
-                verticalDividers = verticalDividers.Distinct().Sort().ToList();
-                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).ToList();
-
-                horizontalDividers.Add(array.Rows);
-                horizontalDividers = horizontalDividers.Distinct().Sort().ToList();
-                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).ToList();
-
-                if (verticalDivisions.Count > 1 ||
-                    horizontalDivisions.Count > 1)
-                {
-                    var tag = new TempArrayDividersTag(CurrentPage, Origin.StudentPageGenerated);
-                    tag.ArrayName = array.Rows + "x" + array.Columns;
-                    if (horizontalDivisions.Count > 1)
-                        tag.VerticalDividers = horizontalDivisions;
-                    if (verticalDivisions.Count > 1)
-                        tag.HorizontalDividers = verticalDivisions;
-                    CurrentPage.AddTag(tag);
-                }
-            }
         }
 
         public Command GenerateStampGroupingsCommand { get; private set; }
