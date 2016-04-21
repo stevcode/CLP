@@ -555,7 +555,7 @@ namespace CLP.Entities
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                orderedObjectsChangedHistoryItems.FirstOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
+                orderedObjectsChangedHistoryItems.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.StrokeIDsAdded.Contains(strokeID);
 
