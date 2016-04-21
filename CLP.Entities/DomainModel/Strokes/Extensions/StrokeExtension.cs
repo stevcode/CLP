@@ -539,20 +539,23 @@ namespace CLP.Entities
             return stroke.Clone();
         }
 
+        /// <summary>
+        /// Signifies the stroke was on the page immediately after the historyItem at the given historyIndex was performed
+        /// </summary>
         public static bool IsOnPageAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("stroke", stroke);
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
+            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
             var strokeID = stroke.GetStrokeID();
 
-            var addedAtAnyPointHistoryItem = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
+            var addedAtAnyPointHistoryItem = orderedObjectsChangedHistoryItems.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>()
-                    .FirstOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
+                orderedObjectsChangedHistoryItems.FirstOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.StrokeIDsAdded.Contains(strokeID);
 
