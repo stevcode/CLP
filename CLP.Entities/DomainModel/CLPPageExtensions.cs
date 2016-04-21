@@ -9,6 +9,9 @@ namespace CLP.Entities
     {
         #region History
 
+        /// <summary>
+        /// Gets all pageObjects that were on the page immediately after the historyItem at the given historyIndex was performed
+        /// </summary>
         public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("page", page);
@@ -21,6 +24,9 @@ namespace CLP.Entities
             return pageObjectsOnPage;
         }
 
+        /// <summary>
+        /// Gets all strokes that were on the page immediately after the historyItem at the given historyIndex was performed
+        /// </summary>
         public static List<Stroke> GetStrokesOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("page", page);
