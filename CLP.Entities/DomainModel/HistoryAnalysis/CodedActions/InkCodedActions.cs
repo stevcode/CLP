@@ -381,10 +381,14 @@ namespace CLP.Entities
                     }
 
                     var previousStroke = previousStrokes.First();
-                    var percentOfPreviousStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, interpretationRegion, previousStroke, firstHistoryItem.HistoryIndex);
-                    if (percentOfPreviousStrokeOverlap > 95.0)
+                    var isPreviousStrokeInvisiblySmall = previousStroke.IsInvisiblySmall();
+                    if (!isPreviousStrokeInvisiblySmall)
                     {
-                        isPreviousStrokeOverInterpretationRegion = true;
+                        var percentOfPreviousStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, interpretationRegion, previousStroke, firstHistoryItem.HistoryIndex);
+                        if (percentOfPreviousStrokeOverlap > 95.0)
+                        {
+                            isPreviousStrokeOverInterpretationRegion = true;
+                        }
                     }
 
                     for (var i = 1; i < historyItems.Count; i++)
@@ -399,8 +403,9 @@ namespace CLP.Entities
                         }
 
                         var currentStroke = currentStrokes.First();
+                        var isCurrentStrokeInvisiblySmall = currentStroke.IsInvisiblySmall();
                         var percentOfCurrentStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, interpretationRegion, currentStroke, currentHistoryItem.HistoryIndex);
-                        var isCurrentStrokeOverInterpretationRegion = percentOfCurrentStrokeOverlap > 95.0;
+                        var isCurrentStrokeOverInterpretationRegion = percentOfCurrentStrokeOverlap > 95.0 && !isCurrentStrokeInvisiblySmall;
 
                         var isBreakCondition = isCurrentStrokeOverInterpretationRegion != isPreviousStrokeOverInterpretationRegion ||
                                                (isPreviousStrokeOverInterpretationRegion && isCurrentInkAdd != isPreviousInkAdd);
@@ -446,6 +451,9 @@ namespace CLP.Entities
                                         if (string.IsNullOrEmpty(interpretation))
                                         {
                                             interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                                        }
+                                        if (string.IsNullOrEmpty(interpretationOnPage))
+                                        {
                                             interpretationOnPage = InkInterpreter.InterpretationClosestToANumber(interpretationsOnPage);
                                         }
                                     }
@@ -529,6 +537,9 @@ namespace CLP.Entities
                                     if (string.IsNullOrEmpty(interpretation))
                                     {
                                         interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                                    }
+                                    if (string.IsNullOrEmpty(interpretationOnPage))
+                                    {
                                         interpretationOnPage = InkInterpreter.InterpretationClosestToANumber(interpretationsOnPage);
                                     }
                                 }
