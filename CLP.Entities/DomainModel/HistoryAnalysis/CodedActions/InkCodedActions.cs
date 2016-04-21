@@ -118,6 +118,30 @@ namespace CLP.Entities
             return cluster;
         }
 
+        public static void MoveStrokeToDifferentCluster(InkCluster toCluster, Stroke stroke)
+        {
+            if (!toCluster.Strokes.Contains(stroke))
+            {
+                toCluster.Strokes.Add(stroke);
+            }
+
+            var fromCluster = InkClusters.FirstOrDefault(c => c.Strokes.Contains(stroke));
+            if (fromCluster == null)
+            {
+                return;
+            }
+
+            if (fromCluster.Strokes.Contains(stroke))
+            {
+                fromCluster.Strokes.Remove(stroke);
+            }
+
+            if (!fromCluster.Strokes.Any())
+            {
+                InkClusters.Remove(fromCluster);
+            }
+        }
+
         public static void GenerateInitialInkClusters(CLPPage page, List<IHistoryAction> historyActions)
         {
             InkClusters.Clear();
