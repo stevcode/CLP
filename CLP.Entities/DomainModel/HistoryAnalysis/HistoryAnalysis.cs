@@ -452,12 +452,14 @@ namespace CLP.Entities
 
         public static List<IHistoryAction> ClusterInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
         {
+            InkCodedActions.InkClusters.Clear();
             var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, historyActions);
+            // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
+            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);  
 
             InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
 
-            // TODO: Refine ANS FI Clusters
-            refinedInkActions = InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
+            //refinedInkActions = InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
 
             // TODO: Rename/fix - Refine Temporal Clusters
             var skipCountActions = new List<IHistoryAction>();
@@ -505,19 +507,6 @@ namespace CLP.Entities
         public static List<IHistoryAction> AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
         {
             var allInterpretedActions = new List<IHistoryAction>();
-
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
-                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_FILL_IN))
-            {
-                // HACK: discuss structure of history action
-
-                var interpretedAction = InkCodedActions.FillInInterpretation(page, historyaction); // TODO: Potentionally needs a recursive pass through.
-                if (interpretedAction != null)
-                {
-                    allInterpretedActions.Add(interpretedAction);
-                    return allInterpretedActions;
-                }
-            }
 
             if ((historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ||
                 historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)) &&
