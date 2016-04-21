@@ -775,7 +775,7 @@ namespace CLP.Entities
                 List<string> interpretations;
                 if (!isArithAdd)
                 {
-                    var orderedStrokes = GetOrderStrokesWhereAddedToPage(page, strokes);
+                    var orderedStrokes = GetOrderStrokesWereAddedToPage(page, strokes);
                     interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
                 }
                 else
@@ -890,7 +890,7 @@ namespace CLP.Entities
 
         #region Utility Static Methods
 
-        public static List<Stroke> GetOrderStrokesWhereAddedToPage(CLPPage page, List<Stroke> strokes)
+        public static List<Stroke> GetOrderStrokesWereAddedToPage(CLPPage page, List<Stroke> strokes)
         {
             var historyItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().Where(h => h.StrokesAdded.Any()).ToList();
             var strokesAdded = historyItems.SelectMany(h => h.StrokesAdded).ToList();

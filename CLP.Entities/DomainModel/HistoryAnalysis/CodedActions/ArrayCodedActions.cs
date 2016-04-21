@@ -527,7 +527,7 @@ namespace CLP.Entities
                 List<string> interpretations;
                 if (!isEqnAdd)
                 {
-                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokes);
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWereAddedToPage(page, strokes);
                     interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
                 }
                 else
@@ -1145,7 +1145,7 @@ namespace CLP.Entities
                 {
                     List<string> interpretations;
 
-                    var orderedStrokes = InkCodedActions.GetOrderStrokesWhereAddedToPage(page, strokeCombination.ToList());
+                    var orderedStrokes = InkCodedActions.GetOrderStrokesWereAddedToPage(page, strokeCombination.ToList());
                     interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
 
                     if (!interpretations.Any())
