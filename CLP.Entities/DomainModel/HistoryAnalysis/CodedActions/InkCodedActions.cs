@@ -689,7 +689,7 @@ namespace CLP.Entities
                                   };
                 InkClusters.Add(skipCluster);
 
-                var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 || kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                 foreach (var stroke in skipStrokes)
                 {
                     MoveStrokeToDifferentCluster(skipCluster, stroke);
