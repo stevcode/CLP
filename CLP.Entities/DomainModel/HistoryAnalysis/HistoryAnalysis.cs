@@ -461,22 +461,22 @@ namespace CLP.Entities
             InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
 
             // TODO: Rename/fix - Refine Temporal Clusters
-            var processedInkChangeActions = new List<IHistoryAction>();
+            var processedActions = new List<IHistoryAction>();
             foreach (var historyAction in refinedInkActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    var refinedInkActionsq = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
-                    processedInkChangeActions.AddRange(refinedInkActionsq);
+                    var processedInkChangeActions = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
+                    processedActions.AddRange(processedInkChangeActions);
                 }
                 else
                 {
-                    processedInkChangeActions.Add(historyAction);
+                    processedActions.Add(historyAction);
                 }
             }
 
-            return processedInkChangeActions;
+            return processedActions;
         }
 
         #endregion // Second Pass: Ink Clustering
