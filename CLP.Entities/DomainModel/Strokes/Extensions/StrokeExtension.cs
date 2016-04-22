@@ -142,6 +142,21 @@ namespace CLP.Entities
 
         #endregion //ExtendedProperties
 
+        #region Equality
+
+        public static bool IsEqualByID(this Stroke stroke, Stroke otherStroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("otherStroke", otherStroke);
+
+            var strokeID = stroke.GetStrokeID();
+            var otherID = otherStroke.GetStrokeID();
+
+            return strokeID == otherID && strokeID != "noStrokeID" && otherID != "noStrokeID";
+        } 
+
+        #endregion // Equality
+
         #region Transformation
 
         /// <summary>
@@ -522,6 +537,29 @@ namespace CLP.Entities
         public static Stroke GetStrokeCopyAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
         {
             return stroke.Clone();
+        }
+
+        /// <summary>
+        /// Signifies the stroke was on the page immediately after the historyItem at the given historyIndex was performed
+        /// </summary>
+        public static bool IsOnPageAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("page", page);
+            Argument.IsNotNull("historyIndex", historyIndex);
+
+            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
+            var strokeID = stroke.GetStrokeID();
+
+            var addedAtAnyPointHistoryItem = orderedObjectsChangedHistoryItems.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
+            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+
+            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
+                orderedObjectsChangedHistoryItems.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryIndex <= historyIndex);
+
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.StrokeIDsAdded.Contains(strokeID);
+
+            return isOnPageBefore || !isPartOfHistory;
         }
 
         #endregion // History

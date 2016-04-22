@@ -98,6 +98,7 @@
     <Compile Include="DomainModel\ClassInformation.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
+    <Compile Include="DomainModel\CLPPageExtensions.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
@@ -237,6 +238,8 @@
     <Compile Include="DomainModel\Tags\TempArrayDividersTag.cs" />
     <Compile Include="DomainModel\Tags\TempArraySkipCountingTag.cs" />
     <Compile Include="DomainModel\Utility\Extentions\DirectoryInfoExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\ColorExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\IEnumerableExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\PointExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />

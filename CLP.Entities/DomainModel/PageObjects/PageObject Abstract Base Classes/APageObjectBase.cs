@@ -280,15 +280,17 @@ namespace CLP.Entities
 
         #region History Methods
 
+        /// <summary>
+        /// Signifies the pageObject was on the page immediately after the historyItem at the given historyIndex was performed
+        /// </summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
-            var addedAtAnyPointHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
+            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
+            var addedAtAnyPointHistoryItem = orderedObjectsOnPageChangedHistoryItems.FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems
-                                  .OfType<ObjectsOnPageChangedHistoryItem>()
-                                  .FirstOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryIndex <= historyIndex);
+                orderedObjectsOnPageChangedHistoryItems.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.PageObjectIDsAdded.Contains(ID);
 

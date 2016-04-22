@@ -35,7 +35,8 @@ namespace CLP.Entities
                                         CodedObjectAction = Codings.ACTION_OBJECT_ADD,
                                         IsObjectActionVisible = false,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                        ReferencePageObjectID = pageObject.ID
                                     };
 
                 return historyAction;
@@ -87,8 +88,9 @@ namespace CLP.Entities
                                         CodedObject = codedObject,
                                         CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
-                                    };
+                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                        ReferencePageObjectID = pageObject.ID
+                };
 
                 return historyAction;
             }
@@ -134,33 +136,34 @@ namespace CLP.Entities
                 return null;
             }
 
-            if (movedPageObjects.Count == 1)
+            if (movedPageObjects.Count != 1)
             {
-                var historyIndex = objectsMovedHistoryItems.First().HistoryIndex;
-                var pageObject = movedPageObjects.First();
-                var codedObject = pageObject.CodedName;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var historyAction = new HistoryAction(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
-                                    {
-                                        CodedObject = codedObject,
-                                        CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
-                                        CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
-                                        CodedObjectActionID =
-                                            string.Format("({0}, {1}) to ({2}, {3})",
-                                                          Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
-                                                          Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
-                                                          Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
-                                                          Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y))
-                                        // TODO: make coded action to describe distance travelled during move.
-                                        // note that there may be more than one objectsMovedHistoryItem in a row where
-                                        // a student moved the same pageObject several consecutive times.
-                                    };
-
-                return historyAction;
+                return null;
             }
 
-            return null;
+            var historyIndex = objectsMovedHistoryItems.First().HistoryIndex;
+            var pageObject = movedPageObjects.First();
+            var codedObject = pageObject.CodedName;
+            var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+            var historyAction = new HistoryAction(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
+                                {
+                                    CodedObject = codedObject,
+                                    CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
+                                    CodedObjectID = codedObjectID,
+                                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                    CodedObjectActionID =
+                                        string.Format("({0}, {1}) to ({2}, {3})",
+                                                      Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
+                                                      Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
+                                                      Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
+                                                      Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y)),
+                                    ReferencePageObjectID = pageObject.ID
+                                    // TODO: make coded action to describe distance travelled during move.
+                                    // note that there may be more than one objectsMovedHistoryItem in a row where
+                                    // a student moved the same pageObject several consecutive times.
+                                };
+
+            return historyAction;
         }
 
         public static IHistoryAction Resize(CLPPage page, List<PageObjectResizeBatchHistoryItem> objectsResizedHistoryItems)
@@ -192,8 +195,8 @@ namespace CLP.Entities
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
                                                       Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().X),
-                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().Y))
-
+                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().Y)),
+                ReferencePageObjectID = pageObjectID
             };
 
             return historyAction;
@@ -216,16 +219,6 @@ namespace CLP.Entities
         public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
-        }
-
-        public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(CLPPage page, int historyIndex, bool isIncludingMC = false)
-        {
-            if (isIncludingMC)
-            {
-                return page.PageObjects.Where(p => p.IsOnPageAtHistoryIndex(historyIndex)).ToList();
-            }
-
-            return page.PageObjects.Where(p => p.IsOnPageAtHistoryIndex(historyIndex) && !(p is MultipleChoiceBox)).ToList();
         }
 
         public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)
