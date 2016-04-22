@@ -507,8 +507,7 @@ namespace CLP.Entities
         {
             var allInterpretedActions = new List<IHistoryAction>();
 
-            if ((historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) ||
-                historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)) &&
+            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) &&
                 historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
                 var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);

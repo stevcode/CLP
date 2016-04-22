@@ -416,26 +416,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            if (!isSkipAdd)
-            {
-                foreach (var stroke in strokes)
-                {
-                    cluster.StrokesOnPage.Remove(stroke);
-                    cluster.StrokesErased.Add(stroke);
-                }
-            }
-            else
-            {
-                foreach (var stroke in strokes)
-                {
-                    cluster.StrokesOnPage.Add(stroke);
-                }
-            }
-
-            var historyIndex = inkAction.HistoryItems.First().HistoryIndex;
+            var historyIndex = inkAction.HistoryItems.Last().HistoryIndex;
+            var strokesOnPage = cluster.GetStrokesOnPageAtHistoryIndex(page, historyIndex);
 
             var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex);
-            var strokeGroupPerRowOnPage = GroupPossibleSkipCountStrokes(page, array, cluster.StrokesOnPage.ToList(), historyIndex);
+            var strokeGroupPerRowOnPage = GroupPossibleSkipCountStrokes(page, array, strokesOnPage, historyIndex);
             var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
             var interpretedRowValuesOnPage = InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, historyIndex);
             var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
@@ -446,7 +431,7 @@ namespace CLP.Entities
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
-            var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT) || inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) ? "right" : "left";
+            var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
 
             var codedActionID = string.Format("{0}, {1}", formattedInterpretation, location);
 
@@ -503,11 +488,6 @@ namespace CLP.Entities
                     return null;
                 }
 
-                foreach (var stroke in strokes)
-                {
-                    cluster.StrokesOnPage.Add(stroke);
-                }
-
                 cluster.ClusterType = InkCluster.ClusterTypes.ARReqn;
 
                 var historyAction = new HistoryAction(page, inkAction)
@@ -537,24 +517,9 @@ namespace CLP.Entities
                 
                 var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
                 var changedInterpretation = string.Format("\"{0}\"", interpretation);
-                
-                if (!isEqnAdd)
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                        cluster.StrokesErased.Add(stroke);
-                    }
-                }
-                else
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Add(stroke);
-                    }
-                }
 
-                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
+                var strokesOnPage = cluster.GetStrokesOnPageAtHistoryIndex(page, inkAction.HistoryItems.Last().HistoryIndex);
+                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokesOnPage)) ?? string.Empty;
                 onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
                 var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
 

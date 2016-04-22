@@ -26,8 +26,6 @@ namespace CLP.Entities
         public InkCluster(StrokeCollection strokes)
         {
             Strokes = strokes;
-            StrokesOnPage = new StrokeCollection();
-            StrokesErased = new StrokeCollection();
             ClusterName = string.Empty;
             ClusterType = ClusterTypes.Unknown;
             PageObjectReferenceID = string.Empty;
@@ -35,8 +33,6 @@ namespace CLP.Entities
         }
 
         public StrokeCollection Strokes { get; set; }
-        public StrokeCollection StrokesOnPage { get; set; }
-        public StrokeCollection StrokesErased { get; set; }
         public string ClusterName { get; set; }
         public ClusterTypes ClusterType { get; set; }
         public string PageObjectReferenceID { get; set; }
@@ -63,25 +59,6 @@ namespace CLP.Entities
             {
                 CodedObject = Codings.OBJECT_INK,
                 CodedObjectAction = isChange ? Codings.ACTION_INK_CHANGE : Codings.ACTION_INK_IGNORE
-            };
-
-            return historyAction;
-        }
-
-        public static IHistoryAction StrokesAddOrErase(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isAdd = true)
-        {
-            if (page == null ||
-                objectsOnPageChangedHistoryItems == null ||
-                !objectsOnPageChangedHistoryItems.Any() ||
-                !objectsOnPageChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
-            {
-                return null;
-            }
-
-            var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
-            {
-                CodedObject = Codings.OBJECT_INK,
-                CodedObjectAction = isAdd ? Codings.ACTION_INK_ADD : Codings.ACTION_INK_ERASE
             };
 
             return historyAction;
@@ -658,7 +635,8 @@ namespace CLP.Entities
                 }
                 else if (currentHistoryAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    foreach (var arrayID in patternStartPoints.Keys)
+                    var arrayIDs = patternStartPoints.Keys.ToList();
+                    foreach (var arrayID in arrayIDs)
                     {
                         patternStartPoints[arrayID] = Codings.ACTION_INK_CHANGE;
                     }
@@ -708,7 +686,9 @@ namespace CLP.Entities
                                       ClusterType = InkCluster.ClusterTypes.ARRskip,
                                       PageObjectReferenceID = arrayID,
                                       LocationReference = Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP
-                };
+                                  };
+                InkClusters.Add(skipCluster);
+
                 var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 || kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                 foreach (var stroke in skipStrokes)
                 {
@@ -945,11 +925,6 @@ namespace CLP.Entities
                     return null;
                 }
 
-                foreach (var stroke in strokes)
-                {
-                    cluster.StrokesOnPage.Add(stroke);
-                }
-
                 cluster.ClusterType = InkCluster.ClusterTypes.ARITH;
 
                 var historyAction = new HistoryAction(page, inkAction)
@@ -980,23 +955,8 @@ namespace CLP.Entities
                 var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
                 var changedInterpretation = string.Format("\"{0}\"", interpretation);
 
-                if (!isArithAdd)
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Remove(stroke);
-                        cluster.StrokesErased.Add(stroke);
-                    }
-                }
-                else
-                {
-                    foreach (var stroke in strokes)
-                    {
-                        cluster.StrokesOnPage.Add(stroke);
-                    }
-                }
-
-                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(cluster.StrokesOnPage)) ?? string.Empty;
+                var strokesOnPage = cluster.GetStrokesOnPageAtHistoryIndex(page, inkAction.HistoryItems.Last().HistoryIndex);
+                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokesOnPage)) ?? string.Empty;
                 onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
                 var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
 
