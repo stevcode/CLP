@@ -1316,6 +1316,43 @@ namespace CLP.Entities
         {
             var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
             var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
+
+            if (point.X >= position.X + dimensions.X)
+            {
+                if (point.Y < position.Y)
+                {
+                    return Codings.ACTIONID_INK_LOCATION_TOP_RIGHT;
+                }
+                if (point.Y > position.Y + dimensions.Y)
+                {
+                    return Codings.ACTIONID_INK_LOCATION_BOTTOM_RIGHT;
+                }
+                return Codings.ACTIONID_INK_LOCATION_RIGHT;
+            }
+
+            if (point.X <= position.X)
+            {
+                if (point.Y < position.Y)
+                {
+                    return Codings.ACTIONID_INK_LOCATION_TOP_LEFT;
+                }
+                if (point.Y > position.Y + dimensions.Y)
+                {
+                    return Codings.ACTIONID_INK_LOCATION_BOTTOM_LEFT;
+                }
+                return Codings.ACTIONID_INK_LOCATION_LEFT;
+            }
+
+            if (point.Y <= position.Y)
+            {
+                return Codings.ACTIONID_INK_LOCATION_TOP;
+            }
+            if (point.Y >= position.Y + dimensions.Y)
+            {
+                return Codings.ACTIONID_INK_LOCATION_BOTTOM;
+            }
+
+            // Point is over the pageObject to some degree, use polar coords.
             var midX = position.X + (dimensions.X / 2.0);
             var midY = position.Y + (dimensions.Y / 2.0);
 
@@ -1327,33 +1364,36 @@ namespace CLP.Entities
             var bottomLeftArc = Math.Atan2(-dimensions.Y / 2, -dimensions.X / 2);
             var bottomRightArc = Math.Atan2(-dimensions.Y / 2, dimensions.X / 2);
 
-            var locationReference = Codings.ACTIONID_INK_LOCATION_NONE;
             if (centroidArcFromMid >= 0 &&
                 centroidArcFromMid <= topRightArc)
             {
-                locationReference = Codings.ACTIONID_INK_LOCATION_RIGHT;
-            }
-            else if (centroidArcFromMid >= bottomRightArc)
-            {
-                locationReference = Codings.ACTIONID_INK_LOCATION_RIGHT;
-            }
-            else if (centroidArcFromMid >= topLeftArc &&
-                     centroidArcFromMid <= bottomLeftArc)
-            {
-                locationReference = Codings.ACTIONID_INK_LOCATION_LEFT;
-            }
-            else if (centroidArcFromMid > topRightArc &&
-                     centroidArcFromMid < topLeftArc)
-            {
-                locationReference = Codings.ACTIONID_INK_LOCATION_TOP;
-            }
-            else if (centroidArcFromMid > bottomLeftArc &&
-                     centroidArcFromMid < bottomRightArc)
-            {
-                locationReference = Codings.ACTIONID_INK_LOCATION_BOTTOM;
+                return Codings.ACTIONID_INK_LOCATION_RIGHT;
             }
 
-            return locationReference;
+            if (centroidArcFromMid >= bottomRightArc)
+            {
+                return Codings.ACTIONID_INK_LOCATION_RIGHT;
+            }
+
+            if (centroidArcFromMid >= topLeftArc &&
+                centroidArcFromMid <= bottomLeftArc)
+            {
+                return Codings.ACTIONID_INK_LOCATION_LEFT;
+            }
+
+            if (centroidArcFromMid > topRightArc &&
+                centroidArcFromMid < topLeftArc)
+            {
+                return Codings.ACTIONID_INK_LOCATION_TOP;
+            }
+
+            if (centroidArcFromMid > bottomLeftArc &&
+                centroidArcFromMid < bottomRightArc)
+            {
+                return Codings.ACTIONID_INK_LOCATION_BOTTOM;
+            }
+
+            return Codings.ACTIONID_INK_LOCATION_NONE;
         }
 
         #endregion // Utility Static Methods
