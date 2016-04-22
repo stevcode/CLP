@@ -458,26 +458,25 @@ namespace CLP.Entities
             refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);  
 
             InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
-
-            //refinedInkActions = InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
+            InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
 
             // TODO: Rename/fix - Refine Temporal Clusters
-            var skipCountActions = new List<IHistoryAction>();
+            var processedInkChangeActions = new List<IHistoryAction>();
             foreach (var historyAction in refinedInkActions)
             {
                 if (historyAction.CodedObject == Codings.OBJECT_INK &&
                     historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
                     var refinedInkActionsq = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
-                    skipCountActions.AddRange(refinedInkActionsq);
+                    processedInkChangeActions.AddRange(refinedInkActionsq);
                 }
                 else
                 {
-                    skipCountActions.Add(historyAction);
+                    processedInkChangeActions.Add(historyAction);
                 }
             }
 
-            return skipCountActions;
+            return processedInkChangeActions;
         }
 
         #endregion // Second Pass: Ink Clustering
