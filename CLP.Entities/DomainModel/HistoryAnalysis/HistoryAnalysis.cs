@@ -580,7 +580,7 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
         {
-            AttemptArrayStrategiesTag(page, historyActions);
+            ArrayStrategyTag.IdentifyArrayStrategies(page, historyActions);
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
@@ -1479,22 +1479,6 @@ namespace CLP.Entities
 
                         var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
-
-                        // HACK: Added for demo.
-                        var strategyCode = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, id);
-                        var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
-                        if (existingArrayStrategiesTag != null)
-                        {
-                            if (!existingArrayStrategiesTag.StrategyCodes.Any(c => c.Contains("skip +arith")))
-                            {
-                                existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
-                            }
-                        }
-                        else
-                        {
-                            var arrayStrategiesTag = new ArrayStrategiesTag(page, Origin.StudentPageObjectGenerated, new List<IHistoryAction>(), new List<string> { strategyCode });
-                            page.AddTag(arrayStrategiesTag);
-                        }
                     }
 
                     finalCodedRepresentations.Add(codedValue);
@@ -1613,124 +1597,6 @@ namespace CLP.Entities
 
             allRepresentations = allRepresentations.Distinct().ToList();
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, allRepresentations, deletedCodedRepresentations, finalCodedRepresentations);
-            page.AddTag(tag);
-        }
-
-        public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
-        {
-            var relevantHistoryactions = new List<IHistoryAction>();
-            var strategyCodes = new List<string>();
-            var ignoredHistoryIndexes = new List<int>();
-            var skipArithCount = new Dictionary<string,int>();
-
-            for (var i = 0; i < historyActions.Count; i++)
-            {
-                if (ignoredHistoryIndexes.Contains(i))
-                {
-                    continue;
-                }
-
-                var currentHistoryAction = historyActions[i];
-                var isLastHistoryAction = i + 1 >= historyActions.Count;
-
-                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARRAY)
-                {
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE_INK, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    {
-                        if (!isLastHistoryAction)
-                        {
-                            var nextHistoryAction = historyActions[i + 1];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                            {
-                                //relevantHistoryactions.Add(currentHistoryAction);
-                                //relevantHistoryactions.Add(nextHistoryAction);
-                                //var compoundCode = string.Format("+arith {0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                                //strategyCodes.Add(compoundCode);
-                          
-                                if (!skipArithCount.ContainsKey(currentHistoryAction.CodedObjectID))
-                                {
-                                    skipArithCount.Add(currentHistoryAction.CodedObjectID, 1);
-                                }
-                                else
-                                {
-                                    skipArithCount[currentHistoryAction.CodedObjectID]++;
-                                }
-
-                                continue;
-                            }
-                        }
-
-                        //relevantHistoryactions.Add(currentHistoryAction);
-                        //var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                        //strategyCodes.Add(code);
-                        //continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
-                    {
-                        for (int j = i + 1; j < historyActions.Count; j++)
-                        {
-                            var nextHistoryAction = historyActions[j];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARRAY &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP &&
-                                nextHistoryAction.CodedObjectID == currentHistoryAction.CodedObjectID)
-                            {
-                                relevantHistoryactions.Add(currentHistoryAction);
-                                relevantHistoryactions.Add(nextHistoryAction);
-                                ignoredHistoryIndexes.Add(j);
-                                var compoundCode = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT_THEN_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                                strategyCodes.Add(compoundCode);
-                                continue;
-                            }
-                        }
-
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}, {2} {3}: {4}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectSubID, currentHistoryAction.CodedObjectSubIDIncrement, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-                }
-            }
-
-            foreach (var key in skipArithCount.Keys)
-            {
-                var objectID = key;
-                var count = skipArithCount[key];
-                var compoundCode = string.Format("COUNT skip +arith ({0}) ARR [{1}]", count, objectID);
-                strategyCodes.Add(compoundCode);
-            }
-
-            if (!strategyCodes.Any())
-            {
-                return;
-            }
-
-            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, relevantHistoryactions, strategyCodes);
             page.AddTag(tag);
         }
 

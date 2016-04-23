@@ -159,22 +159,29 @@ namespace CLP.Entities
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
 
-        #region Array Strategies
+        #region Strategies
 
-        public const string STRATEGY_ARRAY_NONE = "NO STRAT ARR";
-        public const string STRATEGY_ARRAY_DOTS = "COUNT dots ARR";
-        public const string STRATEGY_ARRAY_DOTS_PARTIAL = "COUNT dots part ARR";
-        public const string STRATEGY_ARRAY_SKIP = "COUNT skip ARR";
-        public const string STRATEGY_ARRAY_SKIP_ARITH = "COUNT skip +arith ARR";
-        public const string STRATEGY_ARRAY_SKIP_PARTIAL = "COUNT skip part ARR";
-        public const string STRATEGY_ARRAY_DIVIDE = "PART divide ARR";
-        public const string STRATEGY_ARRAY_DIVIDE_INK = "PART divide ink ARR";
-        public const string STRATEGY_ARRAY_CUT = "PART cut ARR";
-        public const string STRATEGY_ARRAY_SNAP = "PART snap ARR";
-        public const string STRATEGY_ARRAY_CUT_THEN_SNAP = "PART cut snap ARR";
-        public const string STRATEGY_ARRAY_MULTIPLE = "PART mult ARR";
+        public const string STRATEGY_NAME_ARRAY_COUNT_BY_ONE = "COUNT-BY-ONE";
+        public const string STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT = "PART";
+        public const string STRATEGY_NAME_ARRAY_SKIP = "SKIP";
 
-        #endregion // Array Strategies
+        public const string STRATEGY_NAME_NUMBER_LINE_REPEAT_ADDITION = "REPEAT ADD";
+
+        public const string STRATEGY_NAME_BINS_DEAL = "DEAL";
+
+        #endregion // Strategies
+
+        #region Strategy Specifics
+
+        public const string STRATEGY_SPECIFICS_ARRAY_CUT = "cut";
+        public const string STRATEGY_SPECIFICS_ARRAY_SNAP = "snap";
+        public const string STRATEGY_SPECIFICS_ARRAY_CUT_SNAP = "cut and snap";
+        public const string STRATEGY_SPECIFICS_ARRAY_DIVIDE = "divide";
+        public const string STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK = "ink divide";
+        public const string STRATEGY_SPECIFICS_ARRAY_ARITH = "+arith";
+        public const string STRATEGY_SPECIFICS_ARRAY_DOTS = "dots";
+
+        #endregion // Strategy Specifics
 
         #endregion // Analysis Codes
 
