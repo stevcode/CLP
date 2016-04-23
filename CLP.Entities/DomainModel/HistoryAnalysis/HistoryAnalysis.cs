@@ -10,8 +10,7 @@ namespace CLP.Entities
     {
         public static void GenerateHistoryActions(CLPPage page)
         {
-            HistoryAction.CurrentIncrementID.Clear();
-            HistoryAction.MaxIncrementID.Clear();
+            ObjectCodedActions.InitializeIncrementIDs();
             page.History.HistoryActions.Clear();
 
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

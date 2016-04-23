@@ -28,9 +28,9 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = string.Format("{0}x{1}", rotateHistoryItem.OldRows, rotateHistoryItem.OldColumns);
-            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
             var codedActionID = string.Format("{0}x{1}", rotateHistoryItem.OldColumns, rotateHistoryItem.OldRows);
-            var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(array.ID, codedObject, codedActionID);
+            var codedActionIDIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject(array.ID, codedObject, codedActionID);
             if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
             {
                 codedActionID += " " + codedActionIDIncrementID;
@@ -66,7 +66,7 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = cutArray.GetCodedIDAtHistoryIndex(cutHistoryItem.HistoryIndex);
-            var incrementID = HistoryAction.GetIncrementID(cutArray.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(cutArray.ID, codedObject, codedID);
             var codedActionSegments = new List<string>();
             foreach (var halvedPageObjectID in cutHistoryItem.HalvedPageObjectIDs)
             {
@@ -77,7 +77,7 @@ namespace CLP.Entities
                 }
 
                 var arrayCodedID = array.GetCodedIDAtHistoryIndex(cutHistoryItem.HistoryIndex + 1);
-                var arrayIncrementID = HistoryAction.IncrementAndGetIncrementID(array.ID, codedObject, arrayCodedID);
+                var arrayIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject(array.ID, codedObject, arrayCodedID);
                 var actionSegment = string.IsNullOrWhiteSpace(arrayIncrementID) ? arrayCodedID : string.Format("{0} {1}", arrayCodedID, arrayIncrementID);
                 codedActionSegments.Add(actionSegment);
             }
@@ -136,11 +136,11 @@ namespace CLP.Entities
             // whose dimensions change. The SubID is the array that is snapped onto
             // the persistingArray then disappears.
             var codedID = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex);
-            var incrementID = HistoryAction.GetIncrementID(persistingArray.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, codedID);
             var codedSubID = snappedArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex);
-            var incrementSubID = HistoryAction.GetIncrementID(snappedArray.ID, codedObject, codedSubID);
+            var incrementSubID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(snappedArray.ID, codedObject, codedSubID);
             var codedActionID = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex + 1);
-            var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(persistingArray.ID, codedObject, codedActionID);
+            var codedActionIDIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, codedActionID);
             if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
             {
                 codedActionID += " " + codedActionIDIncrementID;
@@ -178,7 +178,7 @@ namespace CLP.Entities
             }
 
             var codedID = dividedArray.GetCodedIDAtHistoryIndex(divideHistoryItem.HistoryIndex);
-            var incrementID = HistoryAction.GetIncrementID(dividedArray.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(dividedArray.ID, codedObject, codedID);
             var codedActionSegments = new List<string>();
 
             // QUESTION: Right now, listing all regions after divide. Alternatively, can list just new regions and have SubID for the replaced region
@@ -199,7 +199,7 @@ namespace CLP.Entities
                 }
 
                 var segmentID = string.Format("{0}x{1}", regionColumn, regionRow);
-                var segmentIncrementID = HistoryAction.IncrementAndGetIncrementID(dividedArray.ID, codedObject, segmentID, index);
+                var segmentIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject_Sub(dividedArray.ID, codedObject, codedID, index, segmentID);
                 if (!string.IsNullOrWhiteSpace(segmentIncrementID))
                 {
                     segmentID += " " + segmentIncrementID;
@@ -324,7 +324,23 @@ namespace CLP.Entities
                 verticalDividers.Add(array.Columns);  // TODO: Fix for if multiple ink dividers are made in a row
                 verticalDividers = verticalDividers.Distinct().OrderBy(x => x).ToList();
                 var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", arrayColumnsAndRows.Y, x));
-                actionID = string.Join(", ", verticalDivisions); // TODO: apply internal increments
+
+                var position = 0;
+                var subIDsWithIncrementIDs = new List<string>();
+                foreach (var verticalDivision in verticalDivisions)
+                {
+                    var subIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject_Sub(array.ID,
+                                                                                                   Codings.OBJECT_ARRAY,
+                                                                                                   array.GetCodedIDAtHistoryIndex(historyIndex),
+                                                                                                   position,
+                                                                                                   verticalDivision,
+                                                                                                   !isAddedStroke);
+                    var subIDWithIncrementID = string.Format("{0}{1}", verticalDivision, !string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty);
+                    subIDsWithIncrementIDs.Add(subIDWithIncrementID);
+                    position++;
+                }
+
+                actionID = string.Join(", ", subIDsWithIncrementIDs);
                 isInkDivide = true;
             }
 
@@ -352,7 +368,22 @@ namespace CLP.Entities
                 horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
                 var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
 
-                actionID = string.Join(", ", horizontalDivisions); // TODO: apply internal increments
+                var position = 0;
+                var subIDsWithIncrementIDs = new List<string>();
+                foreach (var horizontalDivision in horizontalDivisions)
+                {
+                    var subIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject_Sub(array.ID,
+                                                                                                   Codings.OBJECT_ARRAY,
+                                                                                                   array.GetCodedIDAtHistoryIndex(historyIndex),
+                                                                                                   position,
+                                                                                                   horizontalDivision,
+                                                                                                   !isAddedStroke);
+                    var subIDWithIncrementID = string.Format("{0}{1}", horizontalDivision, !string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty);
+                    subIDsWithIncrementIDs.Add(subIDWithIncrementID);
+                    position++;
+                }
+
+                actionID = string.Join(", ", subIDsWithIncrementIDs);
                 isInkDivide = true;
             }
 
@@ -366,7 +397,7 @@ namespace CLP.Entities
             var codedObject = Codings.OBJECT_ARRAY;
             var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID); // TODO: Confirm increments correctly
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
             var inkDivideAction = new HistoryAction(page, historyItem)
                                   {
@@ -430,7 +461,7 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
-            var incrementID = HistoryAction.GetIncrementID(array.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
             var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
 
             var codedActionID = string.Format("{0}, {1}", formattedInterpretation, location);
