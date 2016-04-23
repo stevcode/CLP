@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Ink;
-using System.Windows.Media;
 using Catel.Collections;
-using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -42,7 +37,7 @@ namespace CLP.Entities
                                             });
             var initialHistoryActions = GenerateInitialHistoryActions(page);
             page.History.HistoryActions.AddRange(initialHistoryActions);
-            
+
             File.AppendAllText(filePath, "PASS [1]" + "\n");
             foreach (var item in initialHistoryActions)
             {
@@ -146,10 +141,12 @@ namespace CLP.Entities
                       .Case<ObjectsOnPageChangedHistoryItem>(h => { historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
                       .Case<PartsValueChangedHistoryItem>(h =>
                                                           {
-                                                              historyAction = new HistoryAction(page, h);
-                                                              historyAction.CodedObject = Codings.OBJECT_STAMP;
-                                                              historyAction.CodedObjectAction = "parts";
-                                                              historyAction.CodedObjectID = "CHANGED";
+                                                              historyAction = new HistoryAction(page, h)
+                                                                              {
+                                                                                  CodedObject = Codings.OBJECT_STAMP,
+                                                                                  CodedObjectAction = "parts",
+                                                                                  CodedObjectID = "CHANGED"
+                                                                              };
                                                           })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
@@ -274,7 +271,7 @@ namespace CLP.Entities
                 var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryItem>().ToList();
                 var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
                 var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
-                
+
                 if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
                 {
                     var nextStatusChangedHistoryItems = nextHistoryItem as MultipleChoiceBubbleStatusChangedHistoryItem;
@@ -285,7 +282,7 @@ namespace CLP.Entities
                     }
 
                     ChoiceBubbleStatuses? compressedStatus = null;
-                    if (nextStatusChangedHistoryItems !=null)
+                    if (nextStatusChangedHistoryItems != null)
                     {
                         compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryItems.ChoiceBubbleStatus);
                     }
@@ -455,7 +452,7 @@ namespace CLP.Entities
             InkCodedActions.InkClusters.Clear();
             var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, historyActions);
             // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
-            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);  
+            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);
 
             InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
             InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
@@ -599,9 +596,7 @@ namespace CLP.Entities
 
             #region Answer Definition Relation
 
-            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag ||
-                                                           t is MultiplicationRelationDefinitionTag ||
-                                                           t is AdditionRelationDefinitionTag);
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag || t is MultiplicationRelationDefinitionTag || t is AdditionRelationDefinitionTag);
 
             if (relationDefinitionTag == null)
             {
@@ -620,7 +615,8 @@ namespace CLP.Entities
                 definitionRelation.groupSize = div.Quotient;
                 definitionRelation.numberOfGroups = div.Divisor;
                 definitionRelation.product = div.Dividend;
-                definitionRelation.isOrderedGroup = false; // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
+                definitionRelation.isOrderedGroup = false;
+                    // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
                 definitionRelation.isProductImportant = true;
             }
 
@@ -668,7 +664,8 @@ namespace CLP.Entities
 
             var keyIndexes =
                 historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
-                              .Select(h => h.HistoryItems.First().HistoryIndex - 1).ToList();
+                              .Select(h => h.HistoryItems.First().HistoryIndex - 1)
+                              .ToList();
             if (!page.History.CompleteOrderedHistoryItems.Any())
             {
                 return;
@@ -717,13 +714,13 @@ namespace CLP.Entities
                         var colsAndRows = array.GetColumnsAndRowsAtHistoryIndex(index);
                         usedID = array.ID;
                         representationRelation = new Relation
-                        {
-                            groupSize = colsAndRows.X,
-                            numberOfGroups = colsAndRows.Y,
-                            product = colsAndRows.X * colsAndRows.Y,
-                            isOrderedGroup = false,
-                            isProductImportant = false
-                        };
+                                                 {
+                                                     groupSize = colsAndRows.X,
+                                                     numberOfGroups = colsAndRows.Y,
+                                                     product = colsAndRows.X * colsAndRows.Y,
+                                                     isOrderedGroup = false,
+                                                     isProductImportant = false
+                                                 };
                     }
 
                     var numberLine = pageObject as NumberLine;
@@ -759,7 +756,8 @@ namespace CLP.Entities
                                                  };
                     }
 
-                    if (representationRelation == null || usedPageObjectIDs.Contains(usedID))
+                    if (representationRelation == null ||
+                        usedPageObjectIDs.Contains(usedID))
                     {
                         continue;
                     }
@@ -786,8 +784,8 @@ namespace CLP.Entities
                     {
                         correctness = Correctness.Correct;
                     }
-                    else if(otherCorrectness == Correctness.PartiallyCorrect ||
-                            relationCorrectness == Correctness.PartiallyCorrect)
+                    else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                             relationCorrectness == Correctness.PartiallyCorrect)
                     {
                         correctness = Correctness.PartiallyCorrect;
                     }
@@ -854,7 +852,7 @@ namespace CLP.Entities
                         correctness = Correctness.Correct;
                     }
                     else if (otherCorrectness == Correctness.PartiallyCorrect ||
-                            relationCorrectness == Correctness.PartiallyCorrect)
+                             relationCorrectness == Correctness.PartiallyCorrect)
                     {
                         correctness = Correctness.PartiallyCorrect;
                     }
@@ -929,7 +927,7 @@ namespace CLP.Entities
                             correctness = Correctness.Correct;
                         }
                         else if (otherCorrectness == Correctness.PartiallyCorrect ||
-                                relationCorrectness == Correctness.PartiallyCorrect)
+                                 relationCorrectness == Correctness.PartiallyCorrect)
                         {
                             correctness = Correctness.PartiallyCorrect;
                         }
@@ -1102,10 +1100,12 @@ namespace CLP.Entities
                 return;
             }
 
-            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction>
-                                                                                  {
-                                                                                      lastAnswerAction
-                                                                                  });
+            var tag = new AnswerCorrectnessTag(page,
+                                               Origin.StudentPageGenerated,
+                                               new List<IHistoryAction>
+                                               {
+                                                   lastAnswerAction
+                                               });
             page.AddTag(tag);
         }
 
@@ -1117,8 +1117,8 @@ namespace CLP.Entities
             var stampedObjectGroups = new Dictionary<string, int>();
             var binGroups = new Dictionary<int, int>();
             var maxStampedObjectGroups = new Dictionary<string, int>();
-            var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
-            var subArrayGroups = new Dictionary<string,List<string>>();
+            var jumpGroups = new Dictionary<string, List<NumberLineJumpSize>>();
+            var subArrayGroups = new Dictionary<string, List<string>>();
             foreach (var historyAction in historyActions)
             {
                 #region Stamps
@@ -1248,7 +1248,7 @@ namespace CLP.Entities
                         {
                             allJumps.AddRange(historyItem.JumpsRemoved);
                         }
-                        
+
                         var jumpsToRemove = (from jump in allJumps
                                              from currentJump in jumpGroups[numberLineID]
                                              where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
@@ -1260,7 +1260,7 @@ namespace CLP.Entities
                             if (jumpGroups.ContainsKey(numberLineID))
                             {
                                 jumpGroups[numberLineID].Remove(jump);
-                                
+
                                 if (!jumpGroups[numberLineID].Any())
                                 {
                                     jumpGroups.Remove(numberLineID);
@@ -1327,7 +1327,6 @@ namespace CLP.Entities
                             allRepresentations.Add(obj);
                         }
                     }
-                    
                 }
 
                 #endregion // Number Line
