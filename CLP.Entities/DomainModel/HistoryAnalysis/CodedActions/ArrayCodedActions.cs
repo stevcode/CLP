@@ -426,7 +426,7 @@ namespace CLP.Entities
             var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
             var formattedSkipsOnPage = FormatInterpretedSkipCountGroups(interpretedRowValuesOnPage);
 
-            var formattedInterpretation = string.Format("{0}; {1}", formattedSkips, formattedSkipsOnPage);
+            var formattedInterpretation = string.Format("{0};\n\t{1}", formattedSkips, formattedSkipsOnPage);
 
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
