@@ -345,6 +345,18 @@ namespace CLP.Entities
             return adjustedPosition;
         }
 
+        /// <summary>
+        /// Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo().
+        /// To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.
+        /// // TODO: Modify these to be after current historyItems executes Redo().
+        /// </summary>
+        public virtual Rect GetBoundsAtHistoryIndex(int historyIndex)
+        {
+            var position = GetPositionAtHistoryIndex(historyIndex);
+            var dimensions = GetDimensionsAtHistoryIndex(historyIndex);
+            return new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
+        }
+
         #endregion //History Methods
 
         #endregion //Methods

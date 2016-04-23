@@ -45,5 +45,6 @@ namespace CLP.Entities
         string GetCodedIDAtHistoryIndex(int historyIndex);
         Point GetPositionAtHistoryIndex(int historyIndex);
         Point GetDimensionsAtHistoryIndex(int historyIndex);
+        Rect GetBoundsAtHistoryIndex(int historyIndex);
     }
 }

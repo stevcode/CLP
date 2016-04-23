@@ -221,13 +221,6 @@ namespace CLP.Entities
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
         }
 
-        public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)
-        {
-            var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
-            var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
-            return new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
-        }
-
         #endregion // Utility Methods
     }
 }
