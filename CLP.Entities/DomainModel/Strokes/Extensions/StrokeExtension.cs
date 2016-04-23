@@ -562,6 +562,25 @@ namespace CLP.Entities
             return isOnPageBefore || !isPartOfHistory;
         }
 
+        /// <summary>
+        /// Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the
+        /// historyItems at both historyIndexes)
+        /// </summary>
+        public static bool IsAddedBetweenHistoryIndexes(this Stroke stroke, CLPPage page, int startHistoryIndex, int endHistoryIndex)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("page", page);
+            Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
+            Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
+
+            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
+            var strokeID = stroke.GetStrokeID();
+
+            var isAddedBetweenIndexes = orderedObjectsChangedHistoryItems.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryIndex >= startHistoryIndex && h.HistoryIndex <= endHistoryIndex);
+
+            return isAddedBetweenIndexes;
+        }
+
         #endregion // History
 
         #region Shape Detection

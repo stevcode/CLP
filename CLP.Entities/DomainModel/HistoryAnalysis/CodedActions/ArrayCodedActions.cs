@@ -394,6 +394,20 @@ namespace CLP.Entities
                 return null;
             }
 
+            var divideCluster = InkCodedActions.InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.InkDivide && c.PageObjectReferenceID == array.ID);
+            if (divideCluster == null)
+            {
+                divideCluster = new InkCluster(new StrokeCollection())
+                                {
+                                    ClusterType = InkCluster.ClusterTypes.InkDivide,
+                                    LocationReference = Codings.ACTIONID_INK_LOCATION_OVER,
+                                    PageObjectReferenceID = array.ID
+                                };
+
+                InkCodedActions.InkClusters.Add(divideCluster);
+            }
+            InkCodedActions.MoveStrokeToDifferentCluster(divideCluster, stroke);
+
             var codedObject = Codings.OBJECT_ARRAY;
             var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
