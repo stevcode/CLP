@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Ink;
-using System.Windows.Media;
 using Catel.Collections;
-using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -15,8 +10,7 @@ namespace CLP.Entities
     {
         public static void GenerateHistoryActions(CLPPage page)
         {
-            HistoryAction.CurrentIncrementID.Clear();
-            HistoryAction.MaxIncrementID.Clear();
+            ObjectCodedActions.InitializeIncrementIDs();
             page.History.HistoryActions.Clear();
 
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -42,7 +36,7 @@ namespace CLP.Entities
                                             });
             var initialHistoryActions = GenerateInitialHistoryActions(page);
             page.History.HistoryActions.AddRange(initialHistoryActions);
-            
+
             File.AppendAllText(filePath, "PASS [1]" + "\n");
             foreach (var item in initialHistoryActions)
             {
@@ -146,10 +140,12 @@ namespace CLP.Entities
                       .Case<ObjectsOnPageChangedHistoryItem>(h => { historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
                       .Case<PartsValueChangedHistoryItem>(h =>
                                                           {
-                                                              historyAction = new HistoryAction(page, h);
-                                                              historyAction.CodedObject = Codings.OBJECT_STAMP;
-                                                              historyAction.CodedObjectAction = "parts";
-                                                              historyAction.CodedObjectID = "CHANGED";
+                                                              historyAction = new HistoryAction(page, h)
+                                                                              {
+                                                                                  CodedObject = Codings.OBJECT_STAMP,
+                                                                                  CodedObjectAction = "parts",
+                                                                                  CodedObjectID = "CHANGED"
+                                                                              };
                                                           })
                       .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
                       .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
@@ -274,7 +270,7 @@ namespace CLP.Entities
                 var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryItem>().ToList();
                 var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
                 var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
-                
+
                 if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
                 {
                     var nextStatusChangedHistoryItems = nextHistoryItem as MultipleChoiceBubbleStatusChangedHistoryItem;
@@ -285,7 +281,7 @@ namespace CLP.Entities
                     }
 
                     ChoiceBubbleStatuses? compressedStatus = null;
-                    if (nextStatusChangedHistoryItems !=null)
+                    if (nextStatusChangedHistoryItems != null)
                     {
                         compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryItems.ChoiceBubbleStatus);
                     }
@@ -455,7 +451,7 @@ namespace CLP.Entities
             InkCodedActions.InkClusters.Clear();
             var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, historyActions);
             // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
-            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);  
+            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);
 
             InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
             InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
@@ -580,7 +576,7 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
         {
-            AttemptArrayStrategiesTag(page, historyActions);
+            ArrayStrategyTag.IdentifyArrayStrategies(page, historyActions);
             AttemptAnswerBeforeRepresentationTag(page, historyActions);
             AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
             AttemptAnswerTag(page, historyActions);
@@ -599,9 +595,12 @@ namespace CLP.Entities
 
             #region Answer Definition Relation
 
-            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag ||
-                                                           t is MultiplicationRelationDefinitionTag ||
-                                                           t is AdditionRelationDefinitionTag);
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is DivisionRelationDefinitionTag || t is MultiplicationRelationDefinitionTag || t is AdditionRelationDefinitionTag);
+
+            if (relationDefinitionTag == null)
+            {
+                return;
+            }
 
             var definitionRelation = new Relation();
             var otherDefinitionRelation = new Relation();
@@ -615,7 +614,8 @@ namespace CLP.Entities
                 definitionRelation.groupSize = div.Quotient;
                 definitionRelation.numberOfGroups = div.Divisor;
                 definitionRelation.product = div.Dividend;
-                definitionRelation.isOrderedGroup = false; // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
+                definitionRelation.isOrderedGroup = false;
+                    // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
                 definitionRelation.isProductImportant = true;
             }
 
@@ -663,7 +663,8 @@ namespace CLP.Entities
 
             var keyIndexes =
                 historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
-                              .Select(h => h.HistoryItems.First().HistoryIndex - 1).ToList();
+                              .Select(h => h.HistoryItems.First().HistoryIndex - 1)
+                              .ToList();
             if (!page.History.CompleteOrderedHistoryItems.Any())
             {
                 return;
@@ -712,13 +713,13 @@ namespace CLP.Entities
                         var colsAndRows = array.GetColumnsAndRowsAtHistoryIndex(index);
                         usedID = array.ID;
                         representationRelation = new Relation
-                        {
-                            groupSize = colsAndRows.X,
-                            numberOfGroups = colsAndRows.Y,
-                            product = colsAndRows.X * colsAndRows.Y,
-                            isOrderedGroup = false,
-                            isProductImportant = false
-                        };
+                                                 {
+                                                     groupSize = colsAndRows.X,
+                                                     numberOfGroups = colsAndRows.Y,
+                                                     product = colsAndRows.X * colsAndRows.Y,
+                                                     isOrderedGroup = false,
+                                                     isProductImportant = false
+                                                 };
                     }
 
                     var numberLine = pageObject as NumberLine;
@@ -754,7 +755,8 @@ namespace CLP.Entities
                                                  };
                     }
 
-                    if (representationRelation == null || usedPageObjectIDs.Contains(usedID))
+                    if (representationRelation == null ||
+                        usedPageObjectIDs.Contains(usedID))
                     {
                         continue;
                     }
@@ -781,8 +783,8 @@ namespace CLP.Entities
                     {
                         correctness = Correctness.Correct;
                     }
-                    else if(otherCorrectness == Correctness.PartiallyCorrect ||
-                            relationCorrectness == Correctness.PartiallyCorrect)
+                    else if (otherCorrectness == Correctness.PartiallyCorrect ||
+                             relationCorrectness == Correctness.PartiallyCorrect)
                     {
                         correctness = Correctness.PartiallyCorrect;
                     }
@@ -849,7 +851,7 @@ namespace CLP.Entities
                         correctness = Correctness.Correct;
                     }
                     else if (otherCorrectness == Correctness.PartiallyCorrect ||
-                            relationCorrectness == Correctness.PartiallyCorrect)
+                             relationCorrectness == Correctness.PartiallyCorrect)
                     {
                         correctness = Correctness.PartiallyCorrect;
                     }
@@ -924,7 +926,7 @@ namespace CLP.Entities
                             correctness = Correctness.Correct;
                         }
                         else if (otherCorrectness == Correctness.PartiallyCorrect ||
-                                relationCorrectness == Correctness.PartiallyCorrect)
+                                 relationCorrectness == Correctness.PartiallyCorrect)
                         {
                             correctness = Correctness.PartiallyCorrect;
                         }
@@ -1097,10 +1099,12 @@ namespace CLP.Entities
                 return;
             }
 
-            var tag = new AnswerCorrectnessTag(page, Origin.StudentPageGenerated, new List<IHistoryAction>
-                                                                                  {
-                                                                                      lastAnswerAction
-                                                                                  });
+            var tag = new AnswerCorrectnessTag(page,
+                                               Origin.StudentPageGenerated,
+                                               new List<IHistoryAction>
+                                               {
+                                                   lastAnswerAction
+                                               });
             page.AddTag(tag);
         }
 
@@ -1112,8 +1116,8 @@ namespace CLP.Entities
             var stampedObjectGroups = new Dictionary<string, int>();
             var binGroups = new Dictionary<int, int>();
             var maxStampedObjectGroups = new Dictionary<string, int>();
-            var jumpGroups = new Dictionary<string,List<NumberLineJumpSize>>();
-            var subArrayGroups = new Dictionary<string,List<string>>();
+            var jumpGroups = new Dictionary<string, List<NumberLineJumpSize>>();
+            var subArrayGroups = new Dictionary<string, List<string>>();
             foreach (var historyAction in historyActions)
             {
                 #region Stamps
@@ -1243,7 +1247,7 @@ namespace CLP.Entities
                         {
                             allJumps.AddRange(historyItem.JumpsRemoved);
                         }
-                        
+
                         var jumpsToRemove = (from jump in allJumps
                                              from currentJump in jumpGroups[numberLineID]
                                              where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
@@ -1255,7 +1259,7 @@ namespace CLP.Entities
                             if (jumpGroups.ContainsKey(numberLineID))
                             {
                                 jumpGroups[numberLineID].Remove(jump);
-                                
+
                                 if (!jumpGroups[numberLineID].Any())
                                 {
                                     jumpGroups.Remove(numberLineID);
@@ -1322,7 +1326,6 @@ namespace CLP.Entities
                             allRepresentations.Add(obj);
                         }
                     }
-                    
                 }
 
                 #endregion // Number Line
@@ -1474,22 +1477,6 @@ namespace CLP.Entities
 
                         var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
                         codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
-
-                        // HACK: Added for demo.
-                        var strategyCode = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, id);
-                        var existingArrayStrategiesTag = page.Tags.OfType<ArrayStrategiesTag>().FirstOrDefault();
-                        if (existingArrayStrategiesTag != null)
-                        {
-                            if (!existingArrayStrategiesTag.StrategyCodes.Any(c => c.Contains("skip +arith")))
-                            {
-                                existingArrayStrategiesTag.StrategyCodes.Add(strategyCode);
-                            }
-                        }
-                        else
-                        {
-                            var arrayStrategiesTag = new ArrayStrategiesTag(page, Origin.StudentPageObjectGenerated, new List<IHistoryAction>(), new List<string> { strategyCode });
-                            page.AddTag(arrayStrategiesTag);
-                        }
                     }
 
                     finalCodedRepresentations.Add(codedValue);
@@ -1608,124 +1595,6 @@ namespace CLP.Entities
 
             allRepresentations = allRepresentations.Distinct().ToList();
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, allRepresentations, deletedCodedRepresentations, finalCodedRepresentations);
-            page.AddTag(tag);
-        }
-
-        public static void AttemptArrayStrategiesTag(CLPPage page, List<IHistoryAction> historyActions)
-        {
-            var relevantHistoryactions = new List<IHistoryAction>();
-            var strategyCodes = new List<string>();
-            var ignoredHistoryIndexes = new List<int>();
-            var skipArithCount = new Dictionary<string,int>();
-
-            for (var i = 0; i < historyActions.Count; i++)
-            {
-                if (ignoredHistoryIndexes.Contains(i))
-                {
-                    continue;
-                }
-
-                var currentHistoryAction = historyActions[i];
-                var isLastHistoryAction = i + 1 >= historyActions.Count;
-
-                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARRAY)
-                {
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_DIVIDE_INK, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
-                    {
-                        if (!isLastHistoryAction)
-                        {
-                            var nextHistoryAction = historyActions[i + 1];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
-                            {
-                                //relevantHistoryactions.Add(currentHistoryAction);
-                                //relevantHistoryactions.Add(nextHistoryAction);
-                                //var compoundCode = string.Format("+arith {0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                                //strategyCodes.Add(compoundCode);
-                          
-                                if (!skipArithCount.ContainsKey(currentHistoryAction.CodedObjectID))
-                                {
-                                    skipArithCount.Add(currentHistoryAction.CodedObjectID, 1);
-                                }
-                                else
-                                {
-                                    skipArithCount[currentHistoryAction.CodedObjectID]++;
-                                }
-
-                                continue;
-                            }
-                        }
-
-                        //relevantHistoryactions.Add(currentHistoryAction);
-                        //var code = string.Format("{0} [{1}]", Codings.STRATEGY_ARRAY_SKIP, currentHistoryAction.CodedObjectID);
-                        //strategyCodes.Add(code);
-                        //continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
-                    {
-                        for (int j = i + 1; j < historyActions.Count; j++)
-                        {
-                            var nextHistoryAction = historyActions[j];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARRAY &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP &&
-                                nextHistoryAction.CodedObjectID == currentHistoryAction.CodedObjectID)
-                            {
-                                relevantHistoryactions.Add(currentHistoryAction);
-                                relevantHistoryactions.Add(nextHistoryAction);
-                                ignoredHistoryIndexes.Add(j);
-                                var compoundCode = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT_THEN_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                                strategyCodes.Add(compoundCode);
-                                continue;
-                            }
-                        }
-
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}: {2}]", Codings.STRATEGY_ARRAY_CUT, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
-                    {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var code = string.Format("{0} [{1}, {2} {3}: {4}]", Codings.STRATEGY_ARRAY_SNAP, currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectSubID, currentHistoryAction.CodedObjectSubIDIncrement, currentHistoryAction.CodedObjectActionID);
-                        strategyCodes.Add(code);
-                        continue;
-                    }
-                }
-            }
-
-            foreach (var key in skipArithCount.Keys)
-            {
-                var objectID = key;
-                var count = skipArithCount[key];
-                var compoundCode = string.Format("COUNT skip +arith ({0}) ARR [{1}]", count, objectID);
-                strategyCodes.Add(compoundCode);
-            }
-
-            if (!strategyCodes.Any())
-            {
-                return;
-            }
-
-            var tag = new ArrayStrategiesTag(page, Origin.StudentPageGenerated, relevantHistoryactions, strategyCodes);
             page.AddTag(tag);
         }
 

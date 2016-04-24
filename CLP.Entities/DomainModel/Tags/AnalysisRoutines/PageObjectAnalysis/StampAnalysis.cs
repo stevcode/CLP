@@ -12,7 +12,7 @@ namespace CLP.Entities
         {
             // First, clear out any old StampTags generated via Analysis.
             foreach (var tag in
-                page.Tags.ToList().Where(tag => tag is StampGroupTag || tag is StampTroubleWithGroupingTag || tag is TroubleWithMultiplicationTag))
+                page.Tags.ToList().Where(tag => tag is StampTroubleWithGroupingTag || tag is TroubleWithMultiplicationTag))
             {
                 page.RemoveTag(tag);
             }
@@ -44,50 +44,50 @@ namespace CLP.Entities
                 {
                     var parts = distinctPartsValue;
                     var stampedObjectIDs = stampedObjects.Where(x => x.ParentStampID == id && x.Parts == parts).Select(x => x.ID).ToList();
-                    var stampGroupTag = new StampGroupTag(page, Origin.StudentPageGenerated, parentStampID, parts, stampedObjectIDs);
-                    page.AddTag(stampGroupTag);
-                    AnalyzeStampTroubleWithGrouping(page, multiplicationRelationDefinitionTag, stampGroupTag);
+                    //var stampGroupTag = new StampGroupTag(page, Origin.StudentPageGenerated, parentStampID, parts, stampedObjectIDs);
+                    //page.AddTag(stampGroupTag);
+                    //AnalyzeStampTroubleWithGrouping(page, multiplicationRelationDefinitionTag, stampGroupTag);
                 }
             }
         }
 
-        public static void AnalyzeStampTroubleWithGrouping(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag, StampGroupTag groupTag)
-        {
-            var groups = groupTag.StampedObjectIDs.Count;
-            var groupSize = groupTag.Parts;
+        //public static void AnalyzeStampTroubleWithGrouping(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag, StampGroupTag groupTag)
+        //{
+        //    var groups = groupTag.StampedObjectIDs.Count;
+        //    var groupSize = groupTag.Parts;
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
-            {
-                return;
-            }
+        //    if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
+        //    {
+        //        return;
+        //    }
 
-            var existingTroubleWithGroupingTag = page.Tags.OfType<StampTroubleWithGroupingTag>().FirstOrDefault();
-            if (existingTroubleWithGroupingTag == null)
-            {
-                existingTroubleWithGroupingTag = new StampTroubleWithGroupingTag(page, Origin.StudentPageGenerated);
-                page.AddTag(existingTroubleWithGroupingTag);
-            }
+        //    var existingTroubleWithGroupingTag = page.Tags.OfType<StampTroubleWithGroupingTag>().FirstOrDefault();
+        //    if (existingTroubleWithGroupingTag == null)
+        //    {
+        //        existingTroubleWithGroupingTag = new StampTroubleWithGroupingTag(page, Origin.StudentPageGenerated);
+        //        page.AddTag(existingTroubleWithGroupingTag);
+        //    }
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue)
-            {
-                existingTroubleWithGroupingTag.NumberOfGroupsAndGroupSizeSwappedCount++;
-                return;
-            }
+        //    if (groups == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue)
+        //    {
+        //        existingTroubleWithGroupingTag.NumberOfGroupsAndGroupSizeSwappedCount++;
+        //        return;
+        //    }
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize != multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
-            {
-                existingTroubleWithGroupingTag.GroupSizeWrongCount++;
-                return;
-            }
+        //    if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize != multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
+        //    {
+        //        existingTroubleWithGroupingTag.GroupSizeWrongCount++;
+        //        return;
+        //    }
 
-            if (groups != multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
-            {
-                existingTroubleWithGroupingTag.NumberOfGroupsWrongCount++;
-                return;
-            }
+        //    if (groups != multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
+        //    {
+        //        existingTroubleWithGroupingTag.NumberOfGroupsWrongCount++;
+        //        return;
+        //    }
 
-            existingTroubleWithGroupingTag.NumberOfGroupsWrongAndGroupSizeWrongCount++;
-        }
+        //    existingTroubleWithGroupingTag.NumberOfGroupsWrongAndGroupSizeWrongCount++;
+        //}
 
         public static void AnalyzeStampTroubleWithMultiplication(CLPPage page)
         {

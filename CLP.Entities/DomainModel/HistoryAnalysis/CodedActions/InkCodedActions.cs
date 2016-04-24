@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Media.TextFormatting;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -14,6 +13,7 @@ namespace CLP.Entities
         public enum ClusterTypes
         {
             Ignore,
+            InkDivide,
             Unknown,
             ANS_FI,
             PossibleARITH,
@@ -573,7 +573,7 @@ namespace CLP.Entities
             // This code looks for any of the following patterns for each array, where all other Event types are ignored:
             // ARR add, INK change, ARR delete/ARR move/End
             // ARR move, INK change, ARR delete/ARR move/End
-            // When one of the above patterns is recognized, the end historyIndex and associated arrayID are stored in a list
+            // When one of the above patterns is recognized, the start and end historyIndex and associated arrayID are stored in a list
             // of patternEndPoints. Every identified patternEndPoint will be analyzed at that point in history for skip counting
             // and any skip count strokes found at that point will be isolated in their own clusters.
             var patternStartPoints = new  Dictionary<string, string>();
@@ -589,28 +589,32 @@ namespace CLP.Entities
                     {
                         if (!patternStartPoints.Keys.Contains(arrayID))
                         {
-                            patternStartPoints.Add(arrayID, Codings.ACTION_OBJECT_ADD);
+                            var startPattern = string.Format("{0};{1}", Codings.ACTION_OBJECT_ADD, currentHistoryAction.HistoryItems.First().HistoryIndex);
+                            patternStartPoints.Add(arrayID, startPattern);
                         }
                     }
                     else if (currentHistoryAction.CodedObjectAction == Codings.ACTION_OBJECT_MOVE)
                     {
+                        var startPattern = string.Format("{0};{1}", Codings.ACTION_OBJECT_MOVE, currentHistoryAction.HistoryItems.First().HistoryIndex);
                         if (patternStartPoints.Keys.Contains(arrayID))
                         {
-                            if (patternStartPoints[arrayID] == Codings.ACTION_INK_CHANGE)
+                            if (patternStartPoints[arrayID].Contains(Codings.ACTION_INK_CHANGE))
                             {
-                                var historyIndex = currentHistoryAction.HistoryItems.Last().HistoryIndex;
+                                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                                var endHistoryIndex = currentHistoryAction.HistoryItems.Last().HistoryIndex;
                                 patternEndPoints.Add(new
                                                      {
                                                          ArrayID = arrayID,
-                                                         HistoryIndex = historyIndex
+                                                         StartHistoryIndex = startHistoryIndex,
+                                                         EndHistoryIndex = endHistoryIndex
                                                      });
                             }
 
-                            patternStartPoints[arrayID] = Codings.ACTION_OBJECT_MOVE;
+                            patternStartPoints[arrayID] = startPattern;
                         }
                         else
                         {
-                            patternStartPoints.Add(arrayID, Codings.ACTION_OBJECT_MOVE);
+                            patternStartPoints.Add(arrayID, startPattern);
                         }
                     }
                     else if (currentHistoryAction.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
@@ -620,13 +624,15 @@ namespace CLP.Entities
                             continue;
                         }
 
-                        if (patternStartPoints[arrayID] == Codings.ACTION_INK_CHANGE)
+                        if (patternStartPoints[arrayID].Contains(Codings.ACTION_INK_CHANGE))
                         {
-                            var historyIndex = currentHistoryAction.HistoryItems.Last().HistoryIndex;
+                            var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                            var endHistoryIndex = currentHistoryAction.HistoryItems.Last().HistoryIndex;
                             patternEndPoints.Add(new
                                                  {
                                                      ArrayID = arrayID,
-                                                     HistoryIndex = historyIndex
+                                                     StartHistoryIndex = startHistoryIndex,
+                                                     EndHistoryIndex = endHistoryIndex
                                                  });
                         }
 
@@ -638,23 +644,27 @@ namespace CLP.Entities
                     var arrayIDs = patternStartPoints.Keys.ToList();
                     foreach (var arrayID in arrayIDs)
                     {
-                        patternStartPoints[arrayID] = Codings.ACTION_INK_CHANGE;
+                        var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                        var startPattern = string.Format("{0};{1}", Codings.ACTION_INK_CHANGE, startHistoryIndex);
+                        patternStartPoints[arrayID] = startPattern;
                     }
                 }
             }
 
             foreach (var arrayID in patternStartPoints.Keys)
             {
-                if (patternStartPoints[arrayID] != Codings.ACTION_INK_CHANGE)
+                if (!patternStartPoints[arrayID].Contains(Codings.ACTION_INK_CHANGE))
                 {
                     continue;
                 }
 
-                var historyIndex = historyActions.Last().HistoryItems.Last().HistoryIndex;
+                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                var endHistoryIndex = historyActions.Last().HistoryItems.Last().HistoryIndex;
                 patternEndPoints.Add(new
                                      {
                                          ArrayID = arrayID,
-                                         HistoryIndex = historyIndex
+                                         StartHistoryIndex = startHistoryIndex,
+                                         EndHistoryIndex = endHistoryIndex
                                      });
             }
 
@@ -663,7 +673,8 @@ namespace CLP.Entities
             foreach (var patternEndPoint in patternEndPoints)
             {
                 var arrayID = (string)patternEndPoint.ArrayID;
-                var historyIndex = (int)patternEndPoint.HistoryIndex;
+                var startHistoryIndex = int.Parse((string)patternEndPoint.StartHistoryIndex);
+                var endHistoryIndex = (int)patternEndPoint.EndHistoryIndex;
 
                 var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
                 if (array == null)
@@ -671,12 +682,18 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(historyIndex);
-                var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, historyIndex);
-                var interpretedRowValues = ArrayCodedActions.InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
-                var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
+                var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes(startHistoryIndex, endHistoryIndex);
+                var strokeGroupPerRowHistory = ArrayCodedActions.GroupPossibleSkipCountStrokes(page, array, strokesAddedToPage, endHistoryIndex);
+                var interpretedRowValuesHistory = ArrayCodedActions.InterpretSkipCountGroups(page, array, strokeGroupPerRowHistory, endHistoryIndex);
+                var isSkipCountingHistory = ArrayCodedActions.IsSkipCounting(interpretedRowValuesHistory);
 
-                if (!isSkipCounting)
+                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(endHistoryIndex);
+                var strokeGroupPerRowOnPage = ArrayCodedActions.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
+                var interpretedRowValuesOnPage = ArrayCodedActions.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
+                var isSkipCountingOnPage = ArrayCodedActions.IsSkipCounting(interpretedRowValuesOnPage);
+
+                if (!isSkipCountingHistory &&
+                    !isSkipCountingOnPage)
                 {
                     continue;
                 }
@@ -689,10 +706,40 @@ namespace CLP.Entities
                                   };
                 InkClusters.Add(skipCluster);
 
-                var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var skipStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var skipStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var skipStrokes = skipStrokesHistory.Concat(skipStrokesOnPage).Distinct().ToList();
                 foreach (var stroke in skipStrokes)
                 {
                     MoveStrokeToDifferentCluster(skipCluster, stroke);
+                }
+
+                // TODO: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ARReqn.
+
+                var arrEqnCluster = new InkCluster(new StrokeCollection())
+                                    {
+                                        ClusterType = InkCluster.ClusterTypes.PossibleARReqn,
+                                        PageObjectReferenceID = arrayID,
+                                        LocationReference = Codings.ACTIONID_INK_LOCATION_OVER
+                                    };
+                InkClusters.Add(arrEqnCluster);
+
+                var rejectedStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key == -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var rejectedStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key == -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                var rejectedStrokes = rejectedStrokesHistory.Concat(rejectedStrokesOnPage).Distinct().Where(s => !skipStrokes.Contains(s)).ToList();
+                var bounds = array.GetBoundsAtHistoryIndex(endHistoryIndex);
+                foreach (var stroke in rejectedStrokes)
+                {
+                    var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, endHistoryIndex);
+                    var isStrokeOverArray = strokeCopy.HitTest(bounds, 90);
+                    if (isStrokeOverArray)
+                    {
+                        var currentCluster = GetContainingCluster(stroke);
+                        if (currentCluster.ClusterType != InkCluster.ClusterTypes.InkDivide)
+                        {
+                            MoveStrokeToDifferentCluster(arrEqnCluster, stroke);
+                        }
+                    }
                 }
             }
         }
@@ -772,6 +819,20 @@ namespace CLP.Entities
                             if (array != null)
                             {
                                 var locationReference = Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP;
+                                var codedObject = Codings.OBJECT_ARRAY;
+                                var codedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
+
+                                processedInkAction.CodedObjectActionID = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
+                                processedInkAction.ReferencePageObjectID = arrayID;
+                            }
+                        }
+                        else if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.PossibleARReqn)
+                        {
+                            var arrayID = previousClusterReference.PageObjectReferenceID;
+                            var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
+                            if (array != null)
+                            {
+                                var locationReference = Codings.ACTIONID_INK_LOCATION_OVER;
                                 var codedObject = Codings.OBJECT_ARRAY;
                                 var codedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
 

@@ -25,9 +25,9 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
             var codedID = endPointsChangedHistoryItems.First().PreviousEndValue.ToString();
-            var incrementID = HistoryAction.GetIncrementID(numberLine.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
             var codedActionID = endPointsChangedHistoryItems.Last().NewEndValue.ToString();
-            var codedActionIDIncrementID = HistoryAction.IncrementAndGetIncrementID(numberLine.ID, codedObject, codedActionID);
+            var codedActionIDIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedActionID);
             if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
             {
                 codedActionID += " " + codedActionIDIncrementID;
@@ -65,7 +65,7 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
             var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryIndex);
-            var incrementID = HistoryAction.GetIncrementID(numberLine.ID, codedObject, codedID);
+            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
             var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
 
             var allJumps = new List<NumberLineJumpSize>();

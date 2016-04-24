@@ -35,7 +35,7 @@ namespace CLP.Entities
                                         CodedObjectAction = Codings.ACTION_OBJECT_ADD,
                                         IsObjectActionVisible = false,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                        CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                         ReferencePageObjectID = pageObject.ID
                                     };
 
@@ -54,7 +54,7 @@ namespace CLP.Entities
                     CodedObjectAction = Codings.ACTION_OBJECT_ADD,
                     IsObjectActionVisible = false,
                     CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = HistoryAction.IncrementAndGetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                    CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
 
                 return historyAction;
@@ -88,7 +88,7 @@ namespace CLP.Entities
                                         CodedObject = codedObject,
                                         CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                        CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                         ReferencePageObjectID = pageObject.ID
                 };
 
@@ -106,7 +106,7 @@ namespace CLP.Entities
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
                     CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID)
+                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
 
                 return historyAction;
@@ -150,7 +150,7 @@ namespace CLP.Entities
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
                                     CodedObjectID = codedObjectID,
-                                    CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                     CodedObjectActionID =
                                         string.Format("({0}, {1}) to ({2}, {3})",
                                                       Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
@@ -190,7 +190,7 @@ namespace CLP.Entities
                 CodedObject = codedObject,
                 CodedObjectAction = Codings.ACTION_OBJECT_RESIZE,
                 CodedObjectID = codedObjectID,
-                CodedObjectIDIncrement = HistoryAction.GetIncrementID(pageObject.ID, codedObject, codedObjectID),
+                CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                 CodedObjectActionID =string.Format("({0}, {1}) to ({2}, {3})",
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
@@ -206,6 +206,65 @@ namespace CLP.Entities
 
         #region Utility Methods
 
+        private static readonly Dictionary<string, int> CurrentHighestIncrementIDsForCodedObjectAndID = new Dictionary<string, int>();
+        private static readonly Dictionary<string, int> CurrentIncrementIDForPageObject = new Dictionary<string, int>();
+
+        public static void InitializeIncrementIDs()
+        {
+            CurrentHighestIncrementIDsForCodedObjectAndID.Clear();
+            CurrentIncrementIDForPageObject.Clear();
+        }
+
+        public static string GetCurrentIncrementIDForPageObject(string pageObjectID, string codedObject, string codedID)
+        {
+            var compoundID = string.Format("{0};{1};{2}", pageObjectID, codedObject, codedID);
+
+            return CurrentIncrementIDForPageObject[compoundID].ToLetter();
+        }
+
+        public static string SetCurrentIncrementIDForPageObject(string pageObjectID, string codedObject, string codedID, bool isEraseEvent = false)
+        {
+            var objectAndID = string.Format("{0};{1}", codedObject, codedID);
+            var compoundID = string.Format("{0};{1};{2}", pageObjectID, codedObject, codedID);
+            if (!CurrentHighestIncrementIDsForCodedObjectAndID.ContainsKey(objectAndID))
+            {
+                CurrentHighestIncrementIDsForCodedObjectAndID.Add(objectAndID, 0);
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+            else if (!isEraseEvent)
+            {
+                CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID]++;
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+
+            return CurrentIncrementIDForPageObject[compoundID].ToLetter();
+        }
+
+        public static string GetCurrentIncrementIDForPageObject_Sub(string pageObjectID, string codedObject, string codedID, int subPosition, string subID)
+        {
+            var compoundID = string.Format("{0};{1};{2};{3};{4}", pageObjectID, codedObject, codedID, subPosition, subID);
+
+            return CurrentIncrementIDForPageObject[compoundID].ToLetter();
+        }
+
+        public static string SetCurrentIncrementIDForPageObject_Sub(string pageObjectID, string codedObject, string codedID, int subPosition, string subID, bool isEraseEvent = false)
+        {
+            var objectAndID = string.Format("{0};{1}", codedObject, subID);
+            var compoundID = string.Format("{0};{1};{2};{3};{4}", pageObjectID, codedObject, codedID, subPosition, subID);
+            if (!CurrentHighestIncrementIDsForCodedObjectAndID.ContainsKey(objectAndID))
+            {
+                CurrentHighestIncrementIDsForCodedObjectAndID.Add(objectAndID, 0);
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+            else if (!isEraseEvent)
+            {
+                CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID]++;
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+
+            return CurrentIncrementIDForPageObject[compoundID].ToLetter();
+        }
+
         public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
         {
             return historyItems.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
@@ -219,13 +278,6 @@ namespace CLP.Entities
         public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
         {
             return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
-        }
-
-        public static Rect GetPageObjectBoundsAtHistoryIndex(CLPPage page, IPageObject pageObject, int historyIndex)
-        {
-            var position = pageObject.GetPositionAtHistoryIndex(historyIndex);
-            var dimensions = pageObject.GetDimensionsAtHistoryIndex(historyIndex);
-            return new Rect(position.X, position.Y, dimensions.X, dimensions.Y);
         }
 
         #endregion // Utility Methods

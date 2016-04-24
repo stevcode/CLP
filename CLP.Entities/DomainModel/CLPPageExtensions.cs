@@ -39,6 +39,23 @@ namespace CLP.Entities
             return strokesOnPage;
         }
 
+        /// <summary>
+        /// Gets all strokes that were added to the page between the given historyIndexes (including strokes that were added by the
+        /// historyItems at both historyIndexes).
+        /// </summary>
+        public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes(this CLPPage page, int startHistoryIndex, int endHistoryIndex)
+        {
+            Argument.IsNotNull("page", page);
+            Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
+            Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
+
+            var strokes = page.InkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var strokesAddedToPage = strokes.Concat(trashedStrokes).Distinct().ToList();
+
+            return strokesAddedToPage;
+        }
+
         #endregion // History
     }
 }

@@ -78,7 +78,7 @@ namespace CLP.Entities
 
             if (objectTypes.Any())
             {
-                page.AddTag(new ObjectTypesOnPageTag(page, Origin.StudentPageGenerated, objectTypes));
+                //page.AddTag(new ObjectTypesOnPageTag(page, Origin.StudentPageGenerated, objectTypes));
             }
         }
 
@@ -221,7 +221,7 @@ namespace CLP.Entities
 
             if (objectTypes.Any())
             {
-                page.AddTag(new ObjectTypesInHistoryTag(page, Origin.StudentPageGenerated, objectTypes));
+                //page.AddTag(new ObjectTypesInHistoryTag(page, Origin.StudentPageGenerated, objectTypes));
             }
         }
     }

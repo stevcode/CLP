@@ -20,6 +20,7 @@ namespace CLP.Entities
         Array,
         DivisionTemplate,
         Stamp,
+        Strategy,
         NumberLine,
         Definition,
         CurriculumInformation,

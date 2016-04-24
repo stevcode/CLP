@@ -24,8 +24,8 @@ namespace Classroom_Learning_Partner.ViewModels
         RepresentationType,
         RepresentationCorrectness,
         AnswerCorrectness,
-        ABR,
-        ARIC,
+        AnswerBeforeRepresentation,
+        AnswerChangeAfterRepresentation,
         //TroubleWithFactorPairs,        //Hack: For Demo
         //TroubleWithRemainders,
         //TroubleWithDivision,
@@ -484,10 +484,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.AnswerCorrectness:
                     ApplySortAndGroupByAnswerCorrectness();
                     break;
-                case SortAndGroupTypes.ABR:
+                case SortAndGroupTypes.AnswerBeforeRepresentation:
                     ApplySortAndGroupByABR();
                     break;
-                case SortAndGroupTypes.ARIC:
+                case SortAndGroupTypes.AnswerChangeAfterRepresentation:
                     ApplySortAndGroupByARIC();
                     break;
                 default:
