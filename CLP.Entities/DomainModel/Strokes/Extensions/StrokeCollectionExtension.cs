@@ -113,5 +113,16 @@ namespace CLP.Entities
         }
 
         #endregion // HitTesting
+
+        #region Shape Detection
+
+        public static bool IsEnclosedShape(this IEnumerable<Stroke> strokes)
+        {
+            Argument.IsNotNull("strokes", strokes);
+
+            return false;
+        }
+
+        #endregion // Shape Detection
     }
 }
