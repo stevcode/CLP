@@ -41,8 +41,8 @@
                     <Rectangle HorizontalAlignment="Left"
                                VerticalAlignment="Top"
                                IsHitTestVisible="False"
-                               Width="{Binding DataContext.CellSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                               Height="{Binding DataContext.CellSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                               Width="{Binding DataContext.CellWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                               Height="{Binding DataContext.CellHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                Fill="Black"
                                StrokeThickness="0"
                                Stretch="Fill" />

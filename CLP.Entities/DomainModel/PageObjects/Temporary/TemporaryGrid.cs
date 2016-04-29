@@ -15,14 +15,15 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="TemporaryBoundary" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="TemporaryGrid" /> belongs to.</param>
-        public TemporaryGrid(CLPPage parentPage, double xPosition, double yPosition, double height, double width, int cellSize, List<Point> occupiedCells)
+        public TemporaryGrid(CLPPage parentPage, double xPosition, double yPosition, double height, double width, int cellWidth, int cellHeight, List<Point> occupiedCells)
             : base(parentPage)
         {
             XPosition = xPosition;
             YPosition = yPosition;
             Height = height;
             Width = width;
-            CellSize = cellSize;
+            CellWidth = cellWidth;
+            CellHeight = cellHeight;
             OccupiedCells = occupiedCells;
         }
 
@@ -36,13 +37,21 @@ namespace CLP.Entities
 
         #region Properties
 
-        public int CellSize
+        public int CellWidth
         {
-            get { return GetValue<int>(CellSizeProperty); }
-            set { SetValue(CellSizeProperty, value); }
+            get { return GetValue<int>(CellWidthProperty); }
+            set { SetValue(CellWidthProperty, value); }
         }
 
-        public static readonly PropertyData CellSizeProperty = RegisterProperty("CellSize", typeof(int), 0);
+        public static readonly PropertyData CellWidthProperty = RegisterProperty("CellWidth", typeof(int), 0);
+
+        public int CellHeight
+        {
+            get { return GetValue<int>(CellHeightProperty); }
+            set { SetValue(CellHeightProperty, value); }
+        }
+
+        public static readonly PropertyData CellHeightProperty = RegisterProperty("CellHeight", typeof(int), 0);
 
         public List<Point> OccupiedCells
         {

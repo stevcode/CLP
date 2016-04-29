@@ -11,13 +11,22 @@ namespace Classroom_Learning_Partner.ViewModels
         public TemporaryGridViewModel(TemporaryGrid grid) { PageObject = grid; }
 
         [ViewModelToModel("PageObject")]
-        public int CellSize
+        public int CellWidth
         {
-            get { return GetValue<int>(CellSizeProperty); }
-            set { SetValue(CellSizeProperty, value); }
+            get { return GetValue<int>(CellWidthProperty); }
+            set { SetValue(CellWidthProperty, value); }
         }
 
-        public static readonly PropertyData CellSizeProperty = RegisterProperty("CellSize", typeof(int));
+        public static readonly PropertyData CellWidthProperty = RegisterProperty("CellWidth", typeof(int), 0);
+
+        [ViewModelToModel("PageObject")]
+        public int CellHeight
+        {
+            get { return GetValue<int>(CellHeightProperty); }
+            set { SetValue(CellHeightProperty, value); }
+        }
+
+        public static readonly PropertyData CellHeightProperty = RegisterProperty("CellHeight", typeof(int), 0);
 
         [ViewModelToModel("PageObject")]
         public List<Point> OccupiedCells

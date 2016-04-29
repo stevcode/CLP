@@ -613,21 +613,20 @@ namespace CLP.Entities
                 return false;
             }
 
-            int CELL_HEIGHT = Math.Min(60, (int)(stroke.GetBounds().Height / 5.0));
-            int CELL_WIDTH = Math.Min(60, (int)(stroke.GetBounds().Width / 5.0));
+            var cellHeight = Math.Min(60, (int)(stroke.GetBounds().Height / 5.0));
+            var cellWidth = Math.Min(60, (int)(stroke.GetBounds().Width / 5.0));
 
-            var occupiedCells = FindCellsOccupiedByStroke(stroke, CELL_WIDTH, CELL_HEIGHT);
+            var occupiedCells = FindCellsOccupiedByStroke(stroke, cellWidth, cellHeight);
             if (page != null)
             {
                 var strokeBounds = stroke.GetBounds();
-                var tempGrid = new TemporaryGrid(page, strokeBounds.X, strokeBounds.Y, strokeBounds.Height, strokeBounds.Width, CELL_WIDTH, occupiedCells);
-                // TODO pass in CELL_WIDTH and CELL_HEIGHT
+                var tempGrid = new TemporaryGrid(page, strokeBounds.X, strokeBounds.Y, strokeBounds.Height, strokeBounds.Width, cellWidth, cellHeight, occupiedCells);
                 page.PageObjects.Add(tempGrid);
             }
 
             Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
 
-            return DetectCycle(occupiedCells, CELL_WIDTH, CELL_HEIGHT);
+            return DetectCycle(occupiedCells, cellWidth, cellHeight);
         }
 
         private static int roundToNearestCell(double pos, int CELL_SIZE)
@@ -642,7 +641,7 @@ namespace CLP.Entities
             disconnected graphs
         */
 
-        private static bool DetectCycle(List<Point> occupiedCells, int CELL_WIDTH, int CELL_HEIGHT)
+        private static bool DetectCycle(List<Point> occupiedCells, int cellWidth, int cellHeight)
         {
             // var visited = new PointCollection();
             var cellStack = new Stack<List<Point>>();
@@ -657,7 +656,7 @@ namespace CLP.Entities
             startCellList.Add(thisCell);
 
             cellStack.Push(startCellList);
-            while (cellStack.Count() > 0)
+            while (cellStack.Any())
             {
                 var thisPath = cellStack.Pop();
                 thisCell = thisPath.Last();
@@ -667,7 +666,7 @@ namespace CLP.Entities
                 //     return true;
                 // }
                 // visited.Add(thisCell);
-                var neighbors = GetNeighbors(thisCell, CELL_WIDTH, CELL_HEIGHT);
+                var neighbors = GetNeighbors(thisCell, cellWidth, cellHeight);
                 foreach (var neighbor in neighbors)
                 {
                     if (occupiedCells.Contains(neighbor))
@@ -675,7 +674,7 @@ namespace CLP.Entities
                         if (thisPath.Contains(neighbor))
                         {
                             var cycle = thisPath.Skip(thisPath.IndexOf(neighbor)).Take(thisPath.Count() - thisPath.IndexOf(neighbor)).ToArray();
-                            if (CycleBoundsLargeEnough(cycle, 3 * CELL_WIDTH, 3 * CELL_HEIGHT))
+                            if (CycleBoundsLargeEnough(cycle, 3 * cellWidth, 3 * cellHeight))
                             {
                                 var i = 0;
                                 while (i < cycle.Count())
@@ -688,7 +687,7 @@ namespace CLP.Entities
                         }
                         else
                         {
-                            var neighborsNeighbors = GetNeighbors(neighbor, CELL_WIDTH, CELL_HEIGHT);
+                            var neighborsNeighbors = GetNeighbors(neighbor, cellWidth, cellHeight);
                             int adj = 0;
                             foreach (var neighborNeighbor in neighborsNeighbors)
                             {
