@@ -832,22 +832,97 @@ namespace CLP.Entities
         public static bool IsHorizontalLine(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
+            const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
+            const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
-            return false;
+            var slopes = getSlopesBetweenPoints(stroke);
+
+            //DEBUG
+            int i = 0;
+            while (i < slopes.Count)
+            {
+                Console.WriteLine("slope: {0}", slopes[i]);
+                i++;
+            }
+
+            double avg = slopes.Average();
+            double variation = CalculateStdDev(slopes);
+            Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+
+            return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
+        }
+
+        private static double CalculateStdDev(IEnumerable<double> values)
+        {
+            //found here: http://stackoverflow.com/questions/3141692/standard-deviation-of-generic-list
+            double ret = 0;
+            if (values.Count() > 0)
+            {
+                //Compute the Average      
+                double avg = values.Average();
+                //Perform the Sum of (value-avg)_2_2      
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+                //Put it all together      
+                ret = Math.Sqrt((sum) / (values.Count() - 1));
+            }
+            return ret;
+        }
+
+        private static List<double> getSlopesBetweenPoints(Stroke stroke)
+        {
+            var slopes = new List<double>();
+            var stylusPoints = stroke.StylusPoints;
+            var thisPoint = stylusPoints.First().ToPoint();
+            var nextPoint = new Point();
+
+            int i = 1;
+            while (i < stylusPoints.Count)
+            {
+                nextPoint = stylusPoints[i].ToPoint();
+                var slope = thisPoint.SlopeBetweenPointsInDegrees(nextPoint);
+                slopes.Add(slope);
+                thisPoint = nextPoint;
+                i++;
+            }
+
+            return slopes;
         }
 
         public static bool IsVerticalLine(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
+            const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
+            //TODO somehow make this variation less? Might require modifying getSlopesBetweenPoints
+            const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
-            return false;
+            var slopes = getSlopesBetweenPoints(stroke);
+            
+            //reformat for vertical slopes, so 0 is now facing upward
+            int i = 0;
+            while (i < slopes.Count)
+            {
+                slopes[i] = slopes[i] - 90;
+                if (slopes[i] <= -90)
+                {
+                    slopes[i] += 180;
+                }
+                Console.WriteLine("slope: {0}", slopes[i]);
+                i++;
+            }
+
+            double avg = slopes.Average();
+            double variation = CalculateStdDev(slopes);
+            Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+
+            return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
 
         public static bool IsLine(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return false;
+
+            return IsHorizontalLine(stroke) || IsVerticalLine(stroke);
         }
 
         public static bool IsDot(this Stroke stroke)

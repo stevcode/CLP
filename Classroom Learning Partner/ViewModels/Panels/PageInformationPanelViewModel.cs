@@ -1161,7 +1161,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStrokeTestingCommandExecute()
         {
             Console.WriteLine("NEW STROKE TEST");
-            // var strokes = CurrentPage.InkStrokes.OrderBy(s => s.StrokeWeight()).ToList();
             var strokes = CurrentPage.InkStrokes;
             foreach (var stroke in strokes)
             {
@@ -1175,8 +1174,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     isEnclosed = stroke.IsEnclosedShape();
                 }
-                
+
                 // Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
+                Console.WriteLine("Horizontal Line Test");
+                if (stroke.IsHorizontalLine())
+                {
+                    stroke.DrawingAttributes.Color = Colors.Purple;
+                }
+
+                Console.WriteLine("Vertical Line Test");
+                if (stroke.IsVerticalLine())
+                {
+                     stroke.DrawingAttributes.Color = Colors.Orange;
+                }
 
                 #region Debugging
                 if (IsDebuggingFlag)
