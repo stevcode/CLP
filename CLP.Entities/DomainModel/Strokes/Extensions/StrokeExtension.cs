@@ -600,13 +600,20 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            const int CELL_SIZE = 30;
-
             // reusing CELL_SIZE as a minimum value for height and width. It can be a different value.
-            if (stroke.GetBounds().X < CELL_SIZE*3 || stroke.GetBounds().Y < CELL_SIZE*3)
+            if (stroke.GetBounds().Width < 60 || stroke.GetBounds().Height < 60)
             {
                 return false;
             }
+
+            double aspectRatio = stroke.GetBounds().Width / stroke.GetBounds().Height;
+
+            if (aspectRatio < .5 || aspectRatio > 2)
+            {
+                return false;
+            }
+
+            int CELL_SIZE = Math.Min(60, (int) (Math.Min(stroke.GetBounds().Width, stroke.GetBounds().Height) / 5.0));
 
             var occupiedCells = FindCellsOccupiedByStroke(stroke, CELL_SIZE);
             if (page != null)
