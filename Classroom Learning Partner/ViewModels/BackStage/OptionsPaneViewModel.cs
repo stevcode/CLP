@@ -15,7 +15,10 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public OptionsPaneViewModel() { InitializeCommands(); }
+        public OptionsPaneViewModel()
+        {
+            InitializeCommands();
+        }
 
         private void InitializeCommands()
         {
@@ -203,7 +206,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.AppendAllText(filePath, "*****\n");
             }
 
-
             // return total instances, deleted instances, and final instances counts instead of just total
             // same 3 states for final (only report FINAL for stamps)
             File.AppendAllText(filePath, "\n*****Page Stats*****\n\n");
@@ -262,7 +264,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var totalPages = new List<string>();
             var totalArraysTested = 0;
             var totalArraysRecognizedAsSkipCounting = new List<string>();
-
 
             var totalRowsTested = 0;
             var totalSkipCountRows = 0;
@@ -329,7 +330,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(lastSubmission, array, strokes, historyIndex);
                         var interpretedRowValuesUncorrected = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex, true);
                         var interpretedRowValues = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex);
-                        if (interpretedRowValues.Any() && 
+                        if (interpretedRowValues.Any() &&
                             interpretedRowValuesUncorrected.Any())
                         {
                             for (int i = 0; i < array.Rows; i++)
@@ -424,7 +425,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                     if (expectedValue.ToString() == interpretedValue)
                                     {
                                         correctedImprovedExpectedCountAfter++;
-                                        correctedImprovedExpectedCountAfterRows.Add(string.Format("{0}, page {1}. [{2}x{3}]. Expected: {4}, Interpreted (Corrected): {5}, Interpreted (Uncorrected): {6}",
+                                        correctedImprovedExpectedCountAfterRows.Add(
+                                                                                    string.Format(
+                                                                                                  "{0}, page {1}. [{2}x{3}]. Expected: {4}, Interpreted (Corrected): {5}, Interpreted (Uncorrected): {6}",
                                                                                                   lastSubmission.Owner.FullName,
                                                                                                   lastSubmission.PageNumber,
                                                                                                   array.Rows,
@@ -456,12 +459,12 @@ namespace Classroom_Learning_Partner.ViewModels
                                     else
                                     {
                                         correctedNotMatchedExpectedCountAfterExamples.Add(string.Format("{0}, page {1}. [{2}x{3}]. Expected: {4}, Interpreted: {5}",
-                                                                                                    lastSubmission.Owner.FullName,
-                                                                                                    lastSubmission.PageNumber,
-                                                                                                    array.Rows,
-                                                                                                    array.Columns,
-                                                                                                    expectedValue,
-                                                                                                    interpretedValue));
+                                                                                                        lastSubmission.Owner.FullName,
+                                                                                                        lastSubmission.PageNumber,
+                                                                                                        array.Rows,
+                                                                                                        array.Columns,
+                                                                                                        expectedValue,
+                                                                                                        interpretedValue));
                                     }
                                 }
                             }
@@ -498,9 +501,12 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Rule 1: Stroke is invisibly small: {0}\n", ArrayCodedActions.Rule1Count));
             File.AppendAllText(filePath, string.Format("Rule 2: Stroke is too tall (taller than 2 row heights): {0}\n", ArrayCodedActions.Rule2Count));
             File.AppendAllText(filePath, string.Format("Rule 3b: Stroke intersects less than 50% of initial boundary: {0}\n", ArrayCodedActions.Rule3bCount));
-            File.AppendAllText(filePath, string.Format("Rule 3c: Stroke intersects less than 90% of initial boundary and weighted center is not in the initial boundary: {0}\n", ArrayCodedActions.Rule3cCount));
+            File.AppendAllText(filePath,
+                               string.Format("Rule 3c: Stroke intersects less than 90% of initial boundary and weighted center is not in the initial boundary: {0}\n", ArrayCodedActions.Rule3cCount));
             File.AppendAllText(filePath, string.Format("Rule 3a: Number of strokes that have NOT been rejected after Rule 3 applied: {0}\n", ArrayCodedActions.Rule3aCount));
-            File.AppendAllText(filePath, string.Format("Number of times all strokes have been rejected after Rule 3 (aka, no strokes in initial boundary): {0}\n", ArrayCodedActions.AllStrokesAreOutsideOfAcceptableBoundary));
+            File.AppendAllText(filePath,
+                               string.Format("Number of times all strokes have been rejected after Rule 3 (aka, no strokes in initial boundary): {0}\n",
+                                             ArrayCodedActions.AllStrokesAreOutsideOfAcceptableBoundary));
             File.AppendAllText(filePath, string.Format("Rule 4: Stroke is too tall (deviates from average height): {0}\n", ArrayCodedActions.Rule4Count));
             File.AppendAllText(filePath, string.Format("Rule 5: Stroke ungrouped for being too short (should match Initially Ungrouped Strokes Count above): {0}\n", ArrayCodedActions.Rule5Count));
             File.AppendAllText(filePath, string.Format("Rule 6: Stroke is too far away from other strokes: {0}\n", ArrayCodedActions.Rule6Count));
@@ -510,7 +516,9 @@ namespace Classroom_Learning_Partner.ViewModels
             File.AppendAllText(filePath, string.Format("Rule 8b: Overlap stroke intersects 75% with a row: {0}\n", ArrayCodedActions.Rule8bCount));
             File.AppendAllText(filePath, string.Format("Rule 8c: Overlap stroke remains an overlap stroke: {0}\n", ArrayCodedActions.Rule8cCount));
             File.AppendAllText(filePath, string.Format("Rule 9: Ungrouped stroke matched with a grouped stroke: {0}\n", ArrayCodedActions.Rule9Count));
-            File.AppendAllText(filePath, string.Format("Rule 10: Number of times strokes are rejected for being on the inside of an array when the skip counting stroke are on the outside: {0}\n", ArrayCodedActions.Rule10Count));
+            File.AppendAllText(filePath,
+                               string.Format("Rule 10: Number of times strokes are rejected for being on the inside of an array when the skip counting stroke are on the outside: {0}\n",
+                                             ArrayCodedActions.Rule10Count));
             File.AppendAllText(filePath, string.Format("Rule 10: Number strokes rejected because of Rule 10: {0}\n", ArrayCodedActions.Rule10RejectedStrokesCount));
 
             File.AppendAllText(filePath, string.Format("\n***Ink Interpretation***\n\n"));
@@ -579,15 +587,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGenerateRandomMainColorCommandExecute()
         {
             var randomGen = new Random();
-            var names = (KnownColor[])Enum.GetValues(typeof (KnownColor));
+            var names = (KnownColor[])Enum.GetValues(typeof(KnownColor));
             var randomColorName = names[randomGen.Next(names.Length)];
             var color = Color.FromKnownColor(randomColorName);
-            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)); 
+            MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
         }
 
-        /// <summary>
-        /// Completely renames a Person throughout the entire cache.
-        /// </summary>
+        /// <summary>Completely renames a Person throughout the entire cache.</summary>
         public Command ApplyRenameToCacheCommand { get; private set; }
 
         private void OnApplyRenameToCacheCommandExecute()
@@ -613,12 +619,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Toggles the style used by pageObjects for their boundary.
-        /// </summary>
+        /// <summary>Toggles the style used by pageObjects for their boundary.</summary>
         public Command ToggleBindingStyleCommand { get; private set; }
 
-        private void OnToggleBindingStyleCommandExecute() { App.MainWindowViewModel.IsUsingOldPageObjectBoundary = !App.MainWindowViewModel.IsUsingOldPageObjectBoundary; }
+        private void OnToggleBindingStyleCommandExecute()
+        {
+            App.MainWindowViewModel.IsUsingOldPageObjectBoundary = !App.MainWindowViewModel.IsUsingOldPageObjectBoundary;
+        }
 
         /// <summary>Replays the interaction history of the page on the Grid Display.</summary>
         public Command ReplayHistoryCommand { get; private set; }
