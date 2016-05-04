@@ -474,8 +474,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     // PageObjects
-                    var pageObjects = pageDoc.Descendants("PageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("OwnerID").First().Value == studentOwnerID).ToList();
-                    var trashedPageObjects = pageDoc.Descendants("TrashedPageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("OwnerID").First().Value == studentOwnerID).ToList();
+                    var pageObjects = pageDoc.Descendants("PageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("CreatorID").First().Value == studentOwnerID).ToList();
+                    var trashedPageObjects = pageDoc.Descendants("TrashedPageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("CreatorID").First().Value == studentOwnerID).ToList();
 
                     // Ink
                     var inkOnPage =
