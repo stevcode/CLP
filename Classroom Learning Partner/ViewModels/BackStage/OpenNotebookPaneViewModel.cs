@@ -448,6 +448,10 @@ namespace Classroom_Learning_Partner.ViewModels
             const string END_POINTS_CHANGED_ENTITY = "d1p1:NumberLineEndPointsChangedHistoryItem";
 
             var cacheInfoToAnalyze = SelectedCache;
+            var pagesToIgnore = new List<int>
+                                {
+                                    1, 2, 3, 4, 5, 6, 7, 8, 9
+                                };
 
             var notebookInfosToAnalyze = Services.DataService.GetNotebooksInCache(cacheInfoToAnalyze);
             foreach (var notebookInfo in notebookInfosToAnalyze.Where(ni => ni.NameComposite.OwnerTypeTag == "S"))
@@ -462,8 +466,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     var pageDoc = XElement.Load(pageFileInfo.FullName);
 
                     var pageNumber = pageDoc.Descendants("PageNumber").First().Value;
+                    var pageNumberValue = int.Parse(pageNumber);
                     var versionIndex = pageDoc.Descendants("VersionIndex").First().Value;
-                    if (versionIndex != "0")
+                    if (versionIndex != "0" ||
+                        pagesToIgnore.Contains(pageNumberValue))
                     {
                         continue;
                     }
