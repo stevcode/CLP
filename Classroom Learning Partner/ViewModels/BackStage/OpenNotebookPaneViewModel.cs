@@ -418,6 +418,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                     "ARR snap",
                                     "ARR divide",
                                     "ARR rotate",
+                                    "STAMP total",
+                                    "STAMP on page",
+                                    "STAMP used",
+                                    "STAMP IMAGES total",
+                                    "STAMP IMAGES on page",
                                     "NL",
                                     "NL used",
                                     "NLs w/ changed endpoints",
@@ -446,6 +451,7 @@ namespace Classroom_Learning_Partner.ViewModels
             const string ARRAY_ENTITY = "d1p1:CLPArray";
             const string NUMBER_LINE_ENTITY = "d1p1:NumberLine";
             const string STAMP_ENTITY = "d1p1:Stamp";
+            const string STAMP_IMAGE_ENTITY = "d1p1:StampedObject";
 
             const string CUT_ENTITY = "d1p1:PageObjectCutHistoryItem";
             const string SNAP_ENTITY = "d1p1:CLPArraySnapHistoryItem";
@@ -541,6 +547,33 @@ namespace Classroom_Learning_Partner.ViewModels
                     var rotateHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == ROTATE_ENTITY).ToList();
                     var arrayRotateCount = rotateHistoryItems.Count;
 
+                    // STAMP
+                    var stampsOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_ENTITY);
+                    var trashedStamps = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_ENTITY);
+
+                    var stampsOnPageIDs = stampsOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedStampsIDs = trashedStamps.Select(xe => xe.Descendants("ID").First().Value);
+                    var stampIDs = stampsOnPageIDs.Concat(trashedStampsIDs);
+
+                    var stampsOnPageCount = stampsOnPage.Count();
+                    var trashedStampsCount = trashedStamps.Count();
+                    var stampsCount = stampsOnPageCount + trashedStampsCount;
+
+                    // STAMP IMAGES
+                    var stampImagesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_IMAGE_ENTITY);
+                    var trashedStampImages = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_IMAGE_ENTITY);
+                    var allStampedImages = stampImagesOnPage.Concat(trashedStampImages).ToList();
+
+                    var stampsUsedCount = stampIDs.Count(stampID => allStampedImages.Any(xe => xe.Descendants("ParentStampID").First().Value == stampID));
+
+                    var stampImagesOnPageIDs = stampImagesOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedstampImageIDs = trashedStampImages.Select(xe => xe.Descendants("ID").First().Value);
+                    var stampImageIDs = stampImagesOnPageIDs.Concat(trashedstampImageIDs);
+
+                    var stampImagesOnPageCount = stampImagesOnPage.Count();
+                    var trashedStampImagesCount = trashedStampImages.Count();
+                    var stampImagesCount = stampImagesOnPageCount + trashedStampImagesCount;
+
                     // NL
                     var numberLinesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
                     var trashedNumberLines = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
@@ -562,16 +595,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     // Sum Stats
                     var isArrayUsedCount = arraysUsedCount > 0 ? 1 : 0;
+                    var isStampUsedCount = stampsUsedCount > 0 ? 1 : 0;
                     var isNumberLinesUsedCount = numberLinesUsedCount > 0 ? 1 : 0;
-                    var isMultipleRepresentations = isArrayUsedCount + isNumberLinesUsedCount > 1 ? "Y" : "N";
+                    var isMultipleRepresentations = isArrayUsedCount + isNumberLinesUsedCount + isStampUsedCount > 1 ? "Y" : "N";
 
-                    var isInkOnlyInkOnPage = arraysUsedCount + numberLinesUsedCount == 0 && inkOnPage.Any() ? "Y" : "N";
+                    var isInkOnlyInkOnPage = arraysUsedCount + numberLinesUsedCount + stampsUsedCount == 0 && inkOnPage.Any() ? "Y" : "N";
                     var isInkOnlyCountingErasedInk = arraysUsedCount + numberLinesUsedCount == 0 && (inkOnPage.Any() || trashedInk.Any()) ? "Y" : "N";
 
-                    var isBlank = isArrayUsedCount + isNumberLinesUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
+                    var isBlank = isArrayUsedCount + isNumberLinesUsedCount + isStampUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
 
                     Console.WriteLine($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
                                       $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, ARR divide: {arrayDividersChangedCount}, ARR rotate: {arrayRotateCount}, " +
+                                      $"STAMP total: {stampsCount}, STAMP on page: {stampsOnPageCount}, STAMP used: {stampsUsedCount}, " +
+                                      $"STAMP IMAGES total: {stampImagesCount}, STAMP IMAGES on page: {stampImagesOnPageCount}, " +
                                       $"NL: {numberLinesUsedCount}, NL used: {numberLinesWithJumpsCount}, NLs w/ changed endpoints: {numberLinesWithEndPointsChangedCount}, " +
                                       $"MR: {isMultipleRepresentations}, Ink Only: {isInkOnlyInkOnPage}, Blank: {isBlank}");
 
@@ -585,6 +621,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                           twoArraysSnappedTogetherCount.ToString(),
                                           arrayDividersChangedCount.ToString(),
                                           arrayRotateCount.ToString(),
+                                          stampsCount.ToString(),
+                                          stampsOnPageCount.ToString(),
+                                          stampsUsedCount.ToString(),
+                                          stampImagesCount.ToString(),
+                                          stampImagesOnPageCount.ToString(),
                                           numberLinesUsedCount.ToString(),
                                           numberLinesWithJumpsCount.ToString(),
                                           numberLinesWithEndPointsChangedCount.ToString(),
