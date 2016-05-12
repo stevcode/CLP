@@ -413,6 +413,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     "STUDENT NAME",
                                     "PAGE NUMBER",
                                     "SUBMISSION TIME",
+                                    "IS MISSING",
                                     "ARR",
                                     "ARR cut",
                                     "ARR snap",
@@ -616,6 +617,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           studentName,
                                           pageNumber,
                                           submissionTime,
+                                          "N",
                                           arraysUsedCount.ToString(),
                                           cutsOverArrayCount.ToString(),
                                           twoArraysSnappedTogetherCount.ToString(),
@@ -632,6 +634,34 @@ namespace Classroom_Learning_Partner.ViewModels
                                           isMultipleRepresentations,
                                           isInkOnlyInkOnPage,
                                           isBlank
+                                      };
+                    fileRows.Add(rowContents);
+                }
+
+                foreach (var pageNumber in allPageNumbers)
+                {
+                    var rowContents = new List<string>()
+                                      {
+                                          studentName,
+                                          pageNumber.ToString(),
+                                          "MISSING",
+                                          "Y",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X"
                                       };
                     fileRows.Add(rowContents);
                 }
