@@ -415,6 +415,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     "SUBMISSION TIME",
                                     "ARR",
                                     "ARR cut",
+                                    "ARR snap",
                                     "NL",
                                     "NL used",
                                     "NLs w/ changed endpoints",
@@ -445,17 +446,22 @@ namespace Classroom_Learning_Partner.ViewModels
             const string STAMP_ENTITY = "d1p1:Stamp";
 
             const string CUT_ENTITY = "d1p1:PageObjectCutHistoryItem";
+            const string SNAP_ENTITY = "d1p1:CLPArraySnapHistoryItem";
             const string END_POINTS_CHANGED_ENTITY = "d1p1:NumberLineEndPointsChangedHistoryItem";
+
+            var missingPages = new Dictionary<string,List<int>>();
 
             var cacheInfoToAnalyze = SelectedCache;
             var pagesToIgnore = new List<int>
                                 {
-                                    1, 2, 3, 4, 5, 6, 7, 8, 9
+                                    1, 2, 3, 4, 5, 6, 7, 8
                                 };
 
             var notebookInfosToAnalyze = Services.DataService.GetNotebooksInCache(cacheInfoToAnalyze);
             foreach (var notebookInfo in notebookInfosToAnalyze.Where(ni => ni.NameComposite.OwnerTypeTag == "S"))
             {
+                var allPageNumbers = Enumerable.Range(1, 386 - 1).ToList();
+
                 var nameComposite = notebookInfo.NameComposite;
                 var studentName = nameComposite.OwnerName;
                 var studentOwnerID = nameComposite.OwnerID;
@@ -467,6 +473,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var pageNumber = pageDoc.Descendants("PageNumber").First().Value;
                     var pageNumberValue = int.Parse(pageNumber);
+                    if (allPageNumbers.Contains(pageNumberValue))
+                    {
+                        allPageNumbers.Remove(pageNumberValue);
+                    }
                     var versionIndex = pageDoc.Descendants("VersionIndex").First().Value;
                     if (versionIndex != "0" ||
                         pagesToIgnore.Contains(pageNumberValue))
@@ -518,6 +528,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     var arraysWithACutCount = arraysIDs.Count(arraysID => cutHistoryItems.Any(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => e.Value == arraysID)));
                     var cutsOverArrayCount = cutHistoryItems.Count(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => arraysIDs.Contains(e.Value)));
 
+                    var snapHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == SNAP_ENTITY).ToList();
+                    var twoArraysSnappedTogetherCount = snapHistoryItems.Count;
+
                     // NL
                     var numberLinesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
                     var trashedNumberLines = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
@@ -548,7 +561,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var isBlank = isArrayUsedCount + isNumberLinesUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
 
                     Console.WriteLine($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
-                                      $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, " +
+                                      $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, " +
                                       $"NL: {numberLinesUsedCount}, NL used: {numberLinesWithJumpsCount}, NLs w/ changed endpoints: {numberLinesWithEndPointsChangedCount}, " +
                                       $"MR: {isMultipleRepresentations}, Ink Only: {isInkOnlyInkOnPage}, Blank: {isBlank}");
 
@@ -559,6 +572,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           submissionTime,
                                           arraysUsedCount.ToString(),
                                           cutsOverArrayCount.ToString(),
+                                          twoArraysSnappedTogetherCount.ToString(),
                                           numberLinesUsedCount.ToString(),
                                           numberLinesWithJumpsCount.ToString(),
                                           numberLinesWithEndPointsChangedCount.ToString(),
@@ -569,11 +583,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     fileRows.Add(rowContents);
                 }
 
+                if (allPageNumbers.Any())
+                {
+                    missingPages.Add(studentName, allPageNumbers);
+                }
             }
 
             #endregion // Generate Stats
 
             #region Order rows and write to TSV file
+
+            foreach (var studentName in missingPages.Keys)
+            {
+                var pagesMissing = string.Join(", ", missingPages[studentName]);
+                Console.WriteLine("{0} is missing pages: {1}", studentName, pagesMissing);
+            }
 
             var orderedFileRows = fileRows.OrderBy(r => r.First()).ThenBy(r => int.Parse(r[1])).ToList();
             foreach (var orderedFileRow in orderedFileRows)
