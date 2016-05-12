@@ -417,6 +417,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     "ARR cut",
                                     "ARR snap",
                                     "ARR divide",
+                                    "ARR rotate",
                                     "NL",
                                     "NL used",
                                     "NLs w/ changed endpoints",
@@ -449,6 +450,7 @@ namespace Classroom_Learning_Partner.ViewModels
             const string CUT_ENTITY = "d1p1:PageObjectCutHistoryItem";
             const string SNAP_ENTITY = "d1p1:CLPArraySnapHistoryItem";
             const string DIVIDE_ENTITY = "d1p1:CLPArrayDivisionsChangedHistoryItem";
+            const string ROTATE_ENTITY = "d1p1:CLPArrayRotateHistoryItem";
             const string END_POINTS_CHANGED_ENTITY = "d1p1:NumberLineEndPointsChangedHistoryItem";
 
             var missingPages = new Dictionary<string,List<int>>();
@@ -536,6 +538,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     var divideHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == DIVIDE_ENTITY).ToList();
                     var arrayDividersChangedCount = divideHistoryItems.Count;
 
+                    var rotateHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == ROTATE_ENTITY).ToList();
+                    var arrayRotateCount = rotateHistoryItems.Count;
+
                     // NL
                     var numberLinesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
                     var trashedNumberLines = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
@@ -566,7 +571,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var isBlank = isArrayUsedCount + isNumberLinesUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
 
                     Console.WriteLine($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
-                                      $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, ARR divide: {arrayDividersChangedCount}" +
+                                      $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, ARR divide: {arrayDividersChangedCount}, ARR rotate: {arrayRotateCount}, " +
                                       $"NL: {numberLinesUsedCount}, NL used: {numberLinesWithJumpsCount}, NLs w/ changed endpoints: {numberLinesWithEndPointsChangedCount}, " +
                                       $"MR: {isMultipleRepresentations}, Ink Only: {isInkOnlyInkOnPage}, Blank: {isBlank}");
 
@@ -579,6 +584,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                           cutsOverArrayCount.ToString(),
                                           twoArraysSnappedTogetherCount.ToString(),
                                           arrayDividersChangedCount.ToString(),
+                                          arrayRotateCount.ToString(),
                                           numberLinesUsedCount.ToString(),
                                           numberLinesWithJumpsCount.ToString(),
                                           numberLinesWithEndPointsChangedCount.ToString(),
