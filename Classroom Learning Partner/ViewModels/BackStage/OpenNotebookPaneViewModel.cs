@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
+using System.Xml.Linq;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IO;
@@ -36,6 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             AnonymizeCacheCommand = new Command(OnAnonymizeCacheCommandExecute);
+            LargeCacheAnalysisCommand = new Command(OnLargeCacheAnalysisCommandExecute);
         }
 
         #endregion //Constructor
@@ -384,6 +386,310 @@ namespace Classroom_Learning_Partner.ViewModels
                 var namesToPrint = string.Join("\n", nonConvertedNames);
                 MessageBox.Show("Names not Anonymized:\n" + namesToPrint);
             }
+        }
+
+        public Command LargeCacheAnalysisCommand { get; private set; }
+
+        private void OnLargeCacheAnalysisCommandExecute()
+        {
+            #region Initialize TSV file and header columns
+
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "LargeCacheAnalysis");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, "BatchAnalysis.tsv");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+
+            var columnHeaders = new List<string>
+                                {
+                                    "STUDENT NAME",
+                                    "PAGE NUMBER",
+                                    "SUBMISSION TIME",
+                                    "IS MISSING",
+                                    "ARR",
+                                    "ARR cut",
+                                    "ARR snap",
+                                    "ARR divide",
+                                    "ARR rotate",
+                                    "STAMP total",
+                                    "STAMP on page",
+                                    "STAMP used",
+                                    "STAMP IMAGES total",
+                                    "STAMP IMAGES on page",
+                                    "NL",
+                                    "NL used",
+                                    "NLs w/ changed endpoints",
+                                    "MR",
+                                    "Ink Only",
+                                    "Blank"
+                                };
+            var tabbedColumnHeaders = string.Join("\t", columnHeaders);
+            File.AppendAllText(filePath, tabbedColumnHeaders);
+
+            var fileRows = new List<List<string>>();
+
+            #endregion // Initialize TSV file and header columns
+
+            #region Generate Stats
+
+            XNamespace typeNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+            XNamespace entityNamespace = "http://schemas.datacontract.org/2004/07/CLP.Entities";
+            XNamespace serializationNamespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
+            var typeName = typeNamespace + "type";
+            var anyTypeName = serializationNamespace + "anyType";
+            var stringTypeName = serializationNamespace + "string";
+            var strokeName = entityNamespace + "StrokeDTO";
+            var strokeOwnerIDName = entityNamespace + "_x003C_PersonID_x003E_k__BackingField";
+
+            const string ARRAY_ENTITY = "d1p1:CLPArray";
+            const string NUMBER_LINE_ENTITY = "d1p1:NumberLine";
+            const string STAMP_ENTITY = "d1p1:Stamp";
+            const string STAMP_IMAGE_ENTITY = "d1p1:StampedObject";
+
+            const string CUT_ENTITY = "d1p1:PageObjectCutHistoryItem";
+            const string SNAP_ENTITY = "d1p1:CLPArraySnapHistoryItem";
+            const string DIVIDE_ENTITY = "d1p1:CLPArrayDivisionsChangedHistoryItem";
+            const string ROTATE_ENTITY = "d1p1:CLPArrayRotateHistoryItem";
+            const string END_POINTS_CHANGED_ENTITY = "d1p1:NumberLineEndPointsChangedHistoryItem";
+
+            var missingPages = new Dictionary<string,List<int>>();
+
+            var cacheInfoToAnalyze = SelectedCache;
+            var pagesToIgnore = new List<int>
+                                {
+                                    1, 2, 3, 4, 5, 6, 7, 8
+                                };
+
+            var notebookInfosToAnalyze = Services.DataService.GetNotebooksInCache(cacheInfoToAnalyze);
+            foreach (var notebookInfo in notebookInfosToAnalyze.Where(ni => ni.NameComposite.OwnerTypeTag == "S"))
+            {
+                var allPageNumbers = Enumerable.Range(1, 386 - 1).ToList();
+
+                var nameComposite = notebookInfo.NameComposite;
+                var studentName = nameComposite.OwnerName;
+                var studentOwnerID = nameComposite.OwnerID;
+
+                var pagesDirectoryInfo = new DirectoryInfo(notebookInfo.PagesFolderPath);
+                foreach (var pageFileInfo in pagesDirectoryInfo.GetFiles("*.xml"))
+                {
+                    var pageDoc = XElement.Load(pageFileInfo.FullName);
+
+                    var pageNumber = pageDoc.Descendants("PageNumber").First().Value;
+                    var pageNumberValue = int.Parse(pageNumber);
+                    if (allPageNumbers.Contains(pageNumberValue))
+                    {
+                        allPageNumbers.Remove(pageNumberValue);
+                    }
+                    var versionIndex = pageDoc.Descendants("VersionIndex").First().Value;
+                    if (versionIndex != "0" ||
+                        pagesToIgnore.Contains(pageNumberValue))
+                    {
+                        continue;
+                    }
+                    var submissionTime = pageDoc.Descendants("SubmissionTime").First().Value;
+                    if (string.IsNullOrEmpty(submissionTime) || string.IsNullOrWhiteSpace(submissionTime))
+                    {
+                        submissionTime = "UNSUBMITTED";
+                    }
+
+                    // PageObjects
+                    var pageObjects = pageDoc.Descendants("PageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("CreatorID").First().Value == studentOwnerID).ToList();
+                    var trashedPageObjects = pageDoc.Descendants("TrashedPageObjects").First().Descendants(anyTypeName).Where(xe => xe.Descendants("CreatorID").First().Value == studentOwnerID).ToList();
+
+                    // Ink
+                    var inkOnPage =
+                        pageDoc.Descendants("SerializedStrokes")
+                               .First()
+                               .Descendants(strokeName)
+                               .Where(xe => xe.Descendants(strokeOwnerIDName).First().Value == studentOwnerID)
+                               .ToList();
+                    var trashedInk =
+                        pageDoc.Descendants("SerializedTrashedInkStrokes")
+                               .First()
+                               .Descendants(strokeName)
+                               .Where(xe => xe.Descendants(strokeOwnerIDName).First().Value == studentOwnerID)
+                               .ToList();
+
+                    // History
+                    var undoHistoryItems = pageDoc.Descendants("UndoItems").First().Descendants(anyTypeName);
+                    var redoHistoryItems = pageDoc.Descendants("RedoItems").First().Descendants(anyTypeName);
+                    var historyItems = undoHistoryItems.Concat(redoHistoryItems).Where(xe => xe.Descendants("OwnerID").First().Value == studentOwnerID).ToList();
+
+                    // ARR
+                    var arraysOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == ARRAY_ENTITY);
+                    var trashedArrays = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == ARRAY_ENTITY);
+
+                    var arraysOnPageIDs = arraysOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedarraysIDs = trashedArrays.Select(xe => xe.Descendants("ID").First().Value);
+                    var arraysIDs = arraysOnPageIDs.Concat(trashedarraysIDs);
+
+                    var arraysOnPageCount = arraysOnPage.Count();
+                    var trashedArraysCount = trashedArrays.Count();
+                    var arraysUsedCount = arraysOnPageCount + trashedArraysCount;
+
+                    var cutHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == CUT_ENTITY).ToList();
+                    var arraysWithACutCount = arraysIDs.Count(arraysID => cutHistoryItems.Any(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => e.Value == arraysID)));
+                    var cutsOverArrayCount = cutHistoryItems.Count(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => arraysIDs.Contains(e.Value)));
+
+                    var snapHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == SNAP_ENTITY).ToList();
+                    var twoArraysSnappedTogetherCount = snapHistoryItems.Count;
+
+                    var divideHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == DIVIDE_ENTITY).ToList();
+                    var arrayDividersChangedCount = divideHistoryItems.Count;
+
+                    var rotateHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == ROTATE_ENTITY).ToList();
+                    var arrayRotateCount = rotateHistoryItems.Count;
+
+                    // STAMP
+                    var stampsOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_ENTITY);
+                    var trashedStamps = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_ENTITY);
+
+                    var stampsOnPageIDs = stampsOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedStampsIDs = trashedStamps.Select(xe => xe.Descendants("ID").First().Value);
+                    var stampIDs = stampsOnPageIDs.Concat(trashedStampsIDs);
+
+                    var stampsOnPageCount = stampsOnPage.Count();
+                    var trashedStampsCount = trashedStamps.Count();
+                    var stampsCount = stampsOnPageCount + trashedStampsCount;
+
+                    // STAMP IMAGES
+                    var stampImagesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_IMAGE_ENTITY);
+                    var trashedStampImages = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_IMAGE_ENTITY);
+                    var allStampedImages = stampImagesOnPage.Concat(trashedStampImages).ToList();
+
+                    var stampsUsedCount = stampIDs.Count(stampID => allStampedImages.Any(xe => xe.Descendants("ParentStampID").First().Value == stampID));
+
+                    var stampImagesOnPageIDs = stampImagesOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedstampImageIDs = trashedStampImages.Select(xe => xe.Descendants("ID").First().Value);
+                    var stampImageIDs = stampImagesOnPageIDs.Concat(trashedstampImageIDs);
+
+                    var stampImagesOnPageCount = stampImagesOnPage.Count();
+                    var trashedStampImagesCount = trashedStampImages.Count();
+                    var stampImagesCount = stampImagesOnPageCount + trashedStampImagesCount;
+
+                    // NL
+                    var numberLinesOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
+                    var trashedNumberLines = trashedPageObjects.Where(xe => (string)xe.Attribute(typeName) == NUMBER_LINE_ENTITY);
+
+                    var numberLinesOnPageIDs = numberLinesOnPage.Select(xe => xe.Descendants("ID").First().Value);
+                    var trashedNumberLineIDs = trashedNumberLines.Select(xe => xe.Descendants("ID").First().Value);
+                    var numberLineIDs = numberLinesOnPageIDs.Concat(trashedNumberLineIDs);
+
+                    var numberLinesOnPageCount = numberLinesOnPage.Count();
+                    var trashedNumberLinesCount = trashedNumberLines.Count();
+                    var numberLinesUsedCount = numberLinesOnPageCount + trashedNumberLinesCount;
+
+                    var numberLinesWithJumpsOnPageCount = numberLinesOnPage.Count(xe => xe.Descendants("JumpSizes").First().HasElements);
+                    var trashedNumberLinesWithJumpsCount = trashedNumberLines.Count(xe => xe.Descendants("JumpSizes").First().HasElements);
+                    var numberLinesWithJumpsCount = numberLinesWithJumpsOnPageCount + trashedNumberLinesWithJumpsCount;
+
+                    var endPointsChangedHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == END_POINTS_CHANGED_ENTITY).ToList();
+                    var numberLinesWithEndPointsChangedCount = numberLineIDs.Count(numberLineID => endPointsChangedHistoryItems.Any(xe => xe.Descendants("NumberLineID").First().Value == numberLineID));
+
+                    // Sum Stats
+                    var isArrayUsedCount = arraysUsedCount > 0 ? 1 : 0;
+                    var isStampUsedCount = stampsUsedCount > 0 ? 1 : 0;
+                    var isNumberLinesUsedCount = numberLinesUsedCount > 0 ? 1 : 0;
+                    var isMultipleRepresentations = isArrayUsedCount + isNumberLinesUsedCount + isStampUsedCount > 1 ? "Y" : "N";
+
+                    var isInkOnlyInkOnPage = arraysUsedCount + numberLinesUsedCount + stampsUsedCount == 0 && inkOnPage.Any() ? "Y" : "N";
+                    var isInkOnlyCountingErasedInk = arraysUsedCount + numberLinesUsedCount == 0 && (inkOnPage.Any() || trashedInk.Any()) ? "Y" : "N";
+
+                    var isBlank = isArrayUsedCount + isNumberLinesUsedCount + isStampUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
+
+                    Console.WriteLine($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
+                                      $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, ARR divide: {arrayDividersChangedCount}, ARR rotate: {arrayRotateCount}, " +
+                                      $"STAMP total: {stampsCount}, STAMP on page: {stampsOnPageCount}, STAMP used: {stampsUsedCount}, " +
+                                      $"STAMP IMAGES total: {stampImagesCount}, STAMP IMAGES on page: {stampImagesOnPageCount}, " +
+                                      $"NL: {numberLinesUsedCount}, NL used: {numberLinesWithJumpsCount}, NLs w/ changed endpoints: {numberLinesWithEndPointsChangedCount}, " +
+                                      $"MR: {isMultipleRepresentations}, Ink Only: {isInkOnlyInkOnPage}, Blank: {isBlank}");
+
+                    var rowContents = new List<string>()
+                                      {
+                                          studentName,
+                                          pageNumber,
+                                          submissionTime,
+                                          "N",
+                                          arraysUsedCount.ToString(),
+                                          cutsOverArrayCount.ToString(),
+                                          twoArraysSnappedTogetherCount.ToString(),
+                                          arrayDividersChangedCount.ToString(),
+                                          arrayRotateCount.ToString(),
+                                          stampsCount.ToString(),
+                                          stampsOnPageCount.ToString(),
+                                          stampsUsedCount.ToString(),
+                                          stampImagesCount.ToString(),
+                                          stampImagesOnPageCount.ToString(),
+                                          numberLinesUsedCount.ToString(),
+                                          numberLinesWithJumpsCount.ToString(),
+                                          numberLinesWithEndPointsChangedCount.ToString(),
+                                          isMultipleRepresentations,
+                                          isInkOnlyInkOnPage,
+                                          isBlank
+                                      };
+                    fileRows.Add(rowContents);
+                }
+
+                foreach (var pageNumber in allPageNumbers)
+                {
+                    var rowContents = new List<string>()
+                                      {
+                                          studentName,
+                                          pageNumber.ToString(),
+                                          "MISSING",
+                                          "Y",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X",
+                                          "X"
+                                      };
+                    fileRows.Add(rowContents);
+                }
+
+                if (allPageNumbers.Any())
+                {
+                    missingPages.Add(studentName, allPageNumbers);
+                }
+            }
+
+            #endregion // Generate Stats
+
+            #region Order rows and write to TSV file
+
+            foreach (var studentName in missingPages.Keys)
+            {
+                var pagesMissing = string.Join(", ", missingPages[studentName]);
+                Console.WriteLine("{0} is missing pages: {1}", studentName, pagesMissing);
+            }
+
+            var orderedFileRows = fileRows.OrderBy(r => r.First()).ThenBy(r => int.Parse(r[1])).ToList();
+            foreach (var orderedFileRow in orderedFileRows)
+            {
+                var tabbedRow = string.Join("\t", orderedFileRow);
+                File.AppendAllText(filePath, Environment.NewLine + tabbedRow);
+            }
+
+            #endregion // Order rows and write to TSV file
         }
 
         #endregion //Commands
