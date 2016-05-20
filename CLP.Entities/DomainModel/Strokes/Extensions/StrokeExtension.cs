@@ -600,23 +600,26 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            // reusing CELL_SIZE as a minimum value for height and width. It can be a different value.
-            if (stroke.GetBounds().Width < 60 || stroke.GetBounds().Height < 60)
+            const int MIN_BOUNDS = 60;
+            const double MIN_ASPECT_RATIO = 0.5;
+            const double CELL_SIZE_RATIO = 5.0;
+
+            if (stroke.GetBounds().Width < MIN_BOUNDS || stroke.GetBounds().Height < MIN_BOUNDS)
             {
                 return false;
             }
 
             double aspectRatio = stroke.GetBounds().Width / stroke.GetBounds().Height;
 
-            if (aspectRatio < .5 || aspectRatio > 2)
+            if (aspectRatio < MIN_ASPECT_RATIO || aspectRatio > (1.0/MIN_ASPECT_RATIO))
             {
                 return false;
             }
 
-            var cellHeight = Math.Min(60, (int)(stroke.GetBounds().Height / 5.0));
-            var cellWidth = Math.Min(60, (int)(stroke.GetBounds().Width / 5.0));
+            var cellHeight = Math.Min(MIN_BOUNDS, (int)(stroke.GetBounds().Height / CELL_SIZE_RATIO));
+            var cellWidth = Math.Min(MIN_BOUNDS, (int)(stroke.GetBounds().Width / CELL_SIZE_RATIO));
 
-            var occupiedCells = FindCellsOccupiedByStroke(stroke, cellWidth, cellHeight);
+            var occupiedCells = FindCellsOccupiedByStroke(stroke, cellWidth, cellHeight, (int)stroke.GetBounds().X, (int)stroke.GetBounds().Y);
             if (page != null)
             {
                 var strokeBounds = stroke.GetBounds();
@@ -624,7 +627,7 @@ namespace CLP.Entities
                 page.PageObjects.Add(tempGrid);
             }
 
-            Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
+            // Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
 
             return DetectCycle(occupiedCells, cellWidth, cellHeight);
         }
@@ -641,7 +644,7 @@ namespace CLP.Entities
             disconnected graphs
         */
 
-        private static bool DetectCycle(List<Point> occupiedCells, int cellWidth, int cellHeight)
+        public static bool DetectCycle(List<Point> occupiedCells, int cellWidth, int cellHeight)
         {
             // var visited = new PointCollection();
             var cellStack = new Stack<List<Point>>();
@@ -660,12 +663,7 @@ namespace CLP.Entities
             {
                 var thisPath = cellStack.Pop();
                 thisCell = thisPath.Last();
-                // immediateAncestor = nextTuple.Item2;
-                // if (thisPath.FindIndex(thisCell))
-                // {
-                //     return true;
-                // }
-                // visited.Add(thisCell);
+
                 var neighbors = GetNeighbors(thisCell, cellWidth, cellHeight);
                 foreach (var neighbor in neighbors)
                 {
@@ -674,12 +672,12 @@ namespace CLP.Entities
                         if (thisPath.Contains(neighbor))
                         {
                             var cycle = thisPath.Skip(thisPath.IndexOf(neighbor)).Take(thisPath.Count() - thisPath.IndexOf(neighbor)).ToArray();
-                            if (CycleBoundsLargeEnough(cycle, 3 * cellWidth, 3 * cellHeight))
+                            if (CycleBoundsLargeEnough(cycle, 4 * cellWidth, 4 * cellHeight))
                             {
                                 var i = 0;
                                 while (i < cycle.Count())
                                 {
-                                    Console.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
+                                    // Console.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
                                     i++;
                                 }
                                 return true;
@@ -745,10 +743,8 @@ namespace CLP.Entities
             return neighbors;
         }
 
-        private static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_WIDTH, int CELL_HEIGHT)
+        public static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_WIDTH, int CELL_HEIGHT, int xOffset, int yOffset)
         {
-            int xOffset = (int)stroke.GetBounds().X;
-            int yOffset = (int)stroke.GetBounds().Y;
             var occupiedCells = new List<Point>();
             int i = 1;
             var stylusPoints = stroke.StylusPoints;
@@ -813,10 +809,37 @@ namespace CLP.Entities
             return occupiedCells.Distinct().ToList();
         }
 
+        private static bool IsBoundsOverlappingByPercentage(Rect firstBounds, Rect secondBounds, double percentage)
+        {
+            var intersectRect = Rect.Intersect(firstBounds, secondBounds);
+            return intersectRect.Area() / secondBounds.Area() >= percentage;
+        }
+
         public static bool IsStrokeEnclosure(this Stroke stroke, StrokeCollection strokes)
         {
             Argument.IsNotNull("stroke", stroke);
             Argument.IsNotNull("strokes", strokes);
+
+            const double OVERLAP_PERCENTAGE_THRESHOLD = 75.0;
+
+            if (!IsEnclosedShape(stroke))
+            {
+                return false;
+            }
+
+            var strokeBounds = stroke.GetBounds();
+
+            foreach(var thisStroke in strokes) {
+                if (IsInvisiblySmall(thisStroke))
+                {
+                    continue;
+                }
+
+                if (IsBoundsOverlappingByPercentage(strokeBounds, thisStroke.GetBounds(), OVERLAP_PERCENTAGE_THRESHOLD))
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
@@ -826,12 +849,34 @@ namespace CLP.Entities
             Argument.IsNotNull("stroke", stroke);
             Argument.IsNotNull("pageObjects", pageObjects);
 
+            const double OVERLAP_PERCENTAGE_THRESHOLD = 75.0;
+
+            if (!IsEnclosedShape(stroke))
+            {
+                return false;
+            }
+
+            var strokeBounds = stroke.GetBounds();
+
+            foreach (var thisPageObject in pageObjects)
+            {
+                var pageObjectBounds = new Rect(thisPageObject.XPosition, thisPageObject.YPosition, thisPageObject.Width, thisPageObject.Height);
+                if (IsBoundsOverlappingByPercentage(strokeBounds, pageObjectBounds, OVERLAP_PERCENTAGE_THRESHOLD))
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
         public static bool IsHorizontalLine(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
+            if (stroke.StylusPoints.Count < 2)
+            {
+                return false;
+            }
             const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
             const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
@@ -841,13 +886,13 @@ namespace CLP.Entities
             int i = 0;
             while (i < slopes.Count)
             {
-                Console.WriteLine("slope: {0}", slopes[i]);
+                // Console.WriteLine("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
@@ -891,6 +936,10 @@ namespace CLP.Entities
         public static bool IsVerticalLine(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
+            if (stroke.StylusPoints.Count < 2)
+            {
+                return false;
+            }
             const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
             //TODO somehow make this variation less? Might require modifying getSlopesBetweenPoints
             const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
@@ -906,13 +955,13 @@ namespace CLP.Entities
                 {
                     slopes[i] += 180;
                 }
-                Console.WriteLine("slope: {0}", slopes[i]);
+                // Console.WriteLine("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
@@ -929,7 +978,15 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return false;
+            const double MAX_STROKE_WEIGHT = 10.0;
+            const double MAX_STROKE_BOUNDS = 5.0;
+
+            var strokeBounds = stroke.GetBounds();
+
+            // Console.WriteLine("stroke weight: {0}", stroke.StrokeWeight());
+
+            return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && 
+                strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
         }
 
         public static bool IsCircle(this Stroke stroke)

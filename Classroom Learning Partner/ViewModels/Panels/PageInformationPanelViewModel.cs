@@ -1161,32 +1161,79 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStrokeTestingCommandExecute()
         {
             Console.WriteLine("NEW STROKE TEST");
-            var strokes = CurrentPage.InkStrokes;
-            foreach (var stroke in strokes)
+            var strokes = CurrentPage.InkStrokes.ToList();
+            var strokeIndexesInEnclosure = new List<int>();
+            for (var i=0; i < strokes.Count; i++)
             {
-                var strokeStartPoint = stroke.StylusPoints.First();
+                var stroke = strokes[i];
+                // var strokeStartPoint = stroke.StylusPoints.First();
                 bool isEnclosed;
-                if (IsDebuggingFlag)
+                if (strokeIndexesInEnclosure.Contains(i))
                 {
-                    isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                    isEnclosed = true;
                 }
                 else
                 {
-                    isEnclosed = stroke.IsEnclosedShape();
+                    if (IsDebuggingFlag)
+                    {
+                         isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                    }
+                    else
+                    {
+                        isEnclosed = stroke.IsEnclosedShape();
+                    }
+
+                    if (!isEnclosed)
+                    {
+                        for (var j = i + 1; j < strokes.Count; j++)
+                        {
+                            var otherStroke = strokes[j];
+                            if (closeMatch(stroke, otherStroke))
+                            {
+                                Console.WriteLine("close match");
+                                var strokeCollection = new StrokeCollection();
+                                strokeCollection.Add(stroke);
+                                strokeCollection.Add(otherStroke);
+                                if (IsDebuggingFlag)
+                                {
+                                    isEnclosed = strokeCollection.IsEnclosedShape(CurrentPage);
+                                }
+                                else
+                                {
+                                    isEnclosed = strokeCollection.IsEnclosedShape();
+                                }
+
+                                if (isEnclosed)
+                                {
+                                    strokeIndexesInEnclosure.Add(j);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
+                /*
                 Console.WriteLine("Horizontal Line Test");
                 if (stroke.IsHorizontalLine())
                 {
                     stroke.DrawingAttributes.Color = Colors.Purple;
                 }
 
+
                 Console.WriteLine("Vertical Line Test");
                 if (stroke.IsVerticalLine())
                 {
                      stroke.DrawingAttributes.Color = Colors.Orange;
                 }
+
+                Console.WriteLine("Dot Test");
+                if (stroke.IsDot())
+                {
+                    stroke.DrawingAttributes.Color = Colors.Blue;
+                }
+                */
 
                 #region Debugging
                 if (IsDebuggingFlag)
@@ -1212,6 +1259,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 #endregion // Debugging
             }
+        }
+
+        private Boolean closeMatch(Stroke stroke1, Stroke stroke2)
+        {
+            const double minDistanceSquared = 5000;
+            return ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared) &&
+                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared))
+                    ||
+                   ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared) &&
+                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared));
+
+        }
+
+        private static double DistanceSquaredBetweenPoints(Point p1, Point p2)
+        {
+            var dx = p1.X - p2.X;
+            var dy = p1.Y - p2.Y;
+            var distanceSquared = (dx * dx) + (dy * dy); // Again, for performance purposes, multiplication is used here instead of Math.Pow(). 20x performance boost.
+
+            return distanceSquared;
         }
 
         /// <summary>

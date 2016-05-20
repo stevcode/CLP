@@ -116,11 +116,65 @@ namespace CLP.Entities
 
         #region Shape Detection
 
-        public static bool IsEnclosedShape(this IEnumerable<Stroke> strokes)
+        public static bool IsEnclosedShape(this IEnumerable<Stroke> strokes, CLPPage page = null)
         {
             Argument.IsNotNull("strokes", strokes);
 
-            return false;
+            const int MIN_BOUNDS = 60;
+            const double MIN_ASPECT_RATIO = 0.5;
+            const double CELL_SIZE_RATIO = 5.0;
+
+            var bounds = getBounds(strokes);
+
+            if (bounds.Width < MIN_BOUNDS || bounds.Height < MIN_BOUNDS)
+            {
+                return false;
+            }
+
+            double aspectRatio = bounds.Width / bounds.Height;
+
+            if (aspectRatio < MIN_ASPECT_RATIO || aspectRatio > (1.0 / MIN_ASPECT_RATIO))
+            {
+                return false;
+            }
+
+            var cellHeight = Math.Min(MIN_BOUNDS, (int)(bounds.Height / CELL_SIZE_RATIO));
+            var cellWidth = Math.Min(MIN_BOUNDS, (int)(bounds.Width / CELL_SIZE_RATIO));
+
+            var occupiedCells = new List<Point>();
+
+            foreach (var stroke in strokes) 
+            {
+                var theseOccupiedCells = StrokeExtension.FindCellsOccupiedByStroke(stroke, cellWidth, cellHeight, (int)bounds.X, (int)bounds.Y);
+                occupiedCells.AddRange(theseOccupiedCells);
+            }
+            occupiedCells = occupiedCells.Distinct().ToList();
+
+            if (page != null)
+            {
+                var tempGrid = new TemporaryGrid(page, bounds.X, bounds.Y, bounds.Height, bounds.Width, cellWidth, cellHeight, occupiedCells);
+                page.PageObjects.Add(tempGrid);
+            }
+
+            Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
+
+            return StrokeExtension.DetectCycle(occupiedCells, cellWidth, cellHeight);
+
+        }
+
+        private static Rect getBounds(this IEnumerable<Stroke> strokes)
+        {
+            double minX = 1000000, minY = 1000000;
+            double maxX = 0, maxY = 0;
+            foreach( var stroke in strokes) 
+            {
+                var bounds = stroke.GetBounds();
+                minX = Math.Min(minX, bounds.X);
+                minY = Math.Min(minY, bounds.Y);
+                maxX = Math.Max(maxX, bounds.X + bounds.Width);
+                maxY = Math.Max(maxY, bounds.Y + bounds.Height);
+            }
+            return new Rect(minX, minY, maxX - minX, maxY - minY);
         }
 
         #endregion // Shape Detection
