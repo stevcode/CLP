@@ -997,7 +997,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
-            //Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertDivisionTemplateButton);
             //Buttons.Add(_insertPileButton);
 
             // Insert Shapes
