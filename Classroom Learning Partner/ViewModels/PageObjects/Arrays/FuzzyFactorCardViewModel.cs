@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                              };
             toggleRemainderTilesButton.Checked += toggleRemainderTilesButton_Checked;
             toggleRemainderTilesButton.Unchecked += toggleRemainderTilesButton_Checked;
-            _contextButtons.Add(toggleRemainderTilesButton);
+           // _contextButtons.Add(toggleRemainderTilesButton);
         }
 
         private void toggleRemainderTilesButton_Checked(object sender, RoutedEventArgs e)
