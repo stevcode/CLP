@@ -981,9 +981,9 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraseModeButton);
             //Buttons.Add(_setMarkModeButton);
             Buttons.Add(Separater);
-            //Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
-            //Buttons.Add(_setDividerCreationModeButton);
+            Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
@@ -998,11 +998,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
             Buttons.Add(_insertDivisionTemplateButton);
-            //Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertPileButton);
 
             // Insert Shapes
             //Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);

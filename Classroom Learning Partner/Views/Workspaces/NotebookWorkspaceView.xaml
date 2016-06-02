@@ -64,11 +64,11 @@
                                          LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
                                          IsContextButton="True" />
 
-            <customControls:RibbonButton DockPanel.Dock="Right"
+            <!--<customControls:RibbonButton DockPanel.Dock="Right"
                                          Text="Reset Demo"
                                          Command="{Binding ResetDemoCommand}"
                                          LargeImageSource="pack://application:,,,/Images/LargeIcon.png"
-                                         IsContextButton="True" />
+                                         IsContextButton="True" />-->
 
             <views:ContextRibbonView DataContext="{Binding ContextRibbon}" />
             
