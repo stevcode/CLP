@@ -219,6 +219,11 @@ namespace CLP.Entities
         {
             var compoundID = string.Format("{0};{1};{2}", pageObjectID, codedObject, codedID);
 
+            if (!CurrentIncrementIDForPageObject.ContainsKey(compoundID))
+            {
+                SetCurrentIncrementIDForPageObject(pageObjectID, codedObject, codedID);
+            }
+
             return CurrentIncrementIDForPageObject[compoundID].ToLetter();
         }
 
