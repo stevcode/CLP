@@ -328,6 +328,16 @@ namespace CLP.Entities
             get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
         }
 
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_DIVISION_TEMPLATE; }
+        }
+
+        public override string CodedID
+        {
+            get { return string.Format("{0} / {1}", Dividend, Rows); }
+        }
+
         public override int ZIndex
         {
             get { return 40; }

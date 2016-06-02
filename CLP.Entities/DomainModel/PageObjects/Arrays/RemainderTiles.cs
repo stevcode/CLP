@@ -63,6 +63,16 @@ namespace CLP.Entities
             get { return string.Format("Remainder Tiles with {0} tiles", TileColors.Count); }
         }
 
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_REMAINDER_TILES; }
+        }
+
+        public override string CodedID
+        {
+            get { return string.Format("A"); }
+        }
+
         public override int ZIndex
         {
             get { return 40; }
