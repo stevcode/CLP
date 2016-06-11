@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Ink;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -290,6 +293,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var correctedNotMatchedExpectedCountAfterExamples = new List<string>();
 
+            var keyList = new List<string>();
+            var interpretationOfStrokesInInitialBoundingBox = new Dictionary<string, string>();
+            var interpretationOfStrokesNotGroupedByRows = new Dictionary<string,string>();
+            var interpretationOfStrokesGroupedByRows = new Dictionary<string, string>();
+
             foreach (var notebookInfo in dataService.LoadedNotebooksInfo.OrderBy(ni => ni.Notebook.Owner.FullName))
             {
                 var notebook = notebookInfo.Notebook;
@@ -327,7 +335,97 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         var strokes = lastSubmission.InkStrokes.ToList();
 
+                        var vkey = string.Format("{0}, page {1}. [{2}x{3}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns);
+                        var vkeyIncrement = 0;
+                        while (keyList.Contains(vkey))
+                        {
+                            vkeyIncrement++;
+                            vkey = string.Format("{0}, page {1}. [{2}x{3}, {4}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns, vkeyIncrement);
+                        }
+
+                        keyList.Add(vkey);
+
+                        #region v1 Calculations
+
+                        const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
+                        const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
+
+                        var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+                        var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+                        var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+                        var arrayVisualRight = arrayPosition.X + arrayDimensions.X - array.LabelLength;
+                        var arrayVisualTop = arrayPosition.Y + array.LabelLength;
+                        var halfGridSquareSize = array.GridSquareSize * 0.5;
+                        var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                        arrayVisualTop - halfGridSquareSize,
+                                                        LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                        array.GridSquareSize * (arrayColumnsAndRows.Y + 1));
+
+                        var strokesInsideBoundary = new List<Stroke>();
+
+                        foreach (var stroke in strokes)
+                        {
+                            var strokeBounds = stroke.GetBounds();
+
+                            // Rule 3: Rejected for being outside the accepted skip counting bounds
+                            var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                            if (intersect.IsEmpty)
+                            {
+                                continue;
+                            }
+
+                            var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                            if (intersectPercentage <= 0.50)
+                            {
+                                continue;
+                            }
+
+                            if (intersectPercentage <= 0.90)
+                            {
+                                var weightedCenterX = stroke.WeightedCenter().X;
+                                if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
+                                    weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
+                                {
+                                    continue;
+                                }
+                            }
+
+                            strokesInsideBoundary.Add(stroke);
+                        }
+
+                        if (!strokesInsideBoundary.Any())
+                        {
+                            interpretationOfStrokesInInitialBoundingBox.Add(vkey, "NO STROKES IN BOUNDARY");
+                        }
+                        else
+                        {
+                            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokesInsideBoundary));
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+
+                            interpretationOfStrokesInInitialBoundingBox.Add(vkey, guess);
+                        }
+
+                        #endregion // v1 Calculations
+
                         var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(lastSubmission, array, strokes, historyIndex);
+
+                        #region v2 Calculations
+
+                        var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                        if (!skipStrokes.Any())
+                        {
+                            interpretationOfStrokesNotGroupedByRows.Add(vkey, "NO STROKES RECOGNIZED AS SKIP STROKES");
+                        }
+                        else
+                        {
+                            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipStrokes));
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+
+                            interpretationOfStrokesNotGroupedByRows.Add(vkey, guess);
+                        }
+
+                        #endregion // v2 Calculations
+
                         var interpretedRowValuesUncorrected = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex, true);
                         var interpretedRowValues = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex);
                         if (interpretedRowValues.Any() &&
@@ -382,6 +480,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
                         if (isSkipCounting)
                         {
+                            interpretationOfStrokesGroupedByRows.Add(vkey, string.Join(", ", interpretedRowValues));
+
                             totalSkipCountRows += array.Rows;
                             totalArraysRecognizedAsSkipCounting.Add(string.Format("{0}, page {1}. [{2}x{3}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns));
                             for (int i = 0; i < array.Rows; i++)
@@ -468,6 +568,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                     }
                                 }
                             }
+                        }
+                        else
+                        {
+                            interpretationOfStrokesGroupedByRows.Add(vkey, "NOT RECOGNIZED AS SKIP COUNTING");
                         }
 
                         //if (isSkipCounting && 
@@ -579,6 +683,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
             File.AppendAllText(filePath, string.Format("Rule 9: More than 2 rows share the same interpreted value.\n"));
             File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule9));
+
+            File.AppendAllText(filePath, string.Format("\n\nInterpretation improvements for every array."));
+            File.AppendAllText(filePath, string.Format("\nv1: Interpretation of all strokes inside boundary box."));
+            File.AppendAllText(filePath, string.Format("\nv2: Interpretation of all strokes recognized as likely skip counting strokes, but not grouped into rows. May include strokes later rejected by array structure criteria."));
+            File.AppendAllText(filePath, string.Format("\nv3: Row by row interpretation of strokes recognized as skip counting strokes.\n\n"));
+
+            File.AppendAllText(filePath, string.Format("\nNumber of Arrays with strokes inside initial boundary (v1): {0}", interpretationOfStrokesInInitialBoundingBox.Values.Count(s => s != "NO STROKES IN BOUNDARY")));
+            File.AppendAllText(filePath, string.Format("\nNumber of Arrays with strokes considered possible skip counting, ungrouped by rows (v2): {0}", interpretationOfStrokesNotGroupedByRows.Values.Count(s => s != "NO STROKES RECOGNIZED AS SKIP STROKES")));
+
+            foreach (var key in keyList)
+            {
+                File.AppendAllText(filePath, string.Format("\n\nArray: {0}", key));
+                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}", interpretationOfStrokesInInitialBoundingBox[key]));
+                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}", interpretationOfStrokesNotGroupedByRows[key]));
+                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}", interpretationOfStrokesGroupedByRows[key]));
+            }
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
