@@ -400,8 +400,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         else
                         {
                             var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokesInsideBoundary));
-                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
-
+                            //var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+                            var guess = interpretations[0];
                             interpretationOfStrokesInInitialBoundingBox.Add(vkey, guess);
                         }
 
@@ -419,8 +419,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         else
                         {
                             var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipStrokes));
-                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
-
+                            //var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+                            var guess = interpretations[0];
                             interpretationOfStrokesNotGroupedByRows.Add(vkey, guess);
                         }
 

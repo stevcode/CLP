@@ -97,6 +97,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
             StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            v1Command = new Command(Onv1CommandExecute);
+            v2Command = new Command(Onv2CommandExecute);
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
 
@@ -1164,6 +1166,200 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var line in output)
             {
                 Console.WriteLine(line);
+            }
+        }
+
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command v1Command { get; private set; }
+
+        private void Onv1CommandExecute()
+        {
+            var existingTags = CurrentPage.Tags.OfType<TempArraySkipCountingTag>().ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
+                const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
+
+                var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
+                var arrayVisualTop = array.YPosition + array.LabelLength;
+                var halfGridSquareSize = array.GridSquareSize * 0.5;
+                var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                arrayVisualTop - halfGridSquareSize,
+                                                LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                array.GridSquareSize * (array.Rows + 1));
+
+                var strokes = CurrentPage.InkStrokes;
+                var strokesInsideBoundary = new List<Stroke>();
+
+                foreach (var stroke in strokes)
+                {
+                    var strokeBounds = stroke.GetBounds();
+
+                    // Rule 3: Rejected for being outside the accepted skip counting bounds
+                    var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                    if (intersect.IsEmpty)
+                    {
+                        continue;
+                    }
+
+                    var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                    if (intersectPercentage <= 0.50)
+                    {
+                        continue;
+                    }
+
+                    if (intersectPercentage <= 0.90)
+                    {
+                        var weightedCenterX = stroke.WeightedCenter().X;
+                        if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
+                            weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
+                        {
+                            continue;
+                        }
+                    }
+
+                    strokesInsideBoundary.Add(stroke);
+                }
+
+                if (!strokesInsideBoundary.Any())
+                {
+                    continue;
+                }
+
+                var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokesInsideBoundary));
+                var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+                //var guess = interpretations[0];
+
+                var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
+                {
+                    CodedID = array.CodedID,
+                    RowInterpretations = guess
+                };
+
+                CurrentPage.AddTag(tag);
+
+                if (IsDebuggingFlag)
+                {
+                    CurrentPage.ClearBoundaries();
+                    var tempBoundary = new TemporaryBoundary(CurrentPage, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
+                    {
+                        RegionText = "Boundary Interpretation: " + guess
+                    };
+                    CurrentPage.PageObjects.Add(tempBoundary);
+                    PageHistory.UISleep(5000);
+                    var heightWidths = new Dictionary<Stroke, Point>();
+                    foreach (var stroke in strokesInsideBoundary)
+                    {
+                        var width = stroke.DrawingAttributes.Width;
+                        var height = stroke.DrawingAttributes.Height;
+                        heightWidths.Add(stroke, new Point(width, height));
+
+                        stroke.DrawingAttributes.Width = 8;
+                        stroke.DrawingAttributes.Height = 8;
+                    }
+                    PageHistory.UISleep(5000);
+                    foreach (var stroke in strokesInsideBoundary)
+                    {
+                        var width = heightWidths[stroke].X;
+                        var height = heightWidths[stroke].Y;
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                    heightWidths.Clear();
+                    PageHistory.UISleep(2000);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command v2Command { get; private set; }
+
+        private void Onv2CommandExecute()
+        {
+            var existingTags = CurrentPage.Tags.OfType<TempArraySkipCountingTag>().ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var strokes = CurrentPage.InkStrokes.ToList();
+            var historyIndex = 0;
+            var lastHistoryItem = CurrentPage.History.CompleteOrderedHistoryItems.LastOrDefault();
+            if (lastHistoryItem != null)
+            {
+                historyIndex = lastHistoryItem.HistoryIndex;
+            }
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                
+                var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
+                var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                if (!skipStrokes.Any())
+                {
+                    continue;
+                }
+
+                var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipStrokes));
+                var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
+                //var guess = interpretations[0];
+
+                var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
+                {
+                    CodedID = array.CodedID,
+                    RowInterpretations = guess
+                };
+
+                Console.WriteLine(tag.FormattedValue);
+
+                CurrentPage.AddTag(tag);
+
+                if (IsDebuggingFlag)
+                {
+                    var skipStrokeBounds = new StrokeCollection(skipStrokes).GetBounds();
+
+                    CurrentPage.ClearBoundaries();
+                    var tempBoundary = new TemporaryBoundary(CurrentPage, skipStrokeBounds.X, skipStrokeBounds.Y, skipStrokeBounds.Height, skipStrokeBounds.Width)
+                    {
+                        RegionText = "Potential SC Interpretation: " + guess
+                    };
+                    CurrentPage.PageObjects.Add(tempBoundary);
+                    PageHistory.UISleep(5000);
+                    var heightWidths = new Dictionary<Stroke, Point>();
+                    foreach (var stroke in skipStrokes)
+                    {
+                        var width = stroke.DrawingAttributes.Width;
+                        var height = stroke.DrawingAttributes.Height;
+                        heightWidths.Add(stroke, new Point(width, height));
+
+                        stroke.DrawingAttributes.Width = 8;
+                        stroke.DrawingAttributes.Height = 8;
+                    }
+                    PageHistory.UISleep(5000);
+                    foreach (var stroke in skipStrokes)
+                    {
+                        var width = heightWidths[stroke].X;
+                        var height = heightWidths[stroke].Y;
+                        stroke.DrawingAttributes.Width = width;
+                        stroke.DrawingAttributes.Height = height;
+                    }
+                    heightWidths.Clear();
+                    PageHistory.UISleep(2000);
+                }
             }
         }
 

@@ -232,6 +232,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
@@ -286,6 +288,18 @@
                         <TextBlock Text="Debug" />
                     </StackPanel>
 
+                    <Button Content="v1: Boundary Interpretation"
+                        Command="{Binding v1Command}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                    <Button Content="v2: Potential SC Interpretation"
+                        Command="{Binding v2Command}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+                    
                     <Button Content="Run Skip Counting Analysis"
                         Command="{Binding AnalyzeSkipCountingCommand}"
                         Grid.ColumnSpan="2"
