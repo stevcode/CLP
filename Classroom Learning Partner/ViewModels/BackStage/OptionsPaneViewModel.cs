@@ -709,11 +709,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.AppendAllText(filePath, string.Format("\n\nArray: {0}", key));
                 File.AppendAllText(filePath, string.Format("\nExpected Value: {0}", expectedSkipStringValue[key]));
                 var v1ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesInInitialBoundingBox[key]);
-                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesInInitialBoundingBox[key], v1ED));
+                var cer1 = (v1ED * 100.0) / expectedSkipStringValue[key].Length;
+                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesInInitialBoundingBox[key], v1ED, cer1));
                 var v2ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesNotGroupedByRows[key]);
-                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesNotGroupedByRows[key], v2ED));
+                var cer2 = (v2ED * 100.0) / expectedSkipStringValue[key].Length;
+                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesNotGroupedByRows[key], v2ED, cer2));
                 var v3ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesGroupedByRows[key]);
-                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesGroupedByRows[key], v3ED));
+                var cer3 = (v3ED * 100.0) / expectedSkipStringValue[key].Length;
+                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesGroupedByRows[key], v3ED, cer3));
             }
         }
 
