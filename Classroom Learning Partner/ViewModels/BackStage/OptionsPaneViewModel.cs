@@ -348,13 +348,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         #region Expected Skip Values Calculations
 
+                        var expectedRows = array.Rows;
+
+                        // Hard-coded special cases for partial skip counting
+                        if (lastSubmission.Owner.FullName == "Gates Morton")
+                        {
+                            if (lastSubmission.PageNumber == 3 ||
+                                lastSubmission.PageNumber == 5 ||
+                                lastSubmission.PageNumber == 7 ||
+                                lastSubmission.PageNumber == 13)
+                            {
+                                if (array.Rows == 9 &&
+                                    array.Columns == 7)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 8 &&
+                                    array.Columns == 8)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 6 &&
+                                    array.Columns == 6)
+                                {
+                                    expectedRows = 3;
+                                }
+
+                                if (array.Rows == 8 &&
+                                    array.Columns == 4)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 6 &&
+                                    array.Columns == 9)
+                                {
+                                    expectedRows = 3;
+                                }
+                            }
+                        }
+
                         var expectedSkipValues = new List<int>();
-                        for (var i = 1; i <= array.Rows; i++)
+                        for (var i = 1; i <= expectedRows; i++)
                         {
                             expectedSkipValues.Add(i * array.Columns);
                         }
 
-                        expectedSkipStringValue.Add(vkey, string.Join(" ", expectedSkipValues));
+                        expectedSkipStringValue.Add(vkey, string.Join(" ", expectedSkipValues).Trim());
 
                         #endregion // Expected Skip Values Calculations
 
@@ -491,7 +533,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
                         if (isSkipCounting)
                         {
-                            var interpretedSkips = string.Join(" ", interpretedRowValues);
+                            var trimmedSkip = interpretedRowValues.Select(s => s.Replace(" ", string.Empty)).ToList();
+                            var interpretedSkips = string.Join(" ", trimmedSkip).Trim();
                             interpretationOfStrokesGroupedByRows.Add(vkey, interpretedSkips);
 
                             totalSkipCountRows += array.Rows;
