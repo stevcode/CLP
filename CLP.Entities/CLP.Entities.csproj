@@ -222,6 +222,7 @@
     <Compile Include="DomainModel\Tags\Strategy\BinsStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Strategy\CodedRepresentationStrategy.cs" />
     <Compile Include="DomainModel\Tags\Strategy\NumberLineStrategyTag.cs" />
+    <Compile Include="DomainModel\Utility\EditDistance.cs" />
     <Compile Include="DomainModel\Utility\Extentions\DirectoryInfoExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\ColorExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\IEnumerableExtensions.cs" />

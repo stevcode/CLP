@@ -294,6 +294,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var correctedNotMatchedExpectedCountAfterExamples = new List<string>();
 
             var keyList = new List<string>();
+            var expectedSkipStringValue = new Dictionary<string, string>();
             var interpretationOfStrokesInInitialBoundingBox = new Dictionary<string, string>();
             var interpretationOfStrokesNotGroupedByRows = new Dictionary<string,string>();
             var interpretationOfStrokesGroupedByRows = new Dictionary<string, string>();
@@ -344,6 +345,18 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
 
                         keyList.Add(vkey);
+
+                        #region Expected Skip Values Calculations
+
+                        var expectedSkipValues = new List<int>();
+                        for (var i = 1; i <= array.Rows; i++)
+                        {
+                            expectedSkipValues.Add(i * array.Columns);
+                        }
+
+                        expectedSkipStringValue.Add(vkey, string.Join(" ", expectedSkipValues));
+
+                        #endregion // Expected Skip Values Calculations
 
                         #region v1 Calculations
 
@@ -400,8 +413,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         else
                         {
                             var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokesInsideBoundary));
-                            //var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
-                            var guess = interpretations[0];
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
                             interpretationOfStrokesInInitialBoundingBox.Add(vkey, guess);
                         }
 
@@ -419,8 +431,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         else
                         {
                             var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipStrokes));
-                            //var guess = InkInterpreter.InterpretationClosestToANumber(interpretations); //or use [0]
-                            var guess = interpretations[0];
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
                             interpretationOfStrokesNotGroupedByRows.Add(vkey, guess);
                         }
 
@@ -480,7 +491,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
                         if (isSkipCounting)
                         {
-                            interpretationOfStrokesGroupedByRows.Add(vkey, string.Join(", ", interpretedRowValues));
+                            var interpretedSkips = string.Join(" ", interpretedRowValues);
+                            interpretationOfStrokesGroupedByRows.Add(vkey, interpretedSkips);
 
                             totalSkipCountRows += array.Rows;
                             totalArraysRecognizedAsSkipCounting.Add(string.Format("{0}, page {1}. [{2}x{3}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns));
@@ -695,9 +707,13 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var key in keyList)
             {
                 File.AppendAllText(filePath, string.Format("\n\nArray: {0}", key));
-                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}", interpretationOfStrokesInInitialBoundingBox[key]));
-                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}", interpretationOfStrokesNotGroupedByRows[key]));
-                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}", interpretationOfStrokesGroupedByRows[key]));
+                File.AppendAllText(filePath, string.Format("\nExpected Value: {0}", expectedSkipStringValue[key]));
+                var v1ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesInInitialBoundingBox[key]);
+                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesInInitialBoundingBox[key], v1ED));
+                var v2ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesNotGroupedByRows[key]);
+                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesNotGroupedByRows[key], v2ED));
+                var v3ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesGroupedByRows[key]);
+                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}\t\t\tEdit Distance: {1}", interpretationOfStrokesGroupedByRows[key], v3ED));
             }
         }
 
