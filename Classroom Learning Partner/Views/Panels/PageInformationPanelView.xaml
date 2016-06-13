@@ -234,6 +234,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
@@ -302,6 +303,12 @@
                     
                     <Button Content="Run Skip Counting Analysis"
                         Command="{Binding AnalyzeSkipCountingCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                    <Button Content="Run Bottom Skip Counting Analysis"
+                        Command="{Binding AnalyzeBottomSkipCountingCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />

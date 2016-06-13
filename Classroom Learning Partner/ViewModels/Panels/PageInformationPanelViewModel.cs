@@ -101,6 +101,7 @@ namespace Classroom_Learning_Partner.ViewModels
             v2Command = new Command(Onv2CommandExecute);
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
+            AnalyzeBottomSkipCountingCommand = new Command(OnAnalyzeBottomSkipCountingCommandExecute);
 
             #region Obsolete Commands
 
@@ -1406,6 +1407,40 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             IsDebuggingFlag = true;
             OnAnalyzeSkipCountingCommandExecute();
+        }
+
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command AnalyzeBottomSkipCountingCommand { get; private set; }
+
+        private void OnAnalyzeBottomSkipCountingCommandExecute()
+        {
+            var existingTags = CurrentPage.Tags.OfType<TempArraySkipCountingTag>().ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                var formattedSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                if (string.IsNullOrEmpty(formattedSkips))
+                {
+                    continue;
+                }
+
+                var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
+                {
+                    CodedID = array.CodedID,
+                    RowInterpretations = formattedSkips
+                };
+
+                CurrentPage.AddTag(tag);
+            }
         }
 
         #region Obsolete Commands

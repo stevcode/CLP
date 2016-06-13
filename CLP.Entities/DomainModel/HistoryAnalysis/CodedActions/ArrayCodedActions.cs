@@ -1378,6 +1378,36 @@ namespace CLP.Entities
             return true;
         }
 
+        public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            var historyIndex = 0;
+            var lastHistoryItem = page.History.CompleteOrderedHistoryItems.LastOrDefault();
+            if (lastHistoryItem != null)
+            {
+                historyIndex = lastHistoryItem.HistoryIndex;
+            }
+
+            var strokes = page.InkStrokes.ToList();
+
+            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 80.0;
+            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 41.5;
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var arrayVisualBottom = arrayPosition.Y + arrayDimensions.Y - array.LabelLength;
+            var arrayVisualLeft = arrayPosition.X + array.LabelLength;
+            var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+            var skipCountStrokes = new List<Stroke>();
+            var acceptedBoundary = new Rect(arrayVisualLeft - halfGridSquareSize,
+                                            arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD,
+                                            array.GridSquareSize * (arrayColumnsAndRows.X + 1),
+                                            BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
+
+            return string.Empty;
+        }
+
         #endregion // Utility Methods
 
         #region Logging
