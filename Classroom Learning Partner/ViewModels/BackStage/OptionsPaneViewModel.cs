@@ -752,14 +752,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.AppendAllText(filePath, string.Format("\n\nArray: {0}", key));
                 File.AppendAllText(filePath, string.Format("\nExpected Value: {0}", expectedSkipStringValue[key]));
                 var v1ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesInInitialBoundingBox[key]);
-                var cer1 = (v1ED * 100.0) / expectedSkipStringValue[key].Length;
-                File.AppendAllText(filePath, string.Format("\n\tv1 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesInInitialBoundingBox[key], v1ED, cer1));
+                var cer1 = Math.Round((v1ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv1: {0}\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesInInitialBoundingBox[key], v1ED, cer1));
                 var v2ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesNotGroupedByRows[key]);
-                var cer2 = (v2ED * 100.0) / expectedSkipStringValue[key].Length;
-                File.AppendAllText(filePath, string.Format("\n\tv2 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesNotGroupedByRows[key], v2ED, cer2));
+                var cer2 = Math.Round((v2ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv2: {0}\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesNotGroupedByRows[key], v2ED, cer2));
                 var v3ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesGroupedByRows[key]);
-                var cer3 = (v3ED * 100.0) / expectedSkipStringValue[key].Length;
-                File.AppendAllText(filePath, string.Format("\n\tv3 interpretation: {0}\tEdit Distance: {1}\tCharacter Error Rate: {2}%", interpretationOfStrokesGroupedByRows[key], v3ED, cer3));
+                var cer3 = Math.Round((v3ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv3: {0}\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesGroupedByRows[key], v3ED, cer3));
             }
         }
 
