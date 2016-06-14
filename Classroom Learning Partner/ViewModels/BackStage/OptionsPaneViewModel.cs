@@ -586,7 +586,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                         {
                                             compiledInterpretedValue += c;
                                             var index = adjustedInterpretedValue.IndexOf(c);
-                                            adjustedInterpretedValue = adjustedInterpretedValue.Skip(index + 1).ToString();
+                                            adjustedInterpretedValue = new string(adjustedInterpretedValue.Skip(index + 1).ToArray());
                                             continue;
                                         }
 
