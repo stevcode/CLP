@@ -102,6 +102,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
             AnalyzeBottomSkipCountingCommand = new Command(OnAnalyzeBottomSkipCountingCommandExecute);
+            ShowInitialBoundariesCommand = new Command(OnShowInitialBoundariesCommandExecute);
 
             #region Obsolete Commands
 
@@ -1443,9 +1444,40 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public Command ShowInitialBoundariesCommand { get; private set; }
+
+        private void OnShowInitialBoundariesCommandExecute()
+        {
+            const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
+            const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
+
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            CurrentPage.ClearBoundaries();
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
+                var arrayVisualTop = array.YPosition + array.LabelLength;
+                var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+                var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                arrayVisualTop - halfGridSquareSize,
+                                                LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                array.GridSquareSize * (array.Rows + 1));
+
+                var tempBoundary = new TemporaryBoundary(CurrentPage, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
+                                   {
+                                       RegionText = "Accepted Boundary"
+                                   };
+
+                CurrentPage.PageObjects.Add(tempBoundary);
+            }
+        }
+
         #region Obsolete Commands
 
-        /// <summary>Runs analysis routines on the page.</summary>
+            /// <summary>Runs analysis routines on the page.</summary>
         public Command AnalyzePageCommand { get; private set; }
 
         private void OnAnalyzePageCommandExecute()
