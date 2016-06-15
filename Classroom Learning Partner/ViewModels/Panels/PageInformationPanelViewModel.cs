@@ -1460,11 +1460,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
                 var arrayVisualTop = array.YPosition + array.LabelLength;
                 var halfGridSquareSize = array.GridSquareSize * 0.5;
+                var xpos = arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD;
+                var ypos = arrayVisualTop - halfGridSquareSize;
+                var width = LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD;
+                if (xpos + width > CurrentPage.Width)
+                {
+                    width = CurrentPage.Width - xpos;
+                }
 
-                var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
-                                                arrayVisualTop - halfGridSquareSize,
-                                                LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
-                                                array.GridSquareSize * (array.Rows + 1));
+                var height = array.GridSquareSize * (array.Rows + 1);
+                if (ypos + height > CurrentPage.Height)
+                {
+                    height = CurrentPage.Height - ypos;
+                }
+
+                var acceptedBoundary = new Rect(xpos,
+                                                ypos,
+                                                width,
+                                                height);
 
                 var tempBoundary = new TemporaryBoundary(CurrentPage, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
                                    {
