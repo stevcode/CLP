@@ -1434,6 +1434,22 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
+                var expectedValue = string.Empty;
+                for (var i = 1; i <= array.Columns; i++)
+                {
+                    expectedValue += i * array.Rows;
+                }
+
+                var expectedValueForWrongDimension = string.Empty;
+                for (var i = 1; i <= array.Columns; i++)
+                {
+                    expectedValueForWrongDimension += i * array.Columns;
+                }
+
+                var editDistance = EditDistance.Compute(expectedValue, formattedSkips);
+                var wrongDimensionEditDistance = EditDistance.Compute(expectedValueForWrongDimension, formattedSkips);
+                formattedSkips += "   ED: " + editDistance + "   WED: " + wrongDimensionEditDistance;
+
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                 {
                     CodedID = array.CodedID,

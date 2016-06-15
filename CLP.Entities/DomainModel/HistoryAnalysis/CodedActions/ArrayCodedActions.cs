@@ -1405,7 +1405,52 @@ namespace CLP.Entities
                                             array.GridSquareSize * (arrayColumnsAndRows.X + 1),
                                             BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
 
-            return string.Empty;
+            foreach (var stroke in strokes)
+            {
+                // Rule 1: Rejected for being invisibly small.
+                if (stroke.IsInvisiblySmall())
+                {
+                    continue;
+                }
+
+                var strokeBounds = stroke.GetBounds();
+
+                // Rule 3: Rejected for being outside the accepted skip counting bounds
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.50)
+                {
+                    continue;
+                }
+
+                if (intersectPercentage <= 0.90)
+                {
+                    var weightedCenterY = stroke.WeightedCenter().Y;
+                    if (weightedCenterY < arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD ||
+                        weightedCenterY > arrayVisualBottom + BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD)
+                    {
+                        continue;
+                    }
+                }
+
+                skipCountStrokes.Add(stroke);
+            }
+
+            // No strokes at all inside acceptable boundary
+            if (!skipCountStrokes.Any())
+            {
+                return string.Empty;
+            }
+
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipCountStrokes));
+            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+
+            return guess;
         }
 
         #endregion // Utility Methods
