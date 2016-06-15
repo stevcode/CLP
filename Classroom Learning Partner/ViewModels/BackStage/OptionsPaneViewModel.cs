@@ -299,6 +299,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var interpretationOfStrokesNotGroupedByRows = new Dictionary<string,string>();
             var interpretationOfStrokesGroupedByRows = new Dictionary<string, string>();
 
+            var expectedBottomSkipStringValue = new Dictionary<string, string>();
+            var interpretationOfBottomStrokes = new Dictionary<string, string>();
+
             foreach (var notebookInfo in dataService.LoadedNotebooksInfo.OrderBy(ni => ni.Notebook.Owner.FullName))
             {
                 var notebook = notebookInfo.Notebook;
@@ -426,7 +429,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         expectedSkipStringValue.Add(vkey, string.Join(" ", expectedSkipValues).Trim());
 
+                        var expectedBottomSkipValue = string.Empty;
+                        for (var i = 1; i <= array.Columns; i++)
+                        {
+                            expectedBottomSkipValue += i * array.Rows;
+                        }
+
+                        expectedBottomSkipStringValue.Add(vkey, expectedBottomSkipValue.Trim());
+
                         #endregion // Expected Skip Values Calculations
+
+                        #region Bottom Skip Counting Calculations
+
+                        var formattedBottomSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(lastSubmission, array, false);
+                        if (string.IsNullOrEmpty(formattedBottomSkips))
+                        {
+                            interpretationOfBottomStrokes.Add(vkey, "NO BOTTOM STROKES");
+                        }
+                        else
+                        {
+                            interpretationOfBottomStrokes.Add(vkey, formattedBottomSkips);
+                        }
+
+                        #endregion // Bottom Skip Counting Calculations
 
                         #region v1 Calculations
 
@@ -838,6 +863,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var v3ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesGroupedByRows[key]);
                 var cer3 = Math.Round((v3ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
                 File.AppendAllText(filePath, string.Format("\n\tv3: {0}\t\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesGroupedByRows[key], v3ED, cer3));
+
+                File.AppendAllText(filePath, string.Format("\n\n\tBottom Skip Counting:"));
+                File.AppendAllText(filePath, string.Format("\n\tExpected Bottom Value: {0}", expectedBottomSkipStringValue[key]));
+                var bottomED = EditDistance.Compute(expectedBottomSkipStringValue[key], interpretationOfBottomStrokes[key]);
+                var bottomCER = Math.Round((bottomED * 100.0) / expectedBottomSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                var isSkip = bottomED > 4 || interpretationOfBottomStrokes[key] == "NO BOTTOM STROKES" ? "NO" : "YES";
+                File.AppendAllText(filePath, string.Format("\n\tInterpretation: {0}\t\tEdit Distance: {1}\tCER: {2}%\t\tIs Skip Counting: {3}", interpretationOfBottomStrokes[key], bottomED, bottomCER, isSkip));
             }
         }
 
