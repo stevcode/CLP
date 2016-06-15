@@ -1448,6 +1448,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowInitialBoundariesCommandExecute()
         {
+            //var bounds = CurrentPage.InkStrokes.GetBounds();
+            //var tempyBoundary = new TemporaryBoundary(CurrentPage, bounds.X, bounds.Y, bounds.Height, bounds.Width)
+            //{
+            //    RegionText = "Accepted Boundary"
+            //};
+
+            //CurrentPage.PageObjects.Add(tempyBoundary);
+
+            //Console.WriteLine("Top: {0}", bounds.Y);
+            //Console.WriteLine("Bottom: {0}", bounds.Y + bounds.Height);
+            //Console.WriteLine("Left: {0}", bounds.X);
+            //Console.WriteLine("Right: {0}", bounds.X + bounds.Width);
+
+            //foreach (var array in CurrentPage.PageObjects.OfType<CLPArray>().ToList())
+            //{
+            //    var arrayBottom = array.YPosition + array.Height - array.LabelLength;
+            //    Console.WriteLine("Top Delta: {0}", arrayBottom - bounds.Y);
+            //    Console.WriteLine("Bottom Delta: {0}", bounds.Y + bounds.Height - arrayBottom);
+            //}
+
+            //return;
+
             const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
             const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
 

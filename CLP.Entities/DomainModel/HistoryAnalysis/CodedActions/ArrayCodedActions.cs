@@ -1389,8 +1389,8 @@ namespace CLP.Entities
 
             var strokes = page.InkStrokes.ToList();
 
-            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 80.0;
-            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 41.5;
+            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 45.0;
+            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 51.5;
 
             var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
             var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
