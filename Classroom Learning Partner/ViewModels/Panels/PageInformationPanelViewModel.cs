@@ -1448,7 +1448,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var editDistance = EditDistance.Compute(expectedValue, formattedSkips);
                 var wrongDimensionEditDistance = EditDistance.Compute(expectedValueForWrongDimension, formattedSkips);
-                formattedSkips += "   ED: " + editDistance + "   WED: " + wrongDimensionEditDistance;
+                //formattedSkips += "   ED: " + editDistance + "   WED: " + wrongDimensionEditDistance;
+
+                if (editDistance > 4)
+                {
+                    continue;
+                }
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                 {
