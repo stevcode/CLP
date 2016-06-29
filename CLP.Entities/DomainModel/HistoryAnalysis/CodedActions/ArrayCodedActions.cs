@@ -1464,6 +1464,85 @@ namespace CLP.Entities
             return guess;
         }
 
+        public static string Heuristics(List<string> interpretedRowValues, List<int> expectedValues)
+        {
+            for (var i = 0; i < interpretedRowValues.Count; i++)
+            {
+                var expectedValue = expectedValues[i];
+                var interpretedValue = interpretedRowValues[i];
+
+                int numericValue;
+                var isNumeric = int.TryParse(interpretedValue, out numericValue);
+                if (isNumeric)
+                {
+                    if (numericValue != expectedValue)
+                    {
+                        
+                    }
+                }
+                else
+                {
+                    
+                }
+            }
+
+
+
+            // 8, 16, 24, 32
+            // By 8 from 8 to 16
+
+            // 8, 16, 2q, 32
+            // By 8 from 8 to 16
+
+            var test = new List<int>();
+            var jumpRanges = new List<string>();
+            int? currentFirst = null;
+            int? currentLast = null;
+            int? currentJumpSize = null;
+
+            for (var i = 1; i < test.Count; i++)
+            {
+                var current = test[i];
+                var previous = test[i - 1];
+                var jump = current - previous;
+
+                if (currentFirst == null)
+                {
+                    currentFirst = previous;
+                }
+
+                if (currentJumpSize == null)
+                {
+                    currentJumpSize = jump;
+                    currentLast = current;
+                }
+                else if (currentJumpSize == jump)
+                {
+                    currentLast = current;
+                }
+                else
+                {
+                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    jumpRanges.Add(jumpRange);
+
+                    currentFirst = previous;
+                    currentLast = current;
+                    currentJumpSize = jump;
+                }
+
+                if (currentFirst != null &&
+                    currentLast != null &&
+                    currentJumpSize != null)
+                {
+                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    jumpRanges.Add(jumpRange);
+                }
+            }
+
+
+            return string.Empty;
+        }
+
         #endregion // Utility Methods
 
         #region Logging
