@@ -176,7 +176,8 @@ namespace CLP.InkInterpretation
             foreach (var interpretation in interpretations)
             {
                 var numberOfDigits = interpretation.Count(char.IsDigit);
-                var percentage = numberOfDigits / interpretation.Length;
+                var percentage = numberOfDigits / (interpretation.Length * 1.0);
+                //var percentage = numberOfDigits / interpretation.Length;
                 if (percentage >= percentageOfNumbers)
                 {
                     percentageOfNumbers = percentage;

@@ -1254,6 +1254,8 @@ namespace CLP.Entities
 
         public static bool IsSkipCounting(List<string> interpretedRowValues)
         {
+            var isSkipCounting = true;
+
             // Rule 0: Passed null value.
             if (interpretedRowValues == null)
             {
@@ -1288,14 +1290,16 @@ namespace CLP.Entities
             if (numericInterpreationsCount == 0)
             {
                 ArraysRule3++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 4: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.
             if (numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
             {
                 ArraysRule4++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 5: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.
@@ -1303,7 +1307,8 @@ namespace CLP.Entities
                 nonEmptyInterpretationsCount / (interpretedRowValues.Count * 1.0) <= .5)
             {
                 ArraysRule5++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 6: The first 2 rows do not have interpreted values.
@@ -1311,7 +1316,8 @@ namespace CLP.Entities
                 string.IsNullOrEmpty(interpretedRowValues[1]))
             {
                 ArraysRule6++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             var numberOfSingleGaps = 0;
@@ -1337,7 +1343,8 @@ namespace CLP.Entities
             if (numberOfSingleGaps > 1)
             {
                 ArraysRule7++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
             
             var numberOfDoubleGaps = 0;
@@ -1364,7 +1371,8 @@ namespace CLP.Entities
             if (numberOfDoubleGaps > 0)
             {
                 ArraysRule8++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 9: More than 2 rows share the same interpreted value.
@@ -1372,10 +1380,88 @@ namespace CLP.Entities
             if (maxDuplicateCount > 2)
             {
                 ArraysRule9++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
-            return true;
+            return isSkipCounting;
+
+            //return true;
+        }
+
+        public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            var historyIndex = 0;
+            var lastHistoryItem = page.History.CompleteOrderedHistoryItems.LastOrDefault();
+            if (lastHistoryItem != null)
+            {
+                historyIndex = lastHistoryItem.HistoryIndex;
+            }
+
+            var strokes = page.InkStrokes.ToList();
+
+            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 45.0;
+            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 51.5;
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var arrayVisualBottom = arrayPosition.Y + arrayDimensions.Y - array.LabelLength;
+            var arrayVisualLeft = arrayPosition.X + array.LabelLength;
+            var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+            var skipCountStrokes = new List<Stroke>();
+            var acceptedBoundary = new Rect(arrayVisualLeft - halfGridSquareSize,
+                                            arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD,
+                                            array.GridSquareSize * (arrayColumnsAndRows.X + 1),
+                                            BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
+
+            foreach (var stroke in strokes)
+            {
+                // Rule 1: Rejected for being invisibly small.
+                if (stroke.IsInvisiblySmall())
+                {
+                    continue;
+                }
+
+                var strokeBounds = stroke.GetBounds();
+
+                // Rule 3: Rejected for being outside the accepted skip counting bounds
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.50)
+                {
+                    continue;
+                }
+
+                if (intersectPercentage <= 0.90)
+                {
+                    var weightedCenterY = stroke.WeightedCenter().Y;
+                    if (weightedCenterY < arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD ||
+                        weightedCenterY > arrayVisualBottom + BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD)
+                    {
+                        continue;
+                    }
+                }
+
+                skipCountStrokes.Add(stroke);
+            }
+
+            // No strokes at all inside acceptable boundary
+            if (!skipCountStrokes.Any())
+            {
+                return string.Empty;
+            }
+
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipCountStrokes));
+            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+
+            return guess;
         }
 
         #endregion // Utility Methods

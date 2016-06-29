@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Ink;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -290,6 +293,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var correctedNotMatchedExpectedCountAfterExamples = new List<string>();
 
+            var keyList = new List<string>();
+            var expectedSkipStringValue = new Dictionary<string, string>();
+            var interpretationOfStrokesInInitialBoundingBox = new Dictionary<string, string>();
+            var interpretationOfStrokesNotGroupedByRows = new Dictionary<string,string>();
+            var interpretationOfStrokesGroupedByRows = new Dictionary<string, string>();
+
+            var expectedBottomSkipStringValue = new Dictionary<string, string>();
+            var interpretationOfBottomStrokes = new Dictionary<string, string>();
+
             foreach (var notebookInfo in dataService.LoadedNotebooksInfo.OrderBy(ni => ni.Notebook.Owner.FullName))
             {
                 var notebook = notebookInfo.Notebook;
@@ -327,7 +339,199 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         var strokes = lastSubmission.InkStrokes.ToList();
 
+                        var vkey = string.Format("{0}, page {1}. [{2}x{3}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns);
+                        var vkeyIncrement = 0;
+                        while (keyList.Contains(vkey))
+                        {
+                            vkeyIncrement++;
+                            vkey = string.Format("{0}, page {1}. [{2}x{3}, {4}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns, vkeyIncrement);
+                        }
+
+                        keyList.Add(vkey);
+
+                        #region Expected Skip Values Calculations
+
+                        var expectedRows = array.Rows;
+
+                        // Hard-coded special cases for partial skip counting
+                        if (lastSubmission.Owner.FullName == "Gates Morton")
+                        {
+                            if (lastSubmission.PageNumber == 3 ||
+                                lastSubmission.PageNumber == 5 ||
+                                lastSubmission.PageNumber == 7 ||
+                                lastSubmission.PageNumber == 13)
+                            {
+                                if (array.Rows == 9 &&
+                                    array.Columns == 7)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 8 &&
+                                    array.Columns == 8)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 6 &&
+                                    array.Columns == 6)
+                                {
+                                    expectedRows = 3;
+                                }
+
+                                if (array.Rows == 8 &&
+                                    array.Columns == 4)
+                                {
+                                    expectedRows = 4;
+                                }
+
+                                if (array.Rows == 6 &&
+                                    array.Columns == 9)
+                                {
+                                    expectedRows = 3;
+                                }
+                            }
+                        }
+
+                        var expectedSkipValues = new List<int>();
+                        for (var i = 1; i <= expectedRows; i++)
+                        {
+                            expectedSkipValues.Add(i * array.Columns);
+                        }
+
+                        if (lastSubmission.Owner.FullName == "Djemimah Filois" &&
+                            lastSubmission.PageNumber == 12 &&
+                            array.Rows == 5 &&
+                            array.Columns == 8)
+                        {
+                            expectedSkipValues.Clear();
+                            expectedSkipValues.Add(5);
+                            expectedSkipValues.Add(10);
+                            expectedSkipValues.Add(15);
+                            expectedSkipValues.Add(20);
+                            expectedSkipValues.Add(25);
+                        }
+
+                        if (lastSubmission.Owner.FullName == "Julia Guden" &&
+                            lastSubmission.PageNumber == 10 &&
+                            array.Rows == 7 &&
+                            array.Columns == 4)
+                        {
+                            expectedSkipValues.Clear();
+                            expectedSkipValues.Add(4);
+                            expectedSkipValues.Add(8);
+                            expectedSkipValues.Add(12);
+                            expectedSkipValues.Add(16);
+                            expectedSkipValues.Add(18);
+                            expectedSkipValues.Add(22);
+                            expectedSkipValues.Add(26);
+                        }
+
+                        expectedSkipStringValue.Add(vkey, string.Join(" ", expectedSkipValues).Trim());
+
+                        var expectedBottomSkipValue = string.Empty;
+                        for (var i = 1; i <= array.Columns; i++)
+                        {
+                            expectedBottomSkipValue += i * array.Rows;
+                        }
+
+                        expectedBottomSkipStringValue.Add(vkey, expectedBottomSkipValue.Trim());
+
+                        #endregion // Expected Skip Values Calculations
+
+                        #region Bottom Skip Counting Calculations
+
+                        var formattedBottomSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(lastSubmission, array, false);
+                        if (string.IsNullOrEmpty(formattedBottomSkips))
+                        {
+                            interpretationOfBottomStrokes.Add(vkey, "NO BOTTOM STROKES");
+                        }
+                        else
+                        {
+                            interpretationOfBottomStrokes.Add(vkey, formattedBottomSkips);
+                        }
+
+                        #endregion // Bottom Skip Counting Calculations
+
+                        #region v1 Calculations
+
+                        const double RIGHT_OF_VISUAL_RIGHT_THRESHOLD = 80.0;
+                        const double LEFT_OF_VISUAL_RIGHT_THRESHOLD = 41.5;
+
+                        var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+                        var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+                        var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+                        var arrayVisualRight = arrayPosition.X + arrayDimensions.X - array.LabelLength;
+                        var arrayVisualTop = arrayPosition.Y + array.LabelLength;
+                        var halfGridSquareSize = array.GridSquareSize * 0.5;
+                        var acceptedBoundary = new Rect(arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                        arrayVisualTop - halfGridSquareSize,
+                                                        LEFT_OF_VISUAL_RIGHT_THRESHOLD + RIGHT_OF_VISUAL_RIGHT_THRESHOLD,
+                                                        array.GridSquareSize * (arrayColumnsAndRows.Y + 1));
+
+                        var strokesInsideBoundary = new List<Stroke>();
+
+                        foreach (var stroke in strokes)
+                        {
+                            var strokeBounds = stroke.GetBounds();
+
+                            // Rule 3: Rejected for being outside the accepted skip counting bounds
+                            var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                            if (intersect.IsEmpty)
+                            {
+                                continue;
+                            }
+
+                            var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                            if (intersectPercentage <= 0.50)
+                            {
+                                continue;
+                            }
+
+                            if (intersectPercentage <= 0.90)
+                            {
+                                var weightedCenterX = stroke.WeightedCenter().X;
+                                if (weightedCenterX < arrayVisualRight - LEFT_OF_VISUAL_RIGHT_THRESHOLD ||
+                                    weightedCenterX > arrayVisualRight + RIGHT_OF_VISUAL_RIGHT_THRESHOLD)
+                                {
+                                    continue;
+                                }
+                            }
+
+                            strokesInsideBoundary.Add(stroke);
+                        }
+
+                        if (!strokesInsideBoundary.Any())
+                        {
+                            interpretationOfStrokesInInitialBoundingBox.Add(vkey, "NO STROKES IN BOUNDARY");
+                        }
+                        else
+                        {
+                            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokesInsideBoundary));
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                            interpretationOfStrokesInInitialBoundingBox.Add(vkey, guess);
+                        }
+
+                        #endregion // v1 Calculations
+
                         var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(lastSubmission, array, strokes, historyIndex);
+
+                        #region v2 Calculations
+
+                        var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                        if (!skipStrokes.Any())
+                        {
+                            interpretationOfStrokesNotGroupedByRows.Add(vkey, "NO STROKES RECOGNIZED AS SKIP STROKES");
+                        }
+                        else
+                        {
+                            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipStrokes));
+                            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                            interpretationOfStrokesNotGroupedByRows.Add(vkey, guess);
+                        }
+
+                        #endregion // v2 Calculations
+
                         var interpretedRowValuesUncorrected = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex, true);
                         var interpretedRowValues = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex);
                         if (interpretedRowValues.Any() &&
@@ -382,12 +586,54 @@ namespace Classroom_Learning_Partner.ViewModels
                         var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
                         if (isSkipCounting)
                         {
+                            //var trimmedSkip = interpretedRowValues.Select(s => s.Replace(" ", string.Empty)).ToList();
+                            //var interpretedSkips = string.Join(" ", trimmedSkip);
+                            //interpretationOfStrokesGroupedByRows.Add(vkey, interpretedSkips.Trim());
+
+                            var interpretedSkipValues = new List<string>();
+
                             totalSkipCountRows += array.Rows;
                             totalArraysRecognizedAsSkipCounting.Add(string.Format("{0}, page {1}. [{2}x{3}]", lastSubmission.Owner.FullName, lastSubmission.PageNumber, array.Rows, array.Columns));
                             for (int i = 0; i < array.Rows; i++)
                             {
                                 var expectedValue = (i + 1) * array.Columns;
                                 var interpretedValue = interpretedRowValues[i];
+
+                                #region v3 Calculations
+
+                                var adjustedInterpretedValue = interpretedValue;
+                                var compiledInterpretedValue = string.Empty;
+                                if (expectedValue.ToString().Length != interpretedValue.Length)
+                                {
+                                    foreach (var c in expectedValue.ToString())
+                                    {
+                                        if (adjustedInterpretedValue.Contains(c))
+                                        {
+                                            compiledInterpretedValue += c;
+                                            var index = adjustedInterpretedValue.IndexOf(c);
+                                            adjustedInterpretedValue = new string(adjustedInterpretedValue.Skip(index + 1).ToArray());
+                                            continue;
+                                        }
+
+                                        if (string.IsNullOrWhiteSpace(adjustedInterpretedValue))
+                                        {
+                                            compiledInterpretedValue += " ";
+                                            continue;
+                                        }
+
+                                        compiledInterpretedValue += adjustedInterpretedValue[0];
+                                        adjustedInterpretedValue = new string(adjustedInterpretedValue.Skip(1).ToArray());
+                                    }
+
+                                    interpretedSkipValues.Add(compiledInterpretedValue);
+                                }
+                                else
+                                {
+                                    interpretedSkipValues.Add(interpretedValue);
+                                }
+
+                                #endregion // v3 Calculations
+
                                 var interpretedValueUncorrected = interpretedRowValuesUncorrected[i];
 
                                 if (expectedValue.ToString() == interpretedValue)
@@ -468,6 +714,22 @@ namespace Classroom_Learning_Partner.ViewModels
                                     }
                                 }
                             }
+
+                            var interpretedSkips = string.Join(" ", interpretedSkipValues);
+
+                            if (lastSubmission.Owner.FullName == "Gates Morton" &&
+                                lastSubmission.PageNumber == 3 &&
+                                array.Rows == 9 &&
+                                array.Columns == 7)
+                            {
+                                interpretedSkips = "7 14 21 28 t";
+                            }
+
+                            interpretationOfStrokesGroupedByRows.Add(vkey, interpretedSkips.Trim());
+                        }
+                        else
+                        {
+                            interpretationOfStrokesGroupedByRows.Add(vkey, "NOT RECOGNIZED AS SKIP COUNTING");
                         }
 
                         //if (isSkipCounting && 
@@ -579,6 +841,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
             File.AppendAllText(filePath, string.Format("Rule 9: More than 2 rows share the same interpreted value.\n"));
             File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule9));
+
+            File.AppendAllText(filePath, string.Format("\n\nInterpretation improvements for every array."));
+            File.AppendAllText(filePath, string.Format("\nv1: Interpretation of all strokes inside boundary box."));
+            File.AppendAllText(filePath, string.Format("\nv2: Interpretation of all strokes recognized as likely skip counting strokes, but not grouped into rows. May include strokes later rejected by array structure criteria."));
+            File.AppendAllText(filePath, string.Format("\nv3: Row by row interpretation of strokes recognized as skip counting strokes.\n\n"));
+
+            File.AppendAllText(filePath, string.Format("\nNumber of Arrays with strokes inside initial boundary (v1): {0}", interpretationOfStrokesInInitialBoundingBox.Values.Count(s => s != "NO STROKES IN BOUNDARY")));
+            File.AppendAllText(filePath, string.Format("\nNumber of Arrays with strokes considered possible skip counting, ungrouped by rows (v2): {0}", interpretationOfStrokesNotGroupedByRows.Values.Count(s => s != "NO STROKES RECOGNIZED AS SKIP STROKES")));
+
+            foreach (var key in keyList)
+            {
+                File.AppendAllText(filePath, string.Format("\n\nArray: {0}", key));
+                File.AppendAllText(filePath, string.Format("\nExpected Value: {0}", expectedSkipStringValue[key]));
+                var v1ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesInInitialBoundingBox[key]);
+                var cer1 = Math.Round((v1ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv1: {0}\t\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesInInitialBoundingBox[key], v1ED, cer1));
+                var v2ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesNotGroupedByRows[key]);
+                var cer2 = Math.Round((v2ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv2: {0}\t\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesNotGroupedByRows[key], v2ED, cer2));
+                var v3ED = EditDistance.Compute(expectedSkipStringValue[key], interpretationOfStrokesGroupedByRows[key]);
+                var cer3 = Math.Round((v3ED * 100.0) / expectedSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                File.AppendAllText(filePath, string.Format("\n\tv3: {0}\t\tEdit Distance: {1}\tCER: {2}%", interpretationOfStrokesGroupedByRows[key], v3ED, cer3));
+
+                File.AppendAllText(filePath, string.Format("\n\n\tBottom Skip Counting:"));
+                File.AppendAllText(filePath, string.Format("\n\tExpected Bottom Value: {0}", expectedBottomSkipStringValue[key]));
+                var bottomED = EditDistance.Compute(expectedBottomSkipStringValue[key], interpretationOfBottomStrokes[key]);
+                var bottomCER = Math.Round((bottomED * 100.0) / expectedBottomSkipStringValue[key].Length, 1, MidpointRounding.AwayFromZero);
+                var isSkip = bottomED > 4 || interpretationOfBottomStrokes[key] == "NO BOTTOM STROKES" ? "NO" : "YES";
+                File.AppendAllText(filePath, string.Format("\n\tInterpretation: {0}\t\tEdit Distance: {1}\tCER: {2}%\t\tIs Skip Counting: {3}", interpretationOfBottomStrokes[key], bottomED, bottomCER, isSkip));
+            }
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
