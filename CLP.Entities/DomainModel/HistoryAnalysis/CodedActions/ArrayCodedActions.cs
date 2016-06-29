@@ -1254,6 +1254,8 @@ namespace CLP.Entities
 
         public static bool IsSkipCounting(List<string> interpretedRowValues)
         {
+            var isSkipCounting = true;
+
             // Rule 0: Passed null value.
             if (interpretedRowValues == null)
             {
@@ -1288,14 +1290,16 @@ namespace CLP.Entities
             if (numericInterpreationsCount == 0)
             {
                 ArraysRule3++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 4: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.
             if (numericInterpreationsCount / (nonEmptyInterpretationsCount * 1.0) < 0.34)
             {
                 ArraysRule4++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 5: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.
@@ -1303,7 +1307,8 @@ namespace CLP.Entities
                 nonEmptyInterpretationsCount / (interpretedRowValues.Count * 1.0) <= .5)
             {
                 ArraysRule5++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 6: The first 2 rows do not have interpreted values.
@@ -1311,7 +1316,8 @@ namespace CLP.Entities
                 string.IsNullOrEmpty(interpretedRowValues[1]))
             {
                 ArraysRule6++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             var numberOfSingleGaps = 0;
@@ -1337,7 +1343,8 @@ namespace CLP.Entities
             if (numberOfSingleGaps > 1)
             {
                 ArraysRule7++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
             
             var numberOfDoubleGaps = 0;
@@ -1364,7 +1371,8 @@ namespace CLP.Entities
             if (numberOfDoubleGaps > 0)
             {
                 ArraysRule8++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
             // Rule 9: More than 2 rows share the same interpreted value.
@@ -1372,10 +1380,13 @@ namespace CLP.Entities
             if (maxDuplicateCount > 2)
             {
                 ArraysRule9++;
-                return false;
+                //return false;
+                isSkipCounting = false;
             }
 
-            return true;
+            return isSkipCounting;
+
+            //return true;
         }
 
         public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
