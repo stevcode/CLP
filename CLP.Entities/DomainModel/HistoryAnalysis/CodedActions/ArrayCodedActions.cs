@@ -1464,11 +1464,12 @@ namespace CLP.Entities
             return guess;
         }
 
-        public static string Heuristics(List<string> interpretedRowValues, List<int> expectedValues)
+        public static string Heuristics(List<string> interpretedRowValues, int rows, int columns)
         {
             for (var i = 0; i < interpretedRowValues.Count; i++)
             {
-                var expectedValue = expectedValues[i];
+                var expectedValue = columns * (i + 1);
+                var wrongDimensionExpectedValue = rows * (i + 1);
                 var interpretedValue = interpretedRowValues[i];
 
                 int numericValue;
