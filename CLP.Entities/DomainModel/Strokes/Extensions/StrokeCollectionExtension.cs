@@ -124,7 +124,7 @@ namespace CLP.Entities
             const double MIN_ASPECT_RATIO = 0.5;
             const double CELL_SIZE_RATIO = 5.0;
 
-            var bounds = getBounds(strokes);
+            var bounds = GetBounds(strokes);
 
             if (bounds.Width < MIN_BOUNDS || bounds.Height < MIN_BOUNDS)
             {
@@ -162,7 +162,7 @@ namespace CLP.Entities
 
         }
 
-        private static Rect getBounds(this IEnumerable<Stroke> strokes)
+        private static Rect GetBounds(this IEnumerable<Stroke> strokes)
         {
             double minX = 1000000, minY = 1000000;
             double maxX = 0, maxY = 0;
