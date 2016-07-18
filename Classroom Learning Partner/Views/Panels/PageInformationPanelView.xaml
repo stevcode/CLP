@@ -320,6 +320,12 @@
                         Height="20"
                         Margin="1" />
 
+                    <!--<Button Content="TSV Testing"
+                        Command="{Binding TSVCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />-->
+
                     <Rectangle Grid.ColumnSpan="2"
                            Height="1"
                            Margin="1 5"

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
@@ -103,6 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
             AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
             AnalyzeBottomSkipCountingCommand = new Command(OnAnalyzeBottomSkipCountingCommandExecute);
+            TSVCommand = new Command(OnTSVCommandExecute);
             ShowInitialBoundariesCommand = new Command(OnShowInitialBoundariesCommandExecute);
 
             #region Obsolete Commands
@@ -246,9 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageOrientationsProperty, value); }
         }
 
-        public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations",
-                                                                                        typeof(ObservableCollection<string>),
-                                                                                        () => new ObservableCollection<string>());
+        public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>The currently selected Page Orientation.</summary>
         public string SelectedPageOrientation
@@ -448,7 +448,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage = Notebook.Pages[currentPageIndex - 1];
         }
 
-        private bool OnMovePageUpCanExecute() { return Notebook.Pages.CanMoveItemUp(CurrentPage); }
+        private bool OnMovePageUpCanExecute()
+        {
+            return Notebook.Pages.CanMoveItemUp(CurrentPage);
+        }
 
         /// <summary>Moves the CurrentPage Down in the notebook.</summary>
         public Command MovePageDownCommand { get; private set; }
@@ -464,7 +467,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage = Notebook.Pages[currentPageIndex + 1];
         }
 
-        private bool OnMovePageDownCanExecute() { return Notebook.Pages.CanMoveItemDown(CurrentPage); }
+        private bool OnMovePageDownCanExecute()
+        {
+            return Notebook.Pages.CanMoveItemDown(CurrentPage);
+        }
 
         /// <summary>Add 200 pixels to the height of the current page.</summary>
         public Command MakePageLongerCommand { get; private set; }
@@ -495,7 +501,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Trims the current page's excess height if free of ink strokes and pageObjects.</summary>
         public Command TrimPageCommand { get; private set; }
 
-        private void OnTrimPageCommandExecute() { CurrentPage.TrimPage(); }
+        private void OnTrimPageCommandExecute()
+        {
+            CurrentPage.TrimPage();
+        }
 
         /// <summary>Converts current page between landscape and portrait.</summary>
         public Command SwitchPageLayoutCommand { get; private set; }
@@ -570,17 +579,17 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDifferentiatePageCommandExecute()
         {
             var numberPageVersions = new KeypadWindowView
-            {
-                Owner = Application.Current.MainWindow,
-                QuestionText =
+                                     {
+                                         Owner = Application.Current.MainWindow,
+                                         QuestionText =
                                          {
                                              Text = "How many versions of the page?"
                                          },
-                NumbersEntered =
+                                         NumbersEntered =
                                          {
                                              Text = "4"
                                          }
-            };
+                                     };
 
             numberPageVersions.ShowDialog();
             if (numberPageVersions.DialogResult == true)
@@ -739,9 +748,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
                     var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel)
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
+                                             {
+                                                 Owner = Application.Current.MainWindow
+                                             };
                     multiplicationView.ShowDialog();
 
                     if (multiplicationView.DialogResult != true)
@@ -762,9 +771,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var divisionViewModel = new DivisionRelationDefinitionTagViewModel(answerDefinition as DivisionRelationDefinitionTag);
                     var divisionView = new DivisionRelationDefinitionTagView(divisionViewModel)
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
+                                       {
+                                           Owner = Application.Current.MainWindow
+                                       };
                     divisionView.ShowDialog();
 
                     if (divisionView.DialogResult != true)
@@ -778,9 +787,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var additionViewModel = new AdditionRelationDefinitionTagViewModel(answerDefinition as AdditionRelationDefinitionTag);
                     var additionView = new AdditionRelationDefinitionTagView(additionViewModel)
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
+                                       {
+                                           Owner = Application.Current.MainWindow
+                                       };
                     additionView.ShowDialog();
 
                     if (additionView.DialogResult != true)
@@ -885,9 +894,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var clusterBounds = cluster.Strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
-                };
+                                   {
+                                       RegionText = string.Format("{0}: {1}", cluster.ClusterName, cluster.ClusterType)
+                                   };
                 CurrentPage.PageObjects.Add(tempBoundary);
             }
         }
@@ -955,9 +964,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var clusterBounds = strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
-                {
-                    RegionText = regionCount.ToString()
-                };
+                                   {
+                                       RegionText = regionCount.ToString()
+                                   };
                 regionCount++;
                 CurrentPage.PageObjects.Add(tempBoundary);
             }
@@ -1035,11 +1044,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
             var plotView = new OPTICSReachabilityPlotView()
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                Reachability = normalizedReachabilityPlot
-            };
+                           {
+                               Owner = Application.Current.MainWindow,
+                               WindowStartupLocation = WindowStartupLocation.Manual,
+                               Reachability = normalizedReachabilityPlot
+                           };
             plotView.Show();
 
             //var rawData = new double[normalizedReachabilityPlot.Count][];
@@ -1522,6 +1531,191 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             IsDebuggingFlag = true;
             OnAnalyzeSkipCountingCommandExecute();
+        }
+
+        public Command TSVCommand { get; private set; }
+
+        private void OnTSVCommandExecute()
+        {
+            var pageNumber = CurrentPage.PageNumber;
+            var studentName = CurrentPage.Owner.FullName;
+            var historyActions = CurrentPage.History.HistoryActions;
+            var firstAction = historyActions.FirstOrDefault();
+            var compActions = new ObservableCollection<IHistoryAction>();
+            var index = 0;
+            var strCompActions = "";
+            //Store actions logged from Pass 3
+            for (var i = 0; i < historyActions.Count; i++)
+            {
+                if (historyActions[i].CodedValue == "PASS [3]")
+                {
+                    index = i + 1;
+                    break;
+                }
+            }
+            for (var j = index; j < historyActions.Count; j++)
+            {
+                compActions.Add(historyActions[j]);
+            }
+
+            foreach (var action in compActions)
+            {
+                if (action.CodedObject == Codings.OBJECT_INK &&
+                    action.CodedObjectAction == Codings.ACTION_INK_IGNORE)
+                {
+                    continue;
+                }
+
+                if (action.CodedObjectAction == Codings.ACTION_OBJECT_MOVE)
+                {
+                    continue;
+                }
+
+                if (!action.IsObjectActionVisible)
+                {
+                    strCompActions += action.CodedObject + "; ";
+                }
+                else
+                {
+                    strCompActions += action.CodedObject + " " + action.CodedObjectAction + "; ";
+                }
+
+            }
+
+            //Edit Name and Page Number for comparison from Machine Codes to Human Codes
+            string stringPageNumber;
+            string compareName;
+
+            if (pageNumber < 10)
+            {
+                stringPageNumber = "A0" + pageNumber.ToString();
+            }
+            else
+            {
+                stringPageNumber = "A" + pageNumber.ToString();
+            }
+            if (studentName.Contains("Allison"))
+            {
+                compareName = studentName.Substring(0, 9) + ".";
+            }
+            else if (studentName.Contains("Ella"))
+            {
+                compareName = studentName.Substring(0, 6) + ".";
+            }
+            else
+            {
+                compareName = studentName.Split(' ')[0];
+            }
+
+            //Load TSV file from desktop
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var tsvFile = Path.Combine(desktopDirectory, "Test.tsv");
+            var sr = new StreamReader(tsvFile);
+            var full_doc = new List<List<string>>();
+            string readLine;
+            while ((readLine = sr.ReadLine()) != null)
+            {
+                var row = readLine.Split('\t').ToList();
+                full_doc.Add(row);
+            }
+
+            // Grab matching TSV data and format for comparison
+            var changed = "";
+            var analysisCodes = "";
+            foreach (var row in full_doc)
+            {
+                if (row[2] == compareName &&
+                    row[4] == stringPageNumber)
+                {
+                    var cellContents = row[12];
+                    analysisCodes = row[13];
+                    var contents = cellContents.Split(';');
+                    foreach (var con in contents)
+                    {
+                        var reg_con = Regex.Replace(con, "\\[.*\\]", string.Empty).Trim();
+                        var reg_con2 = Regex.Replace(reg_con, "[^a-zA-Z0-9_\\s]+", "").Trim();
+
+                        if (reg_con2.Length >= 3)
+                        {
+                            if (reg_con2.Substring(0, 3) == "EQN")
+                            {
+                                changed += Codings.OBJECT_ARITH + reg_con2.Substring(3) + "; ";
+                            }
+                        }
+                        if (reg_con2.Length - 5 > 0)
+                        {
+                            if (reg_con2.Substring((reg_con2.Length) - 4) == "leqn")
+                            {
+                                changed += reg_con2.Substring(0, reg_con2.Length - 4) + "eqn; ";
+                            }
+                            else
+                            {
+                                changed += reg_con2 + "; ";
+                            }
+                        }
+
+                        else
+                        {
+                            changed += reg_con2 + "; ";
+                        }
+                    }
+                }
+            }
+            //Format changes to allow for comparison
+            strCompActions = strCompActions.Trim(' ');
+            changed = changed.Trim(' ');
+            strCompActions = strCompActions.Trim(';');
+            changed = changed.Trim(';');
+            strCompActions = " " + strCompActions;
+            changed = " " + changed;
+            // Print for Comparison
+            var output = string.Format("Student Testing: {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}",
+                                       compareName + ' ',
+                                       stringPageNumber,
+                                       Environment.NewLine,
+                                       "Machine Codes: ",
+                                       strCompActions,
+                                       Environment.NewLine,
+                                       "People Codes: ",
+                                       changed,
+                                       "Human Analysis Codes: ",
+                                       analysisCodes);
+            Console.WriteLine(output);
+
+            var consecutive_count = 0;
+            var total_matches = 0;
+            var machineElems = strCompActions.Split(';');
+            var humanElems = changed.Split(';');
+            var elems = Math.Min(machineElems.Length, humanElems.Length);
+            var total_codes = Math.Max(machineElems.Length, humanElems.Length);
+            var copyMachineElems = machineElems.ToList();
+            for (int i = 0; i < elems; i++)
+            {
+                //Console.WriteLine(humanElems[i]);
+                if (machineElems[i] == humanElems[i])
+                {
+                    consecutive_count++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (int j = 0; j < humanElems.Length; j++)
+            {
+                //Console.WriteLine(humanElems[j]);
+                //Console.WriteLine(copyMachineElems.Contains(humanElems[j]));
+                if (copyMachineElems.Contains(humanElems[j]))
+                {
+                    copyMachineElems.RemoveAt(copyMachineElems.FindIndex(humanElems[j]));
+                    total_matches++;
+                }
+            }
+
+            Console.WriteLine("Total Matches: " + total_matches + " out of " + total_codes);
+            Console.WriteLine("Consecutive Matches: " + consecutive_count + " out of " + total_codes);
+            Console.WriteLine();
         }
 
         /// <summary>
