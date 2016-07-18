@@ -31,6 +31,11 @@ namespace CLP.Entities
             return false;
         }
 
-        public static
+        public static string TrimAll(this string s)
+        {
+            Argument.IsNotNull("s", s);
+
+            return s.Replace(" ", string.Empty);
+        }
     }
 }
