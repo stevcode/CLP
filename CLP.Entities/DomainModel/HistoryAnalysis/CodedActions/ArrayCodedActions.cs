@@ -1484,12 +1484,15 @@ namespace CLP.Entities
 
             public bool IsNumeric
             {
-                get { return Designation != HeuristicDesignation.FullText && Designation != HeuristicDesignation.PartialNumeric; }
+                get { return Designation != HeuristicDesignation.FullText && Designation != HeuristicDesignation.PartialNumeric && Designation != HeuristicDesignation.Empty; }
             }
 
             public bool IsCorrectedNumeric
             {
-                get { return CorrectedDesignation != HeuristicDesignation.FullText && CorrectedDesignation != HeuristicDesignation.PartialNumeric; }
+                get
+                {
+                    return CorrectedDesignation != HeuristicDesignation.FullText && CorrectedDesignation != HeuristicDesignation.PartialNumeric && CorrectedDesignation != HeuristicDesignation.Empty;
+                }
             }
         }
 
