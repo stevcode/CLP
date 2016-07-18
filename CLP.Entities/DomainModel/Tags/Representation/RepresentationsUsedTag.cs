@@ -347,7 +347,7 @@ namespace CLP.Entities
                             continue;
                         }
 
-                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var referenceArrayID = historyAction.ReferencePageObjectID;
                         var actionID = historyAction.CodedObjectActionID;
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         if (!subArrayGroups.ContainsKey(referenceArrayID))
@@ -369,7 +369,7 @@ namespace CLP.Entities
                             continue;
                         }
 
-                        var referenceArrayID = historyAction.MetaData["REFERENCE_PAGE_OBJECT_ID"];
+                        var referenceArrayID = historyAction.ReferencePageObjectID;
                         var actionID = historyAction.CodedObjectActionID;
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         foreach (var subArray in subArrays)
@@ -405,9 +405,18 @@ namespace CLP.Entities
 
                         var obj = array.CodedName;
                         var id = historyAction.CodedObjectID;
+                        var referenceArrayID = historyAction.ReferencePageObjectID;
+                        var isInteractedWith =
+                            historyActions.Where(h => h.ReferencePageObjectID == referenceArrayID)
+                                          .Any(
+                                               h =>
+                                               h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
+                                               h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
+                                               (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+
                         var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
-                        var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
                         deletedCodedRepresentations.Add(codedValue);
                         allRepresentations.Add(obj);
                     }
@@ -425,9 +434,18 @@ namespace CLP.Entities
                 {
                     var obj = array.CodedName;
                     var id = array.CodedID;
+                    var referenceArrayID = array.ID;
+                    var isInteractedWith =
+                        historyActions.Where(h => h.ReferencePageObjectID == referenceArrayID)
+                                      .Any(
+                                           h =>
+                                           h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
+                                           h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
+                                           (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+
                     var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
-                    var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
 
                     var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
