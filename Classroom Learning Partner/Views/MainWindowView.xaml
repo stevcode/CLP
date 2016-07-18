@@ -9,7 +9,7 @@
                   xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                   Loaded="MainWindowView_OnLoaded"
                   Closing="MainWindowView_OnClosing"
-                  Icon="..\Images\InkWell.ico"
+                  Icon="pack://application:,,,/Resources/Images/Icons/CLPPaperClipLogoBlack.ico"
                   Height="800"
                   Width="1280"
                   Title="{Binding TitleBarText}"
