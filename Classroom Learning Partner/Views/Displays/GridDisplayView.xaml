@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
 
     <Grid>
         <Grid.Style>
@@ -67,6 +68,17 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </TextBlock.LayoutTransform>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}}"
+                                                     Value="{x:Static viewModels:ProgramModes.Projector}">
+                                            <Setter Property="FontSize"
+                                                    Value="30" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
                         </TextBlock>
 
                         <TextBlock Grid.Column="0"

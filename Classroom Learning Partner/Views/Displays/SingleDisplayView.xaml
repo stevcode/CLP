@@ -66,6 +66,17 @@
                         <TranslateTransform />
                     </TransformGroup>
                 </TextBlock.LayoutTransform>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}}"
+                                                     Value="{x:Static viewModels:ProgramModes.Projector}">
+                                <Setter Property="FontSize"
+                                                    Value="30" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
             </TextBlock>
 
             <Border Grid.Column="1"
