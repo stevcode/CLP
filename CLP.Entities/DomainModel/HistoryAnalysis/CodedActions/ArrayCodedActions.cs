@@ -1880,7 +1880,8 @@ namespace CLP.Entities
             }
 
             dominantSkipSize = skipSizes.OrderByDescending(d => d.Value).First().Key;
-            if (dominantSkipSize == rows)
+            if (dominantSkipSize == rows &&
+                rows != columns)
             {
                 jumpRanges.Add("\t- Skip Counted by Wrong Dimension");
             }
