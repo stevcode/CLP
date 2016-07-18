@@ -1728,8 +1728,8 @@ namespace CLP.Entities
                 var prev = orderedHeuristicValues[i - 1];
                 var next = orderedHeuristicValues[i + 1];
 
-                var prevExpected = columns * heuristicValue.Row - 1;
-                var nextExpected = columns * heuristicValue.Row + 1;
+                var prevExpected = columns * (heuristicValue.Row - 1);
+                var nextExpected = columns * (heuristicValue.Row + 1);
                 if ((int)prev.Value == prevExpected &&
                     (int)next.Value == nextExpected)
                 {
@@ -1740,8 +1740,8 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var prevWrongDimensionExpected = rows * heuristicValue.Row - 1;
-                var nextWrongDimensionExpected = rows * heuristicValue.Row + 1;
+                var prevWrongDimensionExpected = rows * (heuristicValue.Row - 1);
+                var nextWrongDimensionExpected = rows * (heuristicValue.Row + 1);
                 if ((int)prev.Value == prevWrongDimensionExpected &&
                     (int)next.Value == nextWrongDimensionExpected)
                 {
