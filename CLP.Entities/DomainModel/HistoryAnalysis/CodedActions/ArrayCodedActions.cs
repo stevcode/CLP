@@ -1815,7 +1815,10 @@ namespace CLP.Entities
 
             // Convert to English Values
             var skips = orderedHeuristicValues.Select(h => (int)h.Value).ToList();
-            var jumpRanges = new List<string>();
+            var jumpRanges = new List<string>
+                             {
+                                 string.Join(", ", skips)
+                             };
             var currentFirst = -1;
             var currentLast = -1;
             var currentJumpSize = -1;
