@@ -1117,6 +1117,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
     <Resource Include="CLPPaperClipLogoBlack.ico" />
     <Content Include="External Libraries\Catel.Core.dll" />
     <Content Include="External Libraries\Catel.Core.pdb" />
