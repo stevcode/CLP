@@ -1389,11 +1389,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
+                var unformattedSkips = formattedSkips.TrimAll().Split(new[] { "\"\"" }, StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+                var heuristicsResults = ArrayCodedActions.Heuristics(unformattedSkips, array.Rows, array.Columns);
+
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                           {
                               CodedID = array.CodedID,
-                              RowInterpretations = formattedSkips
-                          };
+                              RowInterpretations = formattedSkips,
+                              HeuristicsResults = heuristicsResults
+                };
 
                 Console.WriteLine(tag.FormattedValue);
 

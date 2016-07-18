@@ -1583,7 +1583,6 @@ namespace CLP.Entities
                 }
             }
 
-
             // Verify Wrong Dimension Finality
             var wrongDimensionValues = heuristicValues.Where(h => h.Designation == HeuristicValue.HeuristicDesignation.WrongDimension && !h.IsFinal).ToList();
             var percentWrongDimension = wrongDimensionValues.Count / (heuristicValues.Count * 1.0);
@@ -1814,9 +1813,9 @@ namespace CLP.Entities
             // Convert to English Values
             var skips = orderedHeuristicValues.Select(h => (int)h.Value).ToList();
             var jumpRanges = new List<string>();
-            int? currentFirst = null;
-            int? currentLast = null;
-            int? currentJumpSize = null;
+            var currentFirst = -1;
+            var currentLast = -1;
+            var currentJumpSize = -1;
 
             for (var i = 1; i < skips.Count; i++)
             {
@@ -1824,17 +1823,15 @@ namespace CLP.Entities
                 var previous = skips[i - 1];
                 var jump = current - previous;
 
-                if (currentFirst == null)
+                if (i == 1)
                 {
                     currentFirst = previous;
-                }
-
-                if (currentJumpSize == null)
-                {
                     currentJumpSize = jump;
                     currentLast = current;
+                    continue;
                 }
-                else if (currentJumpSize == jump)
+
+                if (currentJumpSize == jump)
                 {
                     currentLast = current;
                 }
@@ -1848,9 +1845,7 @@ namespace CLP.Entities
                     currentJumpSize = jump;
                 }
 
-                if (currentFirst != null &&
-                    currentLast != null &&
-                    currentJumpSize != null)
+                if (i == skips.Count - 1)
                 {
                     var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
                     jumpRanges.Add(jumpRange);
