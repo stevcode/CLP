@@ -1001,12 +1001,12 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertPileButton);
 
             // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
             //Buttons.Add(_insertRightDiagonalDashedButton);
@@ -1014,11 +1014,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
-            //Buttons.Add(_insertRecognitionRegionButton);
-            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
+            Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(_insertRecognitionRegionButton);
+            Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
         #endregion //Methods
