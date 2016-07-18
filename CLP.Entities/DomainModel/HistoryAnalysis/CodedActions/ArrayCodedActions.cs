@@ -1760,10 +1760,10 @@ namespace CLP.Entities
             }
 
             // Resolve Firsts
-            var firstHeuristicValue = orderedHeuristicValues[1];
+            var firstHeuristicValue = orderedHeuristicValues[0];
             if (!firstHeuristicValue.IsFinal)
             {
-                var nextHeuristicValue = orderedHeuristicValues[2];
+                var nextHeuristicValue = orderedHeuristicValues[1];
                 var correctedValue = (int)nextHeuristicValue.Value - dominantSkipSize;
                 var expectedValue = columns;
                 var expectedWrongDimensionValue = rows;
