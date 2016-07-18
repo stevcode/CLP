@@ -45,6 +45,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData RowInterpretationsProperty = RegisterProperty("RowInterpretations", typeof (string), string.Empty);
 
+        /// <summary>Results of heuristic adjustment of row interpretations.</summary>
+        public string HeuristicsResults
+        {
+            get { return GetValue<string>(HeuristicsResultsProperty); }
+            set { SetValue(HeuristicsResultsProperty, value); }
+        }
+
+        public static readonly PropertyData HeuristicsResultsProperty = RegisterProperty("HeuristicsResults", typeof(string), string.Empty);
+
         #region ATagBase Overrides
 
         public override Category Category
@@ -59,7 +68,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("ARR skip [{0}: {1}]", CodedID, RowInterpretations); }
+            get { return string.Format("ARR skip [{0}: {1}]\n{2}", CodedID, RowInterpretations, HeuristicsResults); }
         }
 
         #endregion //ATagBase Overrides

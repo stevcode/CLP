@@ -1464,6 +1464,438 @@ namespace CLP.Entities
             return guess;
         }
 
+        private class HeuristicValue
+        {
+            public enum HeuristicDesignation
+            {
+                Empty,
+                Expected,
+                WrongDimension,
+                UnknownNumeric,
+                PartialNumeric,
+                FullText
+            }
+
+            public object Value;
+            public int Row;
+            public HeuristicDesignation Designation;
+            public HeuristicDesignation CorrectedDesignation;
+            public bool IsFinal;
+
+            public bool IsNumeric
+            {
+                get { return Designation != HeuristicDesignation.FullText && Designation != HeuristicDesignation.PartialNumeric && Designation != HeuristicDesignation.Empty; }
+            }
+
+            public bool IsCorrectedNumeric
+            {
+                get
+                {
+                    return CorrectedDesignation != HeuristicDesignation.FullText && CorrectedDesignation != HeuristicDesignation.PartialNumeric && CorrectedDesignation != HeuristicDesignation.Empty;
+                }
+            }
+        }
+
+        public static string Heuristics(List<string> interpretedRowValues, int rows, int columns)
+        {
+            var heuristicValues = new List<HeuristicValue>();
+
+            // Initial Classification of each interpreted row.
+            for (var i = 0; i < interpretedRowValues.Count; i++)
+            {
+                var expectedValue = columns * (i + 1);
+                var wrongDimensionExpectedValue = rows * (i + 1);
+                var interpretedValue = interpretedRowValues[i];
+
+                if (string.IsNullOrEmpty(interpretedValue))
+                {
+                    heuristicValues.Add(new HeuristicValue
+                    {
+                        Value = string.Empty,
+                        Row = i + 1,
+                        Designation = HeuristicValue.HeuristicDesignation.Empty,
+                        CorrectedDesignation = HeuristicValue.HeuristicDesignation.Empty,
+                        IsFinal = true
+                    });
+
+                    continue;
+                }
+
+                int numericValue;
+                var isNumeric = int.TryParse(interpretedValue, out numericValue);
+                if (isNumeric)
+                {
+                    if (numericValue == expectedValue)
+                    {
+                        heuristicValues.Add(new HeuristicValue
+                                            {
+                                                Value = numericValue,
+                                                Row = i + 1,
+                                                Designation = HeuristicValue.HeuristicDesignation.Expected,
+                                                CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected,
+                                                IsFinal = true
+                                            });
+                    }
+                    else if (numericValue == wrongDimensionExpectedValue)
+                    {
+                        heuristicValues.Add(new HeuristicValue
+                        {
+                            Value = numericValue,
+                            Row = i + 1,
+                            Designation = HeuristicValue.HeuristicDesignation.WrongDimension,
+                            CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension,
+                            IsFinal = false
+                        });
+                    }
+                    else
+                    {
+                        heuristicValues.Add(new HeuristicValue
+                        {
+                            Value = numericValue,
+                            Row = i + 1,
+                            Designation = HeuristicValue.HeuristicDesignation.UnknownNumeric,
+                            CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric,
+                            IsFinal = false
+                        });
+                    }
+                }
+                else
+                {
+                    if (interpretedValue.Any(char.IsNumber))
+                    {
+                        heuristicValues.Add(new HeuristicValue
+                        {
+                            Value = interpretedValue,
+                            Row = i + 1,
+                            Designation = HeuristicValue.HeuristicDesignation.PartialNumeric,
+                            CorrectedDesignation = HeuristicValue.HeuristicDesignation.PartialNumeric,
+                            IsFinal = false
+                        });
+                    }
+                    else
+                    {
+                        heuristicValues.Add(new HeuristicValue
+                        {
+                            Value = interpretedValue,
+                            Row = i + 1,
+                            Designation = HeuristicValue.HeuristicDesignation.FullText,
+                            CorrectedDesignation = HeuristicValue.HeuristicDesignation.FullText,
+                            IsFinal = false
+                        });
+                    }
+                }
+            }
+
+            // Verify Wrong Dimension Finality
+            var wrongDimensionValues = heuristicValues.Where(h => h.Designation == HeuristicValue.HeuristicDesignation.WrongDimension && !h.IsFinal).ToList();
+            var percentWrongDimension = wrongDimensionValues.Count / (heuristicValues.Count * 1.0);
+            if (percentWrongDimension >= 0.8)
+            {
+                foreach (var heuristicValue in wrongDimensionValues)
+                {
+                    heuristicValue.IsFinal = true;
+                }
+            }
+
+            // Resolve PartialNumeric
+            var partialNumericValues = heuristicValues.Where(h => h.Designation == HeuristicValue.HeuristicDesignation.PartialNumeric && !h.IsFinal).ToList();
+            foreach (var heuristicValue in partialNumericValues)
+            {
+                var expectedValue = columns * heuristicValue.Row;
+                var wrongDimensionExpectedValue = rows * heuristicValue.Row;
+                var isContained = false;
+                foreach (var digit in expectedValue.ToString())
+                {
+                    var val = (string)heuristicValue.Value;
+                    if (!val.Contains(digit))
+                    {
+                        continue;
+                    }
+
+                    heuristicValue.Value = expectedValue;
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    heuristicValue.IsFinal = true;
+                    isContained = true;
+                    break;
+                }
+
+                if (isContained)
+                {
+                    continue;
+                }
+
+                foreach (var digit in wrongDimensionExpectedValue.ToString())
+                {
+                    var val = (string)heuristicValue.Value;
+                    if (!val.Contains(digit))
+                    {
+                        continue;
+                    }
+
+                    heuristicValue.Value = wrongDimensionExpectedValue;
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    heuristicValue.IsFinal = true;
+                    isContained = true;
+                    break;
+                }
+            }
+
+            // Resolve values surrounded by Empties
+            // HACK: Shouldn't be necessary if I can get skip count tied to sub arrays
+            var orderedHeuristicValues = heuristicValues.OrderBy(h => h.Row).ToList();
+            for (var i = 1; i < orderedHeuristicValues.Count - 1; i++)
+            {
+                var prev = orderedHeuristicValues[i - 1];
+                var next = orderedHeuristicValues[i + 1];
+                if (prev.Designation == HeuristicValue.HeuristicDesignation.Empty &&
+                    next.Designation == HeuristicValue.HeuristicDesignation.Empty)
+                {
+                    var heuristicValue = orderedHeuristicValues[i];
+                    heuristicValue.Value = string.Empty;
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Empty;
+                    heuristicValue.IsFinal = true;
+                }
+            }
+
+            // Generate Skip Sizes
+            var skipSizes = new Dictionary<int,int>();
+            for (var i = 1; i < orderedHeuristicValues.Count; i++)
+            {
+                var prev = orderedHeuristicValues[i - 1];
+                var heuristicValue = orderedHeuristicValues[i];
+
+                if (!prev.IsCorrectedNumeric ||
+                    !heuristicValue.IsCorrectedNumeric)
+                {
+                    continue;
+                }
+
+                var skipSize = (int)heuristicValue.Value - (int)prev.Value;
+                if (!skipSizes.ContainsKey(skipSize))
+                {
+                    skipSizes.Add(skipSize, 0);
+                }
+                skipSizes[skipSize]++;
+            }
+
+            var dominantSkipSize = skipSizes.OrderByDescending(d => d.Value).First().Key;
+
+            // Convert non-numerics
+            // TODO: Clean up, this will probably have to be run twice if there are instances of 3 non-numerics in a row
+            for (var i = 1; i < orderedHeuristicValues.Count; i++)
+            {
+                var heuristicValue = orderedHeuristicValues[i];
+                if (heuristicValue.IsCorrectedNumeric ||
+                    heuristicValue.IsFinal)
+                {
+                    continue;
+                }
+
+                var prev = orderedHeuristicValues[i - 1];
+                if (!prev.IsCorrectedNumeric)
+                {
+                    // TODO: Shouldn't hit this unless run into necessary above clean up.
+                    continue;
+                }
+
+                var correctedValue = (int)prev.Value + dominantSkipSize;
+                heuristicValue.Value = correctedValue;
+                heuristicValue.IsFinal = true;
+
+                var expectedValue = columns * heuristicValue.Row;
+                if (correctedValue == expectedValue)
+                {
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    continue;
+                }
+
+                var wrongDimensionExpectedValue = rows * heuristicValue.Row;
+                if (correctedValue == wrongDimensionExpectedValue)
+                {
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    continue;
+                }
+
+                heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+            }
+
+            // Resolve Unknown Middles
+            for (var i = 1; i < orderedHeuristicValues.Count - 1; i++)
+            {
+                var heuristicValue = orderedHeuristicValues[i];
+                if (heuristicValue.IsFinal)
+                {
+                    continue;
+                }
+
+                var prev = orderedHeuristicValues[i - 1];
+                var next = orderedHeuristicValues[i + 1];
+
+                var prevExpected = columns * (heuristicValue.Row - 1);
+                var nextExpected = columns * (heuristicValue.Row + 1);
+                if ((int)prev.Value == prevExpected &&
+                    (int)next.Value == nextExpected)
+                {
+                    var expectedValue = columns * heuristicValue.Row;
+                    heuristicValue.Value = expectedValue;
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    heuristicValue.IsFinal = true;
+                    continue;
+                }
+
+                var prevWrongDimensionExpected = rows * (heuristicValue.Row - 1);
+                var nextWrongDimensionExpected = rows * (heuristicValue.Row + 1);
+                if ((int)prev.Value == prevWrongDimensionExpected &&
+                    (int)next.Value == nextWrongDimensionExpected)
+                {
+                    var expectedValue = rows * heuristicValue.Row;
+                    heuristicValue.Value = expectedValue;
+                    heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    heuristicValue.IsFinal = true;
+                    continue;
+                }
+
+                heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+                heuristicValue.IsFinal = true;
+            }
+
+            // Resolve Firsts
+            var firstHeuristicValue = orderedHeuristicValues[0];
+            if (!firstHeuristicValue.IsFinal)
+            {
+                var nextHeuristicValue = orderedHeuristicValues[1];
+                var correctedValue = (int)nextHeuristicValue.Value - dominantSkipSize;
+                var expectedValue = columns;
+                var expectedWrongDimensionValue = rows;
+                if (correctedValue == expectedValue)
+                {
+                    firstHeuristicValue.Value = correctedValue;
+                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    firstHeuristicValue.IsFinal = true;
+                }
+                else if (correctedValue == expectedWrongDimensionValue)
+                {
+                    firstHeuristicValue.Value = correctedValue;
+                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    firstHeuristicValue.IsFinal = true;
+                }
+                else
+                {
+                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+                    firstHeuristicValue.IsFinal = true;
+                }
+            }
+
+            // Resolve Lasts
+            var lastHeuristicValue = orderedHeuristicValues[orderedHeuristicValues.Count - 1];
+            if (!lastHeuristicValue.IsFinal)
+            {
+                var prevHeuristicValue = orderedHeuristicValues[orderedHeuristicValues.Count - 2];
+                var correctedValue = (int)prevHeuristicValue.Value + dominantSkipSize;
+                var expectedValue = columns * rows;
+                var expectedWrongDimensionValue = rows * rows;
+                if (correctedValue == expectedValue)
+                {
+                    lastHeuristicValue.Value = correctedValue;
+                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    lastHeuristicValue.IsFinal = true;
+                }
+                else if (correctedValue == expectedWrongDimensionValue)
+                {
+                    lastHeuristicValue.Value = correctedValue;
+                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    lastHeuristicValue.IsFinal = true;
+                }
+                else
+                {
+                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+                    lastHeuristicValue.IsFinal = true;
+                }
+            }
+
+            // Convert to English Values
+            var skips = orderedHeuristicValues.Where(h => h.IsCorrectedNumeric).Select(h => (int)h.Value).ToList();
+            var jumpRanges = new List<string>
+                             {
+                                 string.Join(", ", skips)
+                             };
+            var currentFirst = -1;
+            var currentLast = -1;
+            var currentJumpSize = -1;
+
+            for (var i = 1; i < skips.Count; i++)
+            {
+                var current = skips[i];
+                var previous = skips[i - 1];
+                var jump = current - previous;
+
+                if (i == 1)
+                {
+                    currentFirst = previous;
+                    currentJumpSize = jump;
+                    currentLast = current;
+                    continue;
+                }
+
+                if (currentJumpSize == jump)
+                {
+                    currentLast = current;
+                }
+                else
+                {
+                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    jumpRanges.Add(jumpRange);
+
+                    currentFirst = previous;
+                    currentLast = current;
+                    currentJumpSize = jump;
+                }
+
+                if (i == skips.Count - 1)
+                {
+                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    jumpRanges.Add(jumpRange);
+                }
+            }
+
+            // Refresh Dominant Skip Size.
+            skipSizes.Clear();
+            for (var i = 1; i < orderedHeuristicValues.Count; i++)
+            {
+                var prev = orderedHeuristicValues[i - 1];
+                var heuristicValue = orderedHeuristicValues[i];
+
+                if (!prev.IsCorrectedNumeric ||
+                    !heuristicValue.IsCorrectedNumeric)
+                {
+                    continue;
+                }
+
+                var skipSize = (int)heuristicValue.Value - (int)prev.Value;
+                if (!skipSizes.ContainsKey(skipSize))
+                {
+                    skipSizes.Add(skipSize, 0);
+                }
+                skipSizes[skipSize]++;
+            }
+
+            dominantSkipSize = skipSizes.OrderByDescending(d => d.Value).First().Key;
+            if (dominantSkipSize == rows &&
+                rows != columns)
+            {
+                jumpRanges.Add("\t- Skip Counted by Wrong Dimension");
+            }
+
+            if (skipSizes.Count > 1 &&
+                skipSizes.ContainsKey(columns))
+            {
+                jumpRanges.Add("\t- Likely arithmetic error");
+            }
+
+            var result = string.Join("\n", jumpRanges);
+            return result;
+        }
+
         #endregion // Utility Methods
 
         #region Logging

@@ -229,6 +229,7 @@
     <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\PointExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\StringExtensions.cs" />
     <Compile Include="DomainModel\Utility\RollingStandardDeviation.cs" />
     <Compile Include="DomainModel\Utility\TypeSwitch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
