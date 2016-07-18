@@ -84,6 +84,10 @@
                 <views:TemporaryBoundaryView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="TemporaryGridTemplate">
+                <views:TemporaryGridView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="MultipleChoiceTemplate">
                 <views:MultipleChoiceView DataContext="{Binding}" />
             </ControlTemplate>
@@ -202,6 +206,13 @@
                                  Value="TemporaryBoundary">
                         <Setter Property="Template"
                                 Value="{StaticResource TemporaryBoundaryTemplate}" />
+                    </DataTrigger>
+
+                    <!-- TemporaryGrid trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="TemporaryGrid">
+                        <Setter Property="Template"
+                                Value="{StaticResource TemporaryGridTemplate}" />
                     </DataTrigger>
 
                     <!-- MultipleChoice trigger -->

@@ -288,6 +288,7 @@
     <Compile Include="ViewModels\PageObjects\MultipleChoiceViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Temporary\TemporaryGridViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
@@ -515,6 +516,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml.cs">
       <DependentUpon>TemporaryBoundaryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Temporary\TemporaryGridView.xaml.cs">
+      <DependentUpon>TemporaryGridView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
@@ -852,6 +856,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Temporary\TemporaryGridView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

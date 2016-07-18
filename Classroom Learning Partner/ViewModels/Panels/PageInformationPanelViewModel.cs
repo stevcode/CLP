@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -1138,37 +1139,146 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPage.PageObjects.Remove(temporaryBoundary);
             }
+
+            var tempGrids = CurrentPage.PageObjects.OfType<TemporaryGrid>().ToList();
+            foreach (var tempGrid in tempGrids)
+            {
+                CurrentPage.PageObjects.Remove(tempGrid);
+            }
+
+            foreach (var stroke in CurrentPage.InkStrokes)
+            {
+                var drawingAttributes = stroke.DrawingAttributes;
+                // var color = drawingAttributes.Color;
+                // color.A = 255;
+                drawingAttributes.Color = Colors.Black;
+                // stroke.DrawingAttributes = drawingAttributes;
+            }
         }
 
         public Command StrokeTestingCommand { get; private set; }
 
         private void OnStrokeTestingCommandExecute()
         {
+            Console.WriteLine("NEW STROKE TEST");
             var strokes = CurrentPage.InkStrokes.ToList();
-            var arrays = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
-            var distanceFromArray = new List<double>();
-
-            foreach (var stroke in strokes)
+            var strokeIndexesInEnclosure = new List<int>();
+            for (var i=0; i < strokes.Count; i++)
             {
-                var minDistance = double.MaxValue;
-                foreach (var array in arrays)
+                var stroke = strokes[i];
+                // var strokeStartPoint = stroke.StylusPoints.First();
+                bool isEnclosed;
+                if (strokeIndexesInEnclosure.Contains(i))
                 {
-                    var arrayVisualRight = array.XPosition + array.Width - array.LabelLength;
-                    var deltaX = arrayVisualRight - stroke.GetBounds().Left;
-                    if (deltaX < minDistance &&
-                        deltaX >= 0)
+                    isEnclosed = true;
+                }
+                else
+                {
+                    if (IsDebuggingFlag)
                     {
-                        minDistance = deltaX;
+                         isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                    }
+                    else
+                    {
+                        isEnclosed = stroke.IsEnclosedShape();
+                    }
+
+                    if (!isEnclosed)
+                    {
+                        for (var j = i + 1; j < strokes.Count; j++)
+                        {
+                            var otherStroke = strokes[j];
+                            if (closeMatch(stroke, otherStroke))
+                            {
+                                Console.WriteLine("close match");
+                                var strokeCollection = new StrokeCollection();
+                                strokeCollection.Add(stroke);
+                                strokeCollection.Add(otherStroke);
+                                if (IsDebuggingFlag)
+                                {
+                                    isEnclosed = strokeCollection.IsEnclosedShape(CurrentPage);
+                                }
+                                else
+                                {
+                                    isEnclosed = strokeCollection.IsEnclosedShape();
+                                }
+
+                                if (isEnclosed)
+                                {
+                                    strokeIndexesInEnclosure.Add(j);
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
-                distanceFromArray.Add(minDistance);
-            }
 
-            var output = distanceFromArray.Distinct().OrderBy(d => d).Select(d => string.Format("DistanceFromArray: {0}", d)).ToList();
-            foreach (var line in output)
-            {
-                Console.WriteLine(line);
+                // Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
+                /*
+                Console.WriteLine("Horizontal Line Test");
+                if (stroke.IsHorizontalLine())
+                {
+                    stroke.DrawingAttributes.Color = Colors.Purple;
+                }
+
+
+                Console.WriteLine("Vertical Line Test");
+                if (stroke.IsVerticalLine())
+                {
+                     stroke.DrawingAttributes.Color = Colors.Orange;
+                }
+
+                Console.WriteLine("Dot Test");
+                if (stroke.IsDot())
+                {
+                    stroke.DrawingAttributes.Color = Colors.Blue;
+                }
+                */
+
+                #region Debugging
+                if (IsDebuggingFlag)
+                {
+                    var oldWidth = stroke.DrawingAttributes.Width;
+                    var oldHeight = stroke.DrawingAttributes.Height;
+                    var oldColor = stroke.DrawingAttributes.Color;
+                    // stroke.DrawingAttributes.Width = 8;
+                    // stroke.DrawingAttributes.Height = 8;
+                    // PageHistory.UISleep(1000);
+                    if (isEnclosed)
+                    {
+                        stroke.DrawingAttributes.Color = Colors.Green;
+                    }
+                    else
+                    {
+                        stroke.DrawingAttributes.Color = Colors.Crimson;
+                    }
+                    // PageHistory.UISleep(3000);
+                    // stroke.DrawingAttributes.Width = oldWidth;
+                    // DrawingAttributes.Height = oldHeight;
+                    // stroke.DrawingAttributes.Color = oldColor;
+                }
+                #endregion // Debugging
             }
+        }
+
+        private Boolean closeMatch(Stroke stroke1, Stroke stroke2)
+        {
+            const double minDistanceSquared = 5000;
+            return ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared) &&
+                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared))
+                    ||
+                   ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared) &&
+                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared));
+
+        }
+
+        private static double DistanceSquaredBetweenPoints(Point p1, Point p2)
+        {
+            var dx = p1.X - p2.X;
+            var dy = p1.Y - p2.Y;
+            var distanceSquared = (dx * dx) + (dy * dy); // Again, for performance purposes, multiplication is used here instead of Math.Pow(). 20x performance boost.
+
+            return distanceSquared;
         }
 
         /// <summary>
@@ -1714,6 +1824,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 dt.RaiseAllPropertiesChanged();
             }
+            // var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
+            // foreach (var line in output)
+            // {
+                // Console.WriteLine(line);
+            // }
         }
 
         #endregion // Obsolete Commands 

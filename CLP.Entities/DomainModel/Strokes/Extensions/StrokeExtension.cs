@@ -596,6 +596,406 @@ namespace CLP.Entities
             return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT;
         }
 
+        public static bool IsEnclosedShape(this Stroke stroke, CLPPage page = null)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            const int MIN_BOUNDS = 60;
+            const double MIN_ASPECT_RATIO = 0.5;
+            const double CELL_SIZE_RATIO = 5.0;
+
+            if (stroke.GetBounds().Width < MIN_BOUNDS || stroke.GetBounds().Height < MIN_BOUNDS)
+            {
+                return false;
+            }
+
+            double aspectRatio = stroke.GetBounds().Width / stroke.GetBounds().Height;
+
+            if (aspectRatio < MIN_ASPECT_RATIO || aspectRatio > (1.0/MIN_ASPECT_RATIO))
+            {
+                return false;
+            }
+
+            var cellHeight = Math.Min(MIN_BOUNDS, (int)(stroke.GetBounds().Height / CELL_SIZE_RATIO));
+            var cellWidth = Math.Min(MIN_BOUNDS, (int)(stroke.GetBounds().Width / CELL_SIZE_RATIO));
+
+            var occupiedCells = FindCellsOccupiedByStroke(stroke, cellWidth, cellHeight, (int)stroke.GetBounds().X, (int)stroke.GetBounds().Y);
+            if (page != null)
+            {
+                var strokeBounds = stroke.GetBounds();
+                var tempGrid = new TemporaryGrid(page, strokeBounds.X, strokeBounds.Y, strokeBounds.Height, strokeBounds.Width, cellWidth, cellHeight, occupiedCells);
+                page.PageObjects.Add(tempGrid);
+            }
+
+            // Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
+
+            return DetectCycle(occupiedCells, cellWidth, cellHeight);
+        }
+
+        private static int roundToNearestCell(double pos, int CELL_SIZE)
+        {
+            return (int)(pos / CELL_SIZE) * CELL_SIZE;
+        }
+
+        /*
+            Need to do DFS for cycle detection
+            TODO once we detect on multiple strokes, we'll have to pass in starting 
+            points for DFS on each stroke to be extra careful in case there are 
+            disconnected graphs
+        */
+
+        public static bool DetectCycle(List<Point> occupiedCells, int cellWidth, int cellHeight)
+        {
+            // var visited = new PointCollection();
+            var cellStack = new Stack<List<Point>>();
+
+            if (occupiedCells.Count() < 4)
+            {
+                return false;
+            }
+            var thisCell = occupiedCells.First(); //there has to be at least one occupied cell
+            // var immediateAncestor = thisCell;
+            var startCellList = new List<Point>();
+            startCellList.Add(thisCell);
+
+            cellStack.Push(startCellList);
+            while (cellStack.Any())
+            {
+                var thisPath = cellStack.Pop();
+                thisCell = thisPath.Last();
+
+                var neighbors = GetNeighbors(thisCell, cellWidth, cellHeight);
+                foreach (var neighbor in neighbors)
+                {
+                    if (occupiedCells.Contains(neighbor))
+                    {
+                        if (thisPath.Contains(neighbor))
+                        {
+                            var cycle = thisPath.Skip(thisPath.IndexOf(neighbor)).Take(thisPath.Count() - thisPath.IndexOf(neighbor)).ToArray();
+                            if (CycleBoundsLargeEnough(cycle, 4 * cellWidth, 4 * cellHeight))
+                            {
+                                var i = 0;
+                                while (i < cycle.Count())
+                                {
+                                    // Console.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
+                                    i++;
+                                }
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            var neighborsNeighbors = GetNeighbors(neighbor, cellWidth, cellHeight);
+                            int adj = 0;
+                            foreach (var neighborNeighbor in neighborsNeighbors)
+                            {
+                                if (thisPath.Contains(neighborNeighbor))
+                                {
+                                    adj++;
+                                }
+                            }
+
+                            if (adj < 3)
+                            {
+                                var newPath = new List<Point>();
+                                newPath.AddRange(thisPath);
+                                newPath.Add(neighbor);
+                                cellStack.Push(newPath);
+                            }
+
+                        }
+                        
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CycleBoundsLargeEnough(IEnumerable<Point> cycle, int widthThreshold, int heightThreshold)
+        {
+            int minX = 1000000, minY = 1000000;
+            int maxX = 0, maxY = 0;
+
+            foreach (var cell in cycle) {
+                minX = Math.Min(minX, (int)cell.X);
+                minY = Math.Min(minY, (int)cell.Y);
+                maxX = Math.Max(maxX, (int)cell.X);
+                maxY = Math.Max(maxY, (int)cell.Y);
+            }
+            return (maxX - minX >= widthThreshold && maxY - minY >= heightThreshold); 
+        }
+
+        private static List<Point> GetNeighbors(Point thisPoint, int CELL_WIDTH, int CELL_HEIGHT)
+        {
+            var neighbors = new List<Point>();
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y));
+            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y));
+
+            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y + CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y + CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y - CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y - CELL_HEIGHT));
+
+            // neighbors.Remove(immediateAncestor); // Make sure this works with object equality
+            return neighbors;
+        }
+
+        public static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_WIDTH, int CELL_HEIGHT, int xOffset, int yOffset)
+        {
+            var occupiedCells = new List<Point>();
+            int i = 1;
+            var stylusPoints = stroke.StylusPoints;
+            var thisPoint = stylusPoints[0].ToPoint();
+            thisPoint.X = roundToNearestCell(thisPoint.X, CELL_WIDTH) - xOffset;
+            thisPoint.Y = roundToNearestCell(thisPoint.Y, CELL_HEIGHT) - yOffset;
+            var nextPoint = new Point();
+            while (i < stylusPoints.Count)
+            {
+                nextPoint = stylusPoints[i].ToPoint();
+                // Console.WriteLine("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
+                // Console.WriteLine("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
+                nextPoint.X = roundToNearestCell(nextPoint.X, CELL_WIDTH) - xOffset;
+                nextPoint.Y = roundToNearestCell(nextPoint.Y, CELL_HEIGHT) - yOffset;
+
+                // TODO the following is a complete guess about the shape of the curve
+                // We can do better by using the bezzier curve, but this might not be easily exposed
+                if (thisPoint.Y <= nextPoint.Y)
+                {
+                    int j = (int)thisPoint.Y;
+                    while (j <= nextPoint.Y)
+                    {
+                        var occupiedCell = new Point((int)thisPoint.X, j);
+                        occupiedCells.Add(occupiedCell);
+                        j += CELL_HEIGHT;
+                    }
+                }
+                else {
+                    int j = (int)nextPoint.Y;
+                    while (j <= thisPoint.Y)
+                    {
+                        var occupiedCell = new Point((int)thisPoint.X, j);
+                        occupiedCells.Add(occupiedCell);
+                        j += CELL_HEIGHT;
+                    }
+                }
+
+                if (thisPoint.X <= nextPoint.X)
+                {
+                    int k = (int)thisPoint.X;
+                    while (k <= nextPoint.X)
+                    {
+                        var occupiedCell = new Point(k, (int)thisPoint.Y);
+                        occupiedCells.Add(occupiedCell);
+                        k += CELL_WIDTH;
+                    }
+                }
+                else {
+                    int k = (int)nextPoint.X;
+                    while (k <= thisPoint.X)
+                    {
+                        var occupiedCell = new Point(k, (int)nextPoint.Y);
+                        occupiedCells.Add(occupiedCell);
+                        k += CELL_WIDTH;
+                    }
+                }
+
+                thisPoint = nextPoint;
+                i++;
+            }
+
+            return occupiedCells.Distinct().ToList();
+        }
+
+        private static bool IsBoundsOverlappingByPercentage(Rect firstBounds, Rect secondBounds, double percentage)
+        {
+            var intersectRect = Rect.Intersect(firstBounds, secondBounds);
+            return intersectRect.Area() / secondBounds.Area() >= percentage;
+        }
+
+        public static bool IsStrokeEnclosure(this Stroke stroke, StrokeCollection strokes)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("strokes", strokes);
+
+            const double OVERLAP_PERCENTAGE_THRESHOLD = 75.0;
+
+            if (!IsEnclosedShape(stroke))
+            {
+                return false;
+            }
+
+            var strokeBounds = stroke.GetBounds();
+
+            foreach(var thisStroke in strokes) {
+                if (IsInvisiblySmall(thisStroke))
+                {
+                    continue;
+                }
+
+                if (IsBoundsOverlappingByPercentage(strokeBounds, thisStroke.GetBounds(), OVERLAP_PERCENTAGE_THRESHOLD))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsPageObjectEnclosure(this Stroke stroke, List<IPageObject> pageObjects)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("pageObjects", pageObjects);
+
+            const double OVERLAP_PERCENTAGE_THRESHOLD = 75.0;
+
+            if (!IsEnclosedShape(stroke))
+            {
+                return false;
+            }
+
+            var strokeBounds = stroke.GetBounds();
+
+            foreach (var thisPageObject in pageObjects)
+            {
+                var pageObjectBounds = new Rect(thisPageObject.XPosition, thisPageObject.YPosition, thisPageObject.Width, thisPageObject.Height);
+                if (IsBoundsOverlappingByPercentage(strokeBounds, pageObjectBounds, OVERLAP_PERCENTAGE_THRESHOLD))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsHorizontalLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            if (stroke.StylusPoints.Count < 2)
+            {
+                return false;
+            }
+            const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
+            const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
+
+            var slopes = getSlopesBetweenPoints(stroke);
+
+            //DEBUG
+            int i = 0;
+            while (i < slopes.Count)
+            {
+                // Console.WriteLine("slope: {0}", slopes[i]);
+                i++;
+            }
+
+            double avg = slopes.Average();
+            double variation = CalculateStdDev(slopes);
+            // Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+
+            return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
+        }
+
+        private static double CalculateStdDev(IEnumerable<double> values)
+        {
+            //found here: http://stackoverflow.com/questions/3141692/standard-deviation-of-generic-list
+            double ret = 0;
+            if (values.Count() > 0)
+            {
+                //Compute the Average      
+                double avg = values.Average();
+                //Perform the Sum of (value-avg)_2_2      
+                double sum = values.Sum(d => Math.Pow(d - avg, 2));
+                //Put it all together      
+                ret = Math.Sqrt((sum) / (values.Count() - 1));
+            }
+            return ret;
+        }
+
+        private static List<double> getSlopesBetweenPoints(Stroke stroke)
+        {
+            var slopes = new List<double>();
+            var stylusPoints = stroke.StylusPoints;
+            var thisPoint = stylusPoints.First().ToPoint();
+            var nextPoint = new Point();
+
+            int i = 1;
+            while (i < stylusPoints.Count)
+            {
+                nextPoint = stylusPoints[i].ToPoint();
+                var slope = thisPoint.SlopeBetweenPointsInDegrees(nextPoint);
+                slopes.Add(slope);
+                thisPoint = nextPoint;
+                i++;
+            }
+
+            return slopes;
+        }
+
+        public static bool IsVerticalLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            if (stroke.StylusPoints.Count < 2)
+            {
+                return false;
+            }
+            const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
+            //TODO somehow make this variation less? Might require modifying getSlopesBetweenPoints
+            const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
+
+            var slopes = getSlopesBetweenPoints(stroke);
+            
+            //reformat for vertical slopes, so 0 is now facing upward
+            int i = 0;
+            while (i < slopes.Count)
+            {
+                slopes[i] = slopes[i] - 90;
+                if (slopes[i] <= -90)
+                {
+                    slopes[i] += 180;
+                }
+                // Console.WriteLine("slope: {0}", slopes[i]);
+                i++;
+            }
+
+            double avg = slopes.Average();
+            double variation = CalculateStdDev(slopes);
+            // Console.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+
+            return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
+        }
+
+        public static bool IsLine(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+
+            return IsHorizontalLine(stroke) || IsVerticalLine(stroke);
+        }
+
+        public static bool IsDot(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            const double MAX_STROKE_WEIGHT = 10.0;
+            const double MAX_STROKE_BOUNDS = 5.0;
+
+            var strokeBounds = stroke.GetBounds();
+
+            // Console.WriteLine("stroke weight: {0}", stroke.StrokeWeight());
+
+            return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && 
+                strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
+        }
+
+        public static bool IsCircle(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return false;
+        }
+
         #endregion // Shape Detection
     }
 }
