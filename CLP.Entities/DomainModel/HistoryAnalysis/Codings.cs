@@ -10,6 +10,7 @@ namespace CLP.Entities
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_ARRAY = "ARR";
+        public const string OBJECT_MARK = "MARK";
         public const string OBJECT_DIVISION_TEMPLATE = "DT";
         public const string OBJECT_REMAINDER_TILES = "TILES";
         public const string OBJECT_NUMBER_LINE = "NL";
@@ -226,7 +227,7 @@ namespace CLP.Entities
         public static bool IsRepresentationObject(IHistoryAction historyAction)
         {
             return historyAction.CodedObject == OBJECT_ARRAY || historyAction.CodedObject == OBJECT_NUMBER_LINE || historyAction.CodedObject == OBJECT_STAMP ||
-                   historyAction.CodedObject == OBJECT_STAMPED_OBJECTS || historyAction.CodedObject == OBJECT_BINS;
+                   historyAction.CodedObject == OBJECT_STAMPED_OBJECTS || historyAction.CodedObject == OBJECT_BINS || historyAction.CodedObject == OBJECT_MARK;
         }
     }
 }

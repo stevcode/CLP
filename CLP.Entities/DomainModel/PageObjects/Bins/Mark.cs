@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -65,11 +66,56 @@ namespace CLP.Entities
 
         #endregion //Properties
 
+        #region Methods
+
+        public static List<string> BinsIndex = new List<string>();
+
+        //Given a page and an index, returns which bin this mark is fully inside.
+        //If there is more than one, return the latest bin added chronologically.
+        //The bins are indexed 1, 2, ... in the order added.
+        public static string IsInWhichBin(CLPPage page, int historyIndex, Mark mark)
+        {
+            var whichBin = "OUT";
+            var pageObjectsOnPage = ObjectCodedActions.GetPageObjectsOnPageAtHistoryIndex(page, historyIndex);
+            var binsOnPage = pageObjectsOnPage.Where(h => h is Bin).ToList();
+            foreach (var bin in binsOnPage)
+            {
+                if (!BinsIndex.Contains(bin.ID))
+                {
+                    BinsIndex.Add(bin.ID);
+                }
+            }
+            var markRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, mark, historyIndex);
+            foreach (var bin in binsOnPage)
+            {
+                var binRect = ObjectCodedActions.GetPageObjectBoundsAtHistoryIndex(page, bin, historyIndex);
+                var intersectRect = Rect.Intersect(binRect, markRect);
+                var percentOverlap = intersectRect.Area() / markRect.Area();
+                if (intersectRect.IsEmpty)
+                {
+                    percentOverlap = 0.0;
+                }
+                var isOverlapping = percentOverlap >= .6;
+                if (isOverlapping)
+                {
+                    whichBin = (BinsIndex.IndexOf(bin.ID) + 1).ToString();
+                }
+            }
+            return whichBin;
+        }
+
+        #endregion // Methods
+
         #region APageObjectBase Overrides
 
         public override string FormattedName
         {
             get { return string.Format("{0} {1} Mark", MarkColor, MarkShape); }
+        }
+
+        public override string CodedName
+        {
+            get { return Codings.OBJECT_MARK; }
         }
 
         public override int ZIndex
