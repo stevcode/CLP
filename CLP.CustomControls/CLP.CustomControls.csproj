@@ -96,11 +96,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Button Controls\ColorButton.cs" />
-    <Compile Include="Button Controls\GroupedRibbonButton.cs" />
-    <Compile Include="Button Controls\ToggleRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.cs" />
+    <Compile Include="Controls\ColorButton.cs" />
+    <Compile Include="Controls\GroupedRibbonButton.cs" />
+    <Compile Include="Controls\ToggleRibbonButton.cs" />
     <Compile Include="HLSColorValueConverter.cs" />
-    <Compile Include="Button Controls\RibbonButton.cs">
+    <Compile Include="Controls\RibbonButton.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
