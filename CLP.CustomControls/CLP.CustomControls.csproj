@@ -92,16 +92,32 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\Buttons\ColorButton\ColorButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\RibbonButton\RibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\ToggleRibbonButton\ToggleRibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.cs" />
-    <Compile Include="Controls\ColorButton.cs" />
-    <Compile Include="Controls\GroupedRibbonButton.cs" />
-    <Compile Include="Controls\ToggleRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\ColorButton\ColorButton.cs" />
+    <Compile Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\ToggleRibbonButton\ToggleRibbonButton.cs" />
     <Compile Include="HLSColorValueConverter.cs" />
-    <Compile Include="Controls\RibbonButton.cs">
+    <Compile Include="Controls\Buttons\RibbonButton\RibbonButton.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
