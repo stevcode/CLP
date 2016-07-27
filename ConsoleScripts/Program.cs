@@ -15,32 +15,6 @@ namespace ConsoleScripts
     {
         private static void Main(string[] args)
         {
-            //while(true)
-            //{
-            //    Console.Write("> ");
-            //    string command = Console.ReadLine();
-            //    if(!processCommand(command))
-            //    {
-            //        break;
-            //    }
-            //}
-
-            //while(true)
-            //{
-            //    Console.Write("> ");
-            //    var command = Console.ReadLine();
-            //    if(command == null)
-            //    {
-            //        continue;
-            //    }
-            //    if(command == "exit")
-            //    {
-            //        return;
-            //    }
-            //    var compactID = new Guid(command).ToCompactID();
-            //    Console.WriteLine("CompactID: " + compactID);
-            //}
-
             Convert();
             Console.WriteLine("*****Finished*****");
             Console.ReadLine();
@@ -220,47 +194,47 @@ namespace ConsoleScripts
                     problemTypes.Add(ProblemTypes.NonWordProblem);
                     problemTypes.Add(ProblemTypes.Multiplication);
 
-                        var textBoxToRemove = page.PageObjects.First(p => p.ID == "HXP2fZiWS0-Nc_NxIBBxRg") as CLPTextBox;
-                        page.PageObjects.Remove(textBoxToRemove);
+                    var textBoxToRemove = page.PageObjects.First(p => p.ID == "HXP2fZiWS0-Nc_NxIBBxRg") as CLPTextBox;
+                    page.PageObjects.Remove(textBoxToRemove);
 
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "WW8W_qUUlky__piyTo9edQ",
-                            XPosition = 91.395872420262549,
-                            YPosition = 226.14258911819883,
-                            Height = 35,
-                            Width = 731.96435272045,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "2"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 182.99108818011251,
-                            Answer = "3",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 365.982176360225,
-                            Answer = "5"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 548.9732645403376,
-                            Answer = "8"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
+                    var multipleChoice = new MultipleChoice(page)
+                                         {
+                                             ID = "WW8W_qUUlky__piyTo9edQ",
+                                             XPosition = 91.395872420262549,
+                                             YPosition = 226.14258911819883,
+                                             Height = 35,
+                                             Width = 731.96435272045,
+                                             CreatorID = Person.Author.ID,
+                                             OwnerID = Person.Author.ID,
+                                             Orientation = MultipleChoiceOrientations.Horizontal
+                                         };
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "2"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 182.99108818011251,
+                                 Answer = "3",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 365.982176360225,
+                                 Answer = "5"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 548.9732645403376,
+                                 Answer = "8"
+                             };
+                    multipleChoice.ChoiceBubbles.Add(b1);
+                    multipleChoice.ChoiceBubbles.Add(b2);
+                    multipleChoice.ChoiceBubbles.Add(b3);
+                    multipleChoice.ChoiceBubbles.Add(b4);
+                    page.PageObjects.Insert(0, multipleChoice);
+                    break;
                 }
                 case "y-wako1KCk6Aurwrn5QbVg": // Page 5
                 {
@@ -300,50 +274,50 @@ namespace ConsoleScripts
                     ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
                     ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
 
-                        var textBoxToRemove = page.PageObjects.First(p => p.ID == "rcBWT95ExEW9DuS8xkK2Xw") as CLPTextBox;
-                        page.PageObjects.Remove(textBoxToRemove);
+                    var textBoxToRemove = page.PageObjects.First(p => p.ID == "rcBWT95ExEW9DuS8xkK2Xw") as CLPTextBox;
+                    page.PageObjects.Remove(textBoxToRemove);
 
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "me90TgnrPUKEN1CD6AzinQ",
-                            XPosition = 83.764739279027367,
-                            YPosition = 280.02783329603585,
-                            Height = 35,
-                            Width = 990.04844076613745,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "16",
-                            AnswerLabel = "years old"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 247.51211019153436,
-                            Answer = "24",
-                            AnswerLabel = "years old"
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 495.02422038306872,
-                            Answer = "64",
-                            AnswerLabel = "years old",
-                            IsACorrectValue = true
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 742.53633057460308,
-                            Answer = "80",
-                            AnswerLabel = "years old"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
+                    var multipleChoice = new MultipleChoice(page)
+                                         {
+                                             ID = "me90TgnrPUKEN1CD6AzinQ",
+                                             XPosition = 83.764739279027367,
+                                             YPosition = 280.02783329603585,
+                                             Height = 35,
+                                             Width = 990.04844076613745,
+                                             CreatorID = Person.Author.ID,
+                                             OwnerID = Person.Author.ID,
+                                             Orientation = MultipleChoiceOrientations.Horizontal
+                                         };
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "16",
+                                 AnswerLabel = "years old"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 247.51211019153436,
+                                 Answer = "24",
+                                 AnswerLabel = "years old"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 495.02422038306872,
+                                 Answer = "64",
+                                 AnswerLabel = "years old",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 742.53633057460308,
+                                 Answer = "80",
+                                 AnswerLabel = "years old"
+                             };
+                    multipleChoice.ChoiceBubbles.Add(b1);
+                    multipleChoice.ChoiceBubbles.Add(b2);
+                    multipleChoice.ChoiceBubbles.Add(b3);
+                    multipleChoice.ChoiceBubbles.Add(b4);
+                    page.PageObjects.Insert(0, multipleChoice);
                     break;
                 }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
@@ -365,47 +339,47 @@ namespace ConsoleScripts
                                                   RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
                                               };
 
-                        var textBoxToRemove = page.PageObjects.First(p => p.ID == "QPzA5GnIUkSE5opKl8nm8g") as CLPTextBox;
-                        page.PageObjects.Remove(textBoxToRemove);
+                    var textBoxToRemove = page.PageObjects.First(p => p.ID == "QPzA5GnIUkSE5opKl8nm8g") as CLPTextBox;
+                    page.PageObjects.Remove(textBoxToRemove);
 
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "u0WfKRSe00mftRwyarge6A",
-                            XPosition = 98.412757973733619,
-                            YPosition = 264.0337711069418,
-                            Height = 35,
-                            Width = 778.27579737335884,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "$5"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 194.56894934333971,
-                            Answer = "$7"
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 389.13789868667942,
-                            Answer = "$8",
-                            IsACorrectValue = true
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 583.70684803001916,
-                            Answer = "$55"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
+                    var multipleChoice = new MultipleChoice(page)
+                                         {
+                                             ID = "u0WfKRSe00mftRwyarge6A",
+                                             XPosition = 98.412757973733619,
+                                             YPosition = 264.0337711069418,
+                                             Height = 35,
+                                             Width = 778.27579737335884,
+                                             CreatorID = Person.Author.ID,
+                                             OwnerID = Person.Author.ID,
+                                             Orientation = MultipleChoiceOrientations.Horizontal
+                                         };
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "$5"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 194.56894934333971,
+                                 Answer = "$7"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 389.13789868667942,
+                                 Answer = "$8",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 583.70684803001916,
+                                 Answer = "$55"
+                             };
+                    multipleChoice.ChoiceBubbles.Add(b1);
+                    multipleChoice.ChoiceBubbles.Add(b2);
+                    multipleChoice.ChoiceBubbles.Add(b3);
+                    multipleChoice.ChoiceBubbles.Add(b4);
+                    page.PageObjects.Insert(0, multipleChoice);
+                    break;
                 }
                 case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
                 {
@@ -1138,20 +1112,14 @@ namespace ConsoleScripts
                                 var threshold = 80;
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
-                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
-                                                                                                            page.Owner,
-                                                                                                            multipleChoice,
-                                                                                                            index,
-                                                                                                            status,
-                                                                                                            strokesAdded,
-                                                                                                            strokesRemoved);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
                                 page.History.UndoItems.Insert(0, multipleChoiceStatus);
                                 page.History.ConversionUndo();
                                 continue;
                             }
                         }
                     }
-                    else if (strokesRemoved.Count == 1 &&     //Single Remove
+                    else if (strokesRemoved.Count == 1 && //Single Remove
                              !strokesAdded.Any())
                     {
                         var strokeID = objectsChanged.StrokeIDsRemoved.First();
@@ -1228,20 +1196,14 @@ namespace ConsoleScripts
                             {
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
-                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page,
-                                                                                                            page.Owner,
-                                                                                                            multipleChoice,
-                                                                                                            index,
-                                                                                                            status,
-                                                                                                            strokesAdded,
-                                                                                                            strokesRemoved);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
                                 page.History.UndoItems.Insert(0, multipleChoiceStatus);
                                 page.History.ConversionUndo();
                                 continue;
                             }
                         }
                     }
-                    else if (strokesRemoved.Count == 1 &&     //Point Erase
+                    else if (strokesRemoved.Count == 1 && //Point Erase
                              strokesAdded.Count == 2)
                     {
                         // TODO: Handle this use case?
@@ -1352,57 +1314,5 @@ namespace ConsoleScripts
 
         // Process a console command
         // returns true iff the console should accept another command after this one
-
-        private static Boolean processCommand(string command)
-        {
-            if (command.Equals("replace"))
-            {
-                replace();
-            }
-            else if (command.Equals("interpret student"))
-            {
-                batchInterpretStudent();
-            }
-            else if (command.Equals("interpret teacher"))
-            {
-                batchInterpretTeacher();
-            }
-            else if (command.Equals("strip"))
-            {
-                stripHistory();
-            }
-            else if (command.Equals("combine"))
-            {
-                NotebookMerge.Combine();
-            }
-            else if (command.Equals("xml"))
-            {
-                XMLImporter.Import();
-            }
-            else if (command.Equals("exit"))
-            {
-                return false;
-            }
-            else
-            {
-                Console.WriteLine("Command not recognized");
-            }
-            return true;
-        }
-
-        private static void replace()
-        {
-            Console.WriteLine("Starting");
-
-            NotebookMerge.Replace();
-
-            Console.WriteLine("Ended");
-        }
-
-        private static void batchInterpretStudent() { BatchInterpreter.InterpretStudentNotebooks(); }
-
-        private static void batchInterpretTeacher() { BatchInterpreter.InterpretTeacherNotebooks(); }
-
-        private static void stripHistory() { StripHistory.StripAll(); }
     }
 }
