@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.IO;
+using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -11,5 +12,14 @@ namespace CLP.Entities
             : base(info, context) { }
 
         public void ClearDirtyFlag() { IsDirty = false; }
+
+        public static T Load<T>(string fileName, SerializationMode mode)
+             where T : class
+        {
+            using (Stream stream = new FileStream(fileName, FileMode.Open))
+            {
+                return Load<T>(stream, mode);
+            }
+        }
     }
 }
