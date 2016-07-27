@@ -38,7 +38,7 @@ namespace ConsoleScripts
                 var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
                 foreach (var pageFilePath in pageFilePaths)
                 {
-                    var page = ModelBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+                    var page = AEntityBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
                     page.AfterDeserialization();
 
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
