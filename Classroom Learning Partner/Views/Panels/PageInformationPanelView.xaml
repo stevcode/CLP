@@ -380,7 +380,7 @@
 
                     <TextBlock Text="Min/Max/Avg:" />
                     <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
+                         Text="{Binding FormattedMinMaxAverageHistoryLength, Mode=OneWay}"
                          Background="#66FF8C00" />
 
                     <catel:StackGrid Grid.ColumnSpan="2">
@@ -419,7 +419,7 @@
 
                         <TextBlock Text="Min/Max/Avg:" />
                         <TextBox IsReadOnly="True"
-                             Text="{Binding FormattedMinMaxAverageAnimationLength}"
+                             Text="{Binding FormattedMinMaxAverageAnimationLength, Mode=OneWay}"
                              Background="#66FF8C00" />
 
                     </catel:StackGrid>
