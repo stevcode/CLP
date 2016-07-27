@@ -36,45 +36,35 @@ namespace CLP.Entities
 
             modelBuilder.Entity<ClassInformation>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<ClassInformation>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<ClassInformation>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<ClassPeriod>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<Person>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Person>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<Person>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<Notebook>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<CLPPage>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<CLPPage>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<CLPPage>().Ignore(t => t.Mode);
 
             //PageObjects
             modelBuilder.Entity<Shape>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Shape>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<Shape>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<CLPTextBox>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<CLPTextBox>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<CLPTextBox>().Ignore(t => t.Mode);
 
             //Tags
             modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<PageTopicTag>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<PageTopicTag>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<PageTopicTag>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<StarredTag>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<StarredTag>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<StarredTag>().Ignore(t => t.Mode);
         }
 
         #endregion //Methods

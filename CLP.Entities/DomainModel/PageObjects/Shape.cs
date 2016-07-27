@@ -133,22 +133,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newShape = Clone() as Shape;
-            if (newShape == null)
-            {
-                return null;
-            }
-            newShape.CreationDate = DateTime.Now;
-            newShape.ID = Guid.NewGuid().ToCompactID();
-            newShape.VersionIndex = 0;
-            newShape.LastVersionIndex = null;
-            newShape.ParentPage = ParentPage;
-
-            return newShape;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region Implementation of ICuttable

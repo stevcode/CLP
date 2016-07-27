@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -10,9 +9,10 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>Interaction logic for CLPTextBoxView.xaml</summary>
     public partial class CLPTextBoxView
     {
-        public CLPTextBoxView() { InitializeComponent(); }
-
-        protected override Type GetViewModelType() { return typeof (CLPTextBoxViewModel); }
+        public CLPTextBoxView()
+        {
+            InitializeComponent();
+        }
 
         protected override void OnViewModelChanged()
         {
@@ -71,10 +71,7 @@ namespace Classroom_Learning_Partner.Views
                         // Get current position of cursor
                         var curCaret = TextBox.CaretPosition;
                         // Get the current block object that the cursor is in
-                        var curBlock =
-                            TextBox.Document.Blocks.FirstOrDefault(
-                                                                   x =>
-                                                                   x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1);
+                        var curBlock = TextBox.Document.Blocks.FirstOrDefault(x => x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1);
                         if (curBlock != null)
                         {
                             var curParagraph = curBlock as Paragraph;

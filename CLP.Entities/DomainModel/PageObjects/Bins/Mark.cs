@@ -116,22 +116,6 @@ namespace CLP.Entities
             base.OnMoved(oldX, oldY, fromHistory);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newMark = Clone() as Mark;
-            if (newMark == null)
-            {
-                return null;
-            }
-            newMark.CreationDate = DateTime.Now;
-            newMark.ID = Guid.NewGuid().ToCompactID();
-            newMark.VersionIndex = 0;
-            newMark.LastVersionIndex = null;
-            newMark.ParentPage = ParentPage;
-
-            return newMark;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region ICountable Implementation

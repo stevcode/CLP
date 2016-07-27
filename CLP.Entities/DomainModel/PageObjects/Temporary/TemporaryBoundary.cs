@@ -54,22 +54,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newBoundary = Clone() as TemporaryBoundary;
-            if (newBoundary == null)
-            {
-                return null;
-            }
-            newBoundary.CreationDate = DateTime.Now;
-            newBoundary.ID = Guid.NewGuid().ToString();
-            newBoundary.VersionIndex = 0;
-            newBoundary.LastVersionIndex = null;
-            newBoundary.ParentPage = ParentPage;
-
-            return newBoundary;
-        }
-
         #endregion //Methods
     }
 }

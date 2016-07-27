@@ -327,7 +327,7 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as CLPArraySnapHistoryItem;
+            var clonedHistoryItem = this.DeepCopy();
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (clonedHistoryItem == null ||
                 persistingArray == null)

@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using Catel.IO;
 using Catel.IoC;
 using Catel.Logging;
+using Catel.MVVM;
 using Catel.Reflection;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
@@ -58,6 +59,16 @@ namespace Classroom_Learning_Partner
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
+
+            //Manual Register views to viewModels that don't adhere to standard naming conventions.
+            var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
+            viewModelLocator.Register(typeof(ColumnDisplayPreviewView), typeof(ColumnDisplayViewModel));
+            viewModelLocator.Register(typeof(GridDisplayPreviewView), typeof(GridDisplayViewModel));
+            viewModelLocator.Register(typeof(CLPPagePreviewView), typeof(CLPPageViewModel));
+            viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
+            viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
+            viewModelLocator.Register(typeof(NonAsyncPagePreviewView), typeof(CLPPageViewModel));
+            viewModelLocator.Register(typeof(GroupCreationPanel), typeof(GroupCreationViewModel));
         }
 
         private static void InitializeServices()

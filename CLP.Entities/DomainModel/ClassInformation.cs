@@ -230,6 +230,7 @@ namespace CLP.Entities
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
+            // TODO: Use ModelBaseExtensions.serialization.cs extention method SaveAsXml(this ModelBase model, string filePath)
             using (Stream stream = new FileStream(classInformationFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();

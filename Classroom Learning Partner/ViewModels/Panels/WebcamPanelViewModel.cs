@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
@@ -43,12 +44,12 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "WebcamPanelVM"; }
         }
 
-        protected override void Close()
+        protected override async Task CloseAsync()
         {
             SelectedWebcam.Dispose();
             SelectedWebcam = null;
 
-            base.Close();
+            await base.CloseAsync();
         }
 
         #region Bindings

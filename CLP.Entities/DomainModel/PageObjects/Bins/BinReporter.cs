@@ -60,22 +60,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newBinReporter = Clone() as BinReporter;
-            if (newBinReporter == null)
-            {
-                return null;
-            }
-            newBinReporter.CreationDate = DateTime.Now;
-            newBinReporter.ID = Guid.NewGuid().ToCompactID();
-            newBinReporter.VersionIndex = 0;
-            newBinReporter.LastVersionIndex = null;
-            newBinReporter.ParentPage = ParentPage;
-
-            return newBinReporter;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region IReporter Implementation

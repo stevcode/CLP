@@ -480,15 +480,15 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        if (notebookService == null)
-                                                                                        {
-                                                                                            return null;
-                                                                                        }
+                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        //if (notebookService == null)
+                                                                                        //{
+                                                                                        //    return null;
+                                                                                        //}
 
-                                                                                        notebookService.CurrentClassPeriod = classPeriod;
-                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassInformation.StudentList;
-                                                                                        App.MainWindowViewModel.CurrentUser = notebookService.CurrentClassPeriod.ClassInformation.Teacher;
+                                                                                        //notebookService.CurrentClassPeriod = classPeriod;
+                                                                                        //App.MainWindowViewModel.AvailableUsers = classPeriod.ClassInformation.StudentList;
+                                                                                        //App.MainWindowViewModel.CurrentUser = notebookService.CurrentClassPeriod.ClassInformation.Teacher;
 
                                                                                         return null;
                                                                                     },
@@ -593,29 +593,29 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        if (notebookService == null)
-                                                                                        {
-                                                                                            return null;
-                                                                                        }
+                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        //if (notebookService == null)
+                                                                                        //{
+                                                                                        //    return null;
+                                                                                        //}
 
-                                                                                        foreach (var notebook in notebookService.OpenNotebooks)
-                                                                                        {
-                                                                                            var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
+                                                                                        //foreach (var notebook in notebookService.OpenNotebooks)
+                                                                                        //{
+                                                                                        //    var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
 
-                                                                                            if(page == null)
-                                                                                            {
-                                                                                                continue;
-                                                                                            }
+                                                                                        //    if(page == null)
+                                                                                        //    {
+                                                                                        //        continue;
+                                                                                        //    }
 
-                                                                                            historyItem.ParentPage = page;
-                                                                                            historyItem.UnpackHistoryItem();
-                                                                                            page.History.RedoItems.Clear();
-                                                                                            page.History.RedoItems.Add(historyItem);
-                                                                                            page.History.Redo();
+                                                                                        //    historyItem.ParentPage = page;
+                                                                                        //    historyItem.UnpackHistoryItem();
+                                                                                        //    page.History.RedoItems.Clear();
+                                                                                        //    page.History.RedoItems.Add(historyItem);
+                                                                                        //    page.History.Redo();
 
-                                                                                            break;
-                                                                                        }
+                                                                                        //    break;
+                                                                                        //}
                                                                                         return null;
                                                                                     },
                                                        null);

@@ -1,12 +1,8 @@
 ﻿using Classroom_Learning_Partner.ViewModels;
-using System;
-
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for CLPRegionView.xaml
-    /// </summary>
+    /// <summary>Interaction logic for CLPRegionView.xaml</summary>
     public partial class CLPRegionView
     {
         public CLPRegionView()
@@ -14,15 +10,10 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
         }
 
-        protected override Type GetViewModelType()
-        {
-            return typeof(CLPRegionViewModel);
-        }
-
         protected override void OnViewModelChanged()
         {
             base.OnViewModelChanged();
-            if(ViewModel is CLPRegionViewModel)
+            if (ViewModel is CLPRegionViewModel)
             {
                 (ViewModel as CLPRegionViewModel).IsAdornerVisible = true;
             }

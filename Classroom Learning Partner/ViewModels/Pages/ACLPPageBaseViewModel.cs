@@ -56,12 +56,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Overrides of ViewModelBase
 
-        protected override void OnClosing()
+        protected override async Task OnClosingAsync()
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
             Submissions.CollectionChanged -= Submissions_CollectionChanged;
-            base.OnClosing();
+            await base.OnClosingAsync();
         }
 
         #endregion

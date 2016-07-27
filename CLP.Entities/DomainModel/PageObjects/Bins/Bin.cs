@@ -209,22 +209,6 @@ namespace CLP.Entities
             base.OnMoved(oldX, oldY, fromHistory);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newBin = Clone() as Bin;
-            if (newBin == null)
-            {
-                return null;
-            }
-            newBin.CreationDate = DateTime.Now;
-            newBin.ID = Guid.NewGuid().ToCompactID();
-            newBin.VersionIndex = 0;
-            newBin.LastVersionIndex = null;
-            newBin.ParentPage = ParentPage;
-
-            return newBin;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region AStrokeAccepter Overrides

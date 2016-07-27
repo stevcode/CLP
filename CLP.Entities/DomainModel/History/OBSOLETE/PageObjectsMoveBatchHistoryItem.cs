@@ -254,7 +254,7 @@ namespace CLP.Entities
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as PageObjectsMoveBatchHistoryItem;
+            var clonedHistoryItem = this.DeepCopy();
             if(clonedHistoryItem == null)
             {
                 return null;

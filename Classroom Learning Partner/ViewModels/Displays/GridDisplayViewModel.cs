@@ -1,10 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using Catel.Data;
-using Catel.IoC;
-using Catel.MVVM;
-using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -23,10 +20,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Overrides of ViewModelBase
 
-        protected override void OnClosing()
+        protected override async Task OnClosingAsync()
         {
             Pages.CollectionChanged -= Pages_CollectionChanged;
-            base.OnClosing();
+            await base.OnClosingAsync();
         }
 
         #endregion
@@ -47,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(UGridRowsProperty, value); }
         }
 
-        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof (int), 1);
+        public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
 
         #endregion //Bindings
 

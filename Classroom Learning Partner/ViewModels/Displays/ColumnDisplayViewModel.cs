@@ -1,12 +1,9 @@
-﻿using Classroom_Learning_Partner.Services;
-using CLP.Entities;
+﻿using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class ColumnDisplayViewModel : AMultiDisplayViewModelBase
     {
-        private readonly INotebookService _notebookService;
-
         #region Constructor
 
         /// <summary>Initializes a new instance of the GridDisplayViewModel class.</summary>

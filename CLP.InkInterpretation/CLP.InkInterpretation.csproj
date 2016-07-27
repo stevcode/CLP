@@ -45,11 +45,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>WindowsRuntime External Library\System.Runtime.WindowsRuntime.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>

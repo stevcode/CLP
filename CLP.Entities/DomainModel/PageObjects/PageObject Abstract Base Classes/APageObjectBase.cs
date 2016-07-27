@@ -246,7 +246,22 @@ namespace CLP.Entities
 
         #region Methods
 
-        public abstract IPageObject Duplicate();
+        public virtual IPageObject Duplicate()
+        {
+            IPageObject pageObject = this.DeepCopy();
+            if (pageObject == null)
+            {
+                return null;
+            }
+
+            pageObject.CreationDate = DateTime.Now;
+            pageObject.ID = Guid.NewGuid().ToCompactID();
+            pageObject.VersionIndex = 0;
+            pageObject.LastVersionIndex = null;
+            pageObject.ParentPage = ParentPage;
+
+            return pageObject;
+        }
 
         public virtual void OnAdded(bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
 

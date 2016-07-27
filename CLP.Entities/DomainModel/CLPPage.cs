@@ -754,7 +754,7 @@ namespace CLP.Entities
             SubmissionTime = DateTime.Now;
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
             History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x!= null));
-            var copy = Clone() as CLPPage;
+            var copy = this.DeepCopy();
             if (copy == null)
             {
                 return null;
@@ -873,7 +873,7 @@ namespace CLP.Entities
 
         public CLPPage CopyForNewOwner(Person owner)
         {
-            var newPage = Clone() as CLPPage;
+            var newPage = this.DeepCopy();
             if (newPage == null)
             {
                 return null;
@@ -901,7 +901,7 @@ namespace CLP.Entities
         {
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
             History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x != null));
-            var copy = Clone() as CLPPage;
+            var copy = this.DeepCopy();
             if (copy == null)
             {
                 return null;

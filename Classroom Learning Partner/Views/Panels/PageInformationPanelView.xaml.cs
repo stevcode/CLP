@@ -1,12 +1,8 @@
-﻿using System;
-using System.Windows.Input;
-using Classroom_Learning_Partner.ViewModels;
+﻿using System.Windows.Input;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for PageInformationPanelView.xaml
-    /// </summary>
+    /// <summary>Interaction logic for PageInformationPanelView.xaml</summary>
     public partial class PageInformationPanelView
     {
         public PageInformationPanelView()
@@ -15,8 +11,9 @@ namespace Classroom_Learning_Partner.Views
             CloseViewModelOnUnloaded = false;
         }
 
-        protected override Type GetViewModelType() { return typeof(PageInformationPanelViewModel); }
-
-        private void TagsListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }
+        private void TagsListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

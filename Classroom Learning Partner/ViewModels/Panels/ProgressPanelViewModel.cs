@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Catel.Data;
 using Catel.IoC;
@@ -24,7 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
 
             RefreshProgressPanelData();
-            Initialized += ProgressPanelViewModel_Initialized;
+            InitializedAsync += ProgressPanelViewModel_InitializedAsync;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             OpenNotebookCommand = new Command<NotebookInfo>(OnOpenNotebookCommandExecute);
@@ -104,7 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Events
 
-        private void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
+        private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             RefreshProgressPanelData();
             SetPanelWidth();
