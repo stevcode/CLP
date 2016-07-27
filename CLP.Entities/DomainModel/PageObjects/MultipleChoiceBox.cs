@@ -186,22 +186,6 @@ namespace CLP.Entities
             base.OnPropertyChanged(e);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newMultipleChoiceBox = Clone() as MultipleChoiceBox;
-            if (newMultipleChoiceBox == null)
-            {
-                return null;
-            }
-            newMultipleChoiceBox.CreationDate = DateTime.Now;
-            newMultipleChoiceBox.ID = Guid.NewGuid().ToCompactID();
-            newMultipleChoiceBox.VersionIndex = 0;
-            newMultipleChoiceBox.LastVersionIndex = null;
-            newMultipleChoiceBox.ParentPage = ParentPage;
-
-            return newMultipleChoiceBox;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region AStrokeAccepter Overrides

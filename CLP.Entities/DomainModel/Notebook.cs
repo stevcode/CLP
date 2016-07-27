@@ -341,7 +341,7 @@ namespace CLP.Entities
 
         public Notebook CopyForNewOwner(Person owner)
         {
-            var newNotebook = Clone() as Notebook;
+            var newNotebook = this.DeepCopy();
             if (newNotebook == null)
             {
                 return null;

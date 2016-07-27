@@ -75,22 +75,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newGrid = Clone() as TemporaryGrid;
-            if (newGrid == null)
-            {
-                return null;
-            }
-            newGrid.CreationDate = DateTime.Now;
-            newGrid.ID = Guid.NewGuid().ToString();
-            newGrid.VersionIndex = 0;
-            newGrid.LastVersionIndex = null;
-            newGrid.ParentPage = ParentPage;
-
-            return newGrid;
-        }
-
         #endregion //Methods
     }
 }

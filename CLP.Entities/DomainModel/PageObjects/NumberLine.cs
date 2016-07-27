@@ -798,22 +798,6 @@ namespace CLP.Entities
             OnMoving(oldX, oldY, fromHistory);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newNumberLine = Clone() as NumberLine;
-            if (newNumberLine == null)
-            {
-                return null;
-            }
-            newNumberLine.CreationDate = DateTime.Now;
-            newNumberLine.ID = Guid.NewGuid().ToCompactID();
-            newNumberLine.VersionIndex = 0;
-            newNumberLine.LastVersionIndex = null;
-            newNumberLine.ParentPage = ParentPage;
-
-            return newNumberLine;
-        }
-
         /// <summary>Gets CodedID just before the historyItem at historyIndex executes Redo(). To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.</summary>
         public override string GetCodedIDAtHistoryIndex(int historyIndex)
         {

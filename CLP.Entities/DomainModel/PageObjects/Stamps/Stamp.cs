@@ -317,22 +317,6 @@ namespace CLP.Entities
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= .90 || intersectionArea / area >= .90);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newStamp = Clone() as Stamp;
-            if (newStamp == null)
-            {
-                return null;
-            }
-            newStamp.CreationDate = DateTime.Now;
-            newStamp.ID = Guid.NewGuid().ToCompactID();
-            newStamp.VersionIndex = 0;
-            newStamp.LastVersionIndex = null;
-            newStamp.ParentPage = ParentPage;
-
-            return newStamp;
-        }
-
         public override string GetCodedIDAtHistoryIndex(int historyIndex)
         {
             var parts = GetPartsAtHistoryIndex(historyIndex);

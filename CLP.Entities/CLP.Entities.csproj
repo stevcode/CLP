@@ -230,6 +230,7 @@
     <Compile Include="DomainModel\Utility\Extentions\ColorExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\IEnumerableExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\IntegerExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\ModelBaseExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\PointExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\RectExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\StringExtensions.cs" />

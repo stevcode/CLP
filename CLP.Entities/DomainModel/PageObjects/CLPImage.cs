@@ -72,22 +72,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newCLPImage = Clone() as CLPImage;
-            if (newCLPImage == null)
-            {
-                return null;
-            }
-            newCLPImage.CreationDate = DateTime.Now;
-            newCLPImage.ID = Guid.NewGuid().ToCompactID();
-            newCLPImage.VersionIndex = 0;
-            newCLPImage.LastVersionIndex = null;
-            newCLPImage.ParentPage = ParentPage;
-
-            return newCLPImage;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region Static Methods

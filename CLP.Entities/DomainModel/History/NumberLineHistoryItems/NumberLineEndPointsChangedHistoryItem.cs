@@ -194,7 +194,7 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as NumberLineEndPointsChangedHistoryItem;
+            var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
             {
                 return null;

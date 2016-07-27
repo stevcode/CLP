@@ -268,22 +268,6 @@ namespace CLP.Entities
             base.OnMoved(oldX, oldY, fromHistory);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newStampedObject = Clone() as StampedObject;
-            if (newStampedObject == null)
-            {
-                return null;
-            }
-            newStampedObject.CreationDate = DateTime.Now;
-            newStampedObject.ID = Guid.NewGuid().ToCompactID();
-            newStampedObject.VersionIndex = 0;
-            newStampedObject.LastVersionIndex = null;
-            newStampedObject.ParentPage = ParentPage;
-
-            return newStampedObject;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region APageObjectAccepter Overrides

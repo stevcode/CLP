@@ -93,7 +93,7 @@ namespace CLP.Entities
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as AnimationIndicator;
+            var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 

@@ -141,7 +141,7 @@ namespace CLP.Entities
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as PageObjectsRemovedHistoryItem;
+            var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 

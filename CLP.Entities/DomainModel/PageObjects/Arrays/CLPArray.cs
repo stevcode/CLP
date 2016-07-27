@@ -459,22 +459,6 @@ namespace CLP.Entities
             OnMoving(oldX, oldY, fromHistory);
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newCLPArray = Clone() as CLPArray;
-            if (newCLPArray == null)
-            {
-                return null;
-            }
-            newCLPArray.CreationDate = DateTime.Now;
-            newCLPArray.ID = Guid.NewGuid().ToCompactID();
-            newCLPArray.VersionIndex = 0;
-            newCLPArray.LastVersionIndex = null;
-            newCLPArray.ParentPage = ParentPage;
-
-            return newCLPArray;
-        }
-
         public override string GetCodedIDAtHistoryIndex(int historyIndex)
         {
             var dimensions = GetColumnsAndRowsAtHistoryIndex(historyIndex);

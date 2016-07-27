@@ -470,22 +470,6 @@ namespace CLP.Entities
             RaisePropertyChanged("LastDivisionPosition");
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newFuzzyFactorCard = Clone() as FuzzyFactorCard;
-            if (newFuzzyFactorCard == null)
-            {
-                return null;
-            }
-            newFuzzyFactorCard.CreationDate = DateTime.Now;
-            newFuzzyFactorCard.ID = Guid.NewGuid().ToCompactID();
-            newFuzzyFactorCard.VersionIndex = 0;
-            newFuzzyFactorCard.LastVersionIndex = null;
-            newFuzzyFactorCard.ParentPage = ParentPage;
-
-            return newFuzzyFactorCard;
-        }
-
         #endregion //APageObjectBase Overrides
 
         #region IReporter Implementation

@@ -170,22 +170,6 @@ namespace CLP.Entities
             }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newLassoRegion = Clone() as LassoRegion;
-            if (newLassoRegion == null)
-            {
-                return null;
-            }
-            newLassoRegion.CreationDate = DateTime.Now;
-            newLassoRegion.ID = Guid.NewGuid().ToString();
-            newLassoRegion.VersionIndex = 0;
-            newLassoRegion.LastVersionIndex = null;
-            newLassoRegion.ParentPage = ParentPage;
-
-            return newLassoRegion;
-        }
-
         #endregion //Methods
     }
 }

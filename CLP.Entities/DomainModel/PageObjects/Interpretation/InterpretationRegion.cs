@@ -90,22 +90,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newRegion = Clone() as InterpretationRegion;
-            if (newRegion == null)
-            {
-                return null;
-            }
-            newRegion.CreationDate = DateTime.Now;
-            newRegion.ID = Guid.NewGuid().ToCompactID();
-            newRegion.VersionIndex = 0;
-            newRegion.LastVersionIndex = null;
-            newRegion.ParentPage = ParentPage;
-
-            return newRegion;
-        }
-
         #endregion // APageObjectBase Overrides
 
         #region Static Methods

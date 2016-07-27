@@ -797,7 +797,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var parentPage = notebookService.CurrentNotebook.GetPageByCompositeKeys(submission.ID, submission.OwnerID, submission.DifferentiationLevel, 0);
             submission.SerializedStrokes = StrokeDTO.SaveInkStrokes(submission.InkStrokes);
             submission.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(submission.History.TrashedInkStrokes);
-            var copy = submission.Clone() as CLPPage;
+            var copy = submission.DeepCopy();
             if (copy == null ||
                 parentPage == null)
             {

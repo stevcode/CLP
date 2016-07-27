@@ -90,22 +90,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newTextBox = Clone() as CLPTextBox;
-            if (newTextBox == null)
-            {
-                return null;
-            }
-            newTextBox.CreationDate = DateTime.Now;
-            newTextBox.ID = Guid.NewGuid().ToCompactID();
-            newTextBox.VersionIndex = 0;
-            newTextBox.LastVersionIndex = null;
-            newTextBox.ParentPage = ParentPage;
-
-            return newTextBox;
-        }
-
         #endregion //APageObjectBase Overrides
     }
 }

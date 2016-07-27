@@ -83,22 +83,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override IPageObject Duplicate()
-        {
-            var newRemainderTiles = Clone() as RemainderTiles;
-            if (newRemainderTiles == null)
-            {
-                return null;
-            }
-            newRemainderTiles.CreationDate = DateTime.Now;
-            newRemainderTiles.ID = Guid.NewGuid().ToCompactID();
-            newRemainderTiles.VersionIndex = 0;
-            newRemainderTiles.LastVersionIndex = null;
-            newRemainderTiles.ParentPage = ParentPage;
-
-            return newRemainderTiles;
-        }
-
         #endregion //APageObjectBase Overrides
     }
 }
