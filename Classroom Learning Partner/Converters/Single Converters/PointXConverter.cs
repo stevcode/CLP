@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Data;
-using Catel.Windows.Data.Converters;
+using Catel.MVVM.Converters;
 
 namespace Classroom_Learning_Partner.Converters
 {
