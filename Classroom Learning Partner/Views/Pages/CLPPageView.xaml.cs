@@ -1,23 +1,20 @@
-﻿using System;
-using Catel.IoC;
+﻿using Catel.IoC;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for CLPPageView.xaml
-    /// </summary>
+    /// <summary>Interaction logic for CLPPageView.xaml</summary>
     public partial class CLPPageView
     {
-        public CLPPageView() { InitializeComponent(); }
-
-        protected override Type GetViewModelType() { return typeof(CLPPageViewModel); }
+        public CLPPageView()
+        {
+            InitializeComponent();
+        }
 
         protected override void OnViewModelChanged()
         {
-            if(ViewModel is ACLPPageBaseViewModel)
+            if (ViewModel is ACLPPageBaseViewModel)
             {
                 (ViewModel as ACLPPageBaseViewModel).TopCanvas = TopCanvas;
                 (ViewModel as ACLPPageBaseViewModel).IsPagePreview = false;

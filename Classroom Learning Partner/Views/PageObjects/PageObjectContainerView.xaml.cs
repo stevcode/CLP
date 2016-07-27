@@ -11,8 +11,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public PageObjectContainerView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof(APageObjectBaseViewModel); }
-
         protected override Type GetViewModelType(object dataContext)
         {
             //if (dataContext is CLPAudio) return typeof(CLPAudioViewModel);

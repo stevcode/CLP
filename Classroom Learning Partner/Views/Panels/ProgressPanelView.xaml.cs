@@ -1,13 +1,8 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels;
+﻿using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for ProgressPanelView.xaml
-    /// </summary>
+    /// <summary>Interaction logic for ProgressPanelView.xaml</summary>
     public partial class ProgressPanelView
     {
         public ProgressPanelView()
@@ -15,8 +10,6 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
         }
-
-        protected override Type GetViewModelType() { return typeof(ProgressPanelViewModel); }
 
         private void MainScrollViewer_OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
