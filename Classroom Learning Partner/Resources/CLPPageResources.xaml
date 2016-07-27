@@ -5,21 +5,6 @@
 
     <converters:TypeToStringConverter x:Key="TypeToStringConverter" />
 
-    <ItemsPanelTemplate x:Key="PanelTemplate">
-        <Canvas Width="1056"
-                Height="816"
-                Background="Transparent" />
-    </ItemsPanelTemplate>
-
-    <Style x:Key="ContainerStyle">
-        <Setter Property="Canvas.Left"
-                Value="{Binding XPosition}" />
-        <Setter Property="Canvas.Top"
-                Value="{Binding YPosition}" />
-        <Setter Property="Canvas.ZIndex"
-                Value="{Binding ZIndex}" />
-    </Style>
-
     <DataTemplate x:Key="PageObjectContainerTemplate">
         <Control>
             <Control.Resources>
@@ -299,5 +284,20 @@
             </Control.Style>
         </Control>
     </DataTemplate>
+
+    <ItemsPanelTemplate x:Key="PanelTemplate">
+        <Canvas Width="1056"
+                Height="816"
+                Background="Transparent" />
+    </ItemsPanelTemplate>
+
+    <Style x:Key="ContainerStyle">
+        <Setter Property="Canvas.Left"
+                Value="{Binding XPosition}" />
+        <Setter Property="Canvas.Top"
+                Value="{Binding YPosition}" />
+        <Setter Property="Canvas.ZIndex"
+                Value="{Binding ZIndex}" />
+    </Style>
 
 </ResourceDictionary>
