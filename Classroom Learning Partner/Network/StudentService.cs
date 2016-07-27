@@ -92,12 +92,12 @@ namespace Classroom_Learning_Partner
                                                                                                         "Double Login",
                                                                                                         MessageBoxButton.OK);
 
-                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        if (notebookService != null)
-                                                                                        {
-                                                                                            notebookService.OpenNotebooks.Clear();
-                                                                                            notebookService.CurrentNotebook = null;
-                                                                                        }
+                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        //if (notebookService != null)
+                                                                                        //{
+                                                                                        //    notebookService.OpenNotebooks.Clear();
+                                                                                        //    notebookService.CurrentNotebook = null;
+                                                                                        //}
                                                                                         App.MainWindowViewModel.SetWorkspace();
 
                                                                                         return null;
@@ -132,13 +132,13 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        if (notebookService != null)
-                                                                                        {
-                                                                                            notebookService.CurrentClassPeriod = classPeriod;
-                                                                                        }
+                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        //if (notebookService != null)
+                                                                                        //{
+                                                                                        //    notebookService.CurrentClassPeriod = classPeriod;
+                                                                                        //}
 
-                                                                                        App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassInformation.StudentList.OrderBy(x => x.FullName));
+                                                                                        //App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassInformation.StudentList.OrderBy(x => x.FullName));
 
                                                                                         return null;
                                                                                     },
@@ -159,16 +159,16 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        if (notebookService == null)
-                                                                                        {
-                                                                                            return null;
-                                                                                        }
+                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        //if (notebookService == null)
+                                                                                        //{
+                                                                                        //    return null;
+                                                                                        //}
 
-                                                                                        notebookService.OpenNotebooks.Add(notebook);
-                                                                                        notebookService.CurrentNotebook = notebook;
-                                                                                        App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-                                                                                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+                                                                                        //notebookService.OpenNotebooks.Add(notebook);
+                                                                                        //notebookService.CurrentNotebook = notebook;
+                                                                                        //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+                                                                                        //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
 
                                                                                         return null;
                                                                                     },

@@ -269,7 +269,6 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\IDataService.cs" />
-    <Compile Include="Services\INotebookService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
