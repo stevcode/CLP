@@ -131,6 +131,30 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Catel.Core, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.4.5.1\lib\net45\Catel.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.Extensions.Controls, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Extensions.Controls.4.5.1\lib\net45\Catel.Extensions.Controls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.Extensions.EntityFramework6, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Extensions.EntityFramework6.4.5.1\lib\net45\Catel.Extensions.EntityFramework6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Catel.MVVM, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.4.5.1\lib\net45\Catel.MVVM.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="IACore, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\IACore.dll</HintPath>
@@ -159,6 +183,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NRtfTree.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Reactive.Core, Version=2.0.20823.0, Culture=neutral, PublicKeyToken=f300afd708cefcd3, processorArchitecture=MSIL">
@@ -991,6 +1016,7 @@
     </None>
     <None Include="Classroom Learning Partner_TemporaryKey.pfx" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
+    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
