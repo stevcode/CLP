@@ -1,26 +1,16 @@
 ﻿using System.Windows;
 using Catel.Windows.Controls;
-using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>
-    /// Interaction logic for CLPHandwritingRegionView.xaml.
-    /// </summary>
+    /// <summary>Interaction logic for CLPHandwritingRegionView.xaml.</summary>
     public partial class CLPHandwritingRegionView : UserControl
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CLPHandwritingRegionView"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="CLPHandwritingRegionView" /> class.</summary>
         public CLPHandwritingRegionView()
         {
             InitializeComponent();
-        }
-
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(CLPHandwritingRegionViewModel);
         }
 
         public void EditInkRegion(object sender, RoutedEventArgs e)
