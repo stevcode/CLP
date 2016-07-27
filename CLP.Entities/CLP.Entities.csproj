@@ -66,12 +66,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core">
-      <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Catel.Extensions.EntityFramework6">
-      <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Extensions.EntityFramework6.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\Classroom Learning Partner\External Libraries\EntityFramework.dll</HintPath>
     </Reference>
