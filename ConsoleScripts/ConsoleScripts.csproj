@@ -110,10 +110,6 @@
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
       <Name>CLP.Entities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
-      <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
-      <Name>CLP.Models</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
