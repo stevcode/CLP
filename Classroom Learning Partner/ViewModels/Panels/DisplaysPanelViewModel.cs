@@ -2,9 +2,8 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
@@ -12,27 +11,23 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// UserControl view model.
-    /// </summary>
+    /// <summary>UserControl view model.</summary>
     [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.</summary>
         public DisplaysPanelViewModel(Notebook notebook)
         {
             InitializeCommands();
             Notebook = notebook;
-            Initialized += DisplaysPanelViewModel_Initialized;
+            InitializedAsync += DisplaysPanelViewModel_InitializedAsync;
             IsVisible = false;
             OnSetSingleDisplayCommandExecute();
         }
 
-        void DisplaysPanelViewModel_Initialized(object sender, EventArgs e)
+        async Task DisplaysPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
@@ -56,9 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Model
 
-        /// <summary>
-        /// The Model for this ViewModel.
-        /// </summary>
+        /// <summary>The Model for this ViewModel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -68,9 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
-        /// <summary>
-        /// Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.
-        /// </summary>
+        /// <summary>Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
@@ -80,9 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
-        /// <summary>
-        /// A property mapped to a property on the Model Notebook.
-        /// </summary>
+        /// <summary>A property mapped to a property on the Model Notebook.</summary>
         [ViewModelToModel("Notebook")]
         public ObservableCollection<IDisplay> Displays
         {
@@ -96,9 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Color of the SingleDisplay background.
-        /// </summary>
+        /// <summary>Color of the SingleDisplay background.</summary>
         public string SingleDisplaySelectedBackgroundColor
         {
             get { return GetValue<string>(SingleDisplaySelectedBackgroundColorProperty); }
@@ -107,9 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SingleDisplaySelectedBackgroundColorProperty = RegisterProperty("SingleDisplaySelectedBackgroundColor", typeof(string));
 
-        /// <summary>
-        /// Color of the highlighted border around the SingleDisplay.
-        /// </summary>
+        /// <summary>Color of the highlighted border around the SingleDisplay.</summary>
         public string SingleDisplaySelectedColor
         {
             get { return GetValue<string>(SingleDisplaySelectedColorProperty); }
@@ -118,9 +103,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SingleDisplaySelectedColorProperty = RegisterProperty("SingleDisplaySelectedColor", typeof(string));
 
-        /// <summary>
-        /// The selected display in the list of the Notebook's Displays. Does not include the SingleDisplay.
-        /// </summary>
+        /// <summary>The selected display in the list of the Notebook's Displays. Does not include the SingleDisplay.</summary>
         public IDisplay CurrentDisplay
         {
             get { return GetValue<IDisplay>(CurrentDisplayProperty); }
@@ -133,10 +116,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var displayListPanelViewModel = sender as DisplaysPanelViewModel;
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(displayListPanelViewModel == null ||
-               notebookWorkspaceViewModel == null ||
-               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-               args.NewValue == null)
+            if (displayListPanelViewModel == null ||
+                notebookWorkspaceViewModel == null ||
+                App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                args.NewValue == null)
             {
                 return;
             }
@@ -151,8 +134,8 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookWorkspaceViewModel.CurrentDisplay = null;
             notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
 
-            if(App.Network.ProjectorProxy == null ||
-               notebookWorkspaceViewModel.CurrentDisplay == null)
+            if (App.Network.ProjectorProxy == null ||
+                notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 return;
             }
@@ -162,16 +145,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 var displayID = notebookWorkspaceViewModel.CurrentDisplay.ID;
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber);
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
         #endregion //Bindings
 
         #region Commands
 
-        /// <summary>
-        /// Adds a GridDisplay to the notebook.
-        /// </summary>
+        /// <summary>Adds a GridDisplay to the notebook.</summary>
         public Command AddGridDisplayCommand { get; private set; }
 
         private void OnAddGridDisplayCommandExecute()
@@ -180,9 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentDisplay = Displays.LastOrDefault();
         }
 
-        /// <summary>
-        /// Adds a ColumnDisplay to the notebook.
-        /// </summary>
+        /// <summary>Adds a ColumnDisplay to the notebook.</summary>
         public Command AddColumnDisplayCommand { get; private set; }
 
         private void OnAddColumnDisplayCommandExecute()
@@ -192,9 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentDisplay = Displays.LastOrDefault();
         }
 
-        /// <summary>
-        /// Adds the current page on the SingleDisplay to a new GridDisplay.
-        /// </summary>
+        /// <summary>Adds the current page on the SingleDisplay to a new GridDisplay.</summary>
         public Command AddPageToNewGridDisplayCommand { get; private set; }
 
         private void OnAddPageToNewGridDisplayCommandExecute()
@@ -206,9 +183,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
         }
 
-        /// <summary>
-        /// Sets the current display to the Mirror Display.
-        /// </summary>
+        /// <summary>Sets the current display to the Mirror Display.</summary>
         public Command SetSingleDisplayCommand { get; private set; }
 
         private void OnSetSingleDisplayCommandExecute()
@@ -222,38 +197,36 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
+            if (notebookWorkspaceViewModel == null)
             {
                 return;
             }
             notebookWorkspaceViewModel.CurrentDisplay = null;
 
-            if(App.Network.ProjectorProxy == null)
+            if (App.Network.ProjectorProxy == null)
             {
                 return;
             }
 
             try
             {
-                const string DISPLAY_ID = "SingleDisplay";               
+                const string DISPLAY_ID = "SingleDisplay";
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
-        /// <summary>
-        /// Hides the Display from the list of Displays. Allows permanently deletion if in Authoring Mode.
-        /// </summary>
+        /// <summary>Hides the Display from the list of Displays. Allows permanently deletion if in Authoring Mode.</summary>
         public Command<IDisplay> RemoveDisplayCommand { get; private set; }
 
         private void OnRemoveDisplayCommandExecute(IDisplay display)
         {
             var gridDisplay = display as GridDisplay;
-            if(gridDisplay != null)
+            if (gridDisplay != null)
             {
                 var result = MessageBox.Show("Are you sure you want to delete Grid Display " + gridDisplay.DisplayNumber + "?", "Delete Display?", MessageBoxButton.YesNo);
 
-                if(result == MessageBoxResult.No)
+                if (result == MessageBoxResult.No)
                 {
                     return;
                 }
@@ -272,8 +245,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(propertyName == "IsProjectorFrozen" &&
-               viewModel is MainWindowViewModel)
+            if (propertyName == "IsProjectorFrozen" &&
+                viewModel is MainWindowViewModel)
             {
                 if ((viewModel as MainWindowViewModel).IsProjectorFrozen)
                 {
@@ -281,29 +254,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //take snapshot
                     byte[] screenShotByteSource = null;
-                    if(CurrentDisplay == null)
+                    if (CurrentDisplay == null)
                     {
                         var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-                        if(notebookWorkspaceViewModel != null)
+                        if (notebookWorkspaceViewModel != null)
                         {
                             var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
                             screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
                         }
-
-                        
                     }
                     else
                     {
                         var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentDisplay as IModel);
-                        foreach(var gridDisplayView in from displayViewModel in displayViewModels
-                                                       where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
-                                                       select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel)) 
-                                                       {
-                                                           screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
-                                                       }
+                        foreach (var gridDisplayView in from displayViewModel in displayViewModels
+                                                        where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
+                                                        select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                        {
+                            screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
+                        }
                     }
 
-                    if(screenShotByteSource != null)
+                    if (screenShotByteSource != null)
                     {
                         var bitmapImage = new BitmapImage();
                         bitmapImage.BeginInit();
@@ -314,27 +285,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
                         App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
                     }
-                    
+
                     //send freeze command to projector
-                    if(App.Network.ProjectorProxy != null)
+                    if (App.Network.ProjectorProxy != null)
                     {
                         try
                         {
                             App.Network.ProjectorProxy.FreezeProjector(true);
                         }
-                        catch(Exception) { }
+                        catch (Exception) { }
                     }
                 }
                 else
                 {
                     SingleDisplaySelectedBackgroundColor = "PaleGreen";
-                    if(App.Network.ProjectorProxy != null)
+                    if (App.Network.ProjectorProxy != null)
                     {
                         try
                         {
                             App.Network.ProjectorProxy.FreezeProjector(false);
                         }
-                        catch(Exception) { }
+                        catch (Exception) { }
                     }
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
@@ -18,8 +19,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookPagesPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
         {
             Notebook = notebook;
-            Initialized += NotebookPagesPanelViewModel_Initialized;
-            
+            InitializedAsync += NotebookPagesPanelViewModel_InitializedAsync;
+
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
             AddPageToStageCommand = new Command<CLPPage>(OnAddPageToStageCommandExecute);
@@ -28,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
         }
 
-        void NotebookPagesPanelViewModel_Initialized(object sender, EventArgs e)
+        async Task NotebookPagesPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
         }

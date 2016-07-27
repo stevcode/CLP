@@ -92,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.Source = FilteredPages;
 
-            Initialized += StagingPanelViewModel_Initialized;
+            InitializedAsync += StagingPanelViewModel_InitializedAsync;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentSortAndGroupType =  SortAndGroupTypes.StudentName;              // SortAndGroupTypes.PageNumber;  //Hack: For Demo
         }
 
-        void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }
+        async Task StagingPanelViewModel_InitializedAsync(object sender, EventArgs e) { Length = InitialLength; }
 
         public override string Title
         {

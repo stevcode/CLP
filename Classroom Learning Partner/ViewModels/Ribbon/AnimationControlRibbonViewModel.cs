@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.Data;
@@ -43,11 +44,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Overrides of ViewModelBase
 
-        protected override void OnClosing()
+        protected override async Task OnClosingAsync()
         {
             _isClosing = true;
             Stop(CurrentPage);
-            base.OnClosing();
+            await base.OnClosingAsync();
         }
 
         private bool _isClosing;

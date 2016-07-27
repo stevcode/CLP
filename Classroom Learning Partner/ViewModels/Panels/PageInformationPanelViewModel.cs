@@ -5,10 +5,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Ink;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
@@ -20,9 +20,9 @@ using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
-using ServiceModelEx;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
+using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -58,7 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
-            Initialized += PageInformationPanelViewModel_Initialized;
+            InitializedAsync += PageInformationPanelViewModel_InitializedAsync;
             IsVisible = false;
 
             PageOrientations.Add("Default - Landscape");
@@ -119,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
             #endregion // Analysis Commands
         }
 
-        private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
+        private async Task PageInformationPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
@@ -668,7 +668,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null)
@@ -975,7 +975,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageHistory.UISleep(1000);
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
 
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null)
@@ -1172,7 +1172,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Console.WriteLine("NEW STROKE TEST");
             var strokes = CurrentPage.InkStrokes.ToList();
             var strokeIndexesInEnclosure = new List<int>();
-            for (var i=0; i < strokes.Count; i++)
+            for (var i = 0; i < strokes.Count; i++)
             {
                 var stroke = strokes[i];
                 // var strokeStartPoint = stroke.StylusPoints.First();
@@ -1185,7 +1185,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     if (IsDebuggingFlag)
                     {
-                         isEnclosed = stroke.IsEnclosedShape(CurrentPage);
+                        isEnclosed = stroke.IsEnclosedShape(CurrentPage);
                     }
                     else
                     {
@@ -1245,6 +1245,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 */
 
                 #region Debugging
+
                 if (IsDebuggingFlag)
                 {
                     var oldWidth = stroke.DrawingAttributes.Width;
@@ -1266,6 +1267,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     // DrawingAttributes.Height = oldHeight;
                     // stroke.DrawingAttributes.Color = oldColor;
                 }
+
                 #endregion // Debugging
             }
         }
@@ -1274,11 +1276,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             const double minDistanceSquared = 5000;
             return ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared) &&
-                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared))
-                    ||
+                    (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared)) ||
                    ((DistanceSquaredBetweenPoints(stroke1.StylusPoints.First().ToPoint(), stroke2.StylusPoints.Last().ToPoint()) < minDistanceSquared) &&
                     (DistanceSquaredBetweenPoints(stroke1.StylusPoints.Last().ToPoint(), stroke2.StylusPoints.First().ToPoint()) < minDistanceSquared));
-
         }
 
         private static double DistanceSquaredBetweenPoints(Point p1, Point p2)
@@ -1290,9 +1290,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return distanceSquared;
         }
 
-        /// <summary>
-        /// Analyzes ink strokes near array objects to determine if skip counting was used
-        /// </summary>
+        /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used</summary>
         public Command v1Command { get; private set; }
 
         private void Onv1CommandExecute()
@@ -1362,10 +1360,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 //var guess = interpretations[0];
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
-                {
-                    CodedID = array.CodedID,
-                    RowInterpretations = guess
-                };
+                          {
+                              CodedID = array.CodedID,
+                              RowInterpretations = guess
+                          };
 
                 CurrentPage.AddTag(tag);
 
@@ -1373,9 +1371,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     CurrentPage.ClearBoundaries();
                     var tempBoundary = new TemporaryBoundary(CurrentPage, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
-                    {
-                        RegionText = "Boundary Interpretation: " + guess
-                    };
+                                       {
+                                           RegionText = "Boundary Interpretation: " + guess
+                                       };
                     CurrentPage.PageObjects.Add(tempBoundary);
                     PageHistory.UISleep(5000);
                     var heightWidths = new Dictionary<Stroke, Point>();
@@ -1402,9 +1400,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Analyzes ink strokes near array objects to determine if skip counting was used
-        /// </summary>
+        /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used</summary>
         public Command v2Command { get; private set; }
 
         private void Onv2CommandExecute()
@@ -1427,7 +1423,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                
                 var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
                 var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                 if (!skipStrokes.Any())
@@ -1440,10 +1435,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 //var guess = interpretations[0];
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
-                {
-                    CodedID = array.CodedID,
-                    RowInterpretations = guess
-                };
+                          {
+                              CodedID = array.CodedID,
+                              RowInterpretations = guess
+                          };
 
                 Console.WriteLine(tag.FormattedValue);
 
@@ -1455,9 +1450,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     CurrentPage.ClearBoundaries();
                     var tempBoundary = new TemporaryBoundary(CurrentPage, skipStrokeBounds.X, skipStrokeBounds.Y, skipStrokeBounds.Height, skipStrokeBounds.Width)
-                    {
-                        RegionText = "Potential SC Interpretation: " + guess
-                    };
+                                       {
+                                           RegionText = "Potential SC Interpretation: " + guess
+                                       };
                     CurrentPage.PageObjects.Add(tempBoundary);
                     PageHistory.UISleep(5000);
                     var heightWidths = new Dictionary<Stroke, Point>();
@@ -1484,9 +1479,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Analyzes ink strokes near array objects to determine if skip counting was used
-        /// </summary>
+        /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used</summary>
         public Command AnalyzeSkipCountingCommand { get; private set; }
 
         private void OnAnalyzeSkipCountingCommandExecute()
@@ -1516,7 +1509,7 @@ namespace Classroom_Learning_Partner.ViewModels
                               CodedID = array.CodedID,
                               RowInterpretations = formattedSkips,
                               HeuristicsResults = heuristicsResults
-                };
+                          };
 
                 Console.WriteLine(tag.FormattedValue);
 
@@ -1579,7 +1572,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     strCompActions += action.CodedObject + " " + action.CodedObjectAction + "; ";
                 }
-
             }
 
             //Edit Name and Page Number for comparison from Machine Codes to Human Codes
@@ -1718,9 +1710,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Console.WriteLine();
         }
 
-        /// <summary>
-        /// Analyzes ink strokes near array objects to determine if skip counting was used
-        /// </summary>
+        /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used</summary>
         public Command AnalyzeBottomSkipCountingCommand { get; private set; }
 
         private void OnAnalyzeBottomSkipCountingCommandExecute()
@@ -1764,10 +1754,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
-                {
-                    CodedID = array.CodedID,
-                    RowInterpretations = formattedSkips
-                };
+                          {
+                              CodedID = array.CodedID,
+                              RowInterpretations = formattedSkips
+                          };
 
                 CurrentPage.AddTag(tag);
             }
@@ -1825,10 +1815,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     height = CurrentPage.Height - ypos;
                 }
 
-                var acceptedBoundary = new Rect(xpos,
-                                                ypos,
-                                                width,
-                                                height);
+                var acceptedBoundary = new Rect(xpos, ypos, width, height);
 
                 var tempBoundary = new TemporaryBoundary(CurrentPage, acceptedBoundary.X, acceptedBoundary.Y, acceptedBoundary.Height, acceptedBoundary.Width)
                                    {
@@ -1841,7 +1828,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Obsolete Commands
 
-            /// <summary>Runs analysis routines on the page.</summary>
+        /// <summary>Runs analysis routines on the page.</summary>
         public Command AnalyzePageCommand { get; private set; }
 
         private void OnAnalyzePageCommandExecute()
@@ -2005,7 +1992,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var gridSize = dt.ArrayHeight / dt.Rows;
 
-
                 dt.SizeArrayToGridLevel(gridSize, false);
 
                 var position = 0.0;
@@ -2021,7 +2007,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
             // foreach (var line in output)
             // {
-                // Console.WriteLine(line);
+            // Console.WriteLine(line);
             // }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -16,12 +17,12 @@ namespace Classroom_Learning_Partner.ViewModels
         public SubmissionHistoryPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            Initialized += SubmissionHistoryPanelViewModel_Initialized;
+            InitializedAsync += SubmissionHistoryPanelViewModel_InitializedAsync;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
-        private void SubmissionHistoryPanelViewModel_Initialized(object sender, EventArgs e)
+        private async Task SubmissionHistoryPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
             IsVisible = false;
