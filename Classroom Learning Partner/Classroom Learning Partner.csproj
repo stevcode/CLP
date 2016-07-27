@@ -561,9 +561,6 @@
     <Compile Include="Views\PageObjects\Stamps\StampedObjectView.xaml.cs">
       <DependentUpon>StampedObjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
-      <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PageObjects\CLPImageView.xaml.cs">
       <DependentUpon>CLPImageView.xaml</DependentUpon>
     </Compile>
@@ -916,10 +913,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PageObjects\Stamps\StampedObjectView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\PageObjectContainerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
