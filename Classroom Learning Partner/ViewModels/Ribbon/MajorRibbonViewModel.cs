@@ -145,6 +145,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Shapes
             //TODO: Better Icons
+            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Images/AddSquare.png");
+
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
             _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
             _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
@@ -317,6 +319,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertMultipleChoiceTextBoxButton;
 
         //Shapes
+        private DropDownRibbonButton _insertShapeButton;
         private RibbonButton _insertSquareButton;
         private RibbonButton _insertCircleButton;
         private RibbonButton _insertTriangleButton;
@@ -1002,11 +1005,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Shapes
             Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertShapeButton);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
-            Buttons.Add(_insertHorizontalLineButton);
-            Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertHorizontalLineButton);
+            //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
             //Buttons.Add(_insertRightDiagonalDashedButton);

@@ -6,7 +6,7 @@ using Catel.Windows.Threading;
 
 namespace CLP.CustomControls
 {
-    public class DropDownButtonBehavior : BehaviorBase<DropDownRibbonButton>
+    public class DropDownRibbonButtonBehavior : BehaviorBase<DropDownRibbonButton>
     {
         #region Methods
         protected override void OnAssociatedObjectLoaded()

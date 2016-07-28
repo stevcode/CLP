@@ -2,7 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
+        
         <ResourceDictionary Source="/CLP.CustomControls;component/Controls/Buttons/ColorButton/ColorButton.generic.xaml" />
+
+        <ResourceDictionary Source="/CLP.CustomControls;component/Controls/Buttons/DropDownRibbonButton/DropDownRibbonButton.generic.xaml" />
 
         <ResourceDictionary Source="/CLP.CustomControls;component/Controls/Buttons/GroupedRibbonButton/GroupedRibbonButton.generic.xaml" />
 

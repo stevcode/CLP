@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:CLP.CustomControls"
-                    xmlns:catel="http://catel.codeplex.com">
+                    xmlns:local="clr-namespace:CLP.CustomControls">
 
     <Style TargetType="{x:Type local:DropDownRibbonButton}">
         <Style.Resources>
@@ -47,14 +46,14 @@
                             <Path x:Name="Arrow" Data="M0,0L3.5,4 7,0z" Fill="Black" 
                                           HorizontalAlignment="Center" Margin="0,1,0,0" VerticalAlignment="Center"/>
                         </Grid>
-                        <ContentPresenter x:Name="ToggleButtonContent" Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}"
+                        <ContentPresenter x:Name="ToggleButtonContent" Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownRibbonButton}}}"
                                                   Visibility="Collapsed" HorizontalAlignment="Center"
                                                   RecognizesAccessKey="True" VerticalAlignment="Center" 
                                                   Margin="{TemplateBinding Padding}"/>
                     </DockPanel>
                 </Border>
                 <ControlTemplate.Triggers>
-                    <DataTrigger Binding="{Binding ShowDefaultButton, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}" Value="False">
+                    <DataTrigger Binding="{Binding ShowDefaultButton, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownRibbonButton}}}" Value="False">
                         <Setter Property="Visibility" TargetName="ToggleButtonContent" Value="Visible" />
                     </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -80,14 +79,14 @@
                             <Path x:Name="Arrow" Data="M0,0L3.5,4 7,0z" Fill="Black"
                               HorizontalAlignment="Center" Margin="0,1,0,0" VerticalAlignment="Center"/>
                         </Grid>
-                        <ContentPresenter x:Name="ToggleButtonContent" Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}"
+                        <ContentPresenter x:Name="ToggleButtonContent" Content="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownRibbonButton}}}"
                                       Visibility="Collapsed" HorizontalAlignment="Center"
                                       RecognizesAccessKey="True" VerticalAlignment="Center" 
                                       Margin="{TemplateBinding Padding}"/>
                     </DockPanel>
                 </Border>
                 <ControlTemplate.Triggers>
-                    <DataTrigger Binding="{Binding ShowDefaultButton,RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}" Value="False">
+                    <DataTrigger Binding="{Binding ShowDefaultButton,RelativeSource={RelativeSource AncestorType={x:Type local:DropDownRibbonButton}}}" Value="False">
                         <Setter Property="Visibility" TargetName="ToggleButtonContent" Value="Visible" />
                     </DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True">
@@ -116,7 +115,7 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Template" Value="{StaticResource ToggleButtonControlTemplate}" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding EnableTransparentBackground, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}" Value="True">
+                    <DataTrigger Binding="{Binding EnableTransparentBackground, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownRibbonButton}}}" Value="True">
                         <Setter Property="Template" Value="{StaticResource TransparentToggleButtonControlTemplate}" />
                     </DataTrigger>
                 </Style.Triggers>
@@ -487,23 +486,6 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="DefaultButtonColumnStyle" TargetType="{x:Type ColumnDefinition}">
-                <Setter Property="Width" Value="*" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ShowDefaultButton, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}" Value="False">
-                        <Setter Property="Width" Value="Auto" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-
-            <Style x:Key="ToggleButtonColumnStyle" TargetType="{x:Type ColumnDefinition}">
-                <Setter Property="Width" Value="Auto" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding ShowDefaultButton, RelativeSource={RelativeSource AncestorType={x:Type local:DropDownButton}}}" Value="False">
-                        <Setter Property="Width" Value="*" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
         </Style.Resources>
     </Style>
 
