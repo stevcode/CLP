@@ -105,6 +105,9 @@
             </Control.Style>
         </Control>
 
+        <views:AuthoringPanelView DockPanel.Dock="Right"
+                                  Visibility="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
+        
         <!--Right Panel-->
         <Control DockPanel.Dock="Right"
                  Visibility="{Binding RightPanel.IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
