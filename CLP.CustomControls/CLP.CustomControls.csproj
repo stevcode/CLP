@@ -100,10 +100,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,9 +117,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Controls\Buttons\ColorButton\ColorButton.cs" />
-    <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.xaml.cs">
-      <DependentUpon>DropDownRibbonButton.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.cs" />
     <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButtonBehavior.cs" />
     <Compile Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.cs" />
     <Compile Include="Controls\Buttons\ToggleRibbonButton\ToggleRibbonButton.cs" />

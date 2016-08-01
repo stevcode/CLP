@@ -3,16 +3,16 @@
 // https://github.com/WildGums/Orc.Controls/blob/develop/src/Orc.Controls/Orc.Controls.Shared/Controls/DropDownButton/Views/DropDownButton.xaml.cs
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Interactivity;
 using System.Windows.Media;
-using Catel;
 
 namespace CLP.CustomControls
 {
     /// <summary>Interaction logic for DropDownRibbonButton.xaml</summary>
-    public partial class DropDownRibbonButton
+    public class DropDownRibbonButton : ToggleButton
     {
         #region Constructors
 
@@ -24,9 +24,10 @@ namespace CLP.CustomControls
 
         public DropDownRibbonButton()
         {
-            InitializeComponent();
-
             SetResourceReference(BackgroundProperty, "DynamicMainColor");
+
+            var behavior = new DropDownRibbonButtonBehavior();
+            Interaction.GetBehaviors(this).Add(behavior);
         }
 
         public DropDownRibbonButton(string text, string packUri, bool isContextButton = false)
