@@ -143,10 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Buttons.Add(_penModeButton);
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
-            {
-                Buttons.Add(_markerModeButton);
-            }
+            Buttons.Add(_markerModeButton);
             Buttons.Add(_highlighterModeButton);
 
             Buttons.Add(MajorRibbonViewModel.Separater);
