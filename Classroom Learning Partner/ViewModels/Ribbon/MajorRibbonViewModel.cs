@@ -146,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Shapes
             //TODO: Better Icons
-            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Images/AddSquare.png");
+            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/PageObjects512.png");
             var shapeDropDown = new ContextMenu();
             
 

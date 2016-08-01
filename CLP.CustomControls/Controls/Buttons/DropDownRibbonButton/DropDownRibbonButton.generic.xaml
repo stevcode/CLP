@@ -13,9 +13,9 @@
             <SolidColorBrush x:Key="ForegroundBrush" Color="Black"/>
             <SolidColorBrush x:Key="MouseOverForegroundBrush" Color="Black"/>
             <SolidColorBrush x:Key="DisabledMenuForeground" Color="#FFAFAFAF"/>
-            <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{DynamicResource DropDownButtonHighlightColor}"/>
+            <SolidColorBrush x:Key="MenuItemSelectionFill" Color="LightGray"/>
             <SolidColorBrush x:Key="SubMenuBackgroundBrush" Color="White"/>
-            <SolidColorBrush x:Key="MenuItemPressedFill" Color="{DynamicResource DropDownButtonAccentColor}"/>
+            <SolidColorBrush x:Key="MenuItemPressedFill" Color="LightGray"/>
             <SolidColorBrush x:Key="SubMenuBorderBrush" Color="LightGray"/>
             <SolidColorBrush x:Key="SubMenuRepeatButtonBrush" Color="LightGray"/>
             <SolidColorBrush x:Key="SubMenuHoverRepeatButtonBrush" Color="LightGray"/>
