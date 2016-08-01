@@ -12,7 +12,7 @@
                   Icon="pack://application:,,,/Resources/Images/Icons/CLPPaperClipLogoCircled.ico"
                   Height="800"
                   Width="1280"
-                  Title="{Binding TitleBarText}"
+                  Title="Classroom Learning Partner"
                   WindowStyle="None"
                   ShowInTaskbar="True"
                   ResizeMode="CanResize"
