@@ -149,13 +149,19 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/PageObjects512.png");
             var shapeDropDown = new ContextMenu();
             
-
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
             shapeDropDown.Items.Add(_insertSquareButton);
             _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
             shapeDropDown.Items.Add(_insertCircleButton);
-            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
-            _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
+            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
+            shapeDropDown.Items.Add(_insertTriangleButton);
+            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
+            shapeDropDown.Items.Add(_insertHorizontalLineButton);
+
+            _insertShapeButton.DropDown = shapeDropDown;
+
+            #region Obsolete
+
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
             _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
@@ -169,8 +175,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                AddPageObjectToPageCommand,
                                                                "LEFT_DIAGONAL_DASHED");
 
-            _insertShapeButton.DropDown = shapeDropDown;
-
+            #endregion // Obsolete
+            
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
 
