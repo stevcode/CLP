@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -146,9 +147,13 @@ namespace Classroom_Learning_Partner.ViewModels
             //Shapes
             //TODO: Better Icons
             _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Images/AddSquare.png");
+            var shapeDropDown = new ContextMenu();
+            
 
-            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
-            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
+            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
+            shapeDropDown.Items.Add(_insertSquareButton);
+            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
+            shapeDropDown.Items.Add(_insertCircleButton);
             _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
             _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
@@ -163,6 +168,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                "pack://application:,,,/Images/LargeIcon.png",
                                                                AddPageObjectToPageCommand,
                                                                "LEFT_DIAGONAL_DASHED");
+
+            _insertShapeButton.DropDown = shapeDropDown;
 
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");

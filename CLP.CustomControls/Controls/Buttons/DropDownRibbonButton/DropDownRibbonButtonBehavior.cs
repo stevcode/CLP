@@ -21,7 +21,7 @@ namespace CLP.CustomControls
 
             AssociatedObject.SetBinding(ToggleButton.IsCheckedProperty, binding);
 
-            AssociatedObject.ToggleButton.Click += OnClick;
+            AssociatedObject.Click += OnClick;
 
             var dropDown = AssociatedObject.DropDown;
             if (dropDown != null)
@@ -34,7 +34,7 @@ namespace CLP.CustomControls
         {
             base.OnAssociatedObjectUnloaded();
 
-            AssociatedObject.ToggleButton.Click -= OnClick;
+            AssociatedObject.Click -= OnClick;
 
             var dropDown = AssociatedObject.DropDown;
             if (dropDown != null)
@@ -45,13 +45,13 @@ namespace CLP.CustomControls
 
         private void OnDropDownClosed(object sender, RoutedEventArgs e)
         {
-            AssociatedObject.ToggleButton.IsChecked = AssociatedObject.DropDown.IsOpen;
+            AssociatedObject.IsChecked = AssociatedObject.DropDown.IsOpen;
         }
 
         private void OnClick(object sender, RoutedEventArgs e)
         {
             var dropDown = AssociatedObject.DropDown;
-            if (dropDown != null && (AssociatedObject.ToggleButton.IsChecked ?? false))
+            if (dropDown != null && (AssociatedObject.IsChecked ?? false))
             {
                 dropDown.Dispatcher.BeginInvoke(() =>
                 {
