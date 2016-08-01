@@ -4,6 +4,7 @@ using System.Windows;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -20,11 +21,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class AuthoringPanelViewModel : APanelBaseViewModel
     {
+        private IDataService _dataService;
         #region Constructor
 
-        public AuthoringPanelViewModel(Notebook notebook)
+        public AuthoringPanelViewModel(IDataService dataService)
         {
-            Notebook = notebook;
+            _dataService = dataService;
+
+            Notebook = _dataService.CurrentNotebook;
 
             InitializedAsync += AuthoringPanelViewModel_InitializedAsync;
             IsVisible = false;
@@ -115,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedAnswerDefinitionProperty, value); }
         }
 
-        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
+        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions), AnswerDefinitions.Multiplication);
 
         #endregion //Bindings
 
