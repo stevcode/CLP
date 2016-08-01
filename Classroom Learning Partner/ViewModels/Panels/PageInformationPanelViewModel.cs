@@ -26,14 +26,6 @@ using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public enum AnswerDefinitions
-    {
-        Multiplication,
-        Division,
-        Addition,
-        AllFactorsOfAProduct
-    }
-
     public enum ManualTags
     {
         TroubleWithRemainders,

@@ -277,6 +277,7 @@
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryGridViewModel.cs" />
+    <Compile Include="ViewModels\Panels\AuthoringPanelViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
@@ -560,6 +561,9 @@
     </Compile>
     <Compile Include="Views\Pages\NonAsyncPagePreviewView.xaml.cs">
       <DependentUpon>NonAsyncPagePreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\AuthoringPanelView.xaml.cs">
+      <DependentUpon>AuthoringPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\DisplaysPanelView.xaml.cs">
       <DependentUpon>DisplaysPanelView.xaml</DependentUpon>
@@ -916,6 +920,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\NonAsyncPagePreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\AuthoringPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
