@@ -301,7 +301,8 @@
 
             <customControls:RibbonButton Text="Add New Page"
                                          Command="{Binding AddNewPageCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
+                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"  />
 
             <customControls:RibbonButton Text="Add New Animation Page"
                                          Command="{Binding AddNewAnimationPageCommand}"
