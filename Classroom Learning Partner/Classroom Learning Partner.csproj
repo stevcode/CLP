@@ -57,7 +57,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>CLPPaperClipLogoBlack.ico</ApplicationIcon>
+    <ApplicationIcon>CLPPaperClipLogoCircled.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -1091,8 +1091,14 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless64.png" />
+    <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless720.png" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoWhite720.png" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled.ico" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
     <Resource Include="CLPPaperClipLogoBlack.ico" />
+    <Resource Include="CLPPaperClipLogoCircled.ico" />
     <Content Include="External Libraries\EntityFramework.dll" />
     <Content Include="External Libraries\EntityFramework.SqlServer.dll" />
     <Content Include="External Libraries\itextsharp.dll" />

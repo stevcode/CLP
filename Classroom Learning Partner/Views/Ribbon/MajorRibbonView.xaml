@@ -100,7 +100,7 @@
                                              VerticalAlignment="Center" />
 
                                     <!-- Button Content -->
-                                    <Image Source="pack://application:,,,/Resources/Images/CLPMenuIconWhiteBorderless64.png" />
+                                    <Image Source="pack://application:,,,/Resources/Images/CLPPaperClipMenuIconWhiteBorderless64.png" />
                                 </Grid>
 
                                 <!-- FX Triggers -->
