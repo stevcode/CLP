@@ -116,14 +116,38 @@
                         <Rectangle DataContext="{Binding}" 
                                    Height="{Binding Height, Mode=TwoWay}" 
                                    Width="{Binding Width, Mode=TwoWay}" 
-                                   Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+                                   Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                            <Rectangle.Style>
+                                <Style TargetType="{x:Type Rectangle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="EllipseTemplate">
                         <Ellipse DataContext="{Binding}" 
                                  Height="{Binding Height, Mode=TwoWay}" 
                                  Width="{Binding Width, Mode=TwoWay}" 
-                                 Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+                                 Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                            <Ellipse.Style>
+                                <Style TargetType="{x:Type Ellipse}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="TriangleTemplate">
@@ -134,7 +158,19 @@
                                  Stretch="Uniform"
                                  Fill="Transparent"
                                  Stroke="Black"
-                                 StrokeThickness="3" />
+                                 StrokeThickness="3">
+                            <Polygon.Style>
+                                <Style TargetType="{x:Type Polygon}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Polygon.Style>
+                        </Polygon>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="HorizontalLineTemplate">
@@ -142,7 +178,19 @@
                               Width="{Binding Width, Mode=TwoWay}"
                               HorizontalAlignment="Left" VerticalAlignment="Center"
                               Stretch="UniformToFill"
-                              StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0" />
+                              StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0">
+                            <Line.Style>
+                                <Style TargetType="{x:Type Line}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="VerticalLineTemplate">

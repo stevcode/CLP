@@ -87,6 +87,25 @@ namespace CLP.Entities
 
         public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof (ShapeType), ShapeType.Rectangle);
 
+        /// <summary>Determines if the stroke used to make the shape is a dashed line or solid.</summary>
+        public bool IsStrokeDashed
+        {
+            get { return GetValue<bool>(IsStrokeDashedProperty); }
+            set { SetValue(IsStrokeDashedProperty, value); }
+        }
+
+        public static readonly PropertyData IsStrokeDashedProperty = RegisterProperty("IsStrokeDashed", typeof(bool), false);
+
+        /// <summary>Degree the shape has been rotated.</summary>
+        public double RotationDegree
+        {
+            get { return GetValue<double>(RotationDegreeProperty); }
+            set { SetValue(RotationDegreeProperty, value); }
+        }
+
+        public static readonly PropertyData RotationDegreeProperty = RegisterProperty("RotationDegree", typeof(double), 0.0);
+        
+
         #endregion //Properties
 
         #region APageObjectBase Overrides
