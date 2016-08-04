@@ -122,11 +122,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
             const int MIN_WIDTH = 20;
             const int MIN_HEIGHT = 20;
+            double newWidth;
+            double newHeight;
 
-            var newWidth = Math.Max(MIN_WIDTH, PageObject.Width + e.HorizontalChange);
-            newWidth = shape.ShapeType == ShapeType.VerticalLine ? shape.Width : Math.Min(newWidth, parentPage.Width - PageObject.XPosition);
-            var newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + e.VerticalChange);
-            newHeight = shape.ShapeType == ShapeType.HorizontalLine ? shape.Height : Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
+            if (ShapeType == ShapeType.Triangle ||
+                ShapeType == ShapeType.LeftDiagonal ||
+                ShapeType == ShapeType.RightDiagonal)
+            {
+                var diagonalChange = Math.Max(e.HorizontalChange, e.VerticalChange);
+                newWidth = Math.Max(MIN_WIDTH, PageObject.Width + diagonalChange);
+                newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + diagonalChange);
+                var sideOverlap = PageObject.XPosition + newWidth - parentPage.Width;
+                var bottomOverlap = PageObject.YPosition + newHeight - parentPage.Height;
+                if (sideOverlap > 0 ||
+                    bottomOverlap > 0)
+                {
+                    var overlapOffset = Math.Max(sideOverlap, bottomOverlap);
+                    newWidth -= overlapOffset;
+                    newHeight -= overlapOffset;
+                }
+            }
+            else
+            {
+                newWidth = Math.Max(MIN_WIDTH, PageObject.Width + e.HorizontalChange);
+                newWidth = shape.ShapeType == ShapeType.VerticalLine ? shape.Width : Math.Min(newWidth, parentPage.Width - PageObject.XPosition);
+                newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + e.VerticalChange);
+                newHeight = shape.ShapeType == ShapeType.HorizontalLine ? shape.Height : Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
+            }
 
             // BUG: Steve - Protractor can be resized passed the Width of the page.
             if (shape.ShapeType == ShapeType.Protractor)
