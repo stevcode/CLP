@@ -1091,6 +1091,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\Shapes64.png" />
     <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless64.png" />
     <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoWhite720.png" />

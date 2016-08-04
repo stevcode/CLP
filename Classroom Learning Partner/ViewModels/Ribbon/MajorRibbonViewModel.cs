@@ -145,8 +145,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            "AUTO_NUMBERLINE");
 
             //Shapes
-            //TODO: Better Icons
-            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/PageObjects512.png");
+            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/Shapes64.png");
             var shapeDropDown = new ContextMenu();
             
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
@@ -981,7 +980,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = PageInteractionModes.Select;
         }
 
-        private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return CurrentPage != null; }
+        private bool OnAddPageObjectToPageCanExecute(string pageObjectType)
+        {
+            return CurrentPage != null;
+        }
 
         #endregion //Insert PageObject Commands
 
