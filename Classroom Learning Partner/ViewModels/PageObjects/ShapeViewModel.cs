@@ -46,8 +46,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateShapeCommand, null, true));
-
             _toggleIsDashedButton = new ToggleRibbonButton("Solid", "Dashed", "pack://application:,,,/Resources/Images/ToggleDashedStroke64.png", true)
                                     {
                                         IsChecked = IsStrokeDashed
@@ -55,6 +53,13 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleIsDashedButton.Checked += toggleIsDashedButton_Checked;
             _toggleIsDashedButton.Unchecked += toggleIsDashedButton_Checked;
             _contextButtons.Add(_toggleIsDashedButton);
+
+            if (ShapeType != ShapeType.HorizontalLine)
+            {
+                return;
+            }
+
+            _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateShapeCommand, null, true));
         }
 
         private void toggleIsDashedButton_Checked(object sender, RoutedEventArgs e)
@@ -98,16 +103,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsStrokeDashedProperty = RegisterProperty("IsStrokeDashed", typeof(bool));
-
-        /// <summary>Degree the shape has been rotated.</summary>
-        [ViewModelToModel("PageObject")]
-        public double RotationDegree
-        {
-            get { return GetValue<double>(RotationDegreeProperty); }
-            set { SetValue(RotationDegreeProperty, value); }
-        }
-
-        public static readonly PropertyData RotationDegreeProperty = RegisterProperty("RotationDegree", typeof(double));
 
         #endregion // Model
 
@@ -208,13 +203,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRotateShapeCommandExecute()
         {
-            if (RotationDegree >= 360)
+            if (ShapeType == ShapeType.HorizontalLine)
             {
-                RotationDegree = 0.0;
+                ShapeType = ShapeType.RightDiagonal;
+                Height = Math.Sqrt(Math.Pow(Width, 2) / 2);
+                Width = Height;
+            }
+            else if (ShapeType == ShapeType.RightDiagonal)
+            {
+                ShapeType = ShapeType.VerticalLine;
+                Height = Math.Sqrt(2 * Math.Pow(Width, 2));
+                Width = Shape.MIN_LINE_DEPTH;
+            }
+            else if (ShapeType == ShapeType.VerticalLine)
+            {
+                ShapeType = ShapeType.LeftDiagonal;
+                Width = Math.Sqrt(Math.Pow(Height, 2) / 2);
+                Height = Width;
             }
             else
             {
-                RotationDegree += 45.0;
+                ShapeType = ShapeType.HorizontalLine;
+                Width = Math.Sqrt(2 * Math.Pow(Height, 2));
+                Height = Shape.MIN_LINE_DEPTH;
+            }
+
+            if (XPosition + Width > PageObject.ParentPage.Width)
+            {
+                XPosition = PageObject.ParentPage.Width - Width;
+            }
+            if (YPosition + Height > PageObject.ParentPage.Height)
+            {
+                YPosition = PageObject.ParentPage.Height - Height;
             }
         }
 

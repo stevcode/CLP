@@ -223,6 +223,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\Single Converters\HalfNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
     <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
