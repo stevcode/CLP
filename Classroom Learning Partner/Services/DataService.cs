@@ -1281,6 +1281,29 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Old ClassPeriod Methods
 
+        #region Testing
+
+        public void TestJSON()
+        {
+            var currentPage = CurrentPage;
+
+            var nameComposite = PageNameComposite.ParsePage(currentPage);
+            var filePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + ".json");
+
+            currentPage.ToJSON(filePath);
+
+            var loadedPage = CLPPage.LoadFromJSON(filePath);
+            if (loadedPage == null)
+            {
+                return;
+            }
+
+            var secondFilePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + " - Copy.json");
+            loadedPage.ToJSON(secondFilePath);
+        }
+
+        #endregion // Testing
+
         #endregion //Methods
     }
 }

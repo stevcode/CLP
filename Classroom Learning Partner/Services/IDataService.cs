@@ -33,5 +33,7 @@ namespace Classroom_Learning_Partner.Services
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
 
         void Analyze();
+
+        void TestJSON();
     }
 }

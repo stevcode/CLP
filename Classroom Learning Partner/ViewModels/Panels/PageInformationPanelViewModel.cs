@@ -1516,6 +1516,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTSVCommandExecute()
         {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            dataService.TestJSON();
+
+
+            return;
             var pageNumber = CurrentPage.PageNumber;
             var studentName = CurrentPage.Owner.FullName;
             var historyActions = CurrentPage.History.HistoryActions;

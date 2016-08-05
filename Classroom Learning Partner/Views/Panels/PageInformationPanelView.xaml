@@ -231,6 +231,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
@@ -315,11 +316,11 @@
                         Height="20"
                         Margin="1" />
 
-                    <!--<Button Content="TSV Testing"
+                    <Button Content="TSV Testing"
                         Command="{Binding TSVCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />-->
+                        Margin="1" />
 
                     <Rectangle Grid.ColumnSpan="2"
                            Height="1"
