@@ -18,7 +18,6 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    [InterestedIn(typeof(RibbonViewModel))]
     [InterestedIn(typeof(MajorRibbonViewModel))]
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase

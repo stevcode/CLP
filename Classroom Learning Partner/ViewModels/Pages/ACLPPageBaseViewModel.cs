@@ -633,17 +633,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if (propertyName == "CanSendToTeacher" &&
-                viewModel is RibbonViewModel)
-            {
-                RaisePropertyChanged("HasSubmissions");
-            }
+            //if (propertyName == "CanSendToTeacher" &&
+            //    viewModel is RibbonViewModel)
+            //{
+            //    RaisePropertyChanged("HasSubmissions");
+            //}
 
-            if (propertyName == "IsSending" &&
-                viewModel is RibbonViewModel)
-            {
-                RaisePropertyChanged("HasSubmissions");
-            }
+            //if (propertyName == "IsSending" &&
+            //    viewModel is RibbonViewModel)
+            //{
+            //    RaisePropertyChanged("HasSubmissions");
+            //}
 
             if (IsPagePreview)
             {

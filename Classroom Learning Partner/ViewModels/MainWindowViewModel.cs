@@ -5,7 +5,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
@@ -19,13 +21,26 @@ namespace Classroom_Learning_Partner.ViewModels
         Database
     }
 
+    public enum Panels
+    {
+        NotebookPages,
+        StudentWork,
+        Progress,
+        Displays,
+        PageInformation,
+        Webcam
+    }
+
     public class MainWindowViewModel : ViewModelBase
     {
+        private IDataService _dataService;
+
         #region Constructor
 
         /// <summary>Initializes a new instance of the MainWindowViewModel class.</summary>
         public MainWindowViewModel(ProgramModes currentProgramMode)
         {
+            _dataService = ServiceLocator.Default.ResolveType<IDataService>();
             CurrentProgramMode = currentProgramMode;
             MajorRibbon = new MajorRibbonViewModel();
             BackStage = new BackStageViewModel();
@@ -53,15 +68,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Constructor
-
-        /// <summary>ribbon, obsolete</summary>
-        public RibbonViewModel Ribbon
-        {
-            get { return GetValue<RibbonViewModel>(RibbonProperty); }
-            set { SetValue(RibbonProperty, value); }
-        }
-
-        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), () => new RibbonViewModel());
 
         #region Bindings
 
@@ -155,9 +161,9 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<bool>(IsPenDownActivatedProperty); }
             set
             {
-                if (value)
+                if (value && _dataService.CurrentNotebook != null)
                 {
-                    ACLPPageBaseViewModel.ClearAdorners(RibbonViewModel.CurrentPage);
+                    ACLPPageBaseViewModel.ClearAdorners(_dataService.CurrentNotebook.CurrentPage);
                 }
                 SetValue(IsPenDownActivatedProperty, value);
             }

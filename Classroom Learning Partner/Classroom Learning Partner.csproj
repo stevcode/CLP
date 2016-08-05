@@ -476,7 +476,6 @@
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\Panels\IPanel.cs" />
-    <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
