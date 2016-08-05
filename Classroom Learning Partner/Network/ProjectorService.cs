@@ -66,7 +66,7 @@ namespace Classroom_Learning_Partner
                                                                                             byte[] screenShotByteSource = null;
                                                                                             if(notebookWorkspaceViewModel.CurrentDisplay == null)
                                                                                             {
-                                                                                                var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                                                                                                var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView();
                                                                                                 screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
                                                                                             }
                                                                                             else
@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner
                                                                                                 var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.CurrentDisplay as IModel);
                                                                                                 foreach(var gridDisplayView in from displayViewModel in displayViewModels
                                                                                                                                where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
-                                                                                                                               select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                                                                                                                               select displayViewModel.GetFirstView())
                                                                                                 {
                                                                                                     screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
                                                                                                 }
@@ -388,7 +388,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay) as SingleDisplayView;
+            var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView() as SingleDisplayView;
             if(singleDisplayView == null)
             {
                 return;

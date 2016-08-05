@@ -53,14 +53,6 @@ namespace Classroom_Learning_Partner
 
         #region Utilities
 
-        public IView GetViewFromViewModel(IViewModel viewModel)
-        {
-            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
-            var views = viewManager.GetViewsOfViewModel(viewModel);
-
-            return views.Any() ? views[0] : null;
-        }
-
         public List<IViewModel> GetViewModelsFromModel(IModel model)
         {
             if (model == null)

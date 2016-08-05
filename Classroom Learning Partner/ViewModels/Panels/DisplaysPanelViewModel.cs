@@ -259,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                         if (notebookWorkspaceViewModel != null)
                         {
-                            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                            var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView();
                             screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
                         }
                     }
@@ -268,7 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentDisplay as IModel);
                         foreach (var gridDisplayView in from displayViewModel in displayViewModels
                                                         where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
-                                                        select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                                                        select displayViewModel.GetFirstView())
                         {
                             screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
                         }

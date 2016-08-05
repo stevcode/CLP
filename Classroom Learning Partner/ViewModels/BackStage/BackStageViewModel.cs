@@ -87,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMoveWindowCommandExecute(MouseButtonEventArgs args)
         {
-            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            var mainWindow = App.MainWindowViewModel.GetFirstView() as MainWindowView;
             if (mainWindow == null ||
                 Mouse.LeftButton != MouseButtonState.Pressed)
             {
@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMinimizeStateCommandExecute()
         {
-            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            var mainWindow = App.MainWindowViewModel.GetFirstView() as MainWindowView;
             if (mainWindow == null)
             {
                 return;
@@ -120,7 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMaximizeStateCommandExecute()
         {
-            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            var mainWindow = App.MainWindowViewModel.GetFirstView() as MainWindowView;
             if (mainWindow == null)
             {
                 return;
@@ -137,7 +137,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnExitProgramCommandExecute()
         {
-            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            var mainWindow = App.MainWindowViewModel.GetFirstView() as MainWindowView;
             if (mainWindow == null)
             {
                 return;
