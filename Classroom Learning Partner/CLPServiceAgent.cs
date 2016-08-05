@@ -51,47 +51,7 @@ namespace Classroom_Learning_Partner
         }
 
         #region Utilities
-
-      
-        
-
-        /// <summary>
-        /// Compresses byte array to new byte array.
-        /// </summary>
-        public byte[] Compress(byte[] raw)
-        {
-            using(var memory = new MemoryStream())
-            {
-                using(var gzip = new GZipStream(memory, CompressionMode.Compress, true))
-                {
-                    gzip.Write(raw, 0, raw.Length);
-                }
-                return memory.ToArray();
-            }
-        }
-
-        public byte[] Decompress(byte[] gzip)
-        {
-            using(var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-            {
-                const int SIZE = 4096;
-                var buffer = new byte[SIZE];
-                using(var memory = new MemoryStream())
-                {
-                    int count;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, SIZE);
-                        if(count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    }
-                    while(count > 0);
-                    return memory.ToArray();
-                }
-            }
-        }
+       
 
         public string Zip(string text)
         {
@@ -131,19 +91,6 @@ namespace Classroom_Learning_Partner
                 }
 
                 return System.Text.Encoding.Unicode.GetString(buffer, 0, buffer.Length);
-            }
-        }
-
-        public string Checksum(object obj)
-        {
-            // This may only work on objects with [Serializable]. -Casey
-            DataContractSerializer serializer = new DataContractSerializer(obj.GetType());
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                serializer.WriteObject(memoryStream, obj);
-                MD5CryptoServiceProvider hasher = new MD5CryptoServiceProvider();
-                hasher.ComputeHash(memoryStream.ToArray());
-                return Convert.ToBase64String(hasher.Hash);
             }
         }
 
