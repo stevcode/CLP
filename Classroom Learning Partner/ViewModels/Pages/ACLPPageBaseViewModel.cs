@@ -1090,8 +1090,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void RemoveStrokes(CLPPage page, IEnumerable<Stroke> strokesToRemove)
         {
-            var pageViewModel =
-                CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as
+            var pageViewModel = page.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as
                 ACLPPageBaseViewModel;
             if (pageViewModel == null)
             {
@@ -1104,7 +1103,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void TakePageThumbnail(CLPPage page)
         {
-            var viewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+            var viewModels = page.GetAllViewModels();
             if (viewModels == null ||
                 !viewModels.Any())
             {
@@ -1112,7 +1111,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var pageViewModel = viewModels.First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null)

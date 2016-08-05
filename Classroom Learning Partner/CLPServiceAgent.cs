@@ -26,7 +26,6 @@ namespace Classroom_Learning_Partner
     //Sealed to allow the compiler to perform special optimizations during JIT
     public sealed class CLPServiceAgent
     {
-        private static System.Timers.Timer _autoSaveTimer = new System.Timers.Timer();
         private CLPServiceAgent()
         {
             //_autoSaveTimer.Interval = 123000;
@@ -52,17 +51,6 @@ namespace Classroom_Learning_Partner
         }
 
         #region Utilities
-
-        public List<IViewModel> GetViewModelsFromModel(IModel model)
-        {
-            if (model == null)
-            {
-                return null;
-            }
-            var viewModelManger = ServiceLocator.Default.ResolveType<IViewModelManager>();
-            var result = viewModelManger.GetViewModelsOfModel(model).ToList();
-            return result;
-        }
 
 
         public byte[] UIElementToImageByteArray(UIElement source, double imageWidth = -1.0, double scale = 1.0, double dpi = 96, BitmapEncoder encoder = null)
@@ -250,129 +238,6 @@ namespace Classroom_Learning_Partner
         }
 
         #endregion //Utilies
-
-        #region Notebook
-
-        public void SubmitPage(CLPPage page, string notebookID, bool isGroupSubmission)
-        {
-            if(App.Network.InstructorProxy == null)
-            {
-                Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-                return;
-            }
-
-            page.TrimPage();
-            //Take thumbnail of page before submitting it.
-            //ACLPPageBaseViewModel.TakePageThumbnail(page);
-
-            var t = new Thread(() =>
-                               {
-                                   try
-                                   {
-                                       page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-                                       page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
-                                       // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-                                       //TagAnalysis.AnalyzeArray(page);
-                                       //TagAnalysis.AnalyzeStamps(page);
-
-                                       var copy = page.NextVersionCopy();
-
-                                       var sPage = ObjectSerializer.ToString(copy);
-                                       var zippedPage = Zip(sPage);
-
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookID);
-                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                                        (DispatcherOperationCallback)delegate
-                                                                        {
-                                                                            page.Submissions.Add(copy);
-                                                                            return null;
-                                                                        }, null);
-                                   }
-                                   catch(Exception ex)
-                                   {
-                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                                   }
-                               })
-                    {
-                        IsBackground = true
-                    };
-            t.Start();
-        }
-
-        public void AddSubmission(Notebook notebook, CLPPage submission)
-        {
-            var page = notebook.Pages.FirstOrDefault(x => x.ID == submission.ID && x.OwnerID == submission.OwnerID);
-            if(page == null)
-            {
-                return;
-            }
-            page.Submissions.Add(submission);
-        }
-
-        private bool _isAutoSaving;
-        void _autoSaveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            _isAutoSaving = true;
-            QuickSaveNotebook("AUTOSAVE");
-            _isAutoSaving = false;
-        }
-
-        public void QuickSaveNotebook(string appendedFileName)
-        {
-            // TODO: Entities?
-            //string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
-
-            //if(!Directory.Exists(filePath))
-            //{
-            //    Directory.CreateDirectory(filePath);
-            //}
-
-            //var saveTime = DateTime.Now;
-
-            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel != null)
-            //{
-            //    var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
-
-            //    string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
-            //                  saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
-
-            //    if(notebook != null)
-            //    {
-            //        string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
-            //        notebook.Save(filePathName);
-            //    }
-            //    else
-            //    {
-            //        Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
-            //    }
-            //}
-            //else
-            //{
-            //    Logger.Instance.WriteToLog("***NOTEBOOK WORKSPACE VIEWMODEL BECAME NULL***");
-            //}
-        }
-
-        
-
-        #endregion //Notebook
-
-        #region Page
-
-        //public void InterpretRegion(ACLPInkRegion inkRegion) {
-        //    inkRegion.DoInterpretation();
-
-        //    Logger.Instance.WriteToLog(inkRegion.ParentPage.Submitter.FullName);
-        //    var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-        //    if(notebookWorkspaceViewModel != null)
-        //    {
-        //        Logger.Instance.WriteToLog(notebookWorkspaceViewModel.Notebook.NotebookName);
-        //    }
-        //    Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
-        //    Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
-        //}
-
-        #endregion //Page
 
         #region Network
 

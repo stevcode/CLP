@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner
 
                                                                                             if (teacherPage != null)
                                                                                             {
-                                                                                                var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(teacherPage);
+                                                                                                var pageViewModels = teacherPage.GetAllViewModels();
                                                                                                 foreach (var pageViewModel in pageViewModels)
                                                                                                 {
                                                                                                     var pageVM = pageViewModel as ACLPPageBaseViewModel;

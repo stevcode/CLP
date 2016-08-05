@@ -276,8 +276,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.CurrentConvertingPage = null;
                     App.MainWindowViewModel.CurrentConvertingPage = page;
 
-                    var currentPageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
-                    var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+                    var currentPageViewModels = page.GetAllViewModels();
+                    var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
 
                     NonAsyncPagePreviewView currentPagePreviewView = null;
                     foreach (var views in currentPageViewModels.Select(viewManager.GetViewsOfViewModel))

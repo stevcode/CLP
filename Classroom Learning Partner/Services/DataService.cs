@@ -992,7 +992,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
                 {
-                    var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+                    var pageViewModels = page.GetAllViewModels();
                     foreach (var pageViewModel in pageViewModels)
                     {
                         var pageVM = pageViewModel as ACLPPageBaseViewModel;

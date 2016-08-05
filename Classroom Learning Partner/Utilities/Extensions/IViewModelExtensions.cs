@@ -7,16 +7,16 @@ using Catel.MVVM.Views;
 
 namespace Classroom_Learning_Partner
 {
-    public static class ViewModelBaseExtensions
+    public static class IViewModelExtensions
     {
         public static List<IView> GetAllViews(this IViewModel viewModel)
         {
             Argument.IsNotNull("viewModel", viewModel);
 
             var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
-            var views = viewManager.GetViewsOfViewModel(viewModel);
+            var views = viewManager.GetViewsOfViewModel(viewModel).ToList();
 
-            return views.ToList();
+            return views;
         }
 
         public static IView GetFirstView(this IViewModel viewModel)

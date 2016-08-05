@@ -520,8 +520,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Take image of StampBody and add to Ghost border.
             var stamp = PageObject as Stamp;
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(PageObject.ParentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var pageViewModel = PageObject.ParentPage.GetAllViewModels().First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null ||

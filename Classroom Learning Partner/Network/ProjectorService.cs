@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.CurrentDisplay as IModel);
+                                                                                                var displayViewModels = (notebookWorkspaceViewModel.CurrentDisplay as IModel).GetAllViewModels();
                                                                                                 foreach(var gridDisplayView in from displayViewModel in displayViewModels
                                                                                                                                where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
                                                                                                                                select displayViewModel.GetFirstView())

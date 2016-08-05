@@ -666,7 +666,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScreenshotCommandExecute()
         {
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+            var pageViewModel = CurrentPage.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
             var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
@@ -973,7 +973,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Screenshot Clusters
             PageHistory.UISleep(1000);
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
+            var pageViewModel = CurrentPage.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !((ACLPPageBaseViewModel)x).IsPagePreview);
 
             var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);

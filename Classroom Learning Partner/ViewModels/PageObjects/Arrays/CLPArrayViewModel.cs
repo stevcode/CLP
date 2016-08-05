@@ -641,7 +641,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             if (snapFailed)
                             {
-                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                                var factorCardViewModels = divisionTemplate.GetAllViewModels();
                                 foreach (var viewModel in factorCardViewModels)
                                 {
                                     (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
