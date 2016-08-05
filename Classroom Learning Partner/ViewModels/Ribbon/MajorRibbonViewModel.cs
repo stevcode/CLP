@@ -37,16 +37,13 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
-        public static CLPPage CurrentPage
-        {
-            get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
-        }
-
         private IPageInteractionService _pageInteractionService;
+        private IDataService _dataService;
 
         public MajorRibbonViewModel()
         {
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _dataService = DependencyResolver.Resolve<IDataService>();
 
             InitializeCommands();
             InitializeButtons();
@@ -583,11 +580,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Undoes the last action.</summary>
         public Command UndoCommand { get; private set; }
 
-        private void OnUndoCommandExecute() { CurrentPage.History.Undo(); }
+        private void OnUndoCommandExecute() { _dataService.CurrentPage.History.Undo(); }
 
         private bool OnUndoCanExecute()
         {
-            var page = CurrentPage;
+            var page = _dataService.CurrentPage;
             if (page == null)
             {
                 return false;
@@ -606,11 +603,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Redoes the last undone action.</summary>
         public Command RedoCommand { get; private set; }
 
-        private void OnRedoCommandExecute() { CurrentPage.History.Redo(); }
+        private void OnRedoCommandExecute() { _dataService.CurrentPage.History.Redo(); }
 
         private bool OnRedoCanExecute()
         {
-            var page = CurrentPage;
+            var page = _dataService.CurrentPage;
             if (page == null)
             {
                 return false;
@@ -628,9 +625,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSubmitPageCommandExecute()
         {
-            CurrentPage.TrimPage();
-            var page = CurrentPage;
-            var submission = CurrentPage.NextVersionCopy();
+            var currentPage = _dataService.CurrentPage;
+
+            currentPage.TrimPage();
+            var page = currentPage;
+            var submission = currentPage.NextVersionCopy();
 
             var tBackground = new Thread(() =>
                                {
@@ -715,13 +714,13 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if (notebookWorkspace == null ||
-                CurrentPage == null ||
-                notebookWorkspace.PagesAddedThisSession.Contains(CurrentPage))
+                _dataService.CurrentPage == null ||
+                notebookWorkspace.PagesAddedThisSession.Contains(_dataService.CurrentPage))
             {
                 return false;
             }
 
-            return !CurrentPage.IsCached;
+            return !_dataService.CurrentPage.IsCached;
         }
 
         #endregion //Sharing Commands
@@ -769,8 +768,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnLongerPageCommandExecute()
         {
-            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
-            CurrentPage.Height = initialHeight * 2;
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
+            {
+                return;
+            }
+
+            var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
+            currentPage.Height = initialHeight * 2;
 
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
                 App.Network.ProjectorProxy == null)
@@ -787,13 +793,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnLongerPageCanExecute()
         {
-            if (CurrentPage == null)
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
             {
                 return false;
             }
 
-            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
-            return CurrentPage.Height < initialHeight * 2;
+            var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
+            return currentPage.Height < initialHeight * 2;
         }
 
         /// <summary>Sets the Version 0 page to the state of the selected submission.</summary>
@@ -871,109 +879,116 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPageObjectToPageCommandExecute(string pageObjectType)
         {
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
+            {
+                return;
+            }
+
             switch (pageObjectType)
             {
                 //Image
                 case "IMAGE":
-                    CLPImageViewModel.AddImageToPage(CurrentPage);
+                    CLPImageViewModel.AddImageToPage(currentPage);
                     break;
 
                 //Stamps
                 case "BLANK_GENERAL_STAMP":
-                    StampViewModel.AddBlankGeneralStampToPage(CurrentPage);
+                    StampViewModel.AddBlankGeneralStampToPage(currentPage);
                     break;
                 case "BLANK_GROUP_STAMP":
-                    StampViewModel.AddBlankGroupStampToPage(CurrentPage);
+                    StampViewModel.AddBlankGroupStampToPage(currentPage);
                     break;
                 case "IMAGE_GENERAL_STAMP":
-                    StampViewModel.AddImageGeneralStampToPage(CurrentPage);
+                    StampViewModel.AddImageGeneralStampToPage(currentPage);
                     break;
                 case "IMAGE_GROUP_STAMP":
-                    StampViewModel.AddImageGroupStampToPage(CurrentPage);
+                    StampViewModel.AddImageGroupStampToPage(currentPage);
                     break;
                 case "PILE":
-                    StampViewModel.AddPileToPage(CurrentPage);
+                    StampViewModel.AddPileToPage(currentPage);
                     break;
 
                 //Arrays
                 case "ARRAY":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.Array);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.Array);
                     break;
                 case "10X10":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.TenByTen);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.TenByTen);
                     break;
                 case "ARRAYCARD":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ArrayCard);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.ArrayCard);
                     break;
                 case "FACTORCARD":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.FactorCard);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.FactorCard);
                     break;
                 case "OBSCURABLE_ARRAY":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ObscurableArray);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.ObscurableArray);
                     break;
 
                 //Number Line 
                 case "NUMBERLINE":
-                    NumberLineViewModel.AddNumberLineToPage(CurrentPage);
+                    NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
                 case "AUTO_NUMBERLINE":
-                    NumberLineViewModel.AddNumberLine2ToPage(CurrentPage);
+                    NumberLineViewModel.AddNumberLine2ToPage(currentPage);
                     break;
 
                 //Division Template
                 case "DIVISIONTEMPLATE":
-                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(CurrentPage);
+                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(currentPage);
                     break;
 
                 //Shapes
                 case "SQUARE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Rectangle);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Rectangle);
                     break;
                 case "CIRCLE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Ellipse);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Ellipse);
                     break;
                 case "TRIANGLE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Triangle);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Triangle);
                     break;
                 case "HORIZONTALLINE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.HorizontalLine);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.HorizontalLine);
                     break;
                 case "VERTICALLINE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.VerticalLine);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.VerticalLine);
                     break;
                 case "PROTRACTOR":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Protractor);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Protractor);
                     break;
                 case "RIGHT_DIAGONAL":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonal);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.RightDiagonal);
                     break;
                 case "RIGHT_DIAGONAL_DASHED":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonalDashed);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.RightDiagonalDashed);
                     break;
                 case "LEFT_DIAGONAL":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonal);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.LeftDiagonal);
                     break;
                 case "LEFT_DIAGONAL_DASHED":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonalDashed);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.LeftDiagonalDashed);
                     break;
 
                 //Bin
                 case "BIN":
-                    BinViewModel.AddBinToPage(CurrentPage);
+                    BinViewModel.AddBinToPage(currentPage);
                     break;
 
                 //Text
                 case "TEXTBOX":
-                    CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
+                    CLPTextBoxViewModel.AddTextBoxToPage(currentPage);
                     break;
 
                 case "MULTIPLECHOICEBOX":
-                    MultipleChoiceViewModel.AddMultipleChoiceToPage(CurrentPage);
+                    MultipleChoiceViewModel.AddMultipleChoiceToPage(currentPage);
                     break;
 
                 // Recognition
                 case "ANSWERFILLIN":
-                    InterpretationRegionViewModel.AddInterpretationRegionToPage(CurrentPage);
+                    InterpretationRegionViewModel.AddInterpretationRegionToPage(currentPage);
                     break;
             }
 
@@ -982,7 +997,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnAddPageObjectToPageCanExecute(string pageObjectType)
         {
-            return CurrentPage != null;
+            return _dataService.CurrentPage != null;
         }
 
         #endregion //Insert PageObject Commands

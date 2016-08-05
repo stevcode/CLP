@@ -231,6 +231,11 @@ namespace Classroom_Learning_Partner.Services
             get { return CurrentNotebookInfo == null ? null : CurrentNotebookInfo.Notebook; }
         }
 
+        public CLPPage CurrentPage
+        {
+            get { return CurrentNotebook == null ? null : CurrentNotebook.CurrentPage; }
+        }
+
         #endregion //Notebook Properties
 
         #endregion //Properties

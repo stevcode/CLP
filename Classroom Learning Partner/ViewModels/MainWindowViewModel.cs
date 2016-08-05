@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MainWindowViewModel : ViewModelBase
     {
-        private IDataService _dataService;
+        private readonly IDataService _dataService;
 
         #region Constructor
 

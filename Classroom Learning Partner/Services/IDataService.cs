@@ -13,6 +13,7 @@ namespace Classroom_Learning_Partner.Services
         List<NotebookInfo> LoadedNotebooksInfo { get; }
         NotebookInfo CurrentNotebookInfo { get; set; }
         Notebook CurrentNotebook { get; }
+        CLPPage CurrentPage { get; }
 
         CacheInfo CreateNewCache(string cacheName, bool isCacheCurrent = true);
         CacheInfo CreateNewCache(string cacheName, string cachesFolderPath, bool isCacheCurrent = true);
