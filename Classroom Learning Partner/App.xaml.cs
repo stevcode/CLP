@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.IO;
@@ -24,7 +25,6 @@ namespace Classroom_Learning_Partner
             var currentProgramMode = ProgramModes.Teacher;
 
             Logger.Instance.InitializeLog(currentProgramMode);
-            CLPServiceAgent.Instance.Initialize();
 
             InitializeCatelSettings();
             InitializeServices();
@@ -37,7 +37,7 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
-            CLPServiceAgent.Instance.NetworkSetup();
+            NetworkSetup();
             MainWindowViewModel.SetWorkspace();
         }
 
@@ -124,6 +124,37 @@ namespace Classroom_Learning_Partner
         }
 
         #endregion //Methods
+
+        #region Network Methods
+
+        private static Thread _networkThread;
+
+        public static void NetworkSetup()
+        {
+            _networkThread = new Thread(Network.Run) { IsBackground = true };
+            _networkThread.Start();
+        }
+
+        public static void NetworkReconnect()
+        {
+            Network.Stop();
+            _networkThread.Join();
+            _networkThread = null;
+
+            Network.Dispose();
+            Network = null;
+            Network = new CLPNetwork();
+            _networkThread = new Thread(Network.Run) { IsBackground = true };
+            _networkThread.Start();
+        }
+
+        public static void NetworkDisconnect()
+        {
+            Network.Stop();
+            _networkThread.Join();
+        }
+
+        #endregion // Network Methods
 
         #region Properties
 

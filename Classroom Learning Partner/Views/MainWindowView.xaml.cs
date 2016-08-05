@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -28,7 +29,7 @@ namespace Classroom_Learning_Partner.Views
             }
             else
             {
-                CLPServiceAgent.Instance.Exit();
+                Environment.Exit(0);
             }
         }
 

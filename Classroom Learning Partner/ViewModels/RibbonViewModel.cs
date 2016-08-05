@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Reconnects to the network.</summary>
         public Command RefreshNetworkCommand { get; private set; }
 
-        private void OnRefreshNetworkCommandExecute() { CLPServiceAgent.Instance.NetworkReconnect(); }
+        private void OnRefreshNetworkCommandExecute() { App.NetworkReconnect(); }
 
         #endregion //File Menu
 
