@@ -623,7 +623,7 @@ namespace Classroom_Learning_Partner.Services
             if (!isNotebookSaved) { }
 
             var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
-            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            var zippedNotebook = sNotebook.CompressWithGZip();
             App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
         }
 

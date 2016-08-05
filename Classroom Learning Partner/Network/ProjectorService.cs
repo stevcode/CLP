@@ -326,7 +326,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             if (submission == null ||
@@ -452,7 +452,7 @@ namespace Classroom_Learning_Partner
 
         public void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject)
         {
-            var unZippedClassPeriod = CLPServiceAgent.Instance.UnZip(zippedClassPeriod);
+            var unZippedClassPeriod = zippedClassPeriod.DecompressFromGZip();
             var classPeriod = ObjectSerializer.ToObject(unZippedClassPeriod) as ClassPeriod;
             if(classPeriod == null)
             {
@@ -460,7 +460,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
+            var unZippedClassSubject = zippedClassSubject.DecompressFromGZip();
             var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassInformation;
             if(classSubject == null)
             {
@@ -575,7 +575,7 @@ namespace Classroom_Learning_Partner
             var differentiationLevel = compositeKeys[2];
             var versionIndex = Convert.ToUInt32(compositeKeys[3]);
 
-            var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
+            var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
             var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
             if(historyItem == null)
             {
@@ -616,7 +616,7 @@ namespace Classroom_Learning_Partner
 
         public void AddNewPage(string zippedPage, int index)
         {
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
@@ -645,7 +645,7 @@ namespace Classroom_Learning_Partner
 
         public void ReplacePage(string zippedPage, int index)
         {
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;

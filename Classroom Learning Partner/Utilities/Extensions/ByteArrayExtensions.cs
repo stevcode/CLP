@@ -21,7 +21,7 @@ namespace Classroom_Learning_Partner
             return bitmapImage;
         }
 
-        public static byte[] CompressWithGZip(byte[] raw)
+        public static byte[] CompressWithGZip(this byte[] raw)
         {
             Argument.IsNotNull("raw", raw);
 
@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public static byte[] DecompressFromGZip(byte[] gzip)
+        public static byte[] DecompressFromGZip(this byte[] gzip)
         {
             Argument.IsNotNull("gzip", gzip);
 

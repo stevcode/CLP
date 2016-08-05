@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.History.ClearHistory();
             CurrentPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(CurrentPage.InkStrokes);
             CurrentPage.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(CurrentPage.History.TrashedInkStrokes);
-            var serializedCurrentPage = CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(CurrentPage));
+            var serializedCurrentPage = ObjectSerializer.ToString(CurrentPage).CompressWithGZip();
             Parallel.ForEach(studentSelectorViewModel.SelectedStudents,
                              student =>
                              {

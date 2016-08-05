@@ -1201,7 +1201,7 @@ namespace Classroom_Learning_Partner.ViewModels
                               return;
                           }
                           var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-                          var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
+                          var zippedHistoryItem = historyItemString.CompressWithGZip();
 
                           try
                           {

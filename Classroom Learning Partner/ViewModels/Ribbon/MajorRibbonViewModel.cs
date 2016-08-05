@@ -695,7 +695,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    try
                                    {
                                        //var sPage = ObjectSerializer.ToString(submission);
-                                       var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+                                       var zippedPage = sPage.CompressWithGZip();
 
                                        App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
                                    }
