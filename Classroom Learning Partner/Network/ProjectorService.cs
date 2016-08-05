@@ -67,7 +67,7 @@ namespace Classroom_Learning_Partner
                                                                                             if(notebookWorkspaceViewModel.CurrentDisplay == null)
                                                                                             {
                                                                                                 var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView();
-                                                                                                screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
+                                                                                                screenShotByteSource = (singleDisplayView as UIElement).ToImageByteArray();
                                                                                             }
                                                                                             else
                                                                                             {
@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner
                                                                                                                                where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
                                                                                                                                select displayViewModel.GetFirstView())
                                                                                                 {
-                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
+                                                                                                    screenShotByteSource = (gridDisplayView as UIElement).ToImageByteArray();
                                                                                                 }
                                                                                             }
 
@@ -85,16 +85,9 @@ namespace Classroom_Learning_Partner
                                                                                                 return null;
                                                                                             }
 
-                                                                                            var bitmapImage = new BitmapImage();
-                                                                                            bitmapImage.BeginInit();
-                                                                                            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                                                                                            bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
-                                                                                            bitmapImage.EndInit();
-                                                                                            bitmapImage.Freeze();
+                                                                                            var bitmapImage = screenShotByteSource.ToBitmapImage();
 
-                
                                                                                             App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
-
                                                                                         }
                                                                                         App.MainWindowViewModel.IsProjectorFrozen = isFreezing;
 

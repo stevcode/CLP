@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using Catel;
 
 namespace Classroom_Learning_Partner
 {
@@ -8,6 +9,9 @@ namespace Classroom_Learning_Partner
     {
         public static T FindNamedChild<T>(this FrameworkElement frameworkElement, string name)
         {
+            Argument.IsNotNull("frameworkElement", frameworkElement);
+            Argument.IsNotNull("name", name);
+
             var dependencyObject = frameworkElement as DependencyObject;
             var ret = default(T);
 

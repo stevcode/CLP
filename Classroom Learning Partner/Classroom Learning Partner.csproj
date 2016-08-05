@@ -272,10 +272,12 @@
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
+    <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Utilities\Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Utilities\Extensions\IModelExtensions.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\Extensions\IViewModelExtensions.cs" />
+    <Compile Include="Utilities\Extensions\UIElementExtensions.cs" />
     <Compile Include="Utilities\Extensions\VisualExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="Utilities\RangeHelper.cs" />

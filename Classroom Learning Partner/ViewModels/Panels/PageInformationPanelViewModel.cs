@@ -676,14 +676,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
+            var bitmapImage = pageView.ToBitmapImage(CurrentPage.Width, dpi: 300);
 
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
             var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
@@ -983,14 +976,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
+            var bitmapImage = pageView.ToBitmapImage(CurrentPage.Width, dpi: 300);
 
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cluster Screenshots");
             var thumbnailFileName = string.Format("{0}, Page {1};{2} - Cluster {3}.png", CurrentPage.Owner.FullName, CurrentPage.PageNumber, CurrentPage.VersionIndex, clusterEquation);

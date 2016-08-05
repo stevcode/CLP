@@ -1119,15 +1119,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
-
+            var bitmapImage = pageView.ToBitmapImage(492);
             page.PageThumbnail = bitmapImage;
         }
 

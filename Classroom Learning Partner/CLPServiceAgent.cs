@@ -52,46 +52,7 @@ namespace Classroom_Learning_Partner
 
         #region Utilities
 
-
-        public byte[] UIElementToImageByteArray(UIElement source, double imageWidth = -1.0, double scale = 1.0, double dpi = 96, BitmapEncoder encoder = null)
-        {
-            const double SCREEN_DPI = 96.0;
-            var actualWidth = imageWidth <= 0.0 ? source.RenderSize.Width : imageWidth;
-            var actualHeight = actualWidth * source.RenderSize.Height / source.RenderSize.Width;
-
-            var renderWidth = actualWidth * scale * dpi / SCREEN_DPI;
-            var renderHeight = actualHeight * scale * dpi / SCREEN_DPI;
-
-            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, dpi, dpi, PixelFormats.Pbgra32);
-            var sourceBrush = new VisualBrush(source);
-
-            var drawingVisual = new DrawingVisual();
-            var drawingContext = drawingVisual.RenderOpen();
-
-            using(drawingContext)
-            {
-                drawingContext.PushTransform(new ScaleTransform(scale, scale));
-                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
-            }
-            renderTarget.Render(drawingVisual);
-
-            byte[] imageArray;
-            if(encoder == null)
-            {
-                encoder = new PngBitmapEncoder();
-            }
-
-            encoder.Frames.Add(BitmapFrame.Create(renderTarget));
-            using(var outputStream = new MemoryStream())
-            {
-                encoder.Save(outputStream);
-                imageArray = outputStream.ToArray();
-            }
-
-            return imageArray;
-        }
-
-        
+      
         
 
         /// <summary>
