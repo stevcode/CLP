@@ -1,23 +1,24 @@
 ﻿using System;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Catel.MVVM.Converters;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    public class PanelLocationToThicknessConverter : IValueConverter
+    [ValueConversion(typeof(object), typeof(Thickness))]
+    public class PanelLocationToThicknessConverter : ValueConverterBase
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        protected override object Convert(object value, Type targetType, object parameter)
         {
-            if(!(value is PanelLocations))
+            if (!(value is PanelLocations))
             {
                 return new Thickness(0, 0, 0, 0);
             }
 
             var thickness = System.Convert.ToDouble(parameter);
             var location = (PanelLocations)value;
-            switch(location)
+            switch (location)
             {
                 case PanelLocations.Left:
                     return new Thickness(0, 0, thickness, 0);
@@ -33,7 +34,5 @@ namespace Classroom_Learning_Partner.Converters
                     return new Thickness(0, 0, 0, 0);
             }
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotImplementedException(); }
     }
 }

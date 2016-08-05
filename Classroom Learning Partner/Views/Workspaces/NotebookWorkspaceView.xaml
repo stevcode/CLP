@@ -2,15 +2,9 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls">
-
-    <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
-        <conv:IsNullConverter x:Key="IsNullConverter" />
-    </UserControl.Resources>
 
     <DockPanel Background="{Binding WorkspaceBackgroundColor}"
                LastChildFill="True">
@@ -93,14 +87,14 @@
                     <Style.Triggers>
 
                         <!--NotebookPagesPanel trigger-->
-                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={converters:TypeToStringConverter}}"
                                      Value="NotebookPagesPanelViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookPagesPanelTemplate}" />
                         </DataTrigger>
 
                         <!--ProgressPanel trigger-->
-                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={converters:TypeToStringConverter}}"
                                      Value="ProgressPanelViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource ProgressPanelTemplate}" />
@@ -113,7 +107,7 @@
 
         <!--Right Panel-->
         <Control DockPanel.Dock="Right"
-                 Visibility="{Binding RightPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                 Visibility="{Binding RightPanel.IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             <Control.Resources>
 
                 <ControlTemplate x:Key="WebcamPanelTemplate">
@@ -135,21 +129,21 @@
                     <Style.Triggers>
 
                         <!--WebcamPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeToStringConverter}}"
                                      Value="WebcamPanelViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource WebcamPanelTemplate}" />
                         </DataTrigger>
 
                         <!--DisplaysPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeToStringConverter}}"
                                      Value="DisplaysPanelViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource DisplaysPanelTemplate}" />
                         </DataTrigger>
                         
                         <!--PageInformationPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeToStringConverter}}"
                                      Value="PageInformationPanelViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource PageInformationPanelTemplate}" />
@@ -166,7 +160,7 @@
                    LastChildFill="True"
                    HorizontalAlignment="Stretch"
                    Background="{StaticResource GrayBackgroundColor}"
-                   Visibility="{Binding AnimationControlRibbon.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                   Visibility="{Binding AnimationControlRibbon.IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
             <Line DockPanel.Dock="Bottom"
                   Stretch="Fill"
@@ -206,23 +200,23 @@
                     <Style.Triggers>
 
                         <!-- SingleDisplay triggers -->
-                        <DataTrigger Binding="{Binding SingleDisplay, Converter={StaticResource IsNullConverter}}" Value="false">
+                        <DataTrigger Binding="{Binding SingleDisplay, Converter={converters:IsNullConverter}}" Value="false">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
                         </DataTrigger>
                         
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource IsNullConverter}}" Value="true">
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={converters:IsNullConverter}}" Value="true">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={converters:TypeToStringConverter}}"
                                      Value="GridDisplay">
                             <Setter Property="Template"
                                     Value="{StaticResource GridDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- ColumnDisplay trigger -->
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={converters:TypeToStringConverter}}"
                                      Value="ColumnDisplay">
                             <Setter Property="Template"
                                     Value="{StaticResource ColumnDisplayTemplate}" />

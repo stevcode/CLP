@@ -2,7 +2,7 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
@@ -10,12 +10,6 @@
                    xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <UserControl.Resources>
-        <!-- Converters -->
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-        <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-        <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
-        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
 
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
@@ -41,7 +35,7 @@
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
             Width="{Binding Length}">
 
         <Grid>
@@ -69,7 +63,7 @@
                         <ListBox ItemsSource="{Binding StudentsWithNoSubmissions}"
                                  HorizontalContentAlignment="Center"
                                  Height="300"
-                                 Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                 Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
                     </DockPanel>
                 </Border>
 
@@ -178,7 +172,7 @@
                                                             BorderThickness="2 2 2 0"
                                                             Margin="0 0 2 0"
                                                             Height="10"
-                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                                                     <ToggleButton Grid.Row="0"
                                                                   x:Name="GroupVisibilityToggle"
@@ -205,10 +199,10 @@
                                                             BorderBrush="Black"
                                                             BorderThickness="2 0 2 2"
                                                             Margin="0 0 2 2"
-                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
                                                         <ItemsPresenter
-                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                                                     </Border>
                                                 </Grid>
@@ -231,7 +225,7 @@
 
                                 <TextBlock Grid.Column="0"
                                            Margin="5 5 -3 3"
-                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Bottom">
                                     <Run Text="{Binding Owner.DisplayName, Mode=OneWay}" />
@@ -249,7 +243,7 @@
 
                                 <TextBlock Grid.Column="2"
                                            Margin="-3 0 5 0"
-                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center">
                                     <Run Text="{Binding SubmissionTime, StringFormat=MM/dd - HH:mm}" />
@@ -325,7 +319,7 @@
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5 5 5 0"
-                                           Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            StrokeThickness="2"
                                            Fill="Transparent">
                                     <i:Interaction.Triggers>
@@ -382,7 +376,7 @@
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                        Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
                                                         Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
@@ -400,7 +394,7 @@
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
                                             Orientation="Vertical"
-                                            Visibility="{Binding IsChecked, ElementName=IconVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                            Visibility="{Binding IsChecked, ElementName=IconVisibilityToggle, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
                                     <ToggleButton Width="20"
                                                   IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
@@ -476,7 +470,7 @@
 
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Correct}}"
+                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Correct}}"
                                                         Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
@@ -489,7 +483,7 @@
                                                     </DataTrigger>
 
                                                     <DataTrigger
-                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.PartiallyCorrect}}"
+                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.PartiallyCorrect}}"
                                                         Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
@@ -521,7 +515,7 @@
 
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                            Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Incorrect}}"
+                                                            Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Incorrect}}"
                                                                  Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>

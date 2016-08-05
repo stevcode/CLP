@@ -10,8 +10,6 @@
 
     <catel:UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
-        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <converters:TypeToStringConverter x:Key="TypeToStringConverter" />
         <customControls:HLSColorValueConverter x:Key="ColorConverter" />
     </catel:UserControl.Resources>
 
@@ -228,7 +226,7 @@
                           Content="Options"
                           Background="{DynamicResource DynamicMainColor}"
                           IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                          IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Options}}" />
+                          IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Options}}" />
             
             <StackPanel VerticalAlignment="Top"
                         HorizontalAlignment="Stretch"
@@ -237,23 +235,23 @@
                 <ToggleButton Content="Info"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Info}}" />
+                              IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Info}}" />
 
                 <ToggleButton Content="New"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.New}}"
+                              IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.New}}"
                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
                 <ToggleButton Content="Open"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Open}}" />
+                              IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Open}}" />
 
                 <ToggleButton Content="Export"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Export}}" />
+                              IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Export}}" />
 
             </StackPanel>
 
@@ -597,35 +595,35 @@
                     <Style.Triggers>
 
                         <!-- NotebookInfoPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding DisplayedPane, Converter={converters:TypeToStringConverter}}"
                                      Value="NotebookInfoPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookInfoPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- NewNotebookPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding DisplayedPane, Converter={converters:TypeToStringConverter}}"
                                      Value="NewPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NewPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- OpenNotebookPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding DisplayedPane, Converter={converters:TypeToStringConverter}}"
                                      Value="OpenNotebookPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource OpenNotebookPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- ExportPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding DisplayedPane, Converter={converters:TypeToStringConverter}}"
                                      Value="ExportPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource ExportPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- OptionsPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding DisplayedPane, Converter={converters:TypeToStringConverter}}"
                                      Value="OptionsPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource OptionsPaneTemplate}" />

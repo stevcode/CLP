@@ -6,13 +6,8 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
-
-    <UserControl.Resources>
-        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
-    </UserControl.Resources>
-    
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
+   
     <Grid x:Name="TopGrid">
         <Grid.Style>
             <Style TargetType="Grid">
@@ -117,8 +112,8 @@
                           Margin="-20 0 0 0"
                           Cursor="Hand"
                           VerticalAlignment="Top"
-                          IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                          IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                          IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                          IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <ToggleButton.Style>

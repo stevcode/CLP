@@ -223,10 +223,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\Single Converters\HalfNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
-    <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
-    <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\PointXConverter.cs" />
@@ -236,29 +234,26 @@
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
-    <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeMatchToBooleanConverter.cs" />
     <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
-    <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
-    <Compile Include="Converters\EnumToBoolConverter.cs" />
-    <Compile Include="Converters\FFCMarginConverter.cs" />
+    <Compile Include="Converters\Single Converters\DoubleToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Converters\Single Converters\DivisionTemplateMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
-    <Compile Include="Converters\IndexToMarginConverter.cs" />
-    <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
-    <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\IndexToMarginConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToOppositeVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
-    <Compile Include="Converters\PageMatchToColorConverter.cs" />
-    <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
+    <Compile Include="Converters\Single Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
-    <Compile Include="Converters\PageToSubmissionsListConverter.cs" />
-    <Compile Include="Converters\Panel Converters\PanelLocationToThicknessConverter.cs" />
-    <Compile Include="Converters\PageToStarredVisibilityConverter.cs" />
-    <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\PanelLocationToThicknessConverter.cs" />
+    <Compile Include="Converters\Single Converters\PageToStarredVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\PageToSubmissionVisibilityConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
-    <Compile Include="Converters\StringToEmptyStringConverter.cs" />
-    <Compile Include="Converters\TypeToStringConverter.cs" />
+    <Compile Include="Converters\Single Converters\StringToEmptyStringConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
-    <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToQuestionMarkConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -1406,7 +1401,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Converters\List Converters\" />
     <Folder Include="Resources\Images\ContextRibbon\PageObjectBase\" />
     <Folder Include="Resources\Images\ContextRibbon\TextBox\" />
   </ItemGroup>

@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                  xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                  xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                   xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
@@ -33,8 +33,6 @@
             </ResourceDictionary.MergedDictionaries>
 
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
-            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
             <customControls:HLSColorValueConverter x:Key="ColorConverter" />
         </ResourceDictionary>
     </catel:DataWindow.Resources>
@@ -396,21 +394,21 @@
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
                                      Value="BlankWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
                                      Value="NotebookWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
                                      Value="UserLoginWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource UserLoginWorkspaceTemplate}" />
@@ -430,7 +428,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:ProgramModes.Projector}}"
+                                <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:ProgramModes.Projector}}"
                                            Value="True" />
                                 <Condition Binding="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
                                            Value="True" />

@@ -4,14 +4,14 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
-        <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
-        <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
+        <converters:IntToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
+        <converters:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
+        <converters:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="HorizontalDivisionStyle">
@@ -58,8 +58,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -67,8 +67,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -78,8 +78,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
@@ -357,7 +357,7 @@
                                        Height="3"
                                        Margin="3 0"
                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                    Converter={conv:IncreaseNumberConverter}, 
+                                                                    Converter={converters:IncreaseNumberConverter}, 
                                                                     ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource LeftLabelColor}"
@@ -375,13 +375,13 @@
                             <Grid
                                 Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                         Converter={conv:MultiplyNumberConverter},
+                                                         Converter={converters:MultiplyNumberConverter},
                                                          ConverterParameter=-1}"
                                 Height="{Binding Length}"
                                 Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                   Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" >
                                 <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}, ConverterParameter=0}"
                                            TextAlignment="Center"
                                            FontSize="20"
                                            Foreground="{StaticResource LeftLabelColor}"
@@ -452,7 +452,7 @@
                                        Width="3"
                                        Margin="0 3"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={conv:IncreaseNumberConverter}, 
+                                                                      Converter={converters:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource TopLabelColor}"
@@ -470,13 +470,13 @@
                             <Grid
                                 Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={conv:MultiplyNumberConverter},
+                                                          Converter={converters:MultiplyNumberConverter},
                                                           ConverterParameter=-1}"
                                 Width="{Binding Length}"
                                 Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                   Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                 <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}, ConverterParameter=0}"
                                            TextAlignment="Center"
                                            FontSize="20"
                                            Foreground="{StaticResource TopLabelColor}"
