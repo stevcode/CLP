@@ -1111,7 +1111,8 @@ namespace CLP.Entities
             using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
             {
                 var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                // jsonSerializer.WriteTypeInfo = true;  ???
+                jsonSerializer.WriteTypeInfo = true;
+                jsonSerializer.PreserveReferences = true;
                 jsonSerializer.Serialize(this, stream);
                 ClearIsDirtyOnAllChilds();
             }
@@ -1209,6 +1210,8 @@ namespace CLP.Entities
                 using (var stream = new FileStream(pageFilePath, FileMode.Open))
                 {
                     var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                    jsonSerializer.WriteTypeInfo = true;
+                    jsonSerializer.PreserveReferences = true;
                     //page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
                     var uncastPage = jsonSerializer.Deserialize(typeof(CLPPage), stream);
                     page = (CLPPage)uncastPage;
