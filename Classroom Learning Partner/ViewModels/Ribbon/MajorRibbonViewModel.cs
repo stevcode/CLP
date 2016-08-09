@@ -1031,33 +1031,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            Buttons.Add(_insertGeneralStampButton);
-            //Buttons.Add(_insertGroupStampButton);
+            Buttons.Add(_insertArrayButton);
+            //Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertBinButton);
+            Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertAutoNumberLineButton);
-            Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertShapeButton);
+            Buttons.Add(_insertGeneralStampButton);
+            Buttons.Add(_insertPileButton);
+            //Buttons.Add(_insertGroupStampButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            Buttons.Add(_insertObscurableArrayButton);
-            Buttons.Add(_insertBinButton);
-            Buttons.Add(_insertDivisionTemplateButton);
-            Buttons.Add(_insertPileButton);
-            Buttons.Add(_insertShapeButton);
-
-            // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertShapeButton);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
-            //Buttons.Add(_insertProtractorButton);
-            //Buttons.Add(_insertRightDiagonalButton);
-            //Buttons.Add(_insertRightDiagonalDashedButton);
-            //Buttons.Add(_insertLeftDiagonalButton);
-            //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
             //Buttons.Add(Separater);
