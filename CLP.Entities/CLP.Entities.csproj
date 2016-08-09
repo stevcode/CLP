@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CLP.Entities</RootNamespace>
     <AssemblyName>CLP.Entities</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,7 +68,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.4.5.2\lib\net45\Catel.Core.dll</HintPath>
+      <HintPath>..\packages\Catel.Core.4.5.2\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Catel.Extensions.EntityFramework6, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -75,7 +76,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Catel.Serialization.Json, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Serialization.Json.4.5.2\lib\net45\Catel.Serialization.Json.dll</HintPath>
+      <HintPath>..\packages\Catel.Serialization.Json.4.5.2\lib\net46\Catel.Serialization.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -256,7 +257,7 @@
       <Name>CLP.InkInterpretation</Name>
     </ProjectReference>
     <ProjectReference Include="..\MachineAnalysis\CLP.MachineAnalysis.csproj">
-      <Project>{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}</Project>
+      <Project>{117c5f32-8808-4e42-9ac9-ceaaeb3e3875}</Project>
       <Name>CLP.MachineAnalysis</Name>
     </ProjectReference>
   </ItemGroup>
