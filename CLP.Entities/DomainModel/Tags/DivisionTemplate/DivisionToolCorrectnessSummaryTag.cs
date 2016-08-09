@@ -5,16 +5,16 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionTemplateCorrectnessSummaryTag : ATagBase
+    public class DivisionToolCorrectnessSummaryTag : ATagBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" /> from scratch.</summary>
-        public DivisionTemplateCorrectnessSummaryTag() { }
+        /// <summary>Initializes <see cref="DivisionToolCorrectnessSummaryTag" /> from scratch.</summary>
+        public DivisionToolCorrectnessSummaryTag() { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCorrectnessSummaryTag" /> belongs to.</param>
-        public DivisionTemplateCorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness)
+        /// <summary>Initializes <see cref="DivisionToolCorrectnessSummaryTag" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionToolCorrectnessSummaryTag" /> belongs to.</param>
+        public DivisionToolCorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
@@ -22,10 +22,10 @@ namespace CLP.Entities
             Correctness = correctness;
         }
 
-        /// <summary>Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="DivisionToolCorrectnessSummaryTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateCorrectnessSummaryTag(SerializationInfo info, StreamingContext context)
+        public DivisionToolCorrectnessSummaryTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -72,12 +72,12 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.DivisionTemplate; }
+            get { return Category.DivisionTool; }
         }
 
         public override string FormattedName
         {
-            get { return "Division Template Correctness Summary"; }
+            get { return "Division Tool Correctness Summary"; }
         }
 
         public override string FormattedValue

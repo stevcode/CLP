@@ -7,23 +7,23 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class FuzzyFactorCard : ACLPArrayBase, IReporter
+    public class DivisionTool : ACLPArrayBase, IReporter
     {
         private const double MIN_ARRAY_LENGTH = 185.0;
         public const int MAX_NUMBER_OF_REMAINDER_TILES = 50;
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="FuzzyFactorCard" /> from scratch.</summary>
-        public FuzzyFactorCard() { }
+        /// <summary>Initializes <see cref="DivisionTool" /> from scratch.</summary>
+        public DivisionTool() { }
 
-        /// <summary>Initializes <see cref="FuzzyFactorCard" /> from</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="FuzzyFactorCard" /> belongs to.</param>
-        /// <param name="columns">The number of columns in the <see cref="FuzzyFactorCard" />.</param>
-        /// <param name="rows">The number of rows in the <see cref="FuzzyFactorCard" />.</param>
-        /// <param name="dividend">The total number the <see cref="FuzzyFactorCard" /> represents.</param>
-        /// <param name="isRemainderTilesVisible">Signifies the <see cref="FuzzyFactorCard" /> is using a <see cref="RemainderRegion" />.</param>
-        public FuzzyFactorCard(CLPPage parentPage, int columns, int rows, int dividend, bool isRemainderTilesVisible = false)
+        /// <summary>Initializes <see cref="DivisionTool" /> from</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTool" /> belongs to.</param>
+        /// <param name="columns">The number of columns in the <see cref="DivisionTool" />.</param>
+        /// <param name="rows">The number of rows in the <see cref="DivisionTool" />.</param>
+        /// <param name="dividend">The total number the <see cref="DivisionTool" /> represents.</param>
+        /// <param name="isRemainderTilesVisible">Signifies the <see cref="DivisionTool" /> is using a <see cref="RemainderRegion" />.</param>
+        public DivisionTool(CLPPage parentPage, int columns, int rows, int dividend, bool isRemainderTilesVisible = false)
             : base(parentPage, columns, rows)
         {
             Dividend = dividend;
@@ -37,17 +37,17 @@ namespace CLP.Entities
             InitializeRemainderTiles();
         }
 
-        public FuzzyFactorCard(CLPPage parentPage, double gridSquareSize, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
+        public DivisionTool(CLPPage parentPage, double gridSquareSize, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
             : this(parentPage, columns, rows, dividend, isRemainderRegionDisplayed)
         {
             Width = (gridSquareSize * columns) + DT_LABEL_LENGTH + DT_LARGE_LABEL_LENGTH;
             Height = (gridSquareSize * rows) + (2 * DT_LABEL_LENGTH);
         }
 
-        /// <summary>Initializes <see cref="FuzzyFactorCard" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="DivisionTool" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public FuzzyFactorCard(SerializationInfo info, StreamingContext context)
+        public DivisionTool(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         public void InitializeRemainderTiles()
@@ -80,7 +80,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>The total number the <see cref="FuzzyFactorCard" /> represents.</summary>
+        /// <summary>The total number the <see cref="DivisionTool" /> represents.</summary>
         public int Dividend
         {
             get { return GetValue<int>(DividendProperty); }
@@ -102,7 +102,7 @@ namespace CLP.Entities
 
         #region Navigation Properties
 
-        /// <summary>Unique Identifier for the <see cref="FuzzyFactorCard" />'s <see cref="RemainderTiles" />.</summary>
+        /// <summary>Unique Identifier for the <see cref="DivisionTool" />'s <see cref="RemainderTiles" />.</summary>
         /// <remarks>Composite Foreing Key.</remarks>
         public string RemainderTilesID
         {
@@ -131,7 +131,7 @@ namespace CLP.Entities
         public static readonly PropertyData RemainderTilesVersionIndexProperty = RegisterProperty("RemainderTilesVersionIndex", typeof (uint), 0);
 
         /// <summary>
-        ///     <see cref="RemainderTiles" /> for the <see cref="FuzzyFactorCard" />.
+        ///     <see cref="RemainderTiles" /> for the <see cref="DivisionTool" />.
         /// </summary>
         /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         public virtual RemainderTiles RemainderTiles
@@ -325,12 +325,12 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
+            get { return string.Format("{0} / {1} Division Tool with {2} remaining", Dividend, Columns, CurrentRemainder); }
         }
 
         public override string CodedName
         {
-            get { return Codings.OBJECT_DIVISION_TEMPLATE; }
+            get { return Codings.OBJECT_DIVISION_TOOL; }
         }
 
         public override string CodedID
@@ -381,55 +381,55 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+                var divisionToolIDsInHistory = DivisionToolAnalysis.GetListOfDivisionToolIDsInHistory(ParentPage);
 
                 ITag divisionCreationErrorTag = null;
                 if (Dividend == divisionRelationDefinitionTag.Divisor &&
                     Rows == divisionRelationDefinitionTag.Dividend)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionToolCreationErrorTag(ParentPage,
                                                                                     Origin.StudentPageGenerated,
                                                                                     ID,
                                                                                     Dividend,
                                                                                     Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
+                                                                                    divisionToolIDsInHistory.IndexOf(ID),
+                                                                                    DivisionToolIncorrectCreationReasons.SwappedDividendAndDivisor);
                 }
 
                 if (Dividend == divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionToolCreationErrorTag(ParentPage,
                                                                                     Origin.StudentPageGenerated,
                                                                                     ID,
                                                                                     Dividend,
                                                                                     Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
+                                                                                    divisionToolIDsInHistory.IndexOf(ID),
+                                                                                    DivisionToolIncorrectCreationReasons.WrongDivisor);
                 }
 
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows == divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionToolCreationErrorTag(ParentPage,
                                                                                     Origin.StudentPageGenerated,
                                                                                     ID,
                                                                                     Dividend,
                                                                                     Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
+                                                                                    divisionToolIDsInHistory.IndexOf(ID),
+                                                                                    DivisionToolIncorrectCreationReasons.WrongDividend);
                 }
 
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionToolCreationErrorTag(ParentPage,
                                                                                     Origin.StudentPageGenerated,
                                                                                     ID,
                                                                                     Dividend,
                                                                                     Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
+                                                                                    divisionToolIDsInHistory.IndexOf(ID),
+                                                                                    DivisionToolIncorrectCreationReasons.WrongDividendAndDivisor);
                 }
 
                 if (divisionCreationErrorTag != null)
@@ -450,11 +450,11 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Remove(RemainderTiles);
             }
 
-            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+            var divisionToolIDsInHistory = DivisionToolAnalysis.GetListOfDivisionToolIDsInHistory(ParentPage);
 
             var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
 
-            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, divisionTemplateIDsInHistory.IndexOf(ID), arrayDimensions);
+            var tag = new DivisionToolDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, divisionToolIDsInHistory.IndexOf(ID), arrayDimensions);
             ParentPage.AddTag(tag);
         }
 

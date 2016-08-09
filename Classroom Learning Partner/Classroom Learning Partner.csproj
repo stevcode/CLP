@@ -226,7 +226,7 @@
     <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\EnumToBoolConverter.cs" />
-    <Compile Include="Converters\Single Converters\DivisionTemplateMarginConverter.cs" />
+    <Compile Include="Converters\Single Converters\DivisionToolMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToOppositeVisibilityConverter.cs" />
@@ -292,12 +292,12 @@
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
+    <Compile Include="ViewModels\Tags\DivisionToolTroubleWithRemaindersTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Arrays\FuzzyFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\DivisionToolViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
@@ -354,8 +354,8 @@
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml.cs">
-      <DependentUpon>DivisionTemplateTroubleWithRemaindersTagView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml.cs">
+      <DependentUpon>DivisionToolTroubleWithRemaindersTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
@@ -420,14 +420,14 @@
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
-      <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\DivisionToolCreationView.xaml.cs">
+      <DependentUpon>DivisionToolCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml.cs">
-      <DependentUpon>FuzzyFactorCardView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\Arrays\DivisionToolView.xaml.cs">
+      <DependentUpon>DivisionToolView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -667,7 +667,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -755,7 +755,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml">
+    <Page Include="Views\Modal Windows\DivisionToolCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -763,7 +763,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml">
+    <Page Include="Views\PageObjects\Arrays\DivisionToolView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

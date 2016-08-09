@@ -137,13 +137,13 @@ namespace Classroom_Learning_Partner.ViewModels
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
-            _insertObscurableArrayButton = new RibbonButton("Fuzzy Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
+            _insertObscurableArrayButton = new RibbonButton("N Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
-            //Division Templates
-            _insertDivisionTemplateButton = new RibbonButton("Division Template",
+            //Division Tools
+            _insertDivisionToolButton = new RibbonButton("Division Tool",
                                                              "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
                                                              AddPageObjectToPageCommand,
-                                                             "DIVISIONTEMPLATE");
+                                                             "DIVISIONTOOL");
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine64New.png", AddPageObjectToPageCommand, "NUMBERLINE");
@@ -326,8 +326,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertFactorCardButton;
         private RibbonButton _insertObscurableArrayButton;
 
-        //Division Templates
-        private RibbonButton _insertDivisionTemplateButton;
+        //Division Tools
+        private RibbonButton _insertDivisionToolButton;
 
         //NumberLine
         private RibbonButton _insertNumberLineButton;
@@ -946,9 +946,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     NumberLineViewModel.AddNumberLine2ToPage(currentPage);
                     break;
 
-                //Division Template
-                case "DIVISIONTEMPLATE":
-                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(currentPage);
+                //Division Tool
+                case "DIVISIONTOOL":
+                    DivisionToolViewModel.AddDivisionToolToPage(currentPage);
                     break;
 
                 //Shapes
@@ -1034,7 +1034,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
-            Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertDivisionToolButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertAutoNumberLineButton);
             Buttons.Add(_insertShapeButton);

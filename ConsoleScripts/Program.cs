@@ -47,7 +47,7 @@ namespace ConsoleScripts
                     _isConvertingEmilyCache = false;
                     _isConvertingAssessmentCache = true;
                     ReplaceMultipleChoiceBoxes(page);
-                    ConvertDivisionTemplatesToUseNewRemainderTiles(page);
+                    ConvertDivisionToolsToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
                     //Finished doing stuff to page, it'll save below.
@@ -703,35 +703,35 @@ namespace ConsoleScripts
             page.PageObjects.Add(pageObjectToAdd);
         }
 
-        public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
+        public static void ConvertDivisionToolsToUseNewRemainderTiles(CLPPage page)
         {
-            foreach (var divisionTemplate in page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTool in page.PageObjects.OfType<DivisionTool>().Where(d => d.RemainderTiles != null))
             {
-                divisionTemplate.IsRemainderTilesVisible = true;
+                divisionTool.IsRemainderTilesVisible = true;
             }
 
-            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTool in page.History.TrashedPageObjects.OfType<DivisionTool>().Where(d => d.RemainderTiles != null))
             {
-                divisionTemplate.IsRemainderTilesVisible = true;
+                divisionTool.IsRemainderTilesVisible = true;
             }
         }
 
-        public static void FixOldDivisionTemplateSizing(FuzzyFactorCard divisionTemplate)
+        public static void FixOldDivisionToolSizing(DivisionTool divisionTool)
         {
             if (!_isConvertingEmilyCache)
             {
                 return;
             }
 
-            var gridSize = divisionTemplate.ArrayHeight / divisionTemplate.Rows;
+            var gridSize = divisionTool.ArrayHeight / divisionTool.Rows;
 
-            divisionTemplate.SizeArrayToGridLevel(gridSize, false);
+            divisionTool.SizeArrayToGridLevel(gridSize, false);
 
             var position = 0.0;
-            foreach (var division in divisionTemplate.VerticalDivisions)
+            foreach (var division in divisionTool.VerticalDivisions)
             {
                 division.Position = position;
-                division.Length = divisionTemplate.GridSquareSize * division.Value;
+                division.Length = divisionTool.GridSquareSize * division.Value;
                 position = division.Position + division.Length;
             }
         }
@@ -759,8 +759,8 @@ namespace ConsoleScripts
                     historyItemToUndo is CLPArrayRotateHistoryItem ||
                     historyItemToUndo is CLPArrayGridToggleHistoryItem ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
-                    historyItemToUndo is FFCArrayRemovedHistoryItem ||
-                    historyItemToUndo is FFCArraySnappedInHistoryItem ||
+                    historyItemToUndo is DivisionToolArrayRemovedHistoryItem ||
+                    historyItemToUndo is DivisionToolArraySnappedInHistoryItem ||
                     historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem ||
                     historyItemToUndo is PartsValueChangedHistoryItem ||
                     historyItemToUndo is CLPArraySnapHistoryItem)
@@ -794,14 +794,14 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectResizeBatchHistoryItem)
                 {
                     var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryItem;
-                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as FuzzyFactorCard;
-                    if (divisionTemplate != null)
+                    var divisionTool = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTool;
+                    if (divisionTool != null)
                     {
-                        FixOldDivisionTemplateSizing(divisionTemplate);
+                        FixOldDivisionToolSizing(divisionTool);
                         var fixStretchedDimensions = (from point in pageObjectResized.StretchedDimensions
                                                       let height = point.Y
-                                                      let gridSize = (height - (2 * divisionTemplate.LabelLength)) / divisionTemplate.Rows
-                                                      let newWidth = (gridSize * divisionTemplate.Columns) + divisionTemplate.LabelLength + divisionTemplate.LargeLabelLength
+                                                      let gridSize = (height - (2 * divisionTool.LabelLength)) / divisionTool.Rows
+                                                      let newWidth = (gridSize * divisionTool.Columns) + divisionTool.LabelLength + divisionTool.LargeLabelLength
                                                       select new Point(newWidth, point.Y)).ToList();
 
                         pageObjectResized.StretchedDimensions = fixStretchedDimensions;
@@ -828,10 +828,10 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsAdded)
                     {
-                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as FuzzyFactorCard;
-                        if (divisionTemplate != null)
+                        var divisionTool = page.GetVerifiedPageObjectOnPageByID(id) as DivisionTool;
+                        if (divisionTool != null)
                         {
-                            FixOldDivisionTemplateSizing(divisionTemplate);
+                            FixOldDivisionToolSizing(divisionTool);
                         }
                     }
 
@@ -857,10 +857,10 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsRemoved)
                     {
-                        var divisionTemplate = page.GetVerifiedPageObjectInTrashByID(id) as FuzzyFactorCard;
-                        if (divisionTemplate != null)
+                        var divisionTool = page.GetVerifiedPageObjectInTrashByID(id) as DivisionTool;
+                        if (divisionTool != null)
                         {
-                            FixOldDivisionTemplateSizing(divisionTemplate);
+                            FixOldDivisionToolSizing(divisionTool);
                         }
                     }
 

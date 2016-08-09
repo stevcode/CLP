@@ -536,7 +536,7 @@ namespace CLP.Entities
 
                 arraysToAvoid.Remove(overlappingArray);
 
-                if (overlappingArray is FuzzyFactorCard)
+                if (overlappingArray is DivisionTool)
                 {
                     array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
                 }

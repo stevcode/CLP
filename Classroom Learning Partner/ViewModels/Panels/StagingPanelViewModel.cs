@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //TroubleWithFactorPairs,        //Hack: For Demo
         //TroubleWithRemainders,
         //TroubleWithDivision,
-        //DivisionTemplateStrategy,
+        //DivisionToolStrategy,
         Starred,
         HadHelp,
         //Correctness
@@ -45,8 +45,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription TroubleWithFactorPairsGroup = new PropertyGroupDescription("TroubleWithFactorPairs");
         private static readonly PropertyGroupDescription TroubleWithRemaindersGroup = new PropertyGroupDescription("TroubleWithRemainders");
         private static readonly PropertyGroupDescription TroubleWithDivisionGroup = new PropertyGroupDescription("TroubleWithDivision");
-        private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionTemplateIncorrectArrayCreation");
-        private static readonly PropertyGroupDescription DivisionTemplateStrategyGroup = new PropertyGroupDescription("DivisionTemplateStrategy");
+        private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionToolIncorrectArrayCreation");
+        private static readonly PropertyGroupDescription DivisionToolStrategyGroup = new PropertyGroupDescription("DivisionToolStrategy");
         private static readonly PropertyGroupDescription RepresentationTypeGroup = new PropertyGroupDescription("RepresentationType");
 
         private static readonly PropertyGroupDescription RepresentationCorrectnessGroup = new PropertyGroupDescription("RepresentationCorrectness");
@@ -72,10 +72,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription TroubleWithRemaindersDescendingSort = new SortDescription("TroubleWithRemainders", ListSortDirection.Descending);
         private static readonly SortDescription TroubleWithDivisionAscendingSort = new SortDescription("TroubleWithDivision", ListSortDirection.Ascending);
         private static readonly SortDescription TroubleWithDivisionDescendingSort = new SortDescription("TroubleWithDivision", ListSortDirection.Descending);
-        private static readonly SortDescription IncorrectArrayCreationAscendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Ascending);
-        private static readonly SortDescription IncorrectArrayCreationDescendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Descending);
-        private static readonly SortDescription DivisionTemplateStrategyAscendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Ascending);
-        private static readonly SortDescription DivisionTemplateStrategyDescendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Descending);
+        private static readonly SortDescription IncorrectArrayCreationAscendingSort = new SortDescription("DivisionToolIncorrectArrayCreation", ListSortDirection.Ascending);
+        private static readonly SortDescription IncorrectArrayCreationDescendingSort = new SortDescription("DivisionToolIncorrectArrayCreation", ListSortDirection.Descending);
+        private static readonly SortDescription DivisionToolStrategyAscendingSort = new SortDescription("DivisionToolStrategy", ListSortDirection.Ascending);
+        private static readonly SortDescription DivisionToolStrategyDescendingSort = new SortDescription("DivisionToolStrategy", ListSortDirection.Descending);
         private static readonly SortDescription RepresentationTypeAscendingSort = new SortDescription("RepresentationType", ListSortDirection.Ascending);
         private static readonly SortDescription RepresentationTypeDescendingSort = new SortDescription("RepresentationType", ListSortDirection.Descending);
 
@@ -472,8 +472,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 //case SortAndGroupTypes.TroubleWithDivision:
                 //    ApplySortAndGroupByTroubleWithDivision();
                 //    break;
-                //case SortAndGroupTypes.DivisionTemplateStrategy:
-                //    ApplySortAndGroupByDivisionTemplateStrategy();
+                //case SortAndGroupTypes.DivisionToolStrategy:
+                //    ApplySortAndGroupByDivisionToolStrategy();
                 //    break;
                 case SortAndGroupTypes.RepresentationType:
                     ApplySortAndGroupByRepresentationType();
@@ -624,13 +624,13 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
-        public void ApplySortAndGroupByDivisionTemplateStrategy()
+        public void ApplySortAndGroupByDivisionToolStrategy()
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
             SortedAndGroupedPages.SortDescriptions.Clear();
 
-            SortedAndGroupedPages.GroupDescriptions.Add(DivisionTemplateStrategyGroup);
-            SortedAndGroupedPages.SortDescriptions.Add(DivisionTemplateStrategyAscendingSort);
+            SortedAndGroupedPages.GroupDescriptions.Add(DivisionToolStrategyGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(DivisionToolStrategyAscendingSort);
 
             //HACK: for demo video
             //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);

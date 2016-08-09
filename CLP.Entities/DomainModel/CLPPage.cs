@@ -469,7 +469,7 @@ namespace CLP.Entities
         {
             get
             {
-                var tags = Tags.OfType<DivisionTemplateFactorPairErrorsTag>().Where(x => x.HadTrouble);
+                var tags = Tags.OfType<DivisionToolFactorPairErrorsTag>().Where(x => x.HadTrouble);
                 return tags.Any() ? "Trouble With Factor Pairs" : "No Trouble With Factor Pairs";
             }
         }
@@ -478,7 +478,7 @@ namespace CLP.Entities
         {
             get
             {
-                var tags = Tags.OfType<DivisionTemplateRemainderErrorsTag>().Where(x => x.HadTrouble);
+                var tags = Tags.OfType<DivisionToolRemainderErrorsTag>().Where(x => x.HadTrouble);
                 return tags.Any() ? "Trouble With Remainders" : "No Trouble With Remainders";
             }
         }
@@ -512,7 +512,7 @@ namespace CLP.Entities
                 var objectTypes = new List<string>();
                 foreach (var pageObject in PageObjects.Where(pageObject => pageObject.OwnerID == OwnerID))
                 {
-                    if (pageObject is FuzzyFactorCard)
+                    if (pageObject is DivisionTool)
                     {
                         objectTypes.Add("Division Templates");
                         continue;

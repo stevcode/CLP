@@ -23,11 +23,11 @@ namespace CLP.Entities
         /// Initializes <see cref="RemainderTiles" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="RemainderTiles" /> belongs to.</param>
-        /// <param name="divisionTemplate">Associated <see cref="FuzzyFactorCard" /> the <see cref="RemainderTiles" /> acts against.</param>
-        public RemainderTiles(CLPPage parentPage, FuzzyFactorCard divisionTemplate)
+        /// <param name="divisionTool">Associated <see cref="DivisionTool" /> the <see cref="RemainderTiles" /> acts against.</param>
+        public RemainderTiles(CLPPage parentPage, DivisionTool divisionTool)
             : base(parentPage)
         {
-            Height = Math.Ceiling(divisionTemplate.CurrentRemainder / NUMBER_OF_TILES_PER_ROW) * TILE_HEIGHT;
+            Height = Math.Ceiling(divisionTool.CurrentRemainder / NUMBER_OF_TILES_PER_ROW) * TILE_HEIGHT;
             Width = NUMBER_OF_TILES_PER_ROW * TILE_HEIGHT;
         }
 

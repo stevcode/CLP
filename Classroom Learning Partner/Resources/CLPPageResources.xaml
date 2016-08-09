@@ -55,8 +55,8 @@
                     <views:CLPTextBoxView DataContext="{Binding}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="FuzzyFactorCardTemplate">
-                    <views:FuzzyFactorCardView DataContext="{Binding}" />
+                <ControlTemplate x:Key="DivisionToolTemplate">
+                    <views:DivisionToolView DataContext="{Binding}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="RemainderTilesTemplate">
@@ -193,11 +193,11 @@
                                     Value="{StaticResource CLPTextBoxTemplate}" />
                         </DataTrigger>
 
-                        <!-- FuzzyFactorCard trigger -->
+                        <!-- DivisionTool trigger -->
                         <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
-                                     Value="FuzzyFactorCard">
+                                     Value="DivisionTool">
                             <Setter Property="Template"
-                                    Value="{StaticResource FuzzyFactorCardTemplate}" />
+                                    Value="{StaticResource DivisionToolTemplate}" />
                         </DataTrigger>
 
                         <!-- RemainderTiles trigger -->

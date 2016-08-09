@@ -7,11 +7,11 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for FuzzyFactorCardCreationView.xaml
+    /// Interaction logic for DivisionToolCreationView.xaml
     /// </summary>
-    public partial class FuzzyFactorCardCreationView
+    public partial class DivisionToolCreationView
     {
-        public FuzzyFactorCardCreationView()
+        public DivisionToolCreationView()
         {
             Left = 515;
             Top = 315;

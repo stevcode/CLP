@@ -694,11 +694,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnEditTagCommandExecute(ITag tag)
         {
-            //var troubleWithRemaindersTag = tag as DivisionTemplateRemainderErrorsTag;
+            //var troubleWithRemaindersTag = tag as DivisionToolRemainderErrorsTag;
             //if (troubleWithRemaindersTag != null)
             //{
-            //    var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
-            //    var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
+            //    var troubleWithRemaindersVM = new DivisionToolTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
+            //    var troubleWithRemaindersView = new DivisionToolTroubleWithRemaindersTagView(troubleWithRemaindersVM)
             //                                    {
             //                                        Owner = Application.Current.MainWindow
             //                                    };
@@ -822,18 +822,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ManualTags.TroubleWithRemainders:
                     break;
                 case ManualTags.FailedSnap:
-                    //var newTag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                    //var newTag = new DivisionToolFailedSnapTag(CurrentPage,
                     //                                               Origin.StudentPageObjectGenerated,
-                    //                                               DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                    //                                               DivisionToolFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
                     //                                               0);
-                    //var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(newTag);
-                    //var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
+                    //var failedSnapTagVM = new DivisionToolFailedSnapTagViewModel(newTag);
+                    //var failedSnapView = new DivisionToolFailedSnapTagView(failedSnapTagVM)
                     //                     {
                     //                         Owner = Application.Current.MainWindow
                     //                     };
                     //failedSnapView.ShowDialog();
 
-                    //var existingTag = CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>().FirstOrDefault(x => x.Value == newTag.Value);
+                    //var existingTag = CurrentPage.Tags.OfType<DivisionToolFailedSnapTag>().FirstOrDefault(x => x.Value == newTag.Value);
                     //if (existingTag != null)
                     //{
                     //    CurrentPage.RemoveTag(existingTag);
@@ -1838,7 +1838,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ArrayAnalysis.Analyze(CurrentPage);
-            DivisionTemplateAnalysis.Analyze(CurrentPage);
+            DivisionToolAnalysis.Analyze(CurrentPage);
             StampAnalysis.Analyze(CurrentPage);
             NumberLineAnalysis.Analyze(CurrentPage);
             ApplyInterpretedCorrectness(CurrentPage);
@@ -1852,7 +1852,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageAnalysis.Analyze(submission);
                 ArrayAnalysis.Analyze(submission);
-                DivisionTemplateAnalysis.Analyze(submission);
+                DivisionToolAnalysis.Analyze(submission);
                 StampAnalysis.Analyze(submission);
                 NumberLineAnalysis.Analyze(CurrentPage);
                 ApplyInterpretedCorrectness(submission);
@@ -1869,8 +1869,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
 
             //var correctnessTags =
-            //    page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-            //        .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+            //    page.Tags.OfType<DivisionToolRepresentationCorrectnessTag>()
+            //        .Select(divisionToolCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionToolCorrectnessTag.Correctness, true))
             //        .ToList();
             //correctnessTags.AddRange(
             //                         page.Tags.OfType<ArrayCorrectnessSummaryTag>()
@@ -1924,7 +1924,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //     SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
+            DivisionToolAnalysis.AnalyzeHistory(CurrentPage);
 
             if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
@@ -1938,7 +1938,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
 
                 ArrayAnalysis.AnalyzeHistory(submission);
-                DivisionTemplateAnalysis.AnalyzeHistory(submission);
+                DivisionToolAnalysis.AnalyzeHistory(submission);
             }
         }
 
@@ -1971,7 +1971,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnFixCommandExecute()
         {
-            foreach (var dt in CurrentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach (var dt in CurrentPage.PageObjects.OfType<DivisionTool>())
             {
                 var gridSize = dt.ArrayHeight / dt.Rows;
 
