@@ -51,7 +51,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
+
+            //InitializedAsync += MajorRibbonViewModel_InitializedAsync;
+            //ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
+
+        //private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        //{
+        //}
+
+        //private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        //{
+        //}
 
         private void InitializeCommands()
         {
