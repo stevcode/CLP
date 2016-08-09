@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,8 +14,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public ArrayCreationView()
         {
-            //Left = 515;
-            //Top = 315;
             Top = SystemParameters.FullPrimaryScreenHeight / 2 - 150;
             Left = SystemParameters.FullPrimaryScreenWidth / 2 - 300;
             InitializeComponent();
@@ -92,18 +91,43 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
+        public bool IsColumnsHidden;
+        public bool IsRowsHidden;
+
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
-            int rowNum;
-            int colNum;
-            int numberOfArrays = 1;
-            const int MAX_ARRAY_ROWSCOLUMNS = 301;
             const int MAX_NUMBER_OF_ARRAYS = 10;
-            var isRowsNum = Int32.TryParse(Rows.Text, out rowNum);
-            var isColsNum = Int32.TryParse(Columns.Text, out colNum);
-            Int32.TryParse(NumberOfArrays.Text, out numberOfArrays);
+            int numberOfArrays;
+            int.TryParse(NumberOfArrays.Text, out numberOfArrays);
 
-            if(!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
+            const int OBSCURED_DIMENSION_INCREMENT = 2;
+            const int MAX_ARRAY_ROWSCOLUMNS = 301;
+            int rowNum = 0;
+            int colNum = 0;
+            IsRowsHidden = Rows.Text == "N";
+            IsColumnsHidden = Columns.Text == "N";
+            var isRowsNum = !IsRowsHidden && int.TryParse(Rows.Text, out rowNum);
+            var isColsNum = !IsColumnsHidden && int.TryParse(Columns.Text, out colNum);
+
+            if (IsColumnsHidden &&
+                isRowsNum)
+            {
+                colNum = rowNum + OBSCURED_DIMENSION_INCREMENT;
+                Columns.Text = colNum.ToString();
+                isColsNum = true;
+            }
+            else if (IsRowsHidden &&
+                     isColsNum)
+            {
+                rowNum = colNum + OBSCURED_DIMENSION_INCREMENT;
+                Rows.Text = rowNum.ToString();
+                isRowsNum = true;
+            }
+            if (IsColumnsHidden && IsRowsHidden)
+            {
+                MessageBox.Show("Oops, Rows and Columns can't both be N.", "Oops");
+            }
+            else if (!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
             {
                 MessageBox.Show("Oops, you need to put in a number.", "Oops");
             }

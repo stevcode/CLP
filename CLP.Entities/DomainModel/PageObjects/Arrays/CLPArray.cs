@@ -142,6 +142,13 @@ namespace CLP.Entities
                                   };
                 HorizontalDivisions.Add(obscuredDiv);
             }
+
+            RaisePropertyChanged("IsVerticalLinesVisible");
+            RaisePropertyChanged("IsHorizontalLinesVisible");
+            RaisePropertyChanged("IsColumnsObscured");
+            RaisePropertyChanged("IsRowsObscured");
+            RaisePropertyChanged("TopLabelText");
+            RaisePropertyChanged("LeftLabelText");
         }
 
         public void Unobscure(bool isColumnsUnobscured)
@@ -170,6 +177,13 @@ namespace CLP.Entities
                     division.IsObscured = false;
                 }
             }
+
+            RaisePropertyChanged("IsVerticalLinesVisible");
+            RaisePropertyChanged("IsHorizontalLinesVisible");
+            RaisePropertyChanged("IsColumnsObscured");
+            RaisePropertyChanged("IsRowsObscured");
+            RaisePropertyChanged("TopLabelText");
+            RaisePropertyChanged("LeftLabelText");
         }
 
         public Point GetColumnsAndRowsAtHistoryIndex(int historyIndex)
@@ -563,6 +577,13 @@ namespace CLP.Entities
 
             //RefreshStrokeParentIDs();
             OnResized(initialWidth, initialHeight);
+
+            RaisePropertyChanged("IsVerticalLinesVisible");
+            RaisePropertyChanged("IsHorizontalLinesVisible");
+            RaisePropertyChanged("IsColumnsObscured");
+            RaisePropertyChanged("IsRowsObscured");
+            RaisePropertyChanged("TopLabelText");
+            RaisePropertyChanged("LeftLabelText");
         }
 
         #endregion //ACLPArrayBase Overrides

@@ -212,7 +212,12 @@ namespace CLP.Entities
         public bool IsGridOn
         {
             get { return GetValue<bool>(IsGridOnProperty); }
-            set { SetValue(IsGridOnProperty, value); }
+            set
+            {
+                SetValue(IsGridOnProperty, value);
+                RaisePropertyChanged("IsVerticalLinesVisible");
+                RaisePropertyChanged("IsHorizontalLinesVisible");
+            }
         }
 
         public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof (bool), true);
@@ -233,7 +238,7 @@ namespace CLP.Entities
             set { SetValue(IsSnappableProperty, value); }
         }
 
-        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);     
 
         /// <summary>Sets the visibility of the array's top label.</summary>
         public bool IsTopLabelVisible
@@ -252,6 +257,24 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof (bool), true);
+
+        /// <summary>SUMMARY</summary>
+        public string TopLabelVariable
+        {
+            get { return GetValue<string>(TopLabelVariableProperty); }
+            set { SetValue(TopLabelVariableProperty, value); }
+        }
+
+        public static readonly PropertyData TopLabelVariableProperty = RegisterProperty("TopLabelVariable", typeof (string), "N");
+
+        /// <summary>SUMMARY</summary>
+        public string LeftLabelVariable
+        {
+            get { return GetValue<string>(LeftLabelVariableProperty); }
+            set { SetValue(LeftLabelVariableProperty, value); }
+        }
+
+        public static readonly PropertyData LeftLabelVariableProperty = RegisterProperty("LeftLabelVariable", typeof (string), "N");
 
         #endregion //Behavior Properties
 
@@ -274,30 +297,53 @@ namespace CLP.Entities
 
         public abstract double MinimumGridSquareSize { get; }
 
+        public bool IsVerticalLinesVisible
+        {
+            get
+            {
+                return !IsColumnsObscured && IsGridOn;
+            }
+        }
+
+        public bool IsHorizontalLinesVisible
+        {
+            get
+            {
+                return !IsRowsObscured && IsGridOn;
+            }
+        }
+
         /// <summary>Signifies obscuring shape over Rows.</summary>
         public bool IsRowsObscured
         {
             get
             {
-                if (HorizontalDivisions == null)
-                {
-                    return false;
-                }
-                return HorizontalDivisions.Any(d => d.IsObscured);
+                return HorizontalDivisions != null && HorizontalDivisions.Any(d => d.IsObscured);
             }
         }
 
         /// <summary>Signifies obscuring shape over Columns.</summary>
         public bool IsColumnsObscured
         {
-
             get
             {
-                if (VerticalDivisions == null)
-                {
-                    return false;
-                }
-                return VerticalDivisions.Any(d => d.IsObscured);
+                return VerticalDivisions != null && VerticalDivisions.Any(d => d.IsObscured);
+            }
+        }
+
+        public string TopLabelText
+        {
+            get
+            {
+                return IsColumnsObscured ? TopLabelVariable : Columns.ToString();
+            }
+        }
+
+        public string LeftLabelText
+        {
+            get
+            {
+                return IsRowsObscured ? LeftLabelVariable : Rows.ToString();
             }
         }
 

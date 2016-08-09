@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <!-- Array Dimensions -->
         <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
@@ -33,7 +33,7 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"
                        FontWeight="Bold" FontSize="20"
                        Text="What size is the array?" />
-            
+
             <Grid Grid.Row="1"  Margin="10,0,10,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -92,7 +92,7 @@
             </Grid>
 
         </Grid>
-        
+
         <Rectangle Grid.Column="0" Grid.Row="1" Margin="10,0"
                    Stroke="{StaticResource GrayEdgeColor}" StrokeThickness="3" Fill="{StaticResource GrayEdgeColor}" />
 
@@ -106,7 +106,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock Grid.Column="0" Grid.Row="0" Margin="10"
                        VerticalAlignment="Center"
                        Text="How many arrays do you want?" />
@@ -118,39 +118,13 @@
                      BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
                      Text="1" FontSize="24" TextAlignment="Right" />
 
-            <!--<TextBlock Grid.Column="0" Grid.Row="1" Margin="10"
-                       VerticalAlignment="Center"
-                       Text="How do you want the arrays arranged?" />
-
-            <Grid Grid.Column="1" Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <RadioButton x:Name="HorizontalToggle" GroupName="ArrayAlignment"
-                             Style="{StaticResource {x:Type ToggleButton}}"
-                             Grid.Column="0" Margin="5"
-                             Height="32" Width="32"
-                             IsChecked="True">
-                    <Image Source="pack://application:,,,/Resources/Images/HorizontalArrayStack32.png" />
-                </RadioButton>
-
-                <RadioButton x:Name="VerticalToggle" GroupName="ArrayAlignment"
-                             Style="{StaticResource {x:Type ToggleButton}}"
-                             Grid.Column="1" Margin="5"
-                             Height="32" Width="32">
-                    <Image Source="pack://application:,,,/Resources/Images/VerticalArrayStack32.png" />
-                </RadioButton>
-
-            </Grid>-->
-
         </Grid>
 
         <!-- Keypad -->
         <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -176,10 +150,11 @@
                 <Button Grid.Column="1" Grid.Row="2" Click="ValueButton_Click" Content="8" />
                 <Button Grid.Column="2" Grid.Row="2" Click="ValueButton_Click" Content="9" />
                 <Button Grid.Column="0" Grid.Row="3" Click="ValueButton_Click" Content="0" />
-                <Button Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Click="BackspaceButton_Click" Content="Backspace" />
+                <Button Grid.Column="1" Grid.Row="3" Click="ValueButton_Click" Content="N" />
+                <Button Grid.Column="2" Grid.Row="3" Click="BackspaceButton_Click" Content="Backspace" />
             </Grid>
 
-            <Button Grid.Row="1" Height="30" Width="100"
+            <Button Grid.Row="2" Height="30" Width="100"
                     VerticalAlignment="Center" HorizontalAlignment="Right"
                     Content="Enter" Margin="10"
                     Click="EnterButton_Click" />
