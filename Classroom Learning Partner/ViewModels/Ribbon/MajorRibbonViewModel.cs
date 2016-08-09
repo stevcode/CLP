@@ -130,7 +130,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
             //TODO: Better Icon
-            _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
+            _insertPileButton = new RibbonButton("Stamp Group", "pack://application:,,,/Resources/Images/CollectionStamp32.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
             _insertArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "ARRAY");
@@ -1036,7 +1036,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertBinButton);
             Buttons.Add(_insertDivisionToolButton);
             Buttons.Add(_insertNumberLineButton);
-            Buttons.Add(_insertAutoNumberLineButton);
+            //Buttons.Add(_insertAutoNumberLineButton);
             Buttons.Add(_insertShapeButton);
             Buttons.Add(_insertGeneralStampButton);
             Buttons.Add(_insertPileButton);

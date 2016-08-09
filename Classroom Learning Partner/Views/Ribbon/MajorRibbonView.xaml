@@ -206,22 +206,54 @@
 
         <!-- Extras -->
         <StackPanel DockPanel.Dock="Right"
-                    Orientation="Horizontal">
-
-            <!--<customControls:RibbonButton Text="Create Original from Submission."
-                                         Command="{Binding ReverseSubmitPageCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />-->
+                    Orientation="Horizontal"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
             <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
                                                CheckedText="Pens Up"
                                                IsChecked="{Binding BlockStudentPenInput}"
-                                               LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png" />
 
-            <!--<customControls:ToggleRibbonButton UnCheckedText="Extras"
-                                               CheckedText="Extras"
-                                               LargeImageSource="pack://application:,,,/Resources/Images/ExtrasFolder32.png"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />-->
+            <Line DockPanel.Dock="Right"
+                  Stretch="Fill"
+                  Y1="0"
+                  Y2="1"
+                  Margin="0 2 0 2"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <customControls:DropDownRibbonButton Text="Extras"
+                                                 LargeImageSource="pack://application:,,,/Resources/Images/ExtrasFolder32.png">
+                <customControls:DropDownRibbonButton.DropDown>
+                    <ContextMenu>
+                        <customControls:RibbonButton Text="Add New Page"
+                                                     Command="{Binding AddNewPageCommand}"
+                                                     LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
+                                                     IsContextButton="True" />
+
+                        <!--<customControls:RibbonButton Text="Add New Animation Page"
+                                                     Command="{Binding AddNewAnimationPageCommand}"
+                                                     LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
+                                                     IsContextButton="True" />-->
+
+                        <customControls:ToggleRibbonButton UnCheckedText="Show Analysis"
+                                                           CheckedText="Hide Analysis"
+                                                           IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                                                           IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                                           LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
+                                                           IsContextButton="True" />
+
+                        <customControls:ToggleRibbonButton UnCheckedText="Show Page Replay"
+                                                           CheckedText="Hide Page Replay"
+                                                           LargeImageSource="pack://application:,,,/Resources/Images/AnimationIndicator32.png"
+                                                           IsContextButton="True" />
+
+                        <customControls:RibbonButton Text="Take Page Screenshot"
+                                                     LargeImageSource="pack://application:,,,/Images/camera.png"
+                                                     IsContextButton="True" />
+                    </ContextMenu>
+                </customControls:DropDownRibbonButton.DropDown>
+            </customControls:DropDownRibbonButton>
 
         </StackPanel>
 
@@ -236,26 +268,24 @@
 
         <!-- Right Panel Control -->
         <StackPanel DockPanel.Dock="Right"
-                    Orientation="Horizontal">
+                    Orientation="Horizontal"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
             <customControls:RibbonButton Text="Exit Multi Display"
                                          Command="{Binding ExitMultiDisplayCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                                IsChecked="{Binding CurrentRightPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Freeze"
                                                CheckedText="Unfreeze"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
                                                IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
 
         </StackPanel>
 
@@ -291,16 +321,6 @@
         <!-- Page -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
-
-            <customControls:RibbonButton Text="Add New Page"
-                                         Command="{Binding AddNewPageCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
-                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"  />
-
-            <customControls:RibbonButton Text="Add New Animation Page"
-                                         Command="{Binding AddNewAnimationPageCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
-                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:RibbonButton Text="Longer Page"
                                          Command="{Binding LongerPageCommand}"

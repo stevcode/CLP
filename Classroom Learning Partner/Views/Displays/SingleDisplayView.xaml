@@ -5,8 +5,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
    
     <Grid x:Name="TopGrid">
         <Grid.Style>
@@ -106,42 +105,6 @@
                        Width="{Binding BorderWidth}"
                        Height="{Binding BorderHeight}" />
 
-            <ToggleButton Grid.Column="2"
-                          Width="30"
-                          Height="30"
-                          Margin="-20 0 0 0"
-                          Cursor="Hand"
-                          VerticalAlignment="Top"
-                          IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                          IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
-
-                <ToggleButton.Style>
-                    <Style TargetType="{x:Type ToggleButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                    <Image Source="pack://application:,,,/Resources/Images/Info32.png" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsChecked"
-                                     Value="True">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                            <Image Source="pack://application:,,,/Resources/Images/Info32.png"
-                                                   Opacity="0.5" />
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ToggleButton.Style>
-            </ToggleButton>
-
             <Button Grid.Column="2"
                     Width="30"
                     Height="30"
@@ -149,7 +112,7 @@
                     Cursor="Hand"
                     Command="{Binding ReplayHistoryCommand}"
                     VerticalAlignment="Top"
-                    Visibility="{Binding MainWindowViewModel.NotStudentVisibility, Source={x:Static Application.Current}}">
+                    Visibility="Collapsed">
                 <Button.Template>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Image Source="pack://application:,,,/Images/video.png" />
