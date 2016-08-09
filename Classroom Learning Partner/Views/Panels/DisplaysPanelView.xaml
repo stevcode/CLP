@@ -4,7 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    xmlns:local="clr-namespace:CLP.Entities;assembly=CLP.Entities">
@@ -16,10 +16,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
-            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
+            <converters:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer"
@@ -38,7 +35,7 @@
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
+            BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
 
         <Grid>
@@ -71,7 +68,7 @@
                      ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Visibility="{Binding IsHidden, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                        <Grid Visibility="{Binding IsHidden, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Grid.Style>
                                 <Style TargetType="Grid">
                                     <Setter Property="Background" Value="Transparent" />
@@ -98,7 +95,7 @@
                             <TextBlock x:Name="DisplayLabel"
                                        Grid.Column="0"
                                        Margin="5 15 0 0"
-                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                        FontWeight="Bold"
                                        VerticalAlignment="Top">
                                 <TextBlock.LayoutTransform>
@@ -112,13 +109,13 @@
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                            <DataTrigger Binding="{Binding Converter={converters:TypeOfConverter}}"
                                                          Value="{x:Type local:GridDisplay}">
                                                 <Setter Property="Text"
                                                         Value="Grid Display" />
                                             </DataTrigger>
 
-                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                            <DataTrigger Binding="{Binding Converter={converters:TypeOfConverter}}"
                                                          Value="{x:Type local:ColumnDisplay}">
                                                 <Setter Property="Text"
                                                         Value="Column Display" />
@@ -179,14 +176,14 @@
                                         <Style.Triggers>
 
                                             <!-- GridDisplay trigger -->
-                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                            <DataTrigger Binding="{Binding Converter={converters:TypeOfConverter}}"
                                                          Value="{x:Type local:GridDisplay}">
                                                 <Setter Property="Template"
                                                         Value="{StaticResource GridDisplayTemplate}" />
                                             </DataTrigger>
 
                                             <!-- ColumnDisplay trigger -->
-                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                            <DataTrigger Binding="{Binding Converter={converters:TypeOfConverter}}"
                                                          Value="{x:Type local:ColumnDisplay}">
                                                 <Setter Property="Template"
                                                         Value="{StaticResource ColumnDisplayTemplate}" />
@@ -199,7 +196,7 @@
 
                             <Rectangle Grid.Column="1"
                                        Margin="5"
-                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                        StrokeThickness="3"
                                        Fill="Transparent" />
 

@@ -2,18 +2,13 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <conv:StringToEmptyStringConverter x:Key="StringToEmptyStringConverter" />
-
         <ObjectDataProvider x:Key="AnswerDefinitions"
                             MethodName="GetValues"
                             ObjectType="{x:Type sys:Enum}">
@@ -45,7 +40,7 @@
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
+            BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
 
         <Grid>
@@ -96,7 +91,7 @@
 
                 <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=EditCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=EditCommandsToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -217,13 +212,14 @@
 
                 <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=AnalysisCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=AnalysisCommandsToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -320,11 +316,11 @@
                         Height="20"
                         Margin="1" />
 
-                    <!--<Button Content="TSV Testing"
+                    <Button Content="TSV Testing"
                         Command="{Binding TSVCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />-->
+                        Margin="1" />
 
                     <Rectangle Grid.ColumnSpan="2"
                            Height="1"
@@ -357,7 +353,7 @@
                             <MultiBinding StringFormat="Page {0}{1} - {2}">
                                 <Binding Path="PageNumber" />
                                 <Binding Path="DifferentiationLevel"
-                                     Converter="{StaticResource StringToEmptyStringConverter}"
+                                     Converter="{converters:StringToEmptyStringConverter}"
                                      ConverterParameter="0" />
                                 <Binding Path="CurrentPage.Owner.DisplayName" />
                             </MultiBinding>
@@ -389,7 +385,7 @@
                                 <Setter Property="Visibility"
                                     Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding CurrentPage.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                    <DataTrigger Binding="{Binding CurrentPage.PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
                                              Value="True">
                                         <Setter Property="Visibility"
                                             Value="Visible" />
@@ -441,7 +437,7 @@
                     <UniformGrid Grid.Column="0"
                              Columns="3">
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -479,7 +475,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -517,7 +513,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -672,7 +668,7 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="5 2"
-                              Visibility="{Binding IsHiddenTag, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -717,7 +713,7 @@
                                     VerticalAlignment="Center"
                                     Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                     CommandParameter="{Binding}"
-                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="{x:Type Button}">
                                                         <Grid>
@@ -876,7 +872,7 @@
                             <MultiBinding StringFormat="Page {0}{1} - {2}">
                                 <Binding Path="PageNumber" />
                                 <Binding Path="DifferentiationLevel"
-                                     Converter="{StaticResource StringToEmptyStringConverter}"
+                                     Converter="{converters:StringToEmptyStringConverter}"
                                      ConverterParameter="0" />
                                 <Binding Path="CurrentPage.Owner.DisplayName" />
                             </MultiBinding>
@@ -900,7 +896,7 @@
                     <UniformGrid Grid.Column="0"
                              Columns="2">
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -938,7 +934,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -1058,7 +1054,7 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="5 2"
-                              Visibility="{Binding IsHiddenTag, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -1103,7 +1099,7 @@
                                     VerticalAlignment="Center"
                                     Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                     CommandParameter="{Binding}"
-                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="{x:Type Button}">
                                                         <Grid>

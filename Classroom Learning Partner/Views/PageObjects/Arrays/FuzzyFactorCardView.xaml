@@ -4,17 +4,12 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
-        <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
-        <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
-        <conv:IntToOppositeVisibilityConverter x:Key="IntToOppositeVisibilityConverter" />
-        <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
-        <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
+        <converters:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
+        <converters:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
+        <converters:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
 
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
@@ -63,8 +58,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}" />
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=14}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -72,9 +67,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
@@ -83,9 +78,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemoveFuzzyFactorCardCommand}"
@@ -194,7 +189,7 @@
                     Grid.ColumnSpan="2"
                     Background="Transparent"
                     Height="{Binding ArrayHeight}"
-                    Width="{Binding ArrayWidth, Converter={conv:IncreaseNumberConverter}, ConverterParameter=3}"
+                    Width="{Binding ArrayWidth, Converter={converters:IncreaseNumberConverter}, ConverterParameter=3}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     BorderThickness="0 3 0 3"
@@ -223,7 +218,7 @@
                   Stroke="{Binding FuzzyEdgeColor}"
                   StrokeThickness="3"
                   SnapsToDevicePixels="True"
-                  Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}"
+                  Visibility="{Binding PageObject.CurrentRemainder, Converter={converters:IntToVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
 
             <!--Grid seperated at at last divider-->
@@ -311,7 +306,7 @@
                                 <Rectangle Width="{Binding Length}"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={conv:IncreaseNumberConverter}, 
+                                                                      Converter={converters:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Opacity=".3">
@@ -329,19 +324,19 @@
                                            Width="3"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={conv:IncreaseNumberConverter}, 
+                                                                      Converter={converters:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Fill="{StaticResource DividerColor}"
                                            Opacity=".7"
-                                           Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}" />
+                                           Visibility="{Binding Position, Converter={converters:DoubleToVisibilityConverter}}" />
 
                                 <!--Label Inside Snapped-in Array-->
                                 <Grid VerticalAlignment="Center"
                                       HorizontalAlignment="Center"
                                       Height="{Binding Length}"
                                       Width="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                      Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
+                                      Visibility="{Binding Value, Converter={converters:IntToVisibilityConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -420,7 +415,7 @@
                          VerticalAlignment="Bottom"
                          HorizontalAlignment="Center"
                          Margin="0 0 0 30"
-                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
+                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}" />
                 <TextBlock Grid.Column="1"
                            Grid.Row="0"
                            Foreground="Black"
@@ -432,7 +427,7 @@
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
                            Text="{Binding PageObject.CurrentRemainder}"
-                           Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
+                           Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}" />
 
                 <!--Dividend when arrays are snapped in (on right edge of arrays)-->
                 <Ellipse Grid.Column="1"
@@ -445,7 +440,7 @@
                          VerticalAlignment="Top"
                          HorizontalAlignment="Left"
                          Margin="-32 15 0 0"
-                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
+                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}" />
 
                 <TextBlock Grid.Column="1"
                            Grid.Row="0"
@@ -460,7 +455,7 @@
                            Margin="-32 23 0 0"
                            Text="{Binding Dividend}"
                            TextAlignment="Center"
-                           Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
+                           Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}" />
             </Grid>
 
             <!--Dividend with no arrays snapped in (centered)-->
@@ -474,7 +469,7 @@
                      VerticalAlignment="Top"
                      HorizontalAlignment="Center"
                      Margin="0 15 0 0"
-                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}" />
+                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToOppositeVisibilityConverter}}" />
 
             <TextBlock Grid.Column="1"
                        Grid.Row="1"
@@ -485,7 +480,7 @@
                        VerticalAlignment="Top"
                        HorizontalAlignment="Center"
                        Margin="0 23 0 0"
-                       Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"
+                       Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToOppositeVisibilityConverter}}"
                        Text="{Binding Dividend}" />
 
             <!--Array hit box-->
@@ -523,8 +518,8 @@
                         Grid.ColumnSpan="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Left"
-                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"
-                        Margin="{Binding PageObject.LastDivisionPosition, Converter={StaticResource FFCMarginConverter}}">
+                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}"
+                        Margin="{Binding PageObject.LastDivisionPosition, Converter={converters:DivisionTemplateMarginConverter}}">
 
                 <!--Bottom Label (Equation)-->
                 <TextBlock TextAlignment="Center"

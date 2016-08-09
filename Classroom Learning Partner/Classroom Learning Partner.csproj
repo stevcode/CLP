@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Classroom_Learning_Partner</RootNamespace>
     <AssemblyName>Classroom Learning Partner</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -57,7 +57,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>CLPPaperClipLogoBlack.ico</ApplicationIcon>
+    <ApplicationIcon>CLPPaperClipLogoCircled.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -131,28 +131,16 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.4.5.1\lib\net45\Catel.Core.dll</HintPath>
+    <Reference Include="Catel.Core, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.4.5.2\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Extensions.Controls, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.Controls.4.5.1\lib\net45\Catel.Extensions.Controls.dll</HintPath>
+    <Reference Include="Catel.Extensions.Controls, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Extensions.Controls.4.5.2\lib\net46\Catel.Extensions.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Extensions.EntityFramework6, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.EntityFramework6.4.5.1\lib\net45\Catel.Extensions.EntityFramework6.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Catel.MVVM, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.MVVM.4.5.1\lib\net45\Catel.MVVM.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="Catel.MVVM, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.4.5.2\lib\net46\Catel.MVVM.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="IACore, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
@@ -204,8 +192,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Catel.MVVM.4.5.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Catel.MVVM.4.5.2\lib\net46\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -224,8 +212,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
-    <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
-    <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\PointXConverter.cs" />
@@ -235,30 +222,26 @@
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
-    <Compile Include="CLPServiceAgent.cs" />
-    <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeMatchToBooleanConverter.cs" />
     <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
-    <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
-    <Compile Include="Converters\EnumToBoolConverter.cs" />
-    <Compile Include="Converters\FFCMarginConverter.cs" />
+    <Compile Include="Converters\Single Converters\DoubleToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Converters\Single Converters\DivisionTemplateMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
-    <Compile Include="Converters\IndexToMarginConverter.cs" />
-    <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
-    <Compile Include="Converters\IntToVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\IndexToMarginConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToOppositeVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
-    <Compile Include="Converters\PageMatchToColorConverter.cs" />
-    <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
+    <Compile Include="Converters\Single Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
-    <Compile Include="Converters\PageToSubmissionsListConverter.cs" />
-    <Compile Include="Converters\Panel Converters\PanelLocationToThicknessConverter.cs" />
-    <Compile Include="Converters\PageToStarredVisibilityConverter.cs" />
-    <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\PanelLocationToThicknessConverter.cs" />
+    <Compile Include="Converters\Single Converters\PageToStarredVisibilityConverter.cs" />
+    <Compile Include="Converters\Single Converters\PageToSubmissionVisibilityConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
-    <Compile Include="Converters\StringToEmptyStringConverter.cs" />
-    <Compile Include="Converters\TypeToStringConverter.cs" />
+    <Compile Include="Converters\Single Converters\StringToEmptyStringConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
-    <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
+    <Compile Include="Converters\Single Converters\IntToQuestionMarkConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
@@ -271,7 +254,13 @@
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
+    <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
+    <Compile Include="Utilities\Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Utilities\Extensions\IModelExtensions.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
+    <Compile Include="Utilities\Extensions\IViewModelExtensions.cs" />
+    <Compile Include="Utilities\Extensions\UIElementExtensions.cs" />
+    <Compile Include="Utilities\Extensions\VisualExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="Utilities\RangeHelper.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
@@ -470,7 +459,6 @@
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\Panels\IPanel.cs" />
-    <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
@@ -1091,8 +1079,16 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\ToggleDashedStroke64.png" />
+    <Resource Include="Resources\Images\Shapes64.png" />
+    <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless64.png" />
+    <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless720.png" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoWhite720.png" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled.ico" />
+    <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
     <Resource Include="CLPPaperClipLogoBlack.ico" />
+    <Resource Include="CLPPaperClipLogoCircled.ico" />
     <Content Include="External Libraries\EntityFramework.dll" />
     <Content Include="External Libraries\EntityFramework.SqlServer.dll" />
     <Content Include="External Libraries\itextsharp.dll" />
@@ -1393,7 +1389,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Converters\List Converters\" />
     <Folder Include="Resources\Images\ContextRibbon\PageObjectBase\" />
     <Folder Include="Resources\Images\ContextRibbon\TextBox\" />
   </ItemGroup>

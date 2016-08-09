@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -36,16 +37,13 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
-        public static CLPPage CurrentPage
-        {
-            get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
-        }
-
         private IPageInteractionService _pageInteractionService;
+        private IDataService _dataService;
 
         public MajorRibbonViewModel()
         {
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _dataService = DependencyResolver.Resolve<IDataService>();
 
             InitializeCommands();
             InitializeButtons();
@@ -53,7 +51,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
+
+            //InitializedAsync += MajorRibbonViewModel_InitializedAsync;
+            //ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
+
+        //private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        //{
+        //}
+
+        //private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        //{
+        //}
 
         private void InitializeCommands()
         {
@@ -144,11 +153,22 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            "AUTO_NUMBERLINE");
 
             //Shapes
-            //TODO: Better Icons
-            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
-            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
-            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
-            _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
+            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/Shapes64.png");
+            var shapeDropDown = new ContextMenu();
+            
+            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
+            shapeDropDown.Items.Add(_insertSquareButton);
+            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
+            shapeDropDown.Items.Add(_insertCircleButton);
+            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
+            shapeDropDown.Items.Add(_insertTriangleButton);
+            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
+            shapeDropDown.Items.Add(_insertHorizontalLineButton);
+
+            _insertShapeButton.DropDown = shapeDropDown;
+
+            #region Obsolete
+
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
             _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
@@ -162,6 +182,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                AddPageObjectToPageCommand,
                                                                "LEFT_DIAGONAL_DASHED");
 
+            #endregion // Obsolete
+            
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
 
@@ -317,6 +339,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertMultipleChoiceTextBoxButton;
 
         //Shapes
+        private DropDownRibbonButton _insertShapeButton;
         private RibbonButton _insertSquareButton;
         private RibbonButton _insertCircleButton;
         private RibbonButton _insertTriangleButton;
@@ -568,11 +591,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Undoes the last action.</summary>
         public Command UndoCommand { get; private set; }
 
-        private void OnUndoCommandExecute() { CurrentPage.History.Undo(); }
+        private void OnUndoCommandExecute() { _dataService.CurrentPage.History.Undo(); }
 
         private bool OnUndoCanExecute()
         {
-            var page = CurrentPage;
+            var page = _dataService.CurrentPage;
             if (page == null)
             {
                 return false;
@@ -591,11 +614,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Redoes the last undone action.</summary>
         public Command RedoCommand { get; private set; }
 
-        private void OnRedoCommandExecute() { CurrentPage.History.Redo(); }
+        private void OnRedoCommandExecute() { _dataService.CurrentPage.History.Redo(); }
 
         private bool OnRedoCanExecute()
         {
-            var page = CurrentPage;
+            var page = _dataService.CurrentPage;
             if (page == null)
             {
                 return false;
@@ -613,9 +636,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSubmitPageCommandExecute()
         {
-            CurrentPage.TrimPage();
-            var page = CurrentPage;
-            var submission = CurrentPage.NextVersionCopy();
+            var currentPage = _dataService.CurrentPage;
+
+            currentPage.TrimPage();
+            var page = currentPage;
+            var submission = currentPage.NextVersionCopy();
 
             var tBackground = new Thread(() =>
                                {
@@ -680,7 +705,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    try
                                    {
                                        //var sPage = ObjectSerializer.ToString(submission);
-                                       var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+                                       var zippedPage = sPage.CompressWithGZip();
 
                                        App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
                                    }
@@ -700,13 +725,13 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if (notebookWorkspace == null ||
-                CurrentPage == null ||
-                notebookWorkspace.PagesAddedThisSession.Contains(CurrentPage))
+                _dataService.CurrentPage == null ||
+                notebookWorkspace.PagesAddedThisSession.Contains(_dataService.CurrentPage))
             {
                 return false;
             }
 
-            return !CurrentPage.IsCached;
+            return !_dataService.CurrentPage.IsCached;
         }
 
         #endregion //Sharing Commands
@@ -754,8 +779,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnLongerPageCommandExecute()
         {
-            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
-            CurrentPage.Height = initialHeight * 2;
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
+            {
+                return;
+            }
+
+            var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
+            currentPage.Height = initialHeight * 2;
 
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
                 App.Network.ProjectorProxy == null)
@@ -772,13 +804,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnLongerPageCanExecute()
         {
-            if (CurrentPage == null)
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
             {
                 return false;
             }
 
-            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
-            return CurrentPage.Height < initialHeight * 2;
+            var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
+            return currentPage.Height < initialHeight * 2;
         }
 
         /// <summary>Sets the Version 0 page to the state of the selected submission.</summary>
@@ -856,116 +890,126 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPageObjectToPageCommandExecute(string pageObjectType)
         {
+            var currentPage = _dataService.CurrentPage;
+
+            if (currentPage == null)
+            {
+                return;
+            }
+
             switch (pageObjectType)
             {
                 //Image
                 case "IMAGE":
-                    CLPImageViewModel.AddImageToPage(CurrentPage);
+                    CLPImageViewModel.AddImageToPage(currentPage);
                     break;
 
                 //Stamps
                 case "BLANK_GENERAL_STAMP":
-                    StampViewModel.AddBlankGeneralStampToPage(CurrentPage);
+                    StampViewModel.AddBlankGeneralStampToPage(currentPage);
                     break;
                 case "BLANK_GROUP_STAMP":
-                    StampViewModel.AddBlankGroupStampToPage(CurrentPage);
+                    StampViewModel.AddBlankGroupStampToPage(currentPage);
                     break;
                 case "IMAGE_GENERAL_STAMP":
-                    StampViewModel.AddImageGeneralStampToPage(CurrentPage);
+                    StampViewModel.AddImageGeneralStampToPage(currentPage);
                     break;
                 case "IMAGE_GROUP_STAMP":
-                    StampViewModel.AddImageGroupStampToPage(CurrentPage);
+                    StampViewModel.AddImageGroupStampToPage(currentPage);
                     break;
                 case "PILE":
-                    StampViewModel.AddPileToPage(CurrentPage);
+                    StampViewModel.AddPileToPage(currentPage);
                     break;
 
                 //Arrays
                 case "ARRAY":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.Array);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.Array);
                     break;
                 case "10X10":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.TenByTen);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.TenByTen);
                     break;
                 case "ARRAYCARD":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ArrayCard);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.ArrayCard);
                     break;
                 case "FACTORCARD":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.FactorCard);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.FactorCard);
                     break;
                 case "OBSCURABLE_ARRAY":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ObscurableArray);
+                    CLPArrayViewModel.AddArrayToPage(currentPage, ArrayTypes.ObscurableArray);
                     break;
 
                 //Number Line 
                 case "NUMBERLINE":
-                    NumberLineViewModel.AddNumberLineToPage(CurrentPage);
+                    NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
                 case "AUTO_NUMBERLINE":
-                    NumberLineViewModel.AddNumberLine2ToPage(CurrentPage);
+                    NumberLineViewModel.AddNumberLine2ToPage(currentPage);
                     break;
 
                 //Division Template
                 case "DIVISIONTEMPLATE":
-                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(CurrentPage);
+                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(currentPage);
                     break;
 
                 //Shapes
                 case "SQUARE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Rectangle);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Rectangle);
                     break;
                 case "CIRCLE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Ellipse);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Ellipse);
                     break;
                 case "TRIANGLE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Triangle);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Triangle);
                     break;
                 case "HORIZONTALLINE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.HorizontalLine);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.HorizontalLine);
                     break;
                 case "VERTICALLINE":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.VerticalLine);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.VerticalLine);
                     break;
                 case "PROTRACTOR":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Protractor);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.Protractor);
                     break;
                 case "RIGHT_DIAGONAL":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonal);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.RightDiagonal);
                     break;
                 case "RIGHT_DIAGONAL_DASHED":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonalDashed);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.RightDiagonalDashed);
                     break;
                 case "LEFT_DIAGONAL":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonal);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.LeftDiagonal);
                     break;
                 case "LEFT_DIAGONAL_DASHED":
-                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonalDashed);
+                    ShapeViewModel.AddShapeToPage(currentPage, ShapeType.LeftDiagonalDashed);
                     break;
 
                 //Bin
                 case "BIN":
-                    BinViewModel.AddBinToPage(CurrentPage);
+                    BinViewModel.AddBinToPage(currentPage);
                     break;
 
                 //Text
                 case "TEXTBOX":
-                    CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
+                    CLPTextBoxViewModel.AddTextBoxToPage(currentPage);
                     break;
 
                 case "MULTIPLECHOICEBOX":
-                    MultipleChoiceViewModel.AddMultipleChoiceToPage(CurrentPage);
+                    MultipleChoiceViewModel.AddMultipleChoiceToPage(currentPage);
                     break;
 
                 // Recognition
                 case "ANSWERFILLIN":
-                    InterpretationRegionViewModel.AddInterpretationRegionToPage(CurrentPage);
+                    InterpretationRegionViewModel.AddInterpretationRegionToPage(currentPage);
                     break;
             }
 
             PageInteractionMode = PageInteractionModes.Select;
         }
 
-        private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return CurrentPage != null; }
+        private bool OnAddPageObjectToPageCanExecute(string pageObjectType)
+        {
+            return _dataService.CurrentPage != null;
+        }
 
         #endregion //Insert PageObject Commands
 
@@ -999,14 +1043,16 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertBinButton);
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertShapeButton);
 
             // Insert Shapes
-            Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertShapeButton);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
-            Buttons.Add(_insertHorizontalLineButton);
-            Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertHorizontalLineButton);
+            //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
             //Buttons.Add(_insertRightDiagonalDashedButton);
@@ -1014,11 +1060,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            Buttons.Add(Separater);
-            Buttons.Add(_insertImageButton);
-            Buttons.Add(_insertTextBoxButton);
-            Buttons.Add(_insertRecognitionRegionButton);
-            Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertImageButton);
+            //Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(_insertRecognitionRegionButton);
+            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
         #endregion //Methods

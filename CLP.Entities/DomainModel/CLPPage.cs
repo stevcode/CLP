@@ -1111,7 +1111,8 @@ namespace CLP.Entities
             using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
             {
                 var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                // jsonSerializer.WriteTypeInfo = true;  ???
+                jsonSerializer.WriteTypeInfo = true;
+                jsonSerializer.PreserveReferences = true;
                 jsonSerializer.Serialize(this, stream);
                 ClearIsDirtyOnAllChilds();
             }
@@ -1168,6 +1169,33 @@ namespace CLP.Entities
             //}
         }
 
+        public void SaveToJSON(string folderPath, bool serializeInkStrokes = true)
+        {
+            var nameComposite = PageNameComposite.ParsePage(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".json");
+            ToJSON(filePath, serializeInkStrokes);
+
+            //if(page.PageThumbnail == null)
+            //{
+            //    return;
+            //}
+
+            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
+            //if(!Directory.Exists(thumbnailsFolderPath))
+            //{
+            //    Directory.CreateDirectory(thumbnailsFolderPath);
+            //}
+            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+
+            //var pngEncoder = new PngBitmapEncoder();
+            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+            //using(var outputStream = new MemoryStream())
+            //{
+            //    pngEncoder.Save(outputStream);
+            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            //}
+        }
+
         public static CLPPage LoadFromJSON(string pageFilePath)
         {
             try
@@ -1182,7 +1210,11 @@ namespace CLP.Entities
                 using (var stream = new FileStream(pageFilePath, FileMode.Open))
                 {
                     var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                    page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
+                    jsonSerializer.WriteTypeInfo = true;
+                    jsonSerializer.PreserveReferences = true;
+                    //page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
+                    var uncastPage = jsonSerializer.Deserialize(typeof(CLPPage), stream);
+                    page = (CLPPage)uncastPage;
                 }
 
                 if (page == null)
@@ -1204,8 +1236,9 @@ namespace CLP.Entities
 
                 return page;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }
         }

@@ -1,21 +1,25 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.ShapeView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
-    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+    <ac:AdornedControl HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside"
+                       VerticalAdornerPlacement="Outside"
                        IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <!--This is the adorner-->
-        <ac:AdornedControl.AdornerContent >
-            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Width="{Binding Width}" Height="{Binding Height}">
+        <ac:AdornedControl.AdornerContent>
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
 
                 <Rectangle Stroke="Transparent"
                            StrokeThickness="1"
@@ -26,8 +30,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -35,8 +39,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -46,8 +50,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
@@ -77,53 +81,91 @@
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Bottom="-40">
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-40"
+                       Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeShapeCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeShapeCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 8,23 L 23,23 L 23,8" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 12,27 L 27,27 L 27,12" />
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
-                
+
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
         <Grid>
-            
+
             <Control>
                 <Control.Resources>
 
                     <ControlTemplate x:Key="RectangleTemplate">
-                        <Rectangle DataContext="{Binding}" 
-                                   Height="{Binding Height, Mode=TwoWay}" 
-                                   Width="{Binding Width, Mode=TwoWay}" 
-                                   Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+                        <Rectangle DataContext="{Binding}"
+                                   Height="{Binding Height, Mode=TwoWay}"
+                                   Width="{Binding Width, Mode=TwoWay}"
+                                   Fill="Transparent"
+                                   Stroke="Black"
+                                   StrokeThickness="3">
+                            <Rectangle.Style>
+                                <Style TargetType="{x:Type Rectangle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="EllipseTemplate">
-                        <Ellipse DataContext="{Binding}" 
-                                 Height="{Binding Height, Mode=TwoWay}" 
-                                 Width="{Binding Width, Mode=TwoWay}" 
-                                 Fill="Transparent" Stroke="Black" StrokeThickness="3" />
+                        <Ellipse DataContext="{Binding}"
+                                 Height="{Binding Height, Mode=TwoWay}"
+                                 Width="{Binding Width, Mode=TwoWay}"
+                                 Fill="Transparent"
+                                 Stroke="Black"
+                                 StrokeThickness="3">
+                            <Ellipse.Style>
+                                <Style TargetType="{x:Type Ellipse}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="TriangleTemplate">
@@ -134,29 +176,77 @@
                                  Stretch="Uniform"
                                  Fill="Transparent"
                                  Stroke="Black"
-                                 StrokeThickness="3" />
+                                 StrokeThickness="3">
+                            <Polygon.Style>
+                                <Style TargetType="{x:Type Polygon}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Polygon.Style>
+                        </Polygon>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="HorizontalLineTemplate">
-                        <Line DataContext="{Binding}"  
+                        <Line DataContext="{Binding}"
                               Width="{Binding Width, Mode=TwoWay}"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
                               Stretch="UniformToFill"
-                              StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="1" Y2="0" />
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="0">
+                            <Line.Style>
+                                <Style TargetType="{x:Type Line}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="VerticalLineTemplate">
-                        <Line DataContext="{Binding}"  
+                        <Line DataContext="{Binding}"
                               Height="{Binding Height, Mode=TwoWay}"
-                              HorizontalAlignment="Center" VerticalAlignment="Top"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Top"
                               Stretch="UniformToFill"
-                              StrokeThickness="3" Stroke="Black" X1="0" Y1="0" X2="0" Y2="1" />
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="0"
+                              Y2="1">
+                            <Line.Style>
+                                <Style TargetType="{x:Type Line}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="ProtractorTemplate">
-                        <Image DataContext="{Binding}" 
-                               Height="{Binding Height, Mode=TwoWay}" 
-                               Width="{Binding Width, Mode=TwoWay}" 
+                        <Image DataContext="{Binding}"
+                               Height="{Binding Height, Mode=TwoWay}"
+                               Width="{Binding Width, Mode=TwoWay}"
                                Source="..\..\Images\Protractor.png" />
                     </ControlTemplate>
 
@@ -170,7 +260,44 @@
                               X1="0"
                               Y1="1"
                               X2="1"
-                              Y2="0" />
+                              Y2="0">
+                            <Line.Style>
+                                <Style TargetType="{x:Type Line}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="LeftDiagonalLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              Stretch="Uniform"
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="1">
+                            <Line.Style>
+                                <Style TargetType="{x:Type Line}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStrokeDashed}"
+                                                     Value="True">
+                                            <Setter Property="StrokeDashArray"
+                                                    Value="4 4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Line.Style>
+                        </Line>
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="RightDiagonalDashedLineTemplate">
@@ -185,19 +312,6 @@
                               Y1="1"
                               X2="1"
                               Y2="0" />
-                    </ControlTemplate>
-
-                    <ControlTemplate x:Key="LeftDiagonalLineTemplate">
-                        <Line DataContext="{Binding}"
-                              Height="{Binding Height, Mode=TwoWay}"
-                              Width="{Binding Width, Mode=TwoWay}"
-                              Stretch="Uniform"
-                              StrokeThickness="3"
-                              Stroke="Black"
-                              X1="0"
-                              Y1="0"
-                              X2="1"
-                              Y2="1" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="LeftDiagonalDashedLineTemplate">
@@ -221,13 +335,17 @@
                         <Style.Triggers>
 
                             <!-- Rectangle trigger -->
-                            <DataTrigger Binding="{Binding ShapeType}" Value="Rectangle">
-                                <Setter Property="Template" Value="{StaticResource RectangleTemplate}" />
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="Rectangle">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RectangleTemplate}" />
                             </DataTrigger>
 
                             <!-- Ellipse trigger -->
-                            <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
-                                <Setter Property="Template" Value="{StaticResource EllipseTemplate}" />
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="Ellipse">
+                                <Setter Property="Template"
+                                        Value="{StaticResource EllipseTemplate}" />
                             </DataTrigger>
 
                             <!-- Triangle trigger -->
@@ -238,18 +356,24 @@
                             </DataTrigger>
 
                             <!-- HorizontalLine trigger -->
-                            <DataTrigger Binding="{Binding ShapeType}" Value="HorizontalLine">
-                                <Setter Property="Template" Value="{StaticResource HorizontalLineTemplate}" />
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="HorizontalLine">
+                                <Setter Property="Template"
+                                        Value="{StaticResource HorizontalLineTemplate}" />
                             </DataTrigger>
 
                             <!-- VerticalLine trigger -->
-                            <DataTrigger Binding="{Binding ShapeType}" Value="VerticalLine">
-                                <Setter Property="Template" Value="{StaticResource VerticalLineTemplate}" />
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="VerticalLine">
+                                <Setter Property="Template"
+                                        Value="{StaticResource VerticalLineTemplate}" />
                             </DataTrigger>
 
                             <!-- Protractor trigger -->
-                            <DataTrigger Binding="{Binding ShapeType}" Value="Protractor">
-                                <Setter Property="Template" Value="{StaticResource ProtractorTemplate}" />
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="Protractor">
+                                <Setter Property="Template"
+                                        Value="{StaticResource ProtractorTemplate}" />
                             </DataTrigger>
 
                             <!-- RightDiagonalLine trigger -->
@@ -318,8 +442,5 @@
         </Grid>
 
     </ac:AdornedControl>
-    
+
 </catel:UserControl>
-    
-
-

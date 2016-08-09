@@ -259,29 +259,24 @@ namespace Classroom_Learning_Partner.ViewModels
                         var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                         if (notebookWorkspaceViewModel != null)
                         {
-                            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
-                            screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
+                            var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView();
+                            screenShotByteSource = (singleDisplayView as UIElement).ToImageByteArray();
                         }
                     }
                     else
                     {
-                        var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentDisplay as IModel);
+                        var displayViewModels = (CurrentDisplay as IModel).GetAllViewModels();
                         foreach (var gridDisplayView in from displayViewModel in displayViewModels
                                                         where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
-                                                        select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                                                        select displayViewModel.GetFirstView())
                         {
-                            screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
+                            screenShotByteSource = (gridDisplayView as UIElement).ToImageByteArray();
                         }
                     }
 
                     if (screenShotByteSource != null)
                     {
-                        var bitmapImage = new BitmapImage();
-                        bitmapImage.BeginInit();
-                        bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                        bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
-                        bitmapImage.EndInit();
-                        bitmapImage.Freeze();
+                        var bitmapImage = screenShotByteSource.ToBitmapImage();
 
                         App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
                     }

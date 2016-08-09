@@ -23,6 +23,14 @@ namespace CLP.Entities
     [Serializable]
     public class Shape : APageObjectBase, ICuttable, ICountable
     {
+        #region Constants
+
+        public const double MIN_LINE_DEPTH = 20.0;
+        public const double INITIAL_LINE_LENGTH = 100;
+        public const double INITIAL_SHAPE_SIZE = 80;
+
+        #endregion // Constants
+
         #region Constructors
 
         /// <summary>Initializes <see cref="Shape" /> from scratch.</summary>
@@ -41,16 +49,16 @@ namespace CLP.Entities
                 case ShapeType.Rectangle:
                 case ShapeType.Ellipse:
                 case ShapeType.Triangle:
-                    Height = 80;
-                    Width = 80;
+                    Height = INITIAL_SHAPE_SIZE;
+                    Width = INITIAL_SHAPE_SIZE;
                     break;
                 case ShapeType.HorizontalLine:
-                    Width = 100;
-                    Height = 20;
+                    Width = INITIAL_LINE_LENGTH;
+                    Height = MIN_LINE_DEPTH;
                     break;
                 case ShapeType.VerticalLine:
-                    Height = 100;
-                    Width = 20;
+                    Height = INITIAL_LINE_LENGTH;
+                    Width = MIN_LINE_DEPTH;
                     break;
                 case ShapeType.Protractor:
                     Height = 200;
@@ -60,8 +68,8 @@ namespace CLP.Entities
                 case ShapeType.RightDiagonalDashed:
                 case ShapeType.LeftDiagonal:
                 case ShapeType.LeftDiagonalDashed:
-                    Height = 100;
-                    Width = 100;
+                    Height = INITIAL_LINE_LENGTH;
+                    Width = INITIAL_LINE_LENGTH;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("shapeType");
@@ -86,6 +94,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof (ShapeType), ShapeType.Rectangle);
+
+        /// <summary>Determines if the stroke used to make the shape is a dashed line or solid.</summary>
+        public bool IsStrokeDashed
+        {
+            get { return GetValue<bool>(IsStrokeDashedProperty); }
+            set { SetValue(IsStrokeDashedProperty, value); }
+        }
+
+        public static readonly PropertyData IsStrokeDashedProperty = RegisterProperty("IsStrokeDashed", typeof(bool), false);     
 
         #endregion //Properties
 

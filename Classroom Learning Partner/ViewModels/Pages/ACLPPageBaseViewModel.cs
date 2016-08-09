@@ -633,17 +633,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if (propertyName == "CanSendToTeacher" &&
-                viewModel is RibbonViewModel)
-            {
-                RaisePropertyChanged("HasSubmissions");
-            }
+            //if (propertyName == "CanSendToTeacher" &&
+            //    viewModel is RibbonViewModel)
+            //{
+            //    RaisePropertyChanged("HasSubmissions");
+            //}
 
-            if (propertyName == "IsSending" &&
-                viewModel is RibbonViewModel)
-            {
-                RaisePropertyChanged("HasSubmissions");
-            }
+            //if (propertyName == "IsSending" &&
+            //    viewModel is RibbonViewModel)
+            //{
+            //    RaisePropertyChanged("HasSubmissions");
+            //}
 
             if (IsPagePreview)
             {
@@ -1090,8 +1090,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void RemoveStrokes(CLPPage page, IEnumerable<Stroke> strokesToRemove)
         {
-            var pageViewModel =
-                CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as
+            var pageViewModel = page.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as
                 ACLPPageBaseViewModel;
             if (pageViewModel == null)
             {
@@ -1104,7 +1103,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void TakePageThumbnail(CLPPage page)
         {
-            var viewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+            var viewModels = page.GetAllViewModels();
             if (viewModels == null ||
                 !viewModels.Any())
             {
@@ -1112,7 +1111,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var pageViewModel = viewModels.First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
-            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null)
@@ -1120,15 +1119,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
-
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-            bitmapImage.StreamSource = new MemoryStream(thumbnail);
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
-
+            var bitmapImage = pageView.ToBitmapImage(492);
             page.PageThumbnail = bitmapImage;
         }
 
@@ -1210,7 +1201,7 @@ namespace Classroom_Learning_Partner.ViewModels
                               return;
                           }
                           var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-                          var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
+                          var zippedHistoryItem = historyItemString.CompressWithGZip();
 
                           try
                           {

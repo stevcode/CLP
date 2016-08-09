@@ -110,7 +110,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             if (submission == null)
@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner
 
                                                                                             if (teacherPage != null)
                                                                                             {
-                                                                                                var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(teacherPage);
+                                                                                                var pageViewModels = teacherPage.GetAllViewModels();
                                                                                                 foreach (var pageViewModel in pageViewModels)
                                                                                                 {
                                                                                                     var pageVM = pageViewModel as ACLPPageBaseViewModel;
@@ -243,7 +243,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedPages = CLPServiceAgent.Instance.UnZip(zippedPages);
+            var unZippedPages = zippedPages.DecompressFromGZip();
             var pages = ObjectSerializer.ToObject(unZippedPages) as List<CLPPage>;
 
             if (pages == null)
@@ -297,7 +297,7 @@ namespace Classroom_Learning_Partner
                                           return;
                                       }
 
-                                      var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+                                      var unZippedNotebook = zippedNotebook.DecompressFromGZip();
                                       var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
 
                                       if (notebook == null)
@@ -321,7 +321,7 @@ namespace Classroom_Learning_Partner
                     return;
                 }
 
-                var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+                var unZippedNotebook = zippedNotebook.DecompressFromGZip();
                 var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
 
                 if (notebook == null)

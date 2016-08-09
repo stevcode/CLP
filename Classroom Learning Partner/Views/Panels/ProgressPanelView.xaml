@@ -4,7 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
     <UserControl.Resources>
@@ -12,17 +12,7 @@
         <ResourceDictionary>
             
             <!-- Converters -->
-            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <conv:DifferentiationGroupDisplayConverter x:Key="DifferentiationGroupDisplayConverter" />
-            <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
-            <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
-            <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
-            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-            <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
-            <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
-            <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
-            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+            <converters:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
             
         </ResourceDictionary>
         
@@ -37,9 +27,9 @@
         <Border Grid.Column="0" 
                 Background="{StaticResource GrayBackgroundColor}"
                 BorderBrush="{StaticResource GrayEdgeColor}"
-                BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+                BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Width="{Binding Length}"
-                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             
             <Grid>
                 <Grid.RowDefinitions>
@@ -94,7 +84,7 @@
                                          Fill="LawnGreen"
                                          Margin="5 0 3 0"
                                          VerticalAlignment="Center"
-                                         Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+                                         Visibility="{Binding Notebook.Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
                                 <Button DockPanel.Dock="Left" 
                                         Margin="0 0 10 0"
@@ -220,7 +210,7 @@
                                              Fill="LawnGreen"
                                              Margin="5 0 3 0"
                                              VerticalAlignment="Center"
-                                             Visibility="{Binding Notebook.Owner.IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+                                             Visibility="{Binding Notebook.Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
                                     <Button DockPanel.Dock="Left"
                                             Margin="0 0 10 0"
@@ -273,11 +263,11 @@
                                                                         </Grid.ColumnDefinitions>
                                                                         <Image Grid.Column="0"
                                                                                Source="pack://application:,,,/Resources/Images/Starred16.png"
-                                                                               Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
+                                                                               Visibility="{Binding Converter={converters:PageToStarredVisibilityConverter}}" />
 
                                                                         <Image Grid.Column="1"
                                                                                Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
-                                                                               Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
+                                                                               Visibility="{Binding Converter={converters:PageToSubmissionVisibilityConverter}}" />
                                                                     </Grid>
                                                                     <Rectangle Fill="Transparent"
                                                                                Stroke="{StaticResource GrayEdgeColor}"
@@ -325,7 +315,7 @@
                     <Binding Path="IsVisible" />
                     <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
-                             Converter="{StaticResource EnumToBoolConverter}"
+                             Converter="{converters:EnumToBoolConverter}"
                              ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>

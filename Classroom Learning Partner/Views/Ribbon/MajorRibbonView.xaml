@@ -7,13 +7,6 @@
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
-    <catel:UserControl.Resources>
-
-        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <converters:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
-
-    </catel:UserControl.Resources>
-
     <DockPanel Height="65"
                Background="{StaticResource GrayBackgroundColor}">
 
@@ -100,7 +93,7 @@
                                              VerticalAlignment="Center" />
 
                                     <!-- Button Content -->
-                                    <Image Source="pack://application:,,,/Resources/Images/CLPMenuIconWhiteBorderless64.png" />
+                                    <Image Source="pack://application:,,,/Resources/Images/CLPPaperClipMenuIconWhiteBorderless64.png" />
                                 </Grid>
 
                                 <!-- FX Triggers -->
@@ -140,21 +133,21 @@
             <customControls:ToggleRibbonButton UnCheckedText="Show Pages"
                                                CheckedText="Hide Pages"
                                                LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                                               IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
+                                               IsChecked="{Binding CurrentLeftPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Progress"
                                                CheckedText="Hide Progress"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
-                                               IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               IsChecked="{Binding CurrentLeftPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Submissions"
                                                CheckedText="Hide Submissions"
                                                LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
                                                IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
         </StackPanel>
@@ -253,15 +246,15 @@
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                               IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               IsChecked="{Binding CurrentRightPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Freeze"
                                                CheckedText="Unfreeze"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
                                                IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
         </StackPanel>
@@ -301,7 +294,8 @@
 
             <customControls:RibbonButton Text="Add New Page"
                                          Command="{Binding AddNewPageCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
+                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"  />
 
             <customControls:RibbonButton Text="Add New Animation Page"
                                          Command="{Binding AddNewAnimationPageCommand}"

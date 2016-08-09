@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
@@ -18,13 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <conv:DifferentiationGroupDisplayConverter x:Key="DifferentiationGroupDisplayConverter" />
-            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-            <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
-            <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
+            <converters:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
@@ -52,9 +46,9 @@
         <Border Grid.Column="0"
                 Background="{StaticResource GrayBackgroundColor}"
                 BorderBrush="{StaticResource GrayEdgeColor}"
-                BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+                BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Width="{Binding Length}"
-                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
             <Grid>
                 
@@ -94,7 +88,7 @@
 
                                 <TextBlock Grid.Column="0"
                                            Margin="5 0 -3 0"
-                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
                                            Visibility="{Binding MainWindowViewModel.NotTeacherVisibility, Source={x:Static Application.Current}}">
@@ -112,13 +106,13 @@
 
                                 <TextBlock Grid.Column="0"
                                            Margin="5 0 -3 0"
-                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
                                            Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
-                                    <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}"/>
+                                    <Run Text="{Binding DifferentiationLevel, Converter={converters:StringToEmptyStringConverter}, ConverterParameter=0}"/>
 
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
@@ -188,7 +182,7 @@
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"
-                                           Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            StrokeThickness="2"
                                            Fill="Transparent">
                                     <i:Interaction.Triggers>
@@ -258,7 +252,7 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                    <DataTrigger Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
                                                                  Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
@@ -272,7 +266,7 @@
                                            Width="16"
                                            IsHitTestVisible="False"
                                            Source="pack://application:,,,/Resources/Images/Check16.png"
-                                           Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                           Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
                                     
                                 </StackPanel>
 
@@ -352,7 +346,7 @@
                     <Binding Path="IsVisible" />
                     <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
-                             Converter="{StaticResource EnumToBoolConverter}"
+                             Converter="{converters:EnumToBoolConverter}"
                              ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>
@@ -365,7 +359,7 @@
                 <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                     <Binding Path="MainWindowViewModel.CurrentProgramMode"
                              Source="{x:Static Application.Current}"
-                             Converter="{StaticResource EnumToBoolConverter}"
+                             Converter="{converters:EnumToBoolConverter}"
                              ConverterParameter="{x:Static viewModels:ProgramModes.Student}" />
                 </MultiBinding>
             </views:SubmissionHistoryPanelView.Visibility>

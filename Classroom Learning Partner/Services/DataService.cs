@@ -231,6 +231,11 @@ namespace Classroom_Learning_Partner.Services
             get { return CurrentNotebookInfo == null ? null : CurrentNotebookInfo.Notebook; }
         }
 
+        public CLPPage CurrentPage
+        {
+            get { return CurrentNotebook == null ? null : CurrentNotebook.CurrentPage; }
+        }
+
         #endregion //Notebook Properties
 
         #endregion //Properties
@@ -623,7 +628,7 @@ namespace Classroom_Learning_Partner.Services
             if (!isNotebookSaved) { }
 
             var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
-            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            var zippedNotebook = sNotebook.CompressWithGZip();
             App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
         }
 
@@ -992,7 +997,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
                 {
-                    var pageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+                    var pageViewModels = page.GetAllViewModels();
                     foreach (var pageViewModel in pageViewModels)
                     {
                         var pageVM = pageViewModel as ACLPPageBaseViewModel;
@@ -1275,6 +1280,29 @@ namespace Classroom_Learning_Partner.Services
         //} 
 
         #endregion //Old ClassPeriod Methods
+
+        #region Testing
+
+        public void TestJSON()
+        {
+            var currentPage = CurrentPage;
+
+            var nameComposite = PageNameComposite.ParsePage(currentPage);
+            var filePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + ".json");
+
+            currentPage.ToJSON(filePath);
+
+            var loadedPage = CLPPage.LoadFromJSON(filePath);
+            if (loadedPage == null)
+            {
+                return;
+            }
+
+            var secondFilePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + " - Copy.json");
+            loadedPage.ToJSON(secondFilePath);
+        }
+
+        #endregion // Testing
 
         #endregion //Methods
     }

@@ -66,17 +66,17 @@ namespace Classroom_Learning_Partner
                                                                                             byte[] screenShotByteSource = null;
                                                                                             if(notebookWorkspaceViewModel.CurrentDisplay == null)
                                                                                             {
-                                                                                                var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
-                                                                                                screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
+                                                                                                var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView();
+                                                                                                screenShotByteSource = (singleDisplayView as UIElement).ToImageByteArray();
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.CurrentDisplay as IModel);
+                                                                                                var displayViewModels = (notebookWorkspaceViewModel.CurrentDisplay as IModel).GetAllViewModels();
                                                                                                 foreach(var gridDisplayView in from displayViewModel in displayViewModels
                                                                                                                                where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
-                                                                                                                               select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                                                                                                                               select displayViewModel.GetFirstView())
                                                                                                 {
-                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
+                                                                                                    screenShotByteSource = (gridDisplayView as UIElement).ToImageByteArray();
                                                                                                 }
                                                                                             }
 
@@ -85,16 +85,9 @@ namespace Classroom_Learning_Partner
                                                                                                 return null;
                                                                                             }
 
-                                                                                            var bitmapImage = new BitmapImage();
-                                                                                            bitmapImage.BeginInit();
-                                                                                            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                                                                                            bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
-                                                                                            bitmapImage.EndInit();
-                                                                                            bitmapImage.Freeze();
+                                                                                            var bitmapImage = screenShotByteSource.ToBitmapImage();
 
-                
                                                                                             App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
-
                                                                                         }
                                                                                         App.MainWindowViewModel.IsProjectorFrozen = isFreezing;
 
@@ -333,7 +326,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             if (submission == null ||
@@ -388,7 +381,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay) as SingleDisplayView;
+            var singleDisplayView = notebookWorkspaceViewModel.SingleDisplay.GetFirstView() as SingleDisplayView;
             if(singleDisplayView == null)
             {
                 return;
@@ -459,7 +452,7 @@ namespace Classroom_Learning_Partner
 
         public void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject)
         {
-            var unZippedClassPeriod = CLPServiceAgent.Instance.UnZip(zippedClassPeriod);
+            var unZippedClassPeriod = zippedClassPeriod.DecompressFromGZip();
             var classPeriod = ObjectSerializer.ToObject(unZippedClassPeriod) as ClassPeriod;
             if(classPeriod == null)
             {
@@ -467,7 +460,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
+            var unZippedClassSubject = zippedClassSubject.DecompressFromGZip();
             var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassInformation;
             if(classSubject == null)
             {
@@ -582,7 +575,7 @@ namespace Classroom_Learning_Partner
             var differentiationLevel = compositeKeys[2];
             var versionIndex = Convert.ToUInt32(compositeKeys[3]);
 
-            var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
+            var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
             var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
             if(historyItem == null)
             {
@@ -623,7 +616,7 @@ namespace Classroom_Learning_Partner
 
         public void AddNewPage(string zippedPage, int index)
         {
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
@@ -652,7 +645,7 @@ namespace Classroom_Learning_Partner
 
         public void ReplacePage(string zippedPage, int index)
         {
-            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var unZippedPage = zippedPage.DecompressFromGZip();
             var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;

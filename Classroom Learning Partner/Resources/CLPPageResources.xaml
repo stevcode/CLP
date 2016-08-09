@@ -3,8 +3,6 @@
                     xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                     xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
-    <converters:TypeToStringConverter x:Key="TypeToStringConverter" />
-
     <DataTemplate x:Key="PageObjectContainerTemplate">
         <Control>
             <Control.Resources>
@@ -112,168 +110,168 @@
                     <Style.Triggers>
 
                         <!-- CLPAudio trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="CLPAudio">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPAudioTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPDataTable trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="CLPDataTable">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPDataTableTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPHandwritingRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="HandwritingRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPHandwritingRegionTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPGroupingRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="GroupingRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPGroupingRegionTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPImage trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="CLPImage">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPImageTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPAggregationDataTable trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="AggregationDataTable">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPAggregationDataTableTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPInkShapeRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="InkShapeRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPInkShapeRegionTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPShadingRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="ShadingRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPShadingRegionTemplate}" />
                         </DataTrigger>
 
                         <!-- Shape trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="Shape">
                             <Setter Property="Template"
                                     Value="{StaticResource ShapeTemplate}" />
                         </DataTrigger>
 
                         <!-- Stamp trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="Stamp">
                             <Setter Property="Template"
                                     Value="{StaticResource StampTemplate}" />
                         </DataTrigger>
 
                         <!-- StampedObject trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="StampedObject">
                             <Setter Property="Template"
                                     Value="{StaticResource StampedObjectTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPTextBox trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="CLPTextBox">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPTextBoxTemplate}" />
                         </DataTrigger>
 
                         <!-- FuzzyFactorCard trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="FuzzyFactorCard">
                             <Setter Property="Template"
                                     Value="{StaticResource FuzzyFactorCardTemplate}" />
                         </DataTrigger>
 
                         <!-- RemainderTiles trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="RemainderTiles">
                             <Setter Property="Template"
                                     Value="{StaticResource RemainderTilesTemplate}" />
                         </DataTrigger>
 
                         <!-- CLPArray trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="CLPArray">
                             <Setter Property="Template"
                                     Value="{StaticResource CLPArrayTemplate}" />
                         </DataTrigger>
 
                         <!-- NumberLine trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="NumberLine">
                             <Setter Property="Template"
                                     Value="{StaticResource NumberLineTemplate}" />
                         </DataTrigger>
 
                         <!-- LassoRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="LassoRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource LassoRegionTemplate}" />
                         </DataTrigger>
 
                         <!-- TemporaryBoundary trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="TemporaryBoundary">
                             <Setter Property="Template"
                                     Value="{StaticResource TemporaryBoundaryTemplate}" />
                         </DataTrigger>
 
                         <!-- TemporaryGrid trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="TemporaryGrid">
                             <Setter Property="Template"
                                     Value="{StaticResource TemporaryGridTemplate}" />
                         </DataTrigger>
 
                         <!-- MultipleChoice trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="MultipleChoice">
                             <Setter Property="Template"
                                     Value="{StaticResource MultipleChoiceTemplate}" />
                         </DataTrigger>
 
                         <!-- Mark trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="Mark">
                             <Setter Property="Template"
                                     Value="{StaticResource MarkTemplate}" />
                         </DataTrigger>
 
                         <!-- Bin trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="Bin">
                             <Setter Property="Template"
                                     Value="{StaticResource BinTemplate}" />
                         </DataTrigger>
 
                         <!-- BinReporter trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="BinReporter">
                             <Setter Property="Template"
                                     Value="{StaticResource BinReporterTemplate}" />
                         </DataTrigger>
 
                         <!-- InterpretationRegion trigger -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
                                      Value="InterpretationRegion">
                             <Setter Property="Template"
                                     Value="{StaticResource InterpretationRegionTemplate}" />

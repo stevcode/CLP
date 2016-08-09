@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Globalization;
 using System.Windows.Data;
+using Catel.MVVM.Converters;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    public class StringToEmptyStringConverter : IValueConverter
+    [ValueConversion(typeof(string), typeof(string))]
+    public class StringToEmptyStringConverter : ValueConverterBase
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        protected override object Convert(object value, Type targetType, object parameter)
         {
             var val = value as string;
             var stringToMatch = parameter as string;
@@ -19,11 +20,6 @@ namespace Classroom_Learning_Partner.Converters
             }
 
             return val;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

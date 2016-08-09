@@ -68,19 +68,19 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.4.5.1\lib\net45\Catel.Core.dll</HintPath>
+    <Reference Include="Catel.Core, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.4.5.2\lib\net45\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.MVVM, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.MVVM.4.5.1\lib\net45\Catel.MVVM.dll</HintPath>
+    <Reference Include="Catel.MVVM, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.MVVM.4.5.2\lib\net45\Catel.MVVM.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Catel.MVVM.4.5.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Catel.MVVM.4.5.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -92,15 +92,37 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\Buttons\ColorButton\ColorButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\RibbonButton\RibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Buttons\ToggleRibbonButton\ToggleRibbonButton.generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Button Controls\ColorButton.cs" />
-    <Compile Include="Button Controls\GroupedRibbonButton.cs" />
-    <Compile Include="Button Controls\ToggleRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\ColorButton\ColorButton.cs" />
+    <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\DropDownRibbonButton\DropDownRibbonButtonBehavior.cs" />
+    <Compile Include="Controls\Buttons\GroupedRibbonButton\GroupedRibbonButton.cs" />
+    <Compile Include="Controls\Buttons\ToggleRibbonButton\ToggleRibbonButton.cs" />
     <Compile Include="HLSColorValueConverter.cs" />
-    <Compile Include="Button Controls\RibbonButton.cs">
+    <Compile Include="Controls\Buttons\RibbonButton\RibbonButton.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

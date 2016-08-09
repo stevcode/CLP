@@ -3,7 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Resources"
                    Background="CadetBlue">
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
