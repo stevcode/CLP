@@ -42,6 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
             MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
+            MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
             TrimPageCommand = new Command(OnTrimPageCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
@@ -218,6 +219,19 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnMovePageDownCanExecute()
         {
             return Notebook.Pages.CanMoveItemDown(CurrentPage);
+        }
+
+        /// <summary>Moves page to a specific location.</summary>
+        public Command MovePageToCommand { get; private set; }
+
+        private void OnMovePageToCommandExecute()
+        {
+            
+        }
+
+        private bool OnMovePageToCanExecute()
+        {
+            return Notebook.Pages.Count > 1;
         }
 
         /// <summary>Add 200 pixels to the height of the current page.</summary>

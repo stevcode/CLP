@@ -44,6 +44,9 @@
             <Button Content="Move Page Down"
                     Command="{Binding MovePageDownCommand}" />
 
+            <Button Content="Move Page To"
+                    Command="{Binding MovePageToCommand}" />
+
             <Button Content="Make Page Longer"
                     Command="{Binding MakePageLongerCommand}" />
 
@@ -75,7 +78,7 @@
                       Height="24"
                       Margin="1"
                       Padding="5 0"
-                      VerticalAlignment="Center">
+                      VerticalContentAlignment="Center">
                 <ComboBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ComboBoxItem}">
                         <Setter Property="FontSize"
