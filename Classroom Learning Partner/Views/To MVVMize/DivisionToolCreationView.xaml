@@ -54,7 +54,7 @@
                            HorizontalAlignment="Left"
                            FontWeight="Bold"
                            FontSize="20"
-                           Text="Show Tiles?" />
+                           Text="Show tiles?" />
                 
             </StackPanel>
 
