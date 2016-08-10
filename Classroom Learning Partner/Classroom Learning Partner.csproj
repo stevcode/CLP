@@ -339,61 +339,61 @@
     <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
       <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
+    <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>AdditionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml.cs">
       <DependentUpon>ButtonBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml.cs">
       <DependentUpon>DivisionToolTroubleWithRemaindersTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\MultipleChoiceCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml.cs">
       <DependentUpon>MultipleChoiceCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\StudentSelectorView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml.cs">
       <DependentUpon>StudentSelectorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\GroupCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\GroupCreationView.xaml.cs">
       <DependentUpon>GroupCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ClassPeriodChooserView.xaml.cs">
+    <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
+    <Compile Include="Views\To MVVMize\FuzzyFactorCardWithTiles.xaml.cs">
       <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\PersonCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\PersonCreationView.xaml.cs">
       <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\TextInputView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\TextInputView.xaml.cs">
       <DependentUpon>TextInputView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\NumberLineCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\NumberLineCreationView.xaml.cs">
       <DependentUpon>NumberLineCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml.cs">
+    <Compile Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml.cs">
       <DependentUpon>OPTICSReachabilityPlotView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\PageMetadataWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\PageMetadataWindowView.xaml.cs">
       <DependentUpon>PageMetadataWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
@@ -420,7 +420,7 @@
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\DivisionToolCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\DivisionToolCreationView.xaml.cs">
       <DependentUpon>DivisionToolCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml.cs">
@@ -469,37 +469,37 @@
     <Compile Include="Views\Displays\SingleDisplayView.xaml.cs">
       <DependentUpon>SingleDisplayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FactorCardCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\FactorCardCreationView.xaml.cs">
       <DependentUpon>FactorCardCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
       <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\UpdatePropertiesWindowView.xaml.cs">
       <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml.cs">
+    <Compile Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml.cs">
       <DependentUpon>AggregationGridRowSelecterWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
+    <Compile Include="Views\To MVVMize\CustomizeShadingRegionView.xaml.cs">
       <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+    <Compile Include="Views\To MVVMize\CustomizeDataTableView.xaml.cs">
       <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
+    <Compile Include="Views\To MVVMize\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml.cs">
@@ -647,79 +647,79 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
+    <Page Include="Views\To MVVMize\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\MultipleChoiceCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\StudentSelectorView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\GroupCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\GroupCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\ClassPeriodChooserView.xaml">
+    <Page Include="Views\To MVVMize\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml">
+    <Page Include="Views\To MVVMize\FuzzyFactorCardWithTiles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\PersonCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\PersonCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\TextInputView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\TextInputView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\NumberLineCreationView.xaml">
+    <Page Include="Views\To MVVMize\NumberLineCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml">
+    <Page Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
+    <Page Include="Views\To MVVMize\SimpleTextWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\PageMetadataWindowView.xaml">
+    <Page Include="Views\To MVVMize\PageMetadataWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+    <Page Include="Views\To MVVMize\NotebookMetadataWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -755,7 +755,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\DivisionToolCreationView.xaml">
+    <Page Include="Views\To MVVMize\DivisionToolCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -799,47 +799,47 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+    <Page Include="Views\To MVVMize\ArrayCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FactorCardCreationView.xaml">
+    <Page Include="Views\To MVVMize\FactorCardCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml">
+    <Page Include="Views\To MVVMize\LassoedPageObjectParameterizationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\PageTopicWindowView.xaml">
+    <Page Include="Views\To MVVMize\PageTopicWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
+    <Page Include="Views\To MVVMize\UpdatePropertiesWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml">
+    <Page Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
+    <Page Include="Views\To MVVMize\CustomizeShadingRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
+    <Page Include="Views\To MVVMize\CustomizeDataTableView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
+    <Page Include="Views\To MVVMize\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
+    <Page Include="Views\To MVVMize\KeypadWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
