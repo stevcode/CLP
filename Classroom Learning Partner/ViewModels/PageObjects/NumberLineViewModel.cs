@@ -552,30 +552,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            //var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-            var numberLineSize = 25;
-            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.NumberLine);
+            var numberLineSize = int.Parse(viewModel.NumberLineEndPoint);
+            var numberLine = new NumberLine(page, numberLineSize, viewModel.IsUsingAutoArcs? NumberLineTypes.AutoArcs : NumberLineTypes.NumberLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
-        }
-
-        public static void AddNumberLine2ToPage(CLPPage page)
-        {
-            //var keyPad = new NumberLineCreationView
-            //{
-            //    Owner = Application.Current.MainWindow,
-            //    WindowStartupLocation = WindowStartupLocation.Manual
-            //};
-            //keyPad.ShowDialog();
-            //if (keyPad.DialogResult != true ||
-            //    keyPad.NumbersEntered.Text.Length <= 0)
-            //{
-            //    return;
-            //}
-
-            //var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-
-            //var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
         #endregion //Static Methods

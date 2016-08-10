@@ -943,7 +943,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
                 case "AUTO_NUMBERLINE":
-                    NumberLineViewModel.AddNumberLine2ToPage(currentPage);
+                    NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
 
                 //Division Tool
