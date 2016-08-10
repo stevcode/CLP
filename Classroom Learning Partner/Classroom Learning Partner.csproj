@@ -373,9 +373,6 @@
     <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\FuzzyFactorCardWithTiles.xaml.cs">
-      <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\To MVVMize\MVVM\PersonCreationView.xaml.cs">
       <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
@@ -387,15 +384,6 @@
     </Compile>
     <Compile Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml.cs">
       <DependentUpon>OPTICSReachabilityPlotView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\SimpleTextWindowView.xaml.cs">
-      <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\PageMetadataWindowView.xaml.cs">
-      <DependentUpon>PageMetadataWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\NotebookMetadataWindowView.xaml.cs">
-      <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
       <DependentUpon>BinReporterView.xaml</DependentUpon>
@@ -473,26 +461,11 @@
     <Compile Include="Views\To MVVMize\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\FactorCardCreationView.xaml.cs">
-      <DependentUpon>FactorCardCreationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\LassoedPageObjectParameterizationView.xaml.cs">
-      <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
       <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\PageTopicWindowView.xaml.cs">
-      <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\UpdatePropertiesWindowView.xaml.cs">
-      <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml.cs">
       <DependentUpon>AggregationGridRowSelecterWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\CustomizeShadingRegionView.xaml.cs">
-      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\CustomizeDataTableView.xaml.cs">
       <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
@@ -692,10 +665,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\FuzzyFactorCardWithTiles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\To MVVMize\MVVM\PersonCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -709,18 +678,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\SimpleTextWindowView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\To MVVMize\PageMetadataWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\NotebookMetadataWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -804,33 +761,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\FactorCardCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\LassoedPageObjectParameterizationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\PageTopicWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\UpdatePropertiesWindowView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\CustomizeShadingRegionView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\To MVVMize\CustomizeDataTableView.xaml">
       <Generator>MSBuild:Compile</Generator>
