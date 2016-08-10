@@ -85,7 +85,7 @@ namespace CLP.Entities
                         PageObjectTypes.Add(pageObject.GetType().ToString());
                     }
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                 }
                 
@@ -112,7 +112,7 @@ namespace CLP.Entities
                     pageObject.OnAdded(true);
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
             }
         }
@@ -131,7 +131,7 @@ namespace CLP.Entities
                     ParentPage.History.TrashedPageObjects.Add(pageObject);
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
             }
         }

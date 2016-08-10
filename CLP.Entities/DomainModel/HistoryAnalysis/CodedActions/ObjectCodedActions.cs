@@ -62,7 +62,7 @@ namespace CLP.Entities
 
             // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
             // special case for Bins
-            return null;
+            //return null;
         }
 
         public static IHistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
@@ -114,7 +114,7 @@ namespace CLP.Entities
 
             // TODO: deal with multiple pageObjects deleted at once (lasso?)
             // special case for Bins
-            return null;
+            //return null;
         }
 
         public static IHistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)

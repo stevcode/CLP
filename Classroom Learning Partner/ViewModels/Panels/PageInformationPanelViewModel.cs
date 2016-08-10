@@ -1054,11 +1054,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTSVCommandExecute()
         {
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            dataService.TestJSON();
-
-
-            return;
             var pageNumber = CurrentPage.PageNumber;
             var studentName = CurrentPage.Owner.FullName;
             var historyActions = CurrentPage.History.HistoryActions;
@@ -1109,11 +1104,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (pageNumber < 10)
             {
-                stringPageNumber = "A0" + pageNumber.ToString();
+                stringPageNumber = "A0" + pageNumber;
             }
             else
             {
-                stringPageNumber = "A" + pageNumber.ToString();
+                stringPageNumber = "A" + pageNumber;
             }
             if (studentName.Contains("Allison"))
             {

@@ -569,7 +569,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 const string DISPLAY_ID = "SingleDisplay";
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //
             }

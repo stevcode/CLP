@@ -594,7 +594,7 @@ namespace CLP.Entities
 
                     return "Mixed";
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "None";
                 }
@@ -625,7 +625,7 @@ namespace CLP.Entities
 
                     return "Partially Correct";
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "None";
                 }
@@ -652,7 +652,7 @@ namespace CLP.Entities
 
                     return "ABR-C";
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "None";
                 }
@@ -673,7 +673,7 @@ namespace CLP.Entities
 
                     return aricTag.AnalysisCode.Substring(0, 4);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return "None";
                 }
