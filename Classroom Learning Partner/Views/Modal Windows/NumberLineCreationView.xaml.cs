@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using CLP.Entities;
 
-namespace Classroom_Learning_Partner.Views.Modal_Windows
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>Interaction logic for NumberLineCreationView.xaml</summary>
     public partial class NumberLineCreationView

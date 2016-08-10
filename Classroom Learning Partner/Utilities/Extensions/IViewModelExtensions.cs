@@ -4,6 +4,7 @@ using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Catel.Services;
 
 namespace Classroom_Learning_Partner
 {
@@ -26,6 +27,22 @@ namespace Classroom_Learning_Partner
             var views = viewModel.GetAllViews();
 
             return views.Any() ? views.First() : null;
+        }
+
+        public static bool? ShowWindow(this IViewModel viewModel)
+        {
+            Argument.IsNotNull("viewModel", viewModel);
+
+            var uiVisualerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            return uiVisualerService.Show(viewModel);
+        }
+
+        public static bool? ShowWindowAsDialog(this IViewModel viewModel)
+        {
+            Argument.IsNotNull("viewModel", viewModel);
+
+            var uiVisualerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            return uiVisualerService.ShowDialog(viewModel);
         }
     }
 }

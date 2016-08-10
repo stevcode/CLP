@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
@@ -542,42 +544,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddNumberLineToPage(CLPPage page)
         {
-            var keyPad = new NumberLineCreationView
-                         {
-                             Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual
-                         };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
+            var viewModel = new NumberLineCreationViewModel();
+            var result = viewModel.ShowWindowAsDialog();
+
+            if (result != true)
             {
                 return;
             }
 
-            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-
+            //var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+            var numberLineSize = 25;
             var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.NumberLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
         public static void AddNumberLine2ToPage(CLPPage page)
         {
-            var keyPad = new NumberLineCreationView
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
-            {
-                return;
-            }
+            //var keyPad = new NumberLineCreationView
+            //{
+            //    Owner = Application.Current.MainWindow,
+            //    WindowStartupLocation = WindowStartupLocation.Manual
+            //};
+            //keyPad.ShowDialog();
+            //if (keyPad.DialogResult != true ||
+            //    keyPad.NumbersEntered.Text.Length <= 0)
+            //{
+            //    return;
+            //}
 
-            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+            //var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
-            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
+            //var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
         #endregion //Static Methods
