@@ -10,13 +10,13 @@
                   ShowInTaskbar="False"
                   Background="{StaticResource GrayBackgroundColor}">
     <catel:StackGrid>
-        <catel:StackGrid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-        </catel:StackGrid.ColumnDefinitions>
+        <catel:StackGrid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </catel:StackGrid.RowDefinitions>
 
         <Grid HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
