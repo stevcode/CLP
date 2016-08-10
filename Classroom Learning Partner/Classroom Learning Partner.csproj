@@ -1087,6 +1087,9 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\Bin128.png" />
+    <Resource Include="Resources\Images\Bin32.png" />
+    <Resource Include="Resources\Images\Bin64.png" />
     <Resource Include="Resources\Images\DivisionTool32.png" />
     <Resource Include="Resources\Images\ToggleDashedStroke64.png" />
     <Resource Include="Resources\Images\Shapes64.png" />

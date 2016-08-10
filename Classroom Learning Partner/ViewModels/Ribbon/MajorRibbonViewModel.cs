@@ -185,7 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
             #endregion // Obsolete
             
             //Bin
-            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
+            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/Bin32.png", AddPageObjectToPageCommand, "BIN");
 
             //Text
             //TODO: Better Icons
