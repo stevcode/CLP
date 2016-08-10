@@ -267,8 +267,9 @@
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\MultipleChoiceCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\MultipleChoiceCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
@@ -283,11 +284,11 @@
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\StudentSelectorViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\ClassSubjectCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\StudentSelectorViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\GroupCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
@@ -381,7 +382,7 @@
     <Compile Include="Views\To MVVMize\MVVM\TextInputView.xaml.cs">
       <DependentUpon>TextInputView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\NumberLineCreationView.xaml.cs">
+    <Compile Include="Views\Modal Windows\NumberLineCreationView.xaml.cs">
       <DependentUpon>NumberLineCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml.cs">
@@ -703,7 +704,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\NumberLineCreationView.xaml">
+    <Page Include="Views\Modal Windows\NumberLineCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1006,7 +1007,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Classroom Learning Partner_TemporaryKey.pfx" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
