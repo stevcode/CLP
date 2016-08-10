@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
@@ -7,15 +8,19 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Views;
 using Catel.Threading;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;
+using Path = System.Windows.Shapes.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -110,6 +115,8 @@ namespace Classroom_Learning_Partner.ViewModels
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+
+            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
 
             ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
@@ -502,6 +509,32 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
+
+        /// <summary>Toggles the animation ribbon.</summary>
+        public bool IsAnimationRibbonForcedVisible
+        {
+            get { return GetValue<bool>(IsAnimationRibbonForcedVisibleProperty); }
+            set { SetValue(IsAnimationRibbonForcedVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsAnimationRibbonForcedVisibleProperty = RegisterProperty("IsAnimationRibbonForcedVisible", typeof(bool), false, OnIsAnimationRibbonForcedVisibleChanged);
+
+        private static void OnIsAnimationRibbonForcedVisibleChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var majorRibbon = sender as MajorRibbonViewModel;
+            if (majorRibbon == null)
+            {
+                return;
+            }
+
+            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
+            if (animationControlRibbon == null)
+            {
+                return;
+            }
+
+            animationControlRibbon.IsNonAnimationPlaybackEnabled = (bool)args.NewValue;
+        }
 
         #endregion //Bindings
 
@@ -1046,6 +1079,52 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Insert PageObject Commands
+
+        #region Extras
+
+        /// <summary>Takes a screenshot of the current page.</summary>
+        public Command TakePageScreenshotCommand { get; private set; }
+
+        private void OnTakePageScreenshotCommandExecute()
+        {
+            var currentPage = _dataService.CurrentPage;
+            var pageViewModel = currentPage.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var bitmapImage = pageView.ToBitmapImage(currentPage.Width, dpi: 300);
+
+            var thumbnailsFolderPath = Catel.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
+            var thumbnailFilePath = Catel.IO.Path.Combine(thumbnailsFolderPath,
+                                                 "Page - " + currentPage.PageNumber + ";" + currentPage.DifferentiationLevel + ";" + currentPage.VersionIndex + ";" +
+                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        private bool OnTakePageScreenshotCanExecute()
+        {
+            return _dataService.CurrentPage != null;
+        }
+
+        #endregion // Extras
 
         #endregion //Commands
 

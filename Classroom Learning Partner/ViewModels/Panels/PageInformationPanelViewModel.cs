@@ -365,43 +365,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        #region Edit Commands
-
-        private void OnPageScreenshotCommandExecute()
-        {
-            var pageViewModel = CurrentPage.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
-
-            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
-            var views = viewManager.GetViewsOfViewModel(pageViewModel);
-            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-            if (pageView == null)
-            {
-                return;
-            }
-
-            var bitmapImage = pageView.ToBitmapImage(CurrentPage.Width, dpi: 300);
-
-            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
-            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
-                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" +
-                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
-
-            if (!Directory.Exists(thumbnailsFolderPath))
-            {
-                Directory.CreateDirectory(thumbnailsFolderPath);
-            }
-
-            var pngEncoder = new PngBitmapEncoder();
-            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            using (var outputStream = new MemoryStream())
-            {
-                pngEncoder.Save(outputStream);
-                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-            }
-        }
-
-       #endregion // Edit Commands
-
         #region Analysis Commands
 
         public Command GenerateHistoryActionsCommand { get; private set; }
