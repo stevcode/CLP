@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CLP.Entities;
 
@@ -14,6 +15,8 @@ namespace Classroom_Learning_Partner.Services
         NotebookInfo CurrentNotebookInfo { get; set; }
         Notebook CurrentNotebook { get; }
         CLPPage CurrentPage { get; }
+
+        event EventHandler<EventArgs> CurrentNotebookChanged;
 
         CacheInfo CreateNewCache(string cacheName, bool isCacheCurrent = true);
         CacheInfo CreateNewCache(string cacheName, string cachesFolderPath, bool isCacheCurrent = true);

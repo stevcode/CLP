@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
@@ -52,17 +53,50 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
 
-            //InitializedAsync += MajorRibbonViewModel_InitializedAsync;
-            //ClosedAsync += MajorRibbonViewModel_ClosedAsync;
+            InitializedAsync += MajorRibbonViewModel_InitializedAsync;
+            ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
 
-        //private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
-        //{
-        //}
+        private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
 
-        //private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
-        //{
-        //}
+            return TaskHelper.Completed;
+        }
+
+        private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            // TODO: Change this to fire on CurrentPage change. See if commented out works to fire all CanExecutes.
+            var catelCommand = (AddPageObjectToPageCommand as ICatelCommand);
+            if (catelCommand != null)
+            {
+                catelCommand.RaiseCanExecuteChanged();
+            }
+
+            //var viewModelBase = this as ViewModelBase;
+            //if (viewModelBase != null)
+            //{
+            //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
+            //    viewModelCommandManager.InvalidateCommands();
+            //}
+        }
+
+        /// <summary>Temp variable to refresh CanExecute command methods.</summary>
+        public bool IsCurrentNotebookChanging
+        {
+            get { return GetValue<bool>(IsCurrentNotebookChangingProperty); }
+            set { SetValue(IsCurrentNotebookChangingProperty, value); }
+        }
+
+        public static readonly PropertyData IsCurrentNotebookChangingProperty = RegisterProperty("IsCurrentNotebookChanging", typeof(bool), false);
+        
 
         private void InitializeCommands()
         {
