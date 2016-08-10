@@ -71,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
 
             var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes",
                                                                 "Hide Group Sizes",

@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Clear();
 
-            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemoveBinCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemoveBinCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
             

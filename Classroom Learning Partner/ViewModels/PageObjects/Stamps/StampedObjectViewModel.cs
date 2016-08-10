@@ -62,7 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(MajorRibbonViewModel.Separater);
             if (IsGroupStampedObject)
             {
-                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject, true));
+                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject, true));
 
                 IsBoundaryVisible = false;
                 IsPartsLabelVisible = false;

@@ -247,7 +247,7 @@
                         <Image DataContext="{Binding}"
                                Height="{Binding Height, Mode=TwoWay}"
                                Width="{Binding Width, Mode=TwoWay}"
-                               Source="..\..\Images\Protractor.png" />
+                               Source="..\..\Resources\Images\Protractor.png" />
                     </ControlTemplate>
 
                     <ControlTemplate x:Key="RightDiagonalLineTemplate">

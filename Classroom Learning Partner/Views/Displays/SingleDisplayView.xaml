@@ -105,21 +105,6 @@
                        Width="{Binding BorderWidth}"
                        Height="{Binding BorderHeight}" />
 
-            <Button Grid.Column="2"
-                    Width="30"
-                    Height="30"
-                    Margin="-20 40 0 0"
-                    Cursor="Hand"
-                    Command="{Binding ReplayHistoryCommand}"
-                    VerticalAlignment="Top"
-                    Visibility="Collapsed">
-                <Button.Template>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Image Source="pack://application:,,,/Images/video.png" />
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
         </Grid>
     </Grid>
 </catel:UserControl>

@@ -33,11 +33,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Clear();
 
-            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemoveDivisionToolCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemoveDivisionToolCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Remove Last Snapped Array", "pack://application:,,,/Images/HorizontalLineIcon.png", RemoveLastArrayCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Remove Last Snapped Array", "pack://application:,,,/Resources/Images/HorizontalLineIcon.png", RemoveLastArrayCommand, null, true));
 
             if (Dividend > DivisionTool.MAX_NUMBER_OF_REMAINDER_TILES)
             {

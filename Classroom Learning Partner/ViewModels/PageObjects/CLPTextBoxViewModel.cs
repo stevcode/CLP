@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             // Bold, Italics, Underline
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-            _toggleBoldButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Bold16.png", true)
+            _toggleBoldButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Resources/Images/Bold16.png", true)
                                 {
                                     IsChecked = IsBold
                                 };
@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleBoldButton.Unchecked += toggleBoldButton_Checked;
             _contextButtons.Add(_toggleBoldButton);
 
-            _toggleItalicsButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Italic16.png", true)
+            _toggleItalicsButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Resources/Images/Italic16.png", true)
                                    {
                                        IsChecked = IsItalic
                                    };
@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleItalicsButton.Unchecked += toggleItalicsButton_Checked;
             _contextButtons.Add(_toggleItalicsButton);
 
-            _toggleUnderlineButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Underline16.png", true)
+            _toggleUnderlineButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Resources/Images/Underline16.png", true)
                                      {
                                          IsChecked = IsUnderlined
                                      };

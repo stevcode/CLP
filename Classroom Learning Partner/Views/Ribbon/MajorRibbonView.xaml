@@ -251,7 +251,7 @@
 
                         <customControls:RibbonButton Text="Take Page Screenshot"
                                                      Command="{Binding TakePageScreenshotCommand}"
-                                                     LargeImageSource="pack://application:,,,/Images/camera.png"
+                                                     LargeImageSource="pack://application:,,,/Resources/Images/camera.png"
                                                      IsContextButton="True" />
                     </ContextMenu>
                 </customControls:DropDownRibbonButton.DropDown>

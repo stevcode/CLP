@@ -26,7 +26,7 @@
             <Button Grid.Row="1" Command="{Binding CaptureImageCommand}" CommandParameter="{Binding ElementName=webcamPlayer}"
                     Height="50" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="..\..\Images\camera.png" />
+                    <Image Source="..\..\Resources\Images\camera.png" />
                     <TextBlock VerticalAlignment="Center" Text="Take Picture" Margin="10" />
                 </StackPanel>
             </Button>
@@ -46,7 +46,7 @@
             <Button Grid.Row="3" Command="{Binding AddImageCommand}"
                     Height="50" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="..\..\Images\AddImage.png" />
+                    <Image Source="..\..\Resources\Images\AddImage.png" />
                     <TextBlock VerticalAlignment="Center" Text="Use Selected Picture" Margin="10" />
                 </StackPanel>
             </Button>

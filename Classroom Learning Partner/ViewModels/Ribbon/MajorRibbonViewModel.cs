@@ -139,7 +139,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                           PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
 
-            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
+            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Resources/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
             _setMarkModeButton.Checked += _button_Checked;
 
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
@@ -159,7 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Images
             //TODO: Better Icons
-            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Resources/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
 
             //Stamps
             _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
@@ -167,9 +167,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
-            _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
+            _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
             //TODO: Better Icon
-            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
+            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
             //TODO: Better Icon
             _insertPileButton = new RibbonButton("Stamp Group", "pack://application:,,,/Resources/Images/CollectionStamp32.png", AddPageObjectToPageCommand, "PILE");
 
@@ -197,31 +197,20 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/Shapes64.png");
             var shapeDropDown = new ContextMenu();
             
-            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
+            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Resources/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
             shapeDropDown.Items.Add(_insertSquareButton);
-            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
+            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Resources/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
             shapeDropDown.Items.Add(_insertCircleButton);
-            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
+            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Resources/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
             shapeDropDown.Items.Add(_insertTriangleButton);
-            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
+            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Resources/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
             shapeDropDown.Items.Add(_insertHorizontalLineButton);
 
             _insertShapeButton.DropDown = shapeDropDown;
 
             #region Obsolete
 
-            _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
-            _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
-            _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
-            _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed",
-                                                                "pack://application:,,,/Images/LargeIcon.png",
-                                                                AddPageObjectToPageCommand,
-                                                                "RIGHT_DIAGONAL_DASHED");
-            _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
-            _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed",
-                                                               "pack://application:,,,/Images/LargeIcon.png",
-                                                               AddPageObjectToPageCommand,
-                                                               "LEFT_DIAGONAL_DASHED");
+            _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Resources/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
 
             #endregion // Obsolete
             
@@ -238,7 +227,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                   "MULTIPLECHOICEBOX");
 
             // Recognition
-            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Resources/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -385,12 +374,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertCircleButton;
         private RibbonButton _insertTriangleButton;
         private RibbonButton _insertHorizontalLineButton;
-        private RibbonButton _insertVerticalLineButton;
         private RibbonButton _insertProtractorButton;
-        private RibbonButton _insertRightDiagonalButton;
-        private RibbonButton _insertRightDiagonalDashedButton;
-        private RibbonButton _insertLeftDiagonalButton;
-        private RibbonButton _insertLeftDiagonalDashedButton;
 
         //Bin
         private RibbonButton _insertBinButton;
