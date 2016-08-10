@@ -1087,6 +1087,7 @@
     <Resource Include="Images\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\DivisionTool32.png" />
     <Resource Include="Resources\Images\ToggleDashedStroke64.png" />
     <Resource Include="Resources\Images\Shapes64.png" />
     <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless64.png" />

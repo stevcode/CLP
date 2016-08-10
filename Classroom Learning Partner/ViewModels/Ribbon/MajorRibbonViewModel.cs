@@ -141,7 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Division Tools
             _insertDivisionToolButton = new RibbonButton("Division Tool",
-                                                             "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
+                                                             "pack://application:,,,/Resources/Images/DivisionTool32.png",
                                                              AddPageObjectToPageCommand,
                                                              "DIVISIONTOOL");
 
