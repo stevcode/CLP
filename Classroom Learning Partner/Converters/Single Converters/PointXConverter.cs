@@ -10,16 +10,16 @@ namespace Classroom_Learning_Partner.Converters
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            if (!(value is double) ||
-                !(parameter is double))
+            var newX = value.ToDouble();
+            var newY = parameter.ToDouble();
+
+            if (newX == null ||
+                newY == null)
             {
                 return ConverterHelper.UnsetValue;
             }
 
-            var x = (double)value;
-            var y = (double)parameter;
-
-            return new Point(x - 2.0, y);
+            return new Point((double)newX - 2.0, (double)newY);
         }
     }
 }

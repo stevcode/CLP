@@ -257,6 +257,7 @@
     <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Utilities\Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Utilities\Extensions\IModelExtensions.cs" />
+    <Compile Include="Utilities\Extensions\ObjectExtentions.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\Extensions\IViewModelExtensions.cs" />
     <Compile Include="Utilities\Extensions\UIElementExtensions.cs" />

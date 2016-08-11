@@ -344,20 +344,6 @@
                                       StrokeThickness="3"
                                       VerticalAlignment="Top"
                                       Stretch="UniformToFill">
-                                    <Path.Data>
-                                        <PathGeometry>
-                                            <PathGeometry.Figures>
-                                                <PathFigure StartPoint="0,0"
-                                                            IsClosed="False">
-                                                    <ArcSegment Point="{Binding Width, ElementName=ArcPath, Converter={converters:PointXConverter}, ConverterParameter=0.0}"
-                                                                Size="{Binding Width, ElementName=ArcPath, Converter={converters:SizeHalfHeightConverter}, ConverterParameter=35}"
-                                                                SweepDirection="Clockwise">
-                                                    </ArcSegment>
-                                                </PathFigure>
-                                            </PathGeometry.Figures>
-                                        </PathGeometry>
-                                    </Path.Data>
-
                                     <Path.Width>
                                         <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
                                             <Binding Path="DataContext.PageObject.TickLength"
@@ -365,6 +351,19 @@
                                             <Binding Path="JumpSize" />
                                         </MultiBinding>
                                     </Path.Width>
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <PathFigure StartPoint="0,0"
+                                                            IsClosed="False">
+                                                    <ArcSegment Point="{Binding Width, ElementName=ArcPath, Converter={converters:PointXConverter}, ConverterParameter=0.0}"
+                                                                Size="{Binding Width, ElementName=ArcPath, Converter={converters:SizeHalfHeightConverter}, ConverterParameter=35}"
+                                                                SweepDirection="Clockwise" />
+                                                </PathFigure>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </Path.Data>
+                                    
                                 </Path>
                             </Canvas>
                             
