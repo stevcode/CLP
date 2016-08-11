@@ -335,7 +335,7 @@
 
                 <Canvas HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Margin="0 30 0 0">
+                        Margin="-20 30 0 0">
                     <Canvas.Style>
                         <Style TargetType="{x:Type Canvas}">
                             <Setter Property="Visibility"
@@ -350,7 +350,7 @@
                             </Style.Triggers>
                         </Style>
                     </Canvas.Style>
-                    <TextBlock FontSize="16"
+                    <TextBlock FontSize="18"
                                FontWeight="Bold"
                                Text="{Binding PageObject.FormattedReport}" />
                 </Canvas>
