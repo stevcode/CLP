@@ -1024,6 +1024,12 @@
     <Resource Include="Resources\Images\Unused\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\Stamp128.png" />
+    <Resource Include="Resources\Images\Stamp256.png" />
+    <Resource Include="Resources\Images\StampGroup128.png" />
+    <Resource Include="Resources\Images\StampGroup256.png" />
+    <Resource Include="Resources\Images\StampGroup32.png" />
+    <Resource Include="Resources\Images\StampGroup64.png" />
     <Resource Include="Resources\Images\Bin128.png" />
     <Resource Include="Resources\Images\Bin32.png" />
     <Resource Include="Resources\Images\Bin64.png" />
