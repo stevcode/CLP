@@ -516,41 +516,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 //Fuzzy Factor Card array snapping in - HACK: for now this will override array snapping even if an array might be closer
 
-                #region Snap to Division Tool
+                #region Snap to Division Template
 
-                if (pageObject is DivisionTool)
+                if (pageObject is DivisionTemplate)
                 {
-                    var divisionTool = pageObject as DivisionTool;
-                    var divisionToolIDsInHistory = DivisionToolAnalysis.GetListOfDivisionToolIDsInHistory(PageObject.ParentPage);
+                    var divisionTemplate = pageObject as DivisionTemplate;
+                    var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
                     if (isVerticalIntersection)
                     {
                         var diff =
                             Math.Abs(snappingArray.XPosition + snappingArray.LabelLength -
-                                     (persistingArray.XPosition + persistingArray.LabelLength + divisionTool.LastDivisionPosition));
+                                     (persistingArray.XPosition + persistingArray.LabelLength + divisionTemplate.LastDivisionPosition));
                         if (diff < 50)
                         {
                             var snapFailed = false;
 
-                            if (divisionTool.CurrentRemainder != divisionTool.Dividend % divisionTool.Rows)
+                            if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                             {
                                 var existingFactorPairErrorsTag =
-                                    divisionTool.ParentPage.Tags.OfType<DivisionToolFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                                    divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                                 var isArrayDimensionErrorsTagOnPage = true;
 
                                 if (existingFactorPairErrorsTag == null)
                                 {
-                                    existingFactorPairErrorsTag = new DivisionToolFactorPairErrorsTag(divisionTool.ParentPage,
+                                    existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(divisionTemplate.ParentPage,
                                                                                                           Origin.StudentPageGenerated,
-                                                                                                          divisionTool.ID,
-                                                                                                          divisionTool.Dividend,
-                                                                                                          divisionTool.Rows,
-                                                                                                          divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                                          divisionTemplate.ID,
+                                                                                                          divisionTemplate.Dividend,
+                                                                                                          divisionTemplate.Rows,
+                                                                                                          divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isArrayDimensionErrorsTagOnPage = false;
                                 }
 
-                                if (snappingArray.Rows != divisionTool.Rows)
+                                if (snappingArray.Rows != divisionTemplate.Rows)
                                 {
-                                    if (snappingArray.Columns == divisionTool.Rows)
+                                    if (snappingArray.Columns == divisionTemplate.Rows)
                                     {
                                         existingFactorPairErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
@@ -561,7 +561,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                     snapFailed = true;
                                 }
-                                else if (divisionTool.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
+                                else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
                                 {
                                     existingFactorPairErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
 
@@ -571,29 +571,29 @@ namespace Classroom_Learning_Partner.ViewModels
                                 if (!isArrayDimensionErrorsTagOnPage &&
                                     existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
                                 {
-                                    divisionTool.ParentPage.AddTag(existingFactorPairErrorsTag);
+                                    divisionTemplate.ParentPage.AddTag(existingFactorPairErrorsTag);
                                 }
                             }
                             else
                             {
                                 var existingRemainderErrorsTag =
-                                    divisionTool.ParentPage.Tags.OfType<DivisionToolRemainderErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                                    divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                                 var isRemainderErrorsTagOnPage = true;
 
                                 if (existingRemainderErrorsTag == null)
                                 {
-                                    existingRemainderErrorsTag = new DivisionToolRemainderErrorsTag(divisionTool.ParentPage,
+                                    existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(divisionTemplate.ParentPage,
                                                                                                         Origin.StudentPageGenerated,
-                                                                                                        divisionTool.ID,
-                                                                                                        divisionTool.Dividend,
-                                                                                                        divisionTool.Rows,
-                                                                                                        divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                                        divisionTemplate.ID,
+                                                                                                        divisionTemplate.Dividend,
+                                                                                                        divisionTemplate.Rows,
+                                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isRemainderErrorsTagOnPage = false;
                                 }
 
-                                if (snappingArray.Rows != divisionTool.Rows)
+                                if (snappingArray.Rows != divisionTemplate.Rows)
                                 {
-                                    if (snappingArray.Columns == divisionTool.Rows)
+                                    if (snappingArray.Columns == divisionTemplate.Rows)
                                     {
                                         existingRemainderErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
@@ -604,7 +604,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                     snapFailed = true;
                                 }
-                                else if (divisionTool.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
+                                else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
                                 {
                                     existingRemainderErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
 
@@ -614,33 +614,33 @@ namespace Classroom_Learning_Partner.ViewModels
                                 if (!isRemainderErrorsTagOnPage &&
                                     existingRemainderErrorsTag.ErrorAtemptsSum > 0)
                                 {
-                                    divisionTool.ParentPage.AddTag(existingRemainderErrorsTag);
+                                    divisionTemplate.ParentPage.AddTag(existingRemainderErrorsTag);
                                 }
                             }
 
                             if (snapFailed)
                             {
-                                var factorCardViewModels = divisionTool.GetAllViewModels();
+                                var factorCardViewModels = divisionTemplate.GetAllViewModels();
                                 foreach (var viewModel in factorCardViewModels)
                                 {
-                                    (viewModel as DivisionToolViewModel).RejectSnappedArray();
+                                    (viewModel as DivisionTemplateViewModel).RejectSnappedArray();
                                 }
                                 continue;
                             }
 
                             //If first division - update IsGridOn to match new array
-                            if (divisionTool.LastDivisionPosition == 0)
+                            if (divisionTemplate.LastDivisionPosition == 0)
                             {
-                                divisionTool.IsGridOn = snappingArray.IsGridOn;
+                                divisionTemplate.IsGridOn = snappingArray.IsGridOn;
                             }
 
                             //Add a new division and remove snapping array
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
                             ContextRibbon.Buttons.Clear();
-                            divisionTool.SnapInArray(snappingArray.Columns);
+                            divisionTemplate.SnapInArray(snappingArray.Columns);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                                       new DivisionToolArraySnappedInHistoryItem(PageObject.ParentPage,
+                                                                       new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage,
                                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                                         pageObject.ID,
                                                                                                         snappingArray));
@@ -650,7 +650,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                #endregion //Snap to Division Tool
+                #endregion //Snap to Division Template
 
                 if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows &&
                     snappingArray.IsRowsObscured == persistingArray.IsRowsObscured)
@@ -1000,23 +1000,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.AcceptedStrokes.RotateAll(90, XPosition, YPosition, Width, 0);
             }
 
-            var divisionToolIDsInHistory = DivisionToolAnalysis.GetListOfDivisionToolIDsInHistory(array.ParentPage);
-            foreach (var divisionTool in array.ParentPage.PageObjects.OfType<DivisionTool>())
+            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(array.ParentPage);
+            foreach (var divisionTemplate in array.ParentPage.PageObjects.OfType<DivisionTemplate>())
             {
-                // Only increase OrientationChanged attempt if Division Tool already full.
-                if (divisionTool.CurrentRemainder != divisionTool.Dividend % divisionTool.Rows)
+                // Only increase OrientationChanged attempt if Division Template already full.
+                if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
                     var existingFactorPairErrorsTag =
-                        array.ParentPage.Tags.OfType<DivisionToolRemainderErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                        array.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
                     if (existingFactorPairErrorsTag == null)
                     {
-                        existingFactorPairErrorsTag = new DivisionToolRemainderErrorsTag(array.ParentPage,
+                        existingFactorPairErrorsTag = new DivisionTemplateRemainderErrorsTag(array.ParentPage,
                                                                                              Origin.StudentPageGenerated,
-                                                                                             divisionTool.ID,
-                                                                                             divisionTool.Dividend,
-                                                                                             divisionTool.Rows,
-                                                                                             divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                             divisionTemplate.ID,
+                                                                                             divisionTemplate.Dividend,
+                                                                                             divisionTemplate.Rows,
+                                                                                             divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         array.ParentPage.AddTag(existingFactorPairErrorsTag);
                     }
                     existingFactorPairErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
@@ -1024,16 +1024,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     var existingRemainderErrorsTag =
-                        array.ParentPage.Tags.OfType<DivisionToolRemainderErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                        array.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
                     if (existingRemainderErrorsTag == null)
                     {
-                        existingRemainderErrorsTag = new DivisionToolRemainderErrorsTag(array.ParentPage,
+                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(array.ParentPage,
                                                                                             Origin.StudentPageGenerated,
-                                                                                            divisionTool.ID,
-                                                                                            divisionTool.Dividend,
-                                                                                            divisionTool.Rows,
-                                                                                            divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                            divisionTemplate.ID,
+                                                                                            divisionTemplate.Dividend,
+                                                                                            divisionTemplate.Rows,
+                                                                                            divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         array.ParentPage.AddTag(existingRemainderErrorsTag);
                     }
                     existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
@@ -1555,21 +1555,21 @@ namespace Classroom_Learning_Partner.ViewModels
             var isColumnsHidden = arrayCreationView.IsColumnsHidden;
             var isRowsHidden = arrayCreationView.IsRowsHidden;
 
-            //Match GridSquareSize if any Division Tools or Arrays are already on the page.
+            //Match GridSquareSize if any Division Templates or Arrays are already on the page.
             //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
-            //Ignores any Division Tools that are full, unless all DTs on the page are full.
+            //Ignores any Division Templates that are full, unless all DTs on the page are full.
             //If no DTs are on the page, match against other Arrays on the page.
-            var divisionToolsOnPage = page.PageObjects.OfType<DivisionTool>().Where(d => d.CurrentRemainder < d.Rows).ToList();
-            if (!divisionToolsOnPage.Any())
+            var divisionTemplatesOnPage = page.PageObjects.OfType<DivisionTemplate>().Where(d => d.CurrentRemainder < d.Rows).ToList();
+            if (!divisionTemplatesOnPage.Any())
             {
-                divisionToolsOnPage = page.PageObjects.OfType<DivisionTool>().ToList();
+                divisionTemplatesOnPage = page.PageObjects.OfType<DivisionTemplate>().ToList();
             }
-            if (divisionToolsOnPage.Any())
+            if (divisionTemplatesOnPage.Any())
             {
-                var groupSize = divisionToolsOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
-                var relevantDivisionToolIDs =
-                    divisionToolsOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
-                initialGridSize = divisionToolsOnPage.Last(d => relevantDivisionToolIDs.Contains(d.ID)).GridSquareSize;
+                var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                var relevantDivisionTemplateIDs =
+                    divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
                 isMatchingOtherGridSquareSize = true;
             }
             else

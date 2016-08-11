@@ -55,8 +55,8 @@
                     <views:CLPTextBoxView DataContext="{Binding}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="DivisionToolTemplate">
-                    <views:DivisionToolView DataContext="{Binding}" />
+                <ControlTemplate x:Key="DivisionTemplateTemplate">
+                    <views:DivisionTemplateView DataContext="{Binding}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="RemainderTilesTemplate">
@@ -193,11 +193,11 @@
                                     Value="{StaticResource CLPTextBoxTemplate}" />
                         </DataTrigger>
 
-                        <!-- DivisionTool trigger -->
+                        <!-- DivisionTemplate trigger -->
                         <DataTrigger Binding="{Binding Converter={converters:TypeToStringConverter}}"
-                                     Value="DivisionTool">
+                                     Value="DivisionTemplate">
                             <Setter Property="Template"
-                                    Value="{StaticResource DivisionToolTemplate}" />
+                                    Value="{StaticResource DivisionTemplateTemplate}" />
                         </DataTrigger>
 
                         <!-- RemainderTiles trigger -->

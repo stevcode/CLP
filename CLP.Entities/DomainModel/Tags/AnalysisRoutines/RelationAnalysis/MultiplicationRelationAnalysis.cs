@@ -21,7 +21,7 @@ namespace CLP.Entities
             //    page.Tags.ToList()
             //        .Where(
             //               tag =>
-            //               tag is DivisionToolRepresentationCorrectnessTag || tag is DivisionToolCompletenessTag || tag is DivisionToolCorrectnessSummaryTag ||
+            //               tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateCompletenessTag || tag is DivisionTemplateCorrectnessSummaryTag ||
             //               tag is TroubleWithDivisionTag))
             //{
             //    page.RemoveTag(tag);
@@ -32,8 +32,8 @@ namespace CLP.Entities
                 AnalyzeRepresentationCorrectness(page, multiplicationRelationDefinitionTag);
             }
 
-            //AnalyzeDivisionToolTroubleWithDivision(page);
-            //AnalyzeDivisionToolCorrectness(page);
+            //AnalyzeDivisionTemplateTroubleWithDivision(page);
+            //AnalyzeDivisionTemplateCorrectness(page);
         }
 
         public static void AnalyzeRepresentationCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag)

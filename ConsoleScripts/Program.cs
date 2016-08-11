@@ -47,7 +47,7 @@ namespace ConsoleScripts
                     _isConvertingEmilyCache = false;
                     _isConvertingAssessmentCache = true;
                     ReplaceMultipleChoiceBoxes(page);
-                    ConvertDivisionToolsToUseNewRemainderTiles(page);
+                    ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
                     //Finished doing stuff to page, it'll save below.
@@ -703,35 +703,35 @@ namespace ConsoleScripts
             page.PageObjects.Add(pageObjectToAdd);
         }
 
-        public static void ConvertDivisionToolsToUseNewRemainderTiles(CLPPage page)
+        public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
         {
-            foreach (var divisionTool in page.PageObjects.OfType<DivisionTool>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTemplate in page.PageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
             {
-                divisionTool.IsRemainderTilesVisible = true;
+                divisionTemplate.IsRemainderTilesVisible = true;
             }
 
-            foreach (var divisionTool in page.History.TrashedPageObjects.OfType<DivisionTool>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
             {
-                divisionTool.IsRemainderTilesVisible = true;
+                divisionTemplate.IsRemainderTilesVisible = true;
             }
         }
 
-        public static void FixOldDivisionToolSizing(DivisionTool divisionTool)
+        public static void FixOldDivisionTemplateSizing(DivisionTemplate divisionTemplate)
         {
             if (!_isConvertingEmilyCache)
             {
                 return;
             }
 
-            var gridSize = divisionTool.ArrayHeight / divisionTool.Rows;
+            var gridSize = divisionTemplate.ArrayHeight / divisionTemplate.Rows;
 
-            divisionTool.SizeArrayToGridLevel(gridSize, false);
+            divisionTemplate.SizeArrayToGridLevel(gridSize, false);
 
             var position = 0.0;
-            foreach (var division in divisionTool.VerticalDivisions)
+            foreach (var division in divisionTemplate.VerticalDivisions)
             {
                 division.Position = position;
-                division.Length = divisionTool.GridSquareSize * division.Value;
+                division.Length = divisionTemplate.GridSquareSize * division.Value;
                 position = division.Position + division.Length;
             }
         }
@@ -759,8 +759,8 @@ namespace ConsoleScripts
                     historyItemToUndo is CLPArrayRotateHistoryItem ||
                     historyItemToUndo is CLPArrayGridToggleHistoryItem ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
-                    historyItemToUndo is DivisionToolArrayRemovedHistoryItem ||
-                    historyItemToUndo is DivisionToolArraySnappedInHistoryItem ||
+                    historyItemToUndo is DivisionTemplateArrayRemovedHistoryItem ||
+                    historyItemToUndo is DivisionTemplateArraySnappedInHistoryItem ||
                     historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem ||
                     historyItemToUndo is PartsValueChangedHistoryItem ||
                     historyItemToUndo is CLPArraySnapHistoryItem)
@@ -794,14 +794,14 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectResizeBatchHistoryItem)
                 {
                     var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryItem;
-                    var divisionTool = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTool;
-                    if (divisionTool != null)
+                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTemplate;
+                    if (divisionTemplate != null)
                     {
-                        FixOldDivisionToolSizing(divisionTool);
+                        FixOldDivisionTemplateSizing(divisionTemplate);
                         var fixStretchedDimensions = (from point in pageObjectResized.StretchedDimensions
                                                       let height = point.Y
-                                                      let gridSize = (height - (2 * divisionTool.LabelLength)) / divisionTool.Rows
-                                                      let newWidth = (gridSize * divisionTool.Columns) + divisionTool.LabelLength + divisionTool.LargeLabelLength
+                                                      let gridSize = (height - (2 * divisionTemplate.LabelLength)) / divisionTemplate.Rows
+                                                      let newWidth = (gridSize * divisionTemplate.Columns) + divisionTemplate.LabelLength + divisionTemplate.LargeLabelLength
                                                       select new Point(newWidth, point.Y)).ToList();
 
                         pageObjectResized.StretchedDimensions = fixStretchedDimensions;
@@ -828,10 +828,10 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsAdded)
                     {
-                        var divisionTool = page.GetVerifiedPageObjectOnPageByID(id) as DivisionTool;
-                        if (divisionTool != null)
+                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as DivisionTemplate;
+                        if (divisionTemplate != null)
                         {
-                            FixOldDivisionToolSizing(divisionTool);
+                            FixOldDivisionTemplateSizing(divisionTemplate);
                         }
                     }
 
@@ -857,10 +857,10 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsRemoved)
                     {
-                        var divisionTool = page.GetVerifiedPageObjectInTrashByID(id) as DivisionTool;
-                        if (divisionTool != null)
+                        var divisionTemplate = page.GetVerifiedPageObjectInTrashByID(id) as DivisionTemplate;
+                        if (divisionTemplate != null)
                         {
-                            FixOldDivisionToolSizing(divisionTool);
+                            FixOldDivisionTemplateSizing(divisionTemplate);
                         }
                     }
 

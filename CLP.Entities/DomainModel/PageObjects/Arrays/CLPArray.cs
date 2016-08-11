@@ -285,41 +285,41 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                foreach (var divisionTool in ParentPage.PageObjects.OfType<DivisionTool>().ToList())
+                foreach (var divisionTemplate in ParentPage.PageObjects.OfType<DivisionTemplate>().ToList())
                 {
                     if (ParentPage.IsTagAddPrevented)
                     {
                         continue;
                     }
 
-                    var divisionToolIDsInHistory = DivisionToolAnalysis.GetListOfDivisionToolIDsInHistory(ParentPage);
+                    var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
 
-                    if (divisionTool.CurrentRemainder != divisionTool.Dividend % divisionTool.Rows)
+                    if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                     {
                         var existingFactorPairErrorsTag =
-                            ParentPage.Tags.OfType<DivisionToolFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                            ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                         var isArrayDimensionErrorsTagOnPage = true;
 
                         if (existingFactorPairErrorsTag == null)
                         {
-                            existingFactorPairErrorsTag = new DivisionToolFactorPairErrorsTag(ParentPage,
+                            existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
                                                                                                   Origin.StudentPageGenerated,
-                                                                                                  divisionTool.ID,
-                                                                                                  divisionTool.Dividend,
-                                                                                                  divisionTool.Rows,
-                                                                                                  divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                                  divisionTemplate.ID,
+                                                                                                  divisionTemplate.Dividend,
+                                                                                                  divisionTemplate.Rows,
+                                                                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                             isArrayDimensionErrorsTagOnPage = false;
                         }
 
-                        if (Columns == divisionTool.Dividend ||
-                            Rows == divisionTool.Dividend)
+                        if (Columns == divisionTemplate.Dividend ||
+                            Rows == divisionTemplate.Dividend)
                         {
                             existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
 
-                        if (Rows != divisionTool.Rows)
+                        if (Rows != divisionTemplate.Rows)
                         {
-                            if (Columns == divisionTool.Rows)
+                            if (Columns == divisionTemplate.Rows)
                             {
                                 existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                             }
@@ -330,7 +330,7 @@ namespace CLP.Entities
                         }
 
                         var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
-                        if (totalAreaOfArraysOnPage > divisionTool.CurrentRemainder)
+                        if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
                         {
                             existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
@@ -344,29 +344,29 @@ namespace CLP.Entities
                     else
                     {
                         var existingRemainderErrorsTag =
-                            ParentPage.Tags.OfType<DivisionToolRemainderErrorsTag>().FirstOrDefault(x => x.DivisionToolID == divisionTool.ID);
+                            ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                         var isRemainderErrorsTagOnPage = true;
 
                         if (existingRemainderErrorsTag == null)
                         {
-                            existingRemainderErrorsTag = new DivisionToolRemainderErrorsTag(ParentPage,
+                            existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(ParentPage,
                                                                                                 Origin.StudentPageGenerated,
-                                                                                                divisionTool.ID,
-                                                                                                divisionTool.Dividend,
-                                                                                                divisionTool.Rows,
-                                                                                                divisionToolIDsInHistory.IndexOf(divisionTool.ID));
+                                                                                                divisionTemplate.ID,
+                                                                                                divisionTemplate.Dividend,
+                                                                                                divisionTemplate.Rows,
+                                                                                                divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                             isRemainderErrorsTagOnPage = false;
                         }
 
-                        if (Columns == divisionTool.Dividend ||
-                            Rows == divisionTool.Dividend)
+                        if (Columns == divisionTemplate.Dividend ||
+                            Rows == divisionTemplate.Dividend)
                         {
                             existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
 
-                        if (Rows != divisionTool.Rows)
+                        if (Rows != divisionTemplate.Rows)
                         {
-                            if (Columns == divisionTool.Rows)
+                            if (Columns == divisionTemplate.Rows)
                             {
                                 existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                             }
@@ -377,7 +377,7 @@ namespace CLP.Entities
                         }
 
                         var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
-                        if (totalAreaOfArraysOnPage > divisionTool.CurrentRemainder)
+                        if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
                         {
                             existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }

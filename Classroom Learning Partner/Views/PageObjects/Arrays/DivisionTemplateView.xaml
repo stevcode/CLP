@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.DivisionToolView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.DivisionTemplateView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
@@ -83,7 +83,7 @@
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
-                <Button Command="{Binding RemoveDivisionToolCommand}"
+                <Button Command="{Binding RemoveDivisionTemplateCommand}"
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
@@ -115,7 +115,7 @@
                        Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeDivisionToolCommand}"
+                            <catel:EventToCommand Command="{Binding ResizeDivisionTemplateCommand}"
                                                   PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
@@ -519,7 +519,7 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Left"
                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={converters:IntToVisibilityConverter}}"
-                        Margin="{Binding PageObject.LastDivisionPosition, Converter={converters:DivisionToolMarginConverter}}">
+                        Margin="{Binding PageObject.LastDivisionPosition, Converter={converters:DivisionTemplateMarginConverter}}">
 
                 <!--Bottom Label (Equation)-->
                 <TextBlock TextAlignment="Center"

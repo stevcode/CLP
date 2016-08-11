@@ -293,12 +293,11 @@
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Tags\DivisionToolTroubleWithRemaindersTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Arrays\DivisionToolViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\DivisionTemplateViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
@@ -355,9 +354,6 @@
     <Compile Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml.cs">
-      <DependentUpon>DivisionToolTroubleWithRemaindersTagView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
     </Compile>
@@ -409,14 +405,14 @@
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\DivisionToolCreationView.xaml.cs">
-      <DependentUpon>DivisionToolCreationView.xaml</DependentUpon>
+    <Compile Include="Views\To MVVMize\DivisionTemplateCreationView.xaml.cs">
+      <DependentUpon>DivisionTemplateCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Arrays\DivisionToolView.xaml.cs">
-      <DependentUpon>DivisionToolView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\Arrays\DivisionTemplateView.xaml.cs">
+      <DependentUpon>DivisionTemplateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -641,10 +637,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\DivisionToolTroubleWithRemaindersTagView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -713,7 +705,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\DivisionToolCreationView.xaml">
+    <Page Include="Views\To MVVMize\DivisionTemplateCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -721,7 +713,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Arrays\DivisionToolView.xaml">
+    <Page Include="Views\PageObjects\Arrays\DivisionTemplateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

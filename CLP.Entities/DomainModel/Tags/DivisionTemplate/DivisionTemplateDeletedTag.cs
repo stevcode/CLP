@@ -6,32 +6,32 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionToolDeletedTag : ADivisionToolBaseTag
+    public class DivisionTemplateDeletedTag : ADivisionTemplateBaseTag
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionToolDeletedTag" /> from scratch.</summary>
-        public DivisionToolDeletedTag() { }
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> from scratch.</summary>
+        public DivisionTemplateDeletedTag() { }
 
-        /// <summary>Initializes <see cref="DivisionToolDeletedTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionToolDeletedTag" /> belongs to.</param>
-        public DivisionToolDeletedTag(CLPPage parentPage,
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateDeletedTag" /> belongs to.</param>
+        public DivisionTemplateDeletedTag(CLPPage parentPage,
                                           Origin origin,
-                                          string divisionToolID,
+                                          string divisionTemplateID,
                                           int dividend,
                                           int divisor,
-                                          int divisionToolNumber,
+                                          int divisionTemplateNumber,
                                           List<string> arrayDimensions
                                           )
-            : base(parentPage, origin, divisionToolID, dividend, divisor, divisionToolNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             ArrayDimensions = arrayDimensions;
         }
 
-        /// <summary>Initializes <see cref="DivisionToolDeletedTag" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionToolDeletedTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateDeletedTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -51,17 +51,17 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Division Template {0} Deleted", DivisionToolNumber); }
+            get { return string.Format("Division Template {0} Deleted", DivisionTemplateNumber); }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format("{0} / {1} Deleted.\n" + "DivisionTool {2} on page.\n" + "Snapped-In Arrays: {3}",
+                return string.Format("{0} / {1} Deleted.\n" + "DivisionTemplate {2} on page.\n" + "Snapped-In Arrays: {3}",
                                      Dividend,
                                      Divisor,
-                                     IsDivisionToolStillOnPage ? "still" : "no longer",
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
                                      string.Join(",", ArrayDimensions));
             }
         }

@@ -6,7 +6,7 @@ using Catel.MVVM.Converters;
 namespace Classroom_Learning_Partner.Converters
 {
     [ValueConversion(typeof(double), typeof(Thickness))]
-    public class DivisionToolMarginConverter : ValueConverterBase
+    public class DivisionTemplateMarginConverter : ValueConverterBase
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {

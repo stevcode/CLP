@@ -13,17 +13,17 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class DivisionToolViewModel : APageObjectBaseViewModel
+    public class DivisionTemplateViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 
-        /// <summary>Initializes a new instance of the <see cref="DivisionToolViewModel" /> class.</summary>
-        public DivisionToolViewModel(DivisionTool divisionTool)
+        /// <summary>Initializes a new instance of the <see cref="DivisionTemplateViewModel" /> class.</summary>
+        public DivisionTemplateViewModel(DivisionTemplate divisionTemplate)
         {
-            PageObject = divisionTool;
+            PageObject = divisionTemplate;
 
-            RemoveDivisionToolCommand = new Command(OnRemoveDivisionToolCommandExecute);
-            ResizeDivisionToolCommand = new Command<DragDeltaEventArgs>(OnResizeDivisionToolCommandExecute);
+            RemoveDivisionTemplateCommand = new Command(OnRemoveDivisionTemplateCommandExecute);
+            ResizeDivisionTemplateCommand = new Command<DragDeltaEventArgs>(OnResizeDivisionTemplateCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
             
             InitializeButtons();
@@ -33,20 +33,20 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Clear();
 
-            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemoveDivisionToolCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemoveDivisionTemplateCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Remove Last Snapped Array", "pack://application:,,,/Resources/Images/HorizontalLineIcon.png", RemoveLastArrayCommand, null, true));
 
-            if (Dividend > DivisionTool.MAX_NUMBER_OF_REMAINDER_TILES)
+            if (Dividend > DivisionTemplate.MAX_NUMBER_OF_REMAINDER_TILES)
             {
                 return;
             }
 
             var toggleRemainderTilesButton = new ToggleRibbonButton("Show Remainder Tiles", "Hide RemainderTiles", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
                                              {
-                                                 IsChecked = PageObject is DivisionTool && ((DivisionTool)PageObject).CanShowRemainderTiles
+                                                 IsChecked = PageObject is DivisionTemplate && ((DivisionTemplate)PageObject).CanShowRemainderTiles
                                              };
             toggleRemainderTilesButton.Checked += toggleRemainderTilesButton_Checked;
             toggleRemainderTilesButton.Unchecked += toggleRemainderTilesButton_Checked;
@@ -62,49 +62,49 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var divisionTool = PageObject as DivisionTool;
-            if (divisionTool == null)
+            var divisionTemplate = PageObject as DivisionTemplate;
+            if (divisionTemplate == null)
             {
                 return;
             }
 
-            var page = divisionTool.ParentPage;
+            var page = divisionTemplate.ParentPage;
             if (page == null)
             {
                 return;
             }
 
-            divisionTool.IsRemainderTilesVisible = (bool)toggleButton.IsChecked;
-            if (divisionTool.CanShowRemainderTiles)
+            divisionTemplate.IsRemainderTilesVisible = (bool)toggleButton.IsChecked;
+            if (divisionTemplate.CanShowRemainderTiles)
             {
-                if (divisionTool.RemainderTiles == null)
+                if (divisionTemplate.RemainderTiles == null)
                 {
-                    divisionTool.InitializeRemainderTiles();
-                    divisionTool.RemainderTiles.CreatorID = divisionTool.CreatorID;
+                    divisionTemplate.InitializeRemainderTiles();
+                    divisionTemplate.RemainderTiles.CreatorID = divisionTemplate.CreatorID;
                 }
 
-                if (!page.PageObjects.Contains(divisionTool.RemainderTiles))
+                if (!page.PageObjects.Contains(divisionTemplate.RemainderTiles))
                 {
-                    page.PageObjects.Add(divisionTool.RemainderTiles);
+                    page.PageObjects.Add(divisionTemplate.RemainderTiles);
                     ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
                                                                new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
                                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                                              divisionTool.ID,
+                                                                                                              divisionTemplate.ID,
                                                                                                               true));
                 }
             }
-            else if (divisionTool.RemainderTiles != null &&
-                     page.PageObjects.Contains(divisionTool.RemainderTiles))
+            else if (divisionTemplate.RemainderTiles != null &&
+                     page.PageObjects.Contains(divisionTemplate.RemainderTiles))
             {
-                page.PageObjects.Remove(divisionTool.RemainderTiles);
+                page.PageObjects.Remove(divisionTemplate.RemainderTiles);
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
                                                            new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
                                                                                                           App.MainWindowViewModel.CurrentUser,
-                                                                                                          divisionTool.ID,
+                                                                                                          divisionTemplate.ID,
                                                                                                           false));
             }
 
-            divisionTool.UpdateReport();
+            divisionTemplate.UpdateReport();
         }
 
         #endregion //Constructor  
@@ -241,9 +241,9 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>Removes pageObject from page when Delete button is pressed.</summary>
-        public Command RemoveDivisionToolCommand { get; private set; }
+        public Command RemoveDivisionTemplateCommand { get; private set; }
 
-        private void OnRemoveDivisionToolCommandExecute()
+        private void OnRemoveDivisionTemplateCommandExecute()
         {
             var contextRibbon = NotebookWorkspaceViewModel.GetContextRibbon();
             if (contextRibbon != null)
@@ -251,25 +251,25 @@ namespace Classroom_Learning_Partner.ViewModels
                 contextRibbon.Buttons.Clear();
             }
 
-            var divisionTool = PageObject as DivisionTool;
-            if (divisionTool == null)
+            var divisionTemplate = PageObject as DivisionTemplate;
+            if (divisionTemplate == null)
             {
                 return;
             }
-            if (divisionTool.RemainderTiles != null)
+            if (divisionTemplate.RemainderTiles != null)
             {
-                PageObject.ParentPage.PageObjects.Remove(divisionTool.RemainderTiles);
+                PageObject.ParentPage.PageObjects.Remove(divisionTemplate.RemainderTiles);
             }
 
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(divisionTool);
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(divisionTemplate);
         }
 
         /// <summary>Gets the ResizePageObjectCommand command.</summary>
-        public Command<DragDeltaEventArgs> ResizeDivisionToolCommand { get; private set; }
+        public Command<DragDeltaEventArgs> ResizeDivisionTemplateCommand { get; private set; }
 
-        private void OnResizeDivisionToolCommandExecute(DragDeltaEventArgs e)
+        private void OnResizeDivisionTemplateCommandExecute(DragDeltaEventArgs e)
         {
-            var clpArray = PageObject as DivisionTool;
+            var clpArray = PageObject as DivisionTemplate;
             if (clpArray == null)
             {
                 return;
@@ -354,17 +354,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var divisionValue = (VerticalDivisions[VerticalDivisions.Count - 2]).Value;
-            (PageObject as DivisionTool).RemoveLastDivision();
+            (PageObject as DivisionTemplate).RemoveLastDivision();
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new DivisionToolArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
+                                                       new DivisionTemplateArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
         }
 
         #endregion //Commands
 
         #region Static Methods
 
-        public static void AddDivisionToolToPage(CLPPage page)
+        public static void AddDivisionTemplateToPage(CLPPage page)
         {
             if (page == null)
             {
@@ -377,25 +377,25 @@ namespace Classroom_Learning_Partner.ViewModels
             var isRemainderTilesVisible = false;
             var initialGridSize = ACLPArrayBase.DefaultGridSquareSize;
 
-            //Launch Division Tool Creation Window.
-            var divisionToolCreationView = new DivisionToolCreationView
+            //Launch Division Template Creation Window.
+            var divisionTemplateCreationView = new DivisionTemplateCreationView
                                      {
                                          Owner = Application.Current.MainWindow
                                      };
-            divisionToolCreationView.ShowDialog();
+            divisionTemplateCreationView.ShowDialog();
 
-            if (divisionToolCreationView.DialogResult != true)
+            if (divisionTemplateCreationView.DialogResult != true)
             {
                 return;
             }
 
             try
             {
-                dividend = Convert.ToInt32(divisionToolCreationView.Product.Text);
-                rows = Convert.ToInt32(divisionToolCreationView.Factor.Text);
-                if (divisionToolCreationView.TileCheckBox.IsChecked != null)
+                dividend = Convert.ToInt32(divisionTemplateCreationView.Product.Text);
+                rows = Convert.ToInt32(divisionTemplateCreationView.Factor.Text);
+                if (divisionTemplateCreationView.TileCheckBox.IsChecked != null)
                 {
-                    isRemainderTilesVisible = (bool)divisionToolCreationView.TileCheckBox.IsChecked && dividend <= DivisionTool.MAX_NUMBER_OF_REMAINDER_TILES;
+                    isRemainderTilesVisible = (bool)divisionTemplateCreationView.TileCheckBox.IsChecked && dividend <= DivisionTemplate.MAX_NUMBER_OF_REMAINDER_TILES;
                 }
             }
             catch (FormatException)
@@ -405,33 +405,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var columns = dividend / rows;
 
-            //Match GridSquareSize if any Division Tools are already on the page.
+            //Match GridSquareSize if any Division Templates are already on the page.
             //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
-            var divisionToolsOnPage = page.PageObjects.OfType<DivisionTool>().ToList();
-            if (divisionToolsOnPage.Any())
+            var divisionTemplatesOnPage = page.PageObjects.OfType<DivisionTemplate>().ToList();
+            if (divisionTemplatesOnPage.Any())
             {
-                var groupSize = divisionToolsOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
-                var relevantDivisionToolIDs =
-                    divisionToolsOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
-                initialGridSize = divisionToolsOnPage.Last(d => relevantDivisionToolIDs.Contains(d.ID)).GridSquareSize;
+                var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                var relevantDivisionTemplateIDs =
+                    divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
             }
-            else //If no Division Tools or other Arrays are on the page, generate a GridSquareSize that accommodates all the arrays being created.
+            else //If no Division Templates or other Arrays are on the page, generate a GridSquareSize that accommodates all the arrays being created.
             {
                 initialGridSize = AdjustGridSquareSize(page, rows, columns, initialGridSize);
             }
 
-            //Create Division Tool.
-            var divisionTool = new DivisionTool(page, initialGridSize, columns, rows, dividend, isRemainderTilesVisible);
+            //Create Division Template.
+            var divisionTemplate = new DivisionTemplate(page, initialGridSize, columns, rows, dividend, isRemainderTilesVisible);
 
-            //Reposition Division Tool.
-            ACLPArrayBase.ApplyDistinctPosition(divisionTool);
+            //Reposition Division Template.
+            ACLPArrayBase.ApplyDistinctPosition(divisionTemplate);
             if (isRemainderTilesVisible)
             {
-                divisionTool.InitializeRemainderTiles();
+                divisionTemplate.InitializeRemainderTiles();
             }
 
-            //Add Division Tool to page.
-            ACLPPageBaseViewModel.AddPageObjectToPage(divisionTool);
+            //Add Division Template to page.
+            ACLPPageBaseViewModel.AddPageObjectToPage(divisionTemplate);
 
             App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
         }

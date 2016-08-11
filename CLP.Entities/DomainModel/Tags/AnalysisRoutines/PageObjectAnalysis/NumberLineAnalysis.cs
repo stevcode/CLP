@@ -12,7 +12,7 @@ namespace CLP.Entities
 
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
-            // First, clear out any old DivisionToolTags generated via Analysis.
+            // First, clear out any old DivisionTemplateTags generated via Analysis.
             //foreach (var tag in
             //    page.Tags.ToList()
             //        .Where(

@@ -31,7 +31,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.DivisionTool; }
+            get { return Category.DivisionTemplate; }
         }
 
         public override string FormattedName
@@ -57,13 +57,13 @@ namespace CLP.Entities
                                      GetTroubleWithRemaindersCount(ParentPage, true) == 0
                                          ? string.Empty
                                          : string.Format("{0} deleted.\n", GetTroubleWithRemaindersCount(ParentPage, true)),
-                                     GetTroubleWithDivisionToolCreationCount(ParentPage) == 0
+                                     GetTroubleWithDivisionTemplateCreationCount(ParentPage) == 0
                                          ? string.Empty
                                          : string.Format("Trouble with Division Template Creation {0} time(s).\n",
-                                                         GetTroubleWithDivisionToolCreationCount(ParentPage)),
-                                     GetTroubleWithDivisionToolCreationCount(ParentPage, true) == 0
+                                                         GetTroubleWithDivisionTemplateCreationCount(ParentPage)),
+                                     GetTroubleWithDivisionTemplateCreationCount(ParentPage, true) == 0
                                          ? string.Empty
-                                         : string.Format("{0} deleted.\n", GetTroubleWithDivisionToolCreationCount(ParentPage, true))).TrimEnd('\n');
+                                         : string.Format("{0} deleted.\n", GetTroubleWithDivisionTemplateCreationCount(ParentPage, true))).TrimEnd('\n');
             }
         }
 
@@ -76,13 +76,13 @@ namespace CLP.Entities
         public static int GetTroubleWithFactorPairsCount(CLPPage page, bool returnOnlyDeleted = false)
         {
             var totalCount =
-                page.Tags.Count(tag => tag is DivisionToolFactorPairErrorsTag && (tag as DivisionToolFactorPairErrorsTag).HadTrouble);
+                page.Tags.Count(tag => tag is DivisionTemplateFactorPairErrorsTag && (tag as DivisionTemplateFactorPairErrorsTag).HadTrouble);
 
             var deletedCount =
                 page.Tags.Count(
                                 tag =>
-                                tag is DivisionToolFactorPairErrorsTag && (tag as DivisionToolFactorPairErrorsTag).HadTrouble &&
-                                !(tag as DivisionToolFactorPairErrorsTag).IsDivisionToolStillOnPage);
+                                tag is DivisionTemplateFactorPairErrorsTag && (tag as DivisionTemplateFactorPairErrorsTag).HadTrouble &&
+                                !(tag as DivisionTemplateFactorPairErrorsTag).IsDivisionTemplateStillOnPage);
 
             return returnOnlyDeleted ? deletedCount : totalCount;
         }
@@ -90,25 +90,25 @@ namespace CLP.Entities
         public static int GetTroubleWithRemaindersCount(CLPPage page, bool returnOnlyDeleted = false)
         {
             var totalCount =
-                page.Tags.Count(tag => tag is DivisionToolRemainderErrorsTag && (tag as DivisionToolRemainderErrorsTag).HadTrouble);
+                page.Tags.Count(tag => tag is DivisionTemplateRemainderErrorsTag && (tag as DivisionTemplateRemainderErrorsTag).HadTrouble);
 
             var deletedCount =
                 page.Tags.Count(
                                 tag =>
-                                tag is DivisionToolRemainderErrorsTag && (tag as DivisionToolRemainderErrorsTag).HadTrouble &&
-                                !(tag as DivisionToolRemainderErrorsTag).IsDivisionToolStillOnPage);
+                                tag is DivisionTemplateRemainderErrorsTag && (tag as DivisionTemplateRemainderErrorsTag).HadTrouble &&
+                                !(tag as DivisionTemplateRemainderErrorsTag).IsDivisionTemplateStillOnPage);
 
             return returnOnlyDeleted ? deletedCount : totalCount;
         }
 
-        public static int GetTroubleWithDivisionToolCreationCount(CLPPage page, bool returnOnlyDeleted = false)
+        public static int GetTroubleWithDivisionTemplateCreationCount(CLPPage page, bool returnOnlyDeleted = false)
         {
-            var totalCount = page.Tags.Count(tag => tag is DivisionToolCreationErrorTag);
+            var totalCount = page.Tags.Count(tag => tag is DivisionTemplateCreationErrorTag);
 
             var deletedCount =
                 page.Tags.Count(
                                 tag =>
-                                tag is DivisionToolCreationErrorTag && !(tag as DivisionToolCreationErrorTag).IsDivisionToolStillOnPage);
+                                tag is DivisionTemplateCreationErrorTag && !(tag as DivisionTemplateCreationErrorTag).IsDivisionTemplateStillOnPage);
 
             return returnOnlyDeleted ? deletedCount : totalCount;
         }

@@ -7,11 +7,11 @@ using System.Windows.Media;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for DivisionToolCreationView.xaml
+    /// Interaction logic for DivisionTemplateCreationView.xaml
     /// </summary>
-    public partial class DivisionToolCreationView
+    public partial class DivisionTemplateCreationView
     {
-        public DivisionToolCreationView()
+        public DivisionTemplateCreationView()
         {
             Left = 515;
             Top = 315;

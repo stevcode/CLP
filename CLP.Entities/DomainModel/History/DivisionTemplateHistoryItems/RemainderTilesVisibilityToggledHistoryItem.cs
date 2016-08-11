@@ -15,10 +15,10 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="RemainderTilesVisibilityToggledHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public RemainderTilesVisibilityToggledHistoryItem(CLPPage parentPage, Person owner, string divisionToolID, bool isVisibile)
+        public RemainderTilesVisibilityToggledHistoryItem(CLPPage parentPage, Person owner, string divisionTemplateID, bool isVisibile)
             : base(parentPage, owner)
         {
-            DivisionToolID = divisionToolID;
+            DivisionTemplateID = divisionTemplateID;
             IsVisible = isVisibile;
         }
 
@@ -37,14 +37,14 @@ namespace CLP.Entities
             get { return 600; }
         }
 
-        /// <summary>ID of the Division Tool that owns the Remainder Tiles.</summary>
-        public string DivisionToolID
+        /// <summary>ID of the Division Template that owns the Remainder Tiles.</summary>
+        public string DivisionTemplateID
         {
-            get { return GetValue<string>(DivisionToolIDProperty); }
-            set { SetValue(DivisionToolIDProperty, value); }
+            get { return GetValue<string>(DivisionTemplateIDProperty); }
+            set { SetValue(DivisionTemplateIDProperty, value); }
         }
 
-        public static readonly PropertyData DivisionToolIDProperty = RegisterProperty("DivisionToolID", typeof (string), string.Empty);
+        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof (string), string.Empty);
 
         /// <summary>Visibility state the Remainder Tiles were toggled into.</summary>
         public bool IsVisible
@@ -59,17 +59,17 @@ namespace CLP.Entities
         {
             get
             {
-                var divisionTool = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionToolID) as DivisionTool;
-                if (divisionTool == null)
+                var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
+                if (divisionTemplate == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Division Tool for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
                 }
 
                 var toggleState = IsVisible ? "on" : "off";
                 return string.Format("Index #{0}, Toggled Remainder Tiles {1} for {2}.",
                                      HistoryIndex,
                                      toggleState,
-                                     divisionTool.FormattedName);
+                                     divisionTemplate.FormattedName);
             }
         }
 
@@ -96,24 +96,24 @@ namespace CLP.Entities
 
         private void ToggleRemainderTilesVisibility(bool isToggledVisible)
         {
-            var divisionTool = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionToolID) as DivisionTool;
-            if (divisionTool == null)
+            var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
+            if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Tool for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            divisionTool.IsRemainderTilesVisible = isToggledVisible;
-            if (isToggledVisible && !ParentPage.PageObjects.Contains(divisionTool.RemainderTiles))
+            divisionTemplate.IsRemainderTilesVisible = isToggledVisible;
+            if (isToggledVisible && !ParentPage.PageObjects.Contains(divisionTemplate.RemainderTiles))
             {
-                ParentPage.PageObjects.Add(divisionTool.RemainderTiles);
+                ParentPage.PageObjects.Add(divisionTemplate.RemainderTiles);
             }
-            else if (ParentPage.PageObjects.Contains(divisionTool.RemainderTiles))
+            else if (ParentPage.PageObjects.Contains(divisionTemplate.RemainderTiles))
             {
-                ParentPage.PageObjects.Remove(divisionTool.RemainderTiles);
+                ParentPage.PageObjects.Remove(divisionTemplate.RemainderTiles);
             }
 
-            divisionTool.UpdateReport();
+            divisionTemplate.UpdateReport();
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
@@ -136,7 +136,7 @@ namespace CLP.Entities
             // TODO: Unpack history item.
         }
 
-        public override bool IsUsingTrashedPageObject(string id) { return DivisionToolID == id; }
+        public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }
 
         #endregion //Methods
     }

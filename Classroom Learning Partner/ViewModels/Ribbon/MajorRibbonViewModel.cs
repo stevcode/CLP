@@ -180,11 +180,11 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
             _insertObscurableArrayButton = new RibbonButton("N Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
-            //Division Tools
-            _insertDivisionToolButton = new RibbonButton("Division Tool",
-                                                             "pack://application:,,,/Resources/Images/DivisionTool32.png",
+            //Division Templates
+            _insertDivisionTemplateButton = new RibbonButton("Division Template",
+                                                             "pack://application:,,,/Resources/Images/DivisionTemplate32.png",
                                                              AddPageObjectToPageCommand,
-                                                             "DIVISIONTOOL");
+                                                             "DIVISIONTEMPLATE");
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine64New.png", AddPageObjectToPageCommand, "NUMBERLINE");
@@ -356,8 +356,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertFactorCardButton;
         private RibbonButton _insertObscurableArrayButton;
 
-        //Division Tools
-        private RibbonButton _insertDivisionToolButton;
+        //Division Templates
+        private RibbonButton _insertDivisionTemplateButton;
 
         //NumberLine
         private RibbonButton _insertNumberLineButton;
@@ -997,9 +997,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
 
-                //Division Tool
-                case "DIVISIONTOOL":
-                    DivisionToolViewModel.AddDivisionToolToPage(currentPage);
+                //Division Template
+                case "DIVISIONTEMPLATE":
+                    DivisionTemplateViewModel.AddDivisionTemplateToPage(currentPage);
                     break;
 
                 //Shapes
@@ -1131,7 +1131,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
-            Buttons.Add(_insertDivisionToolButton);
+            Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertNumberLineButton);
             //Buttons.Add(_insertAutoNumberLineButton);
             Buttons.Add(_insertShapeButton);

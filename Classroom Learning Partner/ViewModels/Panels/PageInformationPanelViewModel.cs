@@ -1342,7 +1342,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ArrayAnalysis.Analyze(CurrentPage);
-            DivisionToolAnalysis.Analyze(CurrentPage);
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
             StampAnalysis.Analyze(CurrentPage);
             NumberLineAnalysis.Analyze(CurrentPage);
             ApplyInterpretedCorrectness(CurrentPage);
@@ -1356,7 +1356,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageAnalysis.Analyze(submission);
                 ArrayAnalysis.Analyze(submission);
-                DivisionToolAnalysis.Analyze(submission);
+                DivisionTemplateAnalysis.Analyze(submission);
                 StampAnalysis.Analyze(submission);
                 NumberLineAnalysis.Analyze(CurrentPage);
                 ApplyInterpretedCorrectness(submission);
@@ -1373,8 +1373,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
 
             //var correctnessTags =
-            //    page.Tags.OfType<DivisionToolRepresentationCorrectnessTag>()
-            //        .Select(divisionToolCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionToolCorrectnessTag.Correctness, true))
+            //    page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
+            //        .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
             //        .ToList();
             //correctnessTags.AddRange(
             //                         page.Tags.OfType<ArrayCorrectnessSummaryTag>()
@@ -1428,7 +1428,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //     SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            DivisionToolAnalysis.AnalyzeHistory(CurrentPage);
+            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
 
             if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
@@ -1442,7 +1442,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
 
                 ArrayAnalysis.AnalyzeHistory(submission);
-                DivisionToolAnalysis.AnalyzeHistory(submission);
+                DivisionTemplateAnalysis.AnalyzeHistory(submission);
             }
         }
 
@@ -1475,7 +1475,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnFixCommandExecute()
         {
-            foreach (var dt in CurrentPage.PageObjects.OfType<DivisionTool>())
+            foreach (var dt in CurrentPage.PageObjects.OfType<DivisionTemplate>())
             {
                 var gridSize = dt.ArrayHeight / dt.Rows;
 

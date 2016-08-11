@@ -18,7 +18,7 @@ namespace CLP.Entities
     public enum Category
     {
         Array,
-        DivisionTool,
+        DivisionTemplate,
         Stamp,
         Strategy,
         NumberLine,
