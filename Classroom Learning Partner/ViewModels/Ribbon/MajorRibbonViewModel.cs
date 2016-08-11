@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Template",
-                                                             "pack://application:,,,/Resources/Images/DivisionTemplate32.png",
+                                                             "pack://application:,,,/Resources/Images/DivisionTool32.png",
                                                              AddPageObjectToPageCommand,
                                                              "DIVISIONTEMPLATE");
 
