@@ -3,13 +3,10 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   Title="Create a Number Line"
-                  WindowStyle="ToolWindow"
-                  ResizeMode="NoResize"
-                  Height="450"
-                  Width="300"
                   ShowInTaskbar="False"
                   Background="{StaticResource GrayBackgroundColor}">
-    <catel:StackGrid>
+    <catel:StackGrid Height="350"
+                     Width="300">
         <catel:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
