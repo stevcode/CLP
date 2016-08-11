@@ -465,6 +465,8 @@
                             <Image Grid.Row="0" 
                                    Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
+                                   UseLayoutRounding="True"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
                                    HorizontalAlignment="Center"
                                    Margin="0 5 0 3" />
                             <Grid Grid.Row="1" 
@@ -504,6 +506,8 @@
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    VerticalAlignment="Center"
                                    Height="24"
+                                   UseLayoutRounding="True"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
                                    Margin="0 0 2 0" />
                             <Grid>
                                 <TextBlock Name="TextHorizontal"
