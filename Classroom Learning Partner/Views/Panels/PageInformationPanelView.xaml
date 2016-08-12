@@ -50,6 +50,7 @@
                 <ToggleButton Name="AnalysisCommandsToggleButton"
                               DockPanel.Dock="Top"
                               IsChecked="False"
+                              Visibility="Collapsed"
                               Height="20"
                               Margin="1">
                     <ToggleButton.Style>

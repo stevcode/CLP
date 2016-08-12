@@ -1017,6 +1017,8 @@
     <Resource Include="Resources\Images\Unused\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\Stamp512.png" />
+    <Resource Include="Resources\Images\AddOneToDisplay.png" />
     <Resource Include="Resources\Images\Stamp128.png" />
     <Resource Include="Resources\Images\Stamp256.png" />
     <Resource Include="Resources\Images\StampGroup128.png" />

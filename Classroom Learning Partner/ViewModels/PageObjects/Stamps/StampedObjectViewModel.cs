@@ -59,16 +59,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
 
-            _contextButtons.Add(MajorRibbonViewModel.Separater);
-            if (IsGroupStampedObject)
+            
+            if (StampedObjectType == StampedObjectTypes.GroupStampedObject)
             {
-                _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject, true));
+                _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.GroupStampedObject, true));
 
                 IsBoundaryVisible = false;
                 IsPartsLabelVisible = false;
             }
-            else
+
+            if (StampedObjectType == StampedObjectTypes.GeneralStampedObject)
             {
+                _contextButtons.Add(MajorRibbonViewModel.Separater);
                 var toggleChildPartsButton = new ToggleRibbonButton("Show Group Size", "Hide Group Size", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
                 {
                     IsChecked = IsPartsLabelVisible
