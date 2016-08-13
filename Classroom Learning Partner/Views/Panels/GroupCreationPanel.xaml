@@ -3,17 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
-
-    <catel:UserControl.Resources>
-        <ResourceDictionary>
-            <converters:PassMultipleValuesConverter x:Key="PassMultipleValuesConverter" />
-            <converters:StringsEqualMultiConverter x:Key="StringsEqualMultiConverter" />
-        </ResourceDictionary>
-    </catel:UserControl.Resources>
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -101,7 +91,7 @@
                                                                                 <MultiDataTrigger.Conditions>
                                                                                     <Condition Value="True">
                                                                                         <Condition.Binding>
-                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                            <MultiBinding Converter="{converters:StringsEqualMultiConverter}">
                                                                                                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
                                                                                                          Path="DataContext.Label"/>
                                                                                                 <Binding Path="Label"/>
@@ -115,7 +105,7 @@
                                                                                 <MultiDataTrigger.Conditions>
                                                                                     <Condition Value="False">
                                                                                         <Condition.Binding>
-                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                            <MultiBinding Converter="{converters:StringsEqualMultiConverter}">
                                                                                                 <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
                                                                                                          Path="DataContext.Label"/>
                                                                                                 <Binding Path="Label"/>
@@ -133,7 +123,7 @@
                                                                         <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
                                                                               PassEventArgsToCommand="False">
                                                                             <catel:EventToCommand.CommandParameter>
-                                                                                <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
+                                                                                <MultiBinding Converter="{converters:PassMultipleValuesMultiConverter}">
                                                                                     <Binding Path=""/>
                                                                                     <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
                                                                                 </MultiBinding>
@@ -203,7 +193,7 @@
                                                             <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
                                                                               PassEventArgsToCommand="False">
                                                                 <catel:EventToCommand.CommandParameter>
-                                                                    <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
+                                                                    <MultiBinding Converter="{converters:PassMultipleValuesMultiConverter}">
                                                                         <Binding Path=""/>
                                                                         <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
                                                                     </MultiBinding>

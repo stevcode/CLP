@@ -7,10 +7,6 @@
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <converters:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <converters:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
-        <converters:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
-
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
                     Value="0" />
@@ -252,7 +248,7 @@
                                             <DrawingBrush TileMode="Tile"
                                                       ViewportUnits="RelativeToBoundingBox">
                                                 <DrawingBrush.Viewport>
-                                                    <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                                    <MultiBinding Converter="{converters:RatioToRectMultiConverter}">
                                                         <Binding Path="PageObject.LastDivisionPosition" />
                                                         <Binding Path="ArrayHeight" />
                                                         <Binding Path="GridSquareSize" />
@@ -311,7 +307,7 @@
                                            StrokeThickness="0"
                                            Opacity=".3">
                                     <Rectangle.Fill>
-                                        <MultiBinding Converter="{StaticResource DivisionPositionToColorMultiConverter}">
+                                        <MultiBinding Converter="{converters:DivisionPositionToColorMultiConverter}">
                                             <Binding Path="Position" />
                                             <Binding Path="DataContext.VerticalDivisions"
                                                      RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
@@ -560,7 +556,7 @@
                                Foreground="Black"
                                IsHitTestVisible="False">
                         <TextBlock.Text>
-                            <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
+                            <MultiBinding Converter="{converters:MultiplyAllIntToTextMultiConverter}">
                                 <Binding Path="Rows" />
                                 <Binding Path="PageObject.GroupsSubtracted" />
                             </MultiBinding>

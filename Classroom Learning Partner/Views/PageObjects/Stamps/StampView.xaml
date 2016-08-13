@@ -6,11 +6,6 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
-
-    <UserControl.Resources>
-        <converters:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
-    </UserControl.Resources>
-
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside"
@@ -425,7 +420,7 @@
                         </Style>
                     </TextBlock.Style>
                     <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
+                        <MultiBinding Converter="{converters:BoolZeroToQuestionMarkMultiConverter}">
                             <Binding Path="Parts" />
                             <Binding Path="IsGroupStamp" />
                         </MultiBinding>

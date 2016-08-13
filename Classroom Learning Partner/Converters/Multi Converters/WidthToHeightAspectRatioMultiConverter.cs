@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    [ValueConversion(typeof(object), typeof(Visibility))]
-    public class AllBoolToVisibilityMultiConverter : MarkupExtension, IMultiValueConverter
+    [ValueConversion(typeof(object), typeof(double))]
+    public class WidthToHeightAspectRatioMultiConverter : MarkupExtension, IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!values.All(v => v is bool))
+            if (values.Length != 2)
             {
-                return Visibility.Visible;
+                return 100.0;
             }
 
-            var result = values.All(v => (bool)v);
+            var width = values[0].ToDouble();
+            var aspectRatio = values[1].ToDouble();
+            if (width == null ||
+                aspectRatio == null ||
+                aspectRatio == 0.0)
+            {
+                return 100.0;
+            }
 
-            var nonVisibleType = parameter is Visibility ? parameter : Visibility.Collapsed;
-
-            return result ? Visibility.Visible : nonVisibleType;
+            return width / aspectRatio;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

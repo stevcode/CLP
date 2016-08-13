@@ -6,11 +6,6 @@
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
-
-    <UserControl.Resources>
-        <converters:MultiplyAllMultiConverter x:Key="MultiplyAllMultiConverter" />
-    </UserControl.Resources>
-
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside"
@@ -155,7 +150,7 @@
                         <Style TargetType="ContentPresenter">
                             <Setter Property="Canvas.Left">
                                 <Setter.Value>
-                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                    <MultiBinding Converter="{converters:MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
                                                  RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
                                         <Binding Path="StartingTickIndex" />
@@ -174,7 +169,7 @@
                                        FontSize="20">
 
                                 <TextBlock.Width>
-                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                    <MultiBinding Converter="{converters:MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
                                                  RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
                                         <Binding Path="JumpSize" />
@@ -326,7 +321,7 @@
                         <Style TargetType="ContentPresenter">
                             <Setter Property="Canvas.Left">
                                 <Setter.Value>
-                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                    <MultiBinding Converter="{converters:MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
                                                  RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
                                         <Binding Path="StartingTickIndex" />
@@ -345,7 +340,7 @@
                                       VerticalAlignment="Top"
                                       Stretch="UniformToFill">
                                     <Path.Width>
-                                        <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <MultiBinding Converter="{converters:MultiplyAllMultiConverter}">
                                             <Binding Path="DataContext.PageObject.TickLength"
                                                      RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
                                             <Binding Path="JumpSize" />

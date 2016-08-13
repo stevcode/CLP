@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    [ValueConversion(typeof(object), typeof(Visibility))]
-    public class AllBoolToVisibilityMultiConverter : MarkupExtension, IMultiValueConverter
+    [ValueConversion(typeof(object), typeof(bool))]
+    public class StringsEqualMultiConverter : MarkupExtension, IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!values.All(v => v is bool))
+            if (!values.All(v => v is string))
             {
-                return Visibility.Visible;
+                return false;
             }
 
-            var result = values.All(v => (bool)v);
+            var first = values[0] as string;
 
-            var nonVisibleType = parameter is Visibility ? parameter : Visibility.Collapsed;
-
-            return result ? Visibility.Visible : nonVisibleType;
+            return values.All(v => (string)v == first);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

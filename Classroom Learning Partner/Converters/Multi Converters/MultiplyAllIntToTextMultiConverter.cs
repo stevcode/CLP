@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Catel.MVVM.Converters;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    [ValueConversion(typeof(object), typeof(Visibility))]
-    public class AllBoolToVisibilityMultiConverter : MarkupExtension, IMultiValueConverter
+    [ValueConversion(typeof(object), typeof(string))]
+    public class MultiplyAllIntToTextMultiConverter : MarkupExtension, IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!values.All(v => v is bool))
-            {
-                return Visibility.Visible;
-            }
+            var valuesAsInt = values.Select(v => v.ToInt());
 
-            var result = values.All(v => (bool)v);
-
-            var nonVisibleType = parameter is Visibility ? parameter : Visibility.Collapsed;
-
-            return result ? Visibility.Visible : nonVisibleType;
+            return valuesAsInt.Any(v => v == null) ? ConverterHelper.UnsetValue : valuesAsInt.Aggregate(1, (current, v) => current * (int)v).ToString();
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

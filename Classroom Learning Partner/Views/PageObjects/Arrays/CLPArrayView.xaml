@@ -8,8 +8,6 @@
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
-        <converters:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
-
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
                     Value="0" />
@@ -235,7 +233,7 @@
                                   AlignmentX="Left"
                                   AlignmentY="Top">
                         <DrawingBrush.Viewport>
-                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                            <MultiBinding Converter="{converters:RatioToRectMultiConverter}">
                                 <Binding Path="ArrayWidth" />
                                 <Binding Path="ArrayHeight" />
                                 <Binding Path="GridSquareSize" />
@@ -285,7 +283,7 @@
                                   AlignmentX="Left"
                                   AlignmentY="Top">
                         <DrawingBrush.Viewport>
-                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                            <MultiBinding Converter="{converters:RatioToRectMultiConverter}">
                                 <Binding Path="ArrayWidth" />
                                 <Binding Path="ArrayHeight" />
                                 <Binding Path="GridSquareSize" />

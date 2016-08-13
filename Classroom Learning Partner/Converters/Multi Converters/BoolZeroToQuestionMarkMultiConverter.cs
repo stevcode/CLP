@@ -1,27 +1,30 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Catel.MVVM.Converters;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    [ValueConversion(typeof(object), typeof(Visibility))]
-    public class AllBoolToVisibilityMultiConverter : MarkupExtension, IMultiValueConverter
+    [ValueConversion(typeof(object), typeof(string))]
+    public class BoolZeroToQuestionMarkMultiConverter : MarkupExtension, IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!values.All(v => v is bool))
+            if (values.Length != 2)
             {
-                return Visibility.Visible;
+                return ConverterHelper.UnsetValue;
             }
 
-            var result = values.All(v => (bool)v);
+            if (!(values[0] is int) ||
+                !(values[1] is bool))
+            {
+                return ConverterHelper.UnsetValue;
+            }
 
-            var nonVisibleType = parameter is Visibility ? parameter : Visibility.Collapsed;
-
-            return result ? Visibility.Visible : nonVisibleType;
+            var val = (int)values[0];
+            var showZero = (bool)values[1];
+            return !showZero && val == 0 ? "?" : val.ToString();
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

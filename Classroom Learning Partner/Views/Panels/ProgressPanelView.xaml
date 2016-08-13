@@ -7,17 +7,6 @@
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
-    <UserControl.Resources>
-        
-        <ResourceDictionary>
-            
-            <!-- Converters -->
-            <converters:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
-            
-        </ResourceDictionary>
-        
-    </UserControl.Resources>
-    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -311,7 +300,7 @@
                                 DataContext="{Binding StagingPanel}"
                                 Grid.Column="1">
             <views:StagingPanelView.Visibility>
-                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
                     <Binding Path="IsVisible" />
                     <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
