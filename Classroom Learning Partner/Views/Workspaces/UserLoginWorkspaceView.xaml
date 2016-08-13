@@ -3,11 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Resources"
                    Background="CadetBlue">
-    <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-    </UserControl.Resources>
 
     <Grid x:Name="TopGrid"
           Margin="20">
@@ -36,7 +32,7 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Opacity="0.95"
-              Visibility="{Binding IsAllowLoginPromptActivated, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+              Visibility="{Binding IsAllowLoginPromptActivated, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             
             <Button Height="200"
                     Width="200"
@@ -49,7 +45,7 @@
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Opacity="0.9"
-              Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+              Visibility="{Binding IsLoggingIn, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             
             <Border BorderBrush="White"
                     BorderThickness="7"

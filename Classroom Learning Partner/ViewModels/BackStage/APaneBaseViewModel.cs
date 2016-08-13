@@ -6,13 +6,13 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public abstract class APaneBaseViewModel : ViewModelBase
     {
-        protected readonly IDataService DataService;
+        protected readonly IDataService _dataService;
 
         #region Constructor
 
         protected APaneBaseViewModel()
         {
-            DataService = DependencyResolver.Resolve<IDataService>();
+            _dataService = DependencyResolver.Resolve<IDataService>();
         }
 
         #endregion //Constructor

@@ -578,6 +578,10 @@
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\BackStageResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\CLPBrushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

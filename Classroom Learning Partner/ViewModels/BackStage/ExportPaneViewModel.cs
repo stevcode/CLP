@@ -22,7 +22,10 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public ExportPaneViewModel() { InitializeCommands(); }
+        public ExportPaneViewModel()
+        {
+            InitializeCommands();
+        }
 
         private void InitializeCommands()
         {
@@ -30,8 +33,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertPageSubmissionsToPDFCommand = new Command(OnConvertPageSubmissionsToPDFCommandExecute, OnNotebookExportCanExecute);
             ConvertAllSubmissionsToPDFCommand = new Command(OnConvertAllSubmissionsToPDFCommandExecute, OnNotebookExportCanExecute);
             ConvertDisplaysToPDFCommand = new Command(OnConvertDisplaysToPDFCommandExecute, OnNotebookExportCanExecute);
-
-            CopyNotebookForNewOwnerCommand = new Command(OnCopyNotebookForNewOwnerCommandExecute, OnNotebookExportCanExecute);
         }
 
         #endregion //Constructor
@@ -48,14 +49,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool OnNotebookExportCanExecute() { return true; }
+        private bool OnNotebookExportCanExecute()
+        {
+            return true;
+        }
 
         /// <summary>Converts Notebook Pages to PDF.</summary>
         public Command ConvertNotebookToPDFCommand { get; private set; }
 
         private void OnConvertNotebookToPDFCommandExecute()
         {
-            var notebook = DataService.CurrentNotebook;
+            var notebook = _dataService.CurrentNotebook;
 
             ConvertPagesToPDF(notebook.Pages, notebook);
         }
@@ -65,12 +69,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertPageSubmissionsToPDFCommandExecute()
         {
-            var notebook = DataService.CurrentNotebook;
+            var notebook = _dataService.CurrentNotebook;
 
             var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                  ? DataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, notebook.CurrentPage.ID, "0")
+                                  ? _dataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, notebook.CurrentPage.ID, "0")
                                   : notebook.CurrentPage.Submissions.ToList();
-            
+
             var sortedPages = submissions.OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
             var pageNumber = "" + notebook.CurrentPage.PageNumber;
             if (notebook.CurrentPage.DifferentiationLevel != "0")
@@ -86,13 +90,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertAllSubmissionsToPDFCommandExecute()
         {
-            var notebook = DataService.CurrentNotebook;
+            var notebook = _dataService.CurrentNotebook;
             var allPages = new List<CLPPage>();
             CLPPage lastSubmissionAdded = null;
             foreach (var page in notebook.Pages)
             {
                 var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                      ? DataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, page.ID, "0")
+                                      ? _dataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, page.ID, "0")
                                       : page.Submissions.ToList();
 
                 foreach (var submission in submissions)
@@ -112,12 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            var allSortedPages =
-                allPages.OrderBy(page => page.PageNumber)
-                        .ThenBy(page => page.DifferentiationLevel)
-                        .ThenBy(page => page.Owner.FullName)
-                        .ThenBy(page => page.VersionIndex)
-                        .ToList();
+            var allSortedPages = allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex).ToList();
 
             ConvertPagesToPDF(allSortedPages, notebook, true);
         }
@@ -202,33 +201,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //    xpsDocument.Close();
 
             //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
-        }
-
-        /// <summary>Copies the current notebook for a new owner.</summary>
-        public Command CopyNotebookForNewOwnerCommand { get; private set; }
-
-        private void OnCopyNotebookForNewOwnerCommandExecute()
-        {
-            // TODO: Utilize NotebookInfoPane's OnSaveNotebookForStudentCommandExecute
-
-            var person = new Person();
-            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
-            personCreationView.ShowDialog();
-
-            if (personCreationView.DialogResult == null ||
-                personCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            var copiedNotebook = DataService.CurrentNotebook.CopyForNewOwner(person);
-            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-     
-            App.MainWindowViewModel.CurrentUser = person;
-            App.MainWindowViewModel.IsAuthoring = false;
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
-            App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         #endregion //Commands

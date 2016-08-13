@@ -6,7 +6,6 @@
                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                  xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                   Loaded="MainWindowView_OnLoaded"
                   Closing="MainWindowView_OnClosing"
                   Icon="pack://application:,,,/Resources/Images/Icons/CLPPaperClipLogoCircled.ico"
@@ -30,10 +29,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/BackStageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <customControls:HLSColorValueConverter x:Key="ColorConverter" />
         </ResourceDictionary>
     </catel:DataWindow.Resources>
 
@@ -65,288 +62,22 @@
         <DockPanel Background="{StaticResource GrayEdgeColor}"
                    LastChildFill="True"
                    Height="24"
-                   Visibility="{Binding IsDragBarVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                   Visibility="{Binding IsDragBarVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
             <!-- Program Close Button -->
             <Button DockPanel.Dock="Right"
                     Command="{Binding ExitProgramCommand}"
-                    Width="44"
-                    Height="24">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="SnapsToDevicePixels"
-                                Value="true" />
-                        <Setter Property="OverridesDefaultStyle"
-                                Value="true" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-
-                                    <ControlTemplate.Resources>
-
-                                        <!-- Animation  Storyboards -->
-                                        <Storyboard x:Key="PressedOn">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <Storyboard x:Key="PressedOff">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Hidden}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-
-                                    </ControlTemplate.Resources>
-
-                                    <!-- Control Layout -->
-                                    <Grid x:Name="LayoutGrid"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          Background="Red">
-
-                                        <!-- Button FX Displayed Behind Content -->
-                                        <Rectangle x:Name="IsPressedMask"
-                                                   Fill="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
-                                                   StrokeThickness="0"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Visibility="Hidden" />
-
-                                        <!-- Button Content -->
-                                        <Image Source="pack://application:,,,/Resources/Images/WindowControls/CloseButton.png"
-                                               Height="10"
-                                               Width="10"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                    </Grid>
-
-                                    <!-- FX Triggers -->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsPressed"
-                                                 Value="True">
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard x:Name="PressedOff_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOff}" />
-                                            </Trigger.ExitActions>
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard x:Name="PressedOn_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOn}" />
-                                            </Trigger.EnterActions>
-                                        </Trigger>
-
-                                        <Trigger Property="IsEnabled"
-                                                 Value="False">
-                                            <Setter TargetName="LayoutGrid"
-                                                    Property="Opacity"
-                                                    Value=".15" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-
-                    </Style>
-                </Button.Style>
-            </Button>
+                    Style="{StaticResource Exit}" />
 
             <!-- Program Maximize Button -->
             <Button DockPanel.Dock="Right"
                     Command="{Binding ToggleMaximizeStateCommand}"
-                    Width="24"
-                    Height="24">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="SnapsToDevicePixels"
-                                Value="true" />
-                        <Setter Property="OverridesDefaultStyle"
-                                Value="true" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-
-                                    <ControlTemplate.Resources>
-
-                                        <!-- Animation  Storyboards -->
-                                        <Storyboard x:Key="PressedOn">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <Storyboard x:Key="PressedOff">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Hidden}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-
-                                    </ControlTemplate.Resources>
-
-                                    <!-- Control Layout -->
-                                    <Grid x:Name="LayoutGrid"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          Background="Transparent">
-
-                                        <Rectangle x:Name="ColorMask"
-                                                   Fill="{DynamicResource DynamicMainColor}"
-                                                   Visibility="Collapsed" />
-
-                                        <!-- Button FX Displayed Behind Content -->
-                                        <Rectangle x:Name="IsPressedMask"
-                                                   Fill="{Binding Fill, ElementName=ColorMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
-                                                   StrokeThickness="0"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Visibility="Hidden" />
-
-                                        <!-- Button Content -->
-                                        <Image Source="pack://application:,,,/Resources/Images/WindowControls/MaximizeButton.png"
-                                               Height="10"
-                                               Width="10"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                    </Grid>
-
-                                    <!-- FX Triggers -->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsPressed"
-                                                 Value="True">
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard x:Name="PressedOff_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOff}" />
-                                            </Trigger.ExitActions>
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard x:Name="PressedOn_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOn}" />
-                                            </Trigger.EnterActions>
-                                        </Trigger>
-
-                                        <Trigger Property="IsEnabled"
-                                                 Value="False">
-                                            <Setter TargetName="LayoutGrid"
-                                                    Property="Opacity"
-                                                    Value=".15" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-
-                    </Style>
-                </Button.Style>
-            </Button>
+                    Style="{StaticResource Maximize}" />
 
             <!-- Program Minimize Button -->
             <Button DockPanel.Dock="Right"
                     Command="{Binding ToggleMinimizeStateCommand}"
-                    Width="24"
-                    Height="24">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="SnapsToDevicePixels"
-                                Value="true" />
-                        <Setter Property="OverridesDefaultStyle"
-                                Value="true" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-
-                                    <ControlTemplate.Resources>
-
-                                        <!-- Animation  Storyboards -->
-                                        <Storyboard x:Key="PressedOn">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                        <Storyboard x:Key="PressedOff">
-                                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                                           Duration="00:00:00.0010000"
-                                                                           Storyboard.TargetName="IsPressedMask"
-                                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
-                                                                        Value="{x:Static Visibility.Hidden}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-
-                                    </ControlTemplate.Resources>
-
-                                    <!-- Control Layout -->
-                                    <Grid x:Name="LayoutGrid"
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          Background="Transparent">
-
-                                        <Rectangle x:Name="ColorMask"
-                                                   Fill="{DynamicResource DynamicMainColor}"
-                                                   Visibility="Collapsed" />
-
-                                        <!-- Button FX Displayed Behind Content -->
-                                        <Rectangle x:Name="IsPressedMask"
-                                                   Fill="{Binding Fill, ElementName=ColorMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
-                                                   StrokeThickness="0"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"
-                                                   Visibility="Hidden" />
-
-                                        <!-- Button Content -->
-                                        <Image Source="pack://application:,,,/Resources/Images/WindowControls/MinimizeButton.png"
-                                               Height="10"
-                                               Width="10"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                    </Grid>
-
-                                    <!-- FX Triggers -->
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsPressed"
-                                                 Value="True">
-                                            <Trigger.ExitActions>
-                                                <BeginStoryboard x:Name="PressedOff_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOff}" />
-                                            </Trigger.ExitActions>
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard x:Name="PressedOn_BeginStoryboard"
-                                                                 Storyboard="{StaticResource PressedOn}" />
-                                            </Trigger.EnterActions>
-                                        </Trigger>
-
-                                        <Trigger Property="IsEnabled"
-                                                 Value="False">
-                                            <Setter TargetName="LayoutGrid"
-                                                    Property="Opacity"
-                                                    Value=".15" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-
-                    </Style>
-                </Button.Style>
-            </Button>
+                    Style="{StaticResource Minimize}" />
 
             <Grid Background="Transparent">
                 <i:Interaction.Triggers>
@@ -454,7 +185,7 @@
         <views:BackStageView Grid.Row="1"
                              Grid.RowSpan="2"
                              DataContext="{Binding BackStage}"
-                             Visibility="{Binding MainWindowViewModel.IsBackStageVisible, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />     
+                             Visibility="{Binding MainWindowViewModel.IsBackStageVisible, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />     
 
         <Grid Grid.Row="1"
               Grid.RowSpan="2"
@@ -462,7 +193,7 @@
               Opacity="0.9"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
-              Visibility="{Binding IsConvertingToPDF, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+              Visibility="{Binding IsConvertingToPDF, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             <Border BorderBrush="White"
                     BorderThickness="7"
                     CornerRadius="7"
@@ -501,7 +232,7 @@
               Opacity="0.9"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
-              Visibility="{Binding IsPenDownActivated, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+              Visibility="{Binding IsPenDownActivated, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             <Border BorderBrush="White"
                     BorderThickness="7"
                     CornerRadius="7"

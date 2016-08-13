@@ -1,14 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using Catel.Collections;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.Views;
-using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -19,14 +15,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public NewPaneViewModel()
         {
             InitializeCommands();
-            AvailableCaches.AddRange(DataService.AvailableCaches);
+            AvailableCaches.AddRange(_dataService.AvailableCaches);
             SelectedCache = AvailableCaches.FirstOrDefault();
         }
 
         private void InitializeCommands()
         {
             CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
-            CreateClassSubjectCommand = new Command(OnCreateClassSubjectCommandExecute);
         }
 
         #endregion //Constructor
@@ -57,9 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(AvailableCachesProperty, value); }
         }
 
-        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
-                                                                                       typeof(ObservableCollection<CacheInfo>),
-                                                                                       () => new ObservableCollection<CacheInfo>());
+        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches", typeof(ObservableCollection<CacheInfo>), () => new ObservableCollection<CacheInfo>());
 
         /// <summary>Selected Cache.</summary>
         public CacheInfo SelectedCache
@@ -106,11 +99,11 @@ namespace Classroom_Learning_Partner.ViewModels
             if (string.IsNullOrEmpty(TypedCacheName) ||
                 string.IsNullOrWhiteSpace(TypedCacheName))
             {
-                DataService.CurrentCacheInfo = SelectedCache;
+                _dataService.CurrentCacheInfo = SelectedCache;
             }
             else
             {
-                var newCache = DataService.CreateNewCache(TypedCacheName);
+                var newCache = _dataService.CreateNewCache(TypedCacheName);
                 if (newCache == null)
                 {
                     MessageBox.Show("A folder with that name already exists.");
@@ -118,69 +111,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var newNotebook = DataService.CreateNewNotebook(NotebookName, NotebookCurriculum);
+            var newNotebook = _dataService.CreateNewNotebook(NotebookName, NotebookCurriculum);
             if (newNotebook == null)
             {
                 MessageBox.Show("Something went wrong. The notebook you tried to create already exists in this folder.");
             }
         }
 
-        private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
-
-        /// <summary>Creates a new ClassInformation.</summary>
-        public Command CreateClassSubjectCommand { get; private set; }
-
-        private void OnCreateClassSubjectCommandExecute()
+        private bool OnCreateNotebookCanExecute()
         {
-            var classSubject = new ClassInformation();
-            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
-            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
-            classSubjectCreationView.ShowDialog();
-
-            if (classSubjectCreationView.DialogResult == null ||
-                classSubjectCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            foreach (var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
-            {
-                foreach (var student in group.Members)
-                {
-                    if (classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
-                    {
-                        student.TempDifferentiationGroup = group.Label;
-                    }
-                    else
-                    {
-                        student.CurrentDifferentiationGroup = group.Label;
-                    }
-                }
-            }
-
-            foreach (var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
-            {
-                foreach (var student in group.Members)
-                {
-                    if (classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
-                    {
-                        student.TempDifferentiationGroup = group.Label;
-                    }
-                    else
-                    {
-                        student.CurrentDifferentiationGroup = group.Label;
-                    }
-                }
-            }
-
-            classSubject.Projector = classSubject.Teacher;
-
-            var classesFolderPath = SelectedCache.ClassesFolderPath;
-            if (!Directory.Exists(classesFolderPath))
-            {
-                Directory.CreateDirectory(classesFolderPath);
-            }
-            classSubject.SaveToXML(classesFolderPath);
+            return NotebookName != string.Empty;
         }
 
         #endregion //Commands
