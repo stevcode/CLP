@@ -162,7 +162,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Resources/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
 
             //Stamps
-            _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
+            _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp64.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
             _insertGroupStampButton = new RibbonButton("Group Stamp",
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
@@ -171,7 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
             //TODO: Better Icon
-            _insertPileButton = new RibbonButton("Stamp Group", "pack://application:,,,/Resources/Images/StampGroup32.png", AddPageObjectToPageCommand, "PILE");
+            _insertPileButton = new RibbonButton("Division Group", "pack://application:,,,/Resources/Images/DivisionGroup64.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
             _insertArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "ARRAY");
@@ -1120,7 +1120,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            //Buttons.Add(_setMarkModeButton);
+            
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
@@ -1129,18 +1129,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // Insert Math Tools
             Buttons.Add(Separater);
             Buttons.Add(_insertArrayButton);
-            //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
-            Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertNumberLineButton);
-            //Buttons.Add(_insertAutoNumberLineButton);
             Buttons.Add(_insertShapeButton);
             Buttons.Add(_insertGeneralStampButton);
             Buttons.Add(_insertPileButton);
-            //Buttons.Add(_insertGroupStampButton);
-            //Buttons.Add(_insert10x10ArrayButton);
-            //Buttons.Add(_insertArrayCardButton);
-            //Buttons.Add(_insertFactorCardButton);
+            Buttons.Add(_insertDivisionTemplateButton);
 
             // Insert Text Box
             //Buttons.Add(Separater);
@@ -1148,6 +1142,15 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+
+            //Obsolete
+            //Buttons.Add(_setMarkModeButton);
+            //Buttons.Add(_insertGroupStampButton);
+            //Buttons.Add(_insert10x10ArrayButton);
+            //Buttons.Add(_insertArrayCardButton);
+            //Buttons.Add(_insertFactorCardButton);
+            //Buttons.Add(_insertObscurableArrayButton);
+            //Buttons.Add(_insertAutoNumberLineButton);
         }
 
         #endregion //Methods

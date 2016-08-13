@@ -1017,14 +1017,10 @@
     <Resource Include="Resources\Images\Unused\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\DivisionGroup64.png" />
     <Resource Include="Resources\Images\Stamp512.png" />
+    <Resource Include="Resources\Images\Stamp64.png" />
     <Resource Include="Resources\Images\AddOneToDisplay.png" />
-    <Resource Include="Resources\Images\Stamp128.png" />
-    <Resource Include="Resources\Images\Stamp256.png" />
-    <Resource Include="Resources\Images\StampGroup128.png" />
-    <Resource Include="Resources\Images\StampGroup256.png" />
-    <Resource Include="Resources\Images\StampGroup32.png" />
-    <Resource Include="Resources\Images\StampGroup64.png" />
     <Resource Include="Resources\Images\Bin128.png" />
     <Resource Include="Resources\Images\Bin32.png" />
     <Resource Include="Resources\Images\Bin64.png" />
@@ -1185,9 +1181,6 @@
     <Resource Include="Resources\Images\CollectionStamp16.png" />
     <Resource Include="Resources\Images\CollectionStamp32.png" />
     <Resource Include="Resources\Images\CollectionStamp64.png" />
-    <Resource Include="Resources\Images\Stamp16.png" />
-    <Resource Include="Resources\Images\Stamp32.png" />
-    <Resource Include="Resources\Images\Stamp64.png" />
     <Resource Include="Resources\Images\ArrayCard16.png" />
     <Resource Include="Resources\Images\ArrayCard32.png" />
     <Resource Include="Resources\Images\ArrayCard64.png" />
