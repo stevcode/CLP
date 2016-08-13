@@ -239,7 +239,6 @@
     <Compile Include="Converters\Single Converters\PageToSubmissionVisibilityConverter.cs" />
     <Compile Include="Converters\Multi Converters\RatioToRectMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\StringToEmptyStringConverter.cs" />
-    <Compile Include="Converters\Single Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\Multi Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToQuestionMarkConverter.cs" />
     <Compile Include="Resources\Logger.cs" />

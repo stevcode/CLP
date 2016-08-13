@@ -394,22 +394,22 @@
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
-                                     Value="BlankWorkspaceViewModel">
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeOfConverter}}"
+                                     Value="{x:Type viewModels:BlankWorkspaceViewModel}">
                             <Setter Property="Template"
                                     Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
-                                     Value="NotebookWorkspaceViewModel">
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeOfConverter}}"
+                                     Value="{x:Type viewModels:NotebookWorkspaceViewModel}">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeToStringConverter}}"
-                                     Value="UserLoginWorkspaceViewModel">
+                        <DataTrigger Binding="{Binding Workspace, Converter={converters:TypeOfConverter}}"
+                                     Value="{x:Type viewModels:UserLoginWorkspaceViewModel}">
                             <Setter Property="Template"
                                     Value="{StaticResource UserLoginWorkspaceTemplate}" />
                         </DataTrigger>
