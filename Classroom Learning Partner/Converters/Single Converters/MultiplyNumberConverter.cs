@@ -9,22 +9,14 @@ namespace Classroom_Learning_Partner.Converters
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            double originalValue;
-            try
+            var originalValue = value.ToDouble();
+            if (originalValue == null)
             {
-                originalValue = System.Convert.ToDouble(value);
-            }
-            catch (Exception)
-            {
-                return 0;
+                return 0.0;
             }
 
-            double factor;
-            try
-            {
-                factor = System.Convert.ToDouble(parameter);
-            }
-            catch (Exception)
+            var factor = parameter.ToDouble();
+            if (factor == null)
             {
                 return originalValue;
             }

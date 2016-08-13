@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.Converters
                 return Visibility.Hidden;
             }
 
-            return (int)value > 0 ? Visibility.Visible : Visibility.Hidden;
+            return (int)val > 0 ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }
