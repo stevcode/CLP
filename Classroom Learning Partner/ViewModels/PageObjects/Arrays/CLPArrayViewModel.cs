@@ -47,8 +47,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Buttons
 
         private ToggleRibbonButton _toggleLabelsButton;
-        private ToggleRibbonButton _toggleObscureColumnsButton;
-        private ToggleRibbonButton _toggleObscureRowsButton;
         private ToggleRibbonButton _toggleGridLinesButton;
 
         private void InitializeButtons()
@@ -76,28 +74,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
                 _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
                 _contextButtons.Add(_toggleLabelsButton);
-            }
-
-            if (array.ArrayType == ArrayTypes.ObscurableArray)
-            {
-                _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                {
-                    IsChecked = !array.IsColumnsObscured
-                };
-
-                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
-                _contextButtons.Add(_toggleObscureColumnsButton);
-
-                _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                {
-                    IsChecked = !array.IsRowsObscured
-                };
-                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-                _contextButtons.Add(_toggleObscureRowsButton);
             }
 
             _toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
@@ -129,82 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             array.IsTopLabelVisible = (bool)toggleButton.IsChecked && !array.IsColumnsObscured;
             array.IsSideLabelVisible = (bool)toggleButton.IsChecked && !array.IsRowsObscured;
-        }
-
-        private void toggleObscureColumnsButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            var array = PageObject as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-
-            var oldRegions = array.VerticalDivisions.ToList();
-
-            if (array.IsColumnsObscured)
-            {
-                array.Unobscure(true);
-            }
-            else
-            {
-                array.Obscure(true);
-            }
-
-            var newRegions = array.VerticalDivisions.ToList();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               array.ID,
-                                                                                               oldRegions,
-                                                                                               newRegions));
-
-            IsTopLabelVisible = !array.IsColumnsObscured;
-            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-        }
-
-        private void toggleObscureRowsButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            var array = PageObject as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-
-            var oldRegions = array.HorizontalDivisions.ToList();
-
-            if (array.IsRowsObscured)
-            {
-                array.Unobscure(false);
-            }
-            else
-            {
-                array.Obscure(false);
-            }
-
-            var newRegions = array.HorizontalDivisions.ToList();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               array.ID,
-                                                                                               oldRegions,
-                                                                                               newRegions));
-
-            IsSideLabelVisible = !array.IsRowsObscured;
-            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
         }
 
         private void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
@@ -964,23 +864,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var oldWidth = array.Width;
             var oldHeight = array.Height;
             array.RotateArray();
-
-            if (array.ArrayType == ArrayTypes.ObscurableArray)
-            {
-                _toggleObscureColumnsButton.Checked -= toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked -= toggleObscureColumnsButton_Checked;
-                _toggleObscureRowsButton.Checked -= toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked -= toggleObscureRowsButton_Checked;
-                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
-                _toggleObscureColumnsButton.IsChecked = !array.IsColumnsObscured;
-
-                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-                _toggleObscureRowsButton.IsChecked = !array.IsRowsObscured;
-                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-            }
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                        new CLPArrayRotateHistoryItem(array.ParentPage,
