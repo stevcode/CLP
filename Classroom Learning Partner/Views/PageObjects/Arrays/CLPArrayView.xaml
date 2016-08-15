@@ -196,7 +196,8 @@
                        FontSize="20"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}" />
+                       Width="{Binding ArrayWidth}"
+                       Visibility="{Binding IsTopLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
             <!-- Left Large Label -->
             <TextBlock Grid.Column="0"
@@ -210,7 +211,8 @@
                        FontSize="20"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayHeight}">
+                       Width="{Binding ArrayHeight}"
+                       Visibility="{Binding IsSideLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}}" >
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
