@@ -610,7 +610,7 @@ namespace Classroom_Learning_Partner.Services
             if (isForcedFullSave &&
                 Directory.Exists(notebookInfo.NotebookFolderPath))
             {
-                Directory.Delete(notebookInfo.NotebookFolderPath);
+                Directory.Delete(notebookInfo.NotebookFolderPath, true);
             }
             notebookInfo.Initialize();
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);

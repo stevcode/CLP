@@ -94,6 +94,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if (_dataService.CurrentNotebook.OwnerID == Person.Author.ID)
+            {
+                isForceSave = true;
+            }
+
             PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(_dataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
 
             //PleaseWaitHelper.Show(
