@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -80,6 +81,16 @@ namespace Classroom_Learning_Partner.ViewModels
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
         {
             CurrentNotebook = _dataService.CurrentNotebook;
+
+            if (CurrentNotebook != null &&
+                CurrentNotebook.OwnerID == Person.Author.ID)
+            {
+                AddAuthorButtons();
+            }
+            else
+            {
+                RemoveAuthorButtons();
+            }
 
             // TODO: Change this to fire on CurrentPage change. See if commented out works to fire all CanExecutes.
             //var catelCommand = (AddPageObjectToPageCommand as ICatelCommand);
@@ -152,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Images
             //TODO: Better Icons
-            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Resources/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Resources/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE", true);
 
             //Stamps
             _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp64.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
@@ -161,9 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
             _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
-            //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
-            //TODO: Better Icon
             _insertPileButton = new RibbonButton("Division Group", "pack://application:,,,/Resources/Images/DivisionGroup64.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
@@ -212,15 +221,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Text
             //TODO: Better Icons
-            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
+            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX", true);
 
             _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice",
                                                                   "pack://application:,,,/Resources/Images/TempIcon32.png",
                                                                   AddPageObjectToPageCommand,
-                                                                  "MULTIPLECHOICEBOX");
+                                                                  "MULTIPLECHOICEBOX",
+                                                                  true);
 
             // Recognition
-            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Resources/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Resources/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN", true);
+
+            // Other
+            _insertOther = new DropDownRibbonButton("Other", "pack://application:,,,/Resources/Images/Plus32.png");
+            var otherDropDown = new ContextMenu();
+            otherDropDown.Items.Add(_insertTextBoxButton);
+            otherDropDown.Items.Add(_insertImageButton);
+            otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
+            otherDropDown.Items.Add(_insertRecognitionRegionButton);
+
+            _insertOther.DropDown = otherDropDown;
         }
 
         private bool _isCheckedEventRunning = false;
@@ -374,6 +394,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         // Recognition Regions
         private RibbonButton _insertRecognitionRegionButton;
+
+        // Other
+        private DropDownRibbonButton _insertOther;
 
         #endregion //Insert PageObject Buttons
 
@@ -1153,14 +1176,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertDivisionTemplateButton);
 
-            // Insert Text Box
-            //Buttons.Add(Separater);
+            //Obsolete
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
-
-            //Obsolete
             //Buttons.Add(_setMarkModeButton);
             //Buttons.Add(_insertGroupStampButton);
             //Buttons.Add(_insert10x10ArrayButton);
@@ -1168,6 +1188,21 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
             //Buttons.Add(_insertAutoNumberLineButton);
+        }
+
+        public void AddAuthorButtons()
+        {
+            Buttons.Add(Separater);
+            Buttons.Add(_insertOther);
+        }
+
+        public void RemoveAuthorButtons()
+        {
+            if (Equals(Buttons.Last(), _insertOther))
+            {
+                Buttons.RemoveLast();
+                Buttons.RemoveLast();
+            }
         }
 
         #endregion //Methods
