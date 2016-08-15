@@ -4,6 +4,7 @@ using System.Windows;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -21,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class AuthoringPanelViewModel : APanelBaseViewModel
     {
-        private IDataService _dataService;
+        private readonly IDataService _dataService;
         #region Constructor
 
         public AuthoringPanelViewModel(IDataService dataService)
@@ -31,6 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = _dataService.CurrentNotebook;
 
             InitializedAsync += AuthoringPanelViewModel_InitializedAsync;
+            ClosedAsync += AuthoringPanelViewModel_ClosedAsync;
             IsVisible = false;
 
             InitializeCommands();
@@ -52,10 +54,32 @@ namespace Classroom_Learning_Partner.ViewModels
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
         }
 
-        private async Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        //private async Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        //{
+        //    Length = InitialLength;
+        //    Location = PanelLocations.Right;
+        //}
+
+        private Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
+
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private Task AuthoringPanelViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            Notebook = _dataService.CurrentNotebook;
         }
 
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
@@ -80,7 +104,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
-        [Model(SupportIEditableObject = false)]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -88,26 +111,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage));
-
-        /// <summary>DifferentiationLevel of the <see cref="CLPPage" />.</summary>
-        [ViewModelToModel("CurrentPage")]
-        public string DifferentiationLevel
-        {
-            get { return GetValue<string>(DifferentiationLevelProperty); }
-            set { SetValue(DifferentiationLevelProperty, value); }
-        }
-
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string));
-
-        /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
-        [ViewModelToModel("CurrentPage")]
-        public decimal PageNumber
-        {
-            get { return GetValue<decimal>(PageNumberProperty); }
-            set { SetValue(PageNumberProperty, value); }
-        }
-
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof (decimal));
 
         #endregion //Model
 
@@ -195,6 +198,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Notebook.Pages.MoveItemUp(CurrentPage);
             CurrentPage = Notebook.Pages[currentPageIndex - 1];
+            RaisePropertyChanged("CurrentPage");
         }
 
         private bool OnMovePageUpCanExecute()
@@ -214,6 +218,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Notebook.Pages.MoveItemDown(CurrentPage);
             CurrentPage = Notebook.Pages[currentPageIndex + 1];
+            RaisePropertyChanged("CurrentPage");
         }
 
         private bool OnMovePageDownCanExecute()
@@ -265,7 +270,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTrimPageCommandExecute()
         {
-            CurrentPage.TrimPage();
+            //CurrentPage.TrimPage();
+
+            OnMovePageDownCanExecute();
         }
 
         /// <summary>Completely clears a page of ink strokes and pageObjects.</summary>

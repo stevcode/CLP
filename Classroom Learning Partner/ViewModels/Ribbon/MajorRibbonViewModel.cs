@@ -20,7 +20,6 @@ using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;
-using Path = System.Windows.Shapes.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -44,7 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private IPageInteractionService _pageInteractionService;
-        private IDataService _dataService;
+        private readonly IDataService _dataService;
 
         public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService)
         {
