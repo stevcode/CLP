@@ -1554,6 +1554,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var isColumnsHidden = arrayCreationView.IsColumnsHidden;
             var isRowsHidden = arrayCreationView.IsRowsHidden;
+            if (isColumnsHidden ||
+                isRowsHidden)
+            {
+                arrayType = ArrayTypes.ObscurableArray;
+            }
 
             //Match GridSquareSize if any Division Templates or Arrays are already on the page.
             //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
