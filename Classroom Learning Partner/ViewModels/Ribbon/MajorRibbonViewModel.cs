@@ -46,10 +46,12 @@ namespace Classroom_Learning_Partner.ViewModels
         private IPageInteractionService _pageInteractionService;
         private IDataService _dataService;
 
-        public MajorRibbonViewModel()
+        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService)
         {
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
-            _dataService = DependencyResolver.Resolve<IDataService>();
+            _pageInteractionService = pageInteractionService;
+            _dataService = dataService;
+
+            
 
             InitializeCommands();
             InitializeButtons();
@@ -78,12 +80,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
         {
+            CurrentNotebook = _dataService.CurrentNotebook;
+
             // TODO: Change this to fire on CurrentPage change. See if commented out works to fire all CanExecutes.
-            var catelCommand = (AddPageObjectToPageCommand as ICatelCommand);
-            if (catelCommand != null)
-            {
-                catelCommand.RaiseCanExecuteChanged();
-            }
+            //var catelCommand = (AddPageObjectToPageCommand as ICatelCommand);
+            //if (catelCommand != null)
+            //{
+            //    catelCommand.RaiseCanExecuteChanged();
+            //}
 
             //var viewModelBase = this as ViewModelBase;
             //if (viewModelBase != null)
@@ -385,6 +389,30 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Insert PageObject Buttons
 
         #endregion //Buttons
+
+        #region Model
+
+        /// <summary>SUMMARY</summary>
+        [Model(SupportIEditableObject = false)]
+        public Notebook CurrentNotebook
+        {
+            get { return GetValue<Notebook>(CurrentNotebookProperty); }
+            set { SetValue(CurrentNotebookProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentNotebookProperty = RegisterProperty("CurrentNotebook", typeof(Notebook));
+
+        /// <summary>SUMMARY</summary>
+        [ViewModelToModel("CurrentNotebook")]
+        public CLPPage CurrentPage
+        {
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #endregion // Model
 
         #region Bindings
 
@@ -1059,7 +1087,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnAddPageObjectToPageCanExecute(string pageObjectType)
         {
-            return _dataService.CurrentPage != null;
+            return CurrentPage != null;
         }
 
         #endregion //Insert PageObject Commands
@@ -1105,7 +1133,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnTakePageScreenshotCanExecute()
         {
-            return _dataService.CurrentPage != null;
+            return CurrentPage != null;
         }
 
         #endregion // Extras

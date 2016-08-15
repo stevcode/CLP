@@ -243,7 +243,8 @@ namespace Classroom_Learning_Partner.Services
 
         #region Events
 
-        public event EventHandler<EventArgs> CurrentNotebookChanged; 
+        public event EventHandler<EventArgs> CurrentNotebookChanged;
+        public event EventHandler<EventArgs> CurrentPageChanged;
 
         #endregion // Events
 
