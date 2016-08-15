@@ -9,6 +9,11 @@ namespace Classroom_Learning_Partner
         {
             Argument.IsNotNull("potentialNumber", potentialNumber);
 
+            if (!(potentialNumber is IConvertible))
+            {
+                return null;
+            }
+
             double number;
 
             try
@@ -26,6 +31,11 @@ namespace Classroom_Learning_Partner
         public static int? ToInt(this object potentialNumber)
         {
             Argument.IsNotNull("potentialNumber", potentialNumber);
+
+            if (!(potentialNumber is IConvertible))
+            {
+                return null;
+            }
 
             int number;
 
