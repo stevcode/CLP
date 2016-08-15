@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            var currentProgramMode = ProgramModes.Student;
+            var currentProgramMode = ProgramModes.Teacher;
 
             Logger.Instance.InitializeLog(currentProgramMode);
 

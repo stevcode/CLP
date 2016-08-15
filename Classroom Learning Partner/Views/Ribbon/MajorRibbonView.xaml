@@ -150,6 +150,13 @@
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
+            <customControls:ToggleRibbonButton UnCheckedText="Show Submissionsy"
+                                               CheckedText="Hide Submissions"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
+                                               IsChecked="{Binding MainWindow.Workspace.NotebookPagesPanel.SubmissionHistoryPanel.IsVisible}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
+
         </StackPanel>
 
         <Line DockPanel.Dock="Left"
