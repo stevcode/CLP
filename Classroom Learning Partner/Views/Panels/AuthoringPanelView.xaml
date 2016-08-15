@@ -1,0 +1,95 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.AuthoringPanelView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:converter="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                   xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels">
+
+    <UserControl.Resources>
+        <converter:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+
+        <ObjectDataProvider x:Key="AnswerDefinitions"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="viewModel:AnswerDefinitions" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Height"
+                    Value="35" />
+            <Setter Property="Margin"
+                    Value="1 2" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
+            Width="{Binding Length}">
+
+        <StackPanel>
+
+            <Button Content="Add Page"
+                    Command="{Binding AddPageCommand}" />
+
+            <Button Content="Switch Page Orientation"
+                    Command="{Binding SwitchPageLayoutCommand}" />
+
+            <Button Content="Move Page Up"
+                    Command="{Binding MovePageUpCommand}" />
+
+            <Button Content="Move Page Down"
+                    Command="{Binding MovePageDownCommand}" />
+
+            <Button Content="Move Page To"
+                    Command="{Binding MovePageToCommand}" />
+
+            <Button Content="Make Page Longer"
+                    Command="{Binding MakePageLongerCommand}" />
+
+            <Button Content="Trim Page"
+                    Command="{Binding TrimPageCommand}" />
+
+            <Button Content="Clear Page"
+                    Command="{Binding ClearPageCommand}" />
+
+            <Button Content="Duplicate This Page"
+                    Command="{Binding DuplicatePageCommand}" />
+
+            <Button Content="Delete This Page"
+                    Command="{Binding DeletePageCommand}" />
+
+            <Button Content="Differentiate This Page"
+                    Command="{Binding DifferentiatePageCommand}" />
+
+            <Rectangle Height="1"
+                       Margin="1 5"
+                       Stroke="{StaticResource GrayBorderColor}" />
+
+            <Button Content="Add Answer Definition:"
+                    Command="{Binding AddAnswerDefinitionCommand}" />
+
+            <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
+                      SelectedItem="{Binding SelectedAnswerDefinition}"
+                      FontSize="12"
+                      Height="24"
+                      Margin="1"
+                      Padding="5 0"
+                      VerticalContentAlignment="Center">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="FontSize"
+                                Value="22" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center" />
+                    </Style>
+                </ComboBox.ItemContainerStyle>
+            </ComboBox>
+        </StackPanel>
+
+    </Border>
+
+</catel:UserControl>

@@ -47,8 +47,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Buttons
 
         private ToggleRibbonButton _toggleLabelsButton;
-        private ToggleRibbonButton _toggleObscureColumnsButton;
-        private ToggleRibbonButton _toggleObscureRowsButton;
         private ToggleRibbonButton _toggleGridLinesButton;
 
         private void InitializeButtons()
@@ -61,7 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
@@ -76,28 +74,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
                 _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
                 _contextButtons.Add(_toggleLabelsButton);
-            }
-
-            if (array.ArrayType == ArrayTypes.ObscurableArray)
-            {
-                _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                {
-                    IsChecked = !array.IsColumnsObscured
-                };
-
-                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
-                _contextButtons.Add(_toggleObscureColumnsButton);
-
-                _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                {
-                    IsChecked = !array.IsRowsObscured
-                };
-                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-                _contextButtons.Add(_toggleObscureRowsButton);
             }
 
             _toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
@@ -129,82 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             array.IsTopLabelVisible = (bool)toggleButton.IsChecked && !array.IsColumnsObscured;
             array.IsSideLabelVisible = (bool)toggleButton.IsChecked && !array.IsRowsObscured;
-        }
-
-        private void toggleObscureColumnsButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            var array = PageObject as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-
-            var oldRegions = array.VerticalDivisions.ToList();
-
-            if (array.IsColumnsObscured)
-            {
-                array.Unobscure(true);
-            }
-            else
-            {
-                array.Obscure(true);
-            }
-
-            var newRegions = array.VerticalDivisions.ToList();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               array.ID,
-                                                                                               oldRegions,
-                                                                                               newRegions));
-
-            IsTopLabelVisible = !array.IsColumnsObscured;
-            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-        }
-
-        private void toggleObscureRowsButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            var array = PageObject as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-
-            var oldRegions = array.HorizontalDivisions.ToList();
-
-            if (array.IsRowsObscured)
-            {
-                array.Unobscure(false);
-            }
-            else
-            {
-                array.Obscure(false);
-            }
-
-            var newRegions = array.HorizontalDivisions.ToList();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               array.ID,
-                                                                                               oldRegions,
-                                                                                               newRegions));
-
-            IsSideLabelVisible = !array.IsRowsObscured;
-            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
         }
 
         private void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
@@ -516,11 +416,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 //Fuzzy Factor Card array snapping in - HACK: for now this will override array snapping even if an array might be closer
 
-                #region Snap to FFC
+                #region Snap to Division Template
 
-                if (pageObject is FuzzyFactorCard)
+                if (pageObject is DivisionTemplate)
                 {
-                    var divisionTemplate = pageObject as FuzzyFactorCard;
+                    var divisionTemplate = pageObject as DivisionTemplate;
                     var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
                     if (isVerticalIntersection)
                     {
@@ -623,7 +523,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var factorCardViewModels = divisionTemplate.GetAllViewModels();
                                 foreach (var viewModel in factorCardViewModels)
                                 {
-                                    (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+                                    (viewModel as DivisionTemplateViewModel).RejectSnappedArray();
                                 }
                                 continue;
                             }
@@ -640,7 +540,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             divisionTemplate.SnapInArray(snappingArray.Columns);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                                       new FFCArraySnappedInHistoryItem(PageObject.ParentPage,
+                                                                       new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage,
                                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                                         pageObject.ID,
                                                                                                         snappingArray));
@@ -650,7 +550,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                #endregion //Snap to FFC
+                #endregion //Snap to Division Template
 
                 if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows &&
                     snappingArray.IsRowsObscured == persistingArray.IsRowsObscured)
@@ -965,23 +865,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var oldHeight = array.Height;
             array.RotateArray();
 
-            if (array.ArrayType == ArrayTypes.ObscurableArray)
-            {
-                _toggleObscureColumnsButton.Checked -= toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked -= toggleObscureColumnsButton_Checked;
-                _toggleObscureRowsButton.Checked -= toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked -= toggleObscureRowsButton_Checked;
-                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
-                _toggleObscureColumnsButton.IsChecked = !array.IsColumnsObscured;
-
-                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-                _toggleObscureRowsButton.IsChecked = !array.IsRowsObscured;
-                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-            }
-
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                        new CLPArrayRotateHistoryItem(array.ParentPage,
                                                                                      App.MainWindowViewModel.CurrentUser,
@@ -1001,7 +884,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(array.ParentPage);
-            foreach (var divisionTemplate in array.ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach (var divisionTemplate in array.ParentPage.PageObjects.OfType<DivisionTemplate>())
             {
                 // Only increase OrientationChanged attempt if Division Template already full.
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
@@ -1554,15 +1437,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var isColumnsHidden = arrayCreationView.IsColumnsHidden;
             var isRowsHidden = arrayCreationView.IsRowsHidden;
+            if (isColumnsHidden ||
+                isRowsHidden)
+            {
+                arrayType = ArrayTypes.ObscurableArray;
+            }
 
             //Match GridSquareSize if any Division Templates or Arrays are already on the page.
             //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
             //Ignores any Division Templates that are full, unless all DTs on the page are full.
             //If no DTs are on the page, match against other Arrays on the page.
-            var divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.CurrentRemainder < d.Rows).ToList();
+            var divisionTemplatesOnPage = page.PageObjects.OfType<DivisionTemplate>().Where(d => d.CurrentRemainder < d.Rows).ToList();
             if (!divisionTemplatesOnPage.Any())
             {
-                divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+                divisionTemplatesOnPage = page.PageObjects.OfType<DivisionTemplate>().ToList();
             }
             if (divisionTemplatesOnPage.Any())
             {

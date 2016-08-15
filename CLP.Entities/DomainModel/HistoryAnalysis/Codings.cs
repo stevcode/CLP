@@ -10,7 +10,7 @@ namespace CLP.Entities
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_ARRAY = "ARR";
-        public const string OBJECT_DIVISION_TEMPLATE = "DT";
+        public const string OBJECT_DIVISION_TOOL = "DT";
         public const string OBJECT_REMAINDER_TILES = "TILES";
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";

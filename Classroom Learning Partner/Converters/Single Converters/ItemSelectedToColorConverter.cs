@@ -14,6 +14,11 @@ namespace Classroom_Learning_Partner.Converters
             var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
             dict.Source = uri;
 
+            if (!(value is bool))
+            {
+                return dict["GrayBorderColor"];
+            }
+
             if ((bool)value) //IsSelected
             {
                 return dict["MainColor"];

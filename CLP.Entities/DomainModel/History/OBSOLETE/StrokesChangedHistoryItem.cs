@@ -109,7 +109,7 @@ namespace CLP.Entities
                     ParentPage.InkStrokes.Remove(stroke);
                     ParentPage.History.TrashedInkStrokes.Add(stroke);
                 }
-                catch(Exception ex) { }
+                catch(Exception) { }
             }
 
             foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
@@ -119,7 +119,7 @@ namespace CLP.Entities
                     ParentPage.History.TrashedInkStrokes.Remove(stroke);
                     ParentPage.InkStrokes.Add(stroke);
                 }
-                catch(Exception ex) { }
+                catch(Exception) { }
             }
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
@@ -147,7 +147,7 @@ namespace CLP.Entities
                     ParentPage.InkStrokes.Remove(stroke);
                     ParentPage.History.TrashedInkStrokes.Add(stroke);
                 }
-                catch(Exception ex) { }
+                catch(Exception) { }
             }
 
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
@@ -157,7 +157,7 @@ namespace CLP.Entities
                     ParentPage.History.TrashedInkStrokes.Remove(stroke);
                     ParentPage.InkStrokes.Add(stroke);
                 }
-                catch(Exception ex) { }
+                catch(Exception) { }
             }
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())

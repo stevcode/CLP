@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             InitializeCommands();
-            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemovePageObjectCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemovePageObjectCommand, null, true));
         }
 
         private void InitializeCommands()

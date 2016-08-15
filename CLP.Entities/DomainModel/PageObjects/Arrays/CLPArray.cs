@@ -285,7 +285,7 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
+                foreach (var divisionTemplate in ParentPage.PageObjects.OfType<DivisionTemplate>().ToList())
                 {
                     if (ParentPage.IsTagAddPrevented)
                     {

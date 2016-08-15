@@ -47,168 +47,26 @@
             <DockPanel LastChildFill="True"
                        Visibility="{Binding MainWindowViewModel.NotStudentVisibility, Source={x:Static Application.Current}}">
 
-                <UniformGrid DockPanel.Dock="Top"
-                         Columns="2">
-
-                    <ToggleButton Name="EditCommandsToggleButton"
-                          IsChecked="False"
-                          Height="20"
-                          Margin="1">
-                        <ToggleButton.Style>
-                            <Style TargetType="{x:Type ToggleButton}">
-                                <Setter Property="Content"
-                                Value="Show Edit Commands" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsChecked"
-                                     Value="True">
-                                        <Setter Property="Content"
-                                        Value="Hide Edit Commands" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToggleButton.Style>
-                    </ToggleButton>
-
-                    <ToggleButton Name="AnalysisCommandsToggleButton"
-                          IsChecked="False"
-                          Height="20"
-                          Margin="1">
-                        <ToggleButton.Style>
-                            <Style TargetType="{x:Type ToggleButton}">
-                                <Setter Property="Content"
+                <ToggleButton Name="AnalysisCommandsToggleButton"
+                              DockPanel.Dock="Top"
+                              IsChecked="False"
+                              Visibility="Collapsed"
+                              Height="20"
+                              Margin="1">
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Content"
                                 Value="Show Analysis Commands" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsChecked"
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
                                      Value="True">
-                                        <Setter Property="Content"
+                                    <Setter Property="Content"
                                         Value="Hide Analysis Commands" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToggleButton.Style>
-                    </ToggleButton>
-                </UniformGrid>
-
-                <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=EditCommandsToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Button Content="Add Page:"
-                        Command="{Binding AddPageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <ComboBox ItemsSource="{Binding PageOrientations}"
-                          SelectedItem="{Binding SelectedPageOrientation}"
-                          FontSize="12"
-                          Height="18"
-                          Margin="1"
-                          Padding="5 0"
-                          VerticalAlignment="Center">
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ComboBoxItem}">
-                                <Setter Property="FontSize" Value="18"/>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
-                    </ComboBox>
-
-                    <Button Content="Move Page Up"
-                        Command="{Binding MovePageUpCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Make Page Longer"
-                        Command="{Binding MakePageLongerCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Move Page Down"
-                        Command="{Binding MovePageDownCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Trim Page"
-                        Command="{Binding TrimPageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Switch Page Orientation"
-                        Command="{Binding SwitchPageLayoutCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Clear Page"
-                        Command="{Binding ClearPageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Duplicate This Page"
-                        Command="{Binding CopyPageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Differentiate This Page"
-                        Command="{Binding DifferentiatePageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Delete This Page"
-                        Command="{Binding DeletePageCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <Button Content="Take Screenshot of Page"
-                        Command="{Binding PageScreenshotCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
-
-                    <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
-
-                    <Button Content="Add Answer Definition:"
-                        Command="{Binding AddAnswerDefinitionCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                    <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
-                          SelectedItem="{Binding SelectedAnswerDefinition}"
-                          FontSize="12"
-                          Height="18"
-                          Margin="1"
-                          Padding="5 0"
-                          VerticalAlignment="Center">
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ComboBoxItem}">
-                                <Setter Property="FontSize" Value="18"/>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
-                    </ComboBox>
-
-                    <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
-
-                </catel:StackGrid>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
 
                 <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"

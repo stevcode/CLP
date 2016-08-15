@@ -705,18 +705,18 @@ namespace ConsoleScripts
 
         public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
         {
-            foreach (var divisionTemplate in page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTemplate in page.PageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
             {
                 divisionTemplate.IsRemainderTilesVisible = true;
             }
 
-            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
             {
                 divisionTemplate.IsRemainderTilesVisible = true;
             }
         }
 
-        public static void FixOldDivisionTemplateSizing(FuzzyFactorCard divisionTemplate)
+        public static void FixOldDivisionTemplateSizing(DivisionTemplate divisionTemplate)
         {
             if (!_isConvertingEmilyCache)
             {
@@ -759,8 +759,8 @@ namespace ConsoleScripts
                     historyItemToUndo is CLPArrayRotateHistoryItem ||
                     historyItemToUndo is CLPArrayGridToggleHistoryItem ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
-                    historyItemToUndo is FFCArrayRemovedHistoryItem ||
-                    historyItemToUndo is FFCArraySnappedInHistoryItem ||
+                    historyItemToUndo is DivisionTemplateArrayRemovedHistoryItem ||
+                    historyItemToUndo is DivisionTemplateArraySnappedInHistoryItem ||
                     historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem ||
                     historyItemToUndo is PartsValueChangedHistoryItem ||
                     historyItemToUndo is CLPArraySnapHistoryItem)
@@ -794,7 +794,7 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectResizeBatchHistoryItem)
                 {
                     var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryItem;
-                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as FuzzyFactorCard;
+                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTemplate;
                     if (divisionTemplate != null)
                     {
                         FixOldDivisionTemplateSizing(divisionTemplate);
@@ -828,7 +828,7 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsAdded)
                     {
-                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as FuzzyFactorCard;
+                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as DivisionTemplate;
                         if (divisionTemplate != null)
                         {
                             FixOldDivisionTemplateSizing(divisionTemplate);
@@ -857,7 +857,7 @@ namespace ConsoleScripts
 
                     foreach (var id in objectsChanged.PageObjectIDsRemoved)
                     {
-                        var divisionTemplate = page.GetVerifiedPageObjectInTrashByID(id) as FuzzyFactorCard;
+                        var divisionTemplate = page.GetVerifiedPageObjectInTrashByID(id) as DivisionTemplate;
                         if (divisionTemplate != null)
                         {
                             FixOldDivisionTemplateSizing(divisionTemplate);

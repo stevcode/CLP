@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
             EditCommand = new Command(OnEditCommandExecute);
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-            _contextButtons.Add(new RibbonButton("Edit", "pack://application:,,,/Images/AddToDisplay.png", EditCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Edit", "pack://application:,,,/Resources/Images/AddToDisplay.png", EditCommand, null, true));
         }
 
         #endregion //Constructor

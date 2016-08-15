@@ -20,7 +20,7 @@ namespace CLP.Entities
             var objectTypes = new List<string>();
             foreach (var pageObject in page.PageObjects.Where(pageObject => pageObject.OwnerID == page.OwnerID))
             {
-                if (pageObject is FuzzyFactorCard)
+                if (pageObject is DivisionTemplate)
                 {
                     objectTypes.Add("Division Templates");
                     continue;
@@ -99,7 +99,7 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    if (pageObject is FuzzyFactorCard)
+                    if (pageObject is DivisionTemplate)
                     {
                         continue;
                     }
@@ -156,10 +156,10 @@ namespace CLP.Entities
                     page.PageObjects.Where(pageObject => pageObject.OwnerID == page.OwnerID)
                         .Concat(page.History.TrashedPageObjects.Where(pageObject => pageObject.OwnerID == page.OwnerID)))
             {
-                if (pageObject is FuzzyFactorCard)
+                if (pageObject is DivisionTemplate)
                 {
                     objectTypes.Add("Division Templates");
-                    var divisionTemplate = pageObject as FuzzyFactorCard;
+                    var divisionTemplate = pageObject as DivisionTemplate;
                     if (divisionTemplate.RemainderTiles != null)
                     {
                         objectTypes.Add("Remainder Tiles");

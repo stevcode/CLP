@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
-            ReplayHistoryCommand = new Command(OnReplayHistoryCommandExecute);
         }
 
         public override string Title
@@ -74,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, "SingleDisplay");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //
             }
@@ -178,21 +177,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.Network.ProjectorProxy.ScrollPage(percentOffset);
             }
             catch (Exception) { }
-        }
-
-        /// <summary>Replays the interaction history of the page on the Grid Display.</summary>
-        public Command ReplayHistoryCommand { get; private set; }
-
-        private void OnReplayHistoryCommandExecute()
-        {
-            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
-            if (CurrentPage == null ||
-                animationControlRibbon == null)
-            {
-                return;
-            }
-
-            animationControlRibbon.IsNonAnimationPlaybackEnabled = !animationControlRibbon.IsNonAnimationPlaybackEnabled;
         }
 
         #endregion //Commands

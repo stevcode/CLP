@@ -120,16 +120,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Mark
             var markGroupName = "MarkShapes" + catelHack;
-            _circleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddCircle.png", MarkShapes.Circle.ToString(), true);
+            _circleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Resources/Images/AddCircle.png", MarkShapes.Circle.ToString(), true);
             _circleMarkButton.Checked += _markButton_Checked;
 
-            _squareMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddSquare.png", MarkShapes.Square.ToString(), true);
+            _squareMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Resources/Images/AddSquare.png", MarkShapes.Square.ToString(), true);
             _squareMarkButton.Checked += _markButton_Checked;
 
-            _triangleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddTriangle.png", MarkShapes.Triangle.ToString(), true);
+            _triangleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Resources/Images/AddTriangle.png", MarkShapes.Triangle.ToString(), true);
             _triangleMarkButton.Checked += _markButton_Checked;
 
-            _tickMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/VerticalLineIcon.png", MarkShapes.Tick.ToString(), true);
+            _tickMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Resources/Images/VerticalLineIcon.png", MarkShapes.Tick.ToString(), true);
             _tickMarkButton.Checked += _markButton_Checked;
         }
 

@@ -690,8 +690,6 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                ApplyDistinctPosition(this);
-
                 // HACK: Removed for demo
                 //var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
                 //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);

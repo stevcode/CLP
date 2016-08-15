@@ -1183,8 +1183,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
-            return;
-
             //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
             //    App.Network.ProjectorProxy == null ||
             //    App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
@@ -1192,6 +1190,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    return;
             //}
 
+            /*
             QueueTask(() =>
                       {
                           var historyItemCopy = historyItem.CreatePackagedHistoryItem();
@@ -1230,7 +1229,7 @@ namespace Classroom_Learning_Partner.ViewModels
                           //    {
                           //    }
                           //}
-                      });
+                      });*/
         }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)

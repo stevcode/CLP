@@ -15,9 +15,6 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Converters -->
-            <converters:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
-
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer"
                    TargetType="{x:Type ListBoxItem}">
@@ -136,7 +133,7 @@
                                         <views:GridDisplayPreviewView x:Name="DisplayPreviewView"
                                                                       DataContext="{Binding}">
                                             <views:GridDisplayPreviewView.Height>
-                                                <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
+                                                <MultiBinding Converter="{converters:WidthToHeightAspectRatioMultiConverter}">
                                                     <Binding ElementName="DisplayPreviewView"
                                                              Path="ActualWidth" />
                                                     <Binding>
@@ -154,7 +151,7 @@
                                         <views:ColumnDisplayPreviewView x:Name="DisplayPreviewView"
                                                                       DataContext="{Binding}">
                                             <views:ColumnDisplayPreviewView.Height>
-                                                <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
+                                                <MultiBinding Converter="{converters:WidthToHeightAspectRatioMultiConverter}">
                                                     <Binding ElementName="DisplayPreviewView"
                                                              Path="ActualWidth" />
                                                     <Binding>

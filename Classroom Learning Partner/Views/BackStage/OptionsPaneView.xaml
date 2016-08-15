@@ -23,22 +23,6 @@
 
         <StackPanel>
 
-            <Button Content="Toggle Replay"
-                    Command="{Binding ReplayHistoryCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" />
-
-            <Button Content="Toggle Boundary Style"
-                    Command="{Binding ToggleBindingStyleCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" />
-
             <Button Content="Change Main Color"
                     Command="{Binding GenerateRandomMainColorCommand}"
                     Height="50"
@@ -47,39 +31,8 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
-            <Button Content="Generate Submissions"
-                    Command="{Binding GenerateSubmissionsCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" />
-
-            <Button Content="Batch Tag Analysis"
-                    Command="{Binding BatchTagAnalysisCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" /> 
-
-            <Button Content="Batch Representations Used"
-                    Command="{Binding BatchRepresentationsUsedTagCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" />
-
-            <Button Content="Batch Static Skip Counting Stats"
-                    Command="{Binding BatchSkipCountStatsCommand}"
-                    Height="50"
-                    Width="300"
-                    Margin="10"
-                    FontSize="22"
-                    FontWeight="Bold" />
-
         </StackPanel>
+
     </DockPanel>
 
 </catel:UserControl>

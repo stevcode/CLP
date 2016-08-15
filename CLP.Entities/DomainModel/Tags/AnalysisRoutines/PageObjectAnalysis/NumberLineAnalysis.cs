@@ -58,8 +58,8 @@ namespace CLP.Entities
 
         public static void AnalyzeRepresentationCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, NumberLine numberLine)
         {
-            var numberLineIDsInHistory = GetListOfNumberLineIDsInHistory(page);
-            var incomplete = false;
+            //var numberLineIDsInHistory = GetListOfNumberLineIDsInHistory(page);
+            //var incomplete = false;
 
 
             //Completeness

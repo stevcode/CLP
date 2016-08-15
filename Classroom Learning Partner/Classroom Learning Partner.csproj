@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -119,7 +119,7 @@
     <ManifestKeyFile>Classroom Learning Partner_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -128,7 +128,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -213,34 +213,33 @@
     </ApplicationDefinition>
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
-    <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\PointXConverter.cs" />
     <Compile Include="Converters\Single Converters\SizeHalfHeightConverter.cs" />
     <Compile Include="Converters\Single Converters\TypeOfConverter.cs" />
-    <Compile Include="Converters\StringsEqualMultiConverter.cs" />
-    <Compile Include="Converters\PassMultipleValuesConverter.cs" />
+    <Compile Include="Converters\Multi Converters\StringsEqualMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\PassMultipleValuesMultiConverter.cs" />
     <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
-    <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\TypeMatchToBooleanConverter.cs" />
-    <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\DivisionPositionToColorMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\EnumToBoolConverter.cs" />
-    <Compile Include="Converters\Single Converters\DivisionTemplateMarginConverter.cs" />
-    <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\Single Converters\DivisionToolMarginConverter.cs" />
+    <Compile Include="Converters\Multi Converters\HeightToWidthAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
     <Compile Include="Converters\Single Converters\ItemSelectedToColorConverter.cs" />
-    <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\MultiplyAllIntToTextMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\PanelLocationToThicknessConverter.cs" />
     <Compile Include="Converters\Single Converters\PageToStarredVisibilityConverter.cs" />
     <Compile Include="Converters\Single Converters\PageToSubmissionVisibilityConverter.cs" />
-    <Compile Include="Converters\RatioToRectMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\RatioToRectMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\StringToEmptyStringConverter.cs" />
-    <Compile Include="Converters\Single Converters\TypeToStringConverter.cs" />
-    <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\Multi Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToQuestionMarkConverter.cs" />
     <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
@@ -254,9 +253,11 @@
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
+    <Compile Include="Services\TestService.cs" />
     <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Utilities\Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Utilities\Extensions\IModelExtensions.cs" />
+    <Compile Include="Utilities\Extensions\ObjectExtentions.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\Extensions\IViewModelExtensions.cs" />
     <Compile Include="Utilities\Extensions\UIElementExtensions.cs" />
@@ -267,8 +268,9 @@
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\MultipleChoiceCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\MultipleChoiceCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
@@ -277,26 +279,26 @@
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryGridViewModel.cs" />
+    <Compile Include="ViewModels\Panels\AuthoringPanelViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\StudentSelectorViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\ClassSubjectCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\StudentSelectorViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\GroupCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\To MVVMize\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Arrays\FuzzyFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\DivisionTemplateViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
@@ -338,62 +340,47 @@
     <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
       <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
+    <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>AdditionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml.cs">
       <DependentUpon>ButtonBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml.cs">
-      <DependentUpon>DivisionTemplateTroubleWithRemaindersTagView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\MultipleChoiceCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml.cs">
       <DependentUpon>MultipleChoiceCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\StudentSelectorView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml.cs">
       <DependentUpon>StudentSelectorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\GroupCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\GroupCreationView.xaml.cs">
       <DependentUpon>GroupCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ClassPeriodChooserView.xaml.cs">
+    <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
-      <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\PersonCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\PersonCreationView.xaml.cs">
       <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\TextInputView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\TextInputView.xaml.cs">
       <DependentUpon>TextInputView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\NumberLineCreationView.xaml.cs">
       <DependentUpon>NumberLineCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml.cs">
+    <Compile Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml.cs">
       <DependentUpon>OPTICSReachabilityPlotView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
-      <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\PageMetadataWindowView.xaml.cs">
-      <DependentUpon>PageMetadataWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
-      <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
       <DependentUpon>BinReporterView.xaml</DependentUpon>
@@ -419,14 +406,14 @@
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
-      <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
+    <Compile Include="Views\To MVVMize\DivisionTemplateCreationView.xaml.cs">
+      <DependentUpon>DivisionTemplateCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml.cs">
-      <DependentUpon>FuzzyFactorCardView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\Arrays\DivisionTemplateView.xaml.cs">
+      <DependentUpon>DivisionTemplateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -468,37 +455,22 @@
     <Compile Include="Views\Displays\SingleDisplayView.xaml.cs">
       <DependentUpon>SingleDisplayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
+    <Compile Include="Views\To MVVMize\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\FactorCardCreationView.xaml.cs">
-      <DependentUpon>FactorCardCreationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
-      <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
       <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
-      <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml.cs">
-      <DependentUpon>UpdatePropertiesWindowView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml.cs">
+    <Compile Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml.cs">
       <DependentUpon>AggregationGridRowSelecterWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeShadingRegionView.xaml.cs">
-      <DependentUpon>CustomizeShadingRegionView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeDataTableView.xaml.cs">
+    <Compile Include="Views\To MVVMize\CustomizeDataTableView.xaml.cs">
       <DependentUpon>CustomizeDataTableView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\CustomizeInkRegionView.xaml.cs">
+    <Compile Include="Views\To MVVMize\CustomizeInkRegionView.xaml.cs">
       <DependentUpon>CustomizeInkRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
+    <Compile Include="Views\To MVVMize\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml.cs">
@@ -561,6 +533,9 @@
     <Compile Include="Views\Pages\NonAsyncPagePreviewView.xaml.cs">
       <DependentUpon>NonAsyncPagePreviewView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Panels\AuthoringPanelView.xaml.cs">
+      <DependentUpon>AuthoringPanelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\DisplaysPanelView.xaml.cs">
       <DependentUpon>DisplaysPanelView.xaml</DependentUpon>
     </Compile>
@@ -603,6 +578,10 @@
     <Compile Include="Views\Workspaces\UserLoginWorkspaceView.xaml.cs">
       <DependentUpon>UserLoginWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\BackStageResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\CLPBrushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -643,59 +622,51 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
+    <Page Include="Views\To MVVMize\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\MultipleChoiceCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\StudentSelectorView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\GroupCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\GroupCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\ClassPeriodChooserView.xaml">
+    <Page Include="Views\To MVVMize\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml">
+    <Page Include="Views\To MVVMize\MVVM\PersonCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\PersonCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\MVVM\TextInputView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\TextInputView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -703,19 +674,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\OPTICSReachabilityPlotView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Modal Windows\PageMetadataWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+    <Page Include="Views\To MVVMize\OPTICSReachabilityPlotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -751,7 +710,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml">
+    <Page Include="Views\To MVVMize\DivisionTemplateCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -759,7 +718,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml">
+    <Page Include="Views\PageObjects\Arrays\DivisionTemplateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -795,47 +754,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+    <Page Include="Views\To MVVMize\ArrayCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\FactorCardCreationView.xaml">
+    <Page Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml">
+    <Page Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\PageTopicWindowView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\UpdatePropertiesWindowView.xaml">
+    <Page Include="Views\To MVVMize\CustomizeDataTableView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\AggregationGridRowSelecterWindow.xaml">
+    <Page Include="Views\To MVVMize\CustomizeInkRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\CustomizeShadingRegionView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Modal Windows\CustomizeDataTableView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Modal Windows\CustomizeInkRegionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
+    <Page Include="Views\To MVVMize\KeypadWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -919,6 +858,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\AuthoringPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Panels\DisplaysPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -998,7 +941,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Classroom Learning Partner_TemporaryKey.pfx" />
     <None Include="External Libraries\ServiceModelEx.dll.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -1010,45 +952,45 @@
     <Resource Include="Resources\Fonts\SketchFlow Print.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\AddImage.png" />
-    <Resource Include="Images\AddPage.png" />
-    <Resource Include="Images\AddPathStamp.png" />
-    <Resource Include="Images\AddText.png" />
-    <Resource Include="Images\AddToDisplay.png" />
-    <Resource Include="Images\camera.png" />
-    <Resource Include="Images\Collapse.png" />
-    <Resource Include="Images\Correct.png" />
-    <Resource Include="Images\Delete.png" />
-    <Resource Include="Images\EditNotebook.png" />
-    <Resource Include="Images\Exit.png" />
-    <Resource Include="Images\Expand.png" />
-    <Resource Include="Images\GridDisplay.png" />
-    <Resource Include="Images\Happy.png" />
-    <Resource Include="Images\Incorrect.png" />
-    <Resource Include="Images\Inky.png" />
-    <Resource Include="Images\LargeIcon.png" />
-    <Resource Include="Images\Lasso.bmp" />
-    <Resource Include="Images\Marker.png" />
-    <Resource Include="Images\MultipleSidebarView.png" />
-    <Resource Include="Images\NewSubmission.png" />
-    <Resource Include="Images\NextPage.png" />
-    <Resource Include="Images\Notebook.png" />
-    <Resource Include="Images\NotebookImage.png" />
-    <Resource Include="Images\NotSelected.png" />
-    <Resource Include="Images\OpenNotebook.png" />
-    <Resource Include="Images\Pen.png" />
-    <Resource Include="Images\play.png" />
-    <Resource Include="Images\PreviousPage.png" />
-    <Resource Include="Images\Projector.png" />
-    <Resource Include="Images\Recycle.png" />
-    <Resource Include="Images\SaveNotebook.png" />
-    <Resource Include="Images\Selected.png" />
-    <Resource Include="Images\Send.png" />
-    <Resource Include="Images\SingleDisplay.png" />
-    <Resource Include="Images\SingleSidebarView.png" />
-    <Resource Include="Images\SmallIcon.png" />
-    <Resource Include="Images\Students.png" />
-    <Resource Include="Images\Trash.png" />
+    <Resource Include="Resources\Images\AddImage.png" />
+    <Resource Include="Resources\Images\Unused\AddPage.png" />
+    <Resource Include="Resources\Images\Unused\AddPathStamp.png" />
+    <Resource Include="Resources\Images\Unused\AddText.png" />
+    <Resource Include="Resources\Images\AddToDisplay.png" />
+    <Resource Include="Resources\Images\camera.png" />
+    <Resource Include="Resources\Images\Unused\Collapse.png" />
+    <Resource Include="Resources\Images\Unused\Correct.png" />
+    <Resource Include="Resources\Images\Delete.png" />
+    <Resource Include="Resources\Images\EditNotebook.png" />
+    <Resource Include="Resources\Images\Unused\Exit.png" />
+    <Resource Include="Resources\Images\Unused\Expand.png" />
+    <Resource Include="Resources\Images\Unused\GridDisplay.png" />
+    <Resource Include="Resources\Images\Unused\Happy.png" />
+    <Resource Include="Resources\Images\Unused\Incorrect.png" />
+    <Resource Include="Resources\Images\Unused\Inky.png" />
+    <Resource Include="Resources\Images\LargeIcon.png" />
+    <Resource Include="Resources\Images\Unused\Lasso.bmp" />
+    <Resource Include="Resources\Images\Unused\Marker.png" />
+    <Resource Include="Resources\Images\Unused\MultipleSidebarView.png" />
+    <Resource Include="Resources\Images\Unused\NewSubmission.png" />
+    <Resource Include="Resources\Images\Unused\NextPage.png" />
+    <Resource Include="Resources\Images\Unused\Notebook.png" />
+    <Resource Include="Resources\Images\Unused\NotebookImage.png" />
+    <Resource Include="Resources\Images\Unused\NotSelected.png" />
+    <Resource Include="Resources\Images\Unused\OpenNotebook.png" />
+    <Resource Include="Resources\Images\Unused\Pen.png" />
+    <Resource Include="Resources\Images\play.png" />
+    <Resource Include="Resources\Images\Unused\PreviousPage.png" />
+    <Resource Include="Resources\Images\Unused\Projector.png" />
+    <Resource Include="Resources\Images\Unused\Recycle.png" />
+    <Resource Include="Resources\Images\Unused\SaveNotebook.png" />
+    <Resource Include="Resources\Images\Unused\Selected.png" />
+    <Resource Include="Resources\Images\Unused\Send.png" />
+    <Resource Include="Resources\Images\Unused\SingleDisplay.png" />
+    <Resource Include="Resources\Images\Unused\SingleSidebarView.png" />
+    <Resource Include="Resources\Images\SmallIcon.png" />
+    <Resource Include="Resources\Images\Unused\Students.png" />
+    <Resource Include="Resources\Images\Unused\Trash.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLP.CustomControls\CLP.CustomControls.csproj">
@@ -1073,12 +1015,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Undo.png" />
+    <Resource Include="Resources\Images\Unused\Undo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Redo.png" />
+    <Resource Include="Resources\Images\Unused\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\DivisionGroup64.png" />
+    <Resource Include="Resources\Images\Stamp512.png" />
+    <Resource Include="Resources\Images\Stamp64.png" />
+    <Resource Include="Resources\Images\AddOneToDisplay.png" />
+    <Resource Include="Resources\Images\Bin128.png" />
+    <Resource Include="Resources\Images\Bin32.png" />
+    <Resource Include="Resources\Images\Bin64.png" />
+    <Resource Include="Resources\Images\DivisionTool32.png" />
     <Resource Include="Resources\Images\ToggleDashedStroke64.png" />
     <Resource Include="Resources\Images\Shapes64.png" />
     <Resource Include="Resources\Images\CLPPaperClipMenuIconWhiteBorderless64.png" />
@@ -1112,7 +1062,7 @@
     <Resource Include="Resources\Images\Steps512.png" />
     <Resource Include="Resources\Images\Tags128.png" />
     <Resource Include="Resources\Images\Hourglass256.png" />
-    <Resource Include="Images\AddTriangle.png" />
+    <Resource Include="Resources\Images\AddTriangle.png" />
     <Resource Include="Resources\Temp\Lock.png" />
     <Resource Include="Resources\Temp\Unlock.png" />
     <Resource Include="Resources\Images\Marker128.png" />
@@ -1218,7 +1168,7 @@
     <Resource Include="Resources\Images\FuzzyFactorCard32.png" />
     <Resource Include="Resources\Images\dividendonedge32.png" />
     <Resource Include="Resources\Images\dividendonedge16.png" />
-    <Resource Include="Images\video.png" />
+    <Resource Include="Resources\Images\Unused\video.png" />
     <Resource Include="Resources\Images\AnimationIndicator16.png" />
     <Resource Include="Resources\Images\AnimationIndicator32.png" />
     <Resource Include="Resources\Images\AnimationIndicator64.png" />
@@ -1235,9 +1185,6 @@
     <Resource Include="Resources\Images\CollectionStamp16.png" />
     <Resource Include="Resources\Images\CollectionStamp32.png" />
     <Resource Include="Resources\Images\CollectionStamp64.png" />
-    <Resource Include="Resources\Images\Stamp16.png" />
-    <Resource Include="Resources\Images\Stamp32.png" />
-    <Resource Include="Resources\Images\Stamp64.png" />
     <Resource Include="Resources\Images\ArrayCard16.png" />
     <Resource Include="Resources\Images\ArrayCard32.png" />
     <Resource Include="Resources\Images\ArrayCard64.png" />
@@ -1301,80 +1248,80 @@
     <Resource Include="Resources\Images\Lasso64.png" />
     <Resource Include="Resources\Cursors\LassoCursor.cur" />
     <Resource Include="Resources\Cursors\ScissorsCursor.cur" />
-    <Resource Include="Images\Scissors.png" />
+    <Resource Include="Resources\Images\Unused\Scissors.png" />
     <Resource Include="Resources\Cursors\PenCursor.cur" />
-    <Resource Include="Images\HandIcon.png" />
-    <Resource Include="Images\Money\50dollars.png" />
-    <Resource Include="Images\Money\10dollars.png" />
-    <Resource Include="Images\Money\1dollar.png" />
-    <Resource Include="Images\Money\20dollars.png" />
-    <Resource Include="Images\Money\5dollars.png" />
-    <Resource Include="Images\Money\dime.png" />
-    <Resource Include="Images\Money\nickel.png" />
-    <Resource Include="Images\Money\penny.png" />
-    <Resource Include="Images\Money\quarter.png" />
-    <Resource Include="Images\VerticalLineIcon.png" />
-    <Resource Include="Images\Protractor64.png" />
-    <Resource Include="Images\ProtractorWhite.png" />
-    <Resource Include="Images\Protractor.png" />
-    <Resource Include="Images\InkArray.png" />
-    <Resource Include="Images\NumberPad.png" />
-    <Resource Include="Images\Array.png" />
-    <Resource Include="Images\Unstarred.png" />
-    <Resource Include="Images\Starred.png" />
-    <Resource Include="Images\Unknown.png" />
-    <Resource Include="Images\DisplayGroupSubmissionsButton.png" />
-    <Resource Include="Images\GroupSubmit-icon32.png" />
-    <Resource Include="Images\MakePageLonger.png" />
-    <Resource Include="Images\PenSize-icon32.png" />
-    <Resource Include="Images\PenSize.png" />
-    <Resource Include="Images\CLPIcon.ico" />
-    <Resource Include="Images\CLPIcon256.png" />
-    <Resource Include="Images\AddCircle.png" />
-    <Resource Include="Images\AddSquare.png" />
-    <Resource Include="Images\ReconnectToNetwork.png" />
-    <Resource Include="Images\ConvertToXPS.png" />
-    <Resource Include="Images\SaveNotebookHistories.png" />
-    <Resource Include="Images\SaveAllNotebooks.png" />
-    <Resource Include="Images\DoneEditingNotebook.png" />
-    <Resource Include="Images\NewNotebook.png" />
-    <Resource Include="Images\PictureStamp.png" />
-    <Resource Include="Images\StrokeEraser.png" />
-    <Resource Include="Images\Eraser.png" />
-    <Resource Include="Images\InkToStudentsOff.png" />
-    <Resource Include="Images\InkToStudentsOn.png" />
-    <Resource Include="Images\StudentsInk.png" />
-    <Resource Include="Images\HorizontalLineIcon.png" />
-    <Resource Include="Images\recordflash2.png" />
-    <Resource Include="Images\recordflash1.png" />
-    <Resource Include="Images\recording.png" />
-    <Resource Include="Images\pause_blue.png" />
-    <Resource Include="Images\play_green.png" />
-    <Resource Include="Images\record.png" />
-    <Resource Include="Images\stop.png" />
-    <Resource Include="Images\stop_record.png" />
-    <Resource Include="Images\SnapTileIcon.png" />
+    <Resource Include="Resources\Images\Unused\HandIcon.png" />
+    <Resource Include="Resources\Images\Money\50dollars.png" />
+    <Resource Include="Resources\Images\Money\10dollars.png" />
+    <Resource Include="Resources\Images\Money\1dollar.png" />
+    <Resource Include="Resources\Images\Money\20dollars.png" />
+    <Resource Include="Resources\Images\Money\5dollars.png" />
+    <Resource Include="Resources\Images\Money\dime.png" />
+    <Resource Include="Resources\Images\Money\nickel.png" />
+    <Resource Include="Resources\Images\Money\penny.png" />
+    <Resource Include="Resources\Images\Money\quarter.png" />
+    <Resource Include="Resources\Images\VerticalLineIcon.png" />
+    <Resource Include="Resources\Images\Protractor64.png" />
+    <Resource Include="Resources\Images\Unused\ProtractorWhite.png" />
+    <Resource Include="Resources\Images\Protractor.png" />
+    <Resource Include="Resources\Images\Unused\InkArray.png" />
+    <Resource Include="Resources\Images\Unused\NumberPad.png" />
+    <Resource Include="Resources\Images\Unused\Array.png" />
+    <Resource Include="Resources\Images\Unused\Unstarred.png" />
+    <Resource Include="Resources\Images\Unused\Starred.png" />
+    <Resource Include="Resources\Images\Unused\Unknown.png" />
+    <Resource Include="Resources\Images\Unused\DisplayGroupSubmissionsButton.png" />
+    <Resource Include="Resources\Images\Unused\GroupSubmit-icon32.png" />
+    <Resource Include="Resources\Images\Unused\MakePageLonger.png" />
+    <Resource Include="Resources\Images\Unused\PenSize-icon32.png" />
+    <Resource Include="Resources\Images\Unused\PenSize.png" />
+    <Resource Include="Resources\Images\Unused\CLPIcon.ico" />
+    <Resource Include="Resources\Images\Unused\CLPIcon256.png" />
+    <Resource Include="Resources\Images\AddCircle.png" />
+    <Resource Include="Resources\Images\AddSquare.png" />
+    <Resource Include="Resources\Images\Unused\ReconnectToNetwork.png" />
+    <Resource Include="Resources\Images\Unused\ConvertToXPS.png" />
+    <Resource Include="Resources\Images\Unused\SaveNotebookHistories.png" />
+    <Resource Include="Resources\Images\Unused\SaveAllNotebooks.png" />
+    <Resource Include="Resources\Images\Unused\DoneEditingNotebook.png" />
+    <Resource Include="Resources\Images\Unused\NewNotebook.png" />
+    <Resource Include="Resources\Images\PictureStamp.png" />
+    <Resource Include="Resources\Images\Unused\StrokeEraser.png" />
+    <Resource Include="Resources\Images\Unused\Eraser.png" />
+    <Resource Include="Resources\Images\Unused\InkToStudentsOff.png" />
+    <Resource Include="Resources\Images\Unused\InkToStudentsOn.png" />
+    <Resource Include="Resources\Images\Unused\StudentsInk.png" />
+    <Resource Include="Resources\Images\HorizontalLineIcon.png" />
+    <Resource Include="Resources\Images\Unused\recordflash2.png" />
+    <Resource Include="Resources\Images\Unused\recordflash1.png" />
+    <Resource Include="Resources\Images\Unused\recording.png" />
+    <Resource Include="Resources\Images\Unused\pause_blue.png" />
+    <Resource Include="Resources\Images\Unused\play_green.png" />
+    <Resource Include="Resources\Images\Unused\record.png" />
+    <Resource Include="Resources\Images\Unused\stop.png" />
+    <Resource Include="Resources\Images\Unused\stop_record.png" />
+    <Resource Include="Resources\Images\Unused\SnapTileIcon.png" />
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
     <Content Include="External Libraries\IAWinFX.dll" />
     <Content Include="External Libraries\Microsoft.Ink.dll" />
     <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
-    <Resource Include="Images\Inkwell.ico" />
-    <Resource Include="Images\mic_stop.png" />
-    <Resource Include="Images\mic_start.png" />
-    <Resource Include="Images\Inkwell.png" />
+    <Resource Include="Resources\Images\Unused\Inkwell.ico" />
+    <Resource Include="Resources\Images\Unused\mic_stop.png" />
+    <Resource Include="Resources\Images\Unused\mic_start.png" />
+    <Resource Include="Resources\Images\Unused\Inkwell.png" />
     <Resource Include="Resources\Images\File.png" />
-    <Resource Include="Images\play2.png" />
-    <Resource Include="Images\pause.png" />
-    <Resource Include="Images\DisplaySubmissionsButton.png" />
-    <Resource Include="Images\Bold16.png" />
-    <Resource Include="Images\Italic16.png" />
-    <Resource Include="Images\Underline16.png" />
+    <Resource Include="Resources\Images\Unused\play2.png" />
+    <Resource Include="Resources\Images\Unused\pause.png" />
+    <Resource Include="Resources\Images\Unused\DisplaySubmissionsButton.png" />
+    <Resource Include="Resources\Images\Bold16.png" />
+    <Resource Include="Resources\Images\Italic16.png" />
+    <Resource Include="Resources\Images\Underline16.png" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

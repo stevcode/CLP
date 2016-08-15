@@ -23,7 +23,7 @@ namespace CLP.Entities
             }
 
             var divisionDefinitionTags = page.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
-            var divisionTemplates = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+            var divisionTemplates = page.PageObjects.OfType<DivisionTemplate>().ToList();
             if (!divisionDefinitionTags.Any() ||
                 !divisionTemplates.Any())  //BUG: Should probably mark as incorrect if no DTs on page.
             {
@@ -46,13 +46,13 @@ namespace CLP.Entities
 
         private class DivisionTemplateAndRemainder
         {
-            public DivisionTemplateAndRemainder(FuzzyFactorCard divisionTemplate, int remainder)
+            public DivisionTemplateAndRemainder(DivisionTemplate divisionTemplate, int remainder)
             {
                 DivisionTemplate = divisionTemplate;
                 Remainder = remainder;
             }
 
-            public FuzzyFactorCard DivisionTemplate;
+            public readonly DivisionTemplate DivisionTemplate;
             public int Remainder;
         }
 
@@ -65,7 +65,7 @@ namespace CLP.Entities
             {
                 divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
                                                       let divisionTemplate =
-                                                          page.GetPageObjectByID(pageObjectID) as FuzzyFactorCard ?? page.History.GetPageObjectByID(pageObjectID) as FuzzyFactorCard
+                                                          page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate
                                                       where divisionTemplate != null
                                                       select pageObjectID);
             }
@@ -84,7 +84,7 @@ namespace CLP.Entities
             {
                 foreach (var pageObjectID in historyItem.PageObjectIDs)
                 {
-                    var divisionTemplate = page.GetPageObjectByID(pageObjectID) as FuzzyFactorCard ?? page.History.GetPageObjectByID(pageObjectID) as FuzzyFactorCard;
+                    var divisionTemplate = page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate;
                     if (divisionTemplate == null)
                     {
                         continue;
@@ -118,11 +118,11 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var arraySnappedInHistoryItem = historyItem as FFCArraySnappedInHistoryItem;
+                var arraySnappedInHistoryItem = historyItem as DivisionTemplateArraySnappedInHistoryItem;
                 if (arraySnappedInHistoryItem != null)
                 {
                     var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
-                    var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.FuzzyFactorCardID);
+                    var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.DivisionTemplateID);
                     if (divisionTemplateAndRemainder != null &&
                         arrayToRemove != null)
                     {
@@ -139,9 +139,9 @@ namespace CLP.Entities
                     foreach (var pageObject in
                         addedPageObjectHistoryItem.PageObjectIDs.Select(pageObjectID => page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID)))
                     {
-                        if (pageObject is FuzzyFactorCard)
+                        if (pageObject is DivisionTemplate)
                         {
-                            var divisionTemplate = pageObject as FuzzyFactorCard;
+                            var divisionTemplate = pageObject as DivisionTemplate;
                             divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder(divisionTemplate, divisionTemplate.Dividend));
 
                             //DivisionTemplateCreationErrorTag
@@ -371,9 +371,9 @@ namespace CLP.Entities
                 //    var endPosition = pageObjectMovedHistoryItem.TravelledPositions.Last();
                 //    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
                 //    {
-                //        var divisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
+                //        var DivisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
 
-                //        var top = Math.Max(endPosition.Y + array.LabelLength, divisionTemplate.YPosition + divisionTemplate.LabelLength);
+                //        var top = Math.Max(endPosition.Y + array.LabelLength, DivisionTemplate.YPosition + DivisionTemplate.LabelLength);
                 //        var bottom = Math.Min(endPosition.Y + array.LabelLength + array.ArrayHeight,
                 //                              persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
                 //        var verticalIntersectionLength = bottom - top;
@@ -387,13 +387,13 @@ namespace CLP.Entities
 
                 //        if (isVerticalIntersection)
                 //        {
-                //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + divisionTemplate.LastDivisionPosition));
+                //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + DivisionTemplate.LastDivisionPosition));
                 //            if (diff < 50)
                 //            {
-                //                if (snappingArray.Rows != divisionTemplate.Rows)
+                //                if (snappingArray.Rows != DivisionTemplate.Rows)
                 //                {
                 //                    var hasTag = false;
-                //                    if (snappingArray.Columns == divisionTemplate.Rows)
+                //                    if (snappingArray.Columns == DivisionTemplate.Rows)
                 //                    {
                 //                        var existingTag =
                 //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
@@ -430,14 +430,14 @@ namespace CLP.Entities
                 //                        pageObject.ParentPage.AddTag(newTag);
                 //                    }
 
-                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
                 //                    foreach (var viewModel in factorCardViewModels)
                 //                    {
                 //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
                 //                    }
                 //                    continue;
                 //                }
-                //                if (divisionTemplate.CurrentRemainder < divisionTemplate.Rows * snappingArray.Columns)
+                //                if (DivisionTemplate.CurrentRemainder < DivisionTemplate.Rows * snappingArray.Columns)
                 //                {
                 //                    var existingTag =
                 //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
@@ -455,7 +455,7 @@ namespace CLP.Entities
                 //                                                                   previousNumberOfAttempts + 1);
                 //                    pageObject.ParentPage.AddTag(newTag);
 
-                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
                 //                    foreach (var viewModel in factorCardViewModels)
                 //                    {
                 //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
@@ -464,17 +464,17 @@ namespace CLP.Entities
                 //                }
 
                 //                //If first division - update IsGridOn to match new array
-                //                if (divisionTemplate.LastDivisionPosition == 0)
+                //                if (DivisionTemplate.LastDivisionPosition == 0)
                 //                {
-                //                    divisionTemplate.IsGridOn = snappingArray.IsGridOn;
+                //                    DivisionTemplate.IsGridOn = snappingArray.IsGridOn;
                 //                }
 
                 //                //Add a new division and remove snapping array
                 //                PageObject.ParentPage.PageObjects.Remove(PageObject);
-                //                divisionTemplate.SnapInArray(snappingArray.Columns);
+                //                DivisionTemplate.SnapInArray(snappingArray.Columns);
 
                 //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                //                                                           new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
+                //                                                           new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
                 //                return;
                 //            }
                 //        }
@@ -483,9 +483,9 @@ namespace CLP.Entities
             }
         }
 
-        public static void AnalyzeStrategy(CLPPage page, FuzzyFactorCard divisionTemplate)
+        public static void AnalyzeStrategy(CLPPage page, DivisionTemplate divisionTemplate)
         {
-            //var dividerValues = divisionTemplate.VerticalDivisions.Select(x => x.Value).ToList();
+            //var dividerValues = DivisionTemplate.VerticalDivisions.Select(x => x.Value).ToList();
 
             //if (!dividerValues.Any())
             //{
@@ -526,7 +526,7 @@ namespace CLP.Entities
             //                                            dividerValues));
         }
 
-        public static void AnalyzeRepresentationCorrectness(CLPPage page, DivisionRelationDefinitionTag divisionRelationDefinition, FuzzyFactorCard divisionTemplate)
+        public static void AnalyzeRepresentationCorrectness(CLPPage page, DivisionRelationDefinitionTag divisionRelationDefinition, DivisionTemplate divisionTemplate)
         {
             var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 

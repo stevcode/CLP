@@ -11,23 +11,24 @@ namespace Classroom_Learning_Partner.Converters
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            if (!(value is PanelLocations))
+            var thickness = parameter.ToDouble();
+            if (!(value is PanelLocations) ||
+                thickness == null)
             {
                 return new Thickness(0, 0, 0, 0);
             }
 
-            var thickness = System.Convert.ToDouble(parameter);
             var location = (PanelLocations)value;
             switch (location)
             {
                 case PanelLocations.Left:
-                    return new Thickness(0, 0, thickness, 0);
+                    return new Thickness(0, 0, (double)thickness, 0);
                 case PanelLocations.Right:
-                    return new Thickness(thickness, 0, 0, 0);
+                    return new Thickness((double)thickness, 0, 0, 0);
                 case PanelLocations.Top:
-                    return new Thickness(0, 0, 0, thickness);
+                    return new Thickness(0, 0, 0, (double)thickness);
                 case PanelLocations.Bottom:
-                    return new Thickness(0, thickness, 0, 0);
+                    return new Thickness(0, (double)thickness, 0, 0);
                 case PanelLocations.Floating:
                     return new Thickness(0, 0, 0, 0);
                 default:

@@ -3,8 +3,6 @@
                     xmlns:local="clr-namespace:CLP.CustomControls"
                     xmlns:catel="http://catel.codeplex.com">
 
-    <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-
     <Style TargetType="{x:Type local:GroupedRibbonButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -87,9 +85,11 @@
 
                         <!-- Vertical Button Content -->
                         <StackPanel Margin="2 0 2 0"
-                                    Visibility="{TemplateBinding IsContextButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                    Visibility="{TemplateBinding IsContextButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
+                                   UseLayoutRounding="True"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
                                    HorizontalAlignment="Center"
                                    Margin="0 5 0 3" />
                             <Grid HorizontalAlignment="Center"
@@ -114,9 +114,11 @@
                         <!-- Horizontal Button Content -->
                         <StackPanel Margin="2 0 2 0"
                                     Orientation="Horizontal"
-                                    Visibility="{TemplateBinding IsContextButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                    Visibility="{TemplateBinding IsContextButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
+                                   UseLayoutRounding="True"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
                                    HorizontalAlignment="Center"
                                    Margin="0 5 5 3" />
                             <Grid HorizontalAlignment="Center"

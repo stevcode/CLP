@@ -59,6 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
+            MakeSingleCopyCommand = new Command(OnMakeSingleCopyCommandExecute);
             StartDragStampCommand = new Command(OnStartDragStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
@@ -71,18 +72,27 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
 
-            var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes",
+            if (StampType == StampTypes.EmptyGroupStamp)
+            {
+                _contextButtons.Add(new RibbonButton("Make 1 Copy", "pack://application:,,,/Resources/Images/AddOneToDisplay.png", MakeSingleCopyCommand, null, true));
+            }
+
+            if (IsDraggableStamp)
+            {
+                var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes",
                                                                 "Hide Group Sizes",
                                                                 "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png",
                                                                 true)
-                                         {
-                                             IsChecked = IsPartsLabelVisibleForChildren
-                                         };
-            toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
-            toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
-            _contextButtons.Add(toggleChildPartsButton);
+                {
+                    IsChecked = IsPartsLabelVisibleForChildren
+                };
+                toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
+                toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
+
+                _contextButtons.Add(toggleChildPartsButton);
+            }
 
             if (IsGroupStamp)
             {
@@ -340,7 +350,27 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
+            var numberOfCopies = int.Parse(keyPad.NumbersEntered.Text);
+
+            CreateStampedImages(numberOfCopies);
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command MakeSingleCopyCommand { get; private set; }
+
+        private void OnMakeSingleCopyCommandExecute()
+        {
+            CreateStampedImages(1, false);
+        }
+
+        private void CreateStampedImages(int numberOfCopies, bool forceSelectMode = true)
+        {
+            IsGhostVisible = false;
+            var stamp = PageObject as Stamp;
+            if (stamp == null)
+            {
+                return;
+            }
 
             var serializedStrokes = new List<StrokeDTO>();
             foreach (var newStroke in stamp.AcceptedStrokes.Select(stroke => stroke.ToStrokeDTO().ToStroke()))
@@ -406,15 +436,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
 
                     var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
-                                        {
-                                            Width = stampedObjectWidth,
-                                            Height = stampedObjectHeight,
-                                            XPosition = miniGroupingXPosition + xOffset,
-                                            YPosition = miniGroupingYPosition + yOffset,
-                                            SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
-                                            Parts = stamp.Parts,
-                                            IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
-                                        };
+                    {
+                        Width = stampedObjectWidth,
+                        Height = stampedObjectHeight,
+                        XPosition = miniGroupingXPosition + xOffset,
+                        YPosition = miniGroupingYPosition + yOffset,
+                        SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
+                        Parts = stamp.Parts,
+                        IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
+                    };
 
                     stampCopiesToAdd.Add(stampedObject);
                     if (miniGroupIndex == 5)
@@ -438,12 +468,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         stampCopiesToAdd.Add(newPageObject);
                     }
                 }
+
+                ApplyDistinctPosition(stamp.ParentPage, stampCopiesToAdd);
             }
             else
             {
                 var initialXPosition = 25.0;
                 var initialYPosition = YPosition + Height + 125 + 120;
-                    //HACK: the +120 is to compensate for Piles in Ann's Trial because reduced height of Empty Group Stamp by 40 and moved YPos up 15
+                //HACK: the +120 is to compensate for Piles in Ann's Trial because reduced height of Empty Group Stamp by 40 and moved YPos up 15
                 if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
                 {
                     initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;
@@ -457,27 +489,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 for (var i = 0; i < numberOfCopies; i++)
                 {
                     var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
-                                        {
-                                            Width = stampedObjectWidth,
-                                            Height = stampedObjectHeight,
-                                            XPosition = initialXPosition,
-                                            YPosition = initialYPosition,
-                                            SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
-                                            Parts = stamp.Parts,
-                                            IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
-                                            IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
-                                        };
-
+                    {
+                        Width = stampedObjectWidth,
+                        Height = stampedObjectHeight,
+                        XPosition = initialXPosition,
+                        YPosition = initialYPosition,
+                        SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
+                        Parts = stamp.Parts,
+                        IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
+                        IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
+                    };
+                    
                     stampCopiesToAdd.Add(stampedObject);
-                    if (initialXPosition + 2 * stampedObject.Width + 15 < PageObject.ParentPage.Width)
-                    {
-                        initialXPosition += stampedObject.Width + 15;
-                    }
-                    else if (initialYPosition + 2 * stampedObject.Height + 15 < PageObject.ParentPage.Height)
-                    {
-                        initialXPosition = 25;
-                        initialYPosition += stampedObject.Height + 15;
-                    }
 
                     foreach (var pageObject in stamp.AcceptedPageObjects)
                     {
@@ -487,10 +510,23 @@ namespace Classroom_Learning_Partner.ViewModels
                         stampCopiesToAdd.Add(newPageObject);
                     }
                 }
+
+                ApplyDistinctPosition(stamp.ParentPage, stampCopiesToAdd);
             }
 
-            ACLPPageBaseViewModel.AddPageObjectsToPage(stamp.ParentPage, stampCopiesToAdd);
+            ACLPPageBaseViewModel.AddPageObjectsToPage(stamp.ParentPage, stampCopiesToAdd, forceSelectMode: forceSelectMode);
         }
+
+        //private void ApplyDistinctPosition(IPageObject pageObject)
+        //{
+        //    // Empty Stamp
+        //    var initialXPosition = 25.0;
+        //    var initialYPosition = 465.0;
+        //    var horizontalGap = 15.0;
+        //    var verticalGap = 15.0;
+
+        //}
+        
 
         /// <summary>Places copy of stamp below and displays StrokePathViews for dragging stamp.</summary>
         public Command StartDragStampCommand { get; private set; }
@@ -821,12 +857,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddBlankGeneralStampToPage(CLPPage page)
         {
             var stamp = new Stamp(page, StampTypes.GeneralStamp);
+            ApplyDistinctPosition(stamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         public static void AddBlankGroupStampToPage(CLPPage page)
         {
             var stamp = new Stamp(page, StampTypes.GroupStamp);
+            ApplyDistinctPosition(stamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -889,6 +927,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var stamp = new Stamp(page, imageHashID, stampType);
 
+                ApplyDistinctPosition(stamp);
                 ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
             }
             else

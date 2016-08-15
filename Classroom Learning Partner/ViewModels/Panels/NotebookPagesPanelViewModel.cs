@@ -3,7 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
@@ -26,17 +28,17 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageToStageCommand = new Command<CLPPage>(OnAddPageToStageCommandExecute);
             
             StagingPanel = stagingPanel;
-            SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
+
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+            SubmissionHistoryPanel = viewModelFactory.CreateViewModel<SubmissionHistoryPanelViewModel>(typeof(SubmissionHistoryPanelViewModel), null); 
         }
 
-        async Task NotebookPagesPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        private Task NotebookPagesPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
-        }
 
-        public override string Title
-        {
-            get { return "NotebookPagesPanelVM"; }
+            return TaskHelper.Completed;
         }
 
         /// <summary>

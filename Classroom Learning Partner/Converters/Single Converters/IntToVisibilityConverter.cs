@@ -10,7 +10,13 @@ namespace Classroom_Learning_Partner.Converters
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            return (int)value > 0 ? Visibility.Visible : Visibility.Hidden;
+            var val = value.ToInt();
+            if (val == null)
+            {
+                return Visibility.Hidden;
+            }
+
+            return (int)val > 0 ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

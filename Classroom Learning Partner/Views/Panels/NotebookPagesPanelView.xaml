@@ -17,9 +17,6 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Converters -->
-            <converters:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
-
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
                    TargetType="{x:Type ListBoxItem}">
@@ -342,7 +339,7 @@
                                 DataContext="{Binding StagingPanel}"
                                 Grid.Column="1">
             <views:StagingPanelView.Visibility>
-                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
                     <Binding Path="IsVisible" />
                     <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
@@ -356,7 +353,7 @@
         <views:SubmissionHistoryPanelView DataContext="{Binding SubmissionHistoryPanel}"
                                           Grid.Column="2">
             <views:SubmissionHistoryPanelView.Visibility>
-                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
                     <Binding Path="MainWindowViewModel.CurrentProgramMode"
                              Source="{x:Static Application.Current}"
                              Converter="{converters:EnumToBoolConverter}"

@@ -130,7 +130,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" x:Name="StoredAnswer" Text="{Binding Path=StoredAnswer, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"></TextBlock>
                     <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" x:Name="AnalysisType" Text="{Binding Path=AnalysisType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"></TextBlock>
-                    <Image Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Source="/Images/EditNotebook.png" MouseDown="EditInkRegion"></Image>
+                    <Image Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Source="/Resources/Images/EditNotebook.png" MouseDown="EditInkRegion"></Image>
                 </Grid>
             </Grid>
         </Grid>

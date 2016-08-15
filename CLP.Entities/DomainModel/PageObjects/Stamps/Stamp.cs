@@ -42,7 +42,7 @@ namespace CLP.Entities
                     Height = 190;
                     break;
                 case StampTypes.ObservingStamp:
-                    XPosition = 730;
+                    XPosition = 720;
                     YPosition = 30;
                     Width = 90;
                     Height = 140;
@@ -207,8 +207,6 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                ApplyDistinctPosition(this);
-
                 return;
             }
 

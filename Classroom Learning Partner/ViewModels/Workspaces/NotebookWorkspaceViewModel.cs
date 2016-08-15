@@ -70,20 +70,11 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInformationPanel = new PageInformationPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
 
-            // TODO: Use StagingPanel instead?
-            //if(App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student)
-            //{
-            //    SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
-            //    BottomPanel = SubmissionHistoryPanel;
-            //}
-
             if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
             {
                 NotebookPagesPanel.IsVisible = false;
             }
         }
-
-        public override string Title { get { return "NotebookWorkspaceVM"; } }
 
         #endregion //Constructor
 

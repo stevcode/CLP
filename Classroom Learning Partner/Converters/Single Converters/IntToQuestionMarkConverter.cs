@@ -9,21 +9,21 @@ namespace Classroom_Learning_Partner.Converters
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            if (!(value is int) ||
-                !(parameter is int))
+            var val = value.ToInt();
+            var intToMatch = parameter.ToDouble();
+
+            if (val == null ||
+                intToMatch == null)
             {
                 return ConverterHelper.UnsetValue;
             }
 
-            var val = (int)value;
-            var intToMatch = (int)parameter;
-
-            if (val == intToMatch)
+            if (val == (int)intToMatch)
             {
                 return "?";
             }
 
-            return val;
+            return (int)val;
         }
     }
 }

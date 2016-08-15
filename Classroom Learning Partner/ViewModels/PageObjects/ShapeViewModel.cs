@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateShapeCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", DuplicateShapeCommand, null, true));
 
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 

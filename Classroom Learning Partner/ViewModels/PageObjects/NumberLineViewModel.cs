@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
@@ -33,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Images/Underline16.png", true)
+            var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Resources/Images/Underline16.png", true)
                                      {
                                          IsChecked = !IsJumpSizeLabelsVisible
                                      };
@@ -41,7 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
             jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
             _contextButtons.Add(jumpSizeVisibility);
 
-            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Images/play.png", true)
+            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Resources/Images/play.png", true)
                                 {
                                     IsChecked = !IsArrowDraggingAllowed
                                 };
@@ -542,41 +544,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddNumberLineToPage(CLPPage page)
         {
-            var keyPad = new NumberLineCreationView
-                         {
-                             Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual
-                         };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
+            var viewModel = new NumberLineCreationViewModel();
+            var result = viewModel.ShowWindowAsDialog();
+
+            if (result != true)
             {
                 return;
             }
 
-            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-
-            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.NumberLine);
-            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
-        }
-
-        public static void AddNumberLine2ToPage(CLPPage page)
-        {
-            var keyPad = new NumberLineCreationView
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
-            keyPad.ShowDialog();
-            if (keyPad.DialogResult != true ||
-                keyPad.NumbersEntered.Text.Length <= 0)
-            {
-                return;
-            }
-
-            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-
-            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
+            var numberLineSize = int.Parse(viewModel.NumberLineEndPoint);
+            var numberLine = new NumberLine(page, numberLineSize, viewModel.IsUsingAutoArcs? NumberLineTypes.AutoArcs : NumberLineTypes.NumberLine);
+            ApplyDistinctPosition(numberLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 

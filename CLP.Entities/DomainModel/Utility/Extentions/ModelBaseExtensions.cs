@@ -10,7 +10,7 @@ namespace CLP.Entities
     {
         public static T DeepCopy<T>(this T model) where T : ModelBase
         {
-            if (!typeof(T).IsSerializable)
+            if (!model.GetType().IsSerializable)
             {
                 throw new ArgumentException("The type must be serializable.", "model");
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
@@ -7,12 +8,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Views;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;
 
@@ -38,12 +44,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private IPageInteractionService _pageInteractionService;
-        private IDataService _dataService;
+        private readonly IDataService _dataService;
 
-        public MajorRibbonViewModel()
+        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService)
         {
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
-            _dataService = DependencyResolver.Resolve<IDataService>();
+            _pageInteractionService = pageInteractionService;
+            _dataService = dataService;
+
+            
 
             InitializeCommands();
             InitializeButtons();
@@ -52,17 +60,52 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
 
-            //InitializedAsync += MajorRibbonViewModel_InitializedAsync;
-            //ClosedAsync += MajorRibbonViewModel_ClosedAsync;
+            InitializedAsync += MajorRibbonViewModel_InitializedAsync;
+            ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
 
-        //private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
-        //{
-        //}
+        private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
 
-        //private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
-        //{
-        //}
+            return TaskHelper.Completed;
+        }
+
+        private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            CurrentNotebook = _dataService.CurrentNotebook;
+
+            if (CurrentNotebook != null &&
+                CurrentNotebook.OwnerID == Person.Author.ID)
+            {
+                AddAuthorButtons();
+            }
+            else
+            {
+                RemoveAuthorButtons();
+            }
+
+            // TODO: Change this to fire on CurrentPage change. See if commented out works to fire all CanExecutes.
+            //var catelCommand = (AddPageObjectToPageCommand as ICatelCommand);
+            //if (catelCommand != null)
+            //{
+            //    catelCommand.RaiseCanExecuteChanged();
+            //}
+
+            //var viewModelBase = this as ViewModelBase;
+            //if (viewModelBase != null)
+            //{
+            //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
+            //    viewModelCommandManager.InvalidateCommands();
+            //}
+        }      
 
         private void InitializeCommands()
         {
@@ -76,6 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+
+            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
 
             ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
@@ -98,7 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                           PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
 
-            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
+            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Resources/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
             _setMarkModeButton.Checked += _button_Checked;
 
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
@@ -118,30 +163,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Images
             //TODO: Better Icons
-            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Resources/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE", true);
 
             //Stamps
-            _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
+            _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp64.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
             _insertGroupStampButton = new RibbonButton("Group Stamp",
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
-            _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
-            //TODO: Better Icon
-            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
-            //TODO: Better Icon
-            _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
+            _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
+            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
+            _insertPileButton = new RibbonButton("Division Group", "pack://application:,,,/Resources/Images/DivisionGroup64.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
             _insertArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "ARRAY");
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
-            _insertObscurableArrayButton = new RibbonButton("Fuzzy Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
+            _insertObscurableArrayButton = new RibbonButton("N Array", "pack://application:,,,/Resources/Images/FuzzyArray32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Template",
-                                                             "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
+                                                             "pack://application:,,,/Resources/Images/DivisionTool32.png",
                                                              AddPageObjectToPageCommand,
                                                              "DIVISIONTEMPLATE");
 
@@ -156,48 +199,48 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/Shapes64.png");
             var shapeDropDown = new ContextMenu();
             
-            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
+            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Resources/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
             shapeDropDown.Items.Add(_insertSquareButton);
-            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
+            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Resources/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
             shapeDropDown.Items.Add(_insertCircleButton);
-            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
+            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Resources/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
             shapeDropDown.Items.Add(_insertTriangleButton);
-            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
+            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Resources/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
             shapeDropDown.Items.Add(_insertHorizontalLineButton);
 
             _insertShapeButton.DropDown = shapeDropDown;
 
             #region Obsolete
 
-            _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
-            _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
-            _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
-            _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed",
-                                                                "pack://application:,,,/Images/LargeIcon.png",
-                                                                AddPageObjectToPageCommand,
-                                                                "RIGHT_DIAGONAL_DASHED");
-            _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
-            _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed",
-                                                               "pack://application:,,,/Images/LargeIcon.png",
-                                                               AddPageObjectToPageCommand,
-                                                               "LEFT_DIAGONAL_DASHED");
+            _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Resources/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
 
             #endregion // Obsolete
             
             //Bin
-            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/AddBin180.png", AddPageObjectToPageCommand, "BIN");
+            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/Bin32.png", AddPageObjectToPageCommand, "BIN");
 
             //Text
             //TODO: Better Icons
-            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
+            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX", true);
 
             _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice",
                                                                   "pack://application:,,,/Resources/Images/TempIcon32.png",
                                                                   AddPageObjectToPageCommand,
-                                                                  "MULTIPLECHOICEBOX");
+                                                                  "MULTIPLECHOICEBOX",
+                                                                  true);
 
             // Recognition
-            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN");
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Resources/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN", true);
+
+            // Other
+            _insertOther = new DropDownRibbonButton("Other", "pack://application:,,,/Resources/Images/Plus32.png");
+            var otherDropDown = new ContextMenu();
+            otherDropDown.Items.Add(_insertTextBoxButton);
+            otherDropDown.Items.Add(_insertImageButton);
+            otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
+            otherDropDown.Items.Add(_insertRecognitionRegionButton);
+
+            _insertOther.DropDown = otherDropDown;
         }
 
         private bool _isCheckedEventRunning = false;
@@ -344,12 +387,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertCircleButton;
         private RibbonButton _insertTriangleButton;
         private RibbonButton _insertHorizontalLineButton;
-        private RibbonButton _insertVerticalLineButton;
         private RibbonButton _insertProtractorButton;
-        private RibbonButton _insertRightDiagonalButton;
-        private RibbonButton _insertRightDiagonalDashedButton;
-        private RibbonButton _insertLeftDiagonalButton;
-        private RibbonButton _insertLeftDiagonalDashedButton;
 
         //Bin
         private RibbonButton _insertBinButton;
@@ -357,9 +395,36 @@ namespace Classroom_Learning_Partner.ViewModels
         // Recognition Regions
         private RibbonButton _insertRecognitionRegionButton;
 
+        // Other
+        private DropDownRibbonButton _insertOther;
+
         #endregion //Insert PageObject Buttons
 
         #endregion //Buttons
+
+        #region Model
+
+        /// <summary>SUMMARY</summary>
+        [Model(SupportIEditableObject = false)]
+        public Notebook CurrentNotebook
+        {
+            get { return GetValue<Notebook>(CurrentNotebookProperty); }
+            set { SetValue(CurrentNotebookProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentNotebookProperty = RegisterProperty("CurrentNotebook", typeof(Notebook));
+
+        /// <summary>SUMMARY</summary>
+        [ViewModelToModel("CurrentNotebook")]
+        public CLPPage CurrentPage
+        {
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #endregion // Model
 
         #region Bindings
 
@@ -469,6 +534,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
 
+        /// <summary>Toggles the animation ribbon.</summary>
+        public bool IsAnimationRibbonForcedVisible
+        {
+            get { return GetValue<bool>(IsAnimationRibbonForcedVisibleProperty); }
+            set { SetValue(IsAnimationRibbonForcedVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsAnimationRibbonForcedVisibleProperty = RegisterProperty("IsAnimationRibbonForcedVisible", typeof(bool), false, OnIsAnimationRibbonForcedVisibleChanged);
+
+        private static void OnIsAnimationRibbonForcedVisibleChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var majorRibbon = sender as MajorRibbonViewModel;
+            if (majorRibbon == null)
+            {
+                return;
+            }
+
+            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
+            if (animationControlRibbon == null)
+            {
+                return;
+            }
+
+            animationControlRibbon.IsNonAnimationPlaybackEnabled = (bool)args.NewValue;
+        }
+
         #endregion //Bindings
 
         #region Properties
@@ -569,7 +660,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 const string DISPLAY_ID = "SingleDisplay";
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //
             }
@@ -943,12 +1034,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
                 case "AUTO_NUMBERLINE":
-                    NumberLineViewModel.AddNumberLine2ToPage(currentPage);
+                    NumberLineViewModel.AddNumberLineToPage(currentPage);
                     break;
 
                 //Division Template
                 case "DIVISIONTEMPLATE":
-                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(currentPage);
+                    DivisionTemplateViewModel.AddDivisionTemplateToPage(currentPage);
                     break;
 
                 //Shapes
@@ -1008,10 +1099,56 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnAddPageObjectToPageCanExecute(string pageObjectType)
         {
-            return _dataService.CurrentPage != null;
+            return CurrentPage != null;
         }
 
         #endregion //Insert PageObject Commands
+
+        #region Extras
+
+        /// <summary>Takes a screenshot of the current page.</summary>
+        public Command TakePageScreenshotCommand { get; private set; }
+
+        private void OnTakePageScreenshotCommandExecute()
+        {
+            var currentPage = _dataService.CurrentPage;
+            var pageViewModel = currentPage.GetAllViewModels().First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+
+            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null)
+            {
+                return;
+            }
+
+            var bitmapImage = pageView.ToBitmapImage(currentPage.Width, dpi: 300);
+
+            var thumbnailsFolderPath = Catel.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
+            var thumbnailFilePath = Catel.IO.Path.Combine(thumbnailsFolderPath,
+                                                 "Page - " + currentPage.PageNumber + ";" + currentPage.DifferentiationLevel + ";" + currentPage.VersionIndex + ";" +
+                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+
+            if (!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using (var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        private bool OnTakePageScreenshotCanExecute()
+        {
+            return CurrentPage != null;
+        }
+
+        #endregion // Extras
 
         #endregion //Commands
 
@@ -1023,7 +1160,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            //Buttons.Add(_setMarkModeButton);
+            
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
@@ -1031,40 +1168,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            Buttons.Add(_insertGeneralStampButton);
-            //Buttons.Add(_insertGroupStampButton);
-            Buttons.Add(_insertNumberLineButton);
-            Buttons.Add(_insertAutoNumberLineButton);
             Buttons.Add(_insertArrayButton);
-            //Buttons.Add(_insert10x10ArrayButton);
-            //Buttons.Add(_insertArrayCardButton);
-            //Buttons.Add(_insertFactorCardButton);
-            Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertBinButton);
-            Buttons.Add(_insertDivisionTemplateButton);
-            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertShapeButton);
+            Buttons.Add(_insertGeneralStampButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertDivisionTemplateButton);
 
-            // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertShapeButton);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
-            //Buttons.Add(_insertProtractorButton);
-            //Buttons.Add(_insertRightDiagonalButton);
-            //Buttons.Add(_insertRightDiagonalDashedButton);
-            //Buttons.Add(_insertLeftDiagonalButton);
-            //Buttons.Add(_insertLeftDiagonalDashedButton);
-
-            // Insert Text Box
-            //Buttons.Add(Separater);
+            //Obsolete
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertRecognitionRegionButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            //Buttons.Add(_setMarkModeButton);
+            //Buttons.Add(_insertGroupStampButton);
+            //Buttons.Add(_insert10x10ArrayButton);
+            //Buttons.Add(_insertArrayCardButton);
+            //Buttons.Add(_insertFactorCardButton);
+            //Buttons.Add(_insertObscurableArrayButton);
+            //Buttons.Add(_insertAutoNumberLineButton);
+        }
+
+        public void AddAuthorButtons()
+        {
+            Buttons.Add(Separater);
+            Buttons.Add(_insertOther);
+        }
+
+        public void RemoveAuthorButtons()
+        {
+            if (Equals(Buttons.Last(), _insertOther))
+            {
+                Buttons.RemoveLast();
+                Buttons.RemoveLast();
+            }
         }
 
         #endregion //Methods

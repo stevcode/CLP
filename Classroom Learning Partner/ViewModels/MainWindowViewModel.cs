@@ -42,9 +42,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _dataService = ServiceLocator.Default.ResolveType<IDataService>();
             CurrentProgramMode = currentProgramMode;
-            MajorRibbon = new MajorRibbonViewModel();
-            BackStage = new BackStageViewModel();
-            Workspace = new BlankWorkspaceViewModel();
+
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+            MajorRibbon = viewModelFactory.CreateViewModel<MajorRibbonViewModel>(typeof(MajorRibbonViewModel), null);
+            BackStage = viewModelFactory.CreateViewModel<BackStageViewModel>(typeof(BackStageViewModel), null);
+            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(typeof(BlankWorkspaceViewModel), null);
 
             InitializeCommands();
 

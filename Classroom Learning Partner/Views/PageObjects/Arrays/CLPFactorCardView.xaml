@@ -7,9 +7,6 @@
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <converters:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
         <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
     </UserControl.Resources>
@@ -30,14 +27,14 @@
                            Canvas.Top="-5" Canvas.Left="-5"
                            Width="{Binding Width, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
                            Height="{Binding Height, Converter={converters:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                           Visibility="{Binding IsDefaultAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40" Canvas.Top="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsDefaultAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -55,7 +52,7 @@
                 <Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
                        Canvas.Right="-40" Canvas.Top="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Visibility="{Binding IsDefaultAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -93,7 +90,7 @@
                 <Thumb Cursor="SizeNWSE"
                        Width="40" Height="40"
                        Canvas.Right="-40" Canvas.Bottom="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Visibility="{Binding IsDefaultAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizeArrayCommand}" PassEventArgsToCommand="True" />
@@ -124,7 +121,7 @@
                         Width="40" Height="40"
                         Canvas.Right="-50"
                         Canvas.Top="20"
-                        Visibility="{Binding IsRotateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsRotateAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -144,7 +141,7 @@
                         Width="40" Height="40"
                         Canvas.Left="-40"
                         Canvas.Bottom="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsDefaultAdornerVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -177,7 +174,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                       Visibility="{Binding IsTopLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
                        Text="?" TextAlignment="Center"
@@ -211,7 +208,7 @@
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Visibility="{Binding IsTopLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -234,7 +231,7 @@
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center">
                 <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
+                    <MultiBinding Converter="{converters:MultiplyAllIntToTextMultiConverter}">
                         <Binding Path="Columns" />
                         <Binding Path="Rows" />
                     </MultiBinding>

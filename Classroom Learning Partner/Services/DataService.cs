@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Catel;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
@@ -239,6 +240,13 @@ namespace Classroom_Learning_Partner.Services
         #endregion //Notebook Properties
 
         #endregion //Properties
+
+        #region Events
+
+        public event EventHandler<EventArgs> CurrentNotebookChanged;
+        public event EventHandler<EventArgs> CurrentPageChanged;
+
+        #endregion // Events
 
         #region Methods
 
@@ -602,7 +610,7 @@ namespace Classroom_Learning_Partner.Services
             if (isForcedFullSave &&
                 Directory.Exists(notebookInfo.NotebookFolderPath))
             {
-                Directory.Delete(notebookInfo.NotebookFolderPath);
+                Directory.Delete(notebookInfo.NotebookFolderPath, true);
             }
             notebookInfo.Initialize();
             notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
@@ -911,6 +919,8 @@ namespace Classroom_Learning_Partner.Services
             App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
             App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
             App.MainWindowViewModel.IsBackStageVisible = false;
+
+            CurrentNotebookChanged.SafeInvoke(this);
         }
 
         #region Archival Methods
