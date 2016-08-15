@@ -231,7 +231,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMovePageToCommandExecute()
         {
-            
+            var currentPageIndex = Notebook.Pages.IndexOf(CurrentPage);
+
+            var newPageNumberPrompt = new KeypadWindowView("What will this page's new page number be?", Notebook.Pages.Count + 1)
+                                     {
+                                         Owner = Application.Current.MainWindow,
+                                         NumbersEntered = {
+                                                              Text = string.Empty
+                                                          }
+                                     };
+
+            newPageNumberPrompt.ShowDialog();
+            if (newPageNumberPrompt.DialogResult != true)
+            {
+                return;
+            }
+
+            var newPageNumber = Convert.ToInt32(newPageNumberPrompt.NumbersEntered.Text);
+
+            if (newPageNumber == currentPageIndex + 1 ||
+                newPageNumber == 0)
+            {
+                return;
+            }
+
+            if (newPageNumber > currentPageIndex + 1)
+            {
+                for (var i = currentPageIndex + 1; i < newPageNumber; i++)
+                {
+                    var page = Notebook.Pages[i];
+                    page.PageNumber--;
+                }
+
+                CurrentPage.PageNumber = newPageNumber;
+                Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
+            }
+
+            if (newPageNumber < currentPageIndex + 1)
+            {
+                for (var i = newPageNumber - 1; i < currentPageIndex; i++)
+                {
+                    var page = Notebook.Pages[i];
+                    page.PageNumber++;
+                }
+
+                CurrentPage.PageNumber = newPageNumber;
+                Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
+            }
+
+            RaisePropertyChanged("CurrentPage");
         }
 
         private bool OnMovePageToCanExecute()
@@ -270,9 +318,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTrimPageCommandExecute()
         {
-            //CurrentPage.TrimPage();
-
-            OnMovePageDownCanExecute();
+            CurrentPage.TrimPage();
         }
 
         /// <summary>Completely clears a page of ink strokes and pageObjects.</summary>
