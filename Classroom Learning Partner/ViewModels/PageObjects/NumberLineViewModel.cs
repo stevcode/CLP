@@ -554,6 +554,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var numberLineSize = int.Parse(viewModel.NumberLineEndPoint);
             var numberLine = new NumberLine(page, numberLineSize, viewModel.IsUsingAutoArcs? NumberLineTypes.AutoArcs : NumberLineTypes.NumberLine);
+            ApplyDistinctPosition(numberLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 

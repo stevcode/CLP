@@ -207,8 +207,6 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                ApplyDistinctPosition(this);
-
                 return;
             }
 

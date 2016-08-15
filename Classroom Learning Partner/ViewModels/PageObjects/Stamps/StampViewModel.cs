@@ -468,6 +468,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         stampCopiesToAdd.Add(newPageObject);
                     }
                 }
+
+                ApplyDistinctPosition(stamp.ParentPage, stampCopiesToAdd);
             }
             else
             {
@@ -497,17 +499,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
                         IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
                     };
-
+                    
                     stampCopiesToAdd.Add(stampedObject);
-                    if (initialXPosition + 2 * stampedObject.Width + 15 < PageObject.ParentPage.Width)
-                    {
-                        initialXPosition += stampedObject.Width + 15;
-                    }
-                    else if (initialYPosition + 2 * stampedObject.Height + 15 < PageObject.ParentPage.Height)
-                    {
-                        initialXPosition = 25;
-                        initialYPosition += stampedObject.Height + 15;
-                    }
 
                     foreach (var pageObject in stamp.AcceptedPageObjects)
                     {
@@ -517,10 +510,22 @@ namespace Classroom_Learning_Partner.ViewModels
                         stampCopiesToAdd.Add(newPageObject);
                     }
                 }
+
+                ApplyDistinctPosition(stamp.ParentPage, stampCopiesToAdd);
             }
 
             ACLPPageBaseViewModel.AddPageObjectsToPage(stamp.ParentPage, stampCopiesToAdd, forceSelectMode: forceSelectMode);
         }
+
+        //private void ApplyDistinctPosition(IPageObject pageObject)
+        //{
+        //    // Empty Stamp
+        //    var initialXPosition = 25.0;
+        //    var initialYPosition = 465.0;
+        //    var horizontalGap = 15.0;
+        //    var verticalGap = 15.0;
+
+        //}
         
 
         /// <summary>Places copy of stamp below and displays StrokePathViews for dragging stamp.</summary>
@@ -852,12 +857,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddBlankGeneralStampToPage(CLPPage page)
         {
             var stamp = new Stamp(page, StampTypes.GeneralStamp);
+            ApplyDistinctPosition(stamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         public static void AddBlankGroupStampToPage(CLPPage page)
         {
             var stamp = new Stamp(page, StampTypes.GroupStamp);
+            ApplyDistinctPosition(stamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -920,6 +927,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var stamp = new Stamp(page, imageHashID, stampType);
 
+                ApplyDistinctPosition(stamp);
                 ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
             }
             else
