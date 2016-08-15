@@ -3,38 +3,51 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Threading;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class SubmissionHistoryPanelViewModel : APanelBaseViewModel
     {
+        private readonly IDataService _dataService;
+
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubmissionHistoryPanelViewModel" /> class.
         /// </summary>
-        public SubmissionHistoryPanelViewModel(Notebook notebook)
+        public SubmissionHistoryPanelViewModel(IDataService dataService)
         {
-            Notebook = notebook;
+            _dataService = dataService;
+            Notebook = _dataService.CurrentNotebook;
             InitializedAsync += SubmissionHistoryPanelViewModel_InitializedAsync;
+            ClosedAsync += SubmissionHistoryPanelViewModel_ClosedAsync;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
-        private async Task SubmissionHistoryPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        private Task SubmissionHistoryPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
             Length = InitialLength;
             IsVisible = false;
+
+            return TaskHelper.Completed;
         }
 
-        /// <summary>
-        /// Gets the title of the view model.
-        /// </summary>
-        /// <value>The title.</value>
-        public override string Title
+        private Task SubmissionHistoryPanelViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            get { return "SubmissionHistoryPanelVM"; }
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            Notebook = _dataService.CurrentNotebook;
         }
 
         /// <summary>
@@ -91,11 +104,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             submissionHistoryPanel.OriginPage = currentPage;
             submissionHistoryPanel.SubmissionPages = currentPage.Submissions;
+
+            submissionHistoryPanel.RaisePropertyChanged("IsSelectedANonSubmission");
         }
 
         #endregion //Model
         
         #region Bindings
+
+        public bool IsSelectedANonSubmission
+        {
+            get { return CurrentPage?.VersionIndex == 0; }
+        }
 
         /// <summary>
         /// The live version of the <see cref="CLPPage" /> as it exists in the Notebook Pages Panel.
@@ -141,10 +161,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Take thumbnail of page before navigating away from it.
                 ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 CurrentPage = page;
+                RaisePropertyChanged("IsSelectedANonSubmission");
                 return;
             }
 
             notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+
+            RaisePropertyChanged("IsSelectedANonSubmission");
         }
 
         #endregion //Commands

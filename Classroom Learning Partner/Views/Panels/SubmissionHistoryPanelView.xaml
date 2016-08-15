@@ -50,10 +50,26 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <views:CLPPagePreviewView Grid.Column="0"
-                                          Margin="5"
-                                          DataContext="{Binding OriginPage}"
-                                          ClipToBounds="True" />
+                <Grid Grid.Row="0">
+
+                    <views:CLPPagePreviewView Margin="5"
+                                              DataContext="{Binding OriginPage}"
+                                              ClipToBounds="True" />
+
+                    <Rectangle Margin="5"
+                               Stroke="{Binding IsSelectedANonSubmission, Converter={converters:ItemSelectedToColorConverter}}"
+                               StrokeThickness="2"
+                               Fill="Transparent">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <catel:EventToCommand Command="{Binding SetCurrentPageCommand}"
+                                                      PassEventArgsToCommand="False"
+                                                      CommandParameter="{Binding OriginPage}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Rectangle>
+
+                </Grid>
 
                 <Rectangle Grid.Row="1"
                            Height="2"
@@ -138,9 +154,8 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger
-                                                        Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                                        Value="True">
+                                                    <DataTrigger Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                 Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
                                                     </DataTrigger>

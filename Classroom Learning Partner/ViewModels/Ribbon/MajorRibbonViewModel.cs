@@ -94,17 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
-        }
-
-        /// <summary>Temp variable to refresh CanExecute command methods.</summary>
-        public bool IsCurrentNotebookChanging
-        {
-            get { return GetValue<bool>(IsCurrentNotebookChangingProperty); }
-            set { SetValue(IsCurrentNotebookChangingProperty, value); }
-        }
-
-        public static readonly PropertyData IsCurrentNotebookChangingProperty = RegisterProperty("IsCurrentNotebookChanging", typeof(bool), false);
-        
+        }      
 
         private void InitializeCommands()
         {
