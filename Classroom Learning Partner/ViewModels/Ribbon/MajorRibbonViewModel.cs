@@ -196,7 +196,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            "AUTO_NUMBERLINE");
 
             //Shapes
-            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/Shapes64.png");
+            _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/ShapesThin64.png");
             var shapeDropDown = new ContextMenu();
             
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Resources/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
