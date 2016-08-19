@@ -1170,11 +1170,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(Separater);
             Buttons.Add(_insertArrayButton);
             Buttons.Add(_insertBinButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertShapeButton);
             Buttons.Add(_insertGeneralStampButton);
-            Buttons.Add(_insertPileButton);
-            Buttons.Add(_insertDivisionTemplateButton);
 
             //Obsolete
             //Buttons.Add(_insertImageButton);
