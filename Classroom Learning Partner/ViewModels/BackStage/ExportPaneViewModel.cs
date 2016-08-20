@@ -9,6 +9,8 @@ using System.Windows.Media.Imaging;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Catel.Windows;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using iTextSharp.text;
@@ -33,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertPageSubmissionsToPDFCommand = new Command(OnConvertPageSubmissionsToPDFCommandExecute, OnNotebookExportCanExecute);
             ConvertAllSubmissionsToPDFCommand = new Command(OnConvertAllSubmissionsToPDFCommandExecute, OnNotebookExportCanExecute);
             ConvertDisplaysToPDFCommand = new Command(OnConvertDisplaysToPDFCommandExecute, OnNotebookExportCanExecute);
+            CopyNotebookForNewOwnerCommand = new Command(OnCopyNotebookForNewOwnerCommandExecute);
         }
 
         #endregion //Constructor
@@ -201,6 +204,70 @@ namespace Classroom_Learning_Partner.ViewModels
             //    xpsDocument.Close();
 
             //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command CopyNotebookForNewOwnerCommand { get; private set; }
+
+        private void OnCopyNotebookForNewOwnerCommandExecute()
+        {
+            if (_dataService == null ||
+                _dataService.CurrentCacheInfo == null ||
+                _dataService.CurrentNotebookInfo == null ||
+                _dataService.CurrentNotebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            var textInputViewModel = new TextInputViewModel
+                                     {
+                                         TextPrompt = "Student Name: "
+                                     };
+            var textInputView = new TextInputView(textInputViewModel);
+            textInputView.ShowDialog();
+
+            if (textInputView.DialogResult == null ||
+                textInputView.DialogResult != true ||
+                string.IsNullOrEmpty(textInputViewModel.InputText))
+            {
+                return;
+            }
+
+            var person = new Person
+                         {
+                             IsStudent = true,
+                             FullName = textInputViewModel.InputText
+                         };
+
+            var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
+            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+            var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+            var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
+                               {
+                                   Notebook = copiedNotebook
+                               };
+            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
+            _dataService.SetCurrentNotebook(notebookInfo);
+
+            //var person = new Person();
+            //var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
+            //personCreationView.ShowDialog();
+
+            //if (personCreationView.DialogResult == null ||
+            //    personCreationView.DialogResult != true)
+            //{
+            //    return;
+            //}
+
+            //var copiedNotebook = _dataService.CurrentNotebook.CopyForNewOwner(person);
+            //copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+
+            //App.MainWindowViewModel.CurrentUser = person;
+            //App.MainWindowViewModel.IsAuthoring = false;
+            //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
+            //App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         #endregion //Commands

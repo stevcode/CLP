@@ -164,6 +164,51 @@
 
             </WrapPanel>
 
+            <TextBlock Text="Create New Notebook"
+                       TextAlignment="Left"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI Light"
+                       FontSize="30"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource DynamicMainColor}"
+                       Margin="0 5"
+                       TextOptions.TextRenderingMode="Auto"
+                       TextOptions.TextFormattingMode="Ideal" />
+
+            <WrapPanel Orientation="Horizontal">
+
+                <Button Command="{Binding CopyNotebookForNewOwnerCommand}"
+                        Width="160"
+                        Height="90"
+                        Margin="20 5 20 5"
+                        Style="{StaticResource BackStageTopButton}">
+
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Top">
+
+                        <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
+                               Height="32"
+                               Width="32"
+                               HorizontalAlignment="Center"
+                               Margin="5" />
+
+                        <TextBlock Text="Copy Notebook For New Owner"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Stretch"
+                                   FontFamily="Segoe UI"
+                                   FontSize="9pt"
+                                   FontWeight="Bold"
+                                   Foreground="Black"
+                                   TextWrapping="Wrap"
+                                   TextOptions.TextRenderingMode="Auto"
+                                   TextOptions.TextFormattingMode="Ideal" />
+
+                    </StackPanel>
+                </Button>
+
+            </WrapPanel>
+
         </StackPanel>
 
     </DockPanel>
