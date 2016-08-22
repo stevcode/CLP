@@ -129,8 +129,8 @@
                 <ColumnDefinition Width="{Binding PageObject.ArrowLength}" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="{Binding PageObject.NumberLineHeight}"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="{Binding PageObject.NumberLineHeight}" />
             </Grid.RowDefinitions>
 
             <!-- Jump Size Labels -->
@@ -245,64 +245,73 @@
             </Grid>
 
             <!-- Tick Marks -->
-            <Canvas Grid.Column="1"
-                    Grid.Row="1">
-                <ItemsControl ItemsSource="{Binding Ticks}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="{Binding DataContext.PageObject.TickLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                  Margin="0,25,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="{Binding TickHeight}" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
+            <ItemsControl Grid.Column="1"
+                          Grid.Row="1"
+                          ItemsSource="{Binding Ticks}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas ClipToBounds="False" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left">
+                            <Setter.Value>
+                                <MultiBinding Converter="{converters:MultiplyAllMultiConverter}">
+                                    <Binding Path="DataContext.PageObject.TickLength"
+                                             RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                    <Binding Path="TickValue" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,25,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{Binding TickHeight}" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                                <Line Grid.Row="0"
-                                      Y1="0"
-                                      Y2="1"
-                                      Margin="0 3 0 3"
-                                      Stretch="Fill"
-                                      Stroke="Blue"
-                                      StrokeThickness="1"
-                                      HorizontalAlignment="Left"
-                                      SnapsToDevicePixels="False"
-                                      UseLayoutRounding="False"
-                                      Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
+                            <Line Grid.Row="0"
+                                  Y1="0"
+                                  Y2="1"
+                                  Margin="0 3 0 3"
+                                  Stretch="Fill"
+                                  Stroke="Blue"
+                                  StrokeThickness="1"
+                                  HorizontalAlignment="Left"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
 
-                                <Line Grid.Row="0"
-                                      Y1="0"
-                                      Y2="1"
-                                      Stretch="Fill"
-                                      Stroke="Blue"
-                                      StrokeThickness="1"
-                                      HorizontalAlignment="Left"
-                                      SnapsToDevicePixels="False"
-                                      UseLayoutRounding="False"
-                                      Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}}" />
+                            <Line Grid.Row="0"
+                                  Y1="0"
+                                  Y2="1"
+                                  Stretch="Fill"
+                                  Stroke="Blue"
+                                  StrokeThickness="1"
+                                  HorizontalAlignment="Left"
+                                  SnapsToDevicePixels="False"
+                                  UseLayoutRounding="False"
+                                  Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
-                                <Canvas Grid.Row="1"
-                                        ClipToBounds="False"
-                                        HorizontalAlignment="Left"
-                                        Margin="-4 0 0 0"
-                                        Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
-                                    <TextBlock Text="{Binding TickValue}"
-                                               FontSize="14"
-                                               Foreground="{Binding TickColor}"
-                                               FontWeight="Bold" />
-                                </Canvas>
+                            <Canvas Grid.Row="1"
+                                    ClipToBounds="False"
+                                    HorizontalAlignment="Left"
+                                    Margin="-4 0 0 0"
+                                    Visibility="{Binding IsNumberVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                                <TextBlock Text="{Binding TickValue}"
+                                           FontSize="14"
+                                           Foreground="{Binding TickColor}"
+                                           FontWeight="Bold" />
+                            </Canvas>
 
-                                
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-
-                </ItemsControl>
-            </Canvas>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <!-- Auto Generated Jump Arcs -->
             <Grid Grid.Column="1"
@@ -358,10 +367,8 @@
                                             </PathGeometry.Figures>
                                         </PathGeometry>
                                     </Path.Data>
-                                    
                                 </Path>
                             </Canvas>
-                            
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -405,16 +412,16 @@
                    Width="{Binding PageObject.ArrowLength}"
                    Height="{Binding Height}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding ResizeNumberLineLengthCommand}"
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragArrowStartCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="DragStarted">
-                        <catel:EventToCommand Command="{Binding ResizeStartNumberLineLengthCommand}"
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragArrowCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
-                        <catel:EventToCommand Command="{Binding ResizeStopNumberLineLengthCommand}"
+                        <catel:EventToCommand Command="{Binding DragArrowStopCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -425,7 +432,7 @@
                                    Fill="Transparent"
                                    Stretch="Fill"
                                    HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"/>
+                                   VerticalAlignment="Stretch" />
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>

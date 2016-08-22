@@ -144,7 +144,7 @@ namespace CLP.Entities
     public class NumberLine : AStrokeAccepter
     {
         public const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
-        public const int NUMBER_LINE_MAX_SIZE = 93;
+        public const int NUMBER_LINE_MAX_SIZE = 84;
 
         #region Constructors
 
@@ -208,7 +208,10 @@ namespace CLP.Entities
 
         public double TickLength
         {
-            get { return NumberLineLength / NumberLineSize; }
+            get
+            {
+                return NumberLineLength / NumberLineSize;
+            }
         }
 
         /// <summary>Length of number line</summary>
@@ -678,8 +681,8 @@ namespace CLP.Entities
         {
             if (e.PropertyName == "Width")
             {
-                RaisePropertyChanged("TickLength");
                 RaisePropertyChanged("NumberLineLength");
+                RaisePropertyChanged("TickLength");
             }
             base.OnPropertyChanged(e);
         }
