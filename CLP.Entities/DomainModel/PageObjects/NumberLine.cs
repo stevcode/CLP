@@ -208,7 +208,10 @@ namespace CLP.Entities
 
         public double TickLength
         {
-            get { return NumberLineLength / NumberLineSize; }
+            get
+            {
+                return NumberLineLength / NumberLineSize;
+            }
         }
 
         /// <summary>Length of number line</summary>
@@ -678,8 +681,8 @@ namespace CLP.Entities
         {
             if (e.PropertyName == "Width")
             {
-                RaisePropertyChanged("TickLength");
                 RaisePropertyChanged("NumberLineLength");
+                RaisePropertyChanged("TickLength");
             }
             base.OnPropertyChanged(e);
         }

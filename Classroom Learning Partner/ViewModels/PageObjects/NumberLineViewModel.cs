@@ -24,9 +24,9 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = numberLine;
 
             ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
-            ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);
-            ResizeStartNumberLineLengthCommand = new Command<DragStartedEventArgs>(OnResizeStartNumberLineLengthCommandExecute);
-            ResizeStopNumberLineLengthCommand = new Command<DragCompletedEventArgs>(OnResizeStopNumberLineLengthCommandExecute);
+            DragArrowStartCommand = new Command<DragStartedEventArgs>(OnDragArrowStartCommandExecute);
+            DragArrowCommand = new Command<DragDeltaEventArgs>(OnDragArrowCommandExecute);
+            DragArrowStopCommand = new Command<DragCompletedEventArgs>(OnDragArrowStopCommandExecute);
             CheckArrayCompletenessCommand = new Command(OnCheckArrayCompletenessCommandExecute);
             InitializeButtons();
         }
@@ -175,13 +175,13 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.OnResizing(initialWidth, initialHeight);
         }
 
-        /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
-        public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
-
         private bool _isClicked;
         private int _oldEnd;
 
-        private void OnResizeStartNumberLineLengthCommandExecute(DragStartedEventArgs e)
+        /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
+        public Command<DragStartedEventArgs> DragArrowStartCommand { get; set; }
+
+        private void OnDragArrowStartCommandExecute(DragStartedEventArgs e)
         {
             PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage,
                                                                                           App.MainWindowViewModel.CurrentUser,
@@ -192,10 +192,55 @@ namespace Classroom_Learning_Partner.ViewModels
             _oldEnd = NumberLineSize;
         }
 
-        /// <summary>Gets the ResizeStopPageObjectCommand command.</summary>
-        public Command<DragCompletedEventArgs> ResizeStopNumberLineLengthCommand { get; set; }
+        /// <summary>Change the length of the number line</summary>
+        public Command<DragDeltaEventArgs> DragArrowCommand { get; private set; }
 
-        private void OnResizeStopNumberLineLengthCommandExecute(DragCompletedEventArgs e)
+        private void OnDragArrowCommandExecute(DragDeltaEventArgs e)
+        {
+            var numberLine = PageObject as NumberLine;
+
+            if (numberLine == null)
+            {
+                return;
+            }
+
+            var parentPage = PageObject.ParentPage;
+            const int MIN_WIDTH = 250;
+
+            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+
+            if (!IsArrowDraggingAllowed)
+            {
+                return;
+            }
+
+            if (newWidth >= _initialWidth + numberLine.TickLength &&
+                NumberLineSize < NumberLine.NUMBER_LINE_MAX_SIZE)
+            {
+                _isClicked = false;
+                _initialWidth += numberLine.TickLength;
+                ChangeNumberLineEndPoints(NumberLineSize + 1);
+            }
+            else if (newWidth <= _initialWidth - numberLine.TickLength &&
+                     NumberLineSize > 5)
+            {
+                var newNumberLineSize = NumberLineSize - 1;
+                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
+                if (lastMarkedTick == null ||
+                    lastMarkedTick.TickValue <= newNumberLineSize)
+                {
+                    _isClicked = false;
+                    _initialWidth -= numberLine.TickLength;
+                    ChangeNumberLineEndPoints(newNumberLineSize);
+                }
+            }
+        }
+
+        /// <summary>Gets the ResizeStopPageObjectCommand command.</summary>
+        public Command<DragCompletedEventArgs> DragArrowStopCommand { get; set; }
+
+        private void OnDragArrowStopCommandExecute(DragCompletedEventArgs e)
         {
             var tooLow = false;
             var tooLowNumberTry = 0;
@@ -264,51 +309,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _initialWidth = 0;
-        }
-
-        /// <summary>Change the length of the number line</summary>
-        public Command<DragDeltaEventArgs> ResizeNumberLineLengthCommand { get; private set; }
-
-        private void OnResizeNumberLineLengthCommandExecute(DragDeltaEventArgs e)
-        {
-            var numberLine = PageObject as NumberLine;
-
-            if (numberLine == null)
-            {
-                return;
-            }
-
-            var parentPage = PageObject.ParentPage;
-            const int MIN_WIDTH = 250;
-
-            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
-            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
-
-            if (!IsArrowDraggingAllowed)
-            {
-                return;
-            }
-
-            if (newWidth >= _initialWidth + numberLine.TickLength &&
-                NumberLineSize < NumberLine.NUMBER_LINE_MAX_SIZE)
-            {
-                _isClicked = false;
-                _initialWidth += numberLine.TickLength;
-                ChangeNumberLineEndPoints(NumberLineSize + 1);
-            }
-            else if (newWidth <= _initialWidth - numberLine.TickLength &&
-                     NumberLineSize > 5)
-            {
-                var newNumberLineSize = NumberLineSize - 1;
-                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
-                if (lastMarkedTick == null ||
-                    lastMarkedTick.TickValue <= newNumberLineSize)
-                {
-                    _isClicked = false;
-                    _initialWidth -= numberLine.TickLength;
-                    ChangeNumberLineEndPoints(newNumberLineSize);
-                }
-            }
         }
 
         public Command CheckArrayCompletenessCommand { get; private set; }
