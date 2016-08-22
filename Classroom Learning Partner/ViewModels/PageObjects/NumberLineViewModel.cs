@@ -222,7 +222,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var newNumberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+                var newNumberLineSize = int.Parse(keyPad.NumbersEntered.Text);
 
                 if (newNumberLineSize > NumberLine.NUMBER_LINE_MAX_SIZE)
                 {
@@ -264,33 +264,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _initialWidth = 0;
-            // HACK: Removed for demo.
-            //var changeSize = NumberLineSize - _oldEnd;
-            //var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-            //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
-
-            //var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
-
-            //foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-            //{
-            //    var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
-            //    var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
-
-            //    var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
-            //                                                 Origin.StudentPageObjectGenerated,
-            //                                                 PageObject.ID,
-            //                                                 0,
-            //                                                 _oldEnd,
-            //                                                 numberLineIDsInHistory.IndexOf(PageObject.ID),
-            //                                                 0,
-            //                                                 NumberLineSize,
-            //                                                 changeSize,
-            //                                                 _isClicked,
-            //                                                 oldDistanceFromAnswer,
-            //                                                 newDistanceFromAnswer,
-            //                                                 tooLowNumber);
-            //    PageObject.ParentPage.AddTag(tag);
-            //}
         }
 
         /// <summary>Change the length of the number line</summary>
@@ -316,7 +289,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (newWidth >= _initialWidth + numberLine.TickLength)
+            if (newWidth >= _initialWidth + numberLine.TickLength &&
+                NumberLineSize < NumberLine.NUMBER_LINE_MAX_SIZE)
             {
                 _isClicked = false;
                 _initialWidth += numberLine.TickLength;
@@ -335,19 +309,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     ChangeNumberLineEndPoints(newNumberLineSize);
                 }
             }
-
-            //TODO: Use for conversion
-            //if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
-            //{
-            //    _isClicked = false;
-            //    NumberLineSize++;
-            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-            //                                           new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-            //                                                                                       App.MainWindowViewModel.CurrentUser,
-            //                                                                                       PageObject.ID, 0, NumberLineSize - 1));
-            //    _initialWidth += numberLine.TickLength;
-            //    ChangePageObjectDimensions(PageObject, Height, newWidth);
-            //}
         }
 
         public Command CheckArrayCompletenessCommand { get; private set; }
