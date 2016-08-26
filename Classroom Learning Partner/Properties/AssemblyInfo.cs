@@ -6,11 +6,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Classroom_Learning_Partner")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Classroom Learning Partner")]
+[assembly: AssemblyDescription("Classroom Learning Partner")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Classroom_Learning_Partner")]
+[assembly: AssemblyCompany("INK-12")]
+[assembly: AssemblyProduct("Classroom Learning Partner")]
 [assembly: AssemblyCopyright("Copyright © 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
