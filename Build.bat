@@ -8,6 +8,13 @@ cd /d "%~dp0"
 rem MSBuild path
 set msbuildexe="%programfiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe"
 
+git describe --abbrev=0 --tags > latestTag.txt
+for /f "delims=" %%i in ('git rev-list HEAD --count') do set commitCount=%%i
+set /p latestTag=<latestTag.txt
+del latestTag.txt
+set releaseVersion=%latestTag%.%commitCount%
+echo %releaseVersion%
+
 rem Directory paths
 set localDirectory=%~dp0
 set outputDirectory=%localDirectory%output
