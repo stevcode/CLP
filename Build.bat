@@ -11,7 +11,7 @@ set msbuildexe="%programfiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe"
 rem Directory paths
 set localDirectory=%~dp0
 set outputDirectory=%localDirectory%output
-set buildDirectory=%outputDirectory%\build
+set buildsDirectory=%outputDirectory%\builds
 set releasesDirectory=%outputDirectory%\releases
 set x86Release=%releasesDirectory%\x86
 set x64Release=%releasesDirectory%\x64
@@ -21,7 +21,7 @@ rem Clean paths
 rmdir /q /s "%outputDirectory%" 1>nul 2>nul
 
 rem Initialize paths
-mkdir "%buildDirectory%" 1>nul 2>nul
+mkdir "%buildsDirectory%" 1>nul 2>nul
 mkdir "%x86Release%" 1>nul 2>nul
 mkdir "%x64Release%" 1>nul 2>nul
 mkdir "%anyCPURelease%" 1>nul 2>nul
