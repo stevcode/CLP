@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ClassroomLearningPartner</id>
+    <version>$version$</version>
+    <authors>INK-12</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Classroom Learning Partner</description>
+  </metadata>
+  <files>
+    <file src="output\2-releases\AnyCPU\**\*" target="lib\net45" />
+  </files>
+</package>
