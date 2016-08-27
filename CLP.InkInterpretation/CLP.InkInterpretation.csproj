@@ -51,6 +51,9 @@
     <Reference Include="Windows" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VersionAssemblyInfo.cs">
+      <Link>Properties\VersionAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="InkClustering.cs" />
     <Compile Include="InkInterpreter.cs" />
     <Compile Include="PriorityQueue\HeapPriorityQueue.cs" />

@@ -244,6 +244,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\VersionAssemblyInfo.cs">
+      <Link>Properties\VersionAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\Multi Converters\MultiplyAllMultiConverter.cs" />
