@@ -2,10 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ClassroomLearningPartner</id>
+    <title>Classroom Learning Partner</title>
     <version>$version$</version>
     <authors>INK-12</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Classroom Learning Partner</description>
+    <iconUrl>https://raw.githubusercontent.com/stevcode/CLP/SquirrelIntegration/Classroom%20Learning%20Partner/Resources/Images/Icons/CLPPaperClipLogoCircled64.png</iconUrl>
   </metadata>
   <files>
     <file src="output\2-releases\AnyCPU\**\*" target="lib\net45" />
