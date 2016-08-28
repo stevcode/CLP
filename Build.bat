@@ -47,10 +47,19 @@ set buildPlatformConfiguration=Release
 if "%~1" neq "" (set buildPlatformConfiguration=%~1)
 
 rem Set Version
-set dailyBuildVersion=0
+set /a dailyBuildVersion=0
 for /f %%i in ('cscript "%scriptsDirectory%\DateVersionGenerator.vbs" //Nologo') do set dateVersion=%%i
 for /f "delims=" %%i in ('git rev-parse --short HEAD') do set shortHash=%%i
 set assemblyVersion=%dateVersion%.%dailyBuildVersion%
+
+rem Increment dailyBuildVersion
+:DoWhile
+if not exist "%installerDirectory%\CLP Setup - %assemblyVersion%.exe" (goto EndDoWhile)
+set /a dailyBuildVersion=%dailyBuildVersion% + 1
+set assemblyVersion=%dateVersion%.%dailyBuildVersion%
+goto DoWhile
+:EndDoWhile
+
 set hashVersion=%dateVersion%.%dailyBuildVersion%-r%shortHash%
 
 rem Remove last line from VersionAssemblyInfo.cs

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -20,13 +21,14 @@ namespace Classroom_Learning_Partner
     {
         protected override async void OnStartup(StartupEventArgs e)
         {
-            //var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
+#if !DEBUG
+            var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
 
-            //using (var updateManager = new UpdateManager(testPathForReleases))
-            //{
-            //    await updateManager.UpdateApp();
-            //}
-
+            using (var updateManager = new UpdateManager(testPathForReleases))
+            {
+                await updateManager.UpdateApp();
+            }
+#endif
 
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
