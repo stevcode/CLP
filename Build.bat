@@ -10,6 +10,7 @@ set msbuildexe="%programfiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe"
 
 rem Directory paths
 set localDirectory=%~dp0
+set iconFile="%localDirectory%Classroom Learning Partner\Resources\Images\Icons\CLPPaperClipLogoCircled.ico"
 set nuGetDirectory=%localDirectory%tools\NuGet
 set scriptsDirectory=%localDirectory%tools\Scripts
 set outputDirectory=%localDirectory%output
@@ -109,9 +110,13 @@ echo.
 rem Attempt to build the installer using Squirrel
 echo Creating CLP Installer...
 set squirrelDirectory=%localDirectory%packages\squirrel.windows.1.4.4\tools
-"%squirrelDirectory%\Squirrel.exe" --releasify "%packagesDirectory%"\ClassroomLearningPartner.%assemblyVersion%.nupkg --releaseDir "%installerDirectory%"
+"%squirrelDirectory%\Squirrel.exe" --releasify "%packagesDirectory%"\ClassroomLearningPartner.%assemblyVersion%.nupkg --releaseDir "%installerDirectory%" --setupIcon "%~dp0CLPPaperClipLogoCircled.ico"
 
 if not "%ERRORLEVEL%"=="0" (echo ERROR: Creating the installer failed. Check Squirrel version is still 1.4.4. & goto Quit)
+
+move /y "%installerDirectory%\Setup.exe" "%installerDirectory%\CLP Setup - %assemblyVersion%.exe" >nul
+move /y "%installerDirectory%\Setup.msi" "%installerDirectory%\CLP Setup - %assemblyVersion%.msi" >nul
+
 echo CLP Installer created.
 echo.
 
