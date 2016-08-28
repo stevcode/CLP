@@ -11,6 +11,7 @@ set msbuildexe="%programfiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe"
 rem Directory paths
 set localDirectory=%~dp0
 set nuGetDirectory=%localDirectory%tools\NuGet
+set scriptsDirectory=%localDirectory%tools\Scripts
 set outputDirectory=%localDirectory%output
 set buildsDirectory=%outputDirectory%\1-builds
 set anyCPUBuild=%buildsDirectory%\AnyCPU
@@ -45,12 +46,11 @@ set buildPlatformConfiguration=Release
 if "%~1" neq "" (set buildPlatformConfiguration=%~1)
 
 rem Set Version
-set majorVersion=4
-set minorVersion=0
-for /f "delims=" %%i in ('git rev-list HEAD --count') do set commitCount=%%i
+set dailyBuildVersion=0
+for /f %%i in ('cscript "%scriptsDirectory%\DateVersionGenerator.vbs" //Nologo') do set dateVersion=%%i
 for /f "delims=" %%i in ('git rev-parse --short HEAD') do set shortHash=%%i
-set releaseVersion=%majorVersion%.%minorVersion%.%commitCount%-r%shortHash%
-set assemblyVersion=%majorVersion%.%minorVersion%.%commitCount%
+set assemblyVersion=%dateVersion%.%dailyBuildVersion%
+set hashVersion=%dateVersion%.%dailyBuildVersion%-r%shortHash%
 
 rem Remove last line from VersionAssemblyInfo.cs
 set versionAssemblyInfo=%localDirectory%VersionAssemblyInfo.cs
@@ -60,9 +60,9 @@ rem if exist "%tempVersionFile%" del /q "%tempVersionFile%"
 echo // This file is overwritten during the build process. No changes you make will persist. > "%versionAssemblyInfo%"
 echo using System.Reflection; >> "%versionAssemblyInfo%"
 echo [assembly: AssemblyVersion("%assemblyVersion%")] >> "%versionAssemblyInfo%"
-echo [assembly: AssemblyInformationalVersion("%releaseVersion%")] >> "%versionAssemblyInfo%"
+echo [assembly: AssemblyInformationalVersion("%hashVersion%")] >> "%versionAssemblyInfo%"
 
-echo Making Classroom Learning Partner: %buildPlatformConfiguration% Builds. Version %releaseVersion%.
+echo Making Classroom Learning Partner: %buildPlatformConfiguration% Builds. Version %hashVersion%.
 echo.
 
 echo Building AnyCPU Configuration...
@@ -100,7 +100,7 @@ rem xcopy /y "%x86Build%\Classroom Learning Partner.exe.config" "%x86Release%" 1
 
 rem Create the NuGet package for Squirrel to use
 echo Packaging CLP...
-"%nuGetDirectory%\nuget" pack "%localDirectory%CLPDeployment.nuspec" -Version %releaseVersion% -OutputDirectory "%packagesDirectory%"
+"%nuGetDirectory%\nuget" pack "%localDirectory%CLPDeployment.nuspec" -Version %assemblyVersion% -OutputDirectory "%packagesDirectory%"
 
 if not "%ERRORLEVEL%"=="0" (echo ERROR: Creating the NuGet Package Failed. & goto Quit)
 echo CLP packaged.
@@ -109,7 +109,7 @@ echo.
 rem Attempt to build the installer using Squirrel
 echo Creating CLP Installer...
 set squirrelDirectory=%localDirectory%packages\squirrel.windows.1.4.4\tools
-"%squirrelDirectory%\Squirrel.exe" --releasify "%packagesDirectory%"\ClassroomLearningPartner.%releaseVersion%.nupkg --releaseDir "%installerDirectory%"
+"%squirrelDirectory%\Squirrel.exe" --releasify "%packagesDirectory%"\ClassroomLearningPartner.%assemblyVersion%.nupkg --releaseDir "%installerDirectory%"
 
 if not "%ERRORLEVEL%"=="0" (echo ERROR: Creating the installer failed. Check Squirrel version is still 1.4.4. & goto Quit)
 echo CLP Installer created.
