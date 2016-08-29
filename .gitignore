@@ -40,3 +40,6 @@ _ReSharper*/
 # Ignore backup files from merge tools
 *.orig
 *.bak
+
+# Bypass Ignore
+!NuGet.exe

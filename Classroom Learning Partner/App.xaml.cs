@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -11,14 +12,24 @@ using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
+using Squirrel;
 
 namespace Classroom_Learning_Partner
 {
     /// <summary>Interaction logic for App.xaml</summary>
     public partial class App
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
+#if !DEBUG
+            var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
+
+            using (var updateManager = new UpdateManager(testPathForReleases))
+            {
+                await updateManager.UpdateApp();
+            }
+#endif
+
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
