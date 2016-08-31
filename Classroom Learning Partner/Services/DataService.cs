@@ -7,8 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel;
+using Catel.Reflection;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
@@ -196,7 +198,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Properties
 
-        public string CurrentCLPDataFolderPath { get; set; }
+        
 
         #region Cache Properties
 
@@ -240,13 +242,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion //Notebook Properties
 
         #endregion //Properties
-
-        #region Events
-
-        public event EventHandler<EventArgs> CurrentNotebookChanged;
-        public event EventHandler<EventArgs> CurrentPageChanged;
-
-        #endregion // Events
 
         #region Methods
 
@@ -1315,5 +1310,116 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Testing
 
         #endregion //Methods
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Constants
+
+        //private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
+        //private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
+        private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
+        private const string DEFAULT_CONFIG_FOLDER_NAME = "Config";  // Config Service?
+        private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
+
+        #endregion // Constants
+
+        #region Properties
+
+        #region Default Folder Paths
+
+        private string DefaultCLPDataFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        #endregion // Default Folder Paths
+
+        #region Current Folder Paths
+
+        public string CurrentProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
+
+        public string CurrentCLPDataFolderPath { get; set; }
+
+        public string CurrentCacheFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        public string CurrentTempCacheFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_TEMP_CACHE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        public string CurrentArchiveFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_ARCHIVE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        #endregion // Current Folder Paths
+
+        #region Notebook Properties
+
+        //FilePathPair
+        //AvailableNotebooks   //AvailableCLPFiles? AvailableClasses?
+        //LoadedNotebooks      //Differentiate between a .clp file and the individual notebooks within?
+        //CurrentNotebook
+        //CurrentMultiDisplay
+
+        #endregion // Notebook Properties
+
+        #region Page Properties
+
+        //CurrentNotebookPage
+        //CurrentSubmissionPage
+        //CurrentSelectedPage
+
+        #endregion // Page Properties
+
+        #endregion // Properties
+
+        #region Events
+
+        public event EventHandler<EventArgs> CurrentNotebookChanged;
+        public event EventHandler<EventArgs> CurrentPageChanged;
+
+        #endregion // Events
+
+
     }
 }
