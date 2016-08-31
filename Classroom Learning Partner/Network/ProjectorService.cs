@@ -623,7 +623,7 @@ namespace Classroom_Learning_Partner
 
                                                                                         var tempIsAnimating = pageToRedo.History.IsAnimating;
                                                                                         pageToRedo.History.IsAnimating = true;
-                                                                                        pageToRedo.History.Redo();
+                                                                                        pageToRedo.History.Redo(true);
                                                                                         pageToRedo.History.IsAnimating = tempIsAnimating;
 
                                                                                         return null;

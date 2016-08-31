@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
@@ -175,7 +176,69 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void AddHistoryItem(string compositePageID, string zippedHistoryItem) { }
+        public void AddHistoryItem(string compositePageID, string zippedHistoryItem)
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            var compositeKeys = compositePageID.Split(';');
+            var pageID = compositeKeys[0];
+            var pageOwnerID = App.MainWindowViewModel.CurrentUser.ID;
+            var differentiationLevel = compositeKeys[2]; // TODO: Make owner's current differentiation level
+            var versionIndex = Convert.ToUInt32(compositeKeys[3]);
+
+            var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
+            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+            if (historyItem == null)
+            {
+                Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");
+                return;
+            }
+
+            CLPPage pageToRedo = null;
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            {
+                var notebook = notebookInfo.Notebook;
+                if (notebook == null)
+                {
+                    continue;
+                }
+
+                var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                pageToRedo = page;
+            }
+
+            if (pageToRedo == null)
+            {
+                return;
+            }
+
+            historyItem.ParentPage = pageToRedo;
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           historyItem.UnpackHistoryItem();
+                                                           pageToRedo.History.RedoItems.Clear();
+                                                           pageToRedo.History.RedoItems.Add(historyItem);
+
+                                                           var tempIsAnimating = pageToRedo.History.IsAnimating;
+                                                           pageToRedo.History.IsAnimating = true;
+                                                           pageToRedo.History.Redo();
+                                                           pageToRedo.History.IsAnimating = tempIsAnimating;
+
+                                                           return null;
+                                                       },
+                                                       null);
+        }
 
         public void AddNewPage(string zippedPage, int index)
         {
