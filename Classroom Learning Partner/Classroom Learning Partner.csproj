@@ -1075,10 +1075,7 @@
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled.ico" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
-    <Content Include="External Libraries\EntityFramework.dll" />
-    <Content Include="External Libraries\EntityFramework.SqlServer.dll" />
     <Content Include="External Libraries\itextsharp.dll" />
-    <Content Include="External Libraries\NAudio.dll" />
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Reactive.Core.dll" />
@@ -1334,11 +1331,6 @@
     <Resource Include="Resources\Images\Unused\stop.png" />
     <Resource Include="Resources\Images\Unused\stop_record.png" />
     <Resource Include="Resources\Images\Unused\SnapTileIcon.png" />
-    <Content Include="External Libraries\IACore.dll" />
-    <Content Include="External Libraries\IALoader.dll" />
-    <Content Include="External Libraries\IAWinFX.dll" />
-    <Content Include="External Libraries\Microsoft.Ink.dll" />
-    <Content Include="External Libraries\Microsoft.Ink.resources.dll" />
     <Resource Include="Resources\Images\Unused\Inkwell.ico" />
     <Resource Include="Resources\Images\Unused\mic_stop.png" />
     <Resource Include="Resources\Images\Unused\mic_start.png" />
