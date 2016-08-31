@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -25,16 +25,17 @@ namespace ServiceModelEx
          ServiceHost<T> host;
          if(supportIpc == true)
          {
-            host = new ServiceHost<T>(DiscoveryHelper.AvailableIpcBaseAddress,DiscoveryHelper.AvailableTcpBaseAddress);
+            host = new ServiceHost<T>(DiscoveryHelper.AvailableIpcBaseAddress,new Uri(DiscoveryHelper.AvailableTcpBaseAddress.AbsoluteUri+"/"));
          }
          else
          {
-             host = new ServiceHost<T>(DiscoveryHelper.AvailableTcpBaseAddress);
+             host = new ServiceHost<T>(new Uri(DiscoveryHelper.AvailableTcpBaseAddress.AbsoluteUri+"/"));
          }
          host.EnableDiscovery(scope);
 
          return host;
       }
+
       public static T CreateChannel<T>(Uri scope = null) where T : class
       {
          DiscoveryClient discoveryClient = new DiscoveryClient(new UdpDiscoveryEndpoint());
@@ -121,7 +122,7 @@ namespace ServiceModelEx
          return list.ToArray();
       }
       
-      static Binding InferBindingFromUri(Uri address)
+      static internal Binding InferBindingFromUri(Uri address)
       {
          switch(address.Scheme)
          {

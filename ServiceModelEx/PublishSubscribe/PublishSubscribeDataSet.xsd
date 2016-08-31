@@ -9,7 +9,7 @@
         <Tables>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="PersistentSubscribersTableAdapter" GeneratorDataComponentClassName="PersistentSubscribersTableAdapter" Name="PersistentSubscribers" UserDataComponentName="PersistentSubscribersTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="true" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetData" UserSourceName="Fill">
                 <DeleteCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="false">
                     <CommandText>DELETE FROM [dbo].[PersistentSubscribers] WHERE (([Address] = @Original_Address) AND ([Operation] = @Original_Operation) AND ([Contract] = @Original_Contract) AND ([ID] = @Original_ID))</CommandText>
@@ -63,7 +63,7 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
               <Mapping SourceColumn="ID" DataSetColumn="ID" />
             </Mappings>
             <Sources>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetAllSubscribers" GetMethodModifier="Public" GetMethodName="GetAllSubscribers" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetAllSubscribers" UserSourceName="GetAllSubscribers">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetAllSubscribers" GetMethodModifier="Public" GetMethodName="GetAllSubscribers" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetAllSubscribers" UserSourceName="GetAllSubscribers">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Address, Operation, Contract, ID FROM dbo.PersistentSubscribers</CommandText>
@@ -71,7 +71,7 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersByAddressContractOperation" GeneratorSourceName="FillBy" GetMethodModifier="Public" GetMethodName="GetSubscribersByAddressContractOperation" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersByAddressContractOperation" UserSourceName="GetSubscribersByAddressContractOperation">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersByAddressContractOperation" GeneratorSourceName="FillBy" GetMethodModifier="Public" GetMethodName="GetSubscribersByAddressContractOperation" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersByAddressContractOperation" UserSourceName="GetSubscribersByAddressContractOperation">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Address, Operation, Contract, ID FROM dbo.PersistentSubscribers WHERE Address=@address AND  Contract = @contract AND Operation = @operation</CommandText>
@@ -83,7 +83,7 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersFromAddress" GetMethodModifier="Public" GetMethodName="GetSubscribersFromAddress" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersFromAddress" UserSourceName="GetSubscribersFromAddress">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersFromAddress" GetMethodModifier="Public" GetMethodName="GetSubscribersFromAddress" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersFromAddress" UserSourceName="GetSubscribersFromAddress">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Address, Operation, Contract, ID FROM dbo.PersistentSubscribers WHERE Address=@address</CommandText>
@@ -93,7 +93,7 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersToContract" GetMethodModifier="Public" GetMethodName="GetSubscribersToContract" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersToContract" UserSourceName="GetSubscribersToContract">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersToContract" GetMethodModifier="Public" GetMethodName="GetSubscribersToContract" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersToContract" UserSourceName="GetSubscribersToContract">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Address, Operation, Contract, ID FROM dbo.PersistentSubscribers WHERE Contract = @contract </CommandText>
@@ -103,7 +103,7 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
                   </DbCommand>
                 </SelectCommand>
               </DbSource>
-              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersToContractOperation" GetMethodModifier="Public" GetMethodName="GetSubscribersToContractOperation" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersToContractOperation" UserSourceName="GetSubscribersToContractOperation">
+              <DbSource ConnectionRef="PublishSubscribeConnectionString (Settings)" DbObjectName="PublishSubscribe.dbo.PersistentSubscribers" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="true" GeneratorGetMethodName="GetSubscribersToContractOperation" GetMethodModifier="Public" GetMethodName="GetSubscribersToContractOperation" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSubscribersToContractOperation" UserSourceName="GetSubscribersToContractOperation">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT Address, Operation, Contract, ID FROM dbo.PersistentSubscribers WHERE Contract = @contract AND Operation = @operation</CommandText>
@@ -121,34 +121,34 @@ SELECT Address, Operation, Contract, ID FROM PersistentSubscribers WHERE (ID = @
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="PublishSubscribeDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="PublishSubscribeDataSet" msprop:Generator_DataSetName="PublishSubscribeDataSet">
+  <xs:element name="PublishSubscribeDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="PublishSubscribeDataSet" msprop:Generator_UserDSName="PublishSubscribeDataSet">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="PersistentSubscribers" msprop:Generator_UserTableName="PersistentSubscribers" msprop:Generator_RowDeletedName="PersistentSubscribersRowDeleted" msprop:Generator_RowChangedName="PersistentSubscribersRowChanged" msprop:Generator_RowClassName="PersistentSubscribersRow" msprop:Generator_RowChangingName="PersistentSubscribersRowChanging" msprop:Generator_RowEvArgName="PersistentSubscribersRowChangeEvent" msprop:Generator_RowEvHandlerName="PersistentSubscribersRowChangeEventHandler" msprop:Generator_TableClassName="PersistentSubscribersDataTable" msprop:Generator_TableVarName="tablePersistentSubscribers" msprop:Generator_RowDeletingName="PersistentSubscribersRowDeleting" msprop:Generator_TablePropName="PersistentSubscribers">
+        <xs:element name="PersistentSubscribers" msprop:Generator_UserTableName="PersistentSubscribers" msprop:Generator_RowEvArgName="PersistentSubscribersRowChangeEvent" msprop:Generator_TableVarName="tablePersistentSubscribers" msprop:Generator_TablePropName="PersistentSubscribers" msprop:Generator_RowDeletingName="PersistentSubscribersRowDeleting" msprop:Generator_RowChangingName="PersistentSubscribersRowChanging" msprop:Generator_RowDeletedName="PersistentSubscribersRowDeleted" msprop:Generator_RowEvHandlerName="PersistentSubscribersRowChangeEventHandler" msprop:Generator_TableClassName="PersistentSubscribersDataTable" msprop:Generator_RowChangedName="PersistentSubscribersRowChanged" msprop:Generator_RowClassName="PersistentSubscribersRow">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="Address" msprop:Generator_UserColumnName="Address" msprop:Generator_ColumnPropNameInRow="Address" msprop:Generator_ColumnVarNameInTable="columnAddress" msprop:Generator_ColumnPropNameInTable="AddressColumn">
+              <xs:element name="Address" msprop:Generator_ColumnVarNameInTable="columnAddress" msprop:Generator_ColumnPropNameInRow="Address" msprop:Generator_ColumnPropNameInTable="AddressColumn" msprop:Generator_UserColumnName="Address">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="500" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Operation" msprop:Generator_UserColumnName="Operation" msprop:Generator_ColumnPropNameInRow="Operation" msprop:Generator_ColumnVarNameInTable="columnOperation" msprop:Generator_ColumnPropNameInTable="OperationColumn">
+              <xs:element name="Operation" msprop:Generator_ColumnVarNameInTable="columnOperation" msprop:Generator_ColumnPropNameInRow="Operation" msprop:Generator_ColumnPropNameInTable="OperationColumn" msprop:Generator_UserColumnName="Operation">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="500" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Contract" msprop:Generator_UserColumnName="Contract" msprop:Generator_ColumnPropNameInRow="Contract" msprop:Generator_ColumnVarNameInTable="columnContract" msprop:Generator_ColumnPropNameInTable="ContractColumn">
+              <xs:element name="Contract" msprop:Generator_ColumnVarNameInTable="columnContract" msprop:Generator_ColumnPropNameInRow="Contract" msprop:Generator_ColumnPropNameInTable="ContractColumn" msprop:Generator_UserColumnName="Contract">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="500" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="ID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="ID" msdata:ReadOnly="true" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:int" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

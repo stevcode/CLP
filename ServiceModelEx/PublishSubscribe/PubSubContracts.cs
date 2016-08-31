@@ -1,7 +1,8 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
+using System;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
@@ -19,9 +20,20 @@ namespace ServiceModelEx
    }
 
    //For persistent subscribers
-   [DataContract]
-   public struct PersistentSubscription
+   [Serializable]
+   public class PersistentSubscription
    {
+      public PersistentSubscription()
+      {}
+
+      public PersistentSubscription(string address,string contract,string operation)
+      {
+         Address = address;
+         EventsContract = contract;
+         EventOperation = operation;
+      }
+
+
       [DataMember]
       public string Address
       {get;set;}

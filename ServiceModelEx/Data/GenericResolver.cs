@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -117,6 +117,7 @@ namespace ServiceModelEx
             types.AddRange(typesInReferencedAssembly);
          }
 
+         //MTM: Redundant?
          if(GenericResolverInstaller.CallingAssembly.FullName !=  typeof(ServiceHost).Assembly.FullName              &&
             GenericResolverInstaller.CallingAssembly.FullName !=  typeof(GenericResolverInstaller).Assembly.FullName)
          {
@@ -133,11 +134,21 @@ namespace ServiceModelEx
          }
          else
          {
-            Debug.Assert(GenericResolverInstaller.IsWebProcess());
-            foreach(Assembly assembly in GenericResolverInstaller.GetWebAssemblies())
+            if(GenericResolverInstaller.IsWebProcess())
             {
-               Type[] typesInWebAssembly = GetTypes(assembly,false);
-               types.AddRange(typesInWebAssembly);
+               foreach(Assembly assembly in GenericResolverInstaller.GetWebAssemblies())
+               {
+                  Type[] typesInWebAssembly = GetTypes(assembly,false);
+                  types.AddRange(typesInWebAssembly);
+               }
+            }
+            else
+            {
+               foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(domainAssembly=>IsSystemAssembly(domainAssembly.GetName()) == false))
+               {
+                  Type[] typesInDomainAssembly = GetTypes(assembly,false);
+                  types.AddRange(typesInDomainAssembly);
+               }               
             }
          }
          return types.ToArray();
@@ -161,44 +172,62 @@ namespace ServiceModelEx
          }
          else
          {
-            Debug.Assert(GenericResolverInstaller.IsWebProcess());
-            foreach(Assembly assembly in GenericResolverInstaller.GetWebAssemblies())
+            if(GenericResolverInstaller.IsWebProcess())
             {
-               assemblies.AddRange(GetCustomReferencedAssemblies(assembly));
+               foreach(Assembly assembly in GenericResolverInstaller.GetWebAssemblies())
+               {
+                  assemblies.AddRange(GetCustomReferencedAssemblies(assembly));
+               }
+            }
+            else
+            {
+               foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(domainAssembly=>IsSystemAssembly(domainAssembly.GetName()) == false))
+               {
+                  assemblies.AddRange(GetCustomReferencedAssemblies(assembly));
+               }               
             }
          }
          return assemblies.ToArray();         
       }
-      static Assembly[] GetCustomReferencedAssemblies(Assembly assembly)
-      {
-         Debug.Assert(assembly != null);
 
-         AssemblyName[] referencedAssemblies = assembly.GetReferencedAssemblies();
+      static bool IsSystemAssembly(AssemblyName assemblyName)
+      {
+         bool isSystemAssembly = false;
 
          const string dotNetKeyToken1 = "b77a5c561934e089";
          const string dotNetKeyToken2 = "b03f5f7f11d50a3a";
          const string dotNetKeyToken3 = "31bf3856ad364e35";
 
-         List<Assembly> assemblies = new List<Assembly>();
-         foreach(AssemblyName assemblyName in referencedAssemblies)
-         {
-            string keyToken = assemblyName.FullName.Split('=')[3];
+         string keyToken = assemblyName.FullName.Split('=')[3];
 
-            Assembly serviceNModelEx = Assembly.GetCallingAssembly();
-            string serviceNModelExKeyToken = serviceNModelEx.GetName().FullName.Split('=')[3];
-            if(keyToken == serviceNModelExKeyToken)
+         Assembly serviceNModelEx = Assembly.GetCallingAssembly();
+         string serviceNModelExKeyToken = serviceNModelEx.GetName().FullName.Split('=')[3];
+         if(keyToken == serviceNModelExKeyToken)
+         {
+            isSystemAssembly = true;
+         }
+         switch(keyToken)
+         {
+            case dotNetKeyToken1:
+            case dotNetKeyToken2:
+            case dotNetKeyToken3:
             {
-               continue;
+               isSystemAssembly = true;
+               break;
             }
-            switch(keyToken)
-            {
-               case dotNetKeyToken1:
-               case dotNetKeyToken2:
-               case dotNetKeyToken3:
-               {
-                  continue;
-               }
-            }
+         }
+
+         return isSystemAssembly;
+      }
+
+      static Assembly[] GetCustomReferencedAssemblies(Assembly assembly)
+      {
+         Debug.Assert(assembly != null);
+         AssemblyName[] referencedAssemblies = assembly.GetReferencedAssemblies();
+
+         List<Assembly> assemblies = new List<Assembly>();
+         foreach(AssemblyName assemblyName in referencedAssemblies.Where(name=>IsSystemAssembly(name) == false))
+         {
             assemblies.Add(Assembly.Load(assemblyName));
          }
          return assemblies.ToArray();

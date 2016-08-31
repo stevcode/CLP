@@ -1,10 +1,12 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ServiceModelEx
 {
@@ -754,6 +756,48 @@ namespace ServiceModelEx
          }
       }
       /// <summary>
+      ///  Performs the action on every item in collection in parallel and returns immediately
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <param name="collection"></param>
+      /// <param name="action"></param>
+      public static IEnumerable<Task> ForEachAsync<T>(IEnumerable<T> collection,Action<T> action)
+      {
+         if(collection == null)
+         {
+            throw new ArgumentNullException("collection");
+         }
+         if(action == null)
+         {
+            throw new ArgumentNullException("action");
+         }
+         List<Task> tasks = new List<Task>();
+
+         foreach(T item in collection)
+         {            
+            tasks.Add(Task.Run(()=>action(item)));
+         }
+         return tasks;
+      }
+      /// <summary>
+      ///  Performs the action on every item in collection in parallel
+      /// </summary>
+      /// <typeparam name="T"></typeparam>
+      /// <param name="collection"></param>
+      /// <param name="action"></param>
+      public static void ParallelForEach<T>(IEnumerable<T> collection,Action<T> action)
+      {
+         if(collection == null)
+         {
+            throw new ArgumentNullException("collection");
+         }
+         if(action == null)
+         {
+            throw new ArgumentNullException("action");
+         }
+         Parallel.ForEach(collection,action);
+      }
+      /// <summary>
       /// Returns the number of items in collection that satisfy a condition
       /// </summary>
       /// <typeparam name="T"></typeparam>
@@ -1020,6 +1064,26 @@ namespace ServiceModelEx
          IEnumerator<U> newIterator = UnsafeConvertAll(iterator,converter);
          return ToArray(newIterator);
       }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       /// <summary>
       /// Converts collection to an array
       /// </summary>

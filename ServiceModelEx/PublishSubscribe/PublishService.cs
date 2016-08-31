@@ -1,4 +1,4 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -9,10 +9,10 @@ using System.ServiceModel;
 using System.Threading;
 
 namespace ServiceModelEx
-{
+{   
    public abstract class PublishService<T> where T : class
    {
-      protected static void FireEvent(params object[] args)
+      protected virtual void FireEvent(params object[] args)
       {
          string action = OperationContext.Current.IncomingMessageHeaders.Action;
          string[] slashes = action.Split('/');
@@ -30,12 +30,12 @@ namespace ServiceModelEx
          T[] subscribers = SubscriptionManager<T>.GetPersistentList(methodName);
          Publish(subscribers,true,methodName,args);
       }
-      static void PublishTransient(string methodName,object[] args)
+      protected static void PublishTransient(string methodName,object[] args)
       {
          T[] subscribers = SubscriptionManager<T>.GetTransientList(methodName);
          Publish(subscribers,false,methodName,args);
       }
-      static void Publish(T[] subscribers,bool closeSubscribers,string methodName,object[] args)
+      protected static void Publish(T[] subscribers,bool closeSubscribers,string methodName,object[] args)
       {
          WaitCallback fire = (subscriber)=>
                              {

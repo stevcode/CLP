@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Collections.Generic;
-
+using System.IO;
 
 namespace ServiceModelEx
 {
@@ -26,7 +26,7 @@ namespace ServiceModelEx
          }
          string processName = Process.GetCurrentProcess().ProcessName;
 
-         return processName == "w3wp" || processName == "WebDev.WebServer40";
+        return processName == "w3wp" || processName == "WebDev.WebServer40" || processName == "WaWorkerHost" || processName == "iisexpress";
       }
 
       internal static Assembly[] GetWebAssemblies()
@@ -38,17 +38,32 @@ namespace ServiceModelEx
          {  
             throw new InvalidOperationException("Can only call in a web assembly");
          }
-         foreach(ProcessModule module in Process.GetCurrentProcess().Modules)
+         foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
          {
-            if(module.ModuleName.StartsWith("App_Code.") && module.ModuleName.EndsWith(".dll"))
+            var moduleName = assembly.ManifestModule.Name;
+            if(moduleName.StartsWith("App_Code.") && moduleName.EndsWith(".dll"))
             {
-               assemblies.Add(Assembly.LoadFrom(module.FileName));
+               assemblies.Add(assembly);
             }
-            if(module.ModuleName.StartsWith("App_Web_") && module.ModuleName.EndsWith(".dll"))
+            if(moduleName.StartsWith("App_Web_") && moduleName.EndsWith(".dll"))
             {
-               assemblies.Add(Assembly.LoadFrom(module.FileName));
+               assemblies.Add(assembly);
+            }
+            if(assembly.Location.Contains(@"Temporary ASP.NET Files"))
+            {
+                assemblies.Add(assembly);
             }
          }
+         if(assemblies.Count == 0)
+         {
+            string dynamicDirectory = AppDomain.CurrentDomain.DynamicDirectory;
+            IEnumerable<string> files = Directory.EnumerateFiles(dynamicDirectory,"*.dll");
+            foreach(string file in files)
+            {
+                assemblies.Add(Assembly.LoadFrom(file));
+            }           
+         }
+
          if(assemblies.Count == 0)
          {
             throw new InvalidOperationException("Could not find dynamic assembly");

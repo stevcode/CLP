@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -69,7 +69,7 @@ namespace ServiceModelEx
             WaitHandle[] operations = m_PendingOperations.ToArray();
             if(operations.Length > 0)
             {
-               WaitHandle.WaitAll(operations);
+               WaitHandle.WaitAll(operations,Endpoint.Binding.SendTimeout);
             }
          }
          base.Close();

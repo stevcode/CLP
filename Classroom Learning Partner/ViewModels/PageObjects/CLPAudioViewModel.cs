@@ -10,8 +10,8 @@ using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
-using NAudio;
-using NAudio.Wave;
+//using NAudio;
+//using NAudio.Wave;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -27,9 +27,9 @@ namespace Classroom_Learning_Partner.ViewModels
     public class CLPAudioViewModel : APageObjectBaseViewModel, IDisposable
     {
         //Declarations required for audio out and the MP3 stream
-        private IWavePlayer waveOutDevice;
-        private WaveStream mainOutputStream;
-        private WaveChannel32 volumeStream;
+        //private IWavePlayer waveOutDevice;
+        //private WaveStream mainOutputStream;
+        //private WaveChannel32 volumeStream;
 
         private AudioState currentAudioState;
 
@@ -124,24 +124,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CloseWaveOut()
         {
-            if(waveOutDevice != null)
-            {
-                waveOutDevice.Stop();
-            }
-            if(mainOutputStream != null)
-            {
-                // this one really closes the file and ACM conversion
-                volumeStream.Close();
-                volumeStream = null;
-                // this one does the metering stream
-                mainOutputStream.Close();
-                mainOutputStream = null;
-            }
-            if(waveOutDevice != null)
-            {
-                waveOutDevice.Dispose();
-                waveOutDevice = null;
-            }
+            //if(waveOutDevice != null)
+            //{
+            //    waveOutDevice.Stop();
+            //}
+            //if(mainOutputStream != null)
+            //{
+            //    // this one really closes the file and ACM conversion
+            //    volumeStream.Close();
+            //    volumeStream = null;
+            //    // this one does the metering stream
+            //    mainOutputStream.Close();
+            //    mainOutputStream = null;
+            //}
+            //if(waveOutDevice != null)
+            //{
+            //    waveOutDevice.Dispose();
+            //    waveOutDevice = null;
+            //}
         }
 
         #region Commands

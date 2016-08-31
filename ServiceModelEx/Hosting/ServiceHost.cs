@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -56,8 +56,15 @@ namespace ServiceModelEx
             throw new InvalidOperationException("Host is already opened");
          }
          Debug.Assert(errorHandler != null);
-         IServiceBehavior errorHandlerBehavior = new ErrorHandlerBehavior(errorHandler);
-
+         IServiceBehavior errorHandlerBehavior = null;
+         if(errorHandler is IServiceBehavior)
+         {
+            errorHandlerBehavior = errorHandler as IServiceBehavior;
+         }
+         else
+         {
+            errorHandlerBehavior = new ErrorHandlerBehavior(errorHandler);
+         }
          m_ErrorHandlers.Add(errorHandlerBehavior);
       }
       /// <summary>
