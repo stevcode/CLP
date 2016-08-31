@@ -569,6 +569,12 @@ namespace Classroom_Learning_Partner
 
         public void AddHistoryItem(string compositePageID, string zippedHistoryItem)
         {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
             var compositeKeys = compositePageID.Split(';');
             var pageID = compositeKeys[0];
             var pageOwnerID = compositeKeys[1];
@@ -583,32 +589,43 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
+            CLPPage pageToRedo = null;
+            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            {
+                var notebook = notebookInfo.Notebook;
+                if (notebook == null)
+                {
+                    continue;
+                }
+
+                var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                pageToRedo = page;
+            }
+
+            if (pageToRedo == null)
+            {
+                return;
+            }
+
+            historyItem.ParentPage = pageToRedo;
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        //if (notebookService == null)
-                                                                                        //{
-                                                                                        //    return null;
-                                                                                        //}
+                                                                                        historyItem.UnpackHistoryItem();
+                                                                                        pageToRedo.History.RedoItems.Clear();
+                                                                                        pageToRedo.History.RedoItems.Add(historyItem);
 
-                                                                                        //foreach (var notebook in notebookService.OpenNotebooks)
-                                                                                        //{
-                                                                                        //    var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
+                                                                                        var tempIsAnimating = pageToRedo.History.IsAnimating;
+                                                                                        pageToRedo.History.IsAnimating = true;
+                                                                                        pageToRedo.History.Redo();
+                                                                                        pageToRedo.History.IsAnimating = tempIsAnimating;
 
-                                                                                        //    if(page == null)
-                                                                                        //    {
-                                                                                        //        continue;
-                                                                                        //    }
-
-                                                                                        //    historyItem.ParentPage = page;
-                                                                                        //    historyItem.UnpackHistoryItem();
-                                                                                        //    page.History.RedoItems.Clear();
-                                                                                        //    page.History.RedoItems.Add(historyItem);
-                                                                                        //    page.History.Redo();
-
-                                                                                        //    break;
-                                                                                        //}
                                                                                         return null;
                                                                                     },
                                                        null);

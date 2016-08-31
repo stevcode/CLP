@@ -1129,51 +1129,7 @@ namespace Classroom_Learning_Partner.ViewModels
                    point.Y <= pageObject.YPosition + pageObject.Height;
         }
 
-        private static Task _currentTask = Task.FromResult(Type.Missing);
-        private static readonly object _lock = new Object();
-
-        public static void QueueTask(Action action)
-        {
-            lock (_lock)
-            {
-                _currentTask = _currentTask.ContinueWith(lastTask =>
-                                                         {
-                                                             // re-throw the error of the last completed task (if any)
-                                                             try
-                                                             {
-                                                                 lastTask.GetAwaiter().GetResult();
-                                                             }
-                                                             catch (Exception ex)
-                                                             {
-                                                                 Logger.Instance.WriteToLog("Error on lastTask:");
-                                                                 Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
-                                                                                            (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                                                                 Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                                                                 Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                                                                 Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                                                                 Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
-                                                             }
-                                                             // run the new task
-                                                             try
-                                                             {
-                                                                 action();
-                                                             }
-                                                             catch (Exception ex)
-                                                             {
-                                                                 Logger.Instance.WriteToLog("Error on task action execute:");
-                                                                 Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
-                                                                                            (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                                                                 Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                                                                 Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                                                                 Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                                                                 Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
-                                                             }
-                                                         },
-                                                         CancellationToken.None,
-                                                         TaskContinuationOptions.LazyCancellation,
-                                                         TaskScheduler.Default);
-            }
-        }
+        private static readonly TaskQueue TaskQueue = new TaskQueue();
 
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
@@ -1183,53 +1139,52 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
-            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-            //    App.Network.ProjectorProxy == null ||
-            //    App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
-            //{
-            //    return;
-            //}
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                App.Network.ProjectorProxy == null ||
+                !(historyItem is ObjectsOnPageChangedHistoryItem))
+            {
+                return;
+            }
 
-            /*
-            QueueTask(() =>
-                      {
-                          var historyItemCopy = historyItem.CreatePackagedHistoryItem();
-                          if (historyItemCopy == null)
-                          {
-                              Logger.Instance.WriteToLog("Failed to CreatePackagedHistoryItem");
-                              return;
-                          }
-                          var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-                          var zippedHistoryItem = historyItemString.CompressWithGZip();
+            TaskQueue.Enqueue(async () =>
+                               {
+                                   var historyItemCopy = historyItem.CreatePackagedHistoryItem();
+                                   if (historyItemCopy == null)
+                                   {
+                                       return;
+                                   }
 
-                          try
-                          {
-                              var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
-                              App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
-                          }
-                          catch (Exception)
-                          {
-                              Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
-                          }
+                                   var historyItemString = ObjectSerializer.ToString(historyItemCopy);
+                                   var zippedHistoryItem = historyItemString.CompressWithGZip();
 
-                          //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
-                          //{
-                          //    return;
-                          //}
+                                   try
+                                   {
+                                       var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
+                                       App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
+                                   }
+                                   catch (Exception)
+                                   {
+                                       Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+                                   }
 
-                          //foreach(var student in App.Network.ClassList)
-                          //{
-                          //    try
-                          //    {
-                          //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                          //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
-                          //        (studentProxy as ICommunicationObject).Close();
-                          //    }
-                          //    catch(Exception)
-                          //    {
-                          //    }
-                          //}
-                      });*/
+                                   //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
+                                   //{
+                                   //    return;
+                                   //}
+
+                                   //foreach(var student in App.Network.ClassList)
+                                   //{
+                                   //    try
+                                   //    {
+                                   //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                                   //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                   //        (studentProxy as ICommunicationObject).Close();
+                                   //    }
+                                   //    catch(Exception)
+                                   //    {
+                                   //    }
+                                   //}
+                               });
         }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)

@@ -300,6 +300,7 @@
     <Compile Include="Utilities\Extensions\VisualExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="Utilities\RangeHelper.cs" />
+    <Compile Include="Utilities\TaskQueue.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
