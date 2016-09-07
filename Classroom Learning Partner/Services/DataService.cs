@@ -7,11 +7,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel;
+using Catel.IoC;
 using Catel.Reflection;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Json;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
+using Ionic.Zip;
+using Ionic.Zlib;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -189,6 +193,8 @@ namespace Classroom_Learning_Partner.Services
             {
                 Directory.CreateDirectory(CurrentCachesFolderPath);
             }
+
+            CreateTestNotebookSet();
         }
 
         #region Properties
@@ -1263,6 +1269,20 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public string DefaultCacheFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(DefaultCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
         #endregion // Default Folder Paths
 
         #region Current Folder Paths
@@ -1354,6 +1374,104 @@ namespace Classroom_Learning_Partner.Services
 
             var directoryInfo = new DirectoryInfo(folderPath);
             return directoryInfo.GetFiles("*.clp").ToList();
+        }
+
+        public static ClassRoster LoadNotebookSet(FileInfo fileInfo)
+        {
+            if (fileInfo == null)
+            {
+                return null;
+            }
+
+            if (!fileInfo.Exists ||
+                fileInfo.Extension != "clp")
+            {
+                return null;
+            }
+
+            using (var zip = ZipFile.Read(fileInfo.FullName))
+            {
+                if (!zip.ContainsEntry("classRoster.json"))
+                {
+                    return null;
+                }
+
+                var rosterEntry = zip.Entries.First(e => e.FileName == "classRoster.json");
+                using (var memoryStream = new MemoryStream())
+                {
+                    rosterEntry.Extract(memoryStream);
+                    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                    var deserialized = jsonSerializer.Deserialize(typeof(ClassRoster), memoryStream);
+                    return (ClassRoster)deserialized;
+                }
+            }
+        }
+
+        public void CreateTestNotebookSet()
+        {
+            var cacheFolderPath = DefaultCacheFolderPath;
+            var fileName = "Test Notebook.clp";
+            var fullFilePath = Path.Combine(cacheFolderPath, fileName);
+
+            var classRoster = new ClassRoster
+                              {
+                                  SubjectName = "Math",
+                                  GradeLevel = "3",
+                                  SchoolName = "Northeastern",
+                                  City = "Waltham",
+                                  State = "Massachusetts"
+                              };
+            var teacher = new Person
+                          {
+                              FirstName = "Ann",
+                              Nickname = "Mrs.",
+                              LastName = "McNamara",
+                              IsStudent = false
+                          };
+
+            var student1 = new Person
+                           {
+                               FirstName = "Steve",
+                               LastName = "Chapman",
+                               IsStudent = true
+                           };
+
+            var student2 = new Person
+                           {
+                               FirstName = "Lily",
+                               LastName = "Ko",
+                               IsStudent = true
+                           };
+
+            var student3 = new Person
+                           {
+                               FirstName = "Kimberle",
+                               LastName = "Koile",
+                               IsStudent = true
+                           };
+
+            classRoster.ListOfTeachers.Add(teacher);
+
+            classRoster.ListOfStudents.Add(student1);
+            classRoster.ListOfStudents.Add(student2);
+            classRoster.ListOfStudents.Add(student3);
+
+            var rosterString = classRoster.ToJsonString();
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+
+                zip.AddDirectoryByName("sessions");
+                zip.AddDirectoryByName("images");
+                zip.AddDirectoryByName("notebooks");
+
+                zip.AddEntry("classRoster.json", rosterString);
+
+                zip.Save(fullFilePath);
+            }
         }
 
         #endregion // Static Methods

@@ -32,5 +32,9 @@ namespace Classroom_Learning_Partner.Services
         void SetCurrentNotebook(NotebookInfo notebookInfo);
         void GenerateSubmissionsFromModifiedStudentPages();
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
+
+
+
+        void CreateTestNotebookSet();
     }
 }
