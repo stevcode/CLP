@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -1139,12 +1140,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-                App.Network.ProjectorProxy == null ||
-                !(historyItem is ObjectsOnPageChangedHistoryItem))
-            {
-                return;
-            }
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            //    App.Network.ProjectorProxy == null ||
+            //    !(historyItem is ObjectsOnPageChangedHistoryItem))
+            //{
+            //    return;
+            //}
 
             TaskQueue.Enqueue(async () =>
                                {
@@ -1154,18 +1155,54 @@ namespace Classroom_Learning_Partner.ViewModels
                                        return;
                                    }
 
+                                   var st = Stopwatch.StartNew();
+                                   var jsonString = (historyItemCopy as AEntityBase).ToJsonString();
+                                   var zjson = jsonString.CompressWithGZip();
+                                   st.Stop();
+                                   var jTime = st.ElapsedMilliseconds;
+                                   var jLength = jsonString.Length;
+
+                                   st.Restart();
+                                   var backToJson = zjson.DecompressFromGZip();
+                                   var unjHistoryItem = AEntityBase.FromJsonString<object>(backToJson);
+                                   st.Stop();
+                                   var unjsonTime = st.ElapsedMilliseconds;
+
+                                   st.Restart();
                                    var historyItemString = ObjectSerializer.ToString(historyItemCopy);
                                    var zippedHistoryItem = historyItemString.CompressWithGZip();
+                                   st.Stop();
+                                   var zTime = st.ElapsedMilliseconds;
+                                   var toStringLength = historyItemString.Length;
+                                   var toZipLength = zippedHistoryItem.Length;
 
-                                   try
-                                   {
-                                       var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
-                                       App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
-                                   }
-                                   catch (Exception)
-                                   {
-                                       Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
-                                   }
+                                   st.Restart();
+                                   var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
+                                   var uhistoryItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+                                   st.Stop();
+                                   var unzipTime = st.ElapsedMilliseconds;
+
+                                   Console.WriteLine();
+                                   Console.WriteLine("Json conversion time: {0}", jTime);
+                                   Console.WriteLine("Zip conversion time {0}", zTime);
+                                   Console.WriteLine("UnJson conversion time: {0}", unjsonTime);
+                                   Console.WriteLine("UnZip conversion time {0}", unzipTime);
+                                   Console.WriteLine("Json string length: {0}", jLength);
+                                   Console.WriteLine("Json zipped length: {0}", zjson.Length);
+                                   Console.WriteLine("ToString string length: {0}", toStringLength);
+                                   Console.WriteLine("Zip string length: {0}", toZipLength);
+
+                                   
+
+                                   //try
+                                   //{
+                                   //    var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
+                                   //    App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
+                                   //}
+                                   //catch (Exception)
+                                   //{
+                                   //    Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+                                   //}
 
                                    //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
                                    //{

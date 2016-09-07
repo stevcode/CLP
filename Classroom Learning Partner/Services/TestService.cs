@@ -133,7 +133,7 @@ namespace Classroom_Learning_Partner.Services
 
         private void OnBatchTagAnalysisCommandExecute()
         {
-            _dataService.Analyze();
+            Analyze();
         }
 
         private void OnBatchRepresentationsUsedTagCommandExecute()
@@ -1002,7 +1002,7 @@ namespace Classroom_Learning_Partner.Services
             //    {
             //        if (classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
             //        {
-            //            student.TempDifferentiationGroup = group.Label;
+            //            student.TemporaryDifferentiationGroup = group.Label;
             //        }
             //        else
             //        {
@@ -1017,7 +1017,7 @@ namespace Classroom_Learning_Partner.Services
             //    {
             //        if (classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
             //        {
-            //            student.TempDifferentiationGroup = group.Label;
+            //            student.TemporaryDifferentiationGroup = group.Label;
             //        }
             //        else
             //        {
@@ -1714,5 +1714,87 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Open Notebook Pane
+
+        #region DataService
+
+        public void Analyze()
+        {
+            #region TSV Batch
+
+            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
+            //if (!Directory.Exists(fileDirectory))
+            //{
+            //    Directory.CreateDirectory(fileDirectory);
+            //}
+
+            //var filePath = Path.Combine(fileDirectory, "BatchTags.tsv");
+            //if (File.Exists(filePath))
+            //{
+            //    File.Delete(filePath);
+            //}
+            //File.WriteAllText(filePath, "");
+
+            //var columnHeaders = new List<string>
+            //              {
+            //                  "STUDENT NAME",
+            //                  "PAGE NUMBER",
+            //                  "PASS 1",
+            //                  "PASS 2",
+            //                  "PASS 3"
+            //              };
+            //var tabbedColumnHeaders = string.Join("\t", columnHeaders);
+            //File.AppendAllText(filePath, tabbedColumnHeaders);
+
+            //foreach (var notebookInfo in LoadedNotebooksInfo)
+            //{
+            //    var notebook = notebookInfo.Notebook;
+            //    if (notebook.OwnerID == Person.Author.ID ||
+            //        !notebook.Owner.IsStudent)
+            //    {
+            //        continue;
+            //    }
+
+            //    foreach (var page in notebook.Pages)
+            //    {
+            //        var lastSubmission = page.Submissions.LastOrDefault();
+            //        if (lastSubmission == null)
+            //        {
+            //            continue;
+            //        }
+
+            //        var columns = new List<string>
+            //                      {
+            //                          page.Owner.FullName,
+            //                          page.PageNumber.ToString()
+            //                      };
+
+            //        Console.WriteLine("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+            //        HistoryAnalysis.GenerateHistoryActions(lastSubmission);
+            //        Console.WriteLine("Finished generating SEvents.\n");
+
+            //        var pass2Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
+            //        var pass2Index = lastSubmission.History.HistoryActions.IndexOf(pass2Action);
+            //        var pass3Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
+            //        var pass3Index = lastSubmission.History.HistoryActions.IndexOf(pass3Action);
+
+            //        var pass1 = lastSubmission.History.HistoryActions.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();
+            //        var pass2 = lastSubmission.History.HistoryActions.Skip(pass2Index + 1).Take(pass3Index - pass2Index - 1).Select(h => h.CodedValue).ToList();
+            //        var pass3 = lastSubmission.History.HistoryActions.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
+
+            //        columns.Add(string.Join(", ", pass1));
+            //        columns.Add(string.Join(", ", pass2));
+            //        columns.Add(string.Join(", ", pass3));
+
+            //        File.AppendAllText(filePath, "\n");
+            //        var tabbedColumns = string.Join("\t", columns);
+            //        File.AppendAllText(filePath, tabbedColumns);
+            //    }
+            //}
+
+            #endregion // TSV Batch
+        }
+
+        #endregion // DataService
     }
 }

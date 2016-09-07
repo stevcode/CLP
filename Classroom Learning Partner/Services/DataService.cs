@@ -169,10 +169,7 @@ namespace Classroom_Learning_Partner.Services
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLP";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Caches";
 
-        private static string DesktopFolderPath
-        {
-            get { return Environment.GetFolderPath(Environment.SpecialFolder.Desktop); }
-        }
+        
 
         public DataService()
         {
@@ -192,13 +189,9 @@ namespace Classroom_Learning_Partner.Services
             {
                 Directory.CreateDirectory(CurrentCachesFolderPath);
             }
-
-            //MigrateCaches();
         }
 
         #region Properties
-
-        
 
         #region Cache Properties
 
@@ -244,88 +237,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion //Properties
 
         #region Methods
-
-        #region Batch Methods
-
-        public void Analyze()
-        {
-            #region TSV Batch
-
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
-
-            var filePath = Path.Combine(fileDirectory, "BatchTags.tsv");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
-
-            var columnHeaders = new List<string>
-                          {
-                              "STUDENT NAME",
-                              "PAGE NUMBER",
-                              "PASS 1",
-                              "PASS 2",
-                              "PASS 3"
-                          };
-            var tabbedColumnHeaders = string.Join("\t", columnHeaders);
-            File.AppendAllText(filePath, tabbedColumnHeaders);
-
-            foreach (var notebookInfo in LoadedNotebooksInfo)
-            {
-                var notebook = notebookInfo.Notebook;
-                if (notebook.OwnerID == Person.Author.ID ||
-                    !notebook.Owner.IsStudent)
-                {
-                    continue;
-                }
-
-                foreach (var page in notebook.Pages)
-                {
-                    var lastSubmission = page.Submissions.LastOrDefault();
-                    if (lastSubmission == null)
-                    {
-                        continue;
-                    }
-
-                    var columns = new List<string>
-                                  {
-                                      page.Owner.FullName,
-                                      page.PageNumber.ToString()
-                                  };
-
-                    Console.WriteLine("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
-                    HistoryAnalysis.GenerateHistoryActions(lastSubmission);
-                    Console.WriteLine("Finished generating SEvents.\n");
-
-                    var pass2Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
-                    var pass2Index = lastSubmission.History.HistoryActions.IndexOf(pass2Action);
-                    var pass3Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
-                    var pass3Index = lastSubmission.History.HistoryActions.IndexOf(pass3Action);
-
-                    var pass1 = lastSubmission.History.HistoryActions.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();
-                    var pass2 = lastSubmission.History.HistoryActions.Skip(pass2Index + 1).Take(pass3Index - pass2Index - 1).Select(h => h.CodedValue).ToList();
-                    var pass3 = lastSubmission.History.HistoryActions.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
-
-                    columns.Add(string.Join(", ", pass1));
-                    columns.Add(string.Join(", ", pass2));
-                    columns.Add(string.Join(", ", pass3));
-
-                    File.AppendAllText(filePath, "\n");
-                    var tabbedColumns = string.Join("\t", columns);
-                    File.AppendAllText(filePath, tabbedColumns);
-                }
-            }
-
-            #endregion // TSV Batch
-        }
-
-        #endregion // Batch Methods
 
         #region Static Methods
 
@@ -1320,10 +1231,21 @@ namespace Classroom_Learning_Partner.Services
         private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
         private const string DEFAULT_CONFIG_FOLDER_NAME = "Config";  // Config Service?
         private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
+        private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
 
         #endregion // Constants
 
         #region Properties
+
+        #region Special Folder Paths
+
+        private static string WindowsDriveFolderPath => Path.GetPathRoot(Environment.SystemDirectory);
+
+        private static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        public static string CLPProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
+
+        #endregion // Special Folder Paths
 
         #region Default Folder Paths
 
@@ -1331,7 +1253,7 @@ namespace Classroom_Learning_Partner.Services
         {
             get
             {
-                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
+                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);  // TODO: Change to WindowsDriveFolderPath
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -1344,8 +1266,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #region Current Folder Paths
-
-        public string CurrentProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
 
         public string CurrentCLPDataFolderPath { get; set; }
 
@@ -1396,9 +1316,12 @@ namespace Classroom_Learning_Partner.Services
         #region Notebook Properties
 
         //FilePathPair
-        //AvailableNotebooks   //AvailableCLPFiles? AvailableClasses?
-        //LoadedNotebooks      //Differentiate between a .clp file and the individual notebooks within?
-        //CurrentNotebook
+        //AvailableNotebookSets   
+        //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
+        //CurrentNotebookSet
+
+
+
         //CurrentMultiDisplay
 
         #endregion // Notebook Properties
@@ -1420,6 +1343,19 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Events
 
+        #region Static Methods
 
+        public static List<FileInfo> GetNotebookSetsInFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                return new List<FileInfo>();
+            }
+
+            var directoryInfo = new DirectoryInfo(folderPath);
+            return directoryInfo.GetFiles("*.clp").ToList();
+        }
+
+        #endregion // Static Methods
     }
 }

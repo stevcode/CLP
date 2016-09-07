@@ -1114,6 +1114,7 @@ namespace CLP.Entities
                 jsonSerializer.WriteTypeInfo = true;
                 jsonSerializer.PreserveReferences = true;
                 jsonSerializer.Serialize(this, stream);
+                
                 ClearIsDirtyOnAllChilds();
             }
             IsCached = true;

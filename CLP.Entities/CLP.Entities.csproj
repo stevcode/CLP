@@ -110,6 +110,8 @@
     <Compile Include="Analysis\InkInterpretation.cs" />
     <Compile Include="DAL\DatabaseConfiguration.cs" />
     <Compile Include="DAL\ClassPeriodContext.cs" />
+    <Compile Include="DomainModel\Cache\ClassRoster.cs" />
+    <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\ClassPeriod.cs" />
     <Compile Include="DomainModel\ClassInformation.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
@@ -179,7 +181,7 @@
     <Compile Include="DomainModel\History\OBSOLETE\PageObjectsMoveBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\OBSOLETE\PageObjectsRemovedHistoryItem.cs" />
     <Compile Include="DomainModel\History\OBSOLETE\StrokesChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\IConnectedPerson.cs" />
+    <Compile Include="DomainModel\People\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
@@ -198,7 +200,7 @@
     <Compile Include="DomainModel\PageObjects\CLPTextBox.cs" />
     <Compile Include="DomainModel\PageObjects\Stamps\Stamp.cs" />
     <Compile Include="DomainModel\PageObjects\Stamps\StampedObject.cs" />
-    <Compile Include="DomainModel\Person.cs" />
+    <Compile Include="DomainModel\People\Person.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />

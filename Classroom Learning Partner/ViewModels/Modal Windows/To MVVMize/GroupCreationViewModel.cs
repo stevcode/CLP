@@ -185,7 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(GroupType == "Temp")
             {
-                return student.TempDifferentiationGroup;
+                return student.TemporaryDifferentiationGroup;
             }
             else
             {

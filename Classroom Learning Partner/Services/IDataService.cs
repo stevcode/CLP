@@ -30,13 +30,7 @@ namespace Classroom_Learning_Partner.Services
         void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         void SetCurrentNotebook(NotebookInfo notebookInfo);
-        void MigrateCaches();
         void GenerateSubmissionsFromModifiedStudentPages();
-        void PrintUsedHistoryItems();
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
-
-        void Analyze();
-
-        void TestJSON();
     }
 }
