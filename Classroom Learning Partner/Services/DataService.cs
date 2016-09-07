@@ -1398,15 +1398,12 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var rosterEntry = zip.Entries.First(e => e.FileName == "classRoster.json");
+
                 using (var memoryStream = new MemoryStream())
                 {
                     rosterEntry.Extract(memoryStream);
+
                     var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
-
-                    //var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                    //var deserialized = jsonSerializer.Deserialize(typeof(ClassRoster), memoryStream);
-                    //return (ClassRoster)deserialized;
-
                     return AEntityBase.FromJsonString<ClassRoster>(jsonString);
                 }
             }
