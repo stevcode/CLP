@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel;
@@ -1384,7 +1385,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             if (!fileInfo.Exists ||
-                fileInfo.Extension != "clp")
+                fileInfo.Extension != ".clp")
             {
                 return null;
             }
@@ -1400,9 +1401,13 @@ namespace Classroom_Learning_Partner.Services
                 using (var memoryStream = new MemoryStream())
                 {
                     rosterEntry.Extract(memoryStream);
-                    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                    var deserialized = jsonSerializer.Deserialize(typeof(ClassRoster), memoryStream);
-                    return (ClassRoster)deserialized;
+                    var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
+
+                    //var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                    //var deserialized = jsonSerializer.Deserialize(typeof(ClassRoster), memoryStream);
+                    //return (ClassRoster)deserialized;
+
+                    return AEntityBase.FromJsonString<ClassRoster>(jsonString);
                 }
             }
         }
@@ -1471,6 +1476,17 @@ namespace Classroom_Learning_Partner.Services
                 zip.AddEntry("classRoster.json", rosterString);
 
                 zip.Save(fullFilePath);
+            }
+
+            var fileInfos = GetNotebookSetsInFolder(cacheFolderPath);
+            var rosterFileInfo = fileInfos.FirstOrDefault();
+
+
+            var loadedRoster = LoadNotebookSet(rosterFileInfo);
+
+            foreach (var student in loadedRoster.ListOfStudents)
+            {
+                Console.WriteLine(student.DisplayName);
             }
         }
 

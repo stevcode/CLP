@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CLP.Entities
 {

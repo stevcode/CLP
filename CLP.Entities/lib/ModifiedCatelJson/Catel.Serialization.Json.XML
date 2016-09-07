@@ -62,6 +62,12 @@
             </summary>
             <value><c>true</c> if type info should be written; otherwise, <c>false</c>.</value>
         </member>
+        <member name="P:Catel.Runtime.Serialization.Json.IJsonSerializer.FormatWithIndents">
+            <summary>
+            Gets or sets a value indicating whether the json output is formatted with indents.
+            </summary>
+            <value><c>true</c> if json output is formatted with indents; otherwise, <c>false</c>.</value>
+        </member>
         <member name="M:Catel.Runtime.Serialization.Json.IJsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter)">
             <summary>
             Serializes the specified model to the json writer.
@@ -168,6 +174,12 @@
             Gets or sets a value indicating whether type information should be written to the json output.
             </summary>
             <value><c>true</c> if type info should be written; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializer.FormatWithIndents">
+            <summary>
+            Gets or sets a value indicating whether the json output is formatted with indents.
+            </summary>
+            <value><c>true</c> if json output is formatted with indents; otherwise, <c>false</c>.</value>
         </member>
         <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter)">
             <summary>

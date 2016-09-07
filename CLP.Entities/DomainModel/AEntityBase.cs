@@ -16,13 +16,14 @@ namespace CLP.Entities
 
         public void ClearDirtyFlag() { IsDirty = false; }
 
-        public string ToJsonString()
+        public string ToJsonString(bool formatWithIndents = false)
         {
             using (var stream = new MemoryStream())
             {
                 var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
                 jsonSerializer.WriteTypeInfo = true;
                 jsonSerializer.PreserveReferences = true;
+                jsonSerializer.FormatWithIndents = formatWithIndents;
                 jsonSerializer.Serialize(this, stream);
                 stream.Position = 0;
                 var reader = new StreamReader(stream);
