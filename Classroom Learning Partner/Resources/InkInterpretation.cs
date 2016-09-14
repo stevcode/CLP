@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
-using Microsoft.Ink;
+//using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.Resources
 {
