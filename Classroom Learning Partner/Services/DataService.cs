@@ -195,7 +195,7 @@ namespace Classroom_Learning_Partner.Services
                 Directory.CreateDirectory(CurrentCachesFolderPath);
             }
 
-            CreateTestNotebookSet();
+            //CreateTestNotebookSet();
         }
 
         #region Properties

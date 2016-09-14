@@ -43,14 +43,6 @@ namespace Classroom_Learning_Partner.ViewModels
             jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
             _contextButtons.Add(jumpSizeVisibility);
 
-            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Resources/Images/play.png", true)
-                                {
-                                    IsChecked = !IsArrowDraggingAllowed
-                                };
-            allowDragging.Checked += allowDragging_Checked;
-            allowDragging.Unchecked += allowDragging_Checked;
-            _contextButtons.Add(allowDragging);
-
             if (NumberLineType == NumberLineTypes.NumberLine)
             {
                 _contextButtons.Add(new RibbonButton("Check Number Line", "pack://application:,,,/Resources/Images/Correct32.png", CheckArrayCompletenessCommand, null, true));
@@ -67,18 +59,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
-        }
-
-        private void allowDragging_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            IsArrowDraggingAllowed = !(bool)toggleButton.IsChecked;
         }
 
         #endregion //Constructor
