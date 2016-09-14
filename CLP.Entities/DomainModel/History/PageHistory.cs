@@ -61,21 +61,6 @@ namespace CLP.Entities
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>
-        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="PageHistory" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Primary Key.
-        /// Also Foregin Key for <see cref="Person" /> who owns the <see cref="PageHistory" />.
-        /// </remarks>
-        public string OwnerID
-        {
-            get { return GetValue<string>(OwnerIDProperty); }
-            set { SetValue(OwnerIDProperty, value); }
-        }
-
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
-
-        /// <summary>
         /// Version Index of the <see cref="PageHistory" />.
         /// </summary>
         /// <remarks>

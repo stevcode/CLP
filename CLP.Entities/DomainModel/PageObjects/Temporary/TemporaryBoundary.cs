@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Windows;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -55,5 +56,24 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        public static void AddTemporaryBoundaryToPage(CLPPage page, double xPos, double yPos, double height, double width, string regionText = "")
+        {
+            if (page == null)
+            {
+                return;
+            }
+
+            var boundary = new TemporaryBoundary(page, xPos, yPos, height, width)
+            {
+                RegionText = regionText
+            };
+
+            page.PageObjects.Add(boundary);
+        }
+
+        #endregion // Static Methods
     }
 }

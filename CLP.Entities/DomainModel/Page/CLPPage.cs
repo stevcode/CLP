@@ -14,9 +14,13 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
+
+    #region Enums
+
     public enum PageTypes
     {
         Default,
@@ -36,6 +40,8 @@ namespace CLP.Entities
         Lined,
         Grid
     }
+
+    #endregion // Enums
 
     public class PageNameComposite
     {
@@ -93,14 +99,14 @@ namespace CLP.Entities
     [Serializable]
     public class CLPPage : AEntityBase
     {
-        #region Fields
+        #region Constants
 
         public const double LANDSCAPE_HEIGHT = 816;
         public const double LANDSCAPE_WIDTH = 1056;
         public const double PORTRAIT_HEIGHT = 1056;
         public const double PORTRAIT_WIDTH = 816;
 
-        #endregion //Fields
+        #endregion // Constants
 
         #region Constructors
 
@@ -116,20 +122,6 @@ namespace CLP.Entities
         }
 
         /// <summary>Initializes <see cref="CLPPage" /> from page dimensions.</summary>
-        /// <param name="height">Height of the <see cref="CLPPage" />.</param>
-        /// <param name="width">Width of the <see cref="CLPPage" />.</param>
-        public CLPPage(Person owner, double height, double width)
-        {
-            CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToCompactID();
-            Owner = owner;
-            Height = height;
-            Width = width;
-            InitialAspectRatio = Width / Height;
-            History = new PageHistory();
-        }
-
-        /// <summary>Initializes <see cref="CLPPage" /> from page dimensions.</summary>
         /// <param name="owner">The owner of the <see cref="CLPPage" />.</param>
         public CLPPage(Person owner)
             : this()
@@ -137,29 +129,11 @@ namespace CLP.Entities
             Owner = owner;
         }
 
-        /// <summary>Initializes <see cref="CLPPage" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CLPPage(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
 
-        /// <summary>The thumbnail for the <see cref="CLPPage" />
-        /// </summary>
-        [XmlIgnore]
-        public ImageSource PageThumbnail
-        {
-            get { return GetValue<ImageSource>(PageThumbnailProperty); }
-            set { SetValue(PageThumbnailProperty, value); }
-        }
-
-        public static readonly PropertyData PageThumbnailProperty = RegisterProperty("PageThumbnail", typeof (ImageSource));
-
         /// <summary>Unique Identifier for the <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -169,7 +143,6 @@ namespace CLP.Entities
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Primary Key. Also Foregin Key for <see cref="Person" /> who owns the <see cref="CLPPage" />.</remarks>
         public string OwnerID
         {
             get { return GetValue<string>(OwnerIDProperty); }
@@ -177,6 +150,52 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof (string), string.Empty);
+
+        /// <summary><see cref="Person" /> who submitted the <see cref="CLPPage" />.</summary>
+        public Person Owner
+        {
+            get { return GetValue<Person>(OwnerProperty); }
+            set { SetValue(OwnerProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person), null, OnOwnerChanged);
+
+        private static void OnOwnerChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
+                advancedPropertyChangedEventArgs.NewValue == null)
+            {
+                return;
+            }
+
+            var page = sender as CLPPage;
+            var newOwner = advancedPropertyChangedEventArgs.NewValue as Person;
+            if (page == null ||
+                newOwner == null)
+            {
+                return;
+            }
+
+            page.OwnerID = newOwner.ID;
+        }
+
+        /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
+        public decimal PageNumber
+        {
+            get { return GetValue<decimal>(PageNumberProperty); }
+            set { SetValue(PageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
+
+        /// <summary>Differentiation Level of the <see cref="CLPPage" />.</summary>
+        public string DifferentiationLevel
+        {
+            get { return GetValue<string>(DifferentiationGroupProperty); }
+            set { SetValue(DifferentiationGroupProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationGroupProperty = RegisterProperty("DifferentiationGroup", typeof(string), "0");
 
         /// <summary>Version Index of the <see cref="CLPPage" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
@@ -197,24 +216,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof (uint?));
 
-        /// <summary>Differentiation Level of the <see cref="CLPPage" />.</summary>
-        public string DifferentiationLevel
-        {
-            get { return GetValue<string>(DifferentiationGroupProperty); }
-            set { SetValue(DifferentiationGroupProperty, value); }
-        }
-
-        public static readonly PropertyData DifferentiationGroupProperty = RegisterProperty("DifferentiationGroup", typeof (string), "0");
-
-        /// <summary>The type of page.</summary>
-        public PageTypes PageType
-        {
-            get { return GetValue<PageTypes>(PageTypeProperty); }
-            set { SetValue(PageTypeProperty, value); }
-        }
-
-        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof (PageTypes), PageTypes.Default);
-
         /// <summary>Date and Time the <see cref="CLPPage" /> was created.</summary>
         public DateTime CreationDate
         {
@@ -224,50 +225,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
 
-        /// <summary>Height of the <see cref="CLPPage" />.</summary>
-        public double Height
+        /// <summary>The type of page.</summary>
+        public PageTypes PageType
         {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
+            get { return GetValue<PageTypes>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
         }
 
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof (double), LANDSCAPE_HEIGHT);
-
-        /// <summary>Width of the <see cref="CLPPage" />.</summary>
-        public double Width
-        {
-            get { return GetValue<double>(WidthProperty); }
-            set { SetValue(WidthProperty, value); }
-        }
-
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof (double), LANDSCAPE_WIDTH);
-
-        /// <summary>Initial Aspect Ratio of the <see cref="CLPPage" />, where Aspect Ratio = Width / Height.</summary>
-        public double InitialAspectRatio
-        {
-            get { return GetValue<double>(InitialAspectRatioProperty); }
-            set { SetValue(InitialAspectRatioProperty, value); }
-        }
-
-        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof (double));
-
-        /// <summary>Type of lines on the background of the <see cref="CLPPage" />.</summary>
-        public PageLineTypes PageLineType
-        {
-            get { return GetValue<PageLineTypes>(PageLineTypeProperty); }
-            set { SetValue(PageLineTypeProperty, value); }
-        }
-
-        public static readonly PropertyData PageLineTypeProperty = RegisterProperty("PageLineType", typeof (PageLineTypes), PageLineTypes.None);
-
-        /// <summary>Amount of space between PageLines on the <see cref="CLPPage" />.</summary>
-        public double PageLineLength
-        {
-            get { return GetValue<double>(PageLineLengthProperty); }
-            set { SetValue(PageLineLengthProperty, value); }
-        }
-
-        public static readonly PropertyData PageLineLengthProperty = RegisterProperty("PageLineLength", typeof (double), 20.0);
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypes), PageTypes.Default);
 
         /// <summary>Type of Submission for the <see cref="CLPPage" />.</summary>
         public SubmissionTypes SubmissionType
@@ -287,133 +252,68 @@ namespace CLP.Entities
 
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof (DateTime?));
 
-        #region MetaData
-
-        /// <summary>Title of the chapter the <see cref="CLPPage" /> is part of within the <see cref="Notebook" />.</summary>
-        public string ChapterTitle
+        /// <summary>Height of the <see cref="CLPPage" />.</summary>
+        public double Height
         {
-            get { return GetValue<string>(ChapterTitleProperty); }
-            set { SetValue(ChapterTitleProperty, value); }
+            get { return GetValue<double>(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
         }
 
-        public static readonly PropertyData ChapterTitleProperty = RegisterProperty("ChapterTitle", typeof (string), string.Empty);
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), LANDSCAPE_HEIGHT);
 
-        /// <summary>Title of the section the <see cref="CLPPage" /> is part of within the <see cref="Notebook" />.</summary>
-        public string SectionTitle
+        /// <summary>Width of the <see cref="CLPPage" />.</summary>
+        public double Width
         {
-            get { return GetValue<string>(SectionTitleProperty); }
-            set { SetValue(SectionTitleProperty, value); }
+            get { return GetValue<double>(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
         }
 
-        public static readonly PropertyData SectionTitleProperty = RegisterProperty("SectionTitle", typeof (string), string.Empty);
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), LANDSCAPE_WIDTH);
 
-        /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
-        public decimal PageNumber
+        /// <summary>Initial Aspect Ratio of the <see cref="CLPPage" />, where Aspect Ratio = Width / Height.</summary>
+        public double InitialAspectRatio
         {
-            get { return GetValue<decimal>(PageNumberProperty); }
-            set { SetValue(PageNumberProperty, value); }
+            get { return GetValue<double>(InitialAspectRatioProperty); }
+            set { SetValue(InitialAspectRatioProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof (decimal), 1);
+        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
 
-        /// <summary>Page Number of the <see cref="CLPPage" />'s corresponding page in the Student Workbook.</summary>
-        public string StudentWorkbookPageNumber
+        /// <summary>Type of lines on the background of the <see cref="CLPPage" />.</summary>
+        public PageLineTypes PageLineType
         {
-            get { return GetValue<string>(StudentWorkbookPageNumberProperty); }
-            set { SetValue(StudentWorkbookPageNumberProperty, value); }
+            get { return GetValue<PageLineTypes>(PageLineTypeProperty); }
+            set { SetValue(PageLineTypeProperty, value); }
         }
 
-        public static readonly PropertyData StudentWorkbookPageNumberProperty = RegisterProperty("StudentWorkbookPageNumber", typeof (string), string.Empty);
+        public static readonly PropertyData PageLineTypeProperty = RegisterProperty("PageLineType", typeof(PageLineTypes), PageLineTypes.None);
 
-        /// <summary>Page Number of the <see cref="CLPPage" />'s corresponding page in the Teacher Workbook.</summary>
-        public string TeacherWorkbookPageNumber
+        /// <summary>Amount of space between PageLines on the <see cref="CLPPage" />.</summary>
+        public double PageLineLength
         {
-            get { return GetValue<string>(TeacherWorkbookPageNumberProperty); }
-            set { SetValue(TeacherWorkbookPageNumberProperty, value); }
+            get { return GetValue<double>(PageLineLengthProperty); }
+            set { SetValue(PageLineLengthProperty, value); }
         }
 
-        public static readonly PropertyData TeacherWorkbookPageNumberProperty = RegisterProperty("TeacherWorkbookPageNumber", typeof (string), string.Empty);
+        public static readonly PropertyData PageLineLengthProperty = RegisterProperty("PageLineLength", typeof(double), 20.0);
 
-        /// <summary>Curriculum the <see cref="CLPPage" /> employs.</summary>
-        public string Curriculum
-        {
-            get { return GetValue<string>(CurriculumProperty); }
-            set { SetValue(CurriculumProperty, value); }
-        }
-
-        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof (string), string.Empty);
-
-        #endregion //MetaData
-
-        #region Navigation Properties
-
-        /// <summary>
-        ///     <see cref="Person" /> who submitted the <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual Person Owner
-        {
-            get { return GetValue<Person>(OwnerProperty); }
-            set
-            {
-                SetValue(OwnerProperty, value);
-                if (value == null)
-                {
-                    return;
-                }
-                OwnerID = value.ID;
-                History.OwnerID = value.ID;
-            }
-        }
-
-        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof (Person));
-
-        /// <summary>Submissions associated with this <see cref="CLPPage" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public virtual ObservableCollection<CLPPage> Submissions
-        {
-            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionsProperty); }
-            set { SetValue(SubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
-
-        /// <summary>Authored <see cref="IPageObject" />s for the <see cref="CLPPage" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual ObservableCollection<IPageObject> PageObjects
-        {
-            get { return GetValue<ObservableCollection<IPageObject>>(PageObjectsProperty); }
-            set { SetValue(PageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects",
-                                                                                   typeof (ObservableCollection<IPageObject>),
-                                                                                   () => new ObservableCollection<IPageObject>());
-
-        /// <summary>
-        ///     <see cref="ATagBase" />s for the <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual ObservableCollection<ITag> Tags
+        /// <summary><see cref="ATagBase" />s for the <see cref="CLPPage" />.</summary>
+        public ObservableCollection<ITag> Tags
         {
             get { return GetValue<ObservableCollection<ITag>>(TagsProperty); }
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof (ObservableCollection<ITag>), () => new ObservableCollection<ITag>());
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), () => new ObservableCollection<ITag>());
 
-        /// <summary>Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public virtual StrokeCollection InkStrokes
+        /// <summary><see cref="IPageObject" />s for the <see cref="CLPPage" />.</summary>
+        public ObservableCollection<IPageObject> PageObjects
         {
-            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
-            set { SetValue(InkStrokesProperty, value); }
+            get { return GetValue<ObservableCollection<IPageObject>>(PageObjectsProperty); }
+            set { SetValue(PageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof (StrokeCollection), () => new StrokeCollection());
+        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<IPageObject>), () => new ObservableCollection<IPageObject>());
 
         /// <summary>Serialized <see cref="Stroke" />s in the form of <see cref="StrokeDTO" />.</summary>
         public List<StrokeDTO> SerializedStrokes
@@ -424,8 +324,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof (List<StrokeDTO>), () => new List<StrokeDTO>());
 
-        #endregion //Navigation Properties
-
         /// <summary>Interaction history of the page.</summary>
         public PageHistory History
         {
@@ -435,9 +333,49 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof (PageHistory));
 
+        #region Non-Serialized
+
+        /// <summary>The thumbnail for the <see cref="CLPPage" />.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public ImageSource PageThumbnail
+        {
+            get { return GetValue<ImageSource>(PageThumbnailProperty); }
+            set { SetValue(PageThumbnailProperty, value); }
+        }
+
+        public static readonly PropertyData PageThumbnailProperty = RegisterProperty("PageThumbnail", typeof(ImageSource));
+
+        /// <summary>Submissions associated with this <see cref="CLPPage" />.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public ObservableCollection<CLPPage> Submissions
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionsProperty); }
+            set { SetValue(SubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+
+        /// <summary>Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
+        #endregion // Non-Serialized
+
         #region Calculated Sort Properties
 
-        public virtual string IsStarred
+        public string IsStarred
         {
             get
             {
@@ -451,7 +389,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string HadHelp
+        public string HadHelp
         {
             get
             {
@@ -465,7 +403,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string TroubleWithFactorPairs
+        public string TroubleWithFactorPairs
         {
             get
             {
@@ -474,7 +412,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string TroubleWithRemainders
+        public string TroubleWithRemainders
         {
             get
             {
@@ -483,7 +421,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string TroubleWithDivision
+        public string TroubleWithDivision
         {
             get
             {
@@ -496,7 +434,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual Correctness Correctness
+        public Correctness Correctness
         {
             get
             {
@@ -505,7 +443,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string RepresentationType
+        public string RepresentationType
         {
             get
             {
@@ -566,7 +504,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string RepresentationCorrectness
+        public string RepresentationCorrectness
         {
             get
             {
@@ -601,7 +539,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string AnswerCorrectness
+        public string AnswerCorrectness
         {
             get
             {
@@ -632,7 +570,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string ABR
+        public string ABR
         {
             get
             {
@@ -659,7 +597,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string ARIC
+        public string ARIC
         {
             get
             {
@@ -683,32 +621,6 @@ namespace CLP.Entities
         #endregion //Calculated Sort Properties
 
         #endregion //Properties
-
-        #region Overrides of ObservableObject
-
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            IsCached = false;
-        }
-
-        #region Overrides of ModelBase
-
-        protected override void OnPropertyObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            base.OnPropertyObjectCollectionChanged(sender, e);
-            IsCached = false;
-        }
-
-        protected override void OnPropertyObjectCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            base.OnPropertyObjectCollectionItemPropertyChanged(sender, e);
-            IsCached = false;
-        }
-
-        #endregion
-
-        #endregion
 
         #region Methods
 
@@ -853,17 +765,6 @@ namespace CLP.Entities
             Tags.Remove(tag);
         }
 
-        public void AddBoundary(Rect rect, string regionText = "") { AddBoundary(rect.X, rect.Y, rect.Height, rect.Width, regionText); }
-
-        public void AddBoundary(double xPos, double yPos, double height, double width, string  regionText = "")
-        {
-            var boundary = new TemporaryBoundary(this, xPos, yPos, height, width)
-                           {
-                               RegionText = regionText
-                           };
-            PageObjects.Add(boundary);
-        }
-
         public void ClearBoundaries()
         {
             var boundariesToRemove = PageObjects.OfType<TemporaryBoundary>().ToList();
@@ -943,148 +844,11 @@ namespace CLP.Entities
             return copy;
         }
 
-        public Stroke GetVerifiedStrokeOnPageByID(string id)
-        {
-            var stroke = GetStrokeByID(id);
-
-            if (stroke != null)
-            {
-                return stroke;
-            }
-
-            stroke = History.GetStrokeByID(id);
-            if (stroke == null)
-            {
-                return null;
-            }
-
-            Console.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
-            History.TrashedInkStrokes.Remove(stroke);
-            InkStrokes.Add(stroke);
-
-            return stroke;
-        }
-
-        public Stroke GetVerifiedStrokeInHistoryByID(string id)
-        {
-            var stroke = History.GetStrokeByID(id);
-
-            if (stroke != null)
-            {
-                return stroke;
-            }
-
-            stroke = GetStrokeByID(id);
-            if (stroke == null)
-            {
-                return null;
-            }
-
-            Console.WriteLine("Stroke incorrectly existed on Page.");
-            History.TrashedInkStrokes.Add(stroke);
-            InkStrokes.Remove(stroke);
-
-            return stroke;
-        }
-
-        public Stroke GetStrokeByIDOnPageOrInHistory(string id)
-        {
-            var stroke = History.GetStrokeByID(id);
-
-            if (stroke != null)
-            {
-                return stroke;
-            }
-
-            stroke = GetStrokeByID(id);
-            return stroke;
-        }
-
-        public Stroke GetStrokeByID(string id) { return !InkStrokes.Any() ? null : InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
-
-        public IPageObject GetVerifiedPageObjectOnPageByID(string id)
-        {
-            var pageObject = GetPageObjectByID(id);
-
-            if (pageObject != null)
-            {
-                return pageObject;
-            }
-
-            pageObject = History.GetPageObjectByID(id);
-            if (pageObject == null)
-            {
-                return null;
-            }
-
-            Console.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
-            History.TrashedPageObjects.Remove(pageObject);
-            PageObjects.Add(pageObject);
-
-            return pageObject;
-        }
-
-        public IPageObject GetVerifiedPageObjectInTrashByID(string id)
-        {
-            var pageObject = History.GetPageObjectByID(id);
-
-            if (pageObject != null)
-            {
-                return pageObject;
-            }
-
-            pageObject = GetPageObjectByID(id);
-            if (pageObject == null)
-            {
-                return null;
-            }
-
-            Console.WriteLine("PageObject incorrectly existed on Page.");
-            History.TrashedPageObjects.Add(pageObject);
-            PageObjects.Remove(pageObject);
-
-            return pageObject;
-        }
-
-        public IPageObject GetPageObjectByIDOnPageOrInHistory(string id)
-        {
-            var pageObject = History.GetPageObjectByID(id);
-
-            if (pageObject != null)
-            {
-                return pageObject;
-            }
-
-            pageObject = GetPageObjectByID(id);
-            return pageObject;
-        }
-
-        public IPageObject GetPageObjectByID(string id) { return !PageObjects.Any() ? null : PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
-
         public void UpdateAllReporters()
         {
             foreach (var reporter in PageObjects.OfType<IReporter>())
             {
                 reporter.UpdateReport();
-            }
-        }
-
-        public void ValidateStrokeIDs()
-        {
-            foreach (var stroke in InkStrokes)
-            {
-                if (stroke.GetStrokeID() == "noStrokeID")
-                {
-                    Console.WriteLine("Stroke without ID on page {0}, {1}", PageNumber, Owner.FullName);
-                }
-            }
-
-            foreach (var stroke in History.TrashedInkStrokes)
-            {
-                if (stroke.GetStrokeID() == "noStrokeID")
-                {
-                    Console.WriteLine("Trashed Stroke without ID on page {0}, {1}", PageNumber, Owner.FullName);
-                }
             }
         }
 
@@ -1314,5 +1078,31 @@ namespace CLP.Entities
         #endregion
 
         #endregion //Cache
+
+        #region Overrides of ModelBase
+
+        protected override void OnPropertyObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.OnPropertyObjectCollectionChanged(sender, e);
+            IsCached = false;
+        }
+
+        protected override void OnPropertyObjectCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnPropertyObjectCollectionItemPropertyChanged(sender, e);
+            IsCached = false;
+        }
+
+        #endregion
+
+        #region Overrides of ObservableObject
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            IsCached = false;
+        }
+
+        #endregion
     }
 }
