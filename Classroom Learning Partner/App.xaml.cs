@@ -21,7 +21,7 @@ namespace Classroom_Learning_Partner
     {
         protected override async void OnStartup(StartupEventArgs e)
         {
-#if !DEBUG
+#if RELEASE
             var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
 
             using (var updateManager = new UpdateManager(testPathForReleases))

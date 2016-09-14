@@ -10,6 +10,6 @@
     <iconUrl>https://raw.githubusercontent.com/stevcode/CLP/master/Classroom%20Learning%20Partner/Resources/Images/Icons/CLPPaperClipLogoCircled64.png</iconUrl>
   </metadata>
   <files>
-    <file src="output\2-releases\AnyCPU\**\*" target="lib\net45" />
+    <file src="output\2-releases\Release\AnyCPU\**\*" target="lib\net45" />
   </files>
 </package>
