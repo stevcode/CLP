@@ -1,10 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using Catel.Collections;
+﻿using System;
+using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -14,113 +13,229 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public NewPaneViewModel()
         {
-            InitializeCommands();
-            AvailableCaches.AddRange(_dataService.AvailableCaches);
-            SelectedCache = AvailableCaches.FirstOrDefault();
-        }
+            ClassRoster = new ClassRoster();
+            var teacher = new Person
+            {
+                FirstName = "Ann",
+                Nickname = "Mrs.",
+                LastName = "McNamara",
+                IsStudent = false
+            };
 
-        private void InitializeCommands()
-        {
-            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+            var student1 = new Person
+            {
+                FirstName = "Steve",
+                LastName = "Chapman",
+                IsStudent = true
+            };
+
+            var student2 = new Person
+            {
+                FirstName = "Lily",
+                LastName = "Ko",
+                IsStudent = true
+            };
+
+            var student3 = new Person
+            {
+                FirstName = "Kimberle",
+                LastName = "Koile",
+                IsStudent = true
+            };
+
+            ClassRoster.ListOfTeachers.Add(teacher);
+
+            ClassRoster.ListOfStudents.Add(student1);
+            ClassRoster.ListOfStudents.Add(student2);
+            ClassRoster.ListOfStudents.Add(student3);
+
+            for (int i = 0; i < 20; i++)
+            {
+                ClassRoster.ListOfStudents.Add(Person.Guest);
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                ClassRoster.ListOfTeachers.Add(Person.Guest);
+            }
+
+            InitializeCommands();
         }
 
         #endregion //Constructor
 
-        #region Bindings
+        #region Models
 
-        /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
+        #region NotebookSet
+
+        /// <summary>Model of this ViewModel.</summary>
+        [Model(SupportIEditableObject = false)]
+        public NotebookSet NotebookSet
         {
-            get { return "New Notebook"; }
+            get { return GetValue<NotebookSet>(NotebookSetProperty); }
+            set { SetValue(NotebookSetProperty, value); }
         }
 
-        #region Cache Bindings
+        public static readonly PropertyData NotebookSetProperty = RegisterProperty("NotebookSet", typeof(NotebookSet));
 
-        /// <summary>Manually typed Cache Name for creating a new Cache.</summary>
-        public string TypedCacheName
-        {
-            get { return GetValue<string>(TypedCacheNameProperty); }
-            set { SetValue(TypedCacheNameProperty, value); }
-        }
-
-        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof(string), string.Empty);
-
-        /// <summary>List of available Caches.</summary>
-        public ObservableCollection<CacheInfo> AvailableCaches
-        {
-            get { return GetValue<ObservableCollection<CacheInfo>>(AvailableCachesProperty); }
-            set { SetValue(AvailableCachesProperty, value); }
-        }
-
-        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches", typeof(ObservableCollection<CacheInfo>), () => new ObservableCollection<CacheInfo>());
-
-        /// <summary>Selected Cache.</summary>
-        public CacheInfo SelectedCache
-        {
-            get { return GetValue<CacheInfo>(SelectedCacheProperty); }
-            set { SetValue(SelectedCacheProperty, value); }
-        }
-
-        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof(CacheInfo));
-
-        #endregion //Cache Bindings
-
-        #region Notebook Bindings
-
-        /// <summary>Notebook Name to use on creation.</summary>
+        /// <summary>Auto-Mapped property of the NotebookSet Model.</summary>
+        [ViewModelToModel("NotebookSet")]
         public string NotebookName
         {
             get { return GetValue<string>(NotebookNameProperty); }
             set { SetValue(NotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string), string.Empty);
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string));
 
-        /// <summary>Curriculum for the new notebook.</summary>
-        public string NotebookCurriculum
+        #endregion // NotebookSet
+
+        #region ClassRoster
+
+        /// <summary>Model of this ViewModel.</summary>
+        [Model(SupportIEditableObject = false)]
+        public ClassRoster ClassRoster
         {
-            get { return GetValue<string>(NotebookCurriculumProperty); }
-            set { SetValue(NotebookCurriculumProperty, value); }
+            get { return GetValue<ClassRoster>(ClassRosterProperty); }
+            set { SetValue(ClassRosterProperty, value); }
         }
 
-        public static readonly PropertyData NotebookCurriculumProperty = RegisterProperty("NotebookCurriculum", typeof(string), string.Empty);
+        public static readonly PropertyData ClassRosterProperty = RegisterProperty("ClassRoster", typeof(ClassRoster));
 
-        #endregion //Notebook Bindings
+        /// <summary>Auto-Mapped property of the Roster Model.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public ObservableCollection<Person> ListOfStudents
+        {
+            get { return GetValue<ObservableCollection<Person>>(ListOfStudentsProperty); }
+            set { SetValue(ListOfStudentsProperty, value); }
+        }
+
+        public static readonly PropertyData ListOfStudentsProperty = RegisterProperty("ListOfStudents", typeof(ObservableCollection<Person>));
+
+        /// <summary>Auto-Mapped property of the Roster Model.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public ObservableCollection<Person> ListOfTeachers
+        {
+            get { return GetValue<ObservableCollection<Person>>(ListOfTeachersProperty); }
+            set { SetValue(ListOfTeachersProperty, value); }
+        }
+
+        public static readonly PropertyData ListOfTeachersProperty = RegisterProperty("ListOfTeachers", typeof(ObservableCollection<Person>));
+
+        /// <summary>Grade Level of the subject being taught.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string GradeLevel
+        {
+            get { return GetValue<string>(GradeLevelProperty); }
+            set { SetValue(GradeLevelProperty, value); }
+        }
+
+        public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string));
+
+        /// <summary>Start date of the class subject.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public DateTime? StartDate
+        {
+            get { return GetValue<DateTime?>(StartDateProperty); }
+            set { SetValue(StartDateProperty, value); }
+        }
+
+        public static readonly PropertyData StartDateProperty = RegisterProperty("StartDate", typeof(DateTime?));
+
+        /// <summary>End date of the class subject.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public DateTime? EndDate
+        {
+            get { return GetValue<DateTime?>(EndDateProperty); }
+            set { SetValue(EndDateProperty, value); }
+        }
+
+        public static readonly PropertyData EndDateProperty = RegisterProperty("EndDate", typeof(DateTime?));
+
+        /// <summary>Name of the school.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string SchoolName
+        {
+            get { return GetValue<string>(SchoolNameProperty); }
+            set { SetValue(SchoolNameProperty, value); }
+        }
+
+        public static readonly PropertyData SchoolNameProperty = RegisterProperty("SchoolName", typeof(string));
+
+        /// <summary>Name of the school district.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string SchoolDistrict
+        {
+            get { return GetValue<string>(SchoolDistrictProperty); }
+            set { SetValue(SchoolDistrictProperty, value); }
+        }
+
+        public static readonly PropertyData SchoolDistrictProperty = RegisterProperty("SchoolDistrict", typeof(string));
+
+        /// <summary>Name of the city in which the school exists.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string City
+        {
+            get { return GetValue<string>(CityProperty); }
+            set { SetValue(CityProperty, value); }
+        }
+
+        public static readonly PropertyData CityProperty = RegisterProperty("City", typeof(string));
+
+        /// <summary>Name of the state in which the school exists.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string State
+        {
+            get { return GetValue<string>(StateProperty); }
+            set { SetValue(StateProperty, value); }
+        }
+
+        public static readonly PropertyData StateProperty = RegisterProperty("State", typeof(string));
+
+        #endregion // ClassRoster
+
+        #endregion // Models
+
+        #region Bindings
+
+        /// <summary>Title Text for the Pane.</summary>
+        public override string PaneTitleText => "New Notebook";
 
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+            DeleteStudentCommand = new Command<Person>(OnDeleteStudentCommandExecute);
+        }
 
         /// <summary>Creates a new notebook.</summary>
         public Command CreateNotebookCommand { get; private set; }
 
         private void OnCreateNotebookCommandExecute()
         {
-            if (string.IsNullOrEmpty(TypedCacheName) ||
-                string.IsNullOrWhiteSpace(TypedCacheName))
-            {
-                _dataService.CurrentCacheInfo = SelectedCache;
-            }
-            else
-            {
-                var newCache = _dataService.CreateNewCache(TypedCacheName);
-                if (newCache == null)
-                {
-                    MessageBox.Show("A folder with that name already exists.");
-                    return;
-                }
-            }
-
-            var newNotebook = _dataService.CreateNewNotebook(NotebookName, NotebookCurriculum);
-            if (newNotebook == null)
-            {
-                MessageBox.Show("Something went wrong. The notebook you tried to create already exists in this folder.");
-            }
+            TestService.CreateClassSubject();
         }
 
         private bool OnCreateNotebookCanExecute()
         {
-            return NotebookName != string.Empty;
+            return !string.IsNullOrWhiteSpace(NotebookName);
+        }
+
+        /// <summary>Removes student from the List of Students</summary>
+        public Command<Person> DeleteStudentCommand { get; private set; }
+
+        private void OnDeleteStudentCommandExecute(Person student)
+        {
+            if (student == null ||
+                !ListOfStudents.Contains(student))
+            {
+                return;
+            }
+
+            ListOfStudents.Remove(student);
         }
 
         #endregion //Commands

@@ -4,8 +4,73 @@
 
     <customControls:HLSColorValueConverter x:Key="ColorConverter" />
 
-    <Style x:Key="BackStageTopButton"
+    <Style x:Key="BackStageButton"
            TargetType="Button">
+
+        <Style.Resources>
+            <Style TargetType="StackPanel">
+
+                <Setter Property="HorizontalAlignment"
+                        Value="Center" />
+
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+
+            </Style>
+            
+            <Style TargetType="Image">
+                
+                <Setter Property="Height"
+                        Value="32" />
+                
+                <Setter Property="Width"
+                        Value="32" />
+                
+                <Setter Property="HorizontalAlignment"
+                        Value="Center" />
+                
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                
+                <Setter Property="Margin"
+                        Value="5" />
+                
+            </Style>
+            
+            <Style TargetType="TextBlock">
+
+                <Setter Property="TextAlignment"
+                        Value="Center" />
+                
+                <Setter Property="HorizontalAlignment"
+                        Value="Stretch" />
+                
+                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                
+                <Setter Property="FontFamily"
+                        Value="Segoe UI" />
+                
+                <Setter Property="FontSize"
+                        Value="12" />
+                
+                <Setter Property="FontWeight"
+                        Value="Bold" />
+                
+                <Setter Property="Foreground"
+                        Value="Black" />
+                
+                <Setter Property="TextWrapping"
+                        Value="Wrap" />
+
+                <Setter Property="TextOptions.TextRenderingMode"
+                        Value="Auto" />
+
+                <Setter Property="TextOptions.TextFormattingMode"
+                        Value="Ideal" />
+
+            </Style>
+        </Style.Resources>
 
         <Setter Property="SnapsToDevicePixels"
                 Value="true" />
@@ -49,10 +114,10 @@
 
     <Style x:Key="Minimize"
            TargetType="Button">
-        
+
         <Setter Property="SnapsToDevicePixels"
                 Value="true" />
-        
+
         <Setter Property="OverridesDefaultStyle"
                 Value="true" />
 
@@ -146,10 +211,10 @@
 
     <Style x:Key="Maximize"
            TargetType="Button">
-        
+
         <Setter Property="SnapsToDevicePixels"
                 Value="true" />
-        
+
         <Setter Property="OverridesDefaultStyle"
                 Value="true" />
 
@@ -158,7 +223,7 @@
 
         <Setter Property="Width"
                 Value="24" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -243,10 +308,10 @@
 
     <Style x:Key="Exit"
            TargetType="Button">
-        
+
         <Setter Property="SnapsToDevicePixels"
                 Value="true" />
-        
+
         <Setter Property="OverridesDefaultStyle"
                 Value="true" />
 
@@ -255,7 +320,7 @@
 
         <Setter Property="Width"
                 Value="44" />
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -331,6 +396,131 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+    </Style>
+
+    <Style x:Key="BackStageTitleTextBlock"
+           TargetType="TextBlock">
+
+        <Setter Property="TextAlignment"
+                Value="Left" />
+
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+
+        <Setter Property="FontFamily"
+                Value="Segoe UI Light" />
+
+        <Setter Property="FontSize"
+                Value="40" />
+
+        <Setter Property="Foreground"
+                Value="#444444" />
+
+        <Setter Property="TextOptions.TextRenderingMode"
+                Value="Auto" />
+
+        <Setter Property="TextOptions.TextFormattingMode"
+                Value="Ideal" />
+
+    </Style>
+
+    <Style x:Key="BackStageHeaderTextBlock"
+           TargetType="TextBlock">
+
+        <Setter Property="TextAlignment"
+                Value="Left" />
+
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+
+        <Setter Property="FontFamily"
+                Value="Segoe UI Light" />
+
+        <Setter Property="FontSize"
+                Value="30" />
+
+        <Setter Property="FontWeight"
+                Value="Bold" />
+
+        <Setter Property="Margin"
+                Value="0 5" />
+
+        <Setter Property="Foreground"
+                Value="{DynamicResource DynamicMainColor}" />
+
+        <Setter Property="TextOptions.TextRenderingMode"
+                Value="Auto" />
+
+        <Setter Property="TextOptions.TextFormattingMode"
+                Value="Ideal" />
+
+    </Style>
+
+    <Style x:Key="BackStageTextBlock"
+           TargetType="TextBlock">
+
+        <Setter Property="TextAlignment"
+                Value="Left" />
+
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+
+        <Setter Property="FontFamily"
+                Value="Segoe UI" />
+
+        <Setter Property="FontSize"
+                Value="16" />
+
+        <Setter Property="Margin"
+                Value="0 5" />
+
+        <Setter Property="Foreground"
+                Value="Black" />
+
+        <Setter Property="TextOptions.TextRenderingMode"
+                Value="Auto" />
+
+        <Setter Property="TextOptions.TextFormattingMode"
+                Value="Ideal" />
+
+    </Style>
+
+    <Style x:Key="BackStageTextBox"
+           TargetType="TextBox">
+
+        <Setter Property="TextAlignment"
+                Value="Left" />
+
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+
+        <Setter Property="FontFamily"
+                Value="Segoe UI" />
+
+        <Setter Property="FontSize"
+                Value="16" />
+
+        <Setter Property="Width"
+                Value="225" />
+
+        <Setter Property="TextOptions.TextRenderingMode"
+                Value="Auto" />
+
+        <Setter Property="TextOptions.TextFormattingMode"
+                Value="Ideal" />
 
     </Style>
 

@@ -158,7 +158,7 @@ namespace CLP.Entities
             set { SetValue(OwnerProperty, value); }
         }
 
-        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person), null, OnOwnerChanged);
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person), propertyChangedEventHandler: OnOwnerChanged);
 
         private static void OnOwnerChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {

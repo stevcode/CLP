@@ -983,18 +983,18 @@ namespace Classroom_Learning_Partner.Services
 
         #region New Pane
 
-        private void OnCreateClassSubjectCommandExecute()
+        public static void CreateClassSubject()
         {
-            //var classSubject = new ClassInformation();
-            //var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
-            //var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
-            //classSubjectCreationView.ShowDialog();
+            var classSubject = new ClassInformation();
+            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
+            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
+            classSubjectCreationView.ShowDialog();
 
-            //if (classSubjectCreationView.DialogResult == null ||
-            //    classSubjectCreationView.DialogResult != true)
-            //{
-            //    return;
-            //}
+            if (classSubjectCreationView.DialogResult == null ||
+                classSubjectCreationView.DialogResult != true)
+            {
+                return;
+            }
 
             //foreach (var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
             //{

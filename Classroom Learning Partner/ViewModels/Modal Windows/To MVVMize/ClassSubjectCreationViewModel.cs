@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// <see cref="ClassInformation" /> being created.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public ClassInformation ClassInformation
         {
             get { return GetValue<ClassInformation>(ClassSubjectProperty); }

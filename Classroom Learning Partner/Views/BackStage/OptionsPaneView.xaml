@@ -3,6 +3,14 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com">
 
+    <catel:UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/BackStageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </catel:UserControl.Resources>
+    
     <DockPanel LastChildFill="True">
 
         <StackPanel DockPanel.Dock="Top"
@@ -10,14 +18,7 @@
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       FontFamily="Segoe UI Light"
-                       FontSize="40"
-                       Foreground="#444444"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageTitleTextBlock}" />
 
         </StackPanel>
 

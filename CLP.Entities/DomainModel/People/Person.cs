@@ -253,14 +253,23 @@ namespace CLP.Entities
                                                    IsStudent = false
                                                };
 
-        // TODO: Test each call to this Get produces a new person with new ID.
-        public static Person Guest { get; } = new Person
-                                              {
-                                                  ID = Guid.NewGuid().ToCompactID(),
-                                                  FirstName = "GUEST",
-                                                  Alias = "GUEST",
-                                                  IsStudent = true
-                                              };
+        public static int GuestCount { get; set; }
+
+        public static Person Guest
+        {
+            get
+            {
+                // ReSharper disable once ConvertPropertyToExpressionBody
+                // Expression Body initialization is single call only. This evaluates every time Guest get is called.
+                return new Person
+                       {
+                           ID = Guid.NewGuid().ToCompactID(),
+                           FirstName = "GUEST",
+                           Alias = "GUEST " + ++GuestCount,
+                           IsStudent = true
+                       };
+            }
+        }
 
         #endregion //Static Persons
     }

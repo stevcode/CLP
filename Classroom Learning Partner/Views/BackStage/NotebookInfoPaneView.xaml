@@ -18,14 +18,7 @@
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       FontFamily="Segoe UI Light"
-                       FontSize="40"
-                       Foreground="#444444"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageTitleTextBlock}" />
 
             <Button Command="{Binding SaveCurrentNotebookCommand}"
                     Width="80"
@@ -33,7 +26,7 @@
                     Margin="20 0 20 0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Style="{StaticResource BackStageTopButton}">
+                    Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">

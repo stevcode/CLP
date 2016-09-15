@@ -18,14 +18,7 @@
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       FontFamily="Segoe UI Light"
-                       FontSize="40"
-                       Foreground="#444444"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageTitleTextBlock}" />
 
         </StackPanel>
 
@@ -49,7 +42,7 @@
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5"
-                        Style="{StaticResource BackStageTopButton}">
+                        Style="{StaticResource BackStageButton}">
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Top">
@@ -78,7 +71,7 @@
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5"
-                        Style="{StaticResource BackStageTopButton}">
+                        Style="{StaticResource BackStageButton}">
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Top">
@@ -107,7 +100,7 @@
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5"
-                        Style="{StaticResource BackStageTopButton}">
+                        Style="{StaticResource BackStageButton}">
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Top">
@@ -137,7 +130,7 @@
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5"
-                        Style="{StaticResource BackStageTopButton}">
+                        Style="{StaticResource BackStageButton}">
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Top">
@@ -182,7 +175,7 @@
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5"
-                        Style="{StaticResource BackStageTopButton}">
+                        Style="{StaticResource BackStageButton}">
 
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Top">

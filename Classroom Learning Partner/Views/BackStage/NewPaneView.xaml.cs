@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
         }
 
-        private void CachesListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
+        private void ListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e)
         {
             e.Handled = true;
         }
