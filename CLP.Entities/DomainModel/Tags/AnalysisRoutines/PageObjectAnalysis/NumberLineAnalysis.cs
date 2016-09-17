@@ -39,22 +39,22 @@ namespace CLP.Entities
             }
         }
 
-        public static List<string> GetListOfNumberLineIDsInHistory(CLPPage page)
-        {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+        //public static List<string> GetListOfNumberLineIDsInHistory(CLPPage page)
+        //{
+        //    var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
 
-            var numberLineIDsInHistory = new List<string>();
-            foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
-            {
-                numberLineIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
-                                                      let numberLine =
-                                                          page.GetPageObjectByID(pageObjectID) as NumberLine ?? page.History.GetPageObjectByID(pageObjectID) as NumberLine
-                                                      where numberLine != null
-                                                      select pageObjectID);
-            }
+        //    var numberLineIDsInHistory = new List<string>();
+        //    foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
+        //    {
+        //        numberLineIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
+        //                                              let numberLine =
+        //                                                  page.GetPageObjectByID(pageObjectID) as NumberLine ?? page.History.GetPageObjectByID(pageObjectID) as NumberLine
+        //                                              where numberLine != null
+        //                                              select pageObjectID);
+        //    }
 
-            return numberLineIDsInHistory;
-        }
+        //    return numberLineIDsInHistory;
+        //}
 
         public static void AnalyzeRepresentationCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, NumberLine numberLine)
         {

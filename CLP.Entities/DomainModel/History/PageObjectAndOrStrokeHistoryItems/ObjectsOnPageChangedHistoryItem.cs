@@ -48,59 +48,44 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected ObjectsOnPageChangedHistoryItem(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Obsolete Constructors
 
-        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
-        public ObjectsOnPageChangedHistoryItem(StrokesChangedHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            VersionIndex = obsoleteHistoryItem.VersionIndex;
-            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
-            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
-            ParentPage = obsoleteHistoryItem.ParentPage;
+        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
+        //public ObjectsOnPageChangedHistoryItem(StrokesChangedHistoryItem obsoleteHistoryItem)
+        //{
+        //    ID = obsoleteHistoryItem.ID;
+        //    OwnerID = obsoleteHistoryItem.OwnerID;
+        //    ParentPage = obsoleteHistoryItem.ParentPage;
 
-            PageObjectIDsAdded = new List<string>();
-            StrokeIDsAdded = obsoleteHistoryItem.StrokeIDsAdded;
-            StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
-        }
+        //    PageObjectIDsAdded = new List<string>();
+        //    StrokeIDsAdded = obsoleteHistoryItem.StrokeIDsAdded;
+        //    StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
+        //}
 
-        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
-        public ObjectsOnPageChangedHistoryItem(PageObjectsAddedHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            VersionIndex = obsoleteHistoryItem.VersionIndex;
-            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
-            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
-            ParentPage = obsoleteHistoryItem.ParentPage;
+        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
+        //public ObjectsOnPageChangedHistoryItem(PageObjectsAddedHistoryItem obsoleteHistoryItem)
+        //{
+        //    ID = obsoleteHistoryItem.ID;
+        //    OwnerID = obsoleteHistoryItem.OwnerID;
+        //    ParentPage = obsoleteHistoryItem.ParentPage;
 
-            PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs;
-            StrokeIDsAdded = new List<string>();
-        }
+        //    PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs;
+        //    StrokeIDsAdded = new List<string>();
+        //}
 
-        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
-        public ObjectsOnPageChangedHistoryItem(PageObjectsRemovedHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            VersionIndex = obsoleteHistoryItem.VersionIndex;
-            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
-            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
-            ParentPage = obsoleteHistoryItem.ParentPage;
+        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
+        //public ObjectsOnPageChangedHistoryItem(PageObjectsRemovedHistoryItem obsoleteHistoryItem)
+        //{
+        //    ID = obsoleteHistoryItem.ID;
+        //    OwnerID = obsoleteHistoryItem.OwnerID;
+        //    ParentPage = obsoleteHistoryItem.ParentPage;
 
-            PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
-            PageObjectIDsAdded = new List<string>();
-            StrokeIDsAdded = new List<string>();
-        }
+        //    PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
+        //    PageObjectIDsAdded = new List<string>();
+        //    StrokeIDsAdded = new List<string>();
+        //}
 
         #endregion //Obsolete Constructors
 

@@ -42,12 +42,6 @@ namespace CLP.Entities
             HalvedPageObjectIDs = halvedPageObjectIDs;
         }
 
-        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected PageObjectCutHistoryItem(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties

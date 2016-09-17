@@ -45,53 +45,41 @@ namespace CLP.Entities
                                  };
         }
 
-        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected ObjectsMovedBatchHistoryItem(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Converter
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
-        public ObjectsMovedBatchHistoryItem(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            VersionIndex = obsoleteHistoryItem.VersionIndex;
-            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
-            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
-            ParentPage = obsoleteHistoryItem.ParentPage;
+        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
+        //public ObjectsMovedBatchHistoryItem(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
+        //{
+        //    ID = obsoleteHistoryItem.ID;
+        //    OwnerID = obsoleteHistoryItem.OwnerID;
+        //    ParentPage = obsoleteHistoryItem.ParentPage;
 
-            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-            PageObjectIDs = new Dictionary<string, Point>
-                            {
-                                { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
-                            };
+        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
+        //    PageObjectIDs = new Dictionary<string, Point>
+        //                    {
+        //                        { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
+        //                    };
 
-            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        }
+        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+        //}
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
-        public ObjectsMovedBatchHistoryItem(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            VersionIndex = obsoleteHistoryItem.VersionIndex;
-            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
-            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
-            ParentPage = obsoleteHistoryItem.ParentPage;
+        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
+        //public ObjectsMovedBatchHistoryItem(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
+        //{
+        //    ID = obsoleteHistoryItem.ID;
+        //    OwnerID = obsoleteHistoryItem.OwnerID;
+        //    ParentPage = obsoleteHistoryItem.ParentPage;
 
-            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-            var pageObjects = obsoleteHistoryItem.PageObjectIDs.Select(id => obsoleteHistoryItem.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
-            pageObjects = pageObjects.Where(p => p != null).ToList();
-            var referencePageObject = pageObjects.First();
-            var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
-            PageObjectIDs = pageObjectIDs;
-            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        }
+        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
+        //    var pageObjects = obsoleteHistoryItem.PageObjectIDs.Select(id => obsoleteHistoryItem.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
+        //    pageObjects = pageObjects.Where(p => p != null).ToList();
+        //    var referencePageObject = pageObjects.First();
+        //    var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
+        //    PageObjectIDs = pageObjectIDs;
+        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+        //}
 
         #endregion //Converter
 

@@ -88,14 +88,6 @@ namespace Classroom_Learning_Partner.ViewModels
             differentiatedPage.PageNumber = 999;
             differentiatedPage.DifferentiationLevel = label;
 
-            foreach(var historyItem in differentiatedPage.History.UndoItems)
-            {
-                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-            }
-            foreach(var historyItem in differentiatedPage.History.RedoItems)
-            {
-                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-            }
             foreach(var stroke in differentiatedPage.InkStrokes)
             {
                 stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
