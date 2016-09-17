@@ -668,7 +668,7 @@ namespace CLP.Entities
             SubmissionTime = DateTime.Now;
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
             History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x!= null));
-            var copy = this.DeepCopy();
+            CLPPage copy = this.DeepCopy();
             if (copy == null)
             {
                 return null;
@@ -804,7 +804,7 @@ namespace CLP.Entities
         {
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
             History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x != null));
-            var copy = this.DeepCopy();
+            CLPPage copy = this.DeepCopy();
             if (copy == null)
             {
                 return null;
@@ -1046,6 +1046,16 @@ namespace CLP.Entities
 
         public void AfterDeserialization()
         {
+            foreach (var pageObject in PageObjects)
+            {
+                pageObject.ParentPage = this;
+            }
+
+            foreach (var pageObject in History.TrashedPageObjects)
+            {
+                pageObject.ParentPage = this;
+            }
+
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
             History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())

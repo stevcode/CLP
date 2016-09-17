@@ -3,7 +3,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -221,8 +224,10 @@ namespace CLP.Entities
         public static readonly PropertyData ParentPageVersionIndexProperty = RegisterProperty("ParentPageVersionIndex", typeof (uint), 0);
 
         /// <summary>The <see cref="IPageObject" />'s parent <see cref="CLPPage" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual CLPPage ParentPage
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
             set
@@ -248,7 +253,7 @@ namespace CLP.Entities
 
         public virtual IPageObject Duplicate()
         {
-            IPageObject pageObject = this.DeepCopy();
+            IPageObject pageObject = DeepCopy();
             if (pageObject == null)
             {
                 return null;

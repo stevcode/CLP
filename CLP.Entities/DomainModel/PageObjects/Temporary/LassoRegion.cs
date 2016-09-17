@@ -12,6 +12,7 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class LassoRegion : APageObjectBase
     {
         #region Constructors

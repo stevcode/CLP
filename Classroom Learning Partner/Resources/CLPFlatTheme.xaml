@@ -21,6 +21,7 @@
         </Setter>
     </Style>
 
+    <!--
     <Style TargetType="{x:Type ScrollViewer}">
         <Setter Property="OverridesDefaultStyle"
                 Value="True" />
@@ -59,6 +60,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
 </ResourceDictionary>

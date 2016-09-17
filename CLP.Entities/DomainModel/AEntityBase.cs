@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using Catel.Data;
@@ -14,7 +15,10 @@ namespace CLP.Entities
         protected AEntityBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        public void ClearDirtyFlag() { IsDirty = false; }
+        public void ClearDirtyFlag()
+        {
+            IsDirty = false;
+        }
 
         public string ToJsonString(bool formatWithIndents = false)
         {
@@ -32,8 +36,7 @@ namespace CLP.Entities
             }
         }
 
-        public static T Load<T>(string fileName, SerializationMode mode)
-             where T : class
+        public static T Load<T>(string fileName, SerializationMode mode) where T : class
         {
             using (Stream stream = new FileStream(fileName, FileMode.Open))
             {
@@ -41,8 +44,7 @@ namespace CLP.Entities
             }
         }
 
-        public static T FromJsonString<T>(string json)
-             where T : class
+        public static T FromJsonString<T>(string json) where T : class
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
@@ -50,6 +52,18 @@ namespace CLP.Entities
                 var deserialized = jsonSerializer.Deserialize(typeof(T), stream);
                 return (T)deserialized;
             }
+        }
+
+        public dynamic DeepCopy()
+        {
+            var modelType = GetType();
+
+            if (!modelType.IsSerializable)
+            {
+                throw new ArgumentException("The type must be serializable.", modelType.ToString());
+            }
+
+            return FromJsonString<dynamic>(ToJsonString(true));
         }
     }
 }
