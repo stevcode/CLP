@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -18,18 +18,12 @@ namespace CLP.Entities
         protected AStrokeAccepter(CLPPage parentPage)
             : base(parentPage) { }
 
-        public AStrokeAccepter(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region IStrokeAccepter Implementation
 
         /// <summary>Stroke must be at least this percent contained by StrokeAcceptanceBoundingBox.</summary>
-        public virtual int StrokeHitTestPercentage
-        {
-            get { return 95; }
-        }
+        public virtual int StrokeHitTestPercentage => 95;
 
         public virtual Rect StrokeAcceptanceBoundingBox
         {
@@ -43,10 +37,11 @@ namespace CLP.Entities
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<Stroke> AcceptedStrokes
         {
@@ -54,7 +49,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -63,7 +58,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
 
         public void LoadAcceptedStrokes()
         {
@@ -104,9 +99,15 @@ namespace CLP.Entities
             }
         }
 
-        public virtual bool IsStrokeOverPageObject(Stroke stroke) { return stroke.HitTest(StrokeAcceptanceBoundingBox, StrokeHitTestPercentage); }
+        public virtual bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            return stroke.HitTest(StrokeAcceptanceBoundingBox, StrokeHitTestPercentage);
+        }
 
-        public double PercentageOfStrokeOverPageObject(Stroke stroke) { return stroke.PercentContainedByBounds(StrokeAcceptanceBoundingBox); }
+        public double PercentageOfStrokeOverPageObject(Stroke stroke)
+        {
+            return stroke.PercentContainedByBounds(StrokeAcceptanceBoundingBox);
+        }
 
         public StrokeCollection GetStrokesOverPageObject()
         {
@@ -132,9 +133,7 @@ namespace CLP.Entities
                 foreach (var stroke in strokeAccepter.AcceptedStrokes)
                 {
                     var validStrokeAccepters =
-                        newPageObjects.OfType<IStrokeAccepter>()
-                                      .Where(p => (p.CreatorID == strokeAccepter.CreatorID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
-                                      .ToList();
+                        newPageObjects.OfType<IStrokeAccepter>().Where(p => (p.CreatorID == strokeAccepter.CreatorID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke)).ToList();
                     if (isStrokeSingleCapture)
                     {
                         IStrokeAccepter closestPageObject = null;
@@ -158,9 +157,9 @@ namespace CLP.Entities
                         }
 
                         closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
-                                                            {
-                                                                stroke
-                                                            },
+                                                                {
+                                                                    stroke
+                                                                },
                                                                 new List<Stroke>());
                     }
                 }

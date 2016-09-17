@@ -87,10 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
             differentiatedPage.ID = original.ID;
             differentiatedPage.PageNumber = 999;
             differentiatedPage.DifferentiationLevel = label;
-            foreach(var pageObject in differentiatedPage.PageObjects)
-            {
-                pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
-            }
+
             foreach(var historyItem in differentiatedPage.History.UndoItems)
             {
                 historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;

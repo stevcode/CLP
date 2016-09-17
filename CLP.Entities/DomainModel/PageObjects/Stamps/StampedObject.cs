@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Collections;
 using Catel.Data;
 
@@ -40,17 +39,11 @@ namespace CLP.Entities
         public StampedObject(CLPPage parentPage, string parentStampID, StampedObjectTypes stampedObjectType)
             : this(parentPage, parentStampID, string.Empty, stampedObjectType) { }
 
-        /// <summary>Initializes <see cref="StampedObject" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public StampedObject(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
 
-        public virtual double PartsHeight
+        public double PartsHeight
         {
             get { return 20; }
         }
@@ -62,7 +55,7 @@ namespace CLP.Entities
             set { SetValue(ParentStampIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentStampIDProperty = RegisterProperty("ParentStampID", typeof (string));
+        public static readonly PropertyData ParentStampIDProperty = RegisterProperty("ParentStampID", typeof(string));
 
         /// <summary>The unique Hash of the image this <see cref="StampedObject" /> contains.</summary>
         public string ImageHashID
@@ -71,7 +64,7 @@ namespace CLP.Entities
             set { SetValue(ImageHashIDProperty, value); }
         }
 
-        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof (string), string.Empty);
+        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         /// <summary>Type of <see cref="StampedObject" />.</summary>
         public StampedObjectTypes StampedObjectType
@@ -80,7 +73,7 @@ namespace CLP.Entities
             set { SetValue(StampedObjectTypeProperty, value); }
         }
 
-        public static readonly PropertyData StampedObjectTypeProperty = RegisterProperty("StampedObjectType", typeof (StampedObjectTypes), StampedObjectTypes.GeneralStampedObject);
+        public static readonly PropertyData StampedObjectTypeProperty = RegisterProperty("StampedObjectType", typeof(StampedObjectTypes), StampedObjectTypes.GeneralStampedObject);
 
         /// <summary>List of <see cref="StrokeDTO" />s that make up the <see cref="StampedObject" />.</summary>
         public List<StrokeDTO> SerializedStrokes
@@ -89,7 +82,7 @@ namespace CLP.Entities
             set { SetValue(SerializedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof (List<StrokeDTO>), () => new List<StrokeDTO>());
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         /// <summary>Toggles the visibility of a boundary around the stampedObject.</summary>
         public bool IsBoundaryVisible
@@ -98,7 +91,7 @@ namespace CLP.Entities
             set { SetValue(IsBoundaryVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof (bool), true);
+        public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof(bool), true);
 
         /// <summary>Toggles visibility of Parts.</summary>
         public bool IsPartsLabelVisible
@@ -107,7 +100,7 @@ namespace CLP.Entities
             set { SetValue(IsPartsLabelVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsPartsLabelVisibleProperty = RegisterProperty("IsPartsLabelVisible", typeof (bool), false);
+        public static readonly PropertyData IsPartsLabelVisibleProperty = RegisterProperty("IsPartsLabelVisible", typeof(bool), false);
 
         #endregion //Properties
 
@@ -142,20 +135,14 @@ namespace CLP.Entities
 
         public override string CodedName
         {
-            get
-            {
-                return Codings.OBJECT_STAMPED_OBJECTS;
-            }
+            get { return Codings.OBJECT_STAMPED_OBJECTS; }
         }
 
         public override string CodedID
         {
-            get
-            {
-                return ""; //pictorial, discrete/unitized, drag/menu
+            get { return ""; //pictorial, discrete/unitized, drag/menu
             }
         }
-             
 
         public override int ZIndex
         {
@@ -301,7 +288,7 @@ namespace CLP.Entities
             set { SetValue(PartsProperty, value); }
         }
 
-        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof (int), 0);
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), 0);
 
         /// <summary>Is an <see cref="ICountable" /> that doesn't accept inner parts.</summary>
         public bool IsInnerPart
@@ -310,7 +297,7 @@ namespace CLP.Entities
             set { SetValue(IsInnerPartProperty, value); }
         }
 
-        public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof (bool), false);
+        public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof(bool), false);
 
         /// <summary>Parts is Auto-Generated and non-modifiable (except under special circumstances).</summary>
         public bool IsPartsAutoGenerated
@@ -319,7 +306,7 @@ namespace CLP.Entities
             set { SetValue(IsPartsAutoGeneratedProperty, value); }
         }
 
-        public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof (bool), false);
+        public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof(bool), false);
 
         public void RefreshParts()
         {

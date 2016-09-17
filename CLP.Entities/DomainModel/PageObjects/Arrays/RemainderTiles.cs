@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -14,14 +12,10 @@ namespace CLP.Entities
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="RemainderTiles" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="RemainderTiles" /> from scratch.</summary>
         public RemainderTiles() { }
 
-        /// <summary>
-        /// Initializes <see cref="RemainderTiles" /> from
-        /// </summary>
+        /// <summary>Initializes <see cref="RemainderTiles" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="RemainderTiles" /> belongs to.</param>
         /// <param name="divisionTemplate">Associated <see cref="DivisionTemplate" /> the <see cref="RemainderTiles" /> acts against.</param>
         public RemainderTiles(CLPPage parentPage, DivisionTemplate divisionTemplate)
@@ -31,21 +25,11 @@ namespace CLP.Entities
             Width = NUMBER_OF_TILES_PER_ROW * TILE_HEIGHT;
         }
 
-        /// <summary>
-        /// Initializes <see cref="RemainderTiles" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public RemainderTiles(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
 
-        /// <summary>
-        /// Colors of each tile
-        /// </summary>
+        /// <summary>Colors of each tile</summary>
         public ObservableCollection<string> TileColors
         {
             get { return GetValue<ObservableCollection<string>>(TileColorsProperty); }
@@ -68,10 +52,7 @@ namespace CLP.Entities
             get { return Codings.OBJECT_REMAINDER_TILES; }
         }
 
-        public override string CodedID
-        {
-            get { return string.Format("A"); }
-        }
+        public override string CodedID => "A";
 
         public override int ZIndex
         {

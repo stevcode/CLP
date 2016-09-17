@@ -44,12 +44,6 @@ namespace CLP.Entities
             Height = (gridSquareSize * rows) + (2 * DT_LABEL_LENGTH);
         }
 
-        /// <summary>Initializes <see cref="DivisionTemplate" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplate(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         public void InitializeRemainderTiles()
         {
             if (RemainderTiles == null)
@@ -121,20 +115,11 @@ namespace CLP.Entities
 
         public static readonly PropertyData RemainderTilesOwnerIDProperty = RegisterProperty("RemainderTilesOwnerID", typeof (string), string.Empty);
 
-        /// <summary>Version Index for the <see cref="RemainderTiles" />.</summary>
-        public uint RemainderTilesVersionIndex
-        {
-            get { return GetValue<uint>(RemainderTilesVersionIndexProperty); }
-            set { SetValue(RemainderTilesVersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData RemainderTilesVersionIndexProperty = RegisterProperty("RemainderTilesVersionIndex", typeof (uint), 0);
 
         /// <summary>
         ///     <see cref="RemainderTiles" /> for the <see cref="DivisionTemplate" />.
         /// </summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual RemainderTiles RemainderTiles
+        public RemainderTiles RemainderTiles
         {
             get { return GetValue<RemainderTiles>(RemainderTilesProperty); }
             set
@@ -144,12 +129,10 @@ namespace CLP.Entities
                 {
                     RemainderTilesID = string.Empty;
                     RemainderTilesOwnerID = string.Empty;
-                    RemainderTilesVersionIndex = 0;
                     return;
                 }
                 RemainderTilesID = value.ID;
                 RemainderTilesOwnerID = value.OwnerID;
-                RemainderTilesVersionIndex = value.VersionIndex;
             }
         }
 

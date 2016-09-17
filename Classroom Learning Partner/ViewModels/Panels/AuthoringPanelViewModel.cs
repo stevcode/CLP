@@ -386,10 +386,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = Notebook.Pages.IndexOf(originalPage);
             Notebook.Pages.Remove(originalPage);
             Notebook.Pages.Insert(index, originalPage);
-            foreach (var pageObject in originalPage.PageObjects)
-            {
-                pageObject.DifferentiationLevel = originalPage.DifferentiationLevel;
-            }
+
             foreach (var historyItem in originalPage.History.UndoItems)
             {
                 historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
@@ -409,10 +406,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
-                foreach (var pageObject in differentiatedPage.PageObjects)
-                {
-                    pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
-                }
+
                 foreach (var historyItem in differentiatedPage.History.UndoItems)
                 {
                     historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;

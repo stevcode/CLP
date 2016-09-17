@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Windows;
-using Catel.Data;
+﻿using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -22,12 +19,6 @@ namespace CLP.Entities
             Height = height;
             Width = width;
         }
-
-        /// <summary>Initializes <see cref="TemporaryBoundary" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public TemporaryBoundary(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -67,9 +58,9 @@ namespace CLP.Entities
             }
 
             var boundary = new TemporaryBoundary(page, xPos, yPos, height, width)
-            {
-                RegionText = regionText
-            };
+                           {
+                               RegionText = regionText
+                           };
 
             page.PageObjects.Add(boundary);
         }

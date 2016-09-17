@@ -679,15 +679,11 @@ namespace CLP.Entities
             copy.History.LastVersionIndex = LastVersionIndex;
             foreach (var pageObject in copy.PageObjects.Where(x => x != null))
             {
-                pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
-                pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
             foreach (var pageObject in copy.History.TrashedPageObjects.Where(x => x != null))
             {
-                pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
-                pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
@@ -812,13 +808,11 @@ namespace CLP.Entities
 
             foreach (var pageObject in copy.PageObjects.Where(x => x != null))
             {
-                pageObject.VersionIndex = 0;
                 pageObject.ParentPage = copy;
             }
 
             foreach (var pageObject in copy.History.TrashedPageObjects.Where(x => x != null))
             {
-                pageObject.VersionIndex = 0;
                 pageObject.ParentPage = copy;
             }
 

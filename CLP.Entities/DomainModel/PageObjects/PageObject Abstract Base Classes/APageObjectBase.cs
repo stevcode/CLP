@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
-using System.Windows.Input;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -30,78 +25,81 @@ namespace CLP.Entities
             OwnerID = parentPage.OwnerID;
         }
 
-        /// <summary>Initializes <see cref="APageObjectBase" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public APageObjectBase(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
 
-        public virtual string FormattedName
-        {
-            get { return GetType().Name; }
-        }
-
-        public virtual string CodedName
-        {
-            get { return "Coded Name not implemented."; }
-        }
-
-        public virtual string CodedID
-        {
-            get { return "CodedID not implemented."; }
-        }
-
         /// <summary>Unique Identifier for the <see cref="IPageObject" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>X Position of the <see cref="IPageObject" />.</summary>
+        public double XPosition
+        {
+            get { return GetValue<double>(XPositionProperty); }
+            set { SetValue(XPositionProperty, value); }
+        }
+
+        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
+
+        /// <summary>Y Position of the <see cref="IPageObject" />.</summary>
+        public double YPosition
+        {
+            get { return GetValue<double>(YPositionProperty); }
+            set { SetValue(YPositionProperty, value); }
+        }
+
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 250.0);
+
+        /// <summary>Height of the <see cref="IPageObject" />.</summary>
+        public double Height
+        {
+            get { return GetValue<double>(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
+        }
+
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 40.0);
+
+        /// <summary>Width of the <see cref="IPageObject" />.</summary>
+        public double Width
+        {
+            get { return GetValue<double>(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
+        }
+
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 40.0);
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="IPageObject" />.</summary>
-        /// <remarks>Composite Primary Key. Also Foregin Key for <see cref="Person" /> who owns the <see cref="IPageObject" />.</remarks>
         public string OwnerID
         {
             get { return GetValue<string>(OwnerIDProperty); }
             set { SetValue(OwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof (string), string.Empty);
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
 
-        /// <summary>Version Index of the <see cref="IPageObject" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
-        public uint VersionIndex
+        /// <summary>Unique Identifier for the <see cref="Person" /> who created the <see cref="IPageObject" />.</summary>
+        public string CreatorID
         {
-            get { return GetValue<uint>(VersionIndexProperty); }
-            set { SetValue(VersionIndexProperty, value); }
+            get { return GetValue<string>(CreatorIDProperty); }
+            set { SetValue(CreatorIDProperty, value); }
         }
 
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof (uint), 0);
+        public static readonly PropertyData CreatorIDProperty = RegisterProperty("CreatorID", typeof(string), string.Empty);
 
-        /// <summary>Version Index of the latest submission.</summary>
-        public uint? LastVersionIndex
+        /// <summary>Date and Time the <see cref="IPageObject" /> was created.</summary>
+        public DateTime CreationDate
         {
-            get { return GetValue<uint?>(LastVersionIndexProperty); }
-            set { SetValue(LastVersionIndexProperty, value); }
+            get { return GetValue<DateTime>(CreationDateProperty); }
+            set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof (uint?));
-
-        /// <summary>Differentiation Level of the <see cref="IPageObject" />.</summary>
-        public string DifferentiationLevel
-        {
-            get { return GetValue<string>(DifferentiationLevelProperty); }
-            set { SetValue(DifferentiationLevelProperty, value); }
-        }
-
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string), "0");
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>Version marker to trigger different looks or calculated property values based on a previous, prototyped version of a <see cref="IPageObject" />.</summary>
         public string PageObjectFunctionalityVersion
@@ -112,68 +110,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData PageObjectFunctionalityVersionProperty = RegisterProperty("PageObjectFunctionalityVersion", typeof(string), "0");
 
-        /// <summary>Date and Time the <see cref="IPageObject" /> was created.</summary>
-        public DateTime CreationDate
-        {
-            get { return GetValue<DateTime>(CreationDateProperty); }
-            set { SetValue(CreationDateProperty, value); }
-        }
-
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
-
-        /// <summary>X Position of the <see cref="IPageObject" />.</summary>
-        public double XPosition
-        {
-            get { return GetValue<double>(XPositionProperty); }
-            set { SetValue(XPositionProperty, value); }
-        }
-
-        public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof (double), 10.0);
-
-        /// <summary>Y Position of the <see cref="IPageObject" />.</summary>
-        public double YPosition
-        {
-            get { return GetValue<double>(YPositionProperty); }
-            set { SetValue(YPositionProperty, value); }
-        }
-
-        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof (double), 250.0);
-
-        public abstract int ZIndex { get; }
-
-        /// <summary>Height of the <see cref="IPageObject" />.</summary>
-        public double Height
-        {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
-        }
-
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof (double), 40.0);
-
-        /// <summary>Width of the <see cref="IPageObject" />.</summary>
-        public double Width
-        {
-            get { return GetValue<double>(WidthProperty); }
-            set { SetValue(WidthProperty, value); }
-        }
-
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof (double), 40.0);
-
-        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
-        public virtual double MinimumHeight
-        {
-            get { return 20; }
-        }
-
-        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
-        public virtual double MinimumWidth
-        {
-            get { return 20; }
-        }
-
-        /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
-        public abstract bool IsBackgroundInteractable { get; }
-
         /// <summary>Determines whether the <see cref="IPageObject" />'s properties can be changed by a <see cref="Person" /> other than the Creator.</summary>
         public bool IsManipulatableByNonCreator
         {
@@ -181,71 +117,40 @@ namespace CLP.Entities
             set { SetValue(IsManipulatableByNonCreatorProperty, value); }
         }
 
-        public static readonly PropertyData IsManipulatableByNonCreatorProperty = RegisterProperty("IsManipulatableByNonCreator", typeof (bool), false);
-
-        /// <summary>Unique Identifier for the <see cref="Person" /> who created the <see cref="IPageObject" />.</summary>
-        public string CreatorID
-        {
-            get { return GetValue<string>(CreatorIDProperty); }
-            set { SetValue(CreatorIDProperty, value); }
-        }
-
-        public static readonly PropertyData CreatorIDProperty = RegisterProperty("CreatorID", typeof (string), string.Empty);
-
-        #region Navigation Properties
-
-        /// <summary>Unique Identifier for the <see cref="IPageObject" />'s parent <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Foreign Key.</remarks>
-        public string ParentPageID
-        {
-            get { return GetValue<string>(ParentPageIDProperty); }
-            set { SetValue(ParentPageIDProperty, value); }
-        }
-
-        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof (string));
-
-        /// <summary>Unique Identifier of the <see cref="Person" /> who owns the parent <see cref="CLPPage" /> of the <see cref="IPageObject" />.</summary>
-        /// <remarks>Composite Foreign Key.</remarks>
-        public string ParentPageOwnerID
-        {
-            get { return GetValue<string>(ParentPageOwnerIDProperty); }
-            set { SetValue(ParentPageOwnerIDProperty, value); }
-        }
-
-        public static readonly PropertyData ParentPageOwnerIDProperty = RegisterProperty("ParentPageOwnerID", typeof (string));
-
-        /// <summary>The parent <see cref="CLPPage" />'s Version Index.</summary>
-        public uint ParentPageVersionIndex
-        {
-            get { return GetValue<uint>(ParentPageVersionIndexProperty); }
-            set { SetValue(ParentPageVersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData ParentPageVersionIndexProperty = RegisterProperty("ParentPageVersionIndex", typeof (uint), 0);
+        public static readonly PropertyData IsManipulatableByNonCreatorProperty = RegisterProperty("IsManipulatableByNonCreator", typeof(bool), false);
 
         /// <summary>The <see cref="IPageObject" />'s parent <see cref="CLPPage" />.</summary>
-        [XmlIgnore]
-        [JsonIgnore]
-        [ExcludeFromSerialization]
         public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
-            set
-            {
-                SetValue(ParentPageProperty, value);
-                if (value == null)
-                {
-                    return;
-                }
-                ParentPageID = value.ID;
-                ParentPageOwnerID = value.OwnerID;
-                ParentPageVersionIndex = value.VersionIndex;
-            }
+            set { SetValue(ParentPageProperty, value); }
         }
 
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof (CLPPage));
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));
 
-        #endregion //Navigation Properties
+        #region Calculated Properties
+
+        public virtual string FormattedName
+        {
+            get { return GetType().Name; }
+        }
+
+        public virtual string CodedName => "Coded Name not implemented.";
+
+        public virtual string CodedID => "CodedID not implemented.";
+
+        public abstract int ZIndex { get; }
+
+        /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
+        public virtual double MinimumHeight => 20;
+
+        /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
+        public virtual double MinimumWidth => 20;
+
+        /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
+        public abstract bool IsBackgroundInteractable { get; }
+
+        #endregion // Calculated Properties
 
         #endregion //Properties
 
@@ -261,28 +166,41 @@ namespace CLP.Entities
 
             pageObject.CreationDate = DateTime.Now;
             pageObject.ID = Guid.NewGuid().ToCompactID();
-            pageObject.VersionIndex = 0;
-            pageObject.LastVersionIndex = null;
             pageObject.ParentPage = ParentPage;
 
             return pageObject;
         }
 
-        public virtual void OnAdded(bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnAdded(bool fromHistory = false)
+        {
+            ParentPage.UpdateAllReporters();
+        }
 
-        public virtual void OnDeleted(bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnDeleted(bool fromHistory = false)
+        {
+            ParentPage.UpdateAllReporters();
+        }
 
         public virtual void OnMoving(double oldX, double oldY, bool fromHistory = false) { }
 
-        public virtual void OnMoved(double oldX, double oldY, bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnMoved(double oldX, double oldY, bool fromHistory = false)
+        {
+            ParentPage.UpdateAllReporters();
+        }
 
         public virtual void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false) { }
 
-        public virtual void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            ParentPage.UpdateAllReporters();
+        }
 
         public virtual void OnRotating(double oldAngle, bool fromHistory = false) { }
 
-        public virtual void OnRotated(double oldAngle, bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnRotated(double oldAngle, bool fromHistory = false)
+        {
+            ParentPage.UpdateAllReporters();
+        }
 
         public virtual bool PageObjectIsOver(IPageObject pageObject, double percentage)
         {
@@ -300,9 +218,7 @@ namespace CLP.Entities
 
         #region History Methods
 
-        /// <summary>
-        /// Signifies the pageObject was on the page immediately after the historyItem at the given historyIndex was performed
-        /// </summary>
+        /// <summary>Signifies the pageObject was on the page immediately after the historyItem at the given historyIndex was performed</summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
             var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
@@ -317,21 +233,17 @@ namespace CLP.Entities
             return isOnPageBefore || !isPartOfHistory;
         }
 
-        /// <summary>
-        /// Gets CodedID just before the historyItem at historyIndex executes Redo().
-        /// To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.
-        /// </summary>
-        public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return CodedID; }
+        /// <summary>Gets CodedID just before the historyItem at historyIndex executes Redo(). To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        public virtual string GetCodedIDAtHistoryIndex(int historyIndex)
+        {
+            return CodedID;
+        }
 
-        /// <summary>
-        /// Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo().
-        /// To get (Width, Height) just after historyItem executes Redo(), add 1 to historyIndex.
-        /// </summary>
+        /// <summary>Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo(). To get (Width, Height) just after historyItem executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var resizeHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>()
-                          .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>()
+                                              .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
             if (resizeHistoryItem == null ||
                 !resizeHistoryItem.StretchedDimensions.Any())
             {
@@ -343,15 +255,11 @@ namespace CLP.Entities
             // TODO: numberline.endpointchange, remainderTiles.updated
         }
 
-        /// <summary>
-        /// Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo().
-        /// To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.
-        /// </summary>
+        /// <summary>Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo(). To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
             var moveHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>()
-                          .FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
 
             if (moveHistoryItem == null ||
                 !moveHistoryItem.TravelledPositions.Any())
@@ -366,9 +274,8 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo().
-        /// To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.
-        /// // TODO: Modify these to be after current historyItems executes Redo().
+        ///     Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo(). To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex. // TODO: Modify
+        ///     these to be after current historyItems executes Redo().
         /// </summary>
         public virtual Rect GetBoundsAtHistoryIndex(int historyIndex)
         {
@@ -464,7 +371,10 @@ namespace CLP.Entities
             return IsBoundsOverlapping(firstBounds, secondBounds);
         }
 
-        public static bool IsBoundsOverlapping(Rect firstBounds, Rect secondBounds) { return firstBounds.IntersectsWith(secondBounds); }
+        public static bool IsBoundsOverlapping(Rect firstBounds, Rect secondBounds)
+        {
+            return firstBounds.IntersectsWith(secondBounds);
+        }
 
         public static bool IsBoundsOverlappingByPercentage(Rect firstBounds, Rect secondBounds, double percentage)
         {

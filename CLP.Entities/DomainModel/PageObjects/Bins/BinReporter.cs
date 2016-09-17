@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -23,12 +22,6 @@ namespace CLP.Entities
             YPosition = 20;
             PageObjectFunctionalityVersion = "1";
         }
-
-        /// <summary>Initializes <see cref="BinReporter" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public BinReporter(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -138,7 +131,10 @@ namespace CLP.Entities
             }
         }
 
-        public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
+        public void UpdateReport()
+        {
+            RaisePropertyChanged("FormattedReport");
+        }
 
         #endregion //IReporter Implementation
     }

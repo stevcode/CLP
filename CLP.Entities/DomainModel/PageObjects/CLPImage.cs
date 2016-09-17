@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 
@@ -34,12 +33,6 @@ namespace CLP.Entities
             //ApplyDistinctPosition(this);
         }
 
-        /// <summary>Initializes <see cref="CLPImage" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CLPImage(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -51,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(ImageHashIDProperty, value); }
         }
 
-        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof (string), string.Empty);
+        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         #endregion //Properties
 

@@ -49,12 +49,6 @@ namespace CLP.Entities
             Height = (gridSquareSize * rows) + (2 * ARRAY_LABEL_LENGTH);
         }
 
-        /// <summary>Initializes <see cref="CLPArray" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CLPArray(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties

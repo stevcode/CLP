@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -18,18 +18,12 @@ namespace CLP.Entities
         protected APageObjectAccepter(CLPPage parentPage)
             : base(parentPage) { }
 
-        public APageObjectAccepter(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region IPageObjectAccepter Implementation
 
         /// <summary>PageObject must be at least this percent contained by PageObjectAcceptanceBoundingBox.</summary>
-        public virtual int PageObjectHitTestPercentage
-        {
-            get { return 90; }
-        }
+        public virtual int PageObjectHitTestPercentage => 90;
 
         /// <summary>Bounding rectangle used to calculate pageObjects's hit test.</summary>
         public virtual Rect PageObjectAcceptanceBoundingBox
@@ -44,10 +38,11 @@ namespace CLP.Entities
             set { SetValue(CanAcceptPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof (bool), true);
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), true);
 
         /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<IPageObject> AcceptedPageObjects
         {
@@ -55,7 +50,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
+        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
 
         /// <summary>The IDs of the <see cref="IPageObject" />s that have been accepted.</summary>
         public List<string> AcceptedPageObjectIDs
@@ -64,7 +59,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedPageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof(List<string>), () => new List<string>());
 
         public void LoadAcceptedPageObjects()
         {
@@ -98,7 +93,10 @@ namespace CLP.Entities
             }
         }
 
-        public virtual bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject) { return true; }
+        public virtual bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject)
+        {
+            return true;
+        }
 
         public bool IsPageObjectOverThisPageObject(IPageObject pageObject)
         {
@@ -192,9 +190,9 @@ namespace CLP.Entities
                         }
 
                         closestPageObject.ChangeAcceptedPageObjects(new List<IPageObject>
-                                                                {
-                                                                    acceptedPageObject
-                                                                },
+                                                                    {
+                                                                        acceptedPageObject
+                                                                    },
                                                                     new List<IPageObject>());
                     }
                 }
