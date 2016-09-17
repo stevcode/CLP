@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -14,8 +11,7 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" /> from scratch.</summary>
-        public AnswerCorrectnessTag()
-        { }
+        public AnswerCorrectnessTag() { }
 
         /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="AnswerChangedAfterRepresentationTag" /> belongs to.</param>
@@ -24,12 +20,6 @@ namespace CLP.Entities
         {
             HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
         }
-
-        /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public AnswerCorrectnessTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion // Constructors
 
@@ -64,21 +54,12 @@ namespace CLP.Entities
 
         public string AnalysisCode
         {
-            get
-            {
-                return Answer.CodedValue.Replace("additional ", string.Empty);
-            }
+            get { return Answer.CodedValue.Replace("additional ", string.Empty); }
         }
 
-        public override Category Category
-        {
-            get { return Category.Answer; }
-        }
+        public override Category Category => Category.Answer;
 
-        public override string FormattedName
-        {
-            get { return "Answer Correctness"; }
-        }
+        public override string FormattedName => "Answer Correctness";
 
         public override string FormattedValue
         {
@@ -101,9 +82,7 @@ namespace CLP.Entities
                                               answerContents,
                                               isAnswerCorrect ? "correct" : "incorrect");
 
-                return string.Format("{0}{1}",
-                                     answerSet,
-                                     string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nCode: " + AnalysisCode);
+                return string.Format("{0}{1}", answerSet, string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nCode: " + AnalysisCode);
             }
         }
 

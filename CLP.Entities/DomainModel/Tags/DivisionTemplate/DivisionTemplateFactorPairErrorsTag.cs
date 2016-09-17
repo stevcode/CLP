@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -18,12 +17,6 @@ namespace CLP.Entities
         public DivisionTemplateFactorPairErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
             : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber) { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateFactorPairErrorsTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateFactorPairErrorsTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -35,9 +28,7 @@ namespace CLP.Entities
             set { SetValue(CreateArrayTooLargeDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData CreateArrayTooLargeDimensionsProperty = RegisterProperty("CreateArrayTooLargeDimensions",
-                                                                                                     typeof (List<string>),
-                                                                                                     () => new List<string>());
+        public static readonly PropertyData CreateArrayTooLargeDimensionsProperty = RegisterProperty("CreateArrayTooLargeDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that was too large to fit the Division Template was created.</summary>
         public int CreateArrayTooLargeAttempts
@@ -52,9 +43,7 @@ namespace CLP.Entities
             set { SetValue(CreateIncorrectDimensionDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData CreateIncorrectDimensionDimensionsProperty = RegisterProperty("CreateIncorrectDimensionDimensions",
-                                                                                                          typeof (List<string>),
-                                                                                                          () => new List<string>());
+        public static readonly PropertyData CreateIncorrectDimensionDimensionsProperty = RegisterProperty("CreateIncorrectDimensionDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that had incorrect dimensions for the Division Template was created.</summary>
         public int CreateIncorrectDimensionAttempts
@@ -69,9 +58,7 @@ namespace CLP.Entities
             set { SetValue(CreateWrongOrientationDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData CreateWrongOrientationDimensionsProperty = RegisterProperty("CreateWrongOrientationDimensions",
-                                                                                                        typeof (List<string>),
-                                                                                                        () => new List<string>());
+        public static readonly PropertyData CreateWrongOrientationDimensionsProperty = RegisterProperty("CreateWrongOrientationDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that was oriented the wrong way to fit the Division Template was created.</summary>
         public int CreateWrongOrientationAttempts
@@ -86,9 +73,7 @@ namespace CLP.Entities
             set { SetValue(CreateDividendAsDimensionDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData CreateDividendAsDimensionDimensionsProperty = RegisterProperty("CreateDividendAsDimensionDimensions",
-                                                                                                           typeof (List<string>),
-                                                                                                           () => new List<string>());
+        public static readonly PropertyData CreateDividendAsDimensionDimensionsProperty = RegisterProperty("CreateDividendAsDimensionDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that had one dimension as the Dividend of the Division Template was created.</summary>
         public int CreateDividendAsDimensionAttempts
@@ -103,9 +88,7 @@ namespace CLP.Entities
             set { SetValue(SnapArrayTooLargeDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData SnapArrayTooLargeDimensionsProperty = RegisterProperty("SnapArrayTooLargeDimensions",
-                                                                                                   typeof (List<string>),
-                                                                                                   () => new List<string>());
+        public static readonly PropertyData SnapArrayTooLargeDimensionsProperty = RegisterProperty("SnapArrayTooLargeDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that was too large to fit the Division Template was created.</summary>
         public int SnapArrayTooLargeAttempts
@@ -120,9 +103,7 @@ namespace CLP.Entities
             set { SetValue(SnapIncorrectDimensionDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData SnapIncorrectDimensionDimensionsProperty = RegisterProperty("SnapIncorrectDimensionDimensions",
-                                                                                                        typeof (List<string>),
-                                                                                                        () => new List<string>());
+        public static readonly PropertyData SnapIncorrectDimensionDimensionsProperty = RegisterProperty("SnapIncorrectDimensionDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that had incorrect dimensions for the Division Template was created.</summary>
         public int SnapIncorrectDimensionAttempts
@@ -137,9 +118,7 @@ namespace CLP.Entities
             set { SetValue(SnapWrongOrientationDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData SnapWrongOrientationDimensionsProperty = RegisterProperty("SnapWrongOrientationDimensions",
-                                                                                                      typeof (List<string>),
-                                                                                                      () => new List<string>());
+        public static readonly PropertyData SnapWrongOrientationDimensionsProperty = RegisterProperty("SnapWrongOrientationDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array that was oriented the wrong way to fit the Division Template was created.</summary>
         public int SnapWrongOrientationAttempts
@@ -154,9 +133,7 @@ namespace CLP.Entities
             set { SetValue(OrientationChangedDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData OrientationChangedDimensionsProperty = RegisterProperty("OrientationChangedDimensions",
-                                                                                                    typeof (List<string>),
-                                                                                                    () => new List<string>());
+        public static readonly PropertyData OrientationChangedDimensionsProperty = RegisterProperty("OrientationChangedDimensions", typeof(List<string>), () => new List<string>());
 
         /// <summary>Number of times an array's orientation was changed while attempting to solve the remainder of a Division Template.</summary>
         public int OrientationChangedAttempts
@@ -177,9 +154,8 @@ namespace CLP.Entities
         {
             get
             {
-                return CreateArrayTooLargeAttempts + CreateIncorrectDimensionAttempts + CreateWrongOrientationAttempts +
-                       CreateDividendAsDimensionAttempts + SnapArrayTooLargeAttempts + SnapIncorrectDimensionAttempts + SnapWrongOrientationAttempts +
-                       OrientationChangedAttempts;
+                return CreateArrayTooLargeAttempts + CreateIncorrectDimensionAttempts + CreateWrongOrientationAttempts + CreateDividendAsDimensionAttempts + SnapArrayTooLargeAttempts +
+                       SnapIncorrectDimensionAttempts + SnapWrongOrientationAttempts + OrientationChangedAttempts;
             }
         }
 
@@ -189,26 +165,20 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get
-            {
-                return string.Format("Division Template {0} Factor Pair Errors{1}", DivisionTemplateNumber, HadTrouble ? " **Trouble**" : string.Empty);
-            }
+            get { return string.Format("Division Template {0} Factor Pair Errors{1}", DivisionTemplateNumber, HadTrouble ? " **Trouble**" : string.Empty); }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format(
-                                     "Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                return string.Format("Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
                                      Dividend,
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",
                                      CreateArrayTooLargeAttempts == 0
                                          ? string.Empty
-                                         : string.Format("\nCreated {0} Array(s) too large." + "\nArray(s): {1}",
-                                                         CreateArrayTooLargeAttempts,
-                                                         string.Join(", ", CreateArrayTooLargeDimensions)),
+                                         : string.Format("\nCreated {0} Array(s) too large." + "\nArray(s): {1}", CreateArrayTooLargeAttempts, string.Join(", ", CreateArrayTooLargeDimensions)),
                                      CreateIncorrectDimensionAttempts == 0
                                          ? string.Empty
                                          : string.Format("\nCreated {0} Array(s) with incorrect dimensions." + "\nArray(s): {1}",
@@ -226,9 +196,7 @@ namespace CLP.Entities
                                                          string.Join(", ", CreateDividendAsDimensionDimensions)),
                                      SnapArrayTooLargeAttempts == 0
                                          ? string.Empty
-                                         : string.Format("\nSnapped {0} too large." + "\nArrays: {1}",
-                                                         SnapArrayTooLargeAttempts,
-                                                         string.Join(", ", SnapArrayTooLargeDimensions)),
+                                         : string.Format("\nSnapped {0} too large." + "\nArrays: {1}", SnapArrayTooLargeAttempts, string.Join(", ", SnapArrayTooLargeDimensions)),
                                      SnapIncorrectDimensionAttempts == 0
                                          ? string.Empty
                                          : string.Format("\nSnapped {0} with incorrect dimensions." + "\nArray(s): {1}",

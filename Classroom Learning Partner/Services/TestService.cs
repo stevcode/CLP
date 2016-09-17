@@ -12,7 +12,6 @@ using Catel.Windows;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
-using CLP.Entities.DomainModel.Utility.Extentions;
 using CLP.InkInterpretation;
 using Path = Catel.IO.Path;
 

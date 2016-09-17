@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -16,7 +15,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class ProblemTypeTag : ATagBase  // TODO: Implement a way to manually add and/or edit this tag.
+    public class ProblemTypeTag : ATagBase // TODO: Implement a way to manually add and/or edit this tag.
     {
         #region Constructors
 
@@ -30,16 +29,8 @@ namespace CLP.Entities
         public ProblemTypeTag(CLPPage parentPage, Origin origin, List<ProblemTypes> problemTypes)
             : base(parentPage, origin)
         {
-            IsSingleValueTag = true;
-
             ProblemTypes = problemTypes;
         }
-
-        /// <summary>Initializes <see cref="ProblemTypeTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ProblemTypeTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -52,19 +43,15 @@ namespace CLP.Entities
             set { SetValue(ProblemTypesProperty, value); }
         }
 
-        public static readonly PropertyData ProblemTypesProperty = RegisterProperty("ProblemTypes", typeof (List<ProblemTypes>), () => new List<ProblemTypes>());
+        public static readonly PropertyData ProblemTypesProperty = RegisterProperty("ProblemTypes", typeof(List<ProblemTypes>), () => new List<ProblemTypes>());
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.OtherPageInformation; }
-        }
+        public override bool IsSingleValueTag => true;
 
-        public override string FormattedName
-        {
-            get { return "Problem Type"; }
-        }
+        public override Category Category => Category.OtherPageInformation;
+
+        public override string FormattedName => "Problem Type";
 
         public override string FormattedValue
         {

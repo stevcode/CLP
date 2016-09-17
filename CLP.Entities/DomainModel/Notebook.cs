@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -91,42 +92,59 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>Unique Identifier for the <see cref="Notebook" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
-        /// <remarks>Composite Primary Key. Foreign Key.</remarks>
         public string OwnerID
         {
             get { return GetValue<string>(OwnerIDProperty); }
             set { SetValue(OwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof (string), String.Empty);
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
 
-        /// <summary>The <see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual Person Owner
+        /// <summary><see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
+        public Person Owner
         {
             get { return GetValue<Person>(OwnerProperty); }
-            set
-            {
-                SetValue(OwnerProperty, value);
-                if (value == null)
-                {
-                    return;
-                }
-                OwnerID = value.ID;
-            }
+            set { SetValue(OwnerProperty, value); }
         }
 
-        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof (Person));
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person), propertyChangedEventHandler: OnOwnerChanged);
+
+        private static void OnOwnerChanged(object sender, AdvancedPropertyChangedEventArgs e)
+        {
+            if (!e.IsNewValueMeaningful ||
+                e.NewValue == null)
+            {
+                return;
+            }
+
+            var notebook = sender as Notebook;
+            var newOwner = e.NewValue as Person;
+            if (notebook == null ||
+                newOwner == null)
+            {
+                return;
+            }
+
+            notebook.OwnerID = newOwner.ID;
+        }
+
+        /// <summary>Name of the <see cref="Notebook" />.</summary>
+        public string Name
+        {
+            get { return GetValue<string>(NameProperty); }
+            set { SetValue(NameProperty, value); }
+        }
+
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
 
         /// <summary>Date and Time the <see cref="Notebook" /> was created.</summary>
         public DateTime CreationDate
@@ -147,34 +165,13 @@ namespace CLP.Entities
 
         public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof (DateTime?));
 
-        /// <summary>Name of the <see cref="Notebook" />.</summary>
-        public string Name
-        {
-            get { return GetValue<string>(NameProperty); }
-            set { SetValue(NameProperty, value); }
-        }
-
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof (string), String.Empty);
-
-        /// <summary>Overall Curriculum the <see cref="Notebook" /> employs. Curriculum of individual pages may vary.</summary>
-        public string Curriculum
-        {
-            get { return GetValue<string>(CurriculumProperty); }
-            set { SetValue(CurriculumProperty, value); }
-        }
-
-        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof (string), String.Empty);
-
         /// <summary>List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.</summary>
         public List<string> ImagePoolHashIDs
         {
             get { return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList(); }
         }
 
-        #region Navigation Properties
-
         /// <summary>Unique Identifier of the currently selected <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public string CurrentPageID
         {
             get { return GetValue<string>(CurrentPageIDProperty); }
@@ -184,7 +181,6 @@ namespace CLP.Entities
         public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof (string));
 
         /// <summary>Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public string CurrentPageOwnerID
         {
             get { return GetValue<string>(CurrentPageOwnerIDProperty); }
@@ -194,7 +190,6 @@ namespace CLP.Entities
         public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof (string));
 
         /// <summary>Version Index of the currently selected <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public uint CurrentPageVersionIndex
         {
             get { return GetValue<uint>(CurrentPageVersionIndexProperty); }
@@ -203,32 +198,45 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof (uint));
 
+        #region Non-Serialized
+
         /// <summary>Currently selected <see cref="CLPPage" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
-        //  [ExcludeFromSerialization]
-        public virtual CLPPage CurrentPage
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set
-            {
-                SetValue(CurrentPageProperty, value);
-                if (value == null)
-                {
-                    return;
-                }
-                CurrentPageID = value.ID;
-                CurrentPageOwnerID = value.OwnerID;
-                CurrentPageVersionIndex = value.VersionIndex;
-            }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), propertyChangedEventHandler: OnCurrentPageChanged);
+
+        private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs e)
+        {
+            if (!e.IsNewValueMeaningful ||
+                e.NewValue == null)
+            {
+                return;
+            }
+
+            var notebook = sender as Notebook;
+            var page = e.NewValue as CLPPage;
+            if (notebook == null ||
+                page == null)
+            {
+                return;
+            }
+
+            notebook.CurrentPageID = page.ID;
+            notebook.OwnerID = page.OwnerID;
+            notebook.CurrentPageVersionIndex = page.VersionIndex;
+        }
 
         /// <summary>Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
-        //   [ExcludeFromSerialization]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
@@ -238,8 +246,8 @@ namespace CLP.Entities
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<IDisplay> Displays
         {
@@ -249,9 +257,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof (ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
-        #endregion //Navigation Properties
+        #endregion // Non-Serialized
 
-        #endregion //Properties
+        #endregion // Properties
 
         #region Methods
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -28,12 +27,6 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="MultiplicationRelationDefinitionTag" /> belongs to.</param>
         public MultiplicationRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
-
-        /// <summary>Initializes <see cref="MultiplicationRelationDefinitionTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public MultiplicationRelationDefinitionTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -64,9 +57,7 @@ namespace CLP.Entities
             set { SetValue(RelationTypeProperty, value); }
         }
 
-        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
-                                                                                    typeof(RelationTypes),
-                                                                                    RelationTypes.GeneralMultiplication);
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralMultiplication);
 
         #region IRelationPartImplementation
 
@@ -114,15 +105,9 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.Definition; }
-        }
+        public override Category Category => Category.Definition;
 
-        public override string FormattedName
-        {
-            get { return "Multiplication Relation Definition"; }
-        }
+        public override string FormattedName => "Multiplication Relation Definition";
 
         public override string FormattedValue
         {

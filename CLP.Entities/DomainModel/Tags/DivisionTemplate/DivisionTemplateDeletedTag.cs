@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -15,24 +14,11 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateDeletedTag" /> belongs to.</param>
-        public DivisionTemplateDeletedTag(CLPPage parentPage,
-                                          Origin origin,
-                                          string divisionTemplateID,
-                                          int dividend,
-                                          int divisor,
-                                          int divisionTemplateNumber,
-                                          List<string> arrayDimensions
-                                          )
+        public DivisionTemplateDeletedTag(CLPPage parentPage, Origin origin, string divisionTemplateID, int dividend, int divisor, int divisionTemplateNumber, List<string> arrayDimensions)
             : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             ArrayDimensions = arrayDimensions;
         }
-
-        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateDeletedTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -45,7 +31,7 @@ namespace CLP.Entities
             set { SetValue(ArrayDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayDimensionsProperty = RegisterProperty("ArrayDimensions", typeof (List<string>));
+        public static readonly PropertyData ArrayDimensionsProperty = RegisterProperty("ArrayDimensions", typeof(List<string>));
 
         #region ATagBase Overrides
 

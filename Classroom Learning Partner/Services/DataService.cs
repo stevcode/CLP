@@ -448,10 +448,7 @@ namespace Classroom_Learning_Partner.Services
             var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
             notebookName = invalidFileNameCharacters.Aggregate(notebookName, (current, c) => current.Replace(c.ToString(), string.Empty));
 
-            var newNotebook = new Notebook(notebookName, Person.Author)
-                              {
-                                  Curriculum = curriculum
-                              };
+            var newNotebook = new Notebook(notebookName, Person.Author);
 
             var newPage = new CLPPage(Person.Author);
             newNotebook.AddPage(newPage);

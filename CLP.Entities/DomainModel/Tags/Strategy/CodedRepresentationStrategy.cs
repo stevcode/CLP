@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -19,12 +18,6 @@ namespace CLP.Entities
             CodedRepresentation = codedRepresentation;
             CodedID = codedID;
         }
-
-        /// <summary>Initializes <see cref="CodedRepresentationStrategy" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CodedRepresentationStrategy(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -99,9 +92,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        /// <summary>
-        ///     Takes the following form: STRATEGY: REPRESENTATION [ID increment_id: resultant_id] specifics
-        /// </summary>
+        /// <summary>Takes the following form: STRATEGY: REPRESENTATION [ID increment_id: resultant_id] specifics</summary>
         public string CodedValue
         {
             get

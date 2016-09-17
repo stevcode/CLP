@@ -160,16 +160,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person), propertyChangedEventHandler: OnOwnerChanged);
 
-        private static void OnOwnerChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        private static void OnOwnerChanged(object sender, AdvancedPropertyChangedEventArgs e)
         {
-            if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
-                advancedPropertyChangedEventArgs.NewValue == null)
+            if (!e.IsNewValueMeaningful ||
+                e.NewValue == null)
             {
                 return;
             }
 
             var page = sender as CLPPage;
-            var newOwner = advancedPropertyChangedEventArgs.NewValue as Person;
+            var newOwner = e.NewValue as Person;
             if (page == null ||
                 newOwner == null)
             {
@@ -693,8 +693,6 @@ namespace CLP.Entities
 
             foreach (var tag in copy.Tags.Where(x => x != null))
             {
-                tag.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
-                tag.LastVersionIndex = LastVersionIndex;
                 tag.ParentPage = copy;
             }
 
@@ -826,7 +824,6 @@ namespace CLP.Entities
 
             foreach (var tag in copy.Tags.Where(x => x != null))
             {
-                tag.VersionIndex = 0;
                 tag.ParentPage = copy;
             }
 

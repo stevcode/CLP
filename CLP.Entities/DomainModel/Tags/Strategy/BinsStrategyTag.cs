@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -16,20 +15,11 @@ namespace CLP.Entities
         public BinsStrategyTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
             : base(parentPage, origin, historyActions, codedStrategies) { }
 
-        /// <summary>Initializes <see cref="BinsStrategyTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public BinsStrategyTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region ATagBase Overrides
 
-        public override string FormattedName
-        {
-            get { return "Bins"; }
-        }
+        public override string FormattedName => "Bins";
 
         #endregion //ATagBase Overrides
     }

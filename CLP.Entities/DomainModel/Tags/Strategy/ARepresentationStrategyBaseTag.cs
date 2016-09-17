@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -12,23 +11,15 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="ARepresentationStrategyBaseTag" /> from scratch.</summary>
-        public ARepresentationStrategyBaseTag() { }
+        protected ARepresentationStrategyBaseTag() { }
 
         /// <summary>Initializes <see cref="ARepresentationStrategyBaseTag" /> from values.</summary>
-        public ARepresentationStrategyBaseTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
+        protected ARepresentationStrategyBaseTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
             : base(parentPage, origin)
         {
-            IsSingleValueTag = true;
-
             CodedStrategies = codedStrategies;
             HistoryActions = historyActions;
         }
-
-        /// <summary>Initializes <see cref="ARepresentationStrategyBaseTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ARepresentationStrategyBaseTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -54,10 +45,9 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.Strategy; }
-        }
+        public override bool IsSingleValueTag => true;
+
+        public override Category Category => Category.Strategy;
 
         public override string FormattedValue
         {

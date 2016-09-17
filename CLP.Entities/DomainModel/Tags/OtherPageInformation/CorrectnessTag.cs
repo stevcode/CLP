@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -24,16 +23,9 @@ namespace CLP.Entities
         public CorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, bool isAutomaticallySet)
             : base(parentPage, origin)
         {
-            IsSingleValueTag = true;
             Correctness = correctness;
             IsCorrectnessAutomaticallySet = isAutomaticallySet;
         }
-
-        /// <summary>Initializes <see cref="CorrectnessTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CorrectnessTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -46,7 +38,7 @@ namespace CLP.Entities
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof (Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
         /// <summary>Signifies the Correctness Tag was set by an analysis routine.</summary>
         public bool IsCorrectnessAutomaticallySet
@@ -55,9 +47,7 @@ namespace CLP.Entities
             set { SetValue(IsCorrectnessAutomaticallySetProperty, value); }
         }
 
-        public static readonly PropertyData IsCorrectnessAutomaticallySetProperty = RegisterProperty("IsCorrectnessAutomaticallySet",
-                                                                                                     typeof (bool),
-                                                                                                     false);
+        public static readonly PropertyData IsCorrectnessAutomaticallySetProperty = RegisterProperty("IsCorrectnessAutomaticallySet", typeof(bool), false);
 
         public bool IsCorrectnessManuallySet
         {
@@ -66,15 +56,11 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.OtherPageInformation; }
-        }
+        public override bool IsSingleValueTag => true;
 
-        public override string FormattedName
-        {
-            get { return "Correctness"; }
-        }
+        public override Category Category => Category.OtherPageInformation;
+
+        public override string FormattedName => "Correctness";
 
         public override string FormattedValue
         {

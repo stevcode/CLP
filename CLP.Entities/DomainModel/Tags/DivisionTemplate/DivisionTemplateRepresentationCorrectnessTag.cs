@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -38,12 +37,6 @@ namespace CLP.Entities
             DivisionTemplateIncorrectReasons = incorrectReasons;
         }
 
-        /// <summary>Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateRepresentationCorrectnessTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -55,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof (Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
         /// <summary>Reasons the Interpreted Correctness was set to Incorrect.</summary>
         public List<DivisionTemplateIncorrectReason> DivisionTemplateIncorrectReasons
@@ -64,8 +57,7 @@ namespace CLP.Entities
             set { SetValue(DivisionTemplateIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIncorrectReasonsProperty = RegisterProperty("DivisionTemplateIncorrectReasons",
-                                                                                                        typeof (List<DivisionTemplateIncorrectReason>));
+        public static readonly PropertyData DivisionTemplateIncorrectReasonsProperty = RegisterProperty("DivisionTemplateIncorrectReasons", typeof(List<DivisionTemplateIncorrectReason>));
 
         #region ATagBase Overrides
 
@@ -83,9 +75,7 @@ namespace CLP.Entities
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",
                                      Correctness,
-                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown
-                                         ? string.Empty
-                                         : " due to:\n" + string.Join("\n", DivisionTemplateIncorrectReasons));
+                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown ? string.Empty : " due to:\n" + string.Join("\n", DivisionTemplateIncorrectReasons));
             }
         }
 

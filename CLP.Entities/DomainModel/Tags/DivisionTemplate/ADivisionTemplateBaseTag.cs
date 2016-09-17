@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -10,11 +9,11 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="ADivisionTemplateBaseTag" /> from scratch.</summary>
-        public ADivisionTemplateBaseTag() { }
+        protected ADivisionTemplateBaseTag() { }
 
         /// <summary>Initializes <see cref="ADivisionTemplateBaseTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ADivisionTemplateBaseTag" /> belongs to.</param>
-        public ADivisionTemplateBaseTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
+        protected ADivisionTemplateBaseTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
             : base(parentPage, origin)
         {
             DivisionTemplateID = divisionTemplateID;
@@ -22,12 +21,6 @@ namespace CLP.Entities
             Divisor = divisor;
             DivisionTemplateNumber = divisionTemplateNumber + 1;
         }
-
-        /// <summary>Initializes <see cref="ADivisionTemplateBaseTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ADivisionTemplateBaseTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -40,7 +33,7 @@ namespace CLP.Entities
             set { SetValue(DivisionTemplateIDProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof (string), string.Empty);
+        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof(string), string.Empty);
 
         /// <summary>Dividend of the DivisionTemplate being compared against.</summary>
         public double Dividend
@@ -49,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (double));
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(double));
 
         /// <summary>Divisor of the DivisionTemplate being compared against.</summary>
         public double Divisor
@@ -58,7 +51,7 @@ namespace CLP.Entities
             set { SetValue(DivisorProperty, value); }
         }
 
-        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof (double));
+        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double));
 
         /// <summary>Order in which the associated Division Template occured in the history.</summary>
         public int DivisionTemplateNumber
@@ -67,7 +60,7 @@ namespace CLP.Entities
             set { SetValue(DivisionTemplateNumberProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateNumberProperty = RegisterProperty("DivisionTemplateNumber", typeof (int), 0);
+        public static readonly PropertyData DivisionTemplateNumberProperty = RegisterProperty("DivisionTemplateNumber", typeof(int), 0);
 
         /// <summary>Determines if the DivisionTemplate this tag applies to is still on the Parent Page or if it has been deleted from the page.</summary>
         public bool IsDivisionTemplateStillOnPage
@@ -77,10 +70,7 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.DivisionTemplate; }
-        }
+        public override Category Category => Category.DivisionTemplate;
 
         #endregion //ATagBase Overrides
 

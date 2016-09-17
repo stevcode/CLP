@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -21,18 +20,10 @@ namespace CLP.Entities
         public RepresentationsUsedTag(CLPPage parentPage, Origin origin, List<string> allRepresentations, List<string> deletedCodedRepresentations, List<string> finalCodedRepresentations)
             : base(parentPage, origin)
         {
-            IsSingleValueTag = true;
-
             AllRepresentations = allRepresentations;
             DeletedCodedRepresentations = deletedCodedRepresentations;
             FinalCodedRepresentations = finalCodedRepresentations;
         }
-
-        /// <summary>Initializes <see cref="RepresentationsUsedTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public RepresentationsUsedTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -45,7 +36,7 @@ namespace CLP.Entities
             set { SetValue(AllRepresentationsProperty, value); }
         }
 
-        public static readonly PropertyData AllRepresentationsProperty = RegisterProperty("AllRepresentations", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData AllRepresentationsProperty = RegisterProperty("AllRepresentations", typeof(List<string>), () => new List<string>());
 
         /// <summary>Coded values for all deleted representations.</summary>
         public List<string> DeletedCodedRepresentations
@@ -54,7 +45,7 @@ namespace CLP.Entities
             set { SetValue(DeletedCodedRepresentationsProperty, value); }
         }
 
-        public static readonly PropertyData DeletedCodedRepresentationsProperty = RegisterProperty("DeletedCodedRepresentations", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData DeletedCodedRepresentationsProperty = RegisterProperty("DeletedCodedRepresentations", typeof(List<string>), () => new List<string>());
 
         /// <summary>Coded values for all final representations.</summary>
         public List<string> FinalCodedRepresentations
@@ -63,24 +54,17 @@ namespace CLP.Entities
             set { SetValue(FinalCodedRepresentationsProperty, value); }
         }
 
-        public static readonly PropertyData FinalCodedRepresentationsProperty = RegisterProperty("FinalCodedRepresentations", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData FinalCodedRepresentationsProperty = RegisterProperty("FinalCodedRepresentations", typeof(List<string>), () => new List<string>());
 
         #region ATagBase Overrides
 
-        public string AnalysisCode
-        {
-            get { return string.Format("MR [{0}]", string.Join(", ", AllRepresentations)); }
-        }
+        public override bool IsSingleValueTag => true;
 
-        public override Category Category
-        {
-            get { return Category.Representation; }
-        }
+        public string AnalysisCode => $"MR [{string.Join(", ", AllRepresentations)}]";
 
-        public override string FormattedName
-        {
-            get { return "Representations Used"; }
-        }
+        public override Category Category => Category.Representation;
+
+        public override string FormattedName => "Representations Used";
 
         public override string FormattedValue
         {
@@ -410,9 +394,9 @@ namespace CLP.Entities
                             historyActions.Where(h => h.ReferencePageObjectID == referenceArrayID)
                                           .Any(
                                                h =>
-                                               h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
-                                               h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
-                                               (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+                                                   h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
+                                                   h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
+                                                   (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
 
                         var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
@@ -439,9 +423,9 @@ namespace CLP.Entities
                         historyActions.Where(h => h.ReferencePageObjectID == referenceArrayID)
                                       .Any(
                                            h =>
-                                           h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
-                                           h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
-                                           (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+                                               h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
+                                               h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
+                                               (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
 
                     var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 

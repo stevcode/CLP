@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -16,25 +16,19 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="ADisplayBase" /> from scratch.</summary>
-        public ADisplayBase()
+        protected ADisplayBase()
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>Initializes <see cref="ADisplayBase" /> from parent <see cref="Notebook" />.</summary>
-        public ADisplayBase(Notebook notebook)
+        protected ADisplayBase(Notebook notebook)
             : this()
         {
             NotebookID = notebook.ID;
             ParentNotebook = notebook;
         }
-
-        /// <summary>Initializes <see cref="ADisplayBase" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ADisplayBase(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -47,7 +41,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Date and Time the <see cref="IDisplay" /> was created.</summary>
         public DateTime CreationDate
@@ -56,7 +50,7 @@ namespace CLP.Entities
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>Index of the <see cref="IDisplay" /> in the notebook.</summary>
         public int DisplayNumber
@@ -65,7 +59,7 @@ namespace CLP.Entities
             set { SetValue(DisplayNumberProperty, value); }
         }
 
-        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof (int), 0);
+        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int), 0);
 
         /// <summary>Unique Identifier of the <see cref="IDisplay" />'s parent <see cref="Notebook" />.</summary>
         public string NotebookID
@@ -74,10 +68,11 @@ namespace CLP.Entities
             set { SetValue(NotebookIDProperty, value); }
         }
 
-        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof (string), string.Empty);
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>Parent notebook the Display belongs to.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public Notebook ParentNotebook
         {
@@ -85,7 +80,7 @@ namespace CLP.Entities
             set { SetValue(ParentNotebookProperty, value); }
         }
 
-        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof (Notebook));
+        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
 
         /// <summary>List of the composite IDs of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.</summary>
         public List<string> CompositePageIDs
@@ -94,10 +89,11 @@ namespace CLP.Entities
             set { SetValue(CompositePageIDsProperty, value); }
         }
 
-        public static readonly PropertyData CompositePageIDsProperty = RegisterProperty("CompositePageIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData CompositePageIDsProperty = RegisterProperty("CompositePageIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
@@ -105,7 +101,7 @@ namespace CLP.Entities
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>Toggles visibility of the <see cref="IDisplay" /> in the list of <see cref="IDisplay" />s.</summary>
         public bool IsHidden
@@ -114,7 +110,7 @@ namespace CLP.Entities
             set { SetValue(IsHiddenProperty, value); }
         }
 
-        public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof (bool), false);
+        public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof(bool), false);
 
         #endregion //Properties
 

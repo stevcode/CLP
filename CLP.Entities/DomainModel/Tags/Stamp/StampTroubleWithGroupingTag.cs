@@ -17,12 +17,6 @@ namespace CLP.Entities
         public StampTroubleWithGroupingTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
-        /// <summary>Initializes <see cref="StampTroubleWithGroupingTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public StampTroubleWithGroupingTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -81,15 +75,9 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.Stamp; }
-        }
+        public override Category Category => Category.Stamp;
 
-        public override string FormattedName
-        {
-            get { return "Trouble With Grouping"; }
-        }
+        public override string FormattedName => "Trouble With Grouping";
 
         public override string FormattedValue
         {
