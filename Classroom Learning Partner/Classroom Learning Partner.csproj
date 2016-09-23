@@ -358,7 +358,7 @@
     <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\StudentSelectorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\GroupCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\To MVVMize\PersonCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\PersonViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
@@ -439,8 +439,8 @@
     <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\PersonCreationView.xaml.cs">
-      <DependentUpon>PersonCreationView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\PersonView.xaml.cs">
+      <DependentUpon>PersonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\TextInputView.xaml.cs">
       <DependentUpon>TextInputView.xaml</DependentUpon>
@@ -731,7 +731,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\PersonCreationView.xaml">
+    <Page Include="Views\Modal Windows\PersonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

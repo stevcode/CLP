@@ -3,7 +3,7 @@
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for PersonCreationView.xaml
+    /// Interaction logic for ClassSubjectCreationView.xaml
     /// </summary>
     public partial class ClassSubjectCreationView
     {

@@ -208,6 +208,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+            AddPersonCommand = new Command<bool>(OnAddPersonCommandExecute);
+            EditPersonCommand = new Command<Person>(OnEditPersonCommandExecute);
+            DeleteTeacherCommand = new Command<Person>(OnDeleteTeacherCommandExecute);
             DeleteStudentCommand = new Command<Person>(OnDeleteStudentCommandExecute);
         }
 
@@ -222,6 +225,64 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnCreateNotebookCanExecute()
         {
             return !string.IsNullOrWhiteSpace(NotebookName);
+        }
+
+        /// <summary>Adds a new person to the roster.</summary>
+        public Command<bool> AddPersonCommand { get; private set; }
+
+        private void OnAddPersonCommandExecute(bool isTeacher)
+        {
+            var person = new Person
+                         {
+                             IsStudent = !isTeacher
+                         };
+
+            var viewModel = new PersonViewModel(person)
+                            {
+                                WindowTitle = isTeacher ? "New Teacher" : "New Student"
+                            };
+
+            var result = viewModel.ShowWindowAsDialog();
+
+            if (result != true)
+            {
+                return;
+            }
+
+            if (isTeacher)
+            {
+                ListOfTeachers.Add(person);
+            }
+            else
+            {
+                ListOfStudents.Add(person);
+            }
+        }
+
+        /// <summary>Edits the details of a Student or Teacher.</summary>
+        public Command<Person> EditPersonCommand { get; private set; }
+
+        private void OnEditPersonCommandExecute(Person person)
+        {
+            var viewModel = new PersonViewModel(person)
+                            {
+                                WindowTitle = person.IsStudent ? "Edit Student" : "Edit Teacher"
+                            };
+            viewModel.ShowWindowAsDialog();
+        }
+
+        /// <summary>Removes student from the List of Students</summary>
+        public Command<Person> DeleteTeacherCommand { get; private set; }
+
+        private void OnDeleteTeacherCommandExecute(Person teacher)
+        {
+            if (teacher == null ||
+                !ListOfTeachers.Contains(teacher))
+            {
+                return;
+            }
+
+            ListOfTeachers.Remove(teacher);
         }
 
         /// <summary>Removes student from the List of Students</summary>

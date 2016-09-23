@@ -138,9 +138,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// List of all the Students in the <see cref="ClassInformation" />.
         /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
         [ViewModelToModel("ClassInformation")]
         public virtual ObservableCollection<Person> StudentList
         {
@@ -175,22 +172,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddStudentCommandExecute()
         {
-            var person = new Person
-                         {
-                             IsStudent = true
-                         };
-            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
-            personCreationView.ShowDialog();
+            //var person = new Person
+            //             {
+            //                 IsStudent = true
+            //             };
+            //var personCreationView = new PersonView(new PersonViewModel(person));
+            //personCreationView.ShowDialog();
 
-            if(personCreationView.DialogResult == null ||
-               personCreationView.DialogResult != true)
-            {
-                return;
-            }
+            //if(personCreationView.DialogResult == null ||
+            //   personCreationView.DialogResult != true)
+            //{
+            //    return;
+            //}
 
-            StudentList.Add(person);
-            GroupCreationViewModel.StudentsNotInGroup.Add(person);
-            TempGroupCreationViewModel.StudentsNotInGroup.Add(person);
+            //StudentList.Add(person);
+            //GroupCreationViewModel.StudentsNotInGroup.Add(person);
+            //TempGroupCreationViewModel.StudentsNotInGroup.Add(person);
         }
     }
 }

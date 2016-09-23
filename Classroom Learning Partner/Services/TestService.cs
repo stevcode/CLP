@@ -1043,24 +1043,24 @@ namespace Classroom_Learning_Partner.Services
         {
             // TODO: Utilize NotebookInfoPane's OnSaveNotebookForStudentCommandExecute
 
-            var person = new Person();
-            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
-            personCreationView.ShowDialog();
+            //var person = new Person();
+            //var personCreationView = new PersonView(new PersonViewModel(person));
+            //personCreationView.ShowDialog();
 
-            if (personCreationView.DialogResult == null ||
-                personCreationView.DialogResult != true)
-            {
-                return;
-            }
+            //if (personCreationView.DialogResult == null ||
+            //    personCreationView.DialogResult != true)
+            //{
+            //    return;
+            //}
 
-            var copiedNotebook = _dataService.CurrentNotebook.CopyForNewOwner(person);
-            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            //var copiedNotebook = _dataService.CurrentNotebook.CopyForNewOwner(person);
+            //copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
 
-            App.MainWindowViewModel.CurrentUser = person;
-            App.MainWindowViewModel.IsAuthoring = false;
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
-            App.MainWindowViewModel.IsBackStageVisible = false;
+            //App.MainWindowViewModel.CurrentUser = person;
+            //App.MainWindowViewModel.IsAuthoring = false;
+            //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
+            //App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         #endregion // Export Pane

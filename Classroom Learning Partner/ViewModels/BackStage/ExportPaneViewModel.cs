@@ -251,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService.SetCurrentNotebook(notebookInfo);
 
             //var person = new Person();
-            //var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
+            //var personCreationView = new PersonView(new PersonViewModel(person));
             //personCreationView.ShowDialog();
 
             //if (personCreationView.DialogResult == null ||
