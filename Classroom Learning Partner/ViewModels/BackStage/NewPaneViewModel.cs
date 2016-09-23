@@ -1,7 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using Catel.Collections;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
@@ -14,50 +21,50 @@ namespace Classroom_Learning_Partner.ViewModels
         public NewPaneViewModel()
         {
             ClassRoster = new ClassRoster();
-            var teacher = new Person
-            {
-                FirstName = "Ann",
-                Nickname = "Mrs.",
-                LastName = "McNamara",
-                IsStudent = false
-            };
+            //var teacher = new Person
+            //{
+            //    FirstName = "Ann",
+            //    Nickname = "Mrs.",
+            //    LastName = "McNamara",
+            //    IsStudent = false
+            //};
 
-            var student1 = new Person
-            {
-                FirstName = "Steve",
-                LastName = "Chapman",
-                IsStudent = true
-            };
+            //var student1 = new Person
+            //{
+            //    FirstName = "Steve",
+            //    LastName = "Chapman",
+            //    IsStudent = true
+            //};
 
-            var student2 = new Person
-            {
-                FirstName = "Lily",
-                LastName = "Ko",
-                IsStudent = true
-            };
+            //var student2 = new Person
+            //{
+            //    FirstName = "Lily",
+            //    LastName = "Ko",
+            //    IsStudent = true
+            //};
 
-            var student3 = new Person
-            {
-                FirstName = "Kimberle",
-                LastName = "Koile",
-                IsStudent = true
-            };
+            //var student3 = new Person
+            //{
+            //    FirstName = "Kimberle",
+            //    LastName = "Koile",
+            //    IsStudent = true
+            //};
 
-            ClassRoster.ListOfTeachers.Add(teacher);
+            //ClassRoster.ListOfTeachers.Add(teacher);
 
-            ClassRoster.ListOfStudents.Add(student1);
-            ClassRoster.ListOfStudents.Add(student2);
-            ClassRoster.ListOfStudents.Add(student3);
+            //ClassRoster.ListOfStudents.Add(student1);
+            //ClassRoster.ListOfStudents.Add(student2);
+            //ClassRoster.ListOfStudents.Add(student3);
 
-            for (int i = 0; i < 20; i++)
-            {
-                ClassRoster.ListOfStudents.Add(Person.Guest);
-            }
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    ClassRoster.ListOfStudents.Add(Person.Guest);
+            //}
 
-            for (int i = 0; i < 20; i++)
-            {
-                ClassRoster.ListOfTeachers.Add(Person.Guest);
-            }
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    ClassRoster.ListOfTeachers.Add(Person.Guest);
+            //}
 
             InitializeCommands();
         }
@@ -208,6 +215,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+            ImportStudentNamesCommand = new Command(OnImportStudentNamesCommandExecute);
             AddPersonCommand = new Command<bool>(OnAddPersonCommandExecute);
             EditPersonCommand = new Command<Person>(OnEditPersonCommandExecute);
             DeleteTeacherCommand = new Command<Person>(OnDeleteTeacherCommandExecute);
@@ -225,6 +233,83 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnCreateNotebookCanExecute()
         {
             return !string.IsNullOrWhiteSpace(NotebookName);
+        }
+
+        /// <summary>Builds list of students from an imported StudentNames.txt file</summary>
+        public Command ImportStudentNamesCommand { get; private set; }
+
+        private void OnImportStudentNamesCommandExecute()
+        {
+            var dependencyResolver = this.GetDependencyResolver();
+            var openFileService = dependencyResolver.Resolve<IOpenFileService>();
+            openFileService.Filter = "Text files (*.txt)|*.txt";
+            openFileService.IsMultiSelect = false;
+            if (!openFileService.DetermineFile())
+            {
+                return;
+            }
+
+            var filePath = openFileService.FileName;
+            try
+            {
+                var listOfStudents = new List<Person>();
+                foreach (var line in File.ReadLines(filePath))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    var nameParts = line.Split(' ').ToList();
+                    if (!nameParts.Any())
+                    {
+                        continue;
+                    }
+
+                    var firstName = nameParts.First();
+                    nameParts.RemoveAt(0);
+                    if (!nameParts.Any())
+                    {
+                        var person = new Person
+                                     {
+                                         IsStudent = true,
+                                         FirstName = firstName
+                                     };
+                        listOfStudents.Add(person);
+                        continue;
+                    }
+
+                    var lastName = nameParts.Last();
+                    nameParts.RemoveAt(nameParts.Count - 1);
+                    if (!nameParts.Any())
+                    {
+                        var person = new Person
+                                     {
+                                         IsStudent = true,
+                                         FirstName = firstName,
+                                         LastName = lastName
+                                     };
+                        listOfStudents.Add(person);
+                        continue;
+                    }
+
+                    var middleName = string.Join(" ", nameParts);
+                    var personfull = new Person
+                                     {
+                                         IsStudent = true,
+                                         FirstName = firstName,
+                                         MiddleName = middleName,
+                                         LastName = lastName
+                                     };
+                    listOfStudents.Add(personfull);
+                }
+
+                ListOfStudents.AddRange(listOfStudents.OrderBy(p => p.FirstName).ToList());
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Sorry, unable to open or read this file.");
+            }
         }
 
         /// <summary>Adds a new person to the roster.</summary>

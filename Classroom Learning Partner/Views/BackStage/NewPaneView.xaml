@@ -280,6 +280,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="0"
@@ -370,6 +371,24 @@
 
             <TextBox Grid.Column="1"
                      Text="{Binding State}" />
+
+            <Button Grid.Column="0"
+                    Command="{Binding ImportStudentNamesCommand}"
+                    Width="80"
+                    Height="84"
+                    Margin="0 20"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+
+                    <TextBlock Text="Import Student Names" />
+
+                </StackPanel>
+            </Button>
 
         </catel:StackGrid>
 
