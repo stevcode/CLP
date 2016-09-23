@@ -113,10 +113,10 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="CLPPage" /> from scratch.</summary>
         public CLPPage()
         {
-            Height = LANDSCAPE_HEIGHT;
-            Width = LANDSCAPE_WIDTH;
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToCompactID();
+            Width = LANDSCAPE_WIDTH;
+            Height = LANDSCAPE_HEIGHT;
             InitialAspectRatio = Width / Height;
             History = new PageHistory();
         }

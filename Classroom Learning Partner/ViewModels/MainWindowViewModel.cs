@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -7,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -53,21 +56,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
+            InitializedAsync += MainWindowViewModel_InitializedAsync;
+            ClosedAsync += MainWindowViewModel_ClosedAsync;
         }
 
-        public override string Title
+        private Task MainWindowViewModel_InitializedAsync(object sender, EventArgs e)
         {
-            get { return "MainWindowVM"; }
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
         }
 
-        private void InitializeCommands()
+        private Task MainWindowViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
-            TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
-            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
-            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
-            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
-            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            Workspace = new BlankWorkspaceViewModel();
+            Workspace = new NotebookWorkspaceViewModel(_dataService.CurrentNotebook);
+            CurrentNotebookName = _dataService.CurrentNotebook.Name;
+            CurrentUser = _dataService.CurrentNotebook.Owner;
+            IsAuthoring = _dataService.CurrentNotebook.OwnerID == Person.Author.ID;
+            IsBackStageVisible = false;
         }
 
         #endregion //Constructor
@@ -355,6 +369,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
+            TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
+            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
+            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
+            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
+            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+        }
 
         /// <summary>Sets the UserMode of the program.</summary>
         public Command<string> SetUserModeCommand { get; private set; }

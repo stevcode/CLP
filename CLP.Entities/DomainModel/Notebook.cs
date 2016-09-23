@@ -237,7 +237,7 @@ namespace CLP.Entities
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public virtual ObservableCollection<CLPPage> Pages
+        public ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
             set { SetValue(PagesProperty, value); }
@@ -249,7 +249,7 @@ namespace CLP.Entities
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public virtual ObservableCollection<IDisplay> Displays
+        public ObservableCollection<IDisplay> Displays
         {
             get { return GetValue<ObservableCollection<IDisplay>>(DisplaysProperty); }
             set { SetValue(DisplaysProperty, value); }

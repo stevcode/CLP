@@ -21,50 +21,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public NewPaneViewModel()
         {
             ClassRoster = new ClassRoster();
-            //var teacher = new Person
-            //{
-            //    FirstName = "Ann",
-            //    Nickname = "Mrs.",
-            //    LastName = "McNamara",
-            //    IsStudent = false
-            //};
-
-            //var student1 = new Person
-            //{
-            //    FirstName = "Steve",
-            //    LastName = "Chapman",
-            //    IsStudent = true
-            //};
-
-            //var student2 = new Person
-            //{
-            //    FirstName = "Lily",
-            //    LastName = "Ko",
-            //    IsStudent = true
-            //};
-
-            //var student3 = new Person
-            //{
-            //    FirstName = "Kimberle",
-            //    LastName = "Koile",
-            //    IsStudent = true
-            //};
-
-            //ClassRoster.ListOfTeachers.Add(teacher);
-
-            //ClassRoster.ListOfStudents.Add(student1);
-            //ClassRoster.ListOfStudents.Add(student2);
-            //ClassRoster.ListOfStudents.Add(student3);
-
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    ClassRoster.ListOfStudents.Add(Person.Guest);
-            //}
-
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    ClassRoster.ListOfTeachers.Add(Person.Guest);
-            //}
 
             InitializeCommands();
         }
@@ -227,7 +183,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateNotebookCommandExecute()
         {
-            TestService.CreateClassSubject();
+            var dependencyResolver = this.GetDependencyResolver();
+            var dataService = dependencyResolver.Resolve<IDataService>();
+            dataService.CurrentClassRoster = ClassRoster;
+            dataService.CreateAuthorNotebook(NotebookName);
         }
 
         private bool OnCreateNotebookCanExecute()

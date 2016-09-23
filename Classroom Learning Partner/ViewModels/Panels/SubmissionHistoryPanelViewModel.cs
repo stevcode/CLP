@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Task SubmissionHistoryPanelViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
 
             return TaskHelper.Completed;
         }

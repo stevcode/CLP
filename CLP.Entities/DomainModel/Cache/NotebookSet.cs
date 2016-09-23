@@ -1,5 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -47,6 +51,18 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
+
+        /// <summary>Associated FileInfo of the notebookSet's container.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public FileInfo FilePathFileInfo
+        {
+            get { return GetValue<FileInfo>(FilePathFileInfoProperty); }
+            set { SetValue(FilePathFileInfoProperty, value); }
+        }
+
+        public static readonly PropertyData FilePathFileInfoProperty = RegisterProperty("FilePathFileInfo", typeof(FileInfo));
 
         #endregion // Properties
     }

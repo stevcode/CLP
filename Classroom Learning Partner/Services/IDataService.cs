@@ -15,6 +15,8 @@ namespace Classroom_Learning_Partner.Services
         NotebookInfo CurrentNotebookInfo { get; set; }
         Notebook CurrentNotebook { get; }
         CLPPage CurrentPage { get; }
+        ClassRoster CurrentClassRoster { get; set; }
+        NotebookSet CurrentNotebookSet { get; set; }
 
         event EventHandler<EventArgs> CurrentNotebookChanged;
 
@@ -33,7 +35,7 @@ namespace Classroom_Learning_Partner.Services
         void GenerateSubmissionsFromModifiedStudentPages();
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
 
-
+        void CreateAuthorNotebook(string notebookName);
 
         void CreateTestNotebookSet();
     }

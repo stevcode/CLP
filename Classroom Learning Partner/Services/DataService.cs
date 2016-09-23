@@ -229,15 +229,7 @@ namespace Classroom_Learning_Partner.Services
 
         public NotebookInfo CurrentNotebookInfo { get; set; }
 
-        public Notebook CurrentNotebook
-        {
-            get { return CurrentNotebookInfo == null ? null : CurrentNotebookInfo.Notebook; }
-        }
-
-        public CLPPage CurrentPage
-        {
-            get { return CurrentNotebook == null ? null : CurrentNotebook.CurrentPage; }
-        }
+        
 
         #endregion //Notebook Properties
 
@@ -489,26 +481,9 @@ namespace Classroom_Learning_Partner.Services
             //save page async to teacher machine, and partial cache folder
         }
 
-        public void SetCurrentPage(CLPPage page)
-        {
-            if (CurrentNotebook == null)
-            {
-                return;
-            }
+        
 
-            var oldPage = CurrentNotebook.CurrentPage;
-            ACLPPageBaseViewModel.ClearAdorners(oldPage);
-            AutoSavePage(oldPage);
-            CurrentNotebook.CurrentPage = page;
-        }
-
-        public void DeletePage(CLPPage page)
-        {
-            //TODO: Delete page from notebook
-            //delete page's xml
-            //renumber existing pages
-            //function with full cache
-        }
+        
 
         #endregion //AutoSave Methods
 
@@ -829,8 +804,6 @@ namespace Classroom_Learning_Partner.Services
             App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
             App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
             App.MainWindowViewModel.IsBackStageVisible = false;
-
-            CurrentNotebookChanged.SafeInvoke(this);
         }
 
         #region Archival Methods
@@ -1267,20 +1240,6 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public string DefaultCacheFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(DefaultCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
         #endregion // Default Folder Paths
 
         #region Current Folder Paths
@@ -1338,7 +1297,10 @@ namespace Classroom_Learning_Partner.Services
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
         //CurrentNotebookSet
 
-
+        public ClassRoster CurrentClassRoster { get; set; }
+        public NotebookSet CurrentNotebookSet { get; set; }
+        public Notebook CurrentNotebook { get; private set; }
+        public CLPPage CurrentPage { get; private set; }
 
         //CurrentMultiDisplay
 
@@ -1360,6 +1322,62 @@ namespace Classroom_Learning_Partner.Services
         public event EventHandler<EventArgs> CurrentPageChanged;
 
         #endregion // Events
+
+        #region Methods
+
+        #region Notebook Methods
+
+        public void CreateAuthorNotebook(string notebookName)
+        {
+            var notebook = new Notebook(notebookName, Person.Author);
+            SetCurrentNotebook(notebook);
+            AddPage(notebook, new CLPPage());
+        }
+
+        public void SetCurrentNotebook(Notebook notebook)
+        {
+            CurrentNotebook = notebook;
+            CurrentNotebookChanged.SafeInvoke(this);
+        }
+
+        #endregion // Notebook Methods
+
+        #region Page Methods
+
+        public void SetCurrentPage(CLPPage page)
+        {
+            if (CurrentNotebook == null)
+            {
+                return;
+            }
+
+            var oldPage = CurrentNotebook.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(oldPage);
+            AutoSavePage(oldPage);
+            CurrentNotebook.CurrentPage = page;
+            CurrentPage = page;
+
+            CurrentPageChanged.SafeInvoke(this);
+        }
+
+        public void AddPage(Notebook notebook, CLPPage page)
+        {
+            page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
+            notebook.Pages.Add(page);
+            SetCurrentPage(page);
+        }
+
+        public void DeletePage(CLPPage page)
+        {
+            //TODO: Delete page from notebook
+            //delete page's json
+            //renumber existing pages
+            //function with full cache
+        }
+
+        #endregion // Page Methods
+
+        #endregion // Methods
 
         #region Static Methods
 
@@ -1408,7 +1426,7 @@ namespace Classroom_Learning_Partner.Services
 
         public void CreateTestNotebookSet()
         {
-            var cacheFolderPath = DefaultCacheFolderPath;
+            var cacheFolderPath = CurrentCacheFolderPath;
             var fileName = "Test Notebook.clp";
             var fullFilePath = Path.Combine(cacheFolderPath, fileName);
 
