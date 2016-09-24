@@ -261,121 +261,13 @@ namespace CLP.Entities
 
         #endregion // Properties
 
+        // TODO: Either here or in NotebookSet, add property for IsLoadedLocally vs IsLoadedOverNetwork, use as flag to decide how it saves.
+        
         #region Methods
-
-        public void AddDisplay(IDisplay display)
-        {
-            display.NotebookID = ID;
-            display.DisplayNumber = Displays.Any(d => d.GetType() == display.GetType()) ? Displays.Last().DisplayNumber + 1 : 1;
-            Displays.Add(display);
-        }
-
-        public void InsertPageAt(int index, CLPPage page)
-        {
-            Pages.Insert(index, page);
-            GeneratePageNumbers();
-            CurrentPage = page;
-        }
-
-        private List<CLPPage> _trashedPages = new List<CLPPage>();
-
-        public void RemovePageAt(int index)
-        {
-            if (Pages.Count <= index ||
-                index < 0)
-            {
-                return;
-            }
-
-            if (Pages.Count == 1)
-            {
-                var newPage = new CLPPage(Person.Author)
-                              {
-                                  PageNumber = Pages.Any() ? Pages.First().PageNumber : 1
-                              };
-
-                Pages.Add(newPage);
-            }
-
-            int newIndex;
-            if (index + 1 < Pages.Count)
-            {
-                newIndex = index + 1;
-            }
-            else
-            {
-                newIndex = index - 1;
-            }
-
-            var nextPage = Pages.ElementAt(newIndex);
-            CurrentPage = nextPage;
-            if (index == 0)
-            {
-                CurrentPage.PageNumber = Pages.First().PageNumber;
-            }
-
-            _trashedPages.Add(Pages[index]);
-            Pages.RemoveAt(index);
-            GeneratePageNumbers();
-        }
-
-        public void GeneratePageNumbers()
-        {
-            var initialPageNumber = Pages.Any() ? Pages.First().PageNumber - 1 : 0;
-            CLPPage lastPage = null;
-            foreach (var page in Pages)
-            {
-                if (lastPage == null ||
-                    page.ID != lastPage.ID)
-                {
-                    initialPageNumber++;
-                }
-                if (page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
-                {
-                    page.PageNumber = initialPageNumber;
-                }
-                lastPage = page;
-            }
-        }
-
-        public Notebook CopyForNewOwner(Person owner)
-        {
-            var newNotebook = this.DeepCopy();
-            if (newNotebook == null)
-            {
-                return null;
-            }
-            newNotebook.Owner = owner;
-            newNotebook.CurrentPage = CurrentPage == null ? null : CurrentPage.CopyForNewOwner(owner);
-            foreach (var newPage in Pages.Select(page => page.CopyForNewOwner(owner)))
-            {
-                if (!owner.IsStudent)
-                {
-                    newNotebook.Pages.Add(newPage);
-                    continue;
-                }
-
-                if (newPage.DifferentiationLevel == String.Empty ||
-                    newPage.DifferentiationLevel == "0" ||
-                    newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
-                {
-                    newNotebook.Pages.Add(newPage);
-                    continue;
-                }
-
-                if (owner.CurrentDifferentiationGroup == String.Empty &&
-                    newPage.DifferentiationLevel == "A")
-                {
-                    newNotebook.Pages.Add(newPage);
-                }
-            }
-
-            return newNotebook;
-        }
 
         public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, string differentiationLevel, uint versionIndex, bool searchDatabaseAndCache = false)
         {
-            // TODO: Database, search through cache and database if not found in memory.
+            // TODO: Move to DataService once loading/saving works. Possibly load from Container.clp file if not already in memory?
             var notebookPage =
                 Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
             if (notebookPage != null)

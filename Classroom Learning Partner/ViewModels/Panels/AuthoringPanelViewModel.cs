@@ -138,7 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
             var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
 
-            Notebook.InsertPageAt(index, page);
+            _dataService.InsertPageAt(Notebook, page, index);
         }
 
         /// <summary>Converts current page between landscape and portrait.</summary>
@@ -341,7 +341,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
 
             var newPage = CurrentPage.DuplicatePage();
-            Notebook.InsertPageAt(index, newPage);
+            _dataService.InsertPageAt(Notebook, newPage, index);
         }
 
         /// <summary>Deletes current page from the notebook.</summary>
@@ -349,12 +349,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDeletePageCommandExecute()
         {
-            var index = Notebook.Pages.IndexOf(CurrentPage);
-            if (index == -1)
-            {
-                return;
-            }
-            Notebook.RemovePageAt(index);
+            _dataService.DeletePage(Notebook, CurrentPage);
         }
 
         public Command DifferentiatePageCommand { get; private set; }

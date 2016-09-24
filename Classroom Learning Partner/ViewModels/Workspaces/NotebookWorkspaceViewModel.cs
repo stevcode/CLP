@@ -49,6 +49,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializePanels(Notebook notebook)
         {
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+
             SingleDisplay = new SingleDisplayViewModel(notebook);
 
             StagingPanel = new StagingPanelViewModel(notebook)
@@ -66,7 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 LeftPanel = NotebookPagesPanel;
             }
 
-            DisplaysPanel = new DisplaysPanelViewModel(notebook);
+            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(typeof(DisplaysPanelViewModel), notebook);
             PageInformationPanel = new PageInformationPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
 

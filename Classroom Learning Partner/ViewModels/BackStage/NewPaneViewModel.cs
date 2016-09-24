@@ -185,7 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var dependencyResolver = this.GetDependencyResolver();
             var dataService = dependencyResolver.Resolve<IDataService>();
-            dataService.CurrentClassRoster = ClassRoster;
+            dataService.SetCurrentClassRoster(ClassRoster);
             dataService.CreateAuthorNotebook(NotebookName);
         }
 

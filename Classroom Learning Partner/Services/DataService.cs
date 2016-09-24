@@ -8,10 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel;
-using Catel.IoC;
 using Catel.Reflection;
-using Catel.Runtime.Serialization;
-using Catel.Runtime.Serialization.Json;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -74,36 +71,6 @@ namespace Classroom_Learning_Partner.Services
             {
                 Directory.CreateDirectory(NotebooksFolderPath);
             }
-        }
-    }
-
-    public class ClassPeriodInfo
-    {
-        public ClassPeriodInfo(CacheInfo cache, string classPeriodFilePath)
-        {
-            Cache = cache;
-            ClassPeriodFilePath = classPeriodFilePath;
-        }
-
-        public CacheInfo Cache { get; set; }
-
-        public string ClassPeriodFilePath { get; set; }
-
-        public ClassPeriod ClassPeriod { get; set; }
-
-        public ClassPeriodNameComposite NameComposite
-        {
-            get { return ClassPeriodNameComposite.ParseFilePath(ClassPeriodFilePath); }
-        }
-
-        public string StartTime
-        {
-            get { return NameComposite.StartTime; }
-        }
-
-        public string PageNumbers
-        {
-            get { return NameComposite.PageNumbers; }
         }
     }
 
@@ -171,43 +138,474 @@ namespace Classroom_Learning_Partner.Services
 
     public class DataService : IDataService
     {
-        private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLP";
-        private const string DEFAULT_CACHE_FOLDER_NAME = "Caches";
+        #region Constants
 
-        
+        private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
+        private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
+        private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
+        private const string DEFAULT_CONFIG_FOLDER_NAME = "Config";  // Config Service?
+        private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
+        private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
+
+        private const string ZIP_IMAGES_FOLDER_NAME = "images";
+        private const string ZIP_NOTEBOOKS_FOLDER_NAME = "notebooks";
+        private const string ZIP_SESSIONS_FOLDER_NAME = "sessions";
+
+        private const string ZIP_IMAGES_FOLDER_PATH = ZIP_IMAGES_FOLDER_NAME + "/";
+        private const string ZIP_NOTEBOOKS_FOLDER_PATH = ZIP_NOTEBOOKS_FOLDER_NAME + "/";
+        private const string ZIP_SESSIONS_FOLDER_PATH = ZIP_SESSIONS_FOLDER_NAME + "/";
+
+        private const string ZIP_NOTEBOOK_DISPLAYS_FOLDER_PATH = "displays/";
+        private const string ZIP_NOTEBOOK_PAGES_FOLDER_PATH = "pages/";
+        private const string ZIP_NOTEBOOK_PAGE_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_PAGES_FOLDER_PATH + "thumbnails/";
+        private const string ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH = "submissions/";
+        private const string ZIP_NOTEBOOK_SUBMISSION_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH + "thumbnails/";
+
+        #endregion // Constants
 
         public DataService()
         {
-            //Warm up Serializer to make deserializing Notebooks, ClassPeriods, ClassSubjects, and Pages faster.
-            var typesToWarmup = new[] { typeof (Notebook), typeof (ClassPeriod), typeof (ClassInformation), typeof (CLPPage) };
-            var xmlSerializer = SerializationFactory.GetXmlSerializer();
-            xmlSerializer.Warmup(typesToWarmup);
-
-            CurrentCLPDataFolderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
-            if (!Directory.Exists(CurrentCLPDataFolderPath))
-            {
-                Directory.CreateDirectory(CurrentCLPDataFolderPath);
-            }
-
-            CurrentCachesFolderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
-            if (!Directory.Exists(CurrentCachesFolderPath))
-            {
-                Directory.CreateDirectory(CurrentCachesFolderPath);
-            }
+            CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
             CreateTestNotebookSet();
         }
 
+        #region Static Properties
+
+        #region Special Folder Paths
+
+        public static string WindowsDriveFolderPath => Path.GetPathRoot(Environment.SystemDirectory);
+
+        public static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        public static string CLPProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
+
+        #endregion // Special Folder Paths
+
+        #region Default Folder Paths
+
+        public static string DefaultCLPDataFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);  // TODO: Change to WindowsDriveFolderPath
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        #endregion // Default Folder Paths
+
+        #endregion // Static Properties
+
+        #region Methods
+
+        private void GeneratePageNumbers(Notebook notebook)
+        {
+            var initialPageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber - 1 : 0;
+            CLPPage lastPage = null;
+            foreach (var page in notebook.Pages)
+            {
+                if (lastPage == null ||
+                    page.ID != lastPage.ID)
+                {
+                    initialPageNumber++;
+                }
+                if (page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
+                {
+                    page.PageNumber = initialPageNumber;
+                }
+                lastPage = page;
+            }
+
+            // TODO: Optimize into Increase/Decrease pageNumber after this page number?
+        }
+
+        private void AddEntryAndSave(string zipFilePath, string entryDirectory, string entryName, string entryContents)
+        {
+            entryName = ZipExtensions.CombineEntryDirectoryAndName(entryDirectory, entryName);
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.AddEntry(entryName, entryContents);
+                zip.Save();
+            }
+        }
+
+        #endregion // Methods
+
+        #region Static Methods
+
+        public static string ValidateFileNameString(string name)
+        {
+            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
+            return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
+
+        public static List<FileInfo> GetNotebookSetsInFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                return new List<FileInfo>();
+            }
+
+            var directoryInfo = new DirectoryInfo(folderPath);
+            return directoryInfo.GetFiles("*.clp").ToList();
+        }
+
+        public static ClassRoster LoadNotebookSet(FileInfo fileInfo)
+        {
+            if (fileInfo == null)
+            {
+                return null;
+            }
+
+            if (!fileInfo.Exists ||
+                fileInfo.Extension != ".clp")
+            {
+                return null;
+            }
+
+            using (var zip = ZipFile.Read(fileInfo.FullName))
+            {
+                if (!zip.ContainsEntry("classRoster.json"))
+                {
+                    return null;
+                }
+
+                var rosterEntry = zip.Entries.First(e => e.FileName == "classRoster.json");
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    rosterEntry.Extract(memoryStream);
+
+                    var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                    return AEntityBase.FromJsonString<ClassRoster>(jsonString);
+                }
+            }
+        }
+
+        #endregion // Static Methods
+
+        #region IDataService Implementation
+
+        #region Properties
+
+        #region Current Folder Paths
+
+        public string CurrentCLPDataFolderPath { get; set; }
+
+        public string CurrentCacheFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        public string CurrentTempCacheFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_TEMP_CACHE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        public string CurrentArchiveFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_ARCHIVE_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        #endregion // Current Folder Paths
+
+        #region Notebook Properties
+
+        //FilePathPair
+        //AvailableNotebookSets   
+        //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
+        //CurrentNotebookSet
+
+        public NotebookSet CurrentNotebookSet { get; private set; }
+        public ClassRoster CurrentClassRoster { get; private set; }
+        public Notebook CurrentNotebook { get; private set; }
+        public CLPPage CurrentPage { get; private set; }
+
+        //CurrentMultiDisplay
+
+        #endregion // Notebook Properties
+
+        #region Page Properties
+
+        //CurrentNotebookPage
+        //CurrentSubmissionPage
+        //CurrentSelectedPage
+
+        #endregion // Page Properties
+
+        #endregion // Properties
+
+        #region Events
+
+        public event EventHandler<EventArgs> CurrentClassRosterChanged;
+        public event EventHandler<EventArgs> CurrentNotebookChanged;
+        public event EventHandler<EventArgs> CurrentPageChanged;
+
+        #endregion // Events
+
+        #region Methods
+
+        #region ClassRoster Methods
+
+        public void SetCurrentClassRoster(ClassRoster classRoster)
+        {
+            CurrentClassRoster = classRoster;
+            CurrentClassRosterChanged.SafeInvoke(this);
+        }
+
+        #endregion // ClassRoster Methods
+
+        #region Notebook Methods
+
+        public void CreateAuthorNotebook(string notebookName)
+        {
+            var notebook = new Notebook(notebookName, Person.Author);
+            SetCurrentNotebook(notebook);
+            AddPage(notebook, new CLPPage());
+        }
+
+        public void SetCurrentNotebook(Notebook notebook)
+        {
+            CurrentNotebook = notebook;
+            CurrentNotebookChanged.SafeInvoke(this);
+        }
+
+        #endregion // Notebook Methods
+
+        #region Page Methods
+
+        public void SetCurrentPage(CLPPage page)
+        {
+            if (CurrentNotebook == null)
+            {
+                return;
+            }
+
+            var oldPage = CurrentNotebook.CurrentPage;
+            ACLPPageBaseViewModel.ClearAdorners(oldPage);
+            AutoSavePage(oldPage);
+            CurrentNotebook.CurrentPage = page;
+            CurrentPage = page;
+
+            CurrentPageChanged.SafeInvoke(this);
+        }
+
+        public void AddPage(Notebook notebook, CLPPage page)
+        {
+            page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
+            notebook.Pages.Add(page);
+            SetCurrentPage(page);
+        }
+
+        public void InsertPageAt(Notebook notebook, CLPPage page, int index)
+        {
+            notebook.Pages.Insert(index, page);
+            GeneratePageNumbers(notebook);
+            SetCurrentPage(page);
+        }
+
+        public void DeletePage(Notebook notebook, CLPPage page)
+        {
+            var pageIndex = notebook.Pages.IndexOf(page);
+            DeletePageAt(notebook, pageIndex);
+        }
+
+        public void DeletePageAt(Notebook notebook, int index)
+        {
+            //TODO: Delete page from notebook
+            //delete page's json
+            //renumber existing pages
+            //function with full cache
+
+            if (notebook.Pages.Count <= index ||
+                index < 0)
+            {
+                return;
+            }
+
+            if (notebook.Pages.Count == 1)
+            {
+                var newPage = new CLPPage(Person.Author)
+                {
+                    PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                };
+
+                notebook.Pages.Add(newPage);
+            }
+
+            int newIndex;
+            if (index + 1 < notebook.Pages.Count)
+            {
+                newIndex = index + 1;
+            }
+            else
+            {
+                newIndex = index - 1;
+            }
+
+            var nextPage = notebook.Pages.ElementAt(newIndex);
+            CurrentPage = nextPage;
+            if (index == 0)
+            {
+                CurrentPage.PageNumber = notebook.Pages.First().PageNumber;
+            }
+
+            //_trashedPages.Add(notebook.Pages[index]);
+            notebook.Pages.RemoveAt(index);
+            GeneratePageNumbers(notebook);
+        }
+
+        public void AutoSavePage(CLPPage page)
+        {
+            //TODO: take screenshot of page if not already cached
+            //set LastAutoSaveTime of notebook
+            //save page locally, and to export folder
+            //save page async to teacher machine, and partial cache folder
+        }
+
+        #endregion // Page Methods
+
+        #region Display Methods
+
+        public void AddDisplay(Notebook notebook, IDisplay display)
+        {
+            display.NotebookID = notebook.ID;
+            display.DisplayNumber = notebook.Displays.Any(d => d.GetType() == display.GetType()) ? notebook.Displays.Last().DisplayNumber + 1 : 1;
+            notebook.Displays.Add(display);
+        }
+
+        #endregion // Display Methods
+
+        #endregion // Methods
+
+        #endregion // IDataService Implementation
+
+        #region Testing
+
+        public void CreateTestNotebookSet()
+        {
+            var cacheFolderPath = CurrentCacheFolderPath;
+            var fileName = "Test Notebook.clp";
+            var fullFilePath = Path.Combine(cacheFolderPath, fileName);
+
+            var classRoster = new ClassRoster
+            {
+                SubjectName = "Math",
+                GradeLevel = "3",
+                SchoolName = "Northeastern",
+                City = "Waltham",
+                State = "Massachusetts"
+            };
+            var teacher = new Person
+            {
+                FirstName = "Ann",
+                Nickname = "Mrs.",
+                LastName = "McNamara",
+                IsStudent = false
+            };
+
+            var student1 = new Person
+            {
+                FirstName = "Steve",
+                LastName = "Chapman",
+                IsStudent = true
+            };
+
+            var student2 = new Person
+            {
+                FirstName = "Lily",
+                LastName = "Ko",
+                IsStudent = true
+            };
+
+            var student3 = new Person
+            {
+                FirstName = "Kimberle",
+                LastName = "Koile",
+                IsStudent = true
+            };
+
+            classRoster.ListOfTeachers.Add(teacher);
+
+            classRoster.ListOfStudents.Add(student1);
+            classRoster.ListOfStudents.Add(student2);
+            classRoster.ListOfStudents.Add(student3);
+
+            var rosterString = classRoster.ToJsonString(true);
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+
+                zip.AddDirectoryByName("sessions");
+                zip.AddDirectoryByName("images");
+                zip.AddDirectoryByName("notebooks");
+
+                zip.AddEntry("classRoster.json", rosterString);
+                zip.AddEntry("testing/testRoster.json", rosterString);
+
+                zip.Save(fullFilePath);
+            }
+
+            Console.WriteLine("Stopping Point");
+
+            using (var zip = ZipFile.Read(fullFilePath))
+            {
+                foreach (var zipEntryFileName in zip.EntryFileNames)
+                {
+                    Console.WriteLine(zipEntryFileName);
+                }
+
+                var e = zip.GetEntryByNameInDirectory("testing/", "testRoster.json");
+                e.MoveEntry(null);
+                zip.Save();
+            }
+
+            Console.WriteLine("Stopping Point");
+        }
+
+        #endregion // Testing
+
+        #region OBSOLETE
+
         #region Properties
 
         #region Cache Properties
-
-        public string CurrentCachesFolderPath { get; set; }
-
-        public List<CacheInfo> AvailableCaches
-        {
-            get { return GetCachesInFolder(CurrentCachesFolderPath); }
-        }
 
         public CacheInfo CurrentCacheInfo { get; set; }
 
@@ -215,21 +613,11 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Properties
 
-        public List<NotebookInfo> NotebooksInCurrentCache
-        {
-            get { return GetNotebooksInCache(CurrentCacheInfo); }
-        }
-
-        private readonly List<NotebookInfo> _loadedNotebooksInfo = new List<NotebookInfo>();
-
-        public List<NotebookInfo> LoadedNotebooksInfo
-        {
-            get { return _loadedNotebooksInfo; }
-        }
+        public List<NotebookInfo> LoadedNotebooksInfo { get; } = new List<NotebookInfo>();
 
         public NotebookInfo CurrentNotebookInfo { get; set; }
 
-        
+
 
         #endregion //Notebook Properties
 
@@ -338,7 +726,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return submissions;
-        } 
+        }
 
         public static List<CLPPage> LoadOwnSubmissionsForLoadedPages(NotebookInfo notebookInfo)
         {
@@ -395,58 +783,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Static Methods
-
-        #region Create Methods
-
-        public CacheInfo CreateNewCache(string cacheName, bool isCacheCurrent = true) { return CreateNewCache(cacheName, CurrentCachesFolderPath, isCacheCurrent); }
-
-        public CacheInfo CreateNewCache(string cacheName, string cachesFolderPath, bool isCacheCurrent = true)
-        {
-            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
-            cacheName = invalidFileNameCharacters.Aggregate(cacheName, (current, c) => current.Replace(c.ToString(), string.Empty));
-
-            var cacheFileName = "Cache." + cacheName;
-            var cacheFolderPath = Path.Combine(cachesFolderPath, cacheFileName);
-            var availableCaches = GetCachesInFolder(cachesFolderPath);
-
-            var existingCache = availableCaches.FirstOrDefault(c => c.CacheFolderPath == cacheFolderPath);
-            if (existingCache != null)
-            {
-                if (isCacheCurrent)
-                {
-                    CurrentCacheInfo = existingCache;
-                }
-
-                return existingCache;
-            }
-
-            var newCache = new CacheInfo(cacheFolderPath);
-            newCache.Initialize();
-            if (isCacheCurrent)
-            {
-                CurrentCacheInfo = newCache;
-            }
-
-            return newCache;
-        }
-
-        #endregion //Create Methods 
-
-        #region AutoSave Methods
-
-        public void AutoSavePage(CLPPage page)
-        {
-            //TODO: take screenshot of page if not already cached
-            //set LastAutoSaveTime of notebook
-            //save page locally, and to export folder
-            //save page async to teacher machine, and partial cache folder
-        }
-
-        
-
-        
-
-        #endregion //AutoSave Methods
 
         #region Load Methods
 
@@ -729,140 +1065,6 @@ namespace Classroom_Learning_Partner.Services
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
-        #region Archival Methods
-
-        public void ArchiveCache(CacheInfo cacheInfo)
-        {
-            //if (!Directory.Exists(cacheInfo.CacheFolderPath))
-            //{
-            //    return;
-            //}
-
-            //var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
-            //var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            //var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-            //if (!Directory.Exists(archiveDirectory))
-            //{
-            //    Directory.CreateDirectory(archiveDirectory);
-            //}
-            //Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
-        }
-
-        public void MigrateCaches()
-        {
-            var cachesToMove = GetCachesInFolder(DesktopFolderPath);
-            if (!cachesToMove.Any())
-            {
-                return;
-            }
-
-            var result = MessageBox.Show("Do you want to migrate caches to new location?", "Migrate Caches", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-            if (result != MessageBoxResult.Yes)
-            {
-                return;
-            }
-            
-            Parallel.ForEach(cachesToMove,
-                             cacheInfo =>
-                             {
-                                 var cacheFolderName = new DirectoryInfo(cacheInfo.CacheFolderPath).Name;
-                                 var newCacheFolderPath = Path.Combine(CurrentCachesFolderPath, cacheFolderName);
-                                 if (Directory.Exists(newCacheFolderPath))
-                                 {
-                                     return;
-                                 }
-                                 Directory.Move(cacheInfo.CacheFolderPath, newCacheFolderPath);
-                             });
-        }
-
-        #endregion // Archival Methods
-
-        #region Researcher Methods
-
-        public void GenerateSubmissionsFromModifiedStudentPages()
-        {
-            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
-            {
-                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
-                {
-                    if (page.Submissions.Any())
-                    {
-                        var mostRecentSubmission = page.Submissions.Last();
-                        if (page.InkStrokes.StrokesWeight() != mostRecentSubmission.InkStrokes.StrokesWeight() ||
-                            page.PageObjects.Count != mostRecentSubmission.PageObjects.Count)
-                        {
-                            page.TrimPage();
-                            var submission = page.NextVersionCopy();
-                            page.Submissions.Add(submission);
-                        }
-                    }
-                    else
-                    {
-                        if (page.InkStrokes.Any(s => s.GetStrokeOwnerID() == page.OwnerID) ||
-                            page.PageObjects.Any(p => p.OwnerID == page.OwnerID))
-                        {
-                            page.TrimPage();
-                            var submission = page.NextVersionCopy();
-                            page.Submissions.Add(submission);
-                        }
-                    }
-                }
-            }
-
-            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && !n.Notebook.Owner.IsStudent))
-            {
-                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
-                {
-                    var pageViewModels = page.GetAllViewModels();
-                    foreach (var pageViewModel in pageViewModels)
-                    {
-                        var pageVM = pageViewModel as ACLPPageBaseViewModel;
-                        if (pageVM == null)
-                        {
-                            continue;
-                        }
-                        pageVM.UpdateSubmissionCount();
-                    }
-                }
-            }
-        }
-
-        public void PrintUsedHistoryItems()
-        {
-            var historyItemTypes = new List<Type>();
-            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
-            {
-                foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
-                {
-                    historyItemTypes.AddRange(page.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
-                    foreach (var submission in page.Submissions)
-                    {
-                        historyItemTypes.AddRange(submission.History.CompleteOrderedHistoryItems.Select(h => h.GetType()));
-                    }
-                }
-            }
-
-            historyItemTypes = historyItemTypes.Distinct().ToList();
-            historyItemTypes.ForEach(Console.WriteLine);
-        }
-
-        #endregion // Researcher Methods
-
-        #region ClassPeriod Methods
-
-        public static List<ClassPeriodInfo> GetClassPeriodsInFolder(CacheInfo cache)
-        {
-            if (!Directory.Exists(cache.ClassesFolderPath))
-            {
-                return new List<ClassPeriodInfo>();
-            }
-
-            var directoryInfo = new DirectoryInfo(cache.ClassesFolderPath);
-            return directoryInfo.GetFiles().Select(fileInfo => new ClassPeriodInfo(cache, fileInfo.FullName)).Where(c => c != null).OrderBy(c => c.StartTime).ToList();
-        }
-
-        #endregion //ClassPeriod Methods
-
         #region Old ClassPeriod Methods
 
         //public void StartSoonestClassPeriod(string localCacheFolderPath)
@@ -1097,382 +1299,9 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Old ClassPeriod Methods
 
-        #region Testing
-
-        public void TestJSON()
-        {
-            var currentPage = CurrentPage;
-
-            var nameComposite = PageNameComposite.ParsePage(currentPage);
-            var filePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + ".json");
-
-            currentPage.ToJSON(filePath);
-
-            var loadedPage = CLPPage.LoadFromJSON(filePath);
-            if (loadedPage == null)
-            {
-                return;
-            }
-
-            var secondFilePath = Path.Combine(DesktopFolderPath, nameComposite.ToFileName() + " - Copy.json");
-            loadedPage.ToJSON(secondFilePath);
-        }
-
-        #endregion // Testing
 
         #endregion //Methods
 
-        //---------------------------------------------------------------------------------------------------------------------------------------------------
-
-        #region Constants
-
-        //private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
-        //private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
-        private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
-        private const string DEFAULT_CONFIG_FOLDER_NAME = "Config";  // Config Service?
-        private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
-        private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
-
-        private const string ZIP_IMAGES_FOLDER_NAME = "images";
-        private const string ZIP_NOTEBOOKS_FOLDER_NAME = "notebooks";
-        private const string ZIP_SESSIONS_FOLDER_NAME = "sessions";
-
-        private const string ZIP_IMAGES_FOLDER_PATH = ZIP_IMAGES_FOLDER_NAME + "/";
-        private const string ZIP_NOTEBOOKS_FOLDER_PATH = ZIP_NOTEBOOKS_FOLDER_NAME + "/";
-        private const string ZIP_SESSIONS_FOLDER_PATH = ZIP_SESSIONS_FOLDER_NAME + "/";
-
-        private const string ZIP_NOTEBOOK_DISPLAYS_FOLDER_PATH = "displays/";
-        private const string ZIP_NOTEBOOK_PAGES_FOLDER_PATH = "pages/";
-        private const string ZIP_NOTEBOOK_PAGE_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_PAGES_FOLDER_PATH + "thumbnails/";
-        private const string ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH = "submissions/";
-        private const string ZIP_NOTEBOOK_SUBMISSION_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH + "thumbnails/";
-
-        #endregion // Constants
-
-        #region Properties
-
-        #region Special Folder Paths
-
-        private static string WindowsDriveFolderPath => Path.GetPathRoot(Environment.SystemDirectory);
-
-        private static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        public static string CLPProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
-
-        #endregion // Special Folder Paths
-
-        #region Default Folder Paths
-
-        private string DefaultCLPDataFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);  // TODO: Change to WindowsDriveFolderPath
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
-        #endregion // Default Folder Paths
-
-        #region Current Folder Paths
-
-        public string CurrentCLPDataFolderPath { get; set; }
-
-        public string CurrentCacheFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_CACHE_FOLDER_NAME);
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
-        public string CurrentTempCacheFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_TEMP_CACHE_FOLDER_NAME);
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
-        public string CurrentArchiveFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(CurrentCLPDataFolderPath, DEFAULT_ARCHIVE_FOLDER_NAME);
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
-        #endregion // Current Folder Paths
-
-        #region Notebook Properties
-
-        //FilePathPair
-        //AvailableNotebookSets   
-        //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
-        //CurrentNotebookSet
-
-        public ClassRoster CurrentClassRoster { get; set; }
-        public NotebookSet CurrentNotebookSet { get; set; }
-        public Notebook CurrentNotebook { get; private set; }
-        public CLPPage CurrentPage { get; private set; }
-
-        //CurrentMultiDisplay
-
-        #endregion // Notebook Properties
-
-        #region Page Properties
-
-        //CurrentNotebookPage
-        //CurrentSubmissionPage
-        //CurrentSelectedPage
-
-        #endregion // Page Properties
-
-        #endregion // Properties
-
-        #region Events
-
-        public event EventHandler<EventArgs> CurrentNotebookChanged;
-        public event EventHandler<EventArgs> CurrentPageChanged;
-
-        #endregion // Events
-
-        #region Methods
-
-        #region Notebook Methods
-
-        public void CreateAuthorNotebook(string notebookName)
-        {
-            var notebook = new Notebook(notebookName, Person.Author);
-            SetCurrentNotebook(notebook);
-            AddPage(notebook, new CLPPage());
-        }
-
-        public void SetCurrentNotebook(Notebook notebook)
-        {
-            CurrentNotebook = notebook;
-            CurrentNotebookChanged.SafeInvoke(this);
-        }
-
-        #endregion // Notebook Methods
-
-        #region Page Methods
-
-        public void SetCurrentPage(CLPPage page)
-        {
-            if (CurrentNotebook == null)
-            {
-                return;
-            }
-
-            var oldPage = CurrentNotebook.CurrentPage;
-            ACLPPageBaseViewModel.ClearAdorners(oldPage);
-            AutoSavePage(oldPage);
-            CurrentNotebook.CurrentPage = page;
-            CurrentPage = page;
-
-            CurrentPageChanged.SafeInvoke(this);
-        }
-
-        public void AddPage(Notebook notebook, CLPPage page)
-        {
-            page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
-            notebook.Pages.Add(page);
-            SetCurrentPage(page);
-        }
-
-        public void InsertPageAt(Notebook notebook, CLPPage page, int index)
-        {
-            notebook.Pages.Insert(index, page);
-            SetCurrentPage(page);
-        }
-
-        public void DeletePage(Notebook notebook, CLPPage page)
-        {
-            //TODO: Delete page from notebook
-            //delete page's json
-            //renumber existing pages
-            //function with full cache
-        }
-
-        public void DeletePageAt(Notebook notebook, int index)
-        {
-            //TODO: Delete page from notebook
-            //delete page's json
-            //renumber existing pages
-            //function with full cache
-        }
-
-        #endregion // Page Methods
-
-        #endregion // Methods
-
-        #region Static Methods
-
-        public static string ValidateFileOrDirectoryString(string name)
-        {
-            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
-            return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
-        }
-
-        public static List<FileInfo> GetNotebookSetsInFolder(string folderPath)
-        {
-            if (!Directory.Exists(folderPath))
-            {
-                return new List<FileInfo>();
-            }
-
-            var directoryInfo = new DirectoryInfo(folderPath);
-            return directoryInfo.GetFiles("*.clp").ToList();
-        }
-
-        public static ClassRoster LoadNotebookSet(FileInfo fileInfo)
-        {
-            if (fileInfo == null)
-            {
-                return null;
-            }
-
-            if (!fileInfo.Exists ||
-                fileInfo.Extension != ".clp")
-            {
-                return null;
-            }
-
-            using (var zip = ZipFile.Read(fileInfo.FullName))
-            {
-                if (!zip.ContainsEntry("classRoster.json"))
-                {
-                    return null;
-                }
-
-                var rosterEntry = zip.Entries.First(e => e.FileName == "classRoster.json");
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    rosterEntry.Extract(memoryStream);
-
-                    var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                    return AEntityBase.FromJsonString<ClassRoster>(jsonString);
-                }
-            }
-        }
-
-        public void CreateTestNotebookSet()
-        {
-            var cacheFolderPath = CurrentCacheFolderPath;
-            var fileName = "Test Notebook.clp";
-            var fullFilePath = Path.Combine(cacheFolderPath, fileName);
-
-            var classRoster = new ClassRoster
-                              {
-                                  SubjectName = "Math",
-                                  GradeLevel = "3",
-                                  SchoolName = "Northeastern",
-                                  City = "Waltham",
-                                  State = "Massachusetts"
-                              };
-            var teacher = new Person
-                          {
-                              FirstName = "Ann",
-                              Nickname = "Mrs.",
-                              LastName = "McNamara",
-                              IsStudent = false
-                          };
-
-            var student1 = new Person
-                           {
-                               FirstName = "Steve",
-                               LastName = "Chapman",
-                               IsStudent = true
-                           };
-
-            var student2 = new Person
-                           {
-                               FirstName = "Lily",
-                               LastName = "Ko",
-                               IsStudent = true
-                           };
-
-            var student3 = new Person
-                           {
-                               FirstName = "Kimberle",
-                               LastName = "Koile",
-                               IsStudent = true
-                           };
-
-            classRoster.ListOfTeachers.Add(teacher);
-
-            classRoster.ListOfStudents.Add(student1);
-            classRoster.ListOfStudents.Add(student2);
-            classRoster.ListOfStudents.Add(student3);
-
-            var rosterString = classRoster.ToJsonString(true);
-
-            using (var zip = new ZipFile())
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-
-                zip.AddDirectoryByName("sessions");
-                zip.AddDirectoryByName("images");
-                zip.AddDirectoryByName("notebooks");
-
-                zip.AddEntry("classRoster.json", rosterString);
-                zip.AddEntry("testing/testRoster.json", rosterString);
-
-                zip.Save(fullFilePath);
-            }
-
-            Console.WriteLine("Stopping Point");
-
-            using (var zip = ZipFile.Read(fullFilePath))
-            {
-                foreach (var zipEntryFileName in zip.EntryFileNames)
-                {
-                    Console.WriteLine(zipEntryFileName);
-                }
-
-                var e = zip.GetEntryByNameInDirectory("testing/", "testRoster.json");
-                e.MoveEntry(null);
-                zip.Save();
-            }
-
-            Console.WriteLine("Stopping Point");
-        }
-
-        public void AddEntryAndSave(string zipFilePath, string entryDirectory, string entryName, string entryContents)
-        {
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.AddEntry(entryName, entryContents);
-            }
-        }
-
-        #endregion // Static Methods
+        #endregion // OBSOLETE
     }
 }

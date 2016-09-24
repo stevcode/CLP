@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner
         /// <summary>Combines an internal zip directory and an entry name into the full internal path of the entry.</summary>
         /// <param name="entryDirectory">Expected to be a full directory path, ending with a forward slash.</param>
         /// <param name="entryName">Includes file extension.</param>
-        private static string CombineEntryDirectoryAndName(string entryDirectory, string entryName)
+        public static string CombineEntryDirectoryAndName(string entryDirectory, string entryName)
         {
             return string.IsNullOrWhiteSpace(entryDirectory) ? entryName : $"{entryDirectory}{entryName}";
         }

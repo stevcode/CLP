@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -15,11 +16,14 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
+        private IDataService _dataService;
+
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.</summary>
-        public DisplaysPanelViewModel(Notebook notebook)
+        public DisplaysPanelViewModel(Notebook notebook, IDataService dataService)
         {
+            _dataService = dataService;
             InitializeCommands();
             Notebook = notebook;
             InitializedAsync += DisplaysPanelViewModel_InitializedAsync;
@@ -31,20 +35,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
-        }
-
-        public override string Title
-        {
-            get { return "DisplaysPanelVM"; }
-        }
-
-        private void InitializeCommands()
-        {
-            AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
-            AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
-            AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
-            SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
-            RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
         }
 
         #endregion //Constructor
@@ -152,12 +142,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
+            AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
+            AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
+            SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
+            RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
+        }
+
         /// <summary>Adds a GridDisplay to the notebook.</summary>
         public Command AddGridDisplayCommand { get; private set; }
 
         private void OnAddGridDisplayCommandExecute()
         {
-            Notebook.AddDisplay(new GridDisplay(Notebook));
+            _dataService.AddDisplay(Notebook, new GridDisplay(Notebook));
             CurrentDisplay = Displays.LastOrDefault();
         }
 
@@ -166,7 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddColumnDisplayCommandExecute()
         {
-            Notebook.AddDisplay(new ColumnDisplay(Notebook));
+            _dataService.AddDisplay(Notebook, new ColumnDisplay(Notebook));
             Notebook.CurrentPage = null;
             CurrentDisplay = Displays.LastOrDefault();
         }
@@ -177,7 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            Notebook.AddDisplay(newGridDisplay);
+            _dataService.AddDisplay(Notebook, newGridDisplay);
             CurrentDisplay = newGridDisplay;
             PageHistory.UISleep(1300);
             newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
@@ -309,15 +308,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
-
-        #region Static Methods
-
-        public static DisplaysPanelViewModel GetDisplayListPanelViewModel()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.DisplaysPanel;
-        }
-
-        #endregion //Static Methods
     }
 }

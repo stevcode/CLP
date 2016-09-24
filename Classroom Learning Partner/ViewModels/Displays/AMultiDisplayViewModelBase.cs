@@ -85,7 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            _dataService.CurrentNotebook.CurrentPage = page;
+            _dataService.SetCurrentPage(page);
         }
 
         /// <summary>Removes a specific page from the MultiDisplay.</summary>

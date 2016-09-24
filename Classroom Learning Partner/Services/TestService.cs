@@ -968,14 +968,87 @@ namespace Classroom_Learning_Partner.Services
             animationControlRibbon.IsNonAnimationPlaybackEnabled = !animationControlRibbon.IsNonAnimationPlaybackEnabled;
         }
 
+        //public Notebook CopyForNewOwner(Person owner)
+        //{
+        //    var newNotebook = this.DeepCopy();
+        //    if (newNotebook == null)
+        //    {
+        //        return null;
+        //    }
+        //    newNotebook.Owner = owner;
+        //    newNotebook.CurrentPage = CurrentPage == null ? null : CurrentPage.CopyForNewOwner(owner);
+        //    foreach (var newPage in Pages.Select(page => page.CopyForNewOwner(owner)))
+        //    {
+        //        if (!owner.IsStudent)
+        //        {
+        //            newNotebook.Pages.Add(newPage);
+        //            continue;
+        //        }
+
+        //        if (newPage.DifferentiationLevel == string.Empty ||
+        //            newPage.DifferentiationLevel == "0" ||
+        //            newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
+        //        {
+        //            newNotebook.Pages.Add(newPage);
+        //            continue;
+        //        }
+
+        //        if (owner.CurrentDifferentiationGroup == string.Empty &&
+        //            newPage.DifferentiationLevel == "A")
+        //        {
+        //            newNotebook.Pages.Add(newPage);
+        //        }
+        //    }
+
+        //    return newNotebook;
+        //}
+
         private void OnGenerateSubmissionsCommandExecute()
         {
-            PleaseWaitHelper.Show(() =>
-            {
-                _dataService.GenerateSubmissionsFromModifiedStudentPages();
-            },
-                                  null,
-                                  "Generating Submissions");
+            //foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && n.Notebook.Owner.IsStudent))
+            //{
+            //    foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+            //    {
+            //        if (page.Submissions.Any())
+            //        {
+            //            var mostRecentSubmission = page.Submissions.Last();
+            //            if (page.InkStrokes.StrokesWeight() != mostRecentSubmission.InkStrokes.StrokesWeight() ||
+            //                page.PageObjects.Count != mostRecentSubmission.PageObjects.Count)
+            //            {
+            //                page.TrimPage();
+            //                var submission = page.NextVersionCopy();
+            //                page.Submissions.Add(submission);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (page.InkStrokes.Any(s => s.GetStrokeOwnerID() == page.OwnerID) ||
+            //                page.PageObjects.Any(p => p.OwnerID == page.OwnerID))
+            //            {
+            //                page.TrimPage();
+            //                var submission = page.NextVersionCopy();
+            //                page.Submissions.Add(submission);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.Notebook != null && !n.Notebook.Owner.IsStudent))
+            //{
+            //    foreach (var page in notebookInfo.Notebook.Pages.Where(p => p.VersionIndex == 0))
+            //    {
+            //        var pageViewModels = page.GetAllViewModels();
+            //        foreach (var pageViewModel in pageViewModels)
+            //        {
+            //            var pageVM = pageViewModel as ACLPPageBaseViewModel;
+            //            if (pageVM == null)
+            //            {
+            //                continue;
+            //            }
+            //            pageVM.UpdateSubmissionCount();
+            //        }
+            //    }
+            //}
         }
 
         #endregion // Options Pane

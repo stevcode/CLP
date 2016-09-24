@@ -289,50 +289,50 @@ namespace Classroom_Learning_Partner
 
         public void CollectStudentNotebook(string zippedNotebook, string studentName)
         {
-            Task.Factory.StartNew(() =>
-                                  {
-                                      var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-                                      if (dataService == null)
-                                      {
-                                          return;
-                                      }
+            //Task.Factory.StartNew(() =>
+            //                      {
+            //                          var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            //                          if (dataService == null)
+            //                          {
+            //                              return;
+            //                          }
 
-                                      var unZippedNotebook = zippedNotebook.DecompressFromGZip();
-                                      var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            //                          var unZippedNotebook = zippedNotebook.DecompressFromGZip();
+            //                          var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
 
-                                      if (notebook == null)
-                                      {
-                                          Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
-                                          return;
-                                      }
+            //                          if (notebook == null)
+            //                          {
+            //                              Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+            //                              return;
+            //                          }
 
-                                      var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
-                                      notebook.SavePartialNotebook(notebookFolderPath, false);
-                                  });
+            //                          var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
+            //                          notebook.SavePartialNotebook(notebookFolderPath, false);
+            //                      });
         }
 
         public void CollectStudentNotebookAndSubmissions(string zippedNotebook, string zippedSubmissions, string studentName)
         {
-            Task.Factory.StartNew(() =>
-            {
-                var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-                if (dataService == null)
-                {
-                    return;
-                }
+            //Task.Factory.StartNew(() =>
+            //{
+            //    var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            //    if (dataService == null)
+            //    {
+            //        return;
+            //    }
 
-                var unZippedNotebook = zippedNotebook.DecompressFromGZip();
-                var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            //    var unZippedNotebook = zippedNotebook.DecompressFromGZip();
+            //    var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
 
-                if (notebook == null)
-                {
-                    Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
-                    return;
-                }
+            //    if (notebook == null)
+            //    {
+            //        Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+            //        return;
+            //    }
 
-                var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
-                notebook.SavePartialNotebook(notebookFolderPath, false);
-            });
+            //    var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
+            //    notebook.SavePartialNotebook(notebookFolderPath, false);
+            //});
         }
 
         public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)

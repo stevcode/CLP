@@ -633,54 +633,54 @@ namespace Classroom_Learning_Partner
 
         public void AddNewPage(string zippedPage, int index)
         {
-            var unZippedPage = zippedPage.DecompressFromGZip();
-            var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
+            //var unZippedPage = zippedPage.DecompressFromGZip();
+            //var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null ||
-               page == null)
-            {
-                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
-                return;
-            }
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        if(index < notebookWorkspaceViewModel.Notebook.Pages.Count)
-                                                                                        {
-                                                                                            notebookWorkspaceViewModel.Notebook.Pages.Insert(index, page);
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            notebookWorkspaceViewModel.Notebook.Pages.Add(page);
-                                                                                        }
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null ||
+            //   page == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+            //    return;
+            //}
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
+            //                                                                            if(index < notebookWorkspaceViewModel.Notebook.Pages.Count)
+            //                                                                            {
+            //                                                                                notebookWorkspaceViewModel.Notebook.Pages.Insert(index, page);
+            //                                                                            }
+            //                                                                            else
+            //                                                                            {
+            //                                                                                notebookWorkspaceViewModel.Notebook.Pages.Add(page);
+            //                                                                            }
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
         }
 
         public void ReplacePage(string zippedPage, int index)
         {
-            var unZippedPage = zippedPage.DecompressFromGZip();
-            var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
+            //var unZippedPage = zippedPage.DecompressFromGZip();
+            //var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null ||
-               page == null)
-            {
-                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
-                return;
-            }
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
-                                                                                        notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null ||
+            //   page == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+            //    return;
+            //}
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
+            //                                                                            notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
+            //                                                                            notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
         }
 
         #endregion

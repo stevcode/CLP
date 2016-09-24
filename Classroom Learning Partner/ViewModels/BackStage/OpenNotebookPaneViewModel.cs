@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public OpenNotebookPaneViewModel()
         {
             InitializeCommands();
-            AvailableCaches.AddRange(_dataService.AvailableCaches);
+            //AvailableCaches.AddRange(_dataService.AvailableCaches);
             SelectedCache = AvailableCaches.FirstOrDefault();
         }
 
