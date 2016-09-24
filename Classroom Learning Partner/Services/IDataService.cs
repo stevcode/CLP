@@ -23,7 +23,6 @@ namespace Classroom_Learning_Partner.Services
 
         void AutoSavePage(CLPPage page);
         void SetCurrentPage(CLPPage page);
-        void DeletePage(CLPPage page);
         void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true);
         void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
@@ -32,6 +31,10 @@ namespace Classroom_Learning_Partner.Services
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
 
         void CreateAuthorNotebook(string notebookName);
+        void AddPage(Notebook notebook, CLPPage page);
+        void InsertPageAt(Notebook notebook, CLPPage page, int index);
+        void DeletePage(Notebook notebook, CLPPage page);
+        void DeletePageAt(Notebook notebook, int index);
 
         void CreateTestNotebookSet();
     }

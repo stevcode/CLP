@@ -1133,6 +1133,20 @@ namespace Classroom_Learning_Partner.Services
         private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
         private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
 
+        private const string ZIP_IMAGES_FOLDER_NAME = "images";
+        private const string ZIP_NOTEBOOKS_FOLDER_NAME = "notebooks";
+        private const string ZIP_SESSIONS_FOLDER_NAME = "sessions";
+
+        private const string ZIP_IMAGES_FOLDER_PATH = ZIP_IMAGES_FOLDER_NAME + "/";
+        private const string ZIP_NOTEBOOKS_FOLDER_PATH = ZIP_NOTEBOOKS_FOLDER_NAME + "/";
+        private const string ZIP_SESSIONS_FOLDER_PATH = ZIP_SESSIONS_FOLDER_NAME + "/";
+
+        private const string ZIP_NOTEBOOK_DISPLAYS_FOLDER_PATH = "displays/";
+        private const string ZIP_NOTEBOOK_PAGES_FOLDER_PATH = "pages/";
+        private const string ZIP_NOTEBOOK_PAGE_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_PAGES_FOLDER_PATH + "thumbnails/";
+        private const string ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH = "submissions/";
+        private const string ZIP_NOTEBOOK_SUBMISSION_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH + "thumbnails/";
+
         #endregion // Constants
 
         #region Properties
@@ -1290,7 +1304,21 @@ namespace Classroom_Learning_Partner.Services
             SetCurrentPage(page);
         }
 
-        public void DeletePage(CLPPage page)
+        public void InsertPageAt(Notebook notebook, CLPPage page, int index)
+        {
+            notebook.Pages.Insert(index, page);
+            SetCurrentPage(page);
+        }
+
+        public void DeletePage(Notebook notebook, CLPPage page)
+        {
+            //TODO: Delete page from notebook
+            //delete page's json
+            //renumber existing pages
+            //function with full cache
+        }
+
+        public void DeletePageAt(Notebook notebook, int index)
         {
             //TODO: Delete page from notebook
             //delete page's json
@@ -1402,32 +1430,46 @@ namespace Classroom_Learning_Partner.Services
             classRoster.ListOfStudents.Add(student2);
             classRoster.ListOfStudents.Add(student3);
 
-            var rosterString = classRoster.ToJsonString();
+            var rosterString = classRoster.ToJsonString(true);
 
             using (var zip = new ZipFile())
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
 
                 zip.AddDirectoryByName("sessions");
                 zip.AddDirectoryByName("images");
                 zip.AddDirectoryByName("notebooks");
 
                 zip.AddEntry("classRoster.json", rosterString);
+                zip.AddEntry("testing/testRoster.json", rosterString);
 
                 zip.Save(fullFilePath);
             }
 
-            var fileInfos = GetNotebookSetsInFolder(cacheFolderPath);
-            var rosterFileInfo = fileInfos.FirstOrDefault();
+            Console.WriteLine("Stopping Point");
 
-
-            var loadedRoster = LoadNotebookSet(rosterFileInfo);
-
-            foreach (var student in loadedRoster.ListOfStudents)
+            using (var zip = ZipFile.Read(fullFilePath))
             {
-                Console.WriteLine(student.DisplayName);
+                foreach (var zipEntryFileName in zip.EntryFileNames)
+                {
+                    Console.WriteLine(zipEntryFileName);
+                }
+
+                var e = zip.GetEntryByNameInDirectory("testing/", "testRoster.json");
+                e.MoveEntry(null);
+                zip.Save();
+            }
+
+            Console.WriteLine("Stopping Point");
+        }
+
+        public void AddEntryAndSave(string zipFilePath, string entryDirectory, string entryName, string entryContents)
+        {
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.AddEntry(entryName, entryContents);
             }
         }
 

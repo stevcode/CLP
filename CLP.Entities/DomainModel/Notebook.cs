@@ -263,13 +263,6 @@ namespace CLP.Entities
 
         #region Methods
 
-        public void AddPage(CLPPage page)
-        {
-            page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
-            Pages.Add(page);
-            CurrentPage = page;
-        }
-
         public void AddDisplay(IDisplay display)
         {
             display.NotebookID = ID;
