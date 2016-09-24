@@ -211,44 +211,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCopyNotebookForNewOwnerCommandExecute()
         {
-            if (_dataService == null ||
-                _dataService.CurrentCacheInfo == null ||
-                _dataService.CurrentNotebookInfo == null ||
-                _dataService.CurrentNotebookInfo.Notebook == null)
-            {
-                return;
-            }
+            //if (_dataService == null ||
+            //    _dataService.CurrentCacheInfo == null ||
+            //    _dataService.CurrentNotebookInfo == null ||
+            //    _dataService.CurrentNotebookInfo.Notebook == null)
+            //{
+            //    return;
+            //}
 
-            var textInputViewModel = new TextInputViewModel
-                                     {
-                                         TextPrompt = "Student Name: "
-                                     };
-            var textInputView = new TextInputView(textInputViewModel);
-            textInputView.ShowDialog();
+            //var textInputViewModel = new TextInputViewModel
+            //                         {
+            //                             TextPrompt = "Student Name: "
+            //                         };
+            //var textInputView = new TextInputView(textInputViewModel);
+            //textInputView.ShowDialog();
 
-            if (textInputView.DialogResult == null ||
-                textInputView.DialogResult != true ||
-                string.IsNullOrEmpty(textInputViewModel.InputText))
-            {
-                return;
-            }
+            //if (textInputView.DialogResult == null ||
+            //    textInputView.DialogResult != true ||
+            //    string.IsNullOrEmpty(textInputViewModel.InputText))
+            //{
+            //    return;
+            //}
 
-            var person = new Person
-                         {
-                             IsStudent = true,
-                             FullName = textInputViewModel.InputText
-                         };
+            //var person = new Person
+            //             {
+            //                 IsStudent = true,
+            //                 FullName = textInputViewModel.InputText
+            //             };
 
-            var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
-            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-            var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
-            var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
-            var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
-                               {
-                                   Notebook = copiedNotebook
-                               };
-            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
-            _dataService.SetCurrentNotebook(notebookInfo);
+            //var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
+            //copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            //var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+            //var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+            //var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
+            //                   {
+            //                       Notebook = copiedNotebook
+            //                   };
+            //PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
+            //_dataService.SetCurrentNotebook(notebookInfo);
 
             //var person = new Person();
             //var personCreationView = new PersonView(new PersonViewModel(person));

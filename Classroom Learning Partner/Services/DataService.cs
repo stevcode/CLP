@@ -430,45 +430,6 @@ namespace Classroom_Learning_Partner.Services
             return newCache;
         }
 
-        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, bool isNotebookCurrent = true)
-        {
-            return CreateNewNotebook(notebookName, curriculum, CurrentCacheInfo, isNotebookCurrent);
-        }
-
-        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, CacheInfo cache, bool isNotebookCurrent = true)
-        {
-            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
-            notebookName = invalidFileNameCharacters.Aggregate(notebookName, (current, c) => current.Replace(c.ToString(), string.Empty));
-
-            var newNotebook = new Notebook(notebookName, Person.Author);
-
-            var newPage = new CLPPage(Person.Author);
-            newNotebook.AddPage(newPage);
-
-            var notebookFolderName = NotebookNameComposite.ParseNotebook(newNotebook).ToFolderName();
-            var notebookFolderPath = Path.Combine(cache.NotebooksFolderPath, notebookFolderName);
-            if (Directory.Exists(notebookFolderPath))
-            {
-                return null;
-            }
-
-            var notebookInfo = new NotebookInfo(cache, notebookFolderPath)
-                               {
-                                   Notebook = newNotebook
-                               };
-            notebookInfo.Initialize();
-            notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
-            newPage.SaveToXML(notebookInfo.PagesFolderPath);
-
-            LoadedNotebooksInfo.Add(notebookInfo);
-            if (isNotebookCurrent)
-            {
-                SetCurrentNotebook(notebookInfo);
-            }
-
-            return notebookInfo;
-        }
-
         #endregion //Create Methods 
 
         #region AutoSave Methods
@@ -486,44 +447,6 @@ namespace Classroom_Learning_Partner.Services
         
 
         #endregion //AutoSave Methods
-
-        #region Save Methods
-
-        public void SaveNotebookLocally(NotebookInfo notebookInfo, bool isForcedFullSave = false)
-        {
-            notebookInfo.Cache.Initialize();
-            if (isForcedFullSave &&
-                Directory.Exists(notebookInfo.NotebookFolderPath))
-            {
-                Directory.Delete(notebookInfo.NotebookFolderPath, true);
-            }
-            notebookInfo.Initialize();
-            notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
-
-            var pagesToSave = GetPagesToSave(notebookInfo, isForcedFullSave);
-            //Parallel.ForEach(pagesToSave, page => { page.SaveToXML(notebookInfo.PagesFolderPath); });
-            foreach (var page in pagesToSave)
-            {
-                page.SaveToXML(notebookInfo.PagesFolderPath);
-            }
-        }
-
-        #endregion //Save Methods
-
-        public void PackageAndSendNotebook(NotebookInfo notebookInfo, bool isNotebookSaved = true)
-        {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
-                App.Network.InstructorProxy == null)
-            {
-                return;
-            }
-
-            if (!isNotebookSaved) { }
-
-            var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
-            var zippedNotebook = sNotebook.CompressWithGZip();
-            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
-        }
 
         #region Load Methods
 
@@ -1380,6 +1303,12 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Methods
 
         #region Static Methods
+
+        public static string ValidateFileOrDirectoryString(string name)
+        {
+            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
+            return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
 
         public static List<FileInfo> GetNotebookSetsInFolder(string folderPath)
         {

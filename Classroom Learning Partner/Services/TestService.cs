@@ -30,44 +30,44 @@ namespace Classroom_Learning_Partner.Services
 
         private void OnSaveNotebookForStudentCommandExecute()
         {
-            if (_dataService == null ||
-                _dataService.CurrentCacheInfo == null ||
-                _dataService.CurrentNotebookInfo == null ||
-                _dataService.CurrentNotebookInfo.Notebook == null)
-            {
-                return;
-            }
+            //if (_dataService == null ||
+            //    _dataService.CurrentCacheInfo == null ||
+            //    _dataService.CurrentNotebookInfo == null ||
+            //    _dataService.CurrentNotebookInfo.Notebook == null)
+            //{
+            //    return;
+            //}
 
-            var textInputViewModel = new TextInputViewModel
-            {
-                TextPrompt = "Student Name: "
-            };
-            var textInputView = new TextInputView(textInputViewModel);
-            textInputView.ShowDialog();
+            //var textInputViewModel = new TextInputViewModel
+            //{
+            //    TextPrompt = "Student Name: "
+            //};
+            //var textInputView = new TextInputView(textInputViewModel);
+            //textInputView.ShowDialog();
 
-            if (textInputView.DialogResult == null ||
-                textInputView.DialogResult != true ||
-                string.IsNullOrEmpty(textInputViewModel.InputText))
-            {
-                return;
-            }
+            //if (textInputView.DialogResult == null ||
+            //    textInputView.DialogResult != true ||
+            //    string.IsNullOrEmpty(textInputViewModel.InputText))
+            //{
+            //    return;
+            //}
 
-            var person = new Person
-            {
-                IsStudent = true,
-                FullName = textInputViewModel.InputText
-            };
+            //var person = new Person
+            //{
+            //    IsStudent = true,
+            //    FullName = textInputViewModel.InputText
+            //};
 
-            var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
-            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-            var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
-            var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
-            var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
-            {
-                Notebook = copiedNotebook
-            };
-            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
-            _dataService.SetCurrentNotebook(notebookInfo);
+            //var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
+            //copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            //var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+            //var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+            //var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
+            //{
+            //    Notebook = copiedNotebook
+            //};
+            //PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook");
+            //_dataService.SetCurrentNotebook(notebookInfo);
         }
 
         private void OnClearPagesNonAnimationHistoryCommandExecute()
@@ -86,44 +86,44 @@ namespace Classroom_Learning_Partner.Services
         private void OnGenerateStudentNotebooksCommandExecute()
         {
             // HACK: This is very hardcoded.
-            if (_dataService == null ||
-                _dataService.CurrentCacheInfo == null ||
-                _dataService.CurrentNotebookInfo == null ||
-                _dataService.CurrentNotebookInfo.Notebook == null)
-            {
-                return;
-            }
+            //if (_dataService == null ||
+            //    _dataService.CurrentCacheInfo == null ||
+            //    _dataService.CurrentNotebookInfo == null ||
+            //    _dataService.CurrentNotebookInfo.Notebook == null)
+            //{
+            //    return;
+            //}
 
-            var classInfoPath = Path.Combine(_dataService.CurrentCacheInfo.ClassesFolderPath, "classInfo;KK;S1nEmeKiYkSuPPo3t2nWXQ.xml");
-            var classInfo = ClassInformation.LoadFromXML(classInfoPath);
-            if (classInfo == null)
-            {
-                return;
-            }
+            //var classInfoPath = Path.Combine(_dataService.CurrentCacheInfo.ClassesFolderPath, "classInfo;KK;S1nEmeKiYkSuPPo3t2nWXQ.xml");
+            //var classInfo = ClassInformation.LoadFromXML(classInfoPath);
+            //if (classInfo == null)
+            //{
+            //    return;
+            //}
 
-            var teacher = classInfo.Teacher;
-            var copiedNotebookT = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(teacher);
-            copiedNotebookT.CurrentPage = copiedNotebookT.Pages.FirstOrDefault();
-            var notebookCompositeT = NotebookNameComposite.ParseNotebook(copiedNotebookT);
-            var notebookPathT = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookCompositeT.ToFolderName());
-            var notebookInfoT = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPathT)
-            {
-                Notebook = copiedNotebookT
-            };
-            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfoT, true), null, "Saving Notebook for " + teacher.FullName);
+            //var teacher = classInfo.Teacher;
+            //var copiedNotebookT = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(teacher);
+            //copiedNotebookT.CurrentPage = copiedNotebookT.Pages.FirstOrDefault();
+            //var notebookCompositeT = NotebookNameComposite.ParseNotebook(copiedNotebookT);
+            //var notebookPathT = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookCompositeT.ToFolderName());
+            //var notebookInfoT = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPathT)
+            //{
+            //    Notebook = copiedNotebookT
+            //};
+            //PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfoT, true), null, "Saving Notebook for " + teacher.FullName);
 
-            foreach (var person in classInfo.StudentList)
-            {
-                var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
-                copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
-                var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
-                var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
-                var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
-                {
-                    Notebook = copiedNotebook
-                };
-                PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook for " + person.FullName);
-            }
+            //foreach (var person in classInfo.StudentList)
+            //{
+            //    var copiedNotebook = _dataService.CurrentNotebookInfo.Notebook.CopyForNewOwner(person);
+            //    copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            //    var notebookComposite = NotebookNameComposite.ParseNotebook(copiedNotebook);
+            //    var notebookPath = Path.Combine(_dataService.CurrentCacheInfo.NotebooksFolderPath, notebookComposite.ToFolderName());
+            //    var notebookInfo = new NotebookInfo(_dataService.CurrentCacheInfo, notebookPath)
+            //    {
+            //        Notebook = copiedNotebook
+            //    };
+            //    PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(notebookInfo, true), null, "Saving Notebook for " + person.FullName);
+            //}
         }
 
         #endregion // Notebook Info Pane

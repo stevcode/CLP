@@ -1,7 +1,6 @@
 ﻿using System;
 using Catel.Data;
 using Catel.MVVM;
-using Catel.Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -14,11 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = _dataService.CurrentNotebook;
             InitializeCommands();
-        }
-
-        private void InitializeCommands()
-        {
-            SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
         }
 
         #endregion //Constructor
@@ -60,14 +54,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
-        {
-            get { return "Notebook Information"; }
-        }
+        public override string PaneTitleText => "Notebook Information";
 
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
+        }
 
         /// <summary>Saves the current notebook.</summary>
         public Command SaveCurrentNotebookCommand { get; private set; }
@@ -88,18 +84,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void SaveCurrentNotebook(bool isForceSave = false)
         {
-            if (_dataService == null ||
-                _dataService.CurrentNotebook == null)
-            {
-                return;
-            }
+            //if (_dataService == null ||
+            //    _dataService.CurrentNotebook == null)
+            //{
+            //    return;
+            //}
 
-            if (_dataService.CurrentNotebook.OwnerID == Person.Author.ID)
-            {
-                isForceSave = true;
-            }
+            //if (_dataService.CurrentNotebook.OwnerID == Person.Author.ID)
+            //{
+            //    isForceSave = true;
+            //}
 
-            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(_dataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
+            //PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(_dataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
 
             //PleaseWaitHelper.Show(
             //                      () =>
