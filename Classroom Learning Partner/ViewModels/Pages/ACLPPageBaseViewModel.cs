@@ -552,6 +552,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ClearAdorners(CLPPage page)
         {
+            // TODO: Handle GridDisplays?
             if (page == null)
             {
                 return;

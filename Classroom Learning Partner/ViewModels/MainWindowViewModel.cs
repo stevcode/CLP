@@ -48,9 +48,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var dependencyResolver = this.GetDependencyResolver();
             var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
-            MajorRibbon = viewModelFactory.CreateViewModel<MajorRibbonViewModel>(typeof(MajorRibbonViewModel), null);
-            BackStage = viewModelFactory.CreateViewModel<BackStageViewModel>(typeof(BackStageViewModel), null);
-            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(typeof(BlankWorkspaceViewModel), null);
+            MajorRibbon = viewModelFactory.CreateViewModel<MajorRibbonViewModel>(null, null);
+            BackStage = viewModelFactory.CreateViewModel<BackStageViewModel>(null, null);
+            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(null, null);
 
             InitializeCommands();
 
@@ -76,8 +76,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
         {
-            Workspace = new BlankWorkspaceViewModel();
-            Workspace = new NotebookWorkspaceViewModel(_dataService.CurrentNotebook);
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+
+            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(null, null);
+            Workspace = viewModelFactory.CreateViewModel<NotebookWorkspaceViewModel>(_dataService.CurrentNotebook, null);
             CurrentNotebookName = _dataService.CurrentNotebook.Name;
             CurrentUser = _dataService.CurrentNotebook.Owner;
             IsAuthoring = _dataService.CurrentNotebook.OwnerID == Person.Author.ID;
@@ -131,7 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(IsBackStageVisibleProperty, value);
-                ACLPPageBaseViewModel.ClearAdorners(NotebookPagesPanelViewModel.GetCurrentPage());
+                ACLPPageBaseViewModel.ClearAdorners(_dataService.CurrentPage);
             }
         }
 

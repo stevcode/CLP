@@ -84,20 +84,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription ABRAscendingSort = new SortDescription("ABR", ListSortDirection.Ascending);
         private static readonly SortDescription ARICAscendingSort = new SortDescription("ARIC", ListSortDirection.Ascending);
 
+        private readonly IDataService _dataService;
+
         #region Constructor
 
-        public StagingPanelViewModel(Notebook notebook)
+        public StagingPanelViewModel(Notebook notebook, IDataService dataService)
         {
+            _dataService = dataService;
             Notebook = notebook;
 
             SortedAndGroupedPages.Source = FilteredPages;
 
             InitializedAsync += StagingPanelViewModel_InitializedAsync;
 
-            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
-            RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
-            ClearStageCommand = new Command(OnClearStageCommandExecute);
-            ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
+            InitializeCommands();
 
          //   AppendCollectionOfPagesToStage(SingleAddedPages);
          //   FilterCollectionOfPagesFromStage(SingleRemovedPages);
@@ -105,11 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         async Task StagingPanelViewModel_InitializedAsync(object sender, EventArgs e) { Length = InitialLength; }
-
-        public override string Title
-        {
-            get { return "StagingPanelVM"; }
-        }
 
         #endregion //Constructor
 
@@ -243,12 +238,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
+            ClearStageCommand = new Command(OnClearStageCommandExecute);
+            ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
+        }
+
         /// <summary>
         /// Sets the current selected page in the listbox.
         /// </summary>
         public Command<CLPPage> SetCurrentPageCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(CLPPage page) { SetCurrentPage(page); }
+        private void OnSetCurrentPageCommandExecute(CLPPage page) { _dataService.SetCurrentPage(page); }
 
         /// <summary>
         /// Removes given page from the Staging Panel.
@@ -355,25 +358,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
-
-        public void SetCurrentPage(CLPPage page)
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-
-            if(notebookWorkspaceViewModel.CurrentDisplay == null)
-            {
-                //Take thumbnail of page before navigating away from it.
-                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
-                CurrentPage = page;
-                return;
-            }
-
-            notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-        }
 
         #region Filters
 

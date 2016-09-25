@@ -54,12 +54,6 @@ namespace Classroom_Learning_Partner.ViewModels
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
         }
 
-        //private async Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
-        //{
-        //    Length = InitialLength;
-        //    Location = PanelLocations.Right;
-        //}
-
         private Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
@@ -83,10 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
-        public override double InitialLength
-        {
-            get { return 175.0; }
-        }
+        public override double InitialLength => 175.0;
 
         #endregion //Constructor
 
@@ -198,7 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Notebook.Pages.MoveItemUp(CurrentPage);
             CurrentPage = Notebook.Pages[currentPageIndex - 1];
-            RaisePropertyChanged("CurrentPage");
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageUpCanExecute()
@@ -218,7 +209,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Notebook.Pages.MoveItemDown(CurrentPage);
             CurrentPage = Notebook.Pages[currentPageIndex + 1];
-            RaisePropertyChanged("CurrentPage");
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageDownCanExecute()

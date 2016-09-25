@@ -420,6 +420,25 @@ namespace Classroom_Learning_Partner.Services
             CurrentNotebook.CurrentPage = page;
             CurrentPage = page;
 
+            // TODO: Handle multiDisplays
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if (notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
+
+            //if (notebookWorkspaceViewModel.CurrentDisplay == null)
+            //{
+            //    //Take thumbnail of page before navigating away from it.
+            //    ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
+            //    ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
+            //    CurrentPage = page;
+            //    return;
+            //}
+
+            //notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+
+
             CurrentPageChanged.SafeInvoke(this);
         }
 
@@ -1055,14 +1074,14 @@ namespace Classroom_Learning_Partner.Services
 
         public void SetCurrentNotebook(NotebookInfo notebookInfo)
         {
-            CurrentNotebookInfo = notebookInfo;
+            //CurrentNotebookInfo = notebookInfo;
 
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
-            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
-            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
-            App.MainWindowViewModel.IsBackStageVisible = false;
+            //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
+            //App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
+            //App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
+            //App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
+            //App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         #region Old ClassPeriod Methods

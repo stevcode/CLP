@@ -166,7 +166,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddColumnDisplayCommandExecute()
         {
             _dataService.AddDisplay(Notebook, new ColumnDisplay(Notebook));
-            Notebook.CurrentPage = null;
             CurrentDisplay = Displays.LastOrDefault();
         }
 

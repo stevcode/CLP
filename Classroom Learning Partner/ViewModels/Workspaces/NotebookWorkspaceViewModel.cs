@@ -22,24 +22,24 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
+        private readonly IDataService _dataService;
 
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
-        public NotebookWorkspaceViewModel(Notebook notebook)
+        public NotebookWorkspaceViewModel(Notebook notebook, IDataService dataService)
         {
+            _dataService = dataService;
+
             Notebook = notebook;
             ContextRibbon = new ContextRibbonViewModel();
             AnimationControlRibbon = new AnimationControlRibbonViewModel(notebook);
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
-            ResetDemoCommand = new Command(OnResetDemoCommandExecute);
-            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
-            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
-            GoToPageCommand = new Command(OnGoToPageCommandExecute);
+            InitializeCommands();
 
             InitializePanels(notebook);
 
@@ -52,13 +52,12 @@ namespace Classroom_Learning_Partner.ViewModels
             var dependencyResolver = this.GetDependencyResolver();
             var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
 
-            SingleDisplay = new SingleDisplayViewModel(notebook);
+            SingleDisplay = viewModelFactory.CreateViewModel<SingleDisplayViewModel>(notebook, null);
 
-            StagingPanel = new StagingPanelViewModel(notebook)
-            {
-                IsVisible = false
-            };
-            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
+            StagingPanel = viewModelFactory.CreateViewModel<StagingPanelViewModel>(notebook, null);
+            StagingPanel.IsVisible = false;
+
+            NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel, null);
             ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
             if (App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
             {
@@ -69,8 +68,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 LeftPanel = NotebookPagesPanel;
             }
 
-            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(typeof(DisplaysPanelViewModel), notebook);
-            PageInformationPanel = new PageInformationPanelViewModel(notebook);
+            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(notebook, null);
+            PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook, null);
             RightPanel = DisplaysPanel;
 
             if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
@@ -278,7 +277,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        public List<CLPPage> PagesAddedThisSession = new List<CLPPage>();
+        private void InitializeCommands()
+        {
+            ResetDemoCommand = new Command(OnResetDemoCommandExecute);
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
+            GoToPageCommand = new Command(OnGoToPageCommandExecute);
+        }
+
+        public readonly List<CLPPage> PagesAddedThisSession = new List<CLPPage>();
 
         /// <summary>SUMMARY</summary>
         public Command ResetDemoCommand { get; private set; }
@@ -333,8 +340,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            
-            Notebook.CurrentPage = newPage;
+
+            _dataService.SetCurrentPage(newPage);
         }
 
         /// <summary>
@@ -344,33 +351,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPreviousPageCommandExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            // TODO: Take into account Teacher build when in Staging Panel.
+            if (_dataService.CurrentPage == null ||
+                _dataService.CurrentNotebook == null)
             {
                 return;
             }
-            
-            var index = Notebook.Pages.IndexOf(currentPage);
 
-            if (index > 0)
+            var index = _dataService.CurrentNotebook.Pages.IndexOf(_dataService.CurrentPage);
+            if (index <= 0)
             {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-                var page = panel.Notebook.Pages[index - 1];
-                panel.CurrentPage = page;
+                return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(_dataService.CurrentPage);
+            var page = _dataService.CurrentNotebook.Pages[index - 1];
+            _dataService.SetCurrentPage(page);
         }
 
         private bool OnPreviousPageCanExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            if (_dataService.CurrentPage == null || 
+                _dataService.CurrentNotebook == null)
             {
                 return false;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            var index = _dataService.CurrentNotebook.Pages.IndexOf(_dataService.CurrentPage);
             return index > 0;
         }
 
@@ -381,33 +388,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNextPageCommandExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            // TODO: Take into account Teacher build when in Staging Panel.
+            if (_dataService.CurrentPage == null ||
+                _dataService.CurrentNotebook == null)
             {
                 return;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            if (index < panel.Notebook.Pages.Count - 1)
+            var index = _dataService.CurrentNotebook.Pages.IndexOf(_dataService.CurrentPage);
+            if (index >= _dataService.CurrentNotebook.Pages.Count - 1)
             {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-                var page = panel.Notebook.Pages[index + 1];
-                panel.CurrentPage = page;
+                return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(_dataService.CurrentPage);
+            var page = _dataService.CurrentNotebook.Pages[index + 1];
+            _dataService.SetCurrentPage(page);
         }
 
         private bool OnNextPageCanExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            if (_dataService.CurrentPage == null ||
+                _dataService.CurrentNotebook == null)
             {
                 return false;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            return index < panel.Notebook.Pages.Count - 1;
+            var index = _dataService.CurrentNotebook.Pages.IndexOf(_dataService.CurrentPage);
+            return index < _dataService.CurrentNotebook.Pages.Count - 1;
         }
 
         /// <summary>
@@ -435,7 +443,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var newPageIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+            var newPageIndex = int.Parse(keyPad.NumbersEntered.Text);
 
             var newPage = Notebook.Pages.FirstOrDefault(x => x.PageNumber == newPageIndex);
 
@@ -445,8 +453,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
-            Notebook.CurrentPage = newPage;
+            _dataService.SetCurrentPage(newPage);
         }
 
         #endregion //Commands

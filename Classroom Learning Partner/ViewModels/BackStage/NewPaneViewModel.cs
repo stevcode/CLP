@@ -85,6 +85,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ListOfTeachersProperty = RegisterProperty("ListOfTeachers", typeof(ObservableCollection<Person>));
 
+        /// <summary>Name of the subject being taught.</summary>
+        [ViewModelToModel("ClassRoster")]
+        public string SubjectName
+        {
+            get { return GetValue<string>(SubjectNameProperty); }
+            set { SetValue(SubjectNameProperty, value); }
+        }
+
+        public static readonly PropertyData SubjectNameProperty = RegisterProperty("SubjectName", typeof(string));
+
         /// <summary>Grade Level of the subject being taught.</summary>
         [ViewModelToModel("ClassRoster")]
         public string GradeLevel

@@ -15,9 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SubmissionHistoryPanelViewModel" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="SubmissionHistoryPanelViewModel" /> class.</summary>
         public SubmissionHistoryPanelViewModel(IDataService dataService)
         {
             _dataService = dataService;
@@ -25,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializedAsync += SubmissionHistoryPanelViewModel_InitializedAsync;
             ClosedAsync += SubmissionHistoryPanelViewModel_ClosedAsync;
 
-            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            InitializeCommands();
         }
 
         private Task SubmissionHistoryPanelViewModel_InitializedAsync(object sender, EventArgs e)
@@ -50,21 +48,14 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = _dataService.CurrentNotebook;
         }
 
-        /// <summary>
-        /// Initial Length of the Panel, before any resizing.
-        /// </summary>
-        public override double InitialLength
-        {
-            get { return 300.0; }
-        }
+        /// <summary>Initial Length of the Panel, before any resizing.</summary>
+        public override double InitialLength => 300.0;
 
         #endregion //Constructor
 
         #region Model
 
-        /// <summary>
-        /// Notebook associated with the panel.
-        /// </summary>
+        /// <summary>Notebook associated with the panel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -74,9 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
-        /// <summary>
-        /// Current, selected submission.
-        /// </summary>
+        /// <summary>Current, selected submission.</summary>
         [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
@@ -84,20 +73,20 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler:CurrentPageChangedEventHandler);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: CurrentPageChangedEventHandler);
 
         private static void CurrentPageChangedEventHandler(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
-            if(!advancedPropertyChangedEventArgs.IsNewValueMeaningful)
+            if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful)
             {
                 return;
             }
 
             var submissionHistoryPanel = sender as SubmissionHistoryPanelViewModel;
             var currentPage = advancedPropertyChangedEventArgs.NewValue as CLPPage;
-            if(submissionHistoryPanel == null || 
-               currentPage == null ||
-               currentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            if (submissionHistoryPanel == null ||
+                currentPage == null ||
+                currentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
             }
@@ -105,11 +94,11 @@ namespace Classroom_Learning_Partner.ViewModels
             submissionHistoryPanel.OriginPage = currentPage;
             submissionHistoryPanel.SubmissionPages = currentPage.Submissions;
 
-            submissionHistoryPanel.RaisePropertyChanged("IsSelectedANonSubmission");
+            submissionHistoryPanel.RaisePropertyChanged(nameof(IsSelectedANonSubmission));
         }
 
         #endregion //Model
-        
+
         #region Bindings
 
         public bool IsSelectedANonSubmission
@@ -117,9 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return CurrentPage?.VersionIndex == 0; }
         }
 
-        /// <summary>
-        /// The live version of the <see cref="CLPPage" /> as it exists in the Notebook Pages Panel.
-        /// </summary>
+        /// <summary>The live version of the <see cref="CLPPage" /> as it exists in the Notebook Pages Panel.</summary>
         public CLPPage OriginPage
         {
             get { return GetValue<CLPPage>(OriginPageProperty); }
@@ -128,9 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData OriginPageProperty = RegisterProperty("OriginPage", typeof(CLPPage));
 
-        /// <summary>
-        /// All the submissions for the desired page.
-        /// </summary>
+        /// <summary>All the submissions for the desired page.</summary>
         public ObservableCollection<CLPPage> SubmissionPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
@@ -143,31 +128,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Sets the current selected page in the listbox.
-        /// </summary>
+        private void InitializeCommands()
+        {
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+        }
+
+        /// <summary>Sets the current selected page in the listbox.</summary>
         public Command<CLPPage> SetCurrentPageCommand { get; private set; }
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            _dataService.SetCurrentPage(page);
 
-            if(notebookWorkspaceViewModel.CurrentDisplay == null)
-            {
-                //Take thumbnail of page before navigating away from it.
-                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
-                CurrentPage = page;
-                RaisePropertyChanged("IsSelectedANonSubmission");
-                return;
-            }
-
-            notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-
-            RaisePropertyChanged("IsSelectedANonSubmission");
+            RaisePropertyChanged(nameof(IsSelectedANonSubmission));
         }
 
         #endregion //Commands
