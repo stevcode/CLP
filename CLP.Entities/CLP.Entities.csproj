@@ -204,7 +204,7 @@
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectCutHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectResizeBatchHistoryItem.cs" />
     <Compile Include="DomainModel\People\IConnectedPerson.cs" />
-    <Compile Include="DomainModel\Notebook.cs" />
+    <Compile Include="DomainModel\Cache\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />

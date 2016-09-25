@@ -20,7 +20,7 @@ namespace CLP.Entities
             IsDirty = false;
         }
 
-        public string ToJsonString(bool formatWithIndents = false)
+        public string ToJsonString(bool formatWithIndents = true)
         {
             using (var stream = new MemoryStream())
             {
@@ -36,14 +36,6 @@ namespace CLP.Entities
             }
         }
 
-        public static T Load<T>(string fileName, SerializationMode mode) where T : class
-        {
-            using (Stream stream = new FileStream(fileName, FileMode.Open))
-            {
-                return Load<T>(stream, mode);
-            }
-        }
-
         public static T FromJsonString<T>(string json) where T : class
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
@@ -51,6 +43,14 @@ namespace CLP.Entities
                 var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
                 var deserialized = jsonSerializer.Deserialize(typeof(T), stream);
                 return (T)deserialized;
+            }
+        }
+
+        public static T Load<T>(string fileName, SerializationMode mode) where T : class
+        {
+            using (Stream stream = new FileStream(fileName, FileMode.Open))
+            {
+                return Load<T>(stream, mode);
             }
         }
 

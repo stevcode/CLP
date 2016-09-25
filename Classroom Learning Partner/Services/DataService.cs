@@ -140,6 +140,8 @@ namespace Classroom_Learning_Partner.Services
     {
         #region Constants
 
+        private const string CONTAINER_EXTENSION = "clp";
+
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
         private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
@@ -527,6 +529,33 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Display Methods
+
+        #region Save Methods
+
+        public void SaveLocal()
+        {
+            var cacheFolderPath = CurrentCacheFolderPath;
+            var fileName = $"{ValidateFileNameString(CurrentClassRoster.DefaultContainerFileName)}.{CONTAINER_EXTENSION}";
+            var fullFilePath = Path.Combine(cacheFolderPath, fileName);
+
+            var rosterString = CurrentClassRoster.ToJsonString();
+            var notebookString = CurrentNotebook.ToJsonString();
+            var notebookInternalPath = ZipExtensions.CombineEntryDirectoryAndName(ZIP_NOTEBOOKS_FOLDER_PATH + CurrentNotebook.InternalZipFileDirectoryName + "/", "notebook.json");
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+
+                zip.AddEntry("classRoster.json", rosterString);
+                zip.AddEntry(notebookInternalPath, notebookString);
+
+                zip.Save(fullFilePath);
+            }
+        }
+
+        #endregion // Save Methods
 
         #endregion // Methods
 
@@ -1317,7 +1346,6 @@ namespace Classroom_Learning_Partner.Services
         //} 
 
         #endregion //Old ClassPeriod Methods
-
 
         #endregion //Methods
 

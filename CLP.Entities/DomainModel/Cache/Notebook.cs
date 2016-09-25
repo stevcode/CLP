@@ -229,7 +229,6 @@ namespace CLP.Entities
             }
 
             notebook.CurrentPageID = page.ID;
-            notebook.OwnerID = page.OwnerID;
             notebook.CurrentPageVersionIndex = page.VersionIndex;
         }
 
@@ -451,5 +450,18 @@ namespace CLP.Entities
                 }
             }
         }
+
+        #region Storage
+
+        public string InternalZipFileDirectoryName
+        {
+            get
+            {
+                var ownerType = OwnerID == Person.AUTHOR_ID ? "A" : Owner.IsStudent ? "S" : "T";
+                return $"{ownerType};{Owner.FullName};{Owner.ID}";
+            }
+        }
+
+        #endregion // Storage
     }
 }

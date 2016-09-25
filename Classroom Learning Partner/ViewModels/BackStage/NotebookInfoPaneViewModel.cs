@@ -70,6 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveCurrentNotebookCommandExecute()
         {
+            _dataService.SaveLocal();
             SaveCurrentNotebook();
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -122,18 +123,25 @@ namespace CLP.Entities
 
         public static readonly PropertyData StateProperty = RegisterProperty("State", typeof(string), string.Empty);
 
+        #endregion // Properties
+
+        #region Storage
+
         /// <summary>Associated FileInfo of the classroster's container.</summary>
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public FileInfo FilePathFileInfo
+        public string ContainerFilePath { get; set; }
+
+        public string DefaultContainerFileName
         {
-            get { return GetValue<FileInfo>(FilePathFileInfoProperty); }
-            set { SetValue(FilePathFileInfoProperty, value); }
+            get
+            {
+                var teacherName = ListOfTeachers.Any() ? ListOfTeachers.First().FullName : Person.Author.FullName;
+                return $"{teacherName} - {SubjectName}";
+            }
         }
 
-        public static readonly PropertyData FilePathFileInfoProperty = RegisterProperty("FilePathFileInfo", typeof(FileInfo));
-
-        #endregion // Properties
+        #endregion // Storage
     }
 }

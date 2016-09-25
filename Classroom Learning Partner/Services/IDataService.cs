@@ -33,6 +33,8 @@ namespace Classroom_Learning_Partner.Services
 
         void AddDisplay(Notebook notebook, IDisplay display);
 
+        void SaveLocal();
+
         void CreateTestNotebookSet();
 
 
