@@ -63,7 +63,7 @@ namespace CLP.Entities
                 throw new ArgumentException("The type must be serializable.", modelType.ToString());
             }
 
-            return FromJsonString<dynamic>(ToJsonString(true));
+            return FromJsonString<dynamic>(ToJsonString());
         }
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
-using Catel.IoC;
 using Catel.Runtime.Serialization;
-using Catel.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 
 namespace CLP.Entities
@@ -38,54 +35,6 @@ namespace CLP.Entities
     }
 
     #endregion // Enums
-
-    public class PageNameComposite
-    {
-        public const string QUALIFIER_TEXT = "p";
-        public string PageNumber { get; set; }
-        public string ID { get; set; }
-        public string DifferentiationGroupName { get; set; }
-        public string VersionIndex { get; set; }
-
-        public string ToFileName()
-        {
-            return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex);
-        }
-
-        public static PageNameComposite ParsePage(CLPPage page)
-        {
-            var nameComposite = new PageNameComposite
-                                {
-                                    PageNumber = page.PageNumber.ToString(),
-                                    ID = page.ID,
-                                    DifferentiationGroupName = page.DifferentiationLevel,
-                                    VersionIndex = page.VersionIndex.ToString()
-                                };
-
-            return nameComposite;
-        }
-
-        public static PageNameComposite ParseFilePath(string pageFilePath)
-        {
-            var fileInfo = new FileInfo(pageFilePath);
-            var pageFileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
-            var pageFileParts = pageFileName.Split(';');
-            if (pageFileParts.Length != 5)
-            {
-                return null;
-            }
-
-            var nameComposite = new PageNameComposite
-                                {
-                                    PageNumber = pageFileParts[1],
-                                    ID = pageFileParts[2],
-                                    DifferentiationGroupName = pageFileParts[3],
-                                    VersionIndex = pageFileParts[4]
-                                };
-
-            return nameComposite;
-        }
-    }
 
     public class PageNumberComparer : IComparer<CLPPage>
     {
@@ -782,36 +731,6 @@ namespace CLP.Entities
             return newPage;
         }
 
-        public CLPPage CreateOriginalVersion()
-        {
-            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
-            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x != null));
-            CLPPage copy = this.DeepCopy();
-            if (copy == null)
-            {
-                return null;
-            }
-            copy.VersionIndex = 0;
-            copy.History.VersionIndex = 0;
-
-            foreach (var pageObject in copy.PageObjects.Where(x => x != null))
-            {
-                pageObject.ParentPage = copy;
-            }
-
-            foreach (var pageObject in copy.History.TrashedPageObjects.Where(x => x != null))
-            {
-                pageObject.ParentPage = copy;
-            }
-
-            foreach (var tag in copy.Tags.Where(x => x != null))
-            {
-                tag.ParentPage = copy;
-            }
-
-            return copy;
-        }
-
         public void UpdateAllReporters()
         {
             foreach (var reporter in PageObjects.OfType<IReporter>())
@@ -822,198 +741,6 @@ namespace CLP.Entities
 
         #endregion //Methods
 
-        #region Cache
-
-        public bool IsCached { get; set; }
-
-        public void ToJSON(string pageFilePath, bool serializeInkStrokes = true)
-        {
-            if (serializeInkStrokes)
-            {
-                SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
-                History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
-            }
-
-            var fileInfo = new FileInfo(pageFilePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
-            {
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                jsonSerializer.WriteTypeInfo = true;
-                jsonSerializer.PreserveReferences = true;
-                jsonSerializer.Serialize(this, stream);
-
-                ClearIsDirtyOnAllChilds();
-            }
-            IsCached = true;
-        }
-
-        public void ToXML(string pageFilePath, bool serializeInkStrokes = true)
-        {
-            if (serializeInkStrokes)
-            {
-                SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
-                History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
-            }
-
-            var fileInfo = new FileInfo(pageFilePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
-            {
-                var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-            IsCached = true;
-        }
-
-        public void SaveToXML(string folderPath, bool serializeInkStrokes = true)
-        {
-            var nameComposite = PageNameComposite.ParsePage(this);
-            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
-            ToXML(filePath, serializeInkStrokes);
-
-            //if(page.PageThumbnail == null)
-            //{
-            //    return;
-            //}
-
-            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
-            //if(!Directory.Exists(thumbnailsFolderPath))
-            //{
-            //    Directory.CreateDirectory(thumbnailsFolderPath);
-            //}
-            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
-
-            //var pngEncoder = new PngBitmapEncoder();
-            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
-            //using(var outputStream = new MemoryStream())
-            //{
-            //    pngEncoder.Save(outputStream);
-            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-            //}
-        }
-
-        public void SaveToJSON(string folderPath, bool serializeInkStrokes = true)
-        {
-            var nameComposite = PageNameComposite.ParsePage(this);
-            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".json");
-            ToJSON(filePath, serializeInkStrokes);
-
-            //if(page.PageThumbnail == null)
-            //{
-            //    return;
-            //}
-
-            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
-            //if(!Directory.Exists(thumbnailsFolderPath))
-            //{
-            //    Directory.CreateDirectory(thumbnailsFolderPath);
-            //}
-            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
-
-            //var pngEncoder = new PngBitmapEncoder();
-            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
-            //using(var outputStream = new MemoryStream())
-            //{
-            //    pngEncoder.Save(outputStream);
-            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-            //}
-        }
-
-        public static CLPPage LoadFromJSON(string pageFilePath)
-        {
-            try
-            {
-                var nameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                if (nameComposite == null)
-                {
-                    return null;
-                }
-
-                CLPPage page;
-                using (var stream = new FileStream(pageFilePath, FileMode.Open))
-                {
-                    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                    jsonSerializer.WriteTypeInfo = true;
-                    jsonSerializer.PreserveReferences = true;
-                    //page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
-                    var uncastPage = jsonSerializer.Deserialize(typeof(CLPPage), stream);
-                    page = (CLPPage)uncastPage;
-                }
-
-                if (page == null)
-                {
-                    return null;
-                }
-
-                page.PageNumber = decimal.Parse(nameComposite.PageNumber);
-                page.ID = nameComposite.ID;
-                page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
-                page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                //page.AfterDeserialization();
-
-                // BUG: loaded thumbnails don't let go of their disk reference.
-                //var fileInfo = new FileInfo(pageFilePath);
-                //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
-                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
-                //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
-
-                return page;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
-        }
-
-        public static CLPPage LoadFromXML(string pageFilePath)
-        {
-            try
-            {
-                var nameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                if (nameComposite == null)
-                {
-                    return null;
-                }
-
-                var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                if (page == null)
-                {
-                    return null;
-                }
-
-                page.PageNumber = decimal.Parse(nameComposite.PageNumber);
-                page.ID = nameComposite.ID;
-                page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
-                page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                //page.AfterDeserialization();
-
-                // BUG: loaded thumbnails don't let go of their disk reference.
-                //var fileInfo = new FileInfo(pageFilePath);
-                //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
-                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
-                //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
-
-                return page;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        #endregion //Cache
-
         #region Overrides of ModelBase
 
         protected override void OnSerializing()
@@ -1022,6 +749,27 @@ namespace CLP.Entities
 
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
             History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
+
+            // TODO: Save thumbnail after/during serialization
+            //if(page.PageThumbnail == null)
+            //{
+            //    return;
+            //}
+
+            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
+            //if(!Directory.Exists(thumbnailsFolderPath))
+            //{
+            //    Directory.CreateDirectory(thumbnailsFolderPath);
+            //}
+            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+
+            //var pngEncoder = new PngBitmapEncoder();
+            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+            //using(var outputStream = new MemoryStream())
+            //{
+            //    pngEncoder.Save(outputStream);
+            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            //}
         }
 
         protected override void OnDeserialized()
@@ -1053,6 +801,13 @@ namespace CLP.Entities
             {
                 pageObject.LoadAcceptedPageObjects();
             }
+
+            // TODO: Load thumbnail after deserialized
+            // BUG: loaded thumbnails don't let go of their disk reference.
+            //var fileInfo = new FileInfo(pageFilePath);
+            //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
+            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+            //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
 
             base.OnDeserialized();
         }

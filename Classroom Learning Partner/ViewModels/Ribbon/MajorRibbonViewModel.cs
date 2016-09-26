@@ -764,7 +764,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            try
                                                            {
                                                                page.Submissions.Add(submission);
-                                                               page.IsCached = true;
+                                                               //page.IsCached = true;
                                                            }
                                                            catch (Exception e)
                                                            {
@@ -822,7 +822,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return !_dataService.CurrentPage.IsCached;
+            return true; // !_dataService.CurrentPage.IsCached;
         }
 
         #endregion //Sharing Commands

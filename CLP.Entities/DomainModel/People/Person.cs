@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace CLP.Entities
 {
@@ -29,7 +26,7 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="Person" /> from scratch.</summary>
         public Person()
         {
-            ID = Guid.NewGuid().ToCompactID(); 
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         #endregion //Constructors
@@ -43,7 +40,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Person's First Name</summary>
         public string FirstName
@@ -71,7 +68,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData MiddleNameProperty = RegisterProperty("MiddleName", typeof(string), string.Empty);
-        
+
         /// <summary>Person's Last name</summary>
         public string LastName
         {
@@ -97,7 +94,7 @@ namespace CLP.Entities
             set { SetValue(IsStudentProperty, value); }
         }
 
-        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof (bool), true);
+        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
 
         public string CurrentDifferentiationGroup
         {
@@ -105,7 +102,7 @@ namespace CLP.Entities
             set { SetValue(CurrentDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof (string), string.Empty);
+        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), string.Empty);
 
         public string TemporaryDifferentiationGroup
         {
@@ -113,7 +110,7 @@ namespace CLP.Entities
             set { SetValue(TemporaryDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData TemporaryDifferentiationGroupProperty = RegisterProperty("TemporaryDifferentiationGroup", typeof (string), string.Empty);
+        public static readonly PropertyData TemporaryDifferentiationGroupProperty = RegisterProperty("TemporaryDifferentiationGroup", typeof(string), string.Empty);
 
         /// <summary>Left or Right Handed.</summary>
         public Handedness Handedness

@@ -104,187 +104,187 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
+            //var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            //if (dataService == null)
+            //{
+            //    return;
+            //}
 
-            var unZippedPage = zippedPage.DecompressFromGZip();
-            var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
+            //var unZippedPage = zippedPage.DecompressFromGZip();
+            //var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            if (submission == null)
-            {
-                Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
-                return;
-            }
-            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-            submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
+            //if (submission == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
+            //    return;
+            //}
+            //submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+            //submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
 
-            var currentNotebook = dataService.CurrentNotebook;
+            //var currentNotebook = dataService.CurrentNotebook;
 
-            if (currentNotebook == null)
-            {
-                return;
-            }
+            //if (currentNotebook == null)
+            //{
+            //    return;
+            //}
 
-            var submissionNameComposite = PageNameComposite.ParsePage(submission);
-            var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
-            notebookNameComposite.OwnerID = submission.OwnerID;
-            if (submission.Owner == null)
-            {
-                return;
-            }
-            notebookNameComposite.OwnerName = submission.Owner.FullName;
-            notebookNameComposite.OwnerTypeTag = "S";
+            //var submissionNameComposite = PageNameComposite.ParsePage(submission);
+            //var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
+            //notebookNameComposite.OwnerID = submission.OwnerID;
+            //if (submission.Owner == null)
+            //{
+            //    return;
+            //}
+            //notebookNameComposite.OwnerName = submission.Owner.FullName;
+            //notebookNameComposite.OwnerTypeTag = "S";
 
-            var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
-            if (!Directory.Exists(collectionPath))
-            {
-                Directory.CreateDirectory(collectionPath);
-            }
-            var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
-            if (!Directory.Exists(notebookPath))
-            {
-                Directory.CreateDirectory(notebookPath);
-            }
-            var pagesPath = Path.Combine(notebookPath, "Pages");
-            if (!Directory.Exists(pagesPath))
-            {
-                Directory.CreateDirectory(pagesPath);
-            }
-            var pageFilePath = Path.Combine(pagesPath, submissionNameComposite.ToFileName() + ".xml");
-            submission.ToXML(pageFilePath);
+            //var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
+            //if (!Directory.Exists(collectionPath))
+            //{
+            //    Directory.CreateDirectory(collectionPath);
+            //}
+            //var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
+            //if (!Directory.Exists(notebookPath))
+            //{
+            //    Directory.CreateDirectory(notebookPath);
+            //}
+            //var pagesPath = Path.Combine(notebookPath, "Pages");
+            //if (!Directory.Exists(pagesPath))
+            //{
+            //    Directory.CreateDirectory(pagesPath);
+            //}
+            //var pageFilePath = Path.Combine(pagesPath, submissionNameComposite.ToFileName() + ".xml");
+            //submission.ToXML(pageFilePath);
 
-            var studentNotebookInfo = dataService.LoadedNotebooksInfo.FirstOrDefault(ni => ni.Notebook != null && ni.Notebook.OwnerID == submission.OwnerID);
-            if (studentNotebookInfo == null ||
-                studentNotebookInfo.Notebook == null)
-            {
-                return;
-            }
+            //var studentNotebookInfo = dataService.LoadedNotebooksInfo.FirstOrDefault(ni => ni.Notebook != null && ni.Notebook.OwnerID == submission.OwnerID);
+            //if (studentNotebookInfo == null ||
+            //    studentNotebookInfo.Notebook == null)
+            //{
+            //    return;
+            //}
 
-            var studentNotebook = studentNotebookInfo.Notebook;
-            var studentPage = studentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
-            if (studentPage == null ||
-                !studentPage.Owner.IsStudent)
-            {
-                return;
-            }
+            //var studentNotebook = studentNotebookInfo.Notebook;
+            //var studentPage = studentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            //if (studentPage == null ||
+            //    !studentPage.Owner.IsStudent)
+            //{
+            //    return;
+            //}
 
-            var teacherPage = currentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            //var teacherPage = currentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        try
-                                                                                        {
-                                                                                            studentPage.Submissions.Add(submission);
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
+            //                                                                            try
+            //                                                                            {
+            //                                                                                studentPage.Submissions.Add(submission);
 
-                                                                                            if (teacherPage != null)
-                                                                                            {
-                                                                                                var pageViewModels = teacherPage.GetAllViewModels();
-                                                                                                foreach (var pageViewModel in pageViewModels)
-                                                                                                {
-                                                                                                    var pageVM = pageViewModel as ACLPPageBaseViewModel;
-                                                                                                    if (pageVM == null)
-                                                                                                    {
-                                                                                                        continue;
-                                                                                                    }
-                                                                                                    pageVM.UpdateSubmissionCount();
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                        catch (Exception e)
-                                                                                        {
-                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
-                                                                                                                       e.Message);
-                                                                                        }
+            //                                                                                if (teacherPage != null)
+            //                                                                                {
+            //                                                                                    var pageViewModels = teacherPage.GetAllViewModels();
+            //                                                                                    foreach (var pageViewModel in pageViewModels)
+            //                                                                                    {
+            //                                                                                        var pageVM = pageViewModel as ACLPPageBaseViewModel;
+            //                                                                                        if (pageVM == null)
+            //                                                                                        {
+            //                                                                                            continue;
+            //                                                                                        }
+            //                                                                                        pageVM.UpdateSubmissionCount();
+            //                                                                                    }
+            //                                                                                }
+            //                                                                            }
+            //                                                                            catch (Exception e)
+            //                                                                            {
+            //                                                                                Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+            //                                                                                                           e.Message);
+            //                                                                            }
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
 
-            if (App.Network.ProjectorProxy == null)
-            {
-                Logger.Instance.WriteToLog("Projector NOT Available for Student Submission");
-                return;
-            }
+            //if (App.Network.ProjectorProxy == null)
+            //{
+            //    Logger.Instance.WriteToLog("Projector NOT Available for Student Submission");
+            //    return;
+            //}
 
-            var t = new Thread(() =>
-            {
-                try
-                {
-                    App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                }
-            })
-            {
-                IsBackground = true
-            };
-            t.Start();
+            //var t = new Thread(() =>
+            //{
+            //    try
+            //    {
+            //        App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+            //    }
+            //})
+            //{
+            //    IsBackground = true
+            //};
+            //t.Start();
         }
 
         public void AddSerializedPages(string zippedPages, string notebookID)
         {
-            Logger.Instance.WriteToLog("received pages");
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
+            //Logger.Instance.WriteToLog("received pages");
+            //var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            //if (dataService == null)
+            //{
+            //    return;
+            //}
 
-            var currentNotebook = dataService.CurrentNotebook;
+            //var currentNotebook = dataService.CurrentNotebook;
 
-            if (currentNotebook == null)
-            {
-                return;
-            }
+            //if (currentNotebook == null)
+            //{
+            //    return;
+            //}
 
-            var unZippedPages = zippedPages.DecompressFromGZip();
-            var pages = ObjectSerializer.ToObject(unZippedPages) as List<CLPPage>;
+            //var unZippedPages = zippedPages.DecompressFromGZip();
+            //var pages = ObjectSerializer.ToObject(unZippedPages) as List<CLPPage>;
 
-            if (pages == null)
-            {
-                Logger.Instance.WriteToLog("Failed to receive student pages. Pages is null");
-                return;
-            }
+            //if (pages == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to receive student pages. Pages is null");
+            //    return;
+            //}
 
-            foreach (var page in pages)
-            {
-                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+            //foreach (var page in pages)
+            //{
+            //    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+            //    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
 
-                var pageNameComposite = PageNameComposite.ParsePage(page);
-                var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
-                notebookNameComposite.OwnerID = page.OwnerID;
-                if (page.Owner == null)
-                {
-                    return;
-                }
-                notebookNameComposite.OwnerName = page.Owner.FullName;
-                notebookNameComposite.OwnerTypeTag = "S";
+            //    var pageNameComposite = PageNameComposite.ParsePage(page);
+            //    var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
+            //    notebookNameComposite.OwnerID = page.OwnerID;
+            //    if (page.Owner == null)
+            //    {
+            //        return;
+            //    }
+            //    notebookNameComposite.OwnerName = page.Owner.FullName;
+            //    notebookNameComposite.OwnerTypeTag = "S";
 
-                var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
-                if (!Directory.Exists(collectionPath))
-                {
-                    Directory.CreateDirectory(collectionPath);
-                }
-                var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
-                if (!Directory.Exists(notebookPath))
-                {
-                    Directory.CreateDirectory(notebookPath);
-                }
-                var pagesPath = Path.Combine(notebookPath, "Pages");
-                if (!Directory.Exists(pagesPath))
-                {
-                    Directory.CreateDirectory(pagesPath);
-                }
-                var pageFilePath = Path.Combine(pagesPath, pageNameComposite.ToFileName() + ".xml");
-                page.ToXML(pageFilePath);
-            }
+            //    var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
+            //    if (!Directory.Exists(collectionPath))
+            //    {
+            //        Directory.CreateDirectory(collectionPath);
+            //    }
+            //    var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
+            //    if (!Directory.Exists(notebookPath))
+            //    {
+            //        Directory.CreateDirectory(notebookPath);
+            //    }
+            //    var pagesPath = Path.Combine(notebookPath, "Pages");
+            //    if (!Directory.Exists(pagesPath))
+            //    {
+            //        Directory.CreateDirectory(pagesPath);
+            //    }
+            //    var pageFilePath = Path.Combine(pagesPath, pageNameComposite.ToFileName() + ".xml");
+            //    page.ToXML(pageFilePath);
+            //}
         }
 
         public void CollectStudentNotebook(string zippedNotebook, string studentName)

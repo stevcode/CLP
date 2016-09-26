@@ -105,11 +105,6 @@ namespace Classroom_Learning_Partner.Services
             get { return Path.Combine(NotebookFolderPath, "notebook.xml"); }
         }
 
-        public NotebookNameComposite NameComposite
-        {
-            get { return NotebookNameComposite.ParseFolderPath(NotebookFolderPath); }
-        }
-
         public string LastSavedTime
         {
             get { return !File.Exists(NotebookFilePath) ? string.Empty : File.GetLastWriteTime(NotebookFilePath).ToString("MM/dd/yy HH:mm:ss"); }
@@ -698,8 +693,6 @@ namespace Classroom_Learning_Partner.Services
 
         public NotebookInfo CurrentNotebookInfo { get; set; }
 
-
-
         #endregion //Notebook Properties
 
         #endregion //Properties
@@ -732,10 +725,10 @@ namespace Classroom_Learning_Partner.Services
                 directoryInfo.GetDirectories()
                              .Select(directory => new NotebookInfo(cache, directory.FullName))
                              .Where(nc => nc != null)
-                             .OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
-                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
-                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
-                             .ThenBy(nc => nc.NameComposite.OwnerName)
+                             //.OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
+                             //.ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
+                             //.ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
+                             //.ThenBy(nc => nc.NameComposite.OwnerName)
                              .ToList();
         }
 
@@ -744,18 +737,18 @@ namespace Classroom_Learning_Partner.Services
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
             var pageIDs = new ConcurrentBag<string>();
 
-            Parallel.ForEach(pageFilePaths,
-                             pageFilePath =>
-                             {
-                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                                 if (pageNameComposite == null ||
-                                     pageNameComposite.VersionIndex != "0")
-                                 {
-                                     return;
-                                 }
+            //Parallel.ForEach(pageFilePaths,
+            //                 pageFilePath =>
+            //                 {
+            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //                     if (pageNameComposite == null ||
+            //                         pageNameComposite.VersionIndex != "0")
+            //                     {
+            //                         return;
+            //                     }
 
-                                 pageIDs.Add(pageNameComposite.ID);
-                             });
+            //                     pageIDs.Add(pageNameComposite.ID);
+            //                 });
 
             return pageIDs.Distinct().ToList();
         }
@@ -765,31 +758,31 @@ namespace Classroom_Learning_Partner.Services
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
             var pageIDs = new ConcurrentBag<string>();
 
-            Parallel.ForEach(pageFilePaths,
-                             pageFilePath =>
-                             {
-                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                                 if (pageNameComposite == null ||
-                                     pageNameComposite.VersionIndex != "0")
-                                 {
-                                     return;
-                                 }
+            //Parallel.ForEach(pageFilePaths,
+            //                 pageFilePath =>
+            //                 {
+            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //                     if (pageNameComposite == null ||
+            //                         pageNameComposite.VersionIndex != "0")
+            //                     {
+            //                         return;
+            //                     }
 
-                                 int pageNumber;
-                                 var isPageNumber = int.TryParse(pageNameComposite.PageNumber, out pageNumber);
-                                 if (!isPageNumber)
-                                 {
-                                     return;
-                                 }
+            //                     int pageNumber;
+            //                     var isPageNumber = int.TryParse(pageNameComposite.PageNumber, out pageNumber);
+            //                     if (!isPageNumber)
+            //                     {
+            //                         return;
+            //                     }
 
-                                 var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
-                                 if (!isPageToBeLoaded)
-                                 {
-                                     return;
-                                 }
+            //                     var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
+            //                     if (!isPageToBeLoaded)
+            //                     {
+            //                         return;
+            //                     }
 
-                                 pageIDs.Add(pageNameComposite.ID);
-                             });
+            //                     pageIDs.Add(pageNameComposite.ID);
+            //                 });
 
             return pageIDs.Distinct().ToList();
         }
@@ -797,14 +790,14 @@ namespace Classroom_Learning_Partner.Services
         public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
         {
             var submissions = new List<CLPPage>();
-            foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
-            {
-                var pageSubmissions = notebookInfo.Notebook.Pages.Where(p => p.ID == pageID && p.DifferentiationLevel == differentiationLevel && p.VersionIndex == 0).Select(p => p.Submissions).ToList();
-                foreach (var pageSubmission in pageSubmissions)
-                {
-                    submissions.AddRange(pageSubmission);
-                }
-            }
+            //foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
+            //{
+            //    var pageSubmissions = notebookInfo.Notebook.Pages.Where(p => p.ID == pageID && p.DifferentiationLevel == differentiationLevel && p.VersionIndex == 0).Select(p => p.Submissions).ToList();
+            //    foreach (var pageSubmission in pageSubmissions)
+            //    {
+            //        submissions.AddRange(pageSubmission);
+            //    }
+            //}
 
             return submissions;
         }
@@ -820,30 +813,30 @@ namespace Classroom_Learning_Partner.Services
         {
             var submissions = new ConcurrentBag<CLPPage>();
 
-            Parallel.ForEach(pageFilePathsToCheck,
-                             pageFilePath =>
-                             {
-                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                                 if (pageNameComposite == null ||
-                                     pageNameComposite.VersionIndex == "0")
-                                 {
-                                     return;
-                                 }
+            //Parallel.ForEach(pageFilePathsToCheck,
+            //                 pageFilePath =>
+            //                 {
+            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //                     if (pageNameComposite == null ||
+            //                         pageNameComposite.VersionIndex == "0")
+            //                     {
+            //                         return;
+            //                     }
 
-                                 var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
-                                 if (!isPageToBeLoaded)
-                                 {
-                                     return;
-                                 }
+            //                     var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
+            //                     if (!isPageToBeLoaded)
+            //                     {
+            //                         return;
+            //                     }
 
-                                 var page = CLPPage.LoadFromXML(pageFilePath);
-                                 if (page == null)
-                                 {
-                                     return;
-                                 }
+            //                     var page = CLPPage.LoadFromXML(pageFilePath);
+            //                     if (page == null)
+            //                     {
+            //                         return;
+            //                     }
 
-                                 submissions.Add(page);
-                             });
+            //                     submissions.Add(page);
+            //                 });
 
             return submissions.ToList();
         }
@@ -851,14 +844,14 @@ namespace Classroom_Learning_Partner.Services
         public static List<CLPPage> GetPagesToSave(NotebookInfo notebookInfo, bool isForcedFullSave)
         {
             var pagesToSave = new List<CLPPage>();
-            foreach (var page in notebookInfo.Notebook.Pages)
-            {
-                if (isForcedFullSave || !page.IsCached)
-                {
-                    pagesToSave.Add(page);
-                }
-                pagesToSave.AddRange(page.Submissions.Where(s => isForcedFullSave || !s.IsCached));
-            }
+            //foreach (var page in notebookInfo.Notebook.Pages)
+            //{
+            //    if (isForcedFullSave || !page.IsCached)
+            //    {
+            //        pagesToSave.Add(page);
+            //    }
+            //    pagesToSave.AddRange(page.Submissions.Where(s => isForcedFullSave || !s.IsCached));
+            //}
 
             return pagesToSave;
         }
@@ -869,187 +862,187 @@ namespace Classroom_Learning_Partner.Services
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true)
         {
-            // Is Notebook already loaded in memory?
-            var loadedNotebooks = LoadedNotebooksInfo.ToList();
-            var existingNotebookInfo = loadedNotebooks.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
-            if (existingNotebookInfo != null)
-            {
-                if (isForcedOpen)
-                {
-                    LoadedNotebooksInfo.Remove(existingNotebookInfo);
-                }
-                else
-                {
-                    if (CurrentNotebookInfo == existingNotebookInfo)
-                    {
-                        App.MainWindowViewModel.IsBackStageVisible = false;
-                    }
-                    else if (isSetToNotebookCurrentNotebook)
-                    {
-                        SetCurrentNotebook(existingNotebookInfo);
-                    }
-                    return;
-                }
-            }
+            //// Is Notebook already loaded in memory?
+            //var loadedNotebooks = LoadedNotebooksInfo.ToList();
+            //var existingNotebookInfo = loadedNotebooks.FirstOrDefault(n => n.NameComposite.ToFolderName() == notebookInfo.NameComposite.ToFolderName());
+            //if (existingNotebookInfo != null)
+            //{
+            //    if (isForcedOpen)
+            //    {
+            //        LoadedNotebooksInfo.Remove(existingNotebookInfo);
+            //    }
+            //    else
+            //    {
+            //        if (CurrentNotebookInfo == existingNotebookInfo)
+            //        {
+            //            App.MainWindowViewModel.IsBackStageVisible = false;
+            //        }
+            //        else if (isSetToNotebookCurrentNotebook)
+            //        {
+            //            SetCurrentNotebook(existingNotebookInfo);
+            //        }
+            //        return;
+            //    }
+            //}
 
-            // Guarantee folder structure.
-            notebookInfo.Cache.Initialize();
-            notebookInfo.Initialize();
+            //// Guarantee folder structure.
+            //notebookInfo.Cache.Initialize();
+            //notebookInfo.Initialize();
 
-            // Is Notebook included in notebookInfo (e.g. send across the network instead of being loaded from the disk).
-            if (notebookInfo.Notebook != null)
-            {
-                LoadedNotebooksInfo.Add(notebookInfo);
-                if (isSetToNotebookCurrentNotebook)
-                {
-                    SetCurrentNotebook(notebookInfo);
-                }
-                return;
-            }
+            //// Is Notebook included in notebookInfo (e.g. send across the network instead of being loaded from the disk).
+            //if (notebookInfo.Notebook != null)
+            //{
+            //    LoadedNotebooksInfo.Add(notebookInfo);
+            //    if (isSetToNotebookCurrentNotebook)
+            //    {
+            //        SetCurrentNotebook(notebookInfo);
+            //    }
+            //    return;
+            //}
 
-            // Load Notebook from disk.
-            var notebook = Notebook.LoadFromXML(notebookInfo.NotebookFolderPath);
-            if (notebook == null)
-            {
-                MessageBox.Show("Notebook couldn't be loaded.");
-                return;
-            }
+            //// Load Notebook from disk.
+            //var notebook = Notebook.LoadFromXML(notebookInfo.NotebookFolderPath);
+            //if (notebook == null)
+            //{
+            //    MessageBox.Show("Notebook couldn't be loaded.");
+            //    return;
+            //}
 
-            notebookInfo.Notebook = notebook;
+            //notebookInfo.Notebook = notebook;
 
-            LoadedNotebooksInfo.Add(notebookInfo);
-            if (isSetToNotebookCurrentNotebook)
-            {
-                SetCurrentNotebook(notebookInfo);
-            }
+            //LoadedNotebooksInfo.Add(notebookInfo);
+            //if (isSetToNotebookCurrentNotebook)
+            //{
+            //    SetCurrentNotebook(notebookInfo);
+            //}
         }
 
         public void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced)
         {
-            if (notebookInfo.Notebook == null)
-            {
-                return;
-            }
-
-            if (isExistingPagesReplaced)
-            {
-                notebookInfo.Notebook.Pages.Clear();
-                notebookInfo.Notebook.CurrentPage = null;
-            }
-
-            var pagesToLoad = new List<CLPPage>();
-
-            if (notebookInfo.Pages != null &&
-                notebookInfo.Pages.Any()) // Load pages included in notebookInfo (e.g. ones sent across the network).
-            {
-                pagesToLoad = notebookInfo.Pages;
-            }
-            else // Load local pages.
-            {
-                var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
-
-                foreach (var pageFilePath in pageFilePaths)
-                {
-                    var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                    if (pageNameComposite == null ||
-                        pageNameComposite.VersionIndex != "0")
-                    {
-                        continue;
-                    }
-
-                    var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
-                    if (!isPageToBeLoaded)
-                    {
-                        continue;
-                    }
-
-                    var page = CLPPage.LoadFromXML(pageFilePath);
-                    if (page == null)
-                    {
-                        continue;
-                    }
-
-                    pagesToLoad.Add(page);
-                }
-
-                // BUG: Parellel calls invoke threading errors.
-                //Parallel.ForEach(pageFilePaths,
-                //                 pageFilePath =>
-                //                 {
-                //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                //                     if (pageNameComposite == null ||
-                //                         pageNameComposite.VersionIndex != "0")
-                //                     {
-                //                         return;
-                //                     }
-
-                //                     var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
-                //                     if (!isPageToBeLoaded)
-                //                     {
-                //                         return;
-                //                     }
-
-                //                     var page = CLPPage.LoadFromXML(pageFilePath);
-                //                     if (page == null)
-                //                     {
-                //                         return;
-                //                     }
-
-                //                     pagesToLoad.Add(page);
-                //                 });
-            }
-
-            foreach (var page in pagesToLoad)
-            {
-                var index = notebookInfo.Notebook.Pages.ToList().BinarySearch(page, new PageNumberComparer());
-                if (index < 0)
-                {
-                    index = ~index;
-                }
-                notebookInfo.Notebook.Pages.Insert(index, page);
-
-                if (notebookInfo.Notebook.CurrentPageID == page.ID &&
-                    notebookInfo.Notebook.CurrentPageOwnerID == page.OwnerID &&
-                    notebookInfo.Notebook.CurrentPageVersionIndex == page.VersionIndex)
-                {
-                    notebookInfo.Notebook.CurrentPage = page;
-                }
-            }
-
-            if (notebookInfo.Notebook.CurrentPage == null)
-            {
-                notebookInfo.Notebook.CurrentPage = notebookInfo.Notebook.Pages.FirstOrDefault();
-            }
-
-            // Load submissions from disk.
-            //if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
-            //    notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
-            //    notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
+            //if (notebookInfo.Notebook == null)
             //{
-            //    var submissions = LoadOwnSubmissionsForLoadedPages(notebookInfo);
+            //    return;
+            //}
 
-            //    foreach (var page in notebookInfo.Notebook.Pages)
+            //if (isExistingPagesReplaced)
+            //{
+            //    notebookInfo.Notebook.Pages.Clear();
+            //    notebookInfo.Notebook.CurrentPage = null;
+            //}
+
+            //var pagesToLoad = new List<CLPPage>();
+
+            //if (notebookInfo.Pages != null &&
+            //    notebookInfo.Pages.Any()) // Load pages included in notebookInfo (e.g. ones sent across the network).
+            //{
+            //    pagesToLoad = notebookInfo.Pages;
+            //}
+            //else // Load local pages.
+            //{
+            //    var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+
+            //    foreach (var pageFilePath in pageFilePaths)
             //    {
-            //        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(p => p.ID == page.ID).OrderBy(p => p.VersionIndex).ToList());
+            //        var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //        if (pageNameComposite == null ||
+            //            pageNameComposite.VersionIndex != "0")
+            //        {
+            //            continue;
+            //        }
+
+            //        var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
+            //        if (!isPageToBeLoaded)
+            //        {
+            //            continue;
+            //        }
+
+            //        var page = CLPPage.LoadFromXML(pageFilePath);
+            //        if (page == null)
+            //        {
+            //            continue;
+            //        }
+
+            //        pagesToLoad.Add(page);
+            //    }
+
+            //    // BUG: Parellel calls invoke threading errors.
+            //    //Parallel.ForEach(pageFilePaths,
+            //    //                 pageFilePath =>
+            //    //                 {
+            //    //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //    //                     if (pageNameComposite == null ||
+            //    //                         pageNameComposite.VersionIndex != "0")
+            //    //                     {
+            //    //                         return;
+            //    //                     }
+
+            //    //                     var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
+            //    //                     if (!isPageToBeLoaded)
+            //    //                     {
+            //    //                         return;
+            //    //                     }
+
+            //    //                     var page = CLPPage.LoadFromXML(pageFilePath);
+            //    //                     if (page == null)
+            //    //                     {
+            //    //                         return;
+            //    //                     }
+
+            //    //                     pagesToLoad.Add(page);
+            //    //                 });
+            //}
+
+            //foreach (var page in pagesToLoad)
+            //{
+            //    var index = notebookInfo.Notebook.Pages.ToList().BinarySearch(page, new PageNumberComparer());
+            //    if (index < 0)
+            //    {
+            //        index = ~index;
+            //    }
+            //    notebookInfo.Notebook.Pages.Insert(index, page);
+
+            //    if (notebookInfo.Notebook.CurrentPageID == page.ID &&
+            //        notebookInfo.Notebook.CurrentPageOwnerID == page.OwnerID &&
+            //        notebookInfo.Notebook.CurrentPageVersionIndex == page.VersionIndex)
+            //    {
+            //        notebookInfo.Notebook.CurrentPage = page;
             //    }
             //}
-            //else // Load all student submissions for Teacher Notebook.
+
+            //if (notebookInfo.Notebook.CurrentPage == null)
             //{
-            //    var notebookInfos = GetNotebooksInCache(notebookInfo.Cache).Where(n => n.NameComposite.ID == notebookInfo.Notebook.ID && n.NameComposite.OwnerTypeTag == "S");
-            //    var pageFilePathsToCheck = new List<string>();
-
-            //    foreach (var info in notebookInfos)
-            //    {
-            //        pageFilePathsToCheck.AddRange(Directory.EnumerateFiles(info.PagesFolderPath, "*.xml").ToList());
-            //    }
-
-            //    var submissions = LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePathsToCheck);
-
-            //    foreach (var page in notebookInfo.Notebook.Pages)
-            //    {
-            //        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
-            //    }
+            //    notebookInfo.Notebook.CurrentPage = notebookInfo.Notebook.Pages.FirstOrDefault();
             //}
+
+            //// Load submissions from disk.
+            ////if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
+            ////    notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
+            ////    notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
+            ////{
+            ////    var submissions = LoadOwnSubmissionsForLoadedPages(notebookInfo);
+
+            ////    foreach (var page in notebookInfo.Notebook.Pages)
+            ////    {
+            ////        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(p => p.ID == page.ID).OrderBy(p => p.VersionIndex).ToList());
+            ////    }
+            ////}
+            ////else // Load all student submissions for Teacher Notebook.
+            ////{
+            ////    var notebookInfos = GetNotebooksInCache(notebookInfo.Cache).Where(n => n.NameComposite.ID == notebookInfo.Notebook.ID && n.NameComposite.OwnerTypeTag == "S");
+            ////    var pageFilePathsToCheck = new List<string>();
+
+            ////    foreach (var info in notebookInfos)
+            ////    {
+            ////        pageFilePathsToCheck.AddRange(Directory.EnumerateFiles(info.PagesFolderPath, "*.xml").ToList());
+            ////    }
+
+            ////    var submissions = LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePathsToCheck);
+
+            ////    foreach (var page in notebookInfo.Notebook.Pages)
+            ////    {
+            ////        page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
+            ////    }
+            ////}
         }
 
         public void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced)
@@ -1072,26 +1065,26 @@ namespace Classroom_Learning_Partner.Services
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
             foreach (var pageFilePath in pageFilePaths)
             {
-                var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-                if (pageNameComposite == null ||
-                    pageNameComposite.VersionIndex == "0")
-                {
-                    continue;
-                }
+                //var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                //if (pageNameComposite == null ||
+                //    pageNameComposite.VersionIndex == "0")
+                //{
+                //    continue;
+                //}
 
-                var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
-                if (!isPageToBeLoaded)
-                {
-                    continue;
-                }
+                //var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
+                //if (!isPageToBeLoaded)
+                //{
+                //    continue;
+                //}
 
-                var page = CLPPage.LoadFromXML(pageFilePath);
-                if (page == null)
-                {
-                    continue;
-                }
+                //var page = CLPPage.LoadFromXML(pageFilePath);
+                //if (page == null)
+                //{
+                //    continue;
+                //}
 
-                submissions.Add(page);
+                //submissions.Add(page);
             }
 
             foreach (var page in notebookInfo.Notebook.Pages)

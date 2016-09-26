@@ -1450,25 +1450,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPrintAllHistoryItemsCommandExecute()
         {
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
+            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            //if (!Directory.Exists(fileDirectory))
+            //{
+            //    Directory.CreateDirectory(fileDirectory);
+            //}
 
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
-            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+            //var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
+            //if (File.Exists(filePath))
+            //{
+            //    File.Delete(filePath);
+            //}
+            //File.WriteAllText(filePath, "");
+            //var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
 
-            foreach (var item in historyItems)
-            {
-                File.AppendAllText(filePath, item.FormattedValue + "\n");
-            }
+            //foreach (var item in historyItems)
+            //{
+            //    File.AppendAllText(filePath, item.FormattedValue + "\n");
+            //}
         }
 
         public Command FixCommand { get; private set; }

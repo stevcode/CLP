@@ -116,34 +116,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
-            var pageIDs = DataService.GetAllPageIDsInNotebook(SelectedNotebook);
-            PleaseWaitHelper.Show(() =>
-                                  {
-                                      _dataService.LoadPages(SelectedNotebook, pageIDs, true);
-                                      _dataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, true);
-                                      if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher || App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
-                                          IsIncludeSubmissionsChecked &&
-                                          SelectedNotebook.NameComposite.OwnerTypeTag == "T")
-                                      {
-                                          Parallel.ForEach(AvailableNotebooks,
-                                                           notebookInfo =>
-                                                           {
-                                                               if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
-                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T" ||
-                                                                   notebookInfo == SelectedNotebook)
-                                                               {
-                                                                   return;
-                                                               }
+            //PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
+            //var pageIDs = DataService.GetAllPageIDsInNotebook(SelectedNotebook);
+            //PleaseWaitHelper.Show(() =>
+            //                      {
+            //                          _dataService.LoadPages(SelectedNotebook, pageIDs, true);
+            //                          _dataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, true);
+            //                          if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher || App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
+            //                              IsIncludeSubmissionsChecked &&
+            //                              SelectedNotebook.NameComposite.OwnerTypeTag == "T")
+            //                          {
+            //                              Parallel.ForEach(AvailableNotebooks,
+            //                                               notebookInfo =>
+            //                                               {
+            //                                                   if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
+            //                                                       notebookInfo.NameComposite.OwnerTypeTag == "T" ||
+            //                                                       notebookInfo == SelectedNotebook)
+            //                                                   {
+            //                                                       return;
+            //                                                   }
 
-                                                               _dataService.OpenNotebook(notebookInfo, false, false);
-                                                               _dataService.LoadPages(notebookInfo, pageIDs, true);
-                                                               _dataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
-                                                           });
-                                      }
-                                  },
-                                  null,
-                                  "Loading Pages");
+            //                                                   _dataService.OpenNotebook(notebookInfo, false, false);
+            //                                                   _dataService.LoadPages(notebookInfo, pageIDs, true);
+            //                                                   _dataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
+            //                                               });
+            //                          }
+            //                      },
+            //                      null,
+            //                      "Loading Pages");
 
             //if (App.Network.InstructorProxy == null)
             //{
@@ -166,51 +166,51 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenPageRangeCommandExecute()
         {
-            var textInputViewModel = new TextInputViewModel();
-            var textInputView = new TextInputView(textInputViewModel);
-            textInputView.ShowDialog();
+            //var textInputViewModel = new TextInputViewModel();
+            //var textInputView = new TextInputView(textInputViewModel);
+            //textInputView.ShowDialog();
 
-            if (textInputView.DialogResult == null ||
-                textInputView.DialogResult != true ||
-                string.IsNullOrEmpty(textInputViewModel.InputText))
-            {
-                return;
-            }
+            //if (textInputView.DialogResult == null ||
+            //    textInputView.DialogResult != true ||
+            //    string.IsNullOrEmpty(textInputViewModel.InputText))
+            //{
+            //    return;
+            //}
 
-            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
-            if (!pageNumbersToOpen.Any())
-            {
-                return;
-            }
+            //var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
+            //if (!pageNumbersToOpen.Any())
+            //{
+            //    return;
+            //}
 
-            PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
-            var pageIDs = DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
-            PleaseWaitHelper.Show(() =>
-                                  {
-                                      _dataService.LoadPages(SelectedNotebook, pageIDs, false);
-                                      _dataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, false);
-                                      if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
-                                          IsIncludeSubmissionsChecked &&
-                                          SelectedNotebook.NameComposite.OwnerTypeTag == "T")
-                                      {
-                                          Parallel.ForEach(AvailableNotebooks,
-                                                           notebookInfo =>
-                                                           {
-                                                               if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
-                                                                   notebookInfo.NameComposite.OwnerTypeTag == "T" ||
-                                                                   notebookInfo == SelectedNotebook)
-                                                               {
-                                                                   return;
-                                                               }
+            //PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
+            //var pageIDs = DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
+            //PleaseWaitHelper.Show(() =>
+            //                      {
+            //                          _dataService.LoadPages(SelectedNotebook, pageIDs, false);
+            //                          _dataService.LoadLocalSubmissions(SelectedNotebook, pageIDs, false);
+            //                          if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
+            //                              IsIncludeSubmissionsChecked &&
+            //                              SelectedNotebook.NameComposite.OwnerTypeTag == "T")
+            //                          {
+            //                              Parallel.ForEach(AvailableNotebooks,
+            //                                               notebookInfo =>
+            //                                               {
+            //                                                   if (notebookInfo.NameComposite.OwnerTypeTag == "A" ||
+            //                                                       notebookInfo.NameComposite.OwnerTypeTag == "T" ||
+            //                                                       notebookInfo == SelectedNotebook)
+            //                                                   {
+            //                                                       return;
+            //                                                   }
 
-                                                               _dataService.OpenNotebook(notebookInfo, false, false);
-                                                               _dataService.LoadPages(notebookInfo, pageIDs, true);
-                                                               _dataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
-                                                           });
-                                      }
-                                  },
-                                  null,
-                                  "Loading Pages");
+            //                                                   _dataService.OpenNotebook(notebookInfo, false, false);
+            //                                                   _dataService.LoadPages(notebookInfo, pageIDs, true);
+            //                                                   _dataService.LoadLocalSubmissions(notebookInfo, pageIDs, true);
+            //                                               });
+            //                          }
+            //                      },
+            //                      null,
+            //                      "Loading Pages");
         }
 
         private bool OnOpenNotebookCanExecute()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -10,57 +9,6 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public class NotebookNameComposite
-    {
-        public string Name { get; set; }
-        public string ID { get; set; }
-        public string OwnerName { get; set; }
-        public string OwnerID { get; set; }
-        public string OwnerTypeTag { get; set; }
-
-        public string ToFolderName()
-        {
-            return string.Format("{0};{1};{2};{3}{4}", Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag);
-        }
-
-        public static NotebookNameComposite ParseNotebook(Notebook notebook)
-        {
-            var nameComposite = new NotebookNameComposite
-                                {
-                                    Name = notebook.Name,
-                                    ID = notebook.ID,
-                                    OwnerName = notebook.Owner.FullName,
-                                    OwnerID = notebook.Owner.ID,
-                                    OwnerTypeTag = notebook.Owner == null ? "U" : notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T"
-                                };
-
-            return nameComposite;
-        }
-
-        public static NotebookNameComposite ParseFolderPath(string notebookFolderPath)
-        {
-            var directoryInfo = new DirectoryInfo(notebookFolderPath);
-            var notebookDirectoryName = directoryInfo.Name;
-            var notebookDirectoryParts = notebookDirectoryName.Split(';');
-            if (notebookDirectoryParts.Length != 5 &&
-                notebookDirectoryParts.Length != 4)
-            {
-                return null;
-            }
-
-            var nameComposite = new NotebookNameComposite
-                                {
-                                    Name = notebookDirectoryParts[0],
-                                    ID = notebookDirectoryParts[1],
-                                    OwnerName = notebookDirectoryParts[2],
-                                    OwnerID = notebookDirectoryParts[3],
-                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
-                                };
-
-            return nameComposite;
-        }
-    }
-
     [Serializable]
     public class Notebook : AInternalZipEntryFile
     {
@@ -275,174 +223,6 @@ namespace CLP.Entities
 
         #endregion //Methods
 
-        #region Cache
-
-        public void ToXML(string notebookFilePath)
-        {
-            LastSavedDate = DateTime.Now;
-            var fileInfo = new FileInfo(notebookFilePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using (Stream stream = new FileStream(notebookFilePath, FileMode.Create))
-            {
-                var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-        }
-
-        public void SaveToXML(string folderPath)
-        {
-            var filePath = Path.Combine(folderPath, "notebook.xml");
-            ToXML(filePath);
-        }
-
-        public static Notebook LoadFromXML(string notebookFolderPath)
-        {
-            try
-            {
-                var nameComposite = NotebookNameComposite.ParseFolderPath(notebookFolderPath);
-                var notebookFilePath = Path.Combine(notebookFolderPath, "notebook.xml");
-                if (nameComposite == null ||
-                    !File.Exists(notebookFilePath))
-                {
-                    return null;
-                }
-
-                var notebook = Load<Notebook>(notebookFilePath, SerializationMode.Xml);
-                if (notebook == null)
-                {
-                    return null;
-                }
-
-                notebook.Name = nameComposite.Name;
-
-                return notebook;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        #endregion //Cache 
-
-        public void SavePartialNotebook(string folderPath, bool serializeInkStrokes = true)
-        {
-            var fileName = Path.Combine(folderPath, "notebook.xml");
-            ToXML(fileName);
-
-            var pagesFolderPath = Path.Combine(folderPath, "Pages");
-            if (!Directory.Exists(pagesFolderPath))
-            {
-                Directory.CreateDirectory(pagesFolderPath);
-            }
-
-            foreach (var page in Pages)
-            {
-                var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
-                page.ToXML(pageFilePath, serializeInkStrokes);
-                //if(page.PageThumbnail == null)
-                //{
-                //    continue;
-                //}
-
-                //var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
-                //if(!Directory.Exists(thumbnailsFolderPath))
-                //{
-                //    Directory.CreateDirectory(thumbnailsFolderPath);
-                //}
-                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
-
-                //var pngEncoder = new PngBitmapEncoder();
-                //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
-                //using(var outputStream = new MemoryStream())
-                //{
-                //    pngEncoder.Save(outputStream);
-                //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-                //}
-            }
-        }
-
-        public void SaveSubmissions(string folderPath)
-        {
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            foreach (var page in Pages)
-            {
-                foreach (var submission in page.Submissions)
-                {
-                    var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
-                    submission.ToXML(pageFilePath);
-                    //if(submission.PageThumbnail == null)
-                    //{
-                    //    continue;
-                    //}
-
-                    //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
-                    //if(!Directory.Exists(thumbnailsFolderPath))
-                    //{
-                    //    Directory.CreateDirectory(thumbnailsFolderPath);
-                    //}
-                    //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
-
-                    //var pngEncoder = new PngBitmapEncoder();
-                    //pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
-                    //using(var outputStream = new MemoryStream())
-                    //{
-                    //    pngEncoder.Save(outputStream);
-                    //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-                    //}
-                }
-            }
-        }
-
-        public void SaveOthersSubmissions(string folderPath)
-        {
-            foreach (var page in Pages)
-            {
-                foreach (var submission in page.Submissions)
-                {
-                    var notebookFolderPaths = Directory.EnumerateDirectories(folderPath);
-                    foreach (var notebookFolderPath in notebookFolderPaths)
-                    {
-                        if (notebookFolderPath.Contains(submission.OwnerID))
-                        {
-                            var pagesPath = Path.Combine(notebookFolderPath, "Pages");
-                            var pageFilePath = Path.Combine(pagesPath,
-                                                            "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
-                            submission.ToXML(pageFilePath);
-                            //if(submission.PageThumbnail == null)
-                            //{
-                            //    continue;
-                            //}
-
-                            //var thumbnailsFolderPath = Path.Combine(pagesPath, "Thumbnails");
-                            //if(!Directory.Exists(thumbnailsFolderPath))
-                            //{
-                            //    Directory.CreateDirectory(thumbnailsFolderPath);
-                            //}
-                            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
-
-                            //var pngEncoder = new PngBitmapEncoder();
-                            //pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
-                            //using(var outputStream = new MemoryStream())
-                            //{
-                            //    pngEncoder.Save(outputStream);
-                            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-                            //}
-                        }
-                    }
-                }
-            }
-        }
-
         #region Storage
 
         public string InternalZipFileDirectoryName
@@ -455,6 +235,17 @@ namespace CLP.Entities
         }
 
         #endregion // Storage
+
+        #region Overrides of ModelBase
+
+        protected override void OnSerializing()
+        {
+            base.OnSerializing();
+
+            LastSavedDate = DateTime.Now;
+        }
+
+        #endregion
 
         #region Overrides of AInternalZipEntryFile
 
