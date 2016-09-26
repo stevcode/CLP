@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner.Services
     {
         #region Constants
 
-        private const string CONTAINER_EXTENSION = "clp";
+        
 
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
@@ -149,27 +149,11 @@ namespace Classroom_Learning_Partner.Services
         private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
         private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
 
-        private const string ZIP_IMAGES_FOLDER_NAME = "images";
-        private const string ZIP_NOTEBOOKS_FOLDER_NAME = "notebooks";
-        private const string ZIP_SESSIONS_FOLDER_NAME = "sessions";
-
-        private const string ZIP_IMAGES_FOLDER_PATH = ZIP_IMAGES_FOLDER_NAME + "/";
-        private const string ZIP_NOTEBOOKS_FOLDER_PATH = ZIP_NOTEBOOKS_FOLDER_NAME + "/";
-        private const string ZIP_SESSIONS_FOLDER_PATH = ZIP_SESSIONS_FOLDER_NAME + "/";
-
-        private const string ZIP_NOTEBOOK_DISPLAYS_FOLDER_PATH = "displays/";
-        private const string ZIP_NOTEBOOK_PAGES_FOLDER_PATH = "pages/";
-        private const string ZIP_NOTEBOOK_PAGE_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_PAGES_FOLDER_PATH + "thumbnails/";
-        private const string ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH = "submissions/";
-        private const string ZIP_NOTEBOOK_SUBMISSION_THUMBNAILS_FOLDER_PATH = ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_PATH + "thumbnails/";
-
         #endregion // Constants
 
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
-
-            CreateTestNotebookSet();
         }
 
         #region Static Properties
@@ -396,7 +380,7 @@ namespace Classroom_Learning_Partner.Services
         {
             var notebook = new Notebook(notebookName, Person.Author);
             SetCurrentNotebook(notebook);
-            AddPage(notebook, new CLPPage());
+            AddPage(notebook, new CLPPage(Person.Author));
         }
 
         public void SetCurrentNotebook(Notebook notebook)
@@ -532,15 +516,42 @@ namespace Classroom_Learning_Partner.Services
 
         #region Save Methods
 
+        private class ZipEntrySaver
+        {
+            public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+            {
+                EntryFile = entryFile;
+                InternalFilePath = entryFile.GetFullInternalFilePathWithExtension(parentNotebookName);
+                JsonString = entryFile.ToJsonString();
+            }
+
+            public AInternalZipEntryFile EntryFile { get; set; }
+            private string InternalFilePath { get; set; }
+            private string JsonString { get; set; }
+
+            public void AddEntry(ZipFile zip)
+            {
+                zip.AddEntry(InternalFilePath, JsonString);
+            }
+        }
+
         public void SaveLocal()
         {
             var cacheFolderPath = CurrentCacheFolderPath;
-            var fileName = $"{ValidateFileNameString(CurrentClassRoster.DefaultContainerFileName)}.{CONTAINER_EXTENSION}";
+            var fileName = $"{ValidateFileNameString(CurrentClassRoster.DefaultContainerFileName)}.{AInternalZipEntryFile.CONTAINER_EXTENSION}";
             var fullFilePath = Path.Combine(cacheFolderPath, fileName);
 
-            var rosterString = CurrentClassRoster.ToJsonString();
-            var notebookString = CurrentNotebook.ToJsonString();
-            var notebookInternalPath = ZipExtensions.CombineEntryDirectoryAndName(ZIP_NOTEBOOKS_FOLDER_PATH + CurrentNotebook.InternalZipFileDirectoryName + "/", "notebook.json");
+            var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
+            var entryList = new List<ZipEntrySaver>
+                            {
+                                new ZipEntrySaver(CurrentClassRoster, parentNotebookName),
+                                new ZipEntrySaver(CurrentNotebook, parentNotebookName)
+                            };
+
+            foreach (var page in CurrentNotebook.Pages)
+            {
+                entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+            }
 
             using (var zip = new ZipFile())
             {
@@ -548,10 +559,17 @@ namespace Classroom_Learning_Partner.Services
                 zip.CompressionLevel = CompressionLevel.None;
                 zip.UseZip64WhenSaving = Zip64Option.Always;
 
-                zip.AddEntry("classRoster.json", rosterString);
-                zip.AddEntry(notebookInternalPath, notebookString);
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.AddEntry(zip);
+                }
 
                 zip.Save(fullFilePath);
+            }
+
+            foreach (var zipEntrySaver in entryList)
+            {
+                zipEntrySaver.EntryFile.IsSavedLocally = true;
             }
         }
 

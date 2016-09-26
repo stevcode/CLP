@@ -127,7 +127,6 @@ namespace CLP.Entities
         #region Calculated Properties
 
         /// <summary>Formatted full name of the person.</summary>
-        [Obsolete("Only use getter.")]
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
@@ -149,10 +148,7 @@ namespace CLP.Entities
                 var middleInitial = string.IsNullOrWhiteSpace(MiddleName) ? string.Empty : $" {MiddleName[0]}.";
                 return $"{first}{middleInitial} {LastName}";
             }
-            set { SetValue(FullNameProperty, value); }
         }
-
-        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
 
         /// <summary>Formatted display name of the person.</summary>
         public string DisplayName

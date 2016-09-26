@@ -337,102 +337,104 @@ namespace Classroom_Learning_Partner
 
         public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
         {
-            var task = Task<string>.Factory.StartNew(() =>
-                                                     {
-                                                         var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
-                                                                                                                                                        {
-                                                                                                                                                            ID = studentID,
-                                                                                                                                                            FullName = studentName,
-                                                                                                                                                            IsStudent = true
-                                                                                                                                                        };
+            //var task = Task<string>.Factory.StartNew(() =>
+            //                                         {
+            //                                             var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
+            //                                                                                                                                            {
+            //                                                                                                                                                ID = studentID,
+            //                                                                                                                                                FullName = studentName,
+            //                                                                                                                                                IsStudent = true
+            //                                                                                                                                            };
 
-                                                         if (App.MainWindowViewModel.AvailableUsers.All(x => x.ID != studentID))
-                                                         {
-                                                             App.MainWindowViewModel.AvailableUsers.Add(student);
-                                                         }
+            //                                             if (App.MainWindowViewModel.AvailableUsers.All(x => x.ID != studentID))
+            //                                             {
+            //                                                 App.MainWindowViewModel.AvailableUsers.Add(student);
+            //                                             }
 
-                                                         //if (student.IsConnected)
-                                                         //{
-                                                         //    try
-                                                         //    {
-                                                         //        var binding = new NetTcpBinding
-                                                         //                      {
-                                                         //                          Security =
-                                                         //                          {
-                                                         //                              Mode = SecurityMode.None
-                                                         //                          }
-                                                         //                      };
-                                                         //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
-                                                         //                                                                          new EndpointAddress(student.CurrentMachineAddress));
-                                                         //        studentProxy.ForceLogOut(machineName);
-                                                         //        (studentProxy as ICommunicationObject).Close();
-                                                         //    }
-                                                         //    catch (Exception) { }
-                                                         //}
+            //                                             //if (student.IsConnected)
+            //                                             //{
+            //                                             //    try
+            //                                             //    {
+            //                                             //        var binding = new NetTcpBinding
+            //                                             //                      {
+            //                                             //                          Security =
+            //                                             //                          {
+            //                                             //                              Mode = SecurityMode.None
+            //                                             //                          }
+            //                                             //                      };
+            //                                             //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
+            //                                             //                                                                          new EndpointAddress(student.CurrentMachineAddress));
+            //                                             //        studentProxy.ForceLogOut(machineName);
+            //                                             //        (studentProxy as ICommunicationObject).Close();
+            //                                             //    }
+            //                                             //    catch (Exception) { }
+            //                                             //}
 
-                                                         student.CurrentMachineAddress = machineAddress;
-                                                         student.CurrentMachineName = machineName;
-                                                         student.IsConnected = true;
-                                                         return "connected";
+            //                                             student.CurrentMachineAddress = machineAddress;
+            //                                             student.CurrentMachineName = machineName;
+            //                                             student.IsConnected = true;
+            //                                             return "connected";
 
-                                                         //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                         //if (notebookService == null)
-                                                         //{
-                                                         //    return string.Empty;
-                                                         //}
+            //                                             //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            //                                             //if (notebookService == null)
+            //                                             //{
+            //                                             //    return string.Empty;
+            //                                             //}
 
-                                                         //if (!useClassPeriod ||
-                                                         //    notebookService.CurrentClassPeriod == null)
-                                                         //{
-                                                         //    return string.Empty;
-                                                         //}
-                                                         //
-                                                         //try
-                                                         //{
-                                                         //    Notebook notebookToZip;
-                                                         //    var newNotebook = notebookService.OpenNotebooks.First().CopyForNewOwner(student);
+            //                                             //if (!useClassPeriod ||
+            //                                             //    notebookService.CurrentClassPeriod == null)
+            //                                             //{
+            //                                             //    return string.Empty;
+            //                                             //}
+            //                                             //
+            //                                             //try
+            //                                             //{
+            //                                             //    Notebook notebookToZip;
+            //                                             //    var newNotebook = notebookService.OpenNotebooks.First().CopyForNewOwner(student);
 
-                                                         //    var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" +
-                                                         //                                    newNotebook.OwnerID;
-                                                         //    var studentNotebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, studentNotebookFolderName);
-                                                         //    if (Directory.Exists(studentNotebookFolderPath))
-                                                         //    {
-                                                         //        var pageIDs = notebookService.CurrentClassPeriod.PageIDs;
-                                                         //        var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
-                                                         //        if (studentNotebook == null)
-                                                         //        {
-                                                         //            var newNotebookString = ObjectSerializer.ToString(newNotebook);
-                                                         //            var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+            //                                             //    var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" +
+            //                                             //                                    newNotebook.OwnerID;
+            //                                             //    var studentNotebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, studentNotebookFolderName);
+            //                                             //    if (Directory.Exists(studentNotebookFolderPath))
+            //                                             //    {
+            //                                             //        var pageIDs = notebookService.CurrentClassPeriod.PageIDs;
+            //                                             //        var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
+            //                                             //        if (studentNotebook == null)
+            //                                             //        {
+            //                                             //            var newNotebookString = ObjectSerializer.ToString(newNotebook);
+            //                                             //            var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
 
-                                                         //            return zippedNotebook;
-                                                         //        }
-                                                         //        var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
-                                                         //        foreach (var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
-                                                         //        {
-                                                         //            studentNotebook.Pages.Add(page);
-                                                         //        }
-                                                         //        var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
-                                                         //        studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
-                                                         //        var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
-                                                         //        var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
+            //                                             //            return zippedNotebook;
+            //                                             //        }
+            //                                             //        var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
+            //                                             //        foreach (var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
+            //                                             //        {
+            //                                             //            studentNotebook.Pages.Add(page);
+            //                                             //        }
+            //                                             //        var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+            //                                             //        studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+            //                                             //        var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
+            //                                             //        var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
 
-                                                         //        return zippedStudentNotebook;
-                                                         //    }
+            //                                             //        return zippedStudentNotebook;
+            //                                             //    }
 
-                                                         //    var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
-                                                         //    var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
+            //                                             //    var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
+            //                                             //    var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
 
-                                                         //    return zippedNotebook2;
-                                                         //}
-                                                         //catch (Exception ex)
-                                                         //{
-                                                         //    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
-                                                         //    return string.Empty;
-                                                         //}
-                                                     },
-                                                     TaskCreationOptions.LongRunning);
+            //                                             //    return zippedNotebook2;
+            //                                             //}
+            //                                             //catch (Exception ex)
+            //                                             //{
+            //                                             //    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
+            //                                             //    return string.Empty;
+            //                                             //}
+            //                                         },
+            //                                         TaskCreationOptions.LongRunning);
 
-            return task.Result;
+            //return task.Result;
+
+            return string.Empty;
         }
 
         public void StudentLogout(string studentID)

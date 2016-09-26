@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class ClassRoster : AEntityBase
+    public class ClassRoster : AInternalZipEntryFile
     {
         #region Constructor
 
@@ -127,12 +125,6 @@ namespace CLP.Entities
 
         #region Storage
 
-        /// <summary>Associated FileInfo of the classroster's container.</summary>
-        [XmlIgnore]
-        [JsonIgnore]
-        [ExcludeFromSerialization]
-        public string ContainerFilePath { get; set; }
-
         public string DefaultContainerFileName
         {
             get
@@ -143,5 +135,16 @@ namespace CLP.Entities
         }
 
         #endregion // Storage
+
+        #region Overrides of AInternalZipEntryFile
+
+        public override string DefaultInternalFileName => "classRoster";
+
+        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        {
+            return $"{DefaultInternalFileName}.json";
+        }
+
+        #endregion
     }
 }

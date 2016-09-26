@@ -60,7 +60,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class Notebook : AEntityBase
+    public class Notebook : AInternalZipEntryFile
     {
         #region Constructors
 
@@ -80,12 +80,6 @@ namespace CLP.Entities
             Name = notebookName;
             Owner = owner;
         }
-
-        /// <summary>Initializes <see cref="Notebook" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public Notebook(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -463,5 +457,16 @@ namespace CLP.Entities
         }
 
         #endregion // Storage
+
+        #region Overrides of AInternalZipEntryFile
+
+        public override string DefaultInternalFileName => "notebook";
+
+        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        {
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{DefaultInternalFileName}.json";
+        }
+
+        #endregion
     }
 }

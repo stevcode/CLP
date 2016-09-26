@@ -65,7 +65,7 @@
             <TextBox Text="{Binding State}" />
 
             <Label Content="Teacher Name:" />
-            <TextBox Text="{Binding ClassSubject.Teacher.FullName}" />
+            <TextBox Text="{Binding ClassSubject.Teacher.FirstName}" />
             
             <Button Content="Add Student"
                     Command="{Binding AddStudentCommand}"

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public abstract class ADisplayBase : AEntityBase, IDisplay
+    public abstract class ADisplayBase : AInternalZipEntryFile, IDisplay
     {
         #region Constructors
 
@@ -195,5 +195,16 @@ namespace CLP.Entities
         #endregion //Cache
 
         #endregion //Methods
+
+        #region Overrides of AInternalZipEntryFile
+
+        public override string DefaultInternalFileName => "grid";
+
+        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        {
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultInternalFileName}.json";
+        }
+
+        #endregion
     }
 }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public class NotebookSet : AEntityBase
+    public class NotebookSet : AInternalZipEntryFile
     {
         #region Constructor
 
@@ -52,18 +52,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
-        /// <summary>Associated FileInfo of the notebookSet's container.</summary>
-        [XmlIgnore]
-        [JsonIgnore]
-        [ExcludeFromSerialization]
-        public FileInfo FilePathFileInfo
+        #endregion // Properties
+
+        #region Overrides of AInternalZipEntryFile
+
+        public override string DefaultInternalFileName => "notebookMetaData";
+
+        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
         {
-            get { return GetValue<FileInfo>(FilePathFileInfoProperty); }
-            set { SetValue(FilePathFileInfoProperty, value); }
+            return $"{DefaultInternalFileName}.json";
         }
 
-        public static readonly PropertyData FilePathFileInfoProperty = RegisterProperty("FilePathFileInfo", typeof(FileInfo));
-
-        #endregion // Properties
+        #endregion
     }
 }

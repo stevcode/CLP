@@ -97,7 +97,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class CLPPage : AEntityBase
+    public class CLPPage : AInternalZipEntryFile
     {
         #region Constants
 
@@ -191,11 +191,11 @@ namespace CLP.Entities
         /// <summary>Differentiation Level of the <see cref="CLPPage" />.</summary>
         public string DifferentiationLevel
         {
-            get { return GetValue<string>(DifferentiationGroupProperty); }
-            set { SetValue(DifferentiationGroupProperty, value); }
+            get { return GetValue<string>(DifferentiationLevelProperty); }
+            set { SetValue(DifferentiationLevelProperty, value); }
         }
 
-        public static readonly PropertyData DifferentiationGroupProperty = RegisterProperty("DifferentiationGroup", typeof(string), "0");
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
         /// <summary>Version Index of the <see cref="CLPPage" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
@@ -1080,28 +1080,15 @@ namespace CLP.Entities
 
         #endregion //Cache
 
-        #region Overrides of ModelBase
+        #region Overrides of AInternalZipEntryFile
 
-        protected override void OnPropertyObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public override string DefaultInternalFileName => $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+
+        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
         {
-            base.OnPropertyObjectCollectionChanged(sender, e);
-            IsCached = false;
-        }
-
-        protected override void OnPropertyObjectCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            base.OnPropertyObjectCollectionItemPropertyChanged(sender, e);
-            IsCached = false;
-        }
-
-        #endregion
-
-        #region Overrides of ObservableObject
-
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            IsCached = false;
+            return VersionIndex == 0
+                       ? $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultInternalFileName}.json"
+                       : $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultInternalFileName}.json";
         }
 
         #endregion
