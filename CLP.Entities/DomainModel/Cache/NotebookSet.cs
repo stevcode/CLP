@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {

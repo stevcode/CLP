@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -120,6 +123,9 @@ namespace CLP.Entities
         public static readonly PropertyData IsManipulatableByNonCreatorProperty = RegisterProperty("IsManipulatableByNonCreator", typeof(bool), false);
 
         /// <summary>The <see cref="IPageObject" />'s parent <see cref="CLPPage" />.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
         public CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
@@ -130,10 +136,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public virtual string FormattedName
-        {
-            get { return GetType().Name; }
-        }
+        public virtual string FormattedName => GetType().Name;
 
         public virtual string CodedName => "Coded Name not implemented.";
 

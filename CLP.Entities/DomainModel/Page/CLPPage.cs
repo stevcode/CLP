@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml.Serialization;
@@ -51,7 +47,10 @@ namespace CLP.Entities
         public string DifferentiationGroupName { get; set; }
         public string VersionIndex { get; set; }
 
-        public string ToFileName() { return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex); }
+        public string ToFileName()
+        {
+            return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex);
+        }
 
         public static PageNameComposite ParsePage(CLPPage page)
         {
@@ -140,7 +139,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="CLPPage" />.</summary>
         public string OwnerID
@@ -149,7 +148,7 @@ namespace CLP.Entities
             set { SetValue(OwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof (string), string.Empty);
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
 
         /// <summary><see cref="Person" /> who submitted the <see cref="CLPPage" />.</summary>
         public Person Owner
@@ -205,7 +204,7 @@ namespace CLP.Entities
             set { SetValue(VersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof (uint), 0);
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
 
         /// <summary>Version Index of the latest submission.</summary>
         public uint? LastVersionIndex
@@ -214,7 +213,7 @@ namespace CLP.Entities
             set { SetValue(LastVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof (uint?));
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
         /// <summary>Date and Time the <see cref="CLPPage" /> was created.</summary>
         public DateTime CreationDate
@@ -223,7 +222,7 @@ namespace CLP.Entities
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>The type of page.</summary>
         public PageTypes PageType
@@ -241,7 +240,7 @@ namespace CLP.Entities
             set { SetValue(SubmissionTypeProperty, value); }
         }
 
-        public static readonly PropertyData SubmissionTypeProperty = RegisterProperty("SubmissionType", typeof (SubmissionTypes), SubmissionTypes.Unsubmitted);
+        public static readonly PropertyData SubmissionTypeProperty = RegisterProperty("SubmissionType", typeof(SubmissionTypes), SubmissionTypes.Unsubmitted);
 
         /// <summary>Date and Time the <see cref="CLPPage" /> was submitted.</summary>
         public DateTime? SubmissionTime
@@ -250,7 +249,7 @@ namespace CLP.Entities
             set { SetValue(SubmissionTimeProperty, value); }
         }
 
-        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof (DateTime?));
+        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime?));
 
         /// <summary>Height of the <see cref="CLPPage" />.</summary>
         public double Height
@@ -322,7 +321,7 @@ namespace CLP.Entities
             set { SetValue(SerializedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof (List<StrokeDTO>), () => new List<StrokeDTO>());
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         /// <summary>Interaction history of the page.</summary>
         public PageHistory History
@@ -331,7 +330,7 @@ namespace CLP.Entities
             set { SetValue(HistoryProperty, value); }
         }
 
-        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof (PageHistory));
+        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
 
         #region Non-Serialized
 
@@ -667,7 +666,7 @@ namespace CLP.Entities
             }
             SubmissionTime = DateTime.Now;
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
-            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x!= null));
+            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x != null));
             CLPPage copy = this.DeepCopy();
             if (copy == null)
             {
@@ -690,17 +689,6 @@ namespace CLP.Entities
             foreach (var tag in copy.Tags.Where(x => x != null))
             {
                 tag.ParentPage = copy;
-            }
-
-            foreach (var serializedStroke in copy.SerializedStrokes.Where(x => x != null))
-            {
-                //TODO: Stroke Version Index should be uint
-                serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
-            }
-
-            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes.Where(x => x != null))
-            {
-                serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
             }
 
             return copy;
@@ -821,17 +809,6 @@ namespace CLP.Entities
                 tag.ParentPage = copy;
             }
 
-            foreach (var serializedStroke in copy.SerializedStrokes.Where(x => x != null))
-            {
-                //TODO: Stroke Version Index should be uint
-                serializedStroke.VersionIndex = 0;
-            }
-
-            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes.Where(x => x != null))
-            {
-                serializedStroke.VersionIndex = 0;
-            }
-
             return copy;
         }
 
@@ -869,7 +846,7 @@ namespace CLP.Entities
                 jsonSerializer.WriteTypeInfo = true;
                 jsonSerializer.PreserveReferences = true;
                 jsonSerializer.Serialize(this, stream);
-                
+
                 ClearIsDirtyOnAllChilds();
             }
             IsCached = true;
@@ -982,7 +959,7 @@ namespace CLP.Entities
                 page.ID = nameComposite.ID;
                 page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
                 page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                page.AfterDeserialization();
+                //page.AfterDeserialization();
 
                 // BUG: loaded thumbnails don't let go of their disk reference.
                 //var fileInfo = new FileInfo(pageFilePath);
@@ -1019,7 +996,7 @@ namespace CLP.Entities
                 page.ID = nameComposite.ID;
                 page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
                 page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                page.AfterDeserialization();
+                //page.AfterDeserialization();
 
                 // BUG: loaded thumbnails don't let go of their disk reference.
                 //var fileInfo = new FileInfo(pageFilePath);
@@ -1035,20 +1012,31 @@ namespace CLP.Entities
             }
         }
 
-        public void AfterDeserialization()
+        #endregion //Cache
+
+        #region Overrides of ModelBase
+
+        protected override void OnSerializing()
         {
+            base.OnSerializing();
+
+            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
+        }
+
+        protected override void OnDeserialized()
+        {
+            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
+            History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
+
             foreach (var pageObject in PageObjects)
             {
                 pageObject.ParentPage = this;
             }
-
             foreach (var pageObject in History.TrashedPageObjects)
             {
                 pageObject.ParentPage = this;
             }
-
-            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
-            History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())
             {
                 pageObject.LoadAcceptedStrokes();
@@ -1065,20 +1053,11 @@ namespace CLP.Entities
             {
                 pageObject.LoadAcceptedPageObjects();
             }
-            IsCached = true;
-        }
 
-        #region Overrides of ModelBase
-
-        protected override void OnDeserialized()
-        {
             base.OnDeserialized();
-            AfterDeserialization();
         }
 
         #endregion
-
-        #endregion //Cache
 
         #region Overrides of AInternalZipEntryFile
 

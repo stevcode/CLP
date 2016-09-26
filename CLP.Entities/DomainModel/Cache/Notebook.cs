@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -19,7 +18,10 @@ namespace CLP.Entities
         public string OwnerID { get; set; }
         public string OwnerTypeTag { get; set; }
 
-        public string ToFolderName() { return string.Format("{0};{1};{2};{3}{4}", Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag); }
+        public string ToFolderName()
+        {
+            return string.Format("{0};{1};{2};{3}{4}", Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag);
+        }
 
         public static NotebookNameComposite ParseNotebook(Notebook notebook)
         {
@@ -147,7 +149,7 @@ namespace CLP.Entities
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>Date and Time the <see cref="Notebook" /> was last saved.</summary>
         /// <remarks>Type set to DateTime? (i.e. nullable DateTime) to allow NULL in database if LastSavedDate hasn't been set yet.</remarks>
@@ -157,7 +159,7 @@ namespace CLP.Entities
             set { SetValue(LastSavedDateProperty, value); }
         }
 
-        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof (DateTime?));
+        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
 
         /// <summary>List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.</summary>
         public List<string> ImagePoolHashIDs
@@ -172,7 +174,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof (string));
+        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
 
         /// <summary>Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.</summary>
         public string CurrentPageOwnerID
@@ -181,7 +183,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageOwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof (string));
+        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof(string));
 
         /// <summary>Version Index of the currently selected <see cref="CLPPage" />.</summary>
         public uint CurrentPageVersionIndex
@@ -190,7 +192,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof (uint));
+        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint));
 
         #region Non-Serialized
 
@@ -204,7 +206,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), propertyChangedEventHandler: OnCurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: OnCurrentPageChanged);
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs e)
         {
@@ -236,7 +238,7 @@ namespace CLP.Entities
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.</summary>
         [XmlIgnore]
@@ -248,21 +250,20 @@ namespace CLP.Entities
             set { SetValue(DisplaysProperty, value); }
         }
 
-        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof (ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
         #endregion // Non-Serialized
 
         #endregion // Properties
 
         // TODO: Either here or in NotebookSet, add property for IsLoadedLocally vs IsLoadedOverNetwork, use as flag to decide how it saves.
-        
+
         #region Methods
 
         public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, string differentiationLevel, uint versionIndex, bool searchDatabaseAndCache = false)
         {
             // TODO: Move to DataService once loading/saving works. Possibly load from Container.clp file if not already in memory?
-            var notebookPage =
-                Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
+            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
             if (notebookPage != null)
             {
                 return notebookPage;
@@ -377,9 +378,7 @@ namespace CLP.Entities
             {
                 foreach (var submission in page.Submissions)
                 {
-                    var pageFilePath = Path.Combine(folderPath,
-                                                    "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex +
-                                                    ".xml");
+                    var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                     submission.ToXML(pageFilePath);
                     //if(submission.PageThumbnail == null)
                     //{
@@ -417,8 +416,7 @@ namespace CLP.Entities
                         {
                             var pagesPath = Path.Combine(notebookFolderPath, "Pages");
                             var pageFilePath = Path.Combine(pagesPath,
-                                                            "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" +
-                                                            submission.VersionIndex + ".xml");
+                                                            "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                             submission.ToXML(pageFilePath);
                             //if(submission.PageThumbnail == null)
                             //{

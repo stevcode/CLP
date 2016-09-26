@@ -553,18 +553,33 @@ namespace Classroom_Learning_Partner.Services
                 entryList.Add(new ZipEntrySaver(page, parentNotebookName));
             }
 
-            using (var zip = new ZipFile())
+            if (File.Exists(fullFilePath))
             {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-
-                foreach (var zipEntrySaver in entryList)
+                using (var zip = ZipFile.Read(fullFilePath))
                 {
-                    zipEntrySaver.AddEntry(zip);
-                }
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.AddEntry(zip);
+                    }
 
-                zip.Save(fullFilePath);
+                    zip.Save(fullFilePath);
+                }
+            }
+            else
+            {
+                using (var zip = new ZipFile())
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.AddEntry(zip);
+                    }
+
+                    zip.Save(fullFilePath);
+                }
             }
 
             foreach (var zipEntrySaver in entryList)
