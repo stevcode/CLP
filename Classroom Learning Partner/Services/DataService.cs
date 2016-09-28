@@ -330,6 +330,19 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Program Properties
 
+        #region Cache Properties
+
+        public List<FileInfo> AvailableZipContainerFileInfos
+        {
+            get
+            {
+                // ReSharper disable once ConvertPropertyToExpressionBody
+                return GetZipContainersInFolder(CurrentCacheFolderPath);
+            }
+        }
+
+        #endregion // Cache Properties
+
         #region Notebook Properties
 
         //FilePathPair

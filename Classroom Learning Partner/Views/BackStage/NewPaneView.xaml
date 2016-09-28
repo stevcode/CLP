@@ -1,8 +1,7 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.NewPaneView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:catel="http://catel.codeplex.com"
-                   xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                   xmlns:catel="http://catel.codeplex.com">
 
     <catel:UserControl.Resources>
         <ResourceDictionary>
@@ -23,41 +22,28 @@
 
         </StackPanel>
 
-        <catel:StackGrid DockPanel.Dock="Right"
-                         Margin="26 0 0 0"
+        <catel:StackGrid DockPanel.Dock="Left"
                          VerticalAlignment="Stretch">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Students"
-                       TextAlignment="Center"
+            <TextBlock Text="For New Class"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <Button Command="{Binding AddPersonCommand}"
-                    Height="40"
-                    Margin="0 5"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource BackStageButton}">
+            <TextBox Text="{Binding NewZipContainerFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                     Style="{StaticResource BackStageTextBox}" />
 
-                <Button.CommandParameter>
-                    <sys:Boolean>False</sys:Boolean>
-                </Button.CommandParameter>
-
-                <StackPanel Orientation="Horizontal">
-
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
-
-                    <TextBlock Text="Add Student" />
-
-                </StackPanel>
-            </Button>
+            <TextBlock Text="For Existing Class"
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding ListOfStudents}"
+                     ItemsSource="{Binding AvailableZipContainerFileNames}"
+                     SelectedItem="{Binding SelectedExistingZipContainerFileName}"
                      SelectionMode="Single"
                      ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                      Width="275"
@@ -66,66 +52,28 @@
                     <DataTemplate>
 
                         <!-- Control Layout -->
-                        <catel:StackGrid HorizontalAlignment="Stretch"
-                                         Height="42"
-                                         Margin="0 0 30 0">
+                        <Grid Name="LayoutGrid"
+                              Height="42">
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.5'}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
 
-                            <TextBlock Text="{Binding FullName}"
-                                       Style="{StaticResource BackStageTextBlock}" />
+                            <!-- Button Content -->
+                            <TextBlock Text="{Binding}"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
 
-                            <Button Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.EditPersonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid>
-                                            <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
-                                            <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                            <Button Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeleteStudentCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid>
-                                            <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
-                                            <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
-
-                        </catel:StackGrid>
+                        </Grid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -133,7 +81,7 @@
 
         </catel:StackGrid>
 
-        <Line DockPanel.Dock="Right"
+        <Line DockPanel.Dock="Left"
               Stretch="Fill"
               Y1="0"
               Y2="1"
@@ -141,256 +89,66 @@
               Stroke="{StaticResource GrayEdgeColor}"
               StrokeThickness="1" />
 
-        <StackPanel DockPanel.Dock="Right"
-                    Margin="26 0">
+        <DockPanel LastChildFill="True"
+                   HorizontalAlignment="Stretch">
 
-            <TextBlock Text="Teachers"
-                       TextAlignment="Center"
+            <TextBlock DockPanel.Dock="Top"
+                       Text="{Binding SelectedZipContainerFullFilePath}"
+                       FontSize="20"
+                       Margin="26 10 0 10"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <Button Command="{Binding AddPersonCommand}"
-                    Height="40"
-                    Margin="0 5"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource BackStageButton}">
+            <catel:StackGrid HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="26 0 0 0">
 
-                <Button.CommandParameter>
-                    <sys:Boolean>True</sys:Boolean>
-                </Button.CommandParameter>
+                <Grid.Resources>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource BackStageTextBlock}">
+                        <Setter Property="Margin"
+                                Value="0 5 5 0" />
+                    </Style>
+                    <Style TargetType="TextBox"
+                           BasedOn="{StaticResource BackStageTextBox}" />
+                </Grid.Resources>
 
-                <StackPanel Orientation="Horizontal">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                    <TextBlock Text="Add Teacher" />
+                <TextBlock Grid.Column="0"
+                           Text="Notebook Name:" />
 
-                </StackPanel>
-            </Button>
+                <TextBox Grid.Column="1"
+                         Text="{Binding NotebookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
-            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding ListOfTeachers}"
-                     SelectionMode="Single"
-                     ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
-                     Width="275"
-                     ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
+                <Button Grid.Column="0"
+                        Command="{Binding CreateNotebookCommand}"
+                        Width="80"
+                        Height="84"
+                        Margin="0 20"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource BackStageButton}">
 
-                        <!-- Control Layout -->
-                        <catel:StackGrid HorizontalAlignment="Stretch"
-                                         Height="42">
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
 
-                            <TextBlock Text="{Binding FullName}"
-                                       Style="{StaticResource BackStageTextBlock}" />
+                        <TextBlock Text="Create Notebook" />
 
-                            <Button Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeletePersonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid>
-                                            <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
-                                            <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+                    </StackPanel>
+                </Button>
 
-                            <Button Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeleteTeacherCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
-                                <Button.Template>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Grid>
-                                            <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
-                                            <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Button.Template>
-                            </Button>
+            </catel:StackGrid>
 
-                        </catel:StackGrid>
-
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-
-        </StackPanel>
-
-        <Line DockPanel.Dock="Right"
-              Stretch="Fill"
-              Y1="0"
-              Y2="1"
-              Margin="0 0 0 30"
-              Stroke="{StaticResource GrayEdgeColor}"
-              StrokeThickness="1" />
-
-        <catel:StackGrid HorizontalAlignment="Left"
-                         VerticalAlignment="Top">
-
-            <Grid.Resources>
-                <Style TargetType="TextBlock"
-                       BasedOn="{StaticResource BackStageTextBlock}">
-                    <Setter Property="Margin"
-                            Value="0 5 5 0" />
-                </Style>
-                <Style TargetType="TextBox"
-                       BasedOn="{StaticResource BackStageTextBox}" />
-            </Grid.Resources>
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Column="0"
-                       Text="Notebook Name*:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding NotebookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
-
-            <Button Grid.Column="0"
-                    Command="{Binding CreateNotebookCommand}"
-                    Width="80"
-                    Height="84"
-                    Margin="0 20"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource BackStageButton}">
-
-                <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
-
-                    <TextBlock Text="Create Notebook" />
-
-                </StackPanel>
-            </Button>
-
-            <TextBlock Grid.Column="1"
-                       Margin="-10 25 0 0"
-                       VerticalAlignment="Top"
-                       FontSize="10">
-                <Run Text="*Only the Notebook Name is required." />
-                <LineBreak />
-                <Run Text=" Other info can be edited" />
-                <LineBreak />
-                <Run Text=" later from the Info screen." />
-            </TextBlock>
-
-            <TextBlock Grid.Column="0"
-                       Text="Subject Name:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding SubjectName}" />
-
-            <TextBlock Grid.Column="0"
-                       Text="Grade Level:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding GradeLevel}" />
-
-            <TextBlock Grid.Column="0" 
-                       Text="Start Date (mm/dd/yyyy): " />
-            
-            <TextBox Grid.Column="1">
-                <TextBox.Text>
-                    <Binding Path="StartDate" StringFormat="{}{0:MM/dd/yyyy}"/>
-                </TextBox.Text>
-            </TextBox>
-
-            <TextBlock Grid.Column="0" 
-                       Text="End Date (mm/dd/yyyy): " />
-            
-            <TextBox Grid.Column="1">
-                <TextBox.Text>
-                    <Binding Path="EndDate" StringFormat="{}{0:MM/dd/yyyy}"/>
-                </TextBox.Text>
-            </TextBox>
-
-            <TextBlock Grid.Column="0"
-                       Text="School Name:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding SchoolName}" />
-
-            <TextBlock Grid.Column="0"
-                       Text="School District:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding SchoolDistrict}" />
-
-            <TextBlock Grid.Column="0"
-                       Text="City:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding City}" />
-
-            <TextBlock Grid.Column="0"
-                       Text="State:" />
-
-            <TextBox Grid.Column="1"
-                     Text="{Binding State}" />
-
-            <Button Grid.Column="0"
-                    Command="{Binding ImportStudentNamesCommand}"
-                    Width="80"
-                    Height="84"
-                    Margin="0 20"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource BackStageButton}">
-
-                <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
-
-                    <TextBlock Text="Import Student Names" />
-
-                </StackPanel>
-            </Button>
-
-        </catel:StackGrid>
+        </DockPanel>
 
     </DockPanel>
 

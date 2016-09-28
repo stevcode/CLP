@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Media.Imaging;
 using CLP.Entities;
 
@@ -12,6 +13,7 @@ namespace Classroom_Learning_Partner.Services
         string CurrentTempCacheFolderPath { get; }
         string CurrentArchiveFolderPath { get; }
         Dictionary<string, BitmapImage> ImagePool { get; }
+        List<FileInfo> AvailableZipContainerFileInfos { get; }
         NotebookSet CurrentNotebookSet { get; }
         ClassRoster CurrentClassRoster { get; }
         Notebook CurrentNotebook { get; }
