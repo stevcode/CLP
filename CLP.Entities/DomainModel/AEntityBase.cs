@@ -4,12 +4,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using Catel.Data;
 using Catel.IoC;
+using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
 
 namespace CLP.Entities
 {
     public abstract class AEntityBase : ModelBase
     {
+        private static readonly ISerializationManager SerializationManager = ServiceLocator.Default.ResolveType<ISerializationManager>();
+        private static readonly IObjectAdapter ObjectAdapter = ServiceLocator.Default.ResolveType<IObjectAdapter>();
+
         protected AEntityBase() { }
 
         protected AEntityBase(SerializationInfo info, StreamingContext context)
@@ -40,7 +44,7 @@ namespace CLP.Entities
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
                 var deserialized = jsonSerializer.Deserialize(typeof(T), stream);
                 return (T)deserialized;
             }

@@ -74,7 +74,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ZipContainerFileNameToUseProperty = RegisterProperty("ZipContainerFileNameToUse", typeof(string), string.Empty);
         
-
         public string SelectedZipContainerFullFilePath => $"{_dataService.CurrentCacheFolderPath}\\{ZipContainerFileNameToUse}.{AInternalZipEntryFile.CONTAINER_EXTENSION}";
 
         #endregion //Bindings

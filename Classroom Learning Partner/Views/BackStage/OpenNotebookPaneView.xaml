@@ -31,26 +31,12 @@
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
 
-                    <TextBlock Text="Open Notebook"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Open Notebook" />
 
                 </StackPanel>
+
             </Button>
 
             <Button Command="{Binding OpenPageRangeCommand}"
@@ -65,26 +51,32 @@
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
 
-                    <TextBlock Text="Open Range of Pages"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Open Range of Pages" />
 
                 </StackPanel>
+
+            </Button>
+
+            <Button Command="{Binding OpenSessionCommand}"
+                    Width="120"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
+
+                    <TextBlock Text="Open Session" />
+
+                </StackPanel>
+
             </Button>
 
             <CheckBox IsChecked="{Binding IsIncludeSubmissionsChecked}"
@@ -95,23 +87,20 @@
 
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Left">
+        <catel:StackGrid DockPanel.Dock="Left"
+                         VerticalAlignment="Stretch">
 
-            <TextBlock Text="Folder"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI Light"
-                       FontSize="30"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource DynamicMainColor}"
-                       Margin="0 5"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Class"
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding AvailableCaches}"
-                     SelectedItem="{Binding SelectedCache}"
+                     ItemsSource="{Binding AvailableZipContainerFileNames}"
+                     SelectedItem="{Binding SelectedExistingZipContainerFileName}"
                      SelectionMode="Single"
                      ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                      Width="275"
@@ -138,23 +127,16 @@
                             </Grid.Style>
 
                             <!-- Button Content -->
-                            <TextBlock Text="{Binding CacheName}"
-                                       TextAlignment="Left"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center"
-                                       FontFamily="Segoe UI"
-                                       FontSize="12pt"
-                                       Foreground="Black"
-                                       Margin="26 0 0 0"
-                                       TextOptions.TextRenderingMode="Auto"
-                                       TextOptions.TextFormattingMode="Ideal" />
+                            <TextBlock Text="{Binding}"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
+
                         </Grid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </StackPanel>
+        </catel:StackGrid>
 
         <Line DockPanel.Dock="Left"
               Stretch="Fill"
@@ -168,71 +150,140 @@
                    HorizontalAlignment="Stretch">
 
             <TextBlock DockPanel.Dock="Top"
-                       Text="{Binding SelectedCache.CacheFolderPath}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI Light"
+                       Text="{Binding SelectedZipContainerFullFilePath}"
                        FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource DynamicMainColor}"
                        Margin="26 10 0 10"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <ListBox x:Name="NotebookNamesListBox"
-                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                     ItemsSource="{Binding AvailableNotebooks}"
-                     SelectedItem="{Binding SelectedNotebook}"
-                     SelectionMode="Single"
-                     ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
-                     ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
+            <catel:StackGrid DockPanel.Dock="Left" 
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="26 0 0 0">
 
-                        <!-- Control Layout -->
-                        <Grid Name="LayoutGrid"
-                              Height="42">
-                            <!--<i:Interaction.Behaviors>
-                                <catel:DoubleClickToCommand Command="{Binding DataContext.OpenNotebookCommand, ElementName=NotebookNamesListBox}" />
-                            </i:Interaction.Behaviors>-->
+                <Grid.Resources>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource BackStageTextBlock}">
+                        <Setter Property="Margin"
+                                Value="0 5 5 0" />
+                    </Style>
+                    <Style TargetType="TextBox"
+                           BasedOn="{StaticResource BackStageTextBox}" />
+                </Grid.Resources>
 
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Setter Property="Background"
-                                            Value="Transparent" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
-                                                     Value="True">
-                                            <Setter Property="Background"
-                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.75'}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                            <TextBlock TextAlignment="Left"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center"
-                                       FontFamily="Segoe UI"
-                                       FontSize="12pt"
-                                       Foreground="Black"
-                                       Margin="26 5 5 5"
-                                       TextOptions.TextRenderingMode="Auto"
-                                       TextOptions.TextFormattingMode="Ideal">
-                                <Run Text="Name: " />
-                                <Run Text="{Binding NameComposite.Name}" />
-                                <Run Text=",     Owner: " />
-                                <Run Text="{Binding NameComposite.OwnerName}" />
-                                <Run Text=",     Last Saved: " />
-                                <Run Text="{Binding LastSavedTime, Mode=OneWay}" />
-                            </TextBlock>
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Grade {0} {1}">
+                            <Binding Path="GradeLevel" />
+                            <Binding Path="SubjectName" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
 
-                        </Grid>
+                <TextBlock Text="{Binding StartDate, StringFormat={}{0:MM/dd/yyyy}}" />
 
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                <TextBlock Text="Notebook Name"
+                           Style="{StaticResource BackStageHeaderTextBlock}" />
+
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ItemsSource="{Binding ListOfNotebookSets}"
+                         SelectedItem="{Binding SelectedNotebookSet}"
+                         SelectionMode="Single"
+                         ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
+                         ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+
+                            <!-- Control Layout -->
+                            <Grid Name="LayoutGrid"
+                                  Height="42">
+
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Background"
+                                                Value="Transparent" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.75'}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <TextBlock Text="{Binding NotebookName}"
+                                           Style="{StaticResource BackStageListItemTextBlock}" />
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </catel:StackGrid>
+
+            <catel:StackGrid HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="26 0 0 0">
+
+                <Grid.Resources>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource BackStageTextBlock}">
+                        <Setter Property="Margin"
+                                Value="0 5 5 0" />
+                    </Style>
+                    <Style TargetType="TextBox"
+                           BasedOn="{StaticResource BackStageTextBox}" />
+                </Grid.Resources>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ItemsSource="{Binding NotebooksInSelectedNotebookSet}"
+                         SelectedItem="{Binding SelectedNotebook}"
+                         SelectionMode="Single"
+                         ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
+                         ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+
+                            <!-- Control Layout -->
+                            <Grid Name="LayoutGrid"
+                                  Height="42">
+
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Background"
+                                                Value="Transparent" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                         Value="True">
+                                                <Setter Property="Background"
+                                                        Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.75'}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <TextBlock Text="{Binding Owner.FullName}"
+                                           Style="{StaticResource BackStageListItemTextBlock}" />
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </catel:StackGrid>
 
         </DockPanel>
 

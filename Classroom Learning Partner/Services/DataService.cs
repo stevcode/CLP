@@ -24,7 +24,10 @@ namespace Classroom_Learning_Partner.Services
 
     public class CacheInfo
     {
-        public CacheInfo(string cacheFolderPath) { CacheFolderPath = cacheFolderPath; }
+        public CacheInfo(string cacheFolderPath)
+        {
+            CacheFolderPath = cacheFolderPath;
+        }
 
         public string CacheFolderPath { get; private set; }
 
@@ -140,7 +143,7 @@ namespace Classroom_Learning_Partner.Services
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
         private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
-        private const string DEFAULT_CONFIG_FOLDER_NAME = "Config";  // Config Service?
+        private const string DEFAULT_CONFIG_FOLDER_NAME = "Config"; // Config Service?
         private const string DEFAULT_ARCHIVE_FOLDER_NAME = "Archive";
         private const string DEFAULT_LOGS_FOLDER_NAME = "Logs";
 
@@ -169,7 +172,7 @@ namespace Classroom_Learning_Partner.Services
         {
             get
             {
-                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);  // TODO: Change to WindowsDriveFolderPath
+                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME); // TODO: Change to WindowsDriveFolderPath
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -261,6 +264,42 @@ namespace Classroom_Learning_Partner.Services
             return LoadClassRosterFromZipContainer(fileInfo);
         }
 
+        public static List<Notebook> LoadAllNotebooksFromZipContainer(string zipContainerFilePath)
+        {
+            var notebooks = new List<Notebook>();
+            try
+            {
+                var notebookStrings = new List<string>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
+                    foreach (var notebookEntry in notebookEntries)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            notebookEntry.Extract(memoryStream);
+
+                            var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                            notebookStrings.Add(jsonString);
+                        }
+                    }
+                }
+
+                foreach (var notebookString in notebookStrings)
+                {
+                    var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
+                    notebook.ContainerZipFilePath = zipContainerFilePath;
+                    notebooks.Add(notebook);
+                }
+
+                return notebooks;
+            }
+            catch (Exception)
+            {
+                return notebooks;
+            }
+        }
+
         public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
         {
             try
@@ -274,12 +313,15 @@ namespace Classroom_Learning_Partner.Services
                         entry.Extract(memoryStream);
 
                         var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                        return AEntityBase.FromJsonString<T>(jsonString);
+                        var zipEntryFile = AEntityBase.FromJsonString<T>(jsonString);
+                        zipEntryFile.ContainerZipFilePath = zipContainerFilePath;
+                        return zipEntryFile;
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }
         }

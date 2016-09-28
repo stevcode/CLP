@@ -8,6 +8,7 @@ using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
 using Catel.Reflection;
+using Catel.Runtime.Serialization.Json;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;

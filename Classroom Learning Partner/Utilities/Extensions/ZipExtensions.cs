@@ -38,12 +38,18 @@ namespace Classroom_Learning_Partner
         /// <summary>Searches for the specific entry in the given internal zip directory.</summary>
         /// <param name="zip">The already opened zip file to act upon.</param>
         /// <param name="entryDirectory">Expected to be a full directory path, ending with a forward slash.</param>
-        public static List<ZipEntry> GetEntriesInDirectory(this ZipFile zip, string entryDirectory)
+        public static List<ZipEntry> GetEntriesInDirectory(this ZipFile zip, string entryDirectory, bool isRecursive = false)
         {
             Argument.IsNotNull("zip", zip);
             Argument.IsNotNull("entryDirectory", entryDirectory);
 
-            return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory)).ToList();
+            if (isRecursive)
+            {
+                return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory)).ToList();
+            }
+
+            var directoryEndingIndex = entryDirectory.LastIndexOf('/');
+            return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory) && e.FileName.LastIndexOf('/') == directoryEndingIndex).ToList();
         }
 
         #endregion // ZipFile

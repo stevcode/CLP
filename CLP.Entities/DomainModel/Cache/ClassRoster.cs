@@ -53,7 +53,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData ListOfNotebookSetsProperty = RegisterProperty("ListOfNotebookSets", typeof(ObservableCollection<NotebookSet>), () => new ObservableCollection<NotebookSet>());
         
-
         /// <summary>List of all the Teachers in the class.</summary>
         public ObservableCollection<Person> ListOfTeachers
         {
