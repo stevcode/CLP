@@ -9,6 +9,19 @@ namespace Classroom_Learning_Partner
     {
         #region Extensions
 
+        #region ZipFile
+
+        /// <summary>Retrieves entry in the given internal zip directory by entry path.</summary>
+        /// <param name="zip">The already opened zip file to act upon.</param>
+        /// <param name="entryPath">Expected to be a full directory path and entry name of the ZipEntry.</param>
+        public static ZipEntry GetEntry(this ZipFile zip, string entryPath)
+        {
+            Argument.IsNotNull("zip", zip);
+            Argument.IsNotNull("entryPath", entryPath);
+
+            return zip[entryPath];
+        }
+
         /// <summary>Searches for the specific entry in the given internal zip directory.</summary>
         /// <param name="zip">The already opened zip file to act upon.</param>
         /// <param name="entryDirectory">Expected to be a full directory path, ending with a forward slash.</param>
@@ -19,7 +32,7 @@ namespace Classroom_Learning_Partner
             Argument.IsNotNull("entryName", entryName);
 
             var entryPath = CombineEntryDirectoryAndName(entryDirectory, entryName);
-            return zip.Entries.FirstOrDefault(e => e.FileName == entryPath);
+            return zip.GetEntry(entryPath);
         }
 
         /// <summary>Searches for the specific entry in the given internal zip directory.</summary>
@@ -32,6 +45,10 @@ namespace Classroom_Learning_Partner
 
             return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory)).ToList();
         }
+
+        #endregion // ZipFile
+
+        #region ZipEntry
 
         /// <summary>Renames the ZipEntry while keeping the current internal zip directory.</summary>
         /// <param name="entry">Entry to rename.</param>
@@ -69,18 +86,26 @@ namespace Classroom_Learning_Partner
             var newPath = $"{newDirectory}{entryName}";
             entry.FileName = newPath;
 
-            // TODO: If moving the last entry from a directory, the directory is erased, include toggle to preserver empty directory.
+            // TODO: If moving the last entry from a directory, the directory is erased, include toggle to preserve empty directory.
         }
+
+        #endregion // ZipEntry
 
         #endregion // Extensions
 
         #region Static Helpers
 
         /// <summary>Combines an internal zip directory and an entry name into the full internal path of the entry.</summary>
-        /// <param name="entryDirectory">Expected to be a full directory path, ending with a forward slash.</param>
+        /// <param name="entryDirectory">Expected to be a full directory path, can end with a forward slash or not.</param>
         /// <param name="entryName">Includes file extension.</param>
         public static string CombineEntryDirectoryAndName(string entryDirectory, string entryName)
         {
+            if (!string.IsNullOrEmpty(entryDirectory) &&
+                entryDirectory.LastIndexOf('/') != entryDirectory.Length - 1)
+            {
+                entryDirectory = $"{entryDirectory}/";
+            }
+
             return string.IsNullOrWhiteSpace(entryDirectory) ? entryName : $"{entryDirectory}{entryName}";
         }
 

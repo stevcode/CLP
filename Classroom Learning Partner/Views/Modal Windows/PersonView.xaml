@@ -4,6 +4,7 @@
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                  xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                   Title="{Binding WindowTitle}"
                   ShowInTaskbar="False"
                   Background="{StaticResource GrayBackgroundColor}">
@@ -38,7 +39,7 @@
         </Style>
     </Window.Resources>
 
-    <catel:StackGrid Width="300">
+    <catel:StackGrid Width="{x:Static views:PersonView.WINDOW_WIDTH}">
         <catel:StackGrid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />

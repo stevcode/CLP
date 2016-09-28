@@ -63,6 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
+            EditClassCommand = new Command(OnEditClassCommandExecute);
         }
 
         /// <summary>Saves the current notebook.</summary>
@@ -77,6 +78,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnSaveCurrentNotebookCanExecute()
         {
             return Notebook != null;
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command EditClassCommand { get; private set; }
+
+        private void OnEditClassCommandExecute()
+        {
+            var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
+            viewModel.ShowWindowAsDialog();
         }
 
         #endregion //Commands

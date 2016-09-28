@@ -8,6 +8,12 @@ namespace CLP.Entities
     [Serializable]
     public class ClassRoster : AInternalZipEntryFile
     {
+        #region Constants
+
+        public const string DEFAULT_INTERNAL_FILE_NAME = "classRoster";
+
+        #endregion // Constants
+
         #region Constructor
 
         /// <summary>Initializes <see cref="ClassRoster" /> from scratch.</summary>
@@ -136,7 +142,7 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
-        public override string DefaultInternalFileName => "classRoster";
+        public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
 
         public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
         {

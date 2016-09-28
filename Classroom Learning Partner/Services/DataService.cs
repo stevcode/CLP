@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using Catel;
 using Catel.Reflection;
 using Classroom_Learning_Partner.ViewModels;
@@ -135,8 +137,6 @@ namespace Classroom_Learning_Partner.Services
     {
         #region Constants
 
-        
-
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
         private const string DEFAULT_CACHE_FOLDER_NAME = "Cache";
         private const string DEFAULT_TEMP_CACHE_FOLDER_NAME = "TempCache";
@@ -226,7 +226,7 @@ namespace Classroom_Learning_Partner.Services
             return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
         }
 
-        public static List<FileInfo> GetNotebookSetsInFolder(string folderPath)
+        public static List<FileInfo> GetZipContainersInFolder(string folderPath)
         {
             if (!Directory.Exists(folderPath))
             {
@@ -237,7 +237,7 @@ namespace Classroom_Learning_Partner.Services
             return directoryInfo.GetFiles("*.clp").ToList();
         }
 
-        public static ClassRoster LoadNotebookSet(FileInfo fileInfo)
+        public static ClassRoster LoadClassRosterFromZipContainer(FileInfo fileInfo)
         {
             if (fileInfo == null)
             {
@@ -322,6 +322,13 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Current Folder Paths
+
+        #region Program Properties
+
+        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
+        public Dictionary<string, BitmapImage> ImagePool { get; } = new Dictionary<string, BitmapImage>();
+
+        #endregion // Program Properties
 
         #region Notebook Properties
 
@@ -524,9 +531,9 @@ namespace Classroom_Learning_Partner.Services
             private string InternalFilePath { get; set; }
             private string JsonString { get; set; }
 
-            public void AddEntry(ZipFile zip)
+            public void UpdateEntry(ZipFile zip)
             {
-                zip.AddEntry(InternalFilePath, JsonString);
+                zip.UpdateEntry(InternalFilePath, JsonString);
             }
         }
 
@@ -550,11 +557,33 @@ namespace Classroom_Learning_Partner.Services
 
             if (File.Exists(fullFilePath))
             {
+                //var readOptions = new ReadOptions
+                //                  {
+                //                      ReadProgress = Zip_ReadProgress
+                //                  };
+
+                //var zip = ZipFile.Read(fullFilePath, readOptions)
+
                 using (var zip = ZipFile.Read(fullFilePath))
                 {
+                    // TODO: Test if needed. Won't work unless zip has been saved.
+                    // Implied that entries are not added to zip.Entries until saved. Need to verify. Code definitely says added to internal _entries before save, so test this
+                    //zip.SelectEntries("*.json");
+                    //zip.SelectEntries("p;*.json", "blah/blah/pages/"); test this.
+
+                    //zip.UpdateFile only applies to adding a file from the disc to the zip archive, N/A for clp unless we need it for images?
+                    //          for images, probably zip.AddEntry(entryPath, memoryStream); also have byte[] byteArray for content
+
+                    // Change all AddEntry to UpdateEntry
+
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;  Only one that seems persistent, but need to test
+                    zip.CaseSensitiveRetrieval = true;
+
                     foreach (var zipEntrySaver in entryList)
                     {
-                        zipEntrySaver.AddEntry(zip);
+                        zipEntrySaver.UpdateEntry(zip);
                     }
 
                     zip.Save(fullFilePath);
@@ -567,10 +596,11 @@ namespace Classroom_Learning_Partner.Services
                     zip.CompressionMethod = CompressionMethod.None;
                     zip.CompressionLevel = CompressionLevel.None;
                     zip.UseZip64WhenSaving = Zip64Option.Always;
-
+                    zip.CaseSensitiveRetrieval = true;
+                    
                     foreach (var zipEntrySaver in entryList)
                     {
-                        zipEntrySaver.AddEntry(zip);
+                        zipEntrySaver.UpdateEntry(zip);
                     }
 
                     zip.Save(fullFilePath);
@@ -583,7 +613,99 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        private void Zip_ReadProgress(object sender, ReadProgressEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string SaveImageToImagePool(string imageFilePath, CLPPage page)
+        {
+            try
+            {
+                var bytes = File.ReadAllBytes(imageFilePath);
+
+                var md5 = new MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
+                if (ImagePool.ContainsKey(imageHashID))
+                {
+                    return imageHashID;
+                }
+
+                // TODO: Always auto save. Save as soon as creation in temp folder then move to normal cache if saved. On start, clear temp folder?
+
+                var newFileName = $"{imageHashID};{Path.GetFileNameWithoutExtension(imageFilePath)}{Path.GetExtension(imageFilePath)}";
+                var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, newFileName);
+                var containerZipFilePath = page.ContainerZipFilePath;
+
+
+                var newFilePath = Path.Combine(CurrentCacheInfo.ImagesFolderPath, newFileName);
+
+                try
+                {
+                    File.Copy(imageFilePath, newFilePath);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
+                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
+                    return null;
+                }
+
+                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
+                if (bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
+                    return null;
+                }
+
+                ImagePool.Add(imageHashID, bitmapImage);
+
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error opening image file. Please try again.");
+            }
+
+            return null;
+        }
+
         #endregion // Save Methods
+
+        #region Load Methods
+
+        public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
+        {
+            if (ImagePool.ContainsKey(imageHashID))
+            {
+                return ImagePool[imageHashID];
+            }
+            return null;
+            //var filePath = string.Empty;
+            //var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
+            //foreach (var imageFilePath in from imageFilePath in imageFilePaths
+            //                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
+            //                              where imageHashID == image.ImageHashID
+            //                              select imageFilePath)
+            //{
+            //    filePath = imageFilePath;
+            //    break;
+            //}
+
+            //var bitmapImage = CLPImage.GetImageFromPath(filePath);
+            //if (bitmapImage != null)
+            //{
+            //    SourceImage = bitmapImage;
+            //    App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
+            //}
+        }
+
+        #endregion // Load Methods
 
         #endregion // Methods
 

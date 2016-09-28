@@ -12,6 +12,12 @@ namespace CLP.Entities
     [Serializable]
     public class Notebook : AInternalZipEntryFile
     {
+        #region Constants
+
+        public const string DEFAULT_INTERNAL_FILE_NAME = "notebook";
+
+        #endregion // Constants
+
         #region Constructors
 
         /// <summary>Initializes <see cref="Notebook" /> from scratch.</summary>
@@ -249,7 +255,7 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
-        public override string DefaultInternalFileName => "notebook";
+        public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
 
         public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
         {

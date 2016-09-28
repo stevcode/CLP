@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -10,49 +11,26 @@ using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Services;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
 
+
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPImageViewModel : APageObjectBaseViewModel
     {
-        /// <summary>
-        /// Initializes a new instance of the CLPImageViewModel class.
-        /// </summary>
+        #region Constructor
+
+        /// <summary>Initializes a new instance of the CLPImageViewModel class.</summary>
         public CLPImageViewModel(CLPImage image, IDataService dataService)
         {
             PageObject = image;
-            if(App.MainWindowViewModel.ImagePool.ContainsKey(image.ImageHashID))
-            {
-                SourceImage = App.MainWindowViewModel.ImagePool[image.ImageHashID];
-            }
-            else
-            {
-                var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
-                foreach(var imageFilePath in from imageFilePath in imageFilePaths
-                                             let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
-                                             where imageHashID == image.ImageHashID
-                                             select imageFilePath) 
-                                             {
-                                                 filePath = imageFilePath;
-                                                 break;
-                                             }
+            SourceImage = dataService.GetImage(image.ImageHashID, image);
 
-                var bitmapImage = CLPImage.GetImageFromPath(filePath);
-                if(bitmapImage != null)
-                {
-                    SourceImage = bitmapImage;
-                    App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
-                }
-            }
-
-            ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
-            CreateImageCopyCommand = new Command(OnCreateImageCopyCommandExecute);
-
+            InitializeCommands();
             InitializeButtons();
         }
 
@@ -63,28 +41,30 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", CreateImageCopyCommand, null, true));
         }
 
-        public override string Title { get { return "ImageVM"; } }
+        #endregion // Constructor
 
         #region Binding
 
-        /// <summary>
-        /// The visible image, loaded from the ImageCache.
-        /// </summary>
+        /// <summary>The visible image, loaded from the ImageCache.</summary>
         public ImageSource SourceImage
         {
             get { return GetValue<ImageSource>(SourceImageProperty); }
             set { SetValue(SourceImageProperty, value); }
         }
 
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource));
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
 
         #endregion //Binding
 
         #region Commands
 
-        /// <summary>
-        /// Resizes the image while keeping aspect ratio.
-        /// </summary>
+        private void InitializeCommands()
+        {
+            ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
+            CreateImageCopyCommand = new Command(OnCreateImageCopyCommandExecute);
+        }
+
+        /// <summary>Resizes the image while keeping aspect ratio.</summary>
         public Command<DragDeltaEventArgs> ResizeImageCommand { get; set; }
 
         private void OnResizeImageCommandExecute(DragDeltaEventArgs e)
@@ -120,21 +100,19 @@ namespace Classroom_Learning_Partner.ViewModels
             ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
+        /// <summary>SUMMARY</summary>
         public Command CreateImageCopyCommand { get; private set; }
 
         private void OnCreateImageCopyCommandExecute()
         {
             var keyPad = new KeypadWindowView("How many copies?", 21)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
-               keyPad.NumbersEntered.Text.Length <= 0)
+                keyPad.NumbersEntered.Text.Length <= 0)
             {
                 return;
             }
@@ -169,7 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 //If there isn't room, diagonally pile the rest
                 else if ((xPosition + image.Width + 20.0 <= PageObject.ParentPage.Width) &&
-                        (yPosition + image.Height + 20.0 <= PageObject.ParentPage.Height))
+                         (yPosition + image.Height + 20.0 <= PageObject.ParentPage.Height))
                 {
                     xPosition += 20.0;
                     yPosition += 20.0;
@@ -210,66 +188,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddImageToPage(CLPPage page)
         {
-            // Configure open file dialog box
-            var dlg = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"    // Filter files by extension
-            };
-
-            var result = dlg.ShowDialog();
-            if (result != true)
+            var dependencyResolver = ServiceLocator.Default.GetDependencyResolver();
+            var openFileService = dependencyResolver.Resolve<IOpenFileService>();
+            openFileService.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif";
+            openFileService.IsMultiSelect = false;
+            if (!openFileService.DetermineFile())
             {
                 return;
             }
 
-            // Open document
-            var filename = dlg.FileName;
-            if (File.Exists(filename))
+            var imageFilePath = openFileService.FileName;
+
+            Image visualImage;
+            try
             {
-                var bytes = File.ReadAllBytes(filename);
-
-                var md5 = new MD5CryptoServiceProvider();
-                var hash = md5.ComputeHash(bytes);
-                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
-                var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(Catel.IoC.ServiceLocator.Default.ResolveType<IDataService>().CurrentCacheInfo.ImagesFolderPath, newFileName);
-
-                try
-                {
-                    File.Copy(filename, newFilePath);
-                }
-                catch (IOException)
-                {
-                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
-                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
-                    return;
-                }
-
-                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
-                if (bitmapImage == null)
-                {
-                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
-                    return;
-                }
-
-                if (!App.MainWindowViewModel.ImagePool.ContainsKey(imageHashID))
-                {
-                    App.MainWindowViewModel.ImagePool.Add(imageHashID, bitmapImage);
-                }
-
-                var visualImage = System.Drawing.Image.FromFile(newFilePath);
-                var image = new CLPImage(page, imageHashID, visualImage.Height, visualImage.Width);
-
-                ACLPPageBaseViewModel.AddPageObjectToPage(image);
+                visualImage = Image.FromFile(imageFilePath);
             }
-            else
+            catch (Exception)
             {
                 MessageBox.Show("Error opening image file. Please try again.");
+                return;
             }
+
+            var dataService = dependencyResolver.Resolve<IDataService>();
+            var imageHashID = dataService.SaveImageToImagePool(imageFilePath, page);
+
+            if (string.IsNullOrWhiteSpace(imageHashID))
+            {
+                return;
+            }
+
+            var image = new CLPImage(page, imageHashID, visualImage.Height, visualImage.Width);
+            ACLPPageBaseViewModel.AddPageObjectToPage(image);
         }
 
         #endregion //Static Methods

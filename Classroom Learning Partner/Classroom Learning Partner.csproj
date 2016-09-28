@@ -338,6 +338,7 @@
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\MultipleChoiceCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\TextInputViewModel.cs" />
@@ -409,6 +410,9 @@
     </Compile>
     <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
       <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
+      <DependentUpon>ClassRosterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -689,6 +693,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\ColumnDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\ClassRosterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

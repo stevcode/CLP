@@ -50,20 +50,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override string FormattedName
-        {
-            get { return "Image"; }
-        }
+        public override string FormattedName => "Image";
 
-        public override int ZIndex
-        {
-            get { return 10; }
-        }
+        public override int ZIndex => 10;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override bool IsBackgroundInteractable => false;
 
         #endregion //APageObjectBase Overrides
 

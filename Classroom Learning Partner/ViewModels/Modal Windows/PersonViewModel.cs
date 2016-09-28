@@ -11,9 +11,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public PersonViewModel(Person person)
         {
-            InitializeCommands();
-
             Person = person;
+
+            InitializeCommands();
         }
 
         #endregion // Constructor
@@ -120,6 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (!(string.IsNullOrWhiteSpace(FirstName) && string.IsNullOrWhiteSpace(Alias)))
             {
+                await SaveViewModelAsync();
                 await CloseViewModelAsync(true);
             }
             else

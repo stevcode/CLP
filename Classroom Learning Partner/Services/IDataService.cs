@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
@@ -10,6 +11,7 @@ namespace Classroom_Learning_Partner.Services
         string CurrentCacheFolderPath { get; }
         string CurrentTempCacheFolderPath { get; }
         string CurrentArchiveFolderPath { get; }
+        Dictionary<string, BitmapImage> ImagePool { get; }
         NotebookSet CurrentNotebookSet { get; }
         ClassRoster CurrentClassRoster { get; }
         Notebook CurrentNotebook { get; }
@@ -35,14 +37,10 @@ namespace Classroom_Learning_Partner.Services
 
         void SaveLocal();
 
-        void CreateTestNotebookSet();
+        string SaveImageToImagePool(string imageFilePath, CLPPage page);
 
 
-
-
-
-
-
+        BitmapImage GetImage(string imageHashID, IPageObject pageObject);
 
 
 
@@ -50,8 +48,6 @@ namespace Classroom_Learning_Partner.Services
         List<NotebookInfo> LoadedNotebooksInfo { get; }
         
         void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true);
-        void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
-        void LoadLocalSubmissions(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced);
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
     }
 }
