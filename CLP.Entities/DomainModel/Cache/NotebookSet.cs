@@ -4,38 +4,28 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class NotebookSet : AInternalZipEntryFile
+    public class NotebookSet : AEntityBase
     {
-        #region Constants
-
-        public const string DEFAULT_INTERNAL_FILE_NAME = "notebookMetaData";
-
-        #endregion // Constants
-
         #region Constructor
 
-        // TODO: Perhaps just replace with ClassRoster
         /// <summary>Initializes <see cref="NotebookSet" /> from scratch.</summary>
         public NotebookSet()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToCompactID();
+            NotebookID = Guid.NewGuid().ToCompactID();
+        }
+
+        /// <summary>Initializes <see cref="Notebook" /> with name and owner.</summary>
+        public NotebookSet(string notebookName)
+            : this()
+        {
+            NotebookName = notebookName;
         }
 
         #endregion // Constructor
 
         #region Properties
 
-        /// <summary>Unique ID for the notebook set, propgated down to all notebooks in the set.</summary>
-        public string ID
-        {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
-        }
-
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
-
-        // TODO: Account for .clpconnected notebooks with different names.
         /// <summary>Name of the contained notebooks.</summary>
         public string NotebookName
         {
@@ -44,6 +34,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string), string.Empty);
+
+        /// <summary>Unique ID for the notebook set, propgated down to all notebooks in the set.</summary>
+        public string NotebookID
+        {
+            get { return GetValue<string>(NotebookIDProperty); }
+            set { SetValue(NotebookIDProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>Date and Time the <see cref="NotebookSet" /> was created.</summary>
         public DateTime CreationDate
@@ -54,17 +53,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
-        #endregion // Properties
-
-        #region Overrides of AInternalZipEntryFile
-
-        public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
-
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        /// <summary>Flags that the NotebookSet is contained in a .clpconnected file.</summary>
+        public bool IsConnectedNotebook
         {
-            return $"{DefaultInternalFileName}.json";
+            get { return GetValue<bool>(IsConnectedNotebookProperty); }
+            set { SetValue(IsConnectedNotebookProperty, value); }
         }
 
-        #endregion
+        public static readonly PropertyData IsConnectedNotebookProperty = RegisterProperty("IsConnectedNotebook", typeof(bool), false);
+
+        #endregion // Properties
     }
 }

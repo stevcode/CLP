@@ -80,13 +80,19 @@ namespace Classroom_Learning_Partner.ViewModels
             return Notebook != null;
         }
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Edits the currently loaded ClassRoster.</summary>
         public Command EditClassCommand { get; private set; }
 
         private void OnEditClassCommandExecute()
         {
+            if (_dataService.CurrentClassRoster == null)
+            {
+                return;
+            }
+
             var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
             viewModel.ShowWindowAsDialog();
+            _dataService.SaveClassRoaster(_dataService.CurrentClassRoster);
         }
 
         #endregion //Commands

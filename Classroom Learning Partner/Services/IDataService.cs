@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Services
 
         void SetCurrentClassRoster(ClassRoster classRoster);
 
-        void CreateAuthorNotebook(string notebookName);
+        void CreateAuthorNotebook(string notebookName, string zipContainerFilePath);
         void SetCurrentNotebook(Notebook notebook);
 
         void SetCurrentPage(CLPPage page);
@@ -33,7 +33,9 @@ namespace Classroom_Learning_Partner.Services
         void InsertPageAt(Notebook notebook, CLPPage page, int index);
         void DeletePage(Notebook notebook, CLPPage page);
         void DeletePageAt(Notebook notebook, int index);
-        void AutoSavePage(CLPPage page);
+        void AutoSavePage(Notebook notebook, CLPPage page);
+
+        void SaveClassRoaster(ClassRoster classRoster);
 
         void AddDisplay(Notebook notebook, IDisplay display);
 

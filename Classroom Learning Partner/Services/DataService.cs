@@ -250,22 +250,37 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            using (var zip = ZipFile.Read(fileInfo.FullName))
+            var entryPath = $"{ClassRoster.DEFAULT_INTERNAL_FILE_NAME}.json";
+
+            return LoadJsonEntry<ClassRoster>(fileInfo.FullName, entryPath);
+        }
+
+        public static ClassRoster LoadClassRosterFromZipContainer(string fullFilePath)
+        {
+            var fileInfo = new FileInfo(fullFilePath);
+            return LoadClassRosterFromZipContainer(fileInfo);
+        }
+
+        public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
+        {
+            try
             {
-                if (!zip.ContainsEntry("classRoster.json"))
+                using (var zip = ZipFile.Read(zipContainerFilePath))
                 {
-                    return null;
+                    var entry = zip.GetEntry(entryPath);
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        entry.Extract(memoryStream);
+
+                        var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                        return AEntityBase.FromJsonString<T>(jsonString);
+                    }
                 }
-
-                var rosterEntry = zip.Entries.First(e => e.FileName == "classRoster.json");
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    rosterEntry.Extract(memoryStream);
-
-                    var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                    return AEntityBase.FromJsonString<ClassRoster>(jsonString);
-                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
@@ -391,15 +406,39 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Methods
 
-        public void CreateAuthorNotebook(string notebookName)
+        public void CreateAuthorNotebook(string notebookName, string zipContainerFilePath)
         {
-            var notebook = new Notebook(notebookName, Person.Author);
+            var notebookSet = new NotebookSet(notebookName);
+            var notebook = new Notebook(notebookSet, Person.Author)
+                           {
+                               ContainerZipFilePath = zipContainerFilePath
+                           };
+
+            if (!File.Exists(zipContainerFilePath))
+            {
+                CreateEmptyZipContainer(zipContainerFilePath);
+                CurrentClassRoster = new ClassRoster();
+            }
+            else
+            {
+                CurrentClassRoster = LoadClassRosterFromZipContainer(zipContainerFilePath);
+            }
+
+            CurrentClassRoster.ContainerZipFilePath = zipContainerFilePath;
+            CurrentClassRoster.ListOfNotebookSets.Add(notebookSet);
+            SaveClassRoaster(CurrentClassRoster);
+
             SetCurrentNotebook(notebook);
             AddPage(notebook, new CLPPage(Person.Author));
         }
 
         public void SetCurrentNotebook(Notebook notebook)
         {
+            if (CurrentNotebook != null)
+            {
+                SavePage(CurrentNotebook, CurrentNotebook.CurrentPage);
+            }
+
             CurrentNotebook = notebook;
             CurrentNotebookChanged.SafeInvoke(this);
         }
@@ -416,8 +455,12 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var oldPage = CurrentNotebook.CurrentPage;
-            ACLPPageBaseViewModel.ClearAdorners(oldPage);
-            AutoSavePage(oldPage);
+            if (oldPage != null)
+            {
+                ACLPPageBaseViewModel.ClearAdorners(oldPage);
+                AutoSavePage(CurrentNotebook, oldPage);
+            }
+            
             CurrentNotebook.CurrentPage = page;
             CurrentPage = page;
 
@@ -439,22 +482,25 @@ namespace Classroom_Learning_Partner.Services
 
             //notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
 
-
             CurrentPageChanged.SafeInvoke(this);
         }
 
         public void AddPage(Notebook notebook, CLPPage page)
         {
+            page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
             notebook.Pages.Add(page);
             SetCurrentPage(page);
+            SavePage(notebook, page);
         }
 
         public void InsertPageAt(Notebook notebook, CLPPage page, int index)
         {
+            page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             notebook.Pages.Insert(index, page);
             GeneratePageNumbers(notebook);
             SetCurrentPage(page);
+            SavePage(notebook, page);
         }
 
         public void DeletePage(Notebook notebook, CLPPage page)
@@ -508,12 +554,110 @@ namespace Classroom_Learning_Partner.Services
             GeneratePageNumbers(notebook);
         }
 
-        public void AutoSavePage(CLPPage page)
+        public void AutoSavePage(Notebook notebook, CLPPage page)
         {
+            SavePage(notebook, page);
             //TODO: take screenshot of page if not already cached
             //set LastAutoSaveTime of notebook
             //save page locally, and to export folder
             //save page async to teacher machine, and partial cache folder
+        }
+
+        public void SavePage(Notebook notebook, CLPPage page)
+        {
+            if (!File.Exists(page.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entires = new List<ZipEntrySaver>
+                          {
+                              new ZipEntrySaver(page, parentNotebookName),
+                              new ZipEntrySaver(notebook, parentNotebookName)
+                          };
+
+            SaveZipEntries(page.ContainerZipFilePath, entires);
+        }
+
+        public void SavePagesInSameNotebook(Notebook notebook, List<CLPPage> pages)
+        {
+            if (!File.Exists(notebook.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entries = pages.Select(page => new ZipEntrySaver(page, parentNotebookName)).ToList();
+
+            SaveZipEntries(notebook.ContainerZipFilePath, entries);
+        }
+
+        public void SaveClassRoaster(ClassRoster classRoster)
+        {
+            if (!File.Exists(classRoster.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var zipEntrySaver = new ZipEntrySaver(classRoster);
+
+            SaveZipEntry(classRoster.ContainerZipFilePath, zipEntrySaver);
+        }
+
+        public void SaveNotebook(Notebook notebook)
+        {
+            if (!File.Exists(notebook.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var zipEntrySaver = new ZipEntrySaver(notebook, notebook.InternalZipFileDirectoryName);
+
+            SaveZipEntry(notebook.ContainerZipFilePath, zipEntrySaver);
+        }
+
+        private void SaveZipEntry(string zipContainerFilePath, ZipEntrySaver zipEntrySaver)
+        {
+            try
+            {
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    zipEntrySaver.UpdateEntry(zip);
+
+                    zip.Save(zipContainerFilePath);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
+        {
+            try
+            {
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in zipEntrySavers)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save(zipContainerFilePath);
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         #endregion // Page Methods
@@ -547,6 +691,25 @@ namespace Classroom_Learning_Partner.Services
             public void UpdateEntry(ZipFile zip)
             {
                 zip.UpdateEntry(InternalFilePath, JsonString);
+            }
+        }
+
+        public void CreateEmptyZipContainer(string zipContainerFilePath)
+        {
+            if (File.Exists(zipContainerFilePath))
+            {
+                MessageBox.Show(".clp file with that name already exists.");
+                return;
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                zip.Save(zipContainerFilePath);
             }
         }
 
@@ -775,7 +938,7 @@ namespace Classroom_Learning_Partner.Services
             classRoster.ListOfStudents.Add(student2);
             classRoster.ListOfStudents.Add(student3);
 
-            var rosterString = classRoster.ToJsonString(true);
+            var rosterString = classRoster.ToJsonString();
 
             using (var zip = new ZipFile())
             {

@@ -44,6 +44,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData SubjectNameProperty = RegisterProperty("SubjectName", typeof(string), string.Empty);
 
+        /// <summary>List of all the internal and connected NotebookSets available to this class.</summary>
+        public ObservableCollection<NotebookSet> ListOfNotebookSets
+        {
+            get { return GetValue<ObservableCollection<NotebookSet>>(ListOfNotebookSetsProperty); }
+            set { SetValue(ListOfNotebookSetsProperty, value); }
+        }
+
+        public static readonly PropertyData ListOfNotebookSetsProperty = RegisterProperty("ListOfNotebookSets", typeof(ObservableCollection<NotebookSet>), () => new ObservableCollection<NotebookSet>());
+        
+
         /// <summary>List of all the Teachers in the class.</summary>
         public ObservableCollection<Person> ListOfTeachers
         {

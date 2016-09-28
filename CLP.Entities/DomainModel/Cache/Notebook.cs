@@ -21,19 +21,14 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="Notebook" /> from scratch.</summary>
-        public Notebook()
-        {
-            CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToCompactID();
-        }
+        public Notebook() { }
 
         /// <summary>Initializes <see cref="Notebook" /> with name and owner.</summary>
-        /// <param name="notebookName">The name of the notebook.</param>
-        /// <param name="owner">The <see cref="Person" /> who owns the notebook.</param>
-        public Notebook(string notebookName, Person owner)
-            : this()
+        public Notebook(NotebookSet notebookSet, Person owner)
         {
-            Name = notebookName;
+            Name = notebookSet.NotebookName;
+            ID = notebookSet.NotebookID;
+            CreationDate = notebookSet.CreationDate;
             Owner = owner;
         }
 
@@ -104,6 +99,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
+
+        /// <summary>Date and Time the <see cref="Notebook" /> was generated from the Author Notebook.</summary>
+        public DateTime GenerationDate
+        {
+            get { return GetValue<DateTime>(GenerationDateProperty); }
+            set { SetValue(GenerationDateProperty, value); }
+        }
+
+        public static readonly PropertyData GenerationDateProperty = RegisterProperty("GenerationDate", typeof(DateTime));
 
         /// <summary>Date and Time the <see cref="Notebook" /> was last saved.</summary>
         /// <remarks>Type set to DateTime? (i.e. nullable DateTime) to allow NULL in database if LastSavedDate hasn't been set yet.</remarks>

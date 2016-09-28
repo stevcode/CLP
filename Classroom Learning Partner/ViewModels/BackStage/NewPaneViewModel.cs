@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -74,11 +75,37 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ZipContainerFileNameToUseProperty = RegisterProperty("ZipContainerFileNameToUse", typeof(string), string.Empty);
         
 
-        public string SelectedZipContainerFullFilePath => $"{_dataService.CurrentCacheFolderPath}\\{ZipContainerFileNameToUse}.clp";
+        public string SelectedZipContainerFullFilePath => $"{_dataService.CurrentCacheFolderPath}\\{ZipContainerFileNameToUse}.{AInternalZipEntryFile.CONTAINER_EXTENSION}";
 
         #endregion //Bindings
 
-        #region Methods
+        #region Commands
+
+        private void InitializeCommands()
+        {
+            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+        }
+
+        /// <summary>Creates a new notebook.</summary>
+        public Command CreateNotebookCommand { get; private set; }
+
+        private void OnCreateNotebookCommandExecute()
+        {
+            if (AvailableZipContainerFileNames.Select(s => s.ToUpper()).Contains(NewZipContainerFileName.ToUpper()))
+            {
+                MessageBox.Show("The new class name cannot be the same as an existing class name.");
+                return;
+            }
+
+            _dataService.CreateAuthorNotebook(NotebookName, SelectedZipContainerFullFilePath);
+        }
+
+        private bool OnCreateNotebookCanExecute()
+        {
+            return !string.IsNullOrWhiteSpace(NotebookName) && !string.IsNullOrWhiteSpace(ZipContainerFileNameToUse);
+        }
+
+        #endregion //Commands
 
         #region Overrides of ViewModelBase
 
@@ -117,32 +144,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-
-        #endregion // Methods
-
-        #region Commands
-
-        private void InitializeCommands()
-        {
-            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
-        }
-
-        /// <summary>Creates a new notebook.</summary>
-        public Command CreateNotebookCommand { get; private set; }
-
-        private void OnCreateNotebookCommandExecute()
-        {
-            //var dependencyResolver = this.GetDependencyResolver();
-            //var dataService = dependencyResolver.Resolve<IDataService>();
-            //dataService.SetCurrentClassRoster(ClassRoster);
-            //dataService.CreateAuthorNotebook(NotebookName);
-        }
-
-        private bool OnCreateNotebookCanExecute()
-        {
-            return !string.IsNullOrWhiteSpace(NotebookName) && !string.IsNullOrWhiteSpace(ZipContainerFileNameToUse);
-        }
-
-        #endregion //Commands
     }
 }
