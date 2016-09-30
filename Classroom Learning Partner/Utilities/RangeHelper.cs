@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner
         {
             //string justNumbers = new String(text.Where(Char.IsDigit).ToArray());
 
-            var rangeNumbers = range.Split('-').Select(t => new String(t.Where(Char.IsDigit).ToArray())) // Digits Only
+            var rangeNumbers = range.Split('-').Select(t => new string(t.Where(char.IsDigit).ToArray())) // Digits Only
                                     .Where(t => !string.IsNullOrWhiteSpace(t)) // Only if has a value
                                     .Select(int.Parse) // digit to int
                                     .ToList();
@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner
         /// <summary>e.g. (1,1) becomes "1" (1,3) becomes "1-3"</summary>
         private static string PrettyRange(Tuple<int, int> range)
         {
-            return range.Item1 == range.Item2 ? range.Item1.ToString() : string.Format("{0}-{1}", range.Item1, range.Item2);
+            return range.Item1 == range.Item2 ? range.Item1.ToString() : $"{range.Item1}-{range.Item2}";
         }
     }
 }

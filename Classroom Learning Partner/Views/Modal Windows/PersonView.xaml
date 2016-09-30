@@ -83,12 +83,9 @@
         <TextBox Text="{Binding Alias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
         <TextBlock Grid.ColumnSpan="2"
+                   Text="*Alias will overwrite the full name and display name."
                    Margin="20 0 0 0"
-                   FontSize="10">
-            <Run Text="*Alias will overwrite the full name for" />
-            <LineBreak />
-            <Run Text="people with non-standard name layouts." />
-        </TextBlock>
+                   FontSize="10" />
 
         <!--<Label Content="Handedness" />
         <ComboBox ItemsSource="{Binding Source={StaticResource Handedness}}"
@@ -113,4 +110,5 @@
         </StackPanel>
 
     </catel:StackGrid>
+    
 </catel:DataWindow>

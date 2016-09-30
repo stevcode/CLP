@@ -46,11 +46,9 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService = ServiceLocator.Default.ResolveType<IDataService>();
             CurrentProgramMode = currentProgramMode;
 
-            var dependencyResolver = this.GetDependencyResolver();
-            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
-            MajorRibbon = viewModelFactory.CreateViewModel<MajorRibbonViewModel>(null, null);
-            BackStage = viewModelFactory.CreateViewModel<BackStageViewModel>(null, null);
-            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(null, null);
+            MajorRibbon = this.CreateViewModel<MajorRibbonViewModel>(null);
+            BackStage = this.CreateViewModel<BackStageViewModel>(null);
+            Workspace = this.CreateViewModel<BlankWorkspaceViewModel>(null);
 
             InitializeCommands();
 
@@ -76,11 +74,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
         {
-            var dependencyResolver = this.GetDependencyResolver();
-            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
-
-            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(null, null);
-            Workspace = viewModelFactory.CreateViewModel<NotebookWorkspaceViewModel>(_dataService.CurrentNotebook, null);
+            Workspace = this.CreateViewModel<BlankWorkspaceViewModel>(null);
+            Workspace = this.CreateViewModel<NotebookWorkspaceViewModel>(_dataService.CurrentNotebook);
             CurrentNotebookName = _dataService.CurrentNotebook.Name;
             CurrentUser = _dataService.CurrentNotebook.Owner;
             IsAuthoring = _dataService.CurrentNotebook.OwnerID == Person.Author.ID;

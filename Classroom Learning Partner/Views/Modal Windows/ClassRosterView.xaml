@@ -20,7 +20,6 @@
         <StackPanel DockPanel.Dock="Top"
                     Orientation="Horizontal">
 
-            <!-- Pane Title Text -->
             <TextBlock Text="Edit Class"
                        Style="{StaticResource BackStageTitleTextBlock}" />
 

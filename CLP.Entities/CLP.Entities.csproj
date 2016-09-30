@@ -141,6 +141,7 @@
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
+    <Compile Include="DomainModel\Cache\Session.cs" />
     <Compile Include="DomainModel\Obsolete\ClassPeriod.cs" />
     <Compile Include="DomainModel\Obsolete\ClassInformation.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />

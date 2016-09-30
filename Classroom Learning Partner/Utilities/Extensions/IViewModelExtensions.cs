@@ -14,7 +14,8 @@ namespace Classroom_Learning_Partner
         {
             Argument.IsNotNull("viewModel", viewModel);
 
-            var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
+            var dependencyResolver = viewModel.GetDependencyResolver();
+            var viewManager = dependencyResolver.Resolve<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(viewModel).ToList();
 
             return views;
@@ -33,7 +34,9 @@ namespace Classroom_Learning_Partner
         {
             Argument.IsNotNull("viewModel", viewModel);
 
-            var uiVisualerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            var dependencyResolver = viewModel.GetDependencyResolver();
+            var uiVisualerService = dependencyResolver.Resolve<IUIVisualizerService>();
+
             return uiVisualerService.Show(viewModel);
         }
 
@@ -41,8 +44,20 @@ namespace Classroom_Learning_Partner
         {
             Argument.IsNotNull("viewModel", viewModel);
 
-            var uiVisualerService = ServiceLocator.Default.ResolveType<IUIVisualizerService>();
+            var dependencyResolver = viewModel.GetDependencyResolver();
+            var uiVisualerService = dependencyResolver.Resolve<IUIVisualizerService>();
+
             return uiVisualerService.ShowDialog(viewModel);
+        }
+
+        public static T CreateViewModel<T>(this IViewModel viewModel, object dataContext) where T : ViewModelBase
+        {
+            Argument.IsNotNull("viewModel", viewModel);
+
+            var dependencyResolver = viewModel.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+
+            return viewModelFactory.CreateViewModel<T>(dataContext, null);
         }
     }
 }

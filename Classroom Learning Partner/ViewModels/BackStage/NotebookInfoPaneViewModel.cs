@@ -64,6 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             EditClassCommand = new Command(OnEditClassCommandExecute);
+            EditSessionsCommand = new Command(OnEditSessionsCommandExecute);
         }
 
         /// <summary>Saves the current notebook.</summary>
@@ -93,6 +94,15 @@ namespace Classroom_Learning_Partner.ViewModels
             var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
             viewModel.ShowWindowAsDialog();
             _dataService.SaveClassRoaster(_dataService.CurrentClassRoster);
+        }
+
+        /// <summary>Opens a list of sessions in the class.</summary>
+        public Command EditSessionsCommand { get; private set; }
+
+        private void OnEditSessionsCommandExecute()
+        {
+            var viewModel = this.CreateViewModel<SessionsViewModel>(null);
+            viewModel.ShowWindowAsDialog();
         }
 
         #endregion //Commands
