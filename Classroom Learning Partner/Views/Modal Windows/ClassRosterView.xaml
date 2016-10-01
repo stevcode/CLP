@@ -15,12 +15,14 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True"
+               Margin="-6"
                Height="{x:Static views:ClassRosterView.WINDOW_HEIGHT}">
 
         <StackPanel DockPanel.Dock="Top"
                     Orientation="Horizontal">
 
             <TextBlock Text="Edit Class"
+                       Margin="5 0 0 0"
                        Style="{StaticResource BackStageTitleTextBlock}" />
 
         </StackPanel>
@@ -277,7 +279,7 @@
 
             <Button Command="{Binding ImportStudentNamesCommand}"
                     Height="84"
-                    Margin="0 20"
+                    Margin="26 20"
                     HorizontalAlignment="Left"
                     Style="{StaticResource BackStageButton}">
 

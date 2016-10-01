@@ -15,6 +15,7 @@
     </Window.Resources>
 
     <DockPanel LastChildFill="True"
+               Margin="-6"
                Width="{x:Static views:SessionsView.WINDOW_WIDTH}"
                Height="{x:Static views:SessionsView.WINDOW_HEIGHT}">
 
@@ -22,6 +23,7 @@
                     Orientation="Horizontal">
 
             <TextBlock Text="Sessions"
+                       Margin="5 0 0 0"
                        Style="{StaticResource BackStageTitleTextBlock}" />
 
         </StackPanel>
@@ -77,8 +79,20 @@
                                 </Style>
                             </Grid.Style>
 
-                            <!-- Button Content -->
-                            <TextBlock Text="{Binding StartTime}"
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       Text="{Binding SessionTitle}"
+                                       Margin="26 2 5 1"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
+
+                            <TextBlock Grid.Row="1"
+                                       FontSize="12"
+                                       Text="{Binding StartTime, StringFormat={}{0:MM/dd/yyyy HH:mm}}"
+                                       Margin="26 1 5 2"
                                        Style="{StaticResource BackStageListItemTextBlock}" />
 
                         </Grid>
@@ -97,7 +111,25 @@
               Stroke="{StaticResource GrayEdgeColor}"
               StrokeThickness="1" />
 
-        <catel:StackGrid>
+        <catel:StackGrid Margin="10 0">
+
+            <Grid.Resources>
+                
+                <Style TargetType="TextBlock"
+                       BasedOn="{StaticResource BackStageTextBlock}">
+                    <Setter Property="Margin"
+                            Value="0 4 4 0" />
+                </Style>
+
+                <Style TargetType="TextBox"
+                       BasedOn="{StaticResource BackStageTextBox}">
+                    <Setter Property="Width"
+                            Value="Auto" />
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                </Style>
+                
+            </Grid.Resources>
 
             <catel:StackGrid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -123,10 +155,11 @@
             <TextBox Text="{Binding PageNumbers}" />
 
             <TextBlock Grid.ColumnSpan="2"
-                   FontSize="10">
-            <Run Text="*Comma separated page numbers, or page ranges with dashes." />
-            <LineBreak />
-            <Run Text="Example: 1,5,7-10,14" />
+                       Margin="10 4 4 0"
+                       FontSize="10">
+                <Run Text="*Comma separated page numbers, or page ranges with dashes." />
+                <LineBreak />
+                <Run Text="Example: 1,5,7-10,14" />
             </TextBlock>
 
             <TextBlock Text="Starting Page Number:" />
@@ -138,34 +171,34 @@
             <TextBlock Text="Start Time (24h) (hh:mm):" />
             <TextBox Text="{Binding StartingTime}" />
 
-            <TextBlock Grid.ColumnSpan="2" 
-                   Text="Comments or Notes:" />
+            <TextBlock Grid.ColumnSpan="2"
+                       Text="Comments or Notes:" />
 
             <ScrollViewer Grid.ColumnSpan="2"
-                      HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto">
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
                 <TextBox Text="{Binding SessionComments}"
-                     TextWrapping="Wrap"
-                     AcceptsReturn="True"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" />
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch" />
             </ScrollViewer>
 
             <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Grid.ColumnSpan="2">
+                        HorizontalAlignment="Right"
+                        Grid.ColumnSpan="2">
 
                 <Button Content="Confirm"
-                    Command="{Binding ConfirmChangesCommand}"
-                    Margin="10 5"
-                    Height="30"
-                    Width="100" />
+                        Command="{Binding ConfirmChangesCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
 
                 <Button Content="Cancel"
-                    Command="{Binding CancelChangesCommand}"
-                    Margin="10 5"
-                    Height="30"
-                    Width="100" />
+                        Command="{Binding CancelChangesCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
 
             </StackPanel>
 

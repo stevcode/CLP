@@ -129,6 +129,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var session = new Session();
             session.StartTime = DateTime.Now;
+            session.SessionTitle = "Blah blah blah";
             Sessions.Add(session);
             CurrentSession = session;
         }
