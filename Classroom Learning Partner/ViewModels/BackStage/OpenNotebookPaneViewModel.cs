@@ -152,6 +152,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
+            _dataService.SetCurrentNotebook(SelectedNotebook);
+
             //PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             //var pageIDs = DataService.GetAllPageIDsInNotebook(SelectedNotebook);
             //PleaseWaitHelper.Show(() =>
@@ -251,7 +253,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnOpenNotebookCanExecute()
         {
-            return true;
+            return SelectedNotebook != null;
         }
 
         #endregion //Commands

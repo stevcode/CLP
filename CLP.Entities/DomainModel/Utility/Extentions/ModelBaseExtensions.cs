@@ -46,15 +46,6 @@ namespace CLP.Entities
 
                 using (var stream = new MemoryStream())
                 {
-                    var formatter = new BinaryFormatter();
-                    formatter.Serialize(stream, model);
-                    stream.Position = 0L;
-                    var clone = formatter.Deserialize(stream);
-                    return clone as T;
-                }
-
-                using (var stream = new MemoryStream())
-                {
                     var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
                     jsonSerializer.WriteTypeInfo = true;
                     jsonSerializer.PreserveReferences = true;

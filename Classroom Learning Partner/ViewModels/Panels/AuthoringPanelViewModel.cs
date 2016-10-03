@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public class AuthoringPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+
         #region Constructor
 
         public AuthoringPanelViewModel(IDataService dataService)
@@ -36,22 +37,6 @@ namespace Classroom_Learning_Partner.ViewModels
             IsVisible = false;
 
             InitializeCommands();
-        }
-
-        private void InitializeCommands()
-        {
-            AddPageCommand = new Command(OnAddPageCommandExecute);
-            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
-            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
-            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
-            MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
-            TrimPageCommand = new Command(OnTrimPageCommandExecute);
-            ClearPageCommand = new Command(OnClearPageCommandExecute);
-            DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
-            DeletePageCommand = new Command(OnDeletePageCommandExecute);
-            DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
-            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
         }
 
         private Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
@@ -119,6 +104,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            AddPageCommand = new Command(OnAddPageCommandExecute);
+            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
+            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
+            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
+            MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
+            DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
+            DeletePageCommand = new Command(OnDeletePageCommandExecute);
+            DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
+            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+        }
 
         /// <summary>Adds a new page to the notebook.</summary>
         public Command AddPageCommand { get; private set; }
@@ -270,7 +271,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
             }
 
-            RaisePropertyChanged("CurrentPage");
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageToCanExecute()

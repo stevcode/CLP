@@ -326,6 +326,39 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, List<int> pageNumbers)
+        {
+            var pageIDs = new List<string>();
+
+            //Parallel.ForEach(pageFilePaths,
+            //                 pageFilePath =>
+            //                 {
+            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+            //                     if (pageNameComposite == null ||
+            //                         pageNameComposite.VersionIndex != "0")
+            //                     {
+            //                         return;
+            //                     }
+
+            //                     int pageNumber;
+            //                     var isPageNumber = int.TryParse(pageNameComposite.PageNumber, out pageNumber);
+            //                     if (!isPageNumber)
+            //                     {
+            //                         return;
+            //                     }
+
+            //                     var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
+            //                     if (!isPageToBeLoaded)
+            //                     {
+            //                         return;
+            //                     }
+
+            //                     pageIDs.Add(pageNameComposite.ID);
+            //                 });
+
+            return pageIDs.Distinct().ToList();
+        }
+
         #endregion // Static Methods
 
         #region IDataService Implementation
@@ -1041,37 +1074,6 @@ namespace Classroom_Learning_Partner.Services
 
         #region Static Methods
 
-        public static List<CacheInfo> GetCachesInFolder(string cachesFolderPath)
-        {
-            if (!Directory.Exists(cachesFolderPath))
-            {
-                return new List<CacheInfo>();
-            }
-
-            var directoryInfo = new DirectoryInfo(cachesFolderPath);
-            return directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => new CacheInfo(directory.FullName)).OrderBy(c => c.CacheName).ToList();
-        }
-
-        public static List<NotebookInfo> GetNotebooksInCache(CacheInfo cache)
-        {
-            if (cache == null ||
-                !Directory.Exists(cache.NotebooksFolderPath))
-            {
-                return new List<NotebookInfo>();
-            }
-
-            var directoryInfo = new DirectoryInfo(cache.NotebooksFolderPath);
-            return
-                directoryInfo.GetDirectories()
-                             .Select(directory => new NotebookInfo(cache, directory.FullName))
-                             .Where(nc => nc != null)
-                             //.OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
-                             //.ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
-                             //.ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
-                             //.ThenBy(nc => nc.NameComposite.OwnerName)
-                             .ToList();
-        }
-
         public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
         {
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
@@ -1083,40 +1085,6 @@ namespace Classroom_Learning_Partner.Services
             //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
             //                     if (pageNameComposite == null ||
             //                         pageNameComposite.VersionIndex != "0")
-            //                     {
-            //                         return;
-            //                     }
-
-            //                     pageIDs.Add(pageNameComposite.ID);
-            //                 });
-
-            return pageIDs.Distinct().ToList();
-        }
-
-        public static List<string> GetPageIDsFromPageNumbers(NotebookInfo notebookInfo, List<int> pageNumbers)
-        {
-            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
-            var pageIDs = new ConcurrentBag<string>();
-
-            //Parallel.ForEach(pageFilePaths,
-            //                 pageFilePath =>
-            //                 {
-            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-            //                     if (pageNameComposite == null ||
-            //                         pageNameComposite.VersionIndex != "0")
-            //                     {
-            //                         return;
-            //                     }
-
-            //                     int pageNumber;
-            //                     var isPageNumber = int.TryParse(pageNameComposite.PageNumber, out pageNumber);
-            //                     if (!isPageNumber)
-            //                     {
-            //                         return;
-            //                     }
-
-            //                     var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
-            //                     if (!isPageToBeLoaded)
             //                     {
             //                         return;
             //                     }
@@ -1480,49 +1448,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #region Old ClassPeriod Methods
-
-        //public void StartSoonestClassPeriod(string localCacheFolderPath)
-        //{
-        //    var classesFolderPath = Path.Combine(localCacheFolderPath, "Classes");
-        //    var classPeriodFilePaths = Directory.GetFiles(classesFolderPath);
-        //    ClassPeriodNameComposite closestClassPeriodNameComposite = null;
-        //    var closestTimeSpan = TimeSpan.MaxValue;
-        //    var now = DateTime.Now;
-        //    foreach (var classPeriodFilePath in classPeriodFilePaths)
-        //    {
-        //        var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
-        //        if (classPeriodNameComposite == null)
-        //        {
-        //            continue;
-        //        }
-        //        var time = classPeriodNameComposite.StartTime;
-        //        var timeParts = time.Split('.');
-        //        var year = Int32.Parse(timeParts[0]);
-        //        var month = Int32.Parse(timeParts[1]);
-        //        var day = Int32.Parse(timeParts[2]);
-        //        var hour = Int32.Parse(timeParts[3]);
-        //        var minute = Int32.Parse(timeParts[4]);
-        //        var dateTime = new DateTime(year, month, day, hour, minute, 0);
-
-        //        var timeSpan = now - dateTime;
-        //        var duration = timeSpan.Duration();
-        //        var closestTimeSpanDuration = closestTimeSpan.Duration();
-        //        if (duration >= closestTimeSpanDuration)
-        //        {
-        //            continue;
-        //        }
-        //        closestTimeSpan = timeSpan;
-        //        closestClassPeriodNameComposite = classPeriodNameComposite;
-        //    }
-
-        //    if (closestClassPeriodNameComposite == null)
-        //    {
-        //        MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
-        //        return;
-        //    }
-
-        //    StartLocalClassPeriod(closestClassPeriodNameComposite, localCacheFolderPath);
-        //}
 
         //public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
         //{
