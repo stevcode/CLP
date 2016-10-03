@@ -161,7 +161,7 @@ namespace CLP.Entities
 
         public virtual IPageObject Duplicate()
         {
-            IPageObject pageObject = DeepCopy();
+            IPageObject pageObject = this.DeepCopy();
             if (pageObject == null)
             {
                 return null;

@@ -137,7 +137,6 @@
     <Compile Include="Analysis\InkInterpretation.cs" />
     <Compile Include="DAL\DatabaseConfiguration.cs" />
     <Compile Include="DAL\ClassPeriodContext.cs" />
-    <Compile Include="DomainModel\AEntityBaseExtensions.cs" />
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />

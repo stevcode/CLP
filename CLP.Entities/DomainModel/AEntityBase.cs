@@ -57,17 +57,5 @@ namespace CLP.Entities
                 return Load<T>(stream, mode);
             }
         }
-
-        public dynamic DeepCopy()
-        {
-            var modelType = GetType();
-
-            if (!modelType.IsSerializable)
-            {
-                throw new ArgumentException("The type must be serializable.", modelType.ToString());
-            }
-
-            return FromJsonString<dynamic>(ToJsonString());
-        }
     }
 }
