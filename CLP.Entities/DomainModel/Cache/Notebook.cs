@@ -259,6 +259,38 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
+        public class NameComposite
+        {
+            public string OwnerType { get; set; }
+            public string OwnerName { get; set; }
+            public string OwnerID { get; set; }
+
+            public static NameComposite ParseFromString(string nameCompositeString)
+            {
+                var parts = nameCompositeString.Split(';');
+                if (parts.Count() != 3)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    var nameComposite = new NameComposite
+                    {
+                        OwnerType = parts[0],
+                        OwnerName = parts[1],
+                        OwnerID = parts[2]
+                    };
+
+                    return nameComposite;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
+
         public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
 
         public override string GetFullInternalFilePathWithExtension(string parentNotebookName)

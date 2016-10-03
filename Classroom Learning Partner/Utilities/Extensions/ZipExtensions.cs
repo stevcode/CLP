@@ -95,6 +95,17 @@ namespace Classroom_Learning_Partner
             // TODO: If moving the last entry from a directory, the directory is erased, include toggle to preserve empty directory.
         }
 
+        public static string GetEntryNameWithoutExtension(this ZipEntry entry)
+        {
+            Argument.IsNotNull("entry", entry);
+
+            var lastSlashIndex = entry.FileName.LastIndexOf('/');
+            var entryNameWithExtension = lastSlashIndex < 0 ? entry.FileName : entry.FileName.Substring(lastSlashIndex + 1);
+            var lastDotIndex = entryNameWithExtension.LastIndexOf('.');
+            var entryName = lastDotIndex < 0 ? entryNameWithExtension : entryNameWithExtension.Substring(0, lastDotIndex);
+            return entryName;
+        } 
+
         #endregion // ZipEntry
 
         #endregion // Extensions

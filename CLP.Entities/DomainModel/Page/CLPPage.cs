@@ -816,6 +816,40 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
+        public class NameComposite
+        {
+            public decimal PageNumber { get; set; }
+            public string DifferentiationLevel { get; set; }
+            public uint VersionIndex { get; set; }
+            public string ID { get; set; }
+
+            public static NameComposite ParseFromString(string nameCompositeString)
+            {
+                var parts = nameCompositeString.Split(';');
+                if (parts.Count() != 5)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    var nameComposite = new NameComposite
+                                        {
+                                            PageNumber = Convert.ToDecimal(parts[1]),
+                                            DifferentiationLevel = parts[2],
+                                            VersionIndex = Convert.ToUInt32(parts[3]),
+                                            ID = parts[4]
+                                        };
+
+                    return nameComposite;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
+
         public override string DefaultInternalFileName => $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
 
         public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
