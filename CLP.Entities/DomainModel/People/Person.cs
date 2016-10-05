@@ -169,6 +169,26 @@ namespace CLP.Entities
             }
         }
 
+        #region Storage Properties
+
+        public string OwnerType => ID == AUTHOR_ID ? "A" : IsStudent ? "S" : "T";
+
+        public string ParentNotebookFolderName => $"{OwnerType};{FullName};{ID}";
+
+        public string ParentNotebookFolderPath => $"{AInternalZipEntryFile.ZIP_NOTEBOOKS_FOLDER_NAME}/{ParentNotebookFolderName}/";
+
+        public string NotebookDisplaysFolderPath => $"{ParentNotebookFolderPath}{AInternalZipEntryFile.ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/";
+
+        public string NotebookPagesFolderPath => $"{ParentNotebookFolderPath}{AInternalZipEntryFile.ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/";
+
+        public string NotebookPageThumbnailsFolderPath => $"{NotebookPagesFolderPath}{AInternalZipEntryFile.ZIP_NOTEBOOK_PAGE_THUMBNAILS_FOLDER_NAME}/";
+
+        public string NotebookSubmissionsFolderPath => $"{ParentNotebookFolderPath}{AInternalZipEntryFile.ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/";
+
+        public string NotebookSubmissionsThumbnailsFolderPath => $"{NotebookSubmissionsFolderPath}{AInternalZipEntryFile.ZIP_NOTEBOOK_SUBMISSION_THUMBNAILS_FOLDER_NAME}/";
+
+        #endregion // Storage Properties
+
         #endregion // Calculated Properties
 
         #endregion //Properties

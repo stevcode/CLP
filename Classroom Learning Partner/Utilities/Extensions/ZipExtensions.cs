@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Catel;
+using CLP.Entities;
 using Ionic.Zip;
 
 namespace Classroom_Learning_Partner
@@ -56,6 +59,33 @@ namespace Classroom_Learning_Partner
 
         #region ZipEntry
 
+        /// <summary>Extracts a zip entry into the Json string it contains.</summary>
+        /// <param name="entry">Entry to extract.</param>
+        public static string ExtractJsonString(this ZipEntry entry)
+        {
+            Argument.IsNotNull("entry", entry);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                entry.Extract(memoryStream);
+
+                var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                return jsonString;
+            }
+        }
+
+        /// <summary>Extracts a json zip entry into an Entity.</summary>
+        /// <param name="entry">Entry to extract.</param>
+        public static T ExtractJsonEntity<T>(this ZipEntry entry) where T : AEntityBase
+        {
+            Argument.IsNotNull("entry", entry);
+
+            var jsonString = entry.ExtractJsonString();
+            var entity = AEntityBase.FromJsonString<T>(jsonString);
+
+            return entity;
+        }
+
         /// <summary>Renames the ZipEntry while keeping the current internal zip directory.</summary>
         /// <param name="entry">Entry to rename.</param>
         /// <param name="newEntryName">Includes file extension.</param>
@@ -104,7 +134,7 @@ namespace Classroom_Learning_Partner
             var lastDotIndex = entryNameWithExtension.LastIndexOf('.');
             var entryName = lastDotIndex < 0 ? entryNameWithExtension : entryNameWithExtension.Substring(0, lastDotIndex);
             return entryName;
-        } 
+        }
 
         #endregion // ZipEntry
 

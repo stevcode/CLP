@@ -235,14 +235,7 @@ namespace CLP.Entities
 
         #region Storage
 
-        public string InternalZipFileDirectoryName
-        {
-            get
-            {
-                var ownerType = OwnerID == Person.AUTHOR_ID ? "A" : Owner.IsStudent ? "S" : "T";
-                return $"{ownerType};{Owner.FullName};{Owner.ID}";
-            }
-        }
+        public string InternalZipFileDirectoryName => Owner.ParentNotebookFolderName;
 
         #endregion // Storage
 
