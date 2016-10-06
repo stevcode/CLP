@@ -34,9 +34,11 @@ namespace CLP.Entities
                 jsonSerializer.FormatWithIndents = formatWithIndents;
                 jsonSerializer.Serialize(this, stream);
                 stream.Position = 0;
-                var reader = new StreamReader(stream);
-                var jsonString = reader.ReadToEnd();
-                return jsonString;
+                using (var reader = new StreamReader(stream))
+                {
+                    var jsonString = reader.ReadToEnd();
+                    return jsonString;
+                }
             }
         }
 
