@@ -292,6 +292,34 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static List<Session> LoadAllSessionsFromZipContainer(string zipContainerFilePath)
+        {
+            var sessions = new List<Session>();
+            try
+            {
+                var sessionStrings = new List<string>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    var internalSessionsDirectory = $"{AInternalZipEntryFile.ZIP_SESSIONS_FOLDER_NAME}/";
+                    var sessionEntries = zip.GetEntriesInDirectory(internalSessionsDirectory);
+                    sessionStrings.AddRange(sessionEntries.Select(sessionEntry => sessionEntry.ExtractJsonString()));
+                }
+
+                foreach (var sessionString in sessionStrings)
+                {
+                    var session = AEntityBase.FromJsonString<Session>(sessionString);
+                    session.ContainerZipFilePath = zipContainerFilePath;
+                    sessions.Add(session);
+                }
+
+                return sessions.OrderByDescending(s => s.StartTime).ToList();
+            }
+            catch (Exception)
+            {
+                return sessions;
+            }
+        }
+
         public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
         {
             try
@@ -770,6 +798,25 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Display Methods
 
+        #region Session Methods
+
+        public void SaveSession(Session session)
+        {
+            if (!File.Exists(session.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var entires = new List<ZipEntrySaver>
+                          {
+                              new ZipEntrySaver(session)
+                          };
+
+            SaveZipEntries(session.ContainerZipFilePath, entires);
+        }
+
+        #endregion // Session Methods
+
         #region Save Methods
 
         private class ZipEntrySaver
@@ -1004,6 +1051,33 @@ namespace Classroom_Learning_Partner.Services
             SetCurrentNotebook(notebook);
         }
 
+        public void LoadRangeOfNotebookPages(Notebook notebook, List<decimal> pageNumbers)
+        {
+            var owner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            var classRoster = LoadClassRosterFromZipContainer(zipContainerFilePath);
+            SetCurrentClassRoster(classRoster);
+
+            var pageJsonStrings = new List<string>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var pageIDs = GetPageIDsFromPageNumbers(zip, pageNumbers);
+                var pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
+                pageJsonStrings = GetPageJsonStringsFromPageEntries(pageEntries);
+            }
+
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath);
+
+            notebook.Pages.AddRange(pages);
+            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
+            SetCurrentNotebook(notebook);
+        }
+
         #endregion // Load Methods
 
         #endregion // Methods
@@ -1024,8 +1098,6 @@ namespace Classroom_Learning_Partner.Services
 
         public List<NotebookInfo> LoadedNotebooksInfo { get; } = new List<NotebookInfo>();
 
-        public NotebookInfo CurrentNotebookInfo { get; set; }
-
         #endregion //Notebook Properties
 
         #endregion //Properties
@@ -1033,27 +1105,6 @@ namespace Classroom_Learning_Partner.Services
         #region Methods
 
         #region Static Methods
-
-        public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
-        {
-            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
-            var pageIDs = new ConcurrentBag<string>();
-
-            //Parallel.ForEach(pageFilePaths,
-            //                 pageFilePath =>
-            //                 {
-            //                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
-            //                     if (pageNameComposite == null ||
-            //                         pageNameComposite.VersionIndex != "0")
-            //                     {
-            //                         return;
-            //                     }
-
-            //                     pageIDs.Add(pageNameComposite.ID);
-            //                 });
-
-            return pageIDs.Distinct().ToList();
-        }
 
         public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
         {

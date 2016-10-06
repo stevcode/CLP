@@ -39,6 +39,8 @@ namespace Classroom_Learning_Partner.Services
 
         void AddDisplay(Notebook notebook, IDisplay display);
 
+        void SaveSession(Session session);
+
         void SaveLocal();
 
         string SaveImageToImagePool(string imageFilePath, CLPPage page);
@@ -46,6 +48,7 @@ namespace Classroom_Learning_Partner.Services
 
         BitmapImage GetImage(string imageHashID, IPageObject pageObject);
         void LoadAllNotebookPages(Notebook notebook);
+        void LoadRangeOfNotebookPages(Notebook notebook, List<decimal> pageNumbers);
 
         CacheInfo CurrentCacheInfo { get; set; }
         List<NotebookInfo> LoadedNotebooksInfo { get; }

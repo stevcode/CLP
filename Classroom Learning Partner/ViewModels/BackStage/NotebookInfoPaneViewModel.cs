@@ -63,8 +63,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
-            EditClassCommand = new Command(OnEditClassCommandExecute);
-            EditSessionsCommand = new Command(OnEditSessionsCommandExecute);
+            EditClassCommand = new Command(OnEditClassCommandExecute, OnSaveCurrentNotebookCanExecute);
+            EditSessionsCommand = new Command(OnEditSessionsCommandExecute, OnSaveCurrentNotebookCanExecute);
         }
 
         /// <summary>Saves the current notebook.</summary>

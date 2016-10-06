@@ -32,24 +32,8 @@
                          VerticalAlignment="Stretch">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-
-            <Button Command="{Binding AddSessionCommand}"
-                    Height="40"
-                    Margin="0 5"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource BackStageButton}">
-
-                <StackPanel Orientation="Horizontal">
-
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
-
-                    <TextBlock Text="New Session" />
-
-                </StackPanel>
-            </Button>
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Sessions}"
@@ -143,33 +127,25 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </catel:StackGrid.RowDefinitions>
 
             <TextBlock Text="Title:" />
-            <TextBox Text="{Binding SessionTitle}" />
+            <TextBlock Text="{Binding SessionTitle}" />
 
             <TextBlock Text="Page Numbers*:" />
-            <TextBox Text="{Binding PageNumbers}" />
-
-            <TextBlock Grid.ColumnSpan="2"
-                       Margin="10 4 4 0"
-                       FontSize="10">
-                <Run Text="*Comma separated page numbers, or page ranges with dashes." />
-                <LineBreak />
-                <Run Text="Example: 1,5,7-10,14" />
-            </TextBlock>
+            <TextBlock Text="{Binding PageNumbers}" />
 
             <TextBlock Text="Starting Page Number:" />
-            <TextBox Text="{Binding StartingPageNumber}" />
+            <TextBlock Text="{Binding StartingPageNumber}" />
 
             <TextBlock Text="Start Date (mm/dd/yyyy):" />
-            <TextBox Text="{Binding StartingDate}" />
+            <TextBlock Text="{Binding StartingDate}" />
 
             <TextBlock Text="Start Time (24h) (hh:mm):" />
-            <TextBox Text="{Binding StartingTime}" />
+            <TextBlock Text="{Binding StartingTime}" />
 
             <TextBlock Grid.ColumnSpan="2"
                        Text="Comments or Notes:" />
@@ -177,25 +153,44 @@
             <ScrollViewer Grid.ColumnSpan="2"
                           HorizontalScrollBarVisibility="Disabled"
                           VerticalScrollBarVisibility="Auto">
-                <TextBox Text="{Binding SessionComments}"
+                <TextBlock Text="{Binding SessionComments}"
                          TextWrapping="Wrap"
-                         AcceptsReturn="True"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch" />
             </ScrollViewer>
 
-            <StackPanel Orientation="Horizontal"
+            <StackPanel Grid.ColumnSpan="2"
+                        Orientation="Horizontal"
                         HorizontalAlignment="Right"
-                        Grid.ColumnSpan="2">
+                        Visibility="{Binding IsOpening, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
 
-                <Button Content="Confirm"
-                        Command="{Binding ConfirmChangesCommand}"
+                <Button Content="Add Session"
+                        Command="{Binding AddSessionCommand}"
                         Margin="10 5"
                         Height="30"
                         Width="100" />
 
-                <Button Content="Cancel"
-                        Command="{Binding CancelChangesCommand}"
+                <Button Content="Edit Session"
+                        Command="{Binding EditSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+                <Button Content="Delete Session"
+                        Command="{Binding DeleteSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+            </StackPanel>
+
+            <StackPanel Grid.ColumnSpan="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Visibility="{Binding IsOpening, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
+
+                <Button Content="Open Session"
+                        Command="{Binding OpenSessionCommand}"
                         Margin="10 5"
                         Height="30"
                         Width="100" />

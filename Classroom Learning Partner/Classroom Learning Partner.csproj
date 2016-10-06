@@ -19,6 +19,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -35,8 +37,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>false</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -341,6 +341,7 @@
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\SessionViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\MultipleChoiceCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
@@ -417,6 +418,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\SessionsView.xaml.cs">
       <DependentUpon>SessionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\SessionView.xaml.cs">
+      <DependentUpon>SessionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -705,6 +709,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\SessionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\SessionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -145,6 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
+            OpenSessionCommand = new Command(OnOpenSessionCommandExecute);
         }
 
         /// <summary>Opens selected notebook.</summary>
@@ -152,8 +154,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-
-
             _dataService.LoadAllNotebookPages(SelectedNotebook);
 
             //PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
@@ -206,22 +206,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenPageRangeCommandExecute()
         {
-            //var textInputViewModel = new TextInputViewModel();
-            //var textInputView = new TextInputView(textInputViewModel);
-            //textInputView.ShowDialog();
+            var textInputViewModel = new TextInputViewModel();
+            var textInputView = new TextInputView(textInputViewModel);
+            textInputView.ShowDialog();
 
-            //if (textInputView.DialogResult == null ||
-            //    textInputView.DialogResult != true ||
-            //    string.IsNullOrEmpty(textInputViewModel.InputText))
-            //{
-            //    return;
-            //}
+            if (textInputView.DialogResult == null ||
+                textInputView.DialogResult != true ||
+                string.IsNullOrEmpty(textInputViewModel.InputText))
+            {
+                return;
+            }
 
-            //var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
-            //if (!pageNumbersToOpen.Any())
-            //{
-            //    return;
-            //}
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText).Select(Convert.ToDecimal).ToList();
+            if (!pageNumbersToOpen.Any())
+            {
+                return;
+            }
+
+            _dataService.LoadRangeOfNotebookPages(SelectedNotebook, pageNumbersToOpen);
 
             //PleaseWaitHelper.Show(() => _dataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             //var pageIDs = DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
@@ -256,6 +258,23 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnOpenNotebookCanExecute()
         {
             return SelectedNotebook != null;
+        }
+
+        /// <summary>Opens a session.</summary>
+        public Command OpenSessionCommand { get; private set; }
+
+        private void OnOpenSessionCommandExecute()
+        {
+            var viewModel = this.CreateViewModel<SessionsViewModel>(null);
+            viewModel.IsOpening = true;
+            var result = viewModel.ShowWindowAsDialog();
+            if (result != null)
+            {
+                return;
+            }
+
+            var session = viewModel.CurrentSession;
+            // TODO: Open the session.
         }
 
         #endregion //Commands

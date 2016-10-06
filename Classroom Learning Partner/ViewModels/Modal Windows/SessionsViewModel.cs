@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -22,8 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public SessionsViewModel(IDataService dataService)
         {
             _dataService = dataService;
-
-            CurrentSession = new Session();
+            Sessions = DataService.LoadAllSessionsFromZipContainer(_dataService.CurrentNotebook.ContainerZipFilePath).ToObservableCollection();
+            CurrentSession = Sessions.FirstOrDefault();
 
             InitializeCommands();
         }
@@ -33,38 +31,47 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>Model of this ViewModel.</summary>
-        //[Model]
+        [Model(SupportIEditableObject = false)]
         public Session CurrentSession
         {
-            get { return GetValue<Session>(SessionProperty); }
-            set { SetValue(SessionProperty, value); }
+            get { return GetValue<Session>(CurrentSessionProperty); }
+            set { SetValue(CurrentSessionProperty, value); }
         }
 
-        public static readonly PropertyData SessionProperty = RegisterProperty("Session", typeof(Session));
+        public static readonly PropertyData CurrentSessionProperty = RegisterProperty("CurrentSession", typeof(Session));
 
-        ///// <summary>Auto-Mapped property of the Session Model.</summary>
-        //[ViewModelToModel("CurrentSession")]
-        //public string SessionTitle
-        //{
-        //    get { return GetValue<string>(SessionTitleProperty); }
-        //    set { SetValue(SessionTitleProperty, value); }
-        //}
+        /// <summary>Auto-Mapped property of the Session Model.</summary>
+        [ViewModelToModel("CurrentSession")]
+        public string SessionTitle
+        {
+            get { return GetValue<string>(SessionTitleProperty); }
+            set { SetValue(SessionTitleProperty, value); }
+        }
 
-        //public static readonly PropertyData SessionTitleProperty = RegisterProperty("SessionTitle", typeof(string));
+        public static readonly PropertyData SessionTitleProperty = RegisterProperty("SessionTitle", typeof(string));
 
-        ///// <summary>Auto-Mapped property of the Session Model.</summary>
-        //[ViewModelToModel("CurrentSession")]
-        //public string SessionComments
-        //{
-        //    get { return GetValue<string>(SessionCommentsProperty); }
-        //    set { SetValue(SessionCommentsProperty, value); }
-        //}
+        /// <summary>Auto-Mapped property of the Session Model.</summary>
+        [ViewModelToModel("CurrentSession")]
+        public string SessionComments
+        {
+            get { return GetValue<string>(SessionCommentsProperty); }
+            set { SetValue(SessionCommentsProperty, value); }
+        }
 
-        //public static readonly PropertyData SessionCommentsProperty = RegisterProperty("SessionComments", typeof(string));
+        public static readonly PropertyData SessionCommentsProperty = RegisterProperty("SessionComments", typeof(string));
 
         #endregion // Model
 
         #region Bindings
+
+        /// <summary>Determines if the View should show or hide the Open Session button.</summary>
+        public bool IsOpening
+        {
+            get { return GetValue<bool>(IsOpeningProperty); }
+            set { SetValue(IsOpeningProperty, value); }
+        }
+
+        public static readonly PropertyData IsOpeningProperty = RegisterProperty("IsOpening", typeof(bool), false);
 
         /// <summary>List of all the loaded Sessions for the class.</summary>
         public ObservableCollection<Session> Sessions
@@ -118,8 +125,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             AddSessionCommand = new Command(OnAddSessionCommandExecute);
-            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
-            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
+            EditSessionCommand = new Command(OnEditSessionCommandExecute);
+            DeleteSessionCommand = new Command(OnDeleteSessionCommandExecute);
+            OpenSessionCommand = new Command(OnOpenSessionCommandExecute);
         }
 
         /// <summary>Adds a new Session.</summary>
@@ -127,75 +135,90 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddSessionCommandExecute()
         {
-            var session = new Session();
-            session.StartTime = DateTime.Now;
-            session.SessionTitle = "Blah blah blah";
-            Sessions.Add(session);
+            var session = new Session
+                          {
+                              ContainerZipFilePath = _dataService.CurrentNotebook.ContainerZipFilePath
+                          };
+            session.NotebookIDs.Add(_dataService.CurrentNotebook.ID);
+
+            var viewModel = this.CreateViewModel<SessionViewModel>(session);
+            viewModel.WindowTitle = "New Session";
+
+            var result = viewModel.ShowWindowAsDialog();
+            if (result != true)
+            {
+                return;
+            }
+
+            _dataService.SaveSession(session);
+            Sessions.Insert(0, session);
+            Sessions = Sessions.OrderByDescending(s => s.StartTime).ToObservableCollection();
             CurrentSession = session;
         }
 
-        /// <summary>Validates and confirms changes to the session.</summary>
-        public Command ConfirmChangesCommand { get; private set; }
+        /// <summary>Edits the selected Session.</summary>
+        public Command EditSessionCommand { get; private set; }
 
-        private async void OnConfirmChangesCommandExecute()
+        private void OnEditSessionCommandExecute()
         {
-            var combinedDateTimeString = $"{StartingDate} {StartingTime}";
-            DateTime dateTime;
-            try
+            var viewModel = this.CreateViewModel<SessionViewModel>(CurrentSession);
+            viewModel.WindowTitle = "Edit Session";
+
+            var result = viewModel.ShowWindowAsDialog();
+            if (result != true)
             {
-                dateTime = Convert.ToDateTime(combinedDateTimeString);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Starting Date or Starting Time is not in the correct format.");
                 return;
             }
 
-            List<int> actualPageNumbers;
-            try
-            {
-                actualPageNumbers = RangeHelper.ParseStringToIntNumbers(PageNumbers);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Page Numbers are not in the correct format.");
-                return;
-            }
-
-            var startingPageNumber = StartingPageNumber.ToInt();
-            if (startingPageNumber == null)
-            {
-                MessageBox.Show("Starting Page Number is not a number.");
-                return;
-            }
-
-            if (!actualPageNumbers.Contains(startingPageNumber.Value))
-            {
-                MessageBox.Show("Starting Page Number is not one of the listed Page Numbers.");
-                return;
-            }
-
-            //CurrentSession.StartTime = dateTime;
-
-            //// If zip container null, save and add to sessions
-            //// if not null, just save
-
-            //if (!Sessions.Contains(CurrentSession))
-            //{
-            //    Sessions.Add(CurrentSession);
-            //}
-            
-            await SaveViewModelAsync();
+            _dataService.SaveSession(CurrentSession);
         }
 
-        /// <summary>Cancels changes to the session.</summary>
-        public Command CancelChangesCommand { get; private set; }
+        /// <summary>Deletes the selected Session.</summary>
+        public Command DeleteSessionCommand { get; private set; }
 
-        private async void OnCancelChangesCommandExecute()
+        private void OnDeleteSessionCommandExecute()
         {
-            await CancelViewModelAsync();
+            Sessions.Remove(CurrentSession);
+            CurrentSession = Sessions.FirstOrDefault();
         }
+
+        /// <summary>Opens the selected Session.</summary>
+        public Command OpenSessionCommand { get; private set; }
+
+        private void OnOpenSessionCommandExecute() { }
 
         #endregion // Commands
+
+        #region Overrides of ViewModelBase
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(CurrentSession))
+            {
+                var selectedSession = e.NewValue as Session;
+                if (selectedSession != null)
+                {
+                    if (selectedSession.StartTime != null)
+                    {
+                        StartingDate = $"{selectedSession.StartTime:MM/dd/yyyy}";
+                        StartingTime = $"{selectedSession.StartTime:HH:mm}";
+                    }
+                    if (selectedSession.PageIDs.Any())
+                    {
+                        // HACK: Doesn't obey potential decimal pages
+                        var pageNumbers = selectedSession.PageIDs.Values.Select(d => (int)d.ToInt()).ToList();
+                        PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, true, true);
+                    }
+                    if (selectedSession.PageIDs.ContainsKey(selectedSession.StartPageID))
+                    {
+                        StartingPageNumber = selectedSession.PageIDs[selectedSession.StartPageID].ToString();
+                    }
+                }
+            }
+
+            base.OnPropertyChanged(e);
+        }
+
+        #endregion
     }
 }
