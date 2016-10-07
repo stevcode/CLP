@@ -29,16 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 StartingDate = $"{Session.StartTime:MM/dd/yyyy}";
                 StartingTime = $"{Session.StartTime:HH:mm}";
             }
-            if (Session.PageIDs.Any())
-            {
-                // HACK: Doesn't obey potential decimal pages
-                var pageNumbers = Session.PageIDs.Keys.Select(d => (int)d.ToInt()).ToList();
-                PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, true, true);
-            }
-            if (Session.PageIDs.ContainsKey(Session.StartPageID))
-            {
-                StartingPageNumber = Session.PageIDs[Session.StartPageID].ToString();
-            }
+            // TODO: Verify PageNumbers and StartingPageNumber.
 
             InitializeCommands();
         }
@@ -67,6 +58,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SessionTitleProperty = RegisterProperty("SessionTitle", typeof(string));
 
+        /// <summary>Page Number for the starting page of the session.</summary>
+        [ViewModelToModel("Session")]
+        public string StartingPageNumber
+        {
+            get { return GetValue<string>(StartingPageNumberProperty); }
+            set { SetValue(StartingPageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData StartingPageNumberProperty = RegisterProperty("StartingPageNumber", typeof(string));
+
+        /// <summary>Comma/Dash page ranges.</summary>
+        [ViewModelToModel("Session")]
+        public string PageNumbers
+        {
+            get { return GetValue<string>(PageNumbersProperty); }
+            set { SetValue(PageNumbersProperty, value); }
+        }
+
+        public static readonly PropertyData PageNumbersProperty = RegisterProperty("PageNumbers", typeof(string));
+
         /// <summary>Auto-Mapped property of the Session Model.</summary>
         [ViewModelToModel("Session")]
         public string SessionComments
@@ -89,24 +100,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WindowTitleProperty = RegisterProperty("WindowTitle", typeof(string), "Edit Session");
-
-        /// <summary>Comma/Dash page ranges.</summary>
-        public string PageNumbers
-        {
-            get { return GetValue<string>(PageNumbersProperty); }
-            set { SetValue(PageNumbersProperty, value); }
-        }
-
-        public static readonly PropertyData PageNumbersProperty = RegisterProperty("PageNumbers", typeof(string), string.Empty);
-
-        /// <summary>Page Number for the starting page of the session.</summary>
-        public string StartingPageNumber
-        {
-            get { return GetValue<string>(StartingPageNumberProperty); }
-            set { SetValue(StartingPageNumberProperty, value); }
-        }
-
-        public static readonly PropertyData StartingPageNumberProperty = RegisterProperty("StartingPageNumber", typeof(string), string.Empty);
 
         /// <summary>Starting Date of the session (mm/dd/yyyy).</summary>
         public string StartingDate
@@ -188,11 +181,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if (decimalPageNumbers.Contains(page.PageNumber))
                 {
-                    Session.PageIDs.Add(page.ID, page.PageNumber);
+                    Session.PageIDs.Add(page.ID);
                 }
                 if (decimalStartPageNumber == page.PageNumber)
                 {
-                    Session.StartPageID = page.ID;
+                    Session.StartingPageID = page.ID;
                 }
             }
 

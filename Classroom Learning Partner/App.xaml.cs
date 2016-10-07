@@ -66,7 +66,7 @@ namespace Classroom_Learning_Partner
 
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            LogManager.AddDebugListener();
+            //LogManager.AddDebugListener();
 
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;

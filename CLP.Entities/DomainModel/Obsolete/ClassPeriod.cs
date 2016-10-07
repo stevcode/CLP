@@ -198,59 +198,6 @@ namespace CLP.Entities
             ToXML(filePath);
         }
 
-        public static ClassPeriod LoadFromXML(string classPeriodFilePath)
-        {
-            try
-            {
-                var nameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
-                if (nameComposite == null)
-                {
-                    return null;
-                }
-
-                var classPeriod = Load<ClassPeriod>(classPeriodFilePath, SerializationMode.Xml);
-                if (classPeriod == null)
-                {
-                    return null;
-                }
-
-                var time = nameComposite.StartTime;
-                var timeParts = time.Split('.');
-                var year = Int32.Parse(timeParts[0]);
-                var month = Int32.Parse(timeParts[1]);
-                var day = Int32.Parse(timeParts[2]);
-                var hour = Int32.Parse(timeParts[3]);
-                var minute = Int32.Parse(timeParts[4]);
-                var dateTime = new DateTime(year, month, day, hour, minute, 0);
-
-                classPeriod.StartTime = dateTime;
-                classPeriod.ID = nameComposite.ID;
-                classPeriod.PageNumbers = nameComposite.PageNumbers;
-                classPeriod.NumberOfAllowedBlankPages = UInt32.Parse(nameComposite.AllowedBlankPages);
-
-                var classPeriodFolderPath = Path.GetDirectoryName(classPeriodFilePath);
-                var classInformationFilePath =
-                    Directory.EnumerateFiles(classPeriodFolderPath, string.Format("{0};*;{1}.xml", ClassInformationNameComposite.QUALIFIER_TEXT, classPeriod.ClassInformationID))
-                             .FirstOrDefault();
-                if (string.IsNullOrEmpty(classInformationFilePath))
-                {
-                    return null;
-                }
-                var classInformation = ClassInformation.LoadFromXML(classInformationFilePath);
-                if (classInformation == null)
-                {
-                    return null;
-                }
-                classPeriod.ClassInformation = classInformation;
-
-                return classPeriod;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         #endregion //Cache
     }
 }

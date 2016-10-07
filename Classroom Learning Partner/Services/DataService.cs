@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel;
 using Catel.Collections;
+using Catel.Data;
 using Catel.IoC;
 using Catel.Reflection;
 using Catel.Runtime.Serialization.Json;
@@ -22,7 +23,6 @@ using Ionic.Zlib;
 
 namespace Classroom_Learning_Partner.Services
 {
-
     #region Info Classes
 
     public class CacheInfo
@@ -155,20 +155,6 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
-
-            var testy = new Testy();
-            testy.PageIDs.Add("RandomStringID", 1);
-
-            using (var stream = new MemoryStream())
-            {
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                jsonSerializer.WriteTypeInfo = true;
-                jsonSerializer.PreserveReferences = true;
-                jsonSerializer.Serialize(testy, stream);
-                stream.Position = 0;
-                var clone = jsonSerializer.Deserialize(typeof(Testy), stream);
-                Console.WriteLine(clone.ToString());
-            }
         }
 
         #region Static Properties

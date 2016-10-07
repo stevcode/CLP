@@ -239,46 +239,6 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveToXML(string folderPath)
-        {
-            var nameComposite = ClassInformationNameComposite.ParseClassInformation(this);
-            var possiblePreExistingFiles =
-                Directory.EnumerateFiles(folderPath, string.Format("{0};*;{1}.xml", ClassInformationNameComposite.QUALIFIER_TEXT, nameComposite.ID)).ToList();
-            foreach (var oldFilePath in possiblePreExistingFiles)
-            {
-                File.Delete(oldFilePath);
-            }
-
-            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
-            ToXML(filePath);
-        }
-
-        public static ClassInformation LoadFromXML(string classInformationFilePath)
-        {
-            try
-            {
-                var nameComposite = ClassInformationNameComposite.ParseFilePath(classInformationFilePath);
-                if (nameComposite == null)
-                {
-                    return null;
-                }
-
-                var classInformation = Load<ClassInformation>(classInformationFilePath, SerializationMode.Xml);
-                if (classInformation == null)
-                {
-                    return null;
-                }
-
-                classInformation.ID = nameComposite.ID;
-
-                return classInformation;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         #endregion //Cache
     }
 }

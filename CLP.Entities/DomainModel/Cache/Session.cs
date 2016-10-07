@@ -44,25 +44,43 @@ namespace CLP.Entities
             set { SetValue(StartTimeProperty, value); }
         }
 
-        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
+        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime), DateTime.Now);
 
         /// <summary>Unique ID of the first Selected Page when the Session starts.</summary>
-        public string StartPageID
+        public string StartingPageID
         {
-            get { return GetValue<string>(StartPageIDProperty); }
-            set { SetValue(StartPageIDProperty, value); }
+            get { return GetValue<string>(StartingPageIDProperty); }
+            set { SetValue(StartingPageIDProperty, value); }
         }
 
-        public static readonly PropertyData StartPageIDProperty = RegisterProperty("StartPageID", typeof(string), string.Empty);
+        public static readonly PropertyData StartingPageIDProperty = RegisterProperty("StartingPageID", typeof(string), string.Empty);
 
-        /// <summary>Unique IDs of all the pages in the session, mapped to their page numbers.</summary>
-        public Dictionary<string, decimal> PageIDs
+        /// <summary>Page Number for the starting page of the session.</summary>
+        public string StartingPageNumber
         {
-            get { return GetValue<Dictionary<string, decimal>>(PageIDsProperty); }
+            get { return GetValue<string>(StartingPageNumberProperty); }
+            set { SetValue(StartingPageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData StartingPageNumberProperty = RegisterProperty("StartingPageNumber", typeof(string), string.Empty);
+
+        /// <summary>Unique IDs of all the pages in the session.</summary>
+        public List<string> PageIDs
+        {
+            get { return GetValue<List<string>>(PageIDsProperty); }
             set { SetValue(PageIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageIDsProperty = RegisterProperty("PageIDs", typeof(Dictionary<string, decimal>), () => new Dictionary<string, decimal>());
+        public static readonly PropertyData PageIDsProperty = RegisterProperty("PageIDs", typeof(List<string>), () => new List<string>());
+
+        /// <summary>Comma/Dash page ranges.</summary>
+        public string PageNumbers
+        {
+            get { return GetValue<string>(PageNumbersProperty); }
+            set { SetValue(PageNumbersProperty, value); }
+        }
+
+        public static readonly PropertyData PageNumbersProperty = RegisterProperty("PageNumbers", typeof(string), string.Empty);
 
         /// <summary>Comments about the session.</summary>
         public string SessionComments

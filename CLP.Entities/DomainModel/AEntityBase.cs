@@ -51,13 +51,5 @@ namespace CLP.Entities
                 return (T)deserialized;
             }
         }
-
-        public static T Load<T>(string fileName, SerializationMode mode) where T : class
-        {
-            using (Stream stream = new FileStream(fileName, FileMode.Open))
-            {
-                return Load<T>(stream, mode);
-            }
-        }
     }
 }

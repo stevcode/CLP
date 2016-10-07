@@ -132,23 +132,29 @@
                 <RowDefinition Height="Auto" />
             </catel:StackGrid.RowDefinitions>
 
-            <TextBlock Text="Title:" />
+            <TextBlock Text="Title:"
+                       FontWeight="Bold" />
             <TextBlock Text="{Binding SessionTitle}" />
 
-            <TextBlock Text="Page Numbers*:" />
+            <TextBlock Text="Page Numbers:"
+                       FontWeight="Bold" />
             <TextBlock Text="{Binding PageNumbers}" />
 
-            <TextBlock Text="Starting Page Number:" />
+            <TextBlock Text="Starting Page Number:"
+                       FontWeight="Bold" />
             <TextBlock Text="{Binding StartingPageNumber}" />
 
-            <TextBlock Text="Start Date (mm/dd/yyyy):" />
+            <TextBlock Text="Start Date (mm/dd/yyyy):"
+                       FontWeight="Bold" />
             <TextBlock Text="{Binding StartingDate}" />
 
-            <TextBlock Text="Start Time (24h) (hh:mm):" />
+            <TextBlock Text="Start Time (24h) (hh:mm):"
+                       FontWeight="Bold" />
             <TextBlock Text="{Binding StartingTime}" />
 
             <TextBlock Grid.ColumnSpan="2"
-                       Text="Comments or Notes:" />
+                       Text="Comments or Notes:"
+                       FontWeight="Bold" />
 
             <ScrollViewer Grid.ColumnSpan="2"
                           HorizontalScrollBarVisibility="Disabled"

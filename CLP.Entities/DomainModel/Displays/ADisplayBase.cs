@@ -163,35 +163,6 @@ namespace CLP.Entities
             ToXML(filePath);
         }
 
-        public static IDisplay Load<T>(string filePath, Notebook notebook) where T : ADisplayBase
-        {
-            var display = Load<T>(filePath, SerializationMode.Xml);
-            if (display == null)
-            {
-                return null;
-            }
-
-            foreach (var compositePageID in display.CompositePageIDs)
-            {
-                var compositeSections = compositePageID.Split(';');
-                var id = compositeSections[0];
-                var ownerID = compositeSections[1];
-                var differentiationlevel = compositeSections[2];
-                var versionIndex = Convert.ToUInt32(compositeSections[3]);
-
-                var page = notebook.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
-                if (page == null)
-                {
-                    continue;
-                }
-
-                display.Pages.Add(page);
-            }
-
-            display.ParentNotebook = notebook;
-            return display;
-        }
-
         #endregion //Cache
 
         #endregion //Methods
