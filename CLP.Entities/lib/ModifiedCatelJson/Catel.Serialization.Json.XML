@@ -29,7 +29,21 @@
             <param name="serializer">The serializer.</param>
             <param name="model">The model.</param>
             <param name="data">The data.</param>
-            <returns>ISerializationContextInfo.</returns>
+            <returns>
+            ISerializationContextInfo.
+            </returns>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Binary.JsonSerializationContextInfoFactory.GetSerializationContextInfo(Catel.Runtime.Serialization.ISerializer,System.Object,System.Object,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Gets the serialization context information.
+            </summary>
+            <param name="serializer">The serializer.</param>
+            <param name="model">The model.</param>
+            <param name="data">The data.</param>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            ISerializationContextInfo.
+            </returns>
         </member>
         <member name="T:Catel.Runtime.Serialization.Json.CatelJsonContractResolver">
             <summary>
@@ -75,13 +89,34 @@
             <param name="model">The model.</param>
             <param name="jsonWriter">The json writer.</param>
         </member>
+        <member name="M:Catel.Runtime.Serialization.Json.IJsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Serializes the specified model to the json writer.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="jsonWriter">The json writer.</param>
+            <param name="configuration">The configuration.</param>
+        </member>
         <member name="M:Catel.Runtime.Serialization.Json.IJsonSerializer.Deserialize(System.Type,Newtonsoft.Json.JsonReader)">
             <summary>
             Deserializes the specified model from the json reader.
             </summary>
             <param name="modelType">Type of the model.</param>
             <param name="jsonReader">The json reader.</param>
-            <returns>ModelBase.</returns>
+            <returns>
+            ModelBase.
+            </returns>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.IJsonSerializer.Deserialize(System.Type,Newtonsoft.Json.JsonReader,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Deserializes the specified model from the json reader.
+            </summary>
+            <param name="modelType">Type of the model.</param>
+            <param name="jsonReader">The json reader.</param>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            ModelBase.
+            </returns>
         </member>
         <member name="T:Catel.Runtime.Serialization.Json.JsonSerializationContextInfo">
             <summary>
@@ -188,13 +223,34 @@
             <param name="model">The model.</param>
             <param name="jsonWriter">The json writer.</param>
         </member>
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Serializes the specified model to the json writer.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="jsonWriter">The json writer.</param>
+            <param name="configuration">The configuration.</param>
+        </member>
         <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Deserialize(System.Type,Newtonsoft.Json.JsonReader)">
             <summary>
             Deserializes the specified model from the json reader.
             </summary>
             <param name="modelType">Type of the model.</param>
             <param name="jsonReader">The json reader.</param>
-            <returns>The model.</returns>
+            <returns>
+            The model.
+            </returns>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Deserialize(System.Type,Newtonsoft.Json.JsonReader,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Deserializes the specified model from the json reader.
+            </summary>
+            <param name="modelType">Type of the model.</param>
+            <param name="jsonReader">The json reader.</param>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            The model.
+            </returns>
         </member>
         <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Warmup(System.Type)">
             <summary>
@@ -235,7 +291,7 @@
             <param name="memberValue">The member value.</param>
             <returns>The <see cref="T:Catel.Runtime.Serialization.SerializationObject"/> representing the deserialized value or result.</returns>
         </member>
-        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.GetContext(System.Object,System.Type,System.IO.Stream,Catel.Runtime.Serialization.SerializationContextMode)">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.GetContext(System.Object,System.Type,System.IO.Stream,Catel.Runtime.Serialization.SerializationContextMode,Catel.Runtime.Serialization.ISerializationConfiguration)">
             <summary>
             Gets the context.
             </summary>
@@ -243,10 +299,13 @@
             <param name="modelType">Type of the model.</param>
             <param name="stream">The stream.</param>
             <param name="contextMode">The context mode.</param>
-            <returns>ISerializationContext{SerializationInfo}.</returns>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            ISerializationContext{SerializationInfo}.
+            </returns>
             <exception cref="T:System.ArgumentOutOfRangeException">contextMode</exception>
         </member>
-        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.GetContext(System.Object,System.Type,Newtonsoft.Json.JsonReader,Newtonsoft.Json.JsonWriter,Catel.Runtime.Serialization.SerializationContextMode,System.Collections.Generic.Dictionary{System.String,Newtonsoft.Json.Linq.JProperty},Newtonsoft.Json.Linq.JArray)">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.GetContext(System.Object,System.Type,Newtonsoft.Json.JsonReader,Newtonsoft.Json.JsonWriter,Catel.Runtime.Serialization.SerializationContextMode,System.Collections.Generic.Dictionary{System.String,Newtonsoft.Json.Linq.JProperty},Newtonsoft.Json.Linq.JArray,Catel.Runtime.Serialization.ISerializationConfiguration)">
             <summary>
             Gets the context.
             </summary>
@@ -257,7 +316,10 @@
             <param name="contextMode">The context mode.</param>
             <param name="jsonProperties">The json properties.</param>
             <param name="jsonArray">The json array.</param>
-            <returns>ISerializationContext&lt;JsonSerializationContextInfo&gt;.</returns>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            ISerializationContext&lt;JsonSerializationContextInfo&gt;.
+            </returns>
         </member>
         <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.AppendContextToStream(Catel.Runtime.Serialization.ISerializationContext{Catel.Runtime.Serialization.Json.JsonSerializationContextInfo},System.IO.Stream)">
             <summary>
@@ -271,11 +333,12 @@
             Converts Catel models manually using the Catel serializer.
             </summary>
         </member>
-        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.#ctor(Catel.Runtime.Serialization.Json.IJsonSerializer)">
+        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.#ctor(Catel.Runtime.Serialization.Json.IJsonSerializer,Catel.Runtime.Serialization.ISerializationConfiguration)">
             <summary>
             Initializes a new instance of the <see cref="T:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter" /> class.
             </summary>
             <param name="jsonSerializer">The json serializer.</param>
+            <param name="configuration">The configuration.</param>
         </member>
         <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
             <summary>
@@ -313,6 +376,16 @@
             </summary>
             <param name="model">The model.</param>
             <returns>System.String.</returns>
+        </member>
+        <member name="M:Catel.JsonExtensions.ToJson(Catel.Data.ModelBase,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Converters the specified model to a json string.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            System.String.
+            </returns>
         </member>
         <member name="T:Catel.SerializationJsonModule">
             <summary>

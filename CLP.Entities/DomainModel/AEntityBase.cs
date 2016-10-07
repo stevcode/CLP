@@ -47,7 +47,7 @@ namespace CLP.Entities
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
-                var deserialized = jsonSerializer.Deserialize(typeof(T), stream);
+                var deserialized = jsonSerializer.Deserialize(typeof(T), stream, null);
                 return (T)deserialized;
             }
         }
