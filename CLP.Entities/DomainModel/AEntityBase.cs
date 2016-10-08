@@ -19,11 +19,6 @@ namespace CLP.Entities
         protected AEntityBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        public void ClearDirtyFlag()
-        {
-            IsDirty = false;
-        }
-
         public string ToJsonString(bool formatWithIndents = true)
         {
             using (var stream = new MemoryStream())
@@ -32,7 +27,7 @@ namespace CLP.Entities
                 jsonSerializer.WriteTypeInfo = true;
                 jsonSerializer.PreserveReferences = true;
                 jsonSerializer.FormatWithIndents = formatWithIndents;
-                jsonSerializer.Serialize(this, stream);
+                jsonSerializer.Serialize(this, stream, null);
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {
