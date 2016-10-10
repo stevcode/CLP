@@ -20,6 +20,7 @@ using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
+using Blah=CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -155,6 +156,11 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
+            var cacheFolder = Path.Combine(DesktopFolderPath, "CacheT");
+            var notebookFolder = Path.Combine(cacheFolder, "Notebooks");
+            var tylerFolder = Path.Combine(notebookFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;Tyler;cRIy5DH-v0mRxISioSFxGw");
+            var notebook = Blah.Notebook.OpenNotebook(tylerFolder);
+            Console.WriteLine($"Number of Pages: {notebook.Pages.Count}\nOwner: {notebook.Owner.FullName}");
         }
 
         #region Static Properties
