@@ -1,5 +1,8 @@
-﻿namespace CLP.Entities
+﻿using Catel.Runtime.Serialization.Binary;
+
+namespace CLP.Entities.Old
 {
+    [RedirectType("CLP.Entities", "IConnectedPerson")]
     public interface IConnectedPerson
     {
         string CurrentMachineName { get; set; }

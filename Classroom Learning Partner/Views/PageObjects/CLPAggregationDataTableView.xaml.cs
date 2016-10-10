@@ -3,7 +3,7 @@ using System.Windows;
 using Catel.MVVM.Views;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.Views
 {

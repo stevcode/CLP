@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum AnimationIndicatorType
     {
@@ -11,6 +12,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "AnimationIndicator")]
     public class AnimationIndicator : AHistoryItemBase
     {
         #region Constructors

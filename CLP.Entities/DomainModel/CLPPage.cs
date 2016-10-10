@@ -11,8 +11,9 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum PageTypes
     {
@@ -35,6 +36,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "CLPPage")]
     public class CLPPage : AEntityBase
     {
         #region Fields

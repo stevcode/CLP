@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Ink;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public interface IStrokeAccepter : IPageObject
     {

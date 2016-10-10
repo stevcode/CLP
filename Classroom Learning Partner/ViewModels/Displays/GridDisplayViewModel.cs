@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

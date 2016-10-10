@@ -5,11 +5,13 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 using Path = Catel.IO.Path;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "ClassPeriod")]
     public class ClassPeriod : AEntityBase
     {
         #region Constructors

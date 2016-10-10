@@ -3,10 +3,12 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "CLPImage")]
     public class CLPImage : APageObjectBase
     {
         #region Constructors

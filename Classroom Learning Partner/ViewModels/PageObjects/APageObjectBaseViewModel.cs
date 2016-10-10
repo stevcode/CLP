@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Old;
 using System.Windows.Threading;
 using System;
 using System.Timers;

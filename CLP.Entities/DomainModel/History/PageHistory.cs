@@ -10,10 +10,12 @@ using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "PageHistory")]
     public class PageHistory : AEntityBase
     {
         private readonly object _historyLock = new object();

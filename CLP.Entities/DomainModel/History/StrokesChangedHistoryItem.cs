@@ -5,10 +5,12 @@ using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "StrokesChangedHistoryItem")]
     public class StrokesChangedHistoryItem : AHistoryItemBase
     {
         #region Constructors

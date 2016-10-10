@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum ShapeType
     {
@@ -17,6 +18,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "Shape")]
     public class Shape : APageObjectBase, ICuttable, ICountable
     {
         #region Constructors

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "GridDisplay")]
     public class GridDisplay : ADisplayBase
     {
         #region Constructors

@@ -7,7 +7,7 @@ using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

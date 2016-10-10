@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.Views
 {

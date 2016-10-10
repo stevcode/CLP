@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "FuzzyFactorCardCorrectnessTag")]
     public class FuzzyFactorCardCorrectnessTag : ATagBase
     {
         public enum AcceptedValues

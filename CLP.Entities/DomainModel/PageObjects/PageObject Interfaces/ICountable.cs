@@ -1,4 +1,4 @@
-﻿namespace CLP.Entities
+﻿namespace CLP.Entities.Old
 {
     public interface ICountable : IPageObject
     {

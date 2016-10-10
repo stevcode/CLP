@@ -5,9 +5,11 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
+    [RedirectType("CLP.Entities", "ADisplayBase")]
     public abstract class ADisplayBase : AEntityBase, IDisplay
     {
         #region Constructors

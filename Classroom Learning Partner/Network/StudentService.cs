@@ -4,7 +4,7 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner
 {

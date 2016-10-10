@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public class ClassPeriodContext : DbContext
     {

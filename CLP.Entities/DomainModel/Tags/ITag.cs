@@ -2,7 +2,7 @@ using System;
 using System.Xml.Serialization;
 using Catel.Runtime.Serialization;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public interface ITag {
         /// <summary>

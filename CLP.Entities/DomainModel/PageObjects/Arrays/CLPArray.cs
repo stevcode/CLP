@@ -4,8 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum ArrayTypes
     {
@@ -15,6 +16,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "CLPArray")]
     public class CLPArray : ACLPArrayBase, ICountable, ICuttable
     {
         #region Constructors

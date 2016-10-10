@@ -7,8 +7,8 @@
     <ProjectGuid>{C6B95A31-7045-4C7E-A72D-C03468E20B20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLP.Entities</RootNamespace>
-    <AssemblyName>CLP.Entities</AssemblyName>
+    <RootNamespace>CLP.Entities.Old</RootNamespace>
+    <AssemblyName>CLP.Entities.Old</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -82,10 +82,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>

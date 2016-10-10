@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "CLPTextBox")]
     public class CLPTextBox : APageObjectBase
     {
         #region Constructors

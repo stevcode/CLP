@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 using System.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
 
     /// <summary>
@@ -15,6 +16,7 @@ namespace CLP.Entities
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]
+    [RedirectType("CLP.Entities", "ProductRelation")]
 #endif
 
     public class ProductRelation : MathRelation

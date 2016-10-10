@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
-using CLP.Entities;
+using CLP.Entities.Old;
 using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner

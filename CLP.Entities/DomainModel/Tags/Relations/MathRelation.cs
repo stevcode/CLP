@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     /// <summary>
     /// MathRelation Data object class which fully supports serialization, property changed notifications,
@@ -16,6 +16,7 @@ namespace CLP.Entities
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]
+    [RedirectType("CLP.Entities", "MathRelation")]
 #endif
     public abstract class MathRelation : ModelBase
     {

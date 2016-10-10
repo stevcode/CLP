@@ -3,8 +3,9 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum Handedness
     {
@@ -13,6 +14,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "Person")]
     public class Person : AEntityBase, IConnectedPerson
     {
         #region Constructors

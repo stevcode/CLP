@@ -8,7 +8,7 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Old;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
 

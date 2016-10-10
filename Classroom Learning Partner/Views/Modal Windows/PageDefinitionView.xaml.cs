@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Catel.Windows;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Old;
 
 // TODO (someday): Automatically populate combobox with all possible relation types
 

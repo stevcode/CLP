@@ -5,7 +5,7 @@ using System.Linq;
 using Catel.Data;
 using Path = Catel.IO.Path;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Old;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;

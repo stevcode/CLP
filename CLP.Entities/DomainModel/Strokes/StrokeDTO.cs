@@ -5,8 +5,9 @@ using System.Linq;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum StylusTipType
     {
@@ -15,6 +16,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "StrokeDTO")]
     public class StrokeDTO
     {
         #region Constructors

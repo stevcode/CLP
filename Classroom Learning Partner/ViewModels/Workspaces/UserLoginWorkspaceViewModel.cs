@@ -5,7 +5,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Old;
 using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.ViewModels

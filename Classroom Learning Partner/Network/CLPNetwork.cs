@@ -5,7 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Old;
 using ServiceModelEx;
 
 namespace Classroom_Learning_Partner

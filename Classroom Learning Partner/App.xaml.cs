@@ -8,7 +8,7 @@ using Catel.Reflection;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
+using CLP.Entities.Old;
 using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner

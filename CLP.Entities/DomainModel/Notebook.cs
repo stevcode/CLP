@@ -8,11 +8,13 @@ using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Catel.Runtime.Serialization.Binary;
 using Path = Catel.IO.Path;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     [Serializable]
+    [RedirectType("CLP.Entities", "Notebook")]
     public class Notebook : AEntityBase
     {
         #region Constructors
@@ -542,6 +544,7 @@ namespace CLP.Entities
             {
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
                 var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
                 var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");

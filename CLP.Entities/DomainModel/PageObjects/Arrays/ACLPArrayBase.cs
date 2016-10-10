@@ -4,8 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
     public enum ArrayDivisionOrientation
     {
@@ -14,6 +15,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "CLPArrayDivision")]
     public class CLPArrayDivision : ModelBase
     {
         #region Constructors
@@ -110,6 +112,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    [RedirectType("CLP.Entities", "ACLPArrayBase")]
     public abstract class ACLPArrayBase : APageObjectBase
     {
         #region Constructors

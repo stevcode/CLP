@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization.Binary;
 
-namespace CLP.Entities
+namespace CLP.Entities.Old
 {
+    [RedirectType("CLP.Entities", "AHistoryItemBase")]
     public abstract class AHistoryItemBase : AEntityBase, IHistoryItem
     {
         public virtual int AnimationDelay
