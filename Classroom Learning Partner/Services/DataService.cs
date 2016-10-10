@@ -683,8 +683,9 @@ namespace Classroom_Learning_Partner.Services
         public void InsertPageAt(Notebook notebook, CLPPage page, int index)
         {
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
+            page.PageNumber = index + 1;
             notebook.Pages.Insert(index, page);
-            GeneratePageNumbers(notebook);
+            AlterPageNumbersAfterPageNumber(notebook, index, true);
             SetCurrentPage(page);
             SavePage(notebook, page);
         }
@@ -708,7 +709,21 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            if (notebook.Pages.Count == 1)
+            var pageToDelete = notebook.Pages[index];
+            notebook.Pages.RemoveAt(index);
+
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.RemoveEntry(pageToDelete.GetFullInternalFilePathWithExtension(notebook.Owner.ParentNotebookFolderName));
+                zip.Save();
+            }
+
+            // TODO: Refactor to include ZipFile as parameter and put above
+            // Refactor all these methods to static.
+            AlterPageNumbersAfterPageNumber(notebook, index, false);
+
+            if (!notebook.Pages.Any())
             {
                 var newPage = new CLPPage(Person.Author)
                 {
@@ -716,28 +731,16 @@ namespace Classroom_Learning_Partner.Services
                 };
 
                 notebook.Pages.Add(newPage);
+                SavePage(notebook, newPage);
             }
 
-            int newIndex;
-            if (index + 1 < notebook.Pages.Count)
+            if (index >= notebook.Pages.Count)
             {
-                newIndex = index + 1;
-            }
-            else
-            {
-                newIndex = index - 1;
+                index = notebook.Pages.Count - 1;
             }
 
-            var nextPage = notebook.Pages.ElementAt(newIndex);
-            CurrentPage = nextPage;
-            if (index == 0)
-            {
-                CurrentPage.PageNumber = notebook.Pages.First().PageNumber;
-            }
-
-            //_trashedPages.Add(notebook.Pages[index]);
-            notebook.Pages.RemoveAt(index);
-            GeneratePageNumbers(notebook);
+            var nextPage = notebook.Pages.ElementAt(index);
+            SetCurrentPage(nextPage);
         }
 
         public void AutoSavePage(Notebook notebook, CLPPage page)

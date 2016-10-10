@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner
 
         /// <summary>Retrieves entry in the given internal zip directory by entry path.</summary>
         /// <param name="zip">The already opened zip file to act upon.</param>
-        /// <param name="entryPath">Expected to be a full directory path and entry name of the ZipEntry.</param>
+        /// <param name="entryPath">Expected to be a full directory path and entry name of the ZipEntry, with extension.</param>
         public static ZipEntry GetEntry(this ZipFile zip, string entryPath)
         {
             Argument.IsNotNull("zip", zip);
