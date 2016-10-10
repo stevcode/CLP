@@ -823,6 +823,11 @@ namespace CLP.Entities
             public uint VersionIndex { get; set; }
             public string ID { get; set; }
 
+            public string ToNameCompositeString()
+            {
+                return $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+            }
+
             public static NameComposite ParseFromString(string nameCompositeString)
             {
                 var parts = nameCompositeString.Split(';');
