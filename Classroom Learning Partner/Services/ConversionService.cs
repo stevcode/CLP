@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CLP.Entities;
+using Ionic.Zip;
+using Ionic.Zlib;
 using Emily = CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.Services
@@ -11,14 +15,119 @@ namespace Classroom_Learning_Partner.Services
 
         #region Emily Conversions
 
-        public Person ConvertPerson(Emily.Person person)
+        public static string CacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
+        public static string NotebooksFolder => Path.Combine(CacheFolder, "Notebooks");
+        public static string ZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
+
+        public static Notebook ConvertCacheNotebook(string notebookFolder)
+        {
+            var oldNotebook = Emily.Notebook.OpenNotebook(notebookFolder);
+            var newNotebook = ConvertNotebook(oldNotebook);
+
+            foreach (var page in oldNotebook.Pages)
+            {
+                var newPage = ConvertPage(page);
+                foreach (var submission in page.Submissions)
+                {
+                    var newSubmission = ConvertPage(submission);
+                    newPage.Submissions.Add(newSubmission);
+                }
+
+                newNotebook.Pages.Add(newPage);
+            }
+
+            return newNotebook;
+        }
+
+        public static void SaveNotebookToZip(string zipFilePath, Notebook notebook)
+        {
+            if (File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entryList = new List<DataService.ZipEntrySaver>
+                            {
+                                new DataService.ZipEntrySaver(notebook, parentNotebookName)
+                            };
+
+            foreach (var page in notebook.Pages)
+            {
+                entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                foreach (var submission in page.Submissions)
+                {
+                    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save(zipFilePath);
+            }
+        }
+
+        public static void SaveNotebooksToZip(string zipFilePath, List<Notebook> notebooks)
+        {
+            if (File.Exists(zipFilePath))
+            {
+                File.Delete(zipFilePath);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var notebook in notebooks)
+            {
+                notebook.ContainerZipFilePath = zipFilePath;
+
+                var parentNotebookName = notebook.InternalZipFileDirectoryName;
+                entryList.Add(new DataService.ZipEntrySaver(notebook, parentNotebookName));
+
+                foreach (var page in notebook.Pages)
+                {
+                    page.ContainerZipFilePath = zipFilePath;
+                    entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                    foreach (var submission in page.Submissions)
+                    {
+                        submission.ContainerZipFilePath = zipFilePath;
+                        entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                    }
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save(zipFilePath);
+            }
+        }
+
+        public static Person ConvertPerson(Emily.Person person)
         {
             var newPerson = new Person();
-            if (person == null)
-            {
-                Console.WriteLine("[CONVERSION ERROR]: Old Person is null.");
-                return newPerson;
-            }
+            //if (person == null)
+            //{
+            //    Console.WriteLine("[CONVERSION ERROR]: Old Person is null.");
+            //    return newPerson;
+            //}
 
             newPerson.ID = person.ID;
             newPerson.Alias = person.Alias;
@@ -62,7 +171,7 @@ namespace Classroom_Learning_Partner.Services
             return newPerson;
         }
 
-        public Notebook ConvertNotebook(Emily.Notebook notebook)
+        public static Notebook ConvertNotebook(Emily.Notebook notebook)
         {
             var newPerson = ConvertPerson(notebook.Owner);
 
@@ -80,7 +189,7 @@ namespace Classroom_Learning_Partner.Services
             return newNotebook;
         }
 
-        public CLPPage ConvertPage(Emily.CLPPage page)
+        public static CLPPage ConvertPage(Emily.CLPPage page)
         {
             var newPerson = ConvertPerson(page.Owner);
 
@@ -104,9 +213,8 @@ namespace Classroom_Learning_Partner.Services
             // TODO: Convert History
             // TODO: Tags
 
-            foreach (var serializedStroke in page.SerializedStrokes)
+            foreach (var stroke in page.InkStrokes)
             {
-                var stroke = serializedStroke.ToStroke();
                 newPage.InkStrokes.Add(stroke);
             }
 
@@ -125,35 +233,33 @@ namespace Classroom_Learning_Partner.Services
             return newPage;
         }
 
-        public IPageObject ConverPageObject(Emily.IPageObject pageObject, CLPPage newPage)
+        public static IPageObject ConverPageObject(Emily.IPageObject pageObject, CLPPage newPage)
         {
             IPageObject newPageObject = null;
 
             TypeSwitch.On(pageObject).Case<Emily.Shape>(p =>
                                                         {
                                                             newPageObject = ConvertShape(p, newPage);
-                                                        })
-                                     .Case<Emily.CLPTextBox>(p =>
-                                                             {
-                                                                 newPageObject = ConvertTextBox(p, newPage);
-                                                             })
-                                     .Case<Emily.CLPImage>(p =>
-                                                           {
-                                                               newPageObject = ConvertImage(p, newPage);
-                                                           })
-                                     .Case<Emily.CLPArray>(p =>
-                                                           {
-                                                               newPageObject = ConvertArray(p, newPage);
-                                                           })
-                                     .Case<Emily.FuzzyFactorCard>(p =>
-                                                                  {
-                                                                      newPageObject = ConvertDivisionTemplate(p, newPage);
-                                                                  });
+                                                        }).Case<Emily.CLPTextBox>(p =>
+                                                                                  {
+                                                                                      newPageObject = ConvertTextBox(p, newPage);
+                                                                                  }).Case<Emily.CLPImage>(p =>
+                                                                                                          {
+                                                                                                              newPageObject = ConvertImage(p, newPage);
+                                                                                                          }).Case<Emily.CLPArray>(p =>
+                                                                                                                                  {
+                                                                                                                                      newPageObject = ConvertArray(p, newPage);
+                                                                                                                                  }).Case<Emily.FuzzyFactorCard>(p =>
+                                                                                                                                                                 {
+                                                                                                                                                                     newPageObject =
+                                                                                                                                                                         ConvertDivisionTemplate(p,
+                                                                                                                                                                                                 newPage);
+                                                                                                                                                                 });
 
             return newPageObject;
         }
 
-        public Shape ConvertShape(Emily.Shape shape, CLPPage newPage)
+        public static Shape ConvertShape(Emily.Shape shape, CLPPage newPage)
         {
             var newShape = new Shape
                            {
@@ -198,7 +304,7 @@ namespace Classroom_Learning_Partner.Services
             return newShape;
         }
 
-        public CLPTextBox ConvertTextBox(Emily.CLPTextBox textBox, CLPPage newPage)
+        public static CLPTextBox ConvertTextBox(Emily.CLPTextBox textBox, CLPPage newPage)
         {
             var newTextBox = new CLPTextBox
                              {
@@ -219,7 +325,7 @@ namespace Classroom_Learning_Partner.Services
             return newTextBox;
         }
 
-        public CLPImage ConvertImage(Emily.CLPImage image, CLPPage newPage)
+        public static CLPImage ConvertImage(Emily.CLPImage image, CLPPage newPage)
         {
             var newImage = new CLPImage
                            {
@@ -240,28 +346,7 @@ namespace Classroom_Learning_Partner.Services
             return newImage;
         }
 
-        public RemainderTiles ConvertRemainderTiles(Emily.RemainderTiles remainderTiles, CLPPage newPage)
-        {
-            var newRemainderTiles = new RemainderTiles
-                                    {
-                                        ID = remainderTiles.ID,
-                                        XPosition = remainderTiles.XPosition,
-                                        YPosition = remainderTiles.YPosition,
-                                        Height = remainderTiles.Height,
-                                        Width = remainderTiles.Width,
-                                        OwnerID = remainderTiles.OwnerID,
-                                        CreatorID = remainderTiles.CreatorID,
-                                        CreationDate = remainderTiles.CreationDate,
-                                        PageObjectFunctionalityVersion = "Emily5.22.2014",
-                                        IsManipulatableByNonCreator = remainderTiles.IsManipulatableByNonCreator,
-                                        ParentPage = newPage
-                                    };
-            newRemainderTiles.TileColors = remainderTiles.TileOffsets;
-
-            return newRemainderTiles;
-        }
-
-        public CLPArray ConvertArray(Emily.CLPArray array, CLPPage newPage)
+        public static CLPArray ConvertArray(Emily.CLPArray array, CLPPage newPage)
         {
             var newArray = new CLPArray
                            {
@@ -317,7 +402,7 @@ namespace Classroom_Learning_Partner.Services
             return newArray;
         }
 
-        public CLPArrayDivision ConvertArrayDivision(Emily.CLPArrayDivision division)
+        public static CLPArrayDivision ConvertArrayDivision(Emily.CLPArrayDivision division)
         {
             var newDivision = new CLPArrayDivision
                               {
@@ -330,7 +415,7 @@ namespace Classroom_Learning_Partner.Services
             return newDivision;
         }
 
-        public DivisionTemplate ConvertDivisionTemplate(Emily.FuzzyFactorCard ffc, CLPPage newPage)
+        public static DivisionTemplate ConvertDivisionTemplate(Emily.FuzzyFactorCard ffc, CLPPage newPage)
         {
             var newDivisionTemplate = new DivisionTemplate
                                       {
@@ -355,7 +440,7 @@ namespace Classroom_Learning_Partner.Services
                                           Dividend = ffc.Dividend
                                       };
 
-            if (ffc.RemainderTiles != null)
+            if (!object.Equals(ffc.RemainderTiles, null))
             {
                 var newRemainderTiles = ConvertRemainderTiles(ffc.RemainderTiles, newPage);
                 newDivisionTemplate.RemainderTiles = newRemainderTiles;
@@ -375,6 +460,27 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return newDivisionTemplate;
+        }
+
+        public static RemainderTiles ConvertRemainderTiles(Emily.RemainderTiles remainderTiles, CLPPage newPage)
+        {
+            var newRemainderTiles = new RemainderTiles
+            {
+                ID = remainderTiles.ID,
+                XPosition = remainderTiles.XPosition,
+                YPosition = remainderTiles.YPosition,
+                Height = remainderTiles.Height,
+                Width = remainderTiles.Width,
+                OwnerID = remainderTiles.OwnerID,
+                CreatorID = remainderTiles.CreatorID,
+                CreationDate = remainderTiles.CreationDate,
+                PageObjectFunctionalityVersion = "Emily5.22.2014",
+                IsManipulatableByNonCreator = remainderTiles.IsManipulatableByNonCreator,
+                ParentPage = newPage
+            };
+            newRemainderTiles.TileColors = remainderTiles.TileOffsets;
+
+            return newRemainderTiles;
         }
 
         #endregion // Emily Conversions

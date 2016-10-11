@@ -155,11 +155,21 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
-            //var cacheFolder = Path.Combine(DesktopFolderPath, "CacheT");
-            //var notebookFolder = Path.Combine(cacheFolder, "Notebooks");
-            //var tylerFolder = Path.Combine(notebookFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;Tyler;cRIy5DH-v0mRxISioSFxGw");
-            //var notebook = Blah.Notebook.OpenNotebook(tylerFolder);
-            //Console.WriteLine($"Number of Pages: {notebook.Pages.Count}\nOwner: {notebook.Owner.FullName}");
+        }
+
+        private void ConvertEmilyCache()
+        {
+            var dirInfo = new DirectoryInfo(ConversionService.NotebooksFolder);
+            var notebooks = new List<Notebook>();
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+                Console.WriteLine($"Notebook Folder: {notebookFolder}");
+                var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
+                notebooks.Add(notebook);
+            }
+            
+            ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
         }
 
         #region Static Properties
@@ -421,6 +431,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
         }
+
         public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, decimal newPageNumber, bool isSavingImmediately = true)
         {
             var notebookName = notebook.InternalZipFileDirectoryName;
@@ -885,7 +896,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Save Methods
 
-        private class ZipEntrySaver
+        public class ZipEntrySaver
         {
             public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
             {
