@@ -119,12 +119,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
 
-        /// <summary>List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.</summary>
-        public List<string> ImagePoolHashIDs
-        {
-            get { return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList(); }
-        }
-
         /// <summary>Unique Identifier of the currently selected <see cref="CLPPage" />.</summary>
         public string CurrentPageID
         {
@@ -134,15 +128,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
 
-        /// <summary>Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.</summary>
-        public string CurrentPageOwnerID
-        {
-            get { return GetValue<string>(CurrentPageOwnerIDProperty); }
-            set { SetValue(CurrentPageOwnerIDProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof(string));
-
         /// <summary>Version Index of the currently selected <see cref="CLPPage" />.</summary>
         public uint CurrentPageVersionIndex
         {
@@ -151,6 +136,16 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint));
+
+        #region Calculated Properties
+
+        /// <summary>List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.</summary>
+        public List<string> ImagePoolHashIDsForLoadedPages
+        {
+            get { return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList(); }
+        }
+
+        #endregion // Calculated Properties
 
         #region Non-Serialized
 

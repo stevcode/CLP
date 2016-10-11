@@ -20,7 +20,6 @@ using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
-using Blah=CLP.Entities.Old;
 
 namespace Classroom_Learning_Partner.Services
 {

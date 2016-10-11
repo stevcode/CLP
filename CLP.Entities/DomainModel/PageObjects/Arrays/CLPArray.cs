@@ -248,20 +248,14 @@ namespace CLP.Entities
             }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_ARRAY; }
-        }
+        public override string CodedName => Codings.OBJECT_ARRAY;
 
         public override string CodedID
         {
-            get { return string.Format("{0}x{1}", Rows, Columns); }
+            get { return $"{Rows}x{Columns}"; }
         }
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
+        public override bool IsBackgroundInteractable => true;
 
         public override double MinimumHeight
         {

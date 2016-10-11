@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -115,10 +114,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData RemainderTilesOwnerIDProperty = RegisterProperty("RemainderTilesOwnerID", typeof (string), string.Empty);
 
-
-        /// <summary>
-        ///     <see cref="RemainderTiles" /> for the <see cref="DivisionTemplate" />.
-        /// </summary>
+        /// <summary><see cref="RemainderTiles" /> for the <see cref="DivisionTemplate" />.</summary>
         public RemainderTiles RemainderTiles
         {
             get { return GetValue<RemainderTiles>(RemainderTilesProperty); }
@@ -142,10 +138,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public double LargeLabelLength
-        {
-            get { return DT_LARGE_LABEL_LENGTH; }
-        }
+        public double LargeLabelLength => DT_LARGE_LABEL_LENGTH;
 
         public int GroupsSubtracted
         {
@@ -224,10 +217,7 @@ namespace CLP.Entities
 
         #region ACLPArrayBase Overrides
 
-        public override double LabelLength
-        {
-            get { return DT_LABEL_LENGTH; }
-        }
+        public override double LabelLength => DT_LABEL_LENGTH;
 
         public override double ArrayWidth
         {
@@ -308,28 +298,19 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
+            get { return $"{Dividend} / {Columns} Division Template with {CurrentRemainder} remaining"; }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_DIVISION_TOOL; }
-        }
+        public override string CodedName => Codings.OBJECT_DIVISION_TOOL;
 
         public override string CodedID
         {
-            get { return string.Format("{0} / {1}", Dividend, Rows); }
+            get { return $"{Dividend} / {Rows}"; }
         }
 
-        public override int ZIndex
-        {
-            get { return 40; }
-        }
+        public override int ZIndex => 40;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
+        public override bool IsBackgroundInteractable => true;
 
         public override double MinimumHeight
         {

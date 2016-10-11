@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-
     #region Enums
 
     public enum PageTypes

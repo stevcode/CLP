@@ -42,27 +42,15 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override string FormattedName
-        {
-            get { return string.Format("Remainder Tiles with {0} tiles", TileColors.Count); }
-        }
+        public override string FormattedName => $"Remainder Tiles with {TileColors.Count} tiles";
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_REMAINDER_TILES; }
-        }
+        public override string CodedName => Codings.OBJECT_REMAINDER_TILES;
 
         public override string CodedID => "A";
 
-        public override int ZIndex
-        {
-            get { return 40; }
-        }
+        public override int ZIndex => 40;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override bool IsBackgroundInteractable => false;
 
         #endregion //APageObjectBase Overrides
     }
