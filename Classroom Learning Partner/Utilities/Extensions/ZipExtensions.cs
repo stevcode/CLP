@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner
 
         /// <summary>Retrieves entry in the given internal zip directory by entry path.</summary>
         /// <param name="zip">The already opened zip file to act upon.</param>
-        /// <param name="entryPath">Expected to be a full directory path and entry name of the ZipEntry.</param>
+        /// <param name="entryPath">Expected to be a full directory path and entry name of the ZipEntry, with extension.</param>
         public static ZipEntry GetEntry(this ZipFile zip, string entryPath)
         {
             Argument.IsNotNull("zip", zip);
@@ -53,6 +53,25 @@ namespace Classroom_Learning_Partner
 
             var directoryEndingIndex = entryDirectory.LastIndexOf('/');
             return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory) && e.FileName.LastIndexOf('/') == directoryEndingIndex).ToList();
+        }
+
+        /// <summary>Renames an entry based on full internal file paths.</summary>
+        /// <param name="zip">The already opened zip file to act upon.</param>
+        /// <param name="oldInternalFilePath">Expected to be a full internal file name, with extension.</param>
+        /// <param name="newInternalFilePath">Expected to be a full internal file name, with extension.</param>
+        public static void RenameEntry(this ZipFile zip, string oldInternalFilePath, string newInternalFilePath)
+        {
+            Argument.IsNotNull("zip", zip);
+            Argument.IsNotNullOrWhitespace("oldInternalFilePath", oldInternalFilePath);
+            Argument.IsNotNullOrWhitespace("newInternalFilePath", newInternalFilePath);
+
+            var zipEntry = zip.Entries.FirstOrDefault(e => e.FileName == oldInternalFilePath);
+            if (zipEntry == null)
+            {
+                return;
+            }
+
+            zipEntry.FileName = newInternalFilePath;
         }
 
         #endregion // ZipFile

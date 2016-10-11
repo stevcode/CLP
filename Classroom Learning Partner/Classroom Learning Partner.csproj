@@ -176,6 +176,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CLP.Entities\lib\ModifiedCatelJson\Catel.Serialization.Json.dll</HintPath>
     </Reference>
+    <Reference Include="CLP.Entities.Old, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\CLP.Entities.Old.dll</HintPath>
+    </Reference>
     <Reference Include="DeltaCompressionDotNet, Version=1.1.0.0, Culture=neutral, PublicKeyToken=1d14d6e5194e7f4a, processorArchitecture=MSIL">
       <HintPath>..\packages\DeltaCompressionDotNet.1.1.0\lib\net20\DeltaCompressionDotNet.dll</HintPath>
       <Private>True</Private>
@@ -317,6 +321,7 @@
     <Compile Include="Network\ProjectorService.cs" />
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="Services\ConversionService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
@@ -1133,6 +1138,7 @@
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled.ico" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
+    <Content Include="External Libraries\CLP.Entities.Old.dll" />
     <Content Include="External Libraries\itextsharp.dll" />
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />

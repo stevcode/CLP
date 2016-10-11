@@ -17,6 +17,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Constructor
 
+        public SessionsViewModel(Notebook notebook, IDataService dataService)
+        {
+            _dataService = dataService;
+            Sessions = DataService.LoadAllSessionsFromZipContainer(notebook.ContainerZipFilePath).ToObservableCollection();
+            CurrentSession = Sessions.FirstOrDefault();
+
+            InitializeCommands();
+        }
+
         public SessionsViewModel(IDataService dataService)
         {
             _dataService = dataService;
@@ -187,7 +196,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Opens the selected Session.</summary>
         public Command OpenSessionCommand { get; private set; }
 
-        private void OnOpenSessionCommandExecute() { }
+        private async void OnOpenSessionCommandExecute()
+        {
+            await SaveViewModelAsync();
+            await CloseViewModelAsync(true);
+        }
 
         #endregion // Commands
 

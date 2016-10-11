@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-
     #region Enums
 
     public enum PageTypes
@@ -822,6 +821,11 @@ namespace CLP.Entities
             public string DifferentiationLevel { get; set; }
             public uint VersionIndex { get; set; }
             public string ID { get; set; }
+
+            public string ToNameCompositeString()
+            {
+                return $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+            }
 
             public static NameComposite ParseFromString(string nameCompositeString)
             {

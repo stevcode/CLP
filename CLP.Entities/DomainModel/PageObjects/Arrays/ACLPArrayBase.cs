@@ -133,10 +133,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        public virtual double LabelLength
-        {
-            get { return ARRAY_LABEL_LENGTH; }
-        }
+        public virtual double LabelLength => ARRAY_LABEL_LENGTH;
 
         /// <summary>The number of rows in the <see cref="ACLPArrayBase" />.</summary>
         public int Rows
@@ -205,8 +202,8 @@ namespace CLP.Entities
             set
             {
                 SetValue(IsGridOnProperty, value);
-                RaisePropertyChanged("IsVerticalLinesVisible");
-                RaisePropertyChanged("IsHorizontalLinesVisible");
+                RaisePropertyChanged(nameof(IsVerticalLinesVisible));
+                RaisePropertyChanged(nameof(IsHorizontalLinesVisible));
             }
         }
 
@@ -446,21 +443,18 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override int ZIndex
-        {
-            get { return 50; }
-        }
+        public override int ZIndex => 50;
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Height")
             {
-                RaisePropertyChanged("ArrayHeight");
+                RaisePropertyChanged(nameof(ArrayHeight));
             }
             if (e.PropertyName == "Width")
             {
-                RaisePropertyChanged("ArrayWidth");
-                RaisePropertyChanged("GridSquareSize");
+                RaisePropertyChanged(nameof(ArrayWidth));
+                RaisePropertyChanged(nameof(GridSquareSize));
             }
             base.OnPropertyChanged(e);
         }
@@ -483,10 +477,7 @@ namespace CLP.Entities
 
         #region Static Properties
 
-        public static double DefaultGridSquareSize //used to be 45.0, then 34.0, now again 45.0
-        {
-            get { return 45.0; }
-        }
+        public static double DefaultGridSquareSize => 45.0; //used to be 45.0, then 34.0, now again 45.0
 
         #endregion //Static Properties
 
