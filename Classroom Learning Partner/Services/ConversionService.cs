@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static string CacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
         public static string NotebooksFolder => Path.Combine(CacheFolder, "Notebooks");
+        public static string ClassesFolder => Path.Combine(CacheFolder, "Classes");
         public static string ZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
 
         public static Notebook ConvertCacheNotebook(string notebookFolder)
@@ -37,6 +38,14 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return newNotebook;
+        }
+
+        public static Session ConvertCacheClassPeriod(string filePath)
+        {
+            var classPeriod = Emily.ClassPeriod.OpenClassPeriod(filePath);
+            var session = ConvertClassPeriod(classPeriod);
+
+            return session;
         }
 
         public static void SaveNotebookToZip(string zipFilePath, Notebook notebook)
@@ -120,18 +129,80 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var mappedIDs = new Dictionary<string, decimal>();
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var allPageIDs = DataService.GetAllPageIDsInNotebook(zip, Person.Author);
+                mappedIDs = DataService.GetPageNumbersFromPageIDs(zip, allPageIDs);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var session in sessions)
+            {
+                session.ContainerZipFilePath = zipFilePath;
+                session.StartingPageNumber = mappedIDs[session.StartingPageID].ToString();
+                var pageNumbers = new List<int>();
+                foreach (var pageID in session.PageIDs)
+                {
+                    var pageNumber = mappedIDs[pageID];
+                    pageNumbers.Add((int)pageNumber.ToInt());
+                }
+
+                session.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, false, true);
+
+                entryList.Add(new DataService.ZipEntrySaver(session));
+            }
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static Session ConvertClassPeriod(Emily.ClassPeriod classPeriod)
+        {
+            var newSession = new Session
+                             {
+                                 StartTime = classPeriod.StartTime,
+                                 PageIDs = classPeriod.PageIDs,
+                                 StartingPageID = classPeriod.PageIDs.FirstOrDefault()
+                             };
+
+            newSession.NotebookIDs.Add(classPeriod.NotebookID);
+
+            return newSession;
+        }
+
         public static Person ConvertPerson(Emily.Person person)
         {
-            var newPerson = new Person();
-            //if (person == null)
-            //{
-            //    Console.WriteLine("[CONVERSION ERROR]: Old Person is null.");
-            //    return newPerson;
-            //}
-
-            newPerson.ID = person.ID;
-            newPerson.Alias = person.Alias;
-            newPerson.IsStudent = person.IsStudent;
+            var newPerson = new Person
+                            {
+                                ID = person.ID,
+                                Alias = person.Alias,
+                                IsStudent = person.IsStudent
+                            };
 
             if (string.IsNullOrWhiteSpace(person.FullName))
             {

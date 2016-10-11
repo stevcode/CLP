@@ -146,7 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
-            OpenSessionCommand = new Command(OnOpenSessionCommandExecute);
+            OpenSessionCommand = new Command(OnOpenSessionCommandExecute, OnOpenNotebookCanExecute);
         }
 
         /// <summary>Opens selected notebook.</summary>
@@ -265,16 +265,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenSessionCommandExecute()
         {
-            var viewModel = this.CreateViewModel<SessionsViewModel>(null);
+            var viewModel = this.CreateViewModel<SessionsViewModel>(SelectedNotebook);
             viewModel.IsOpening = true;
             var result = viewModel.ShowWindowAsDialog();
-            if (result != null)
+            if (result == null ||
+                !result.Value)
             {
                 return;
             }
 
             var session = viewModel.CurrentSession;
-            // TODO: Open the session.
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(session.PageNumbers).Select(Convert.ToDecimal).ToList();
+            if (!pageNumbersToOpen.Any())
+            {
+                return;
+            }
+
+            _dataService.LoadRangeOfNotebookPages(SelectedNotebook, pageNumbersToOpen);
         }
 
         #endregion //Commands
@@ -307,7 +314,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     // TODO: Use notebookSet.NotebookID/.IsConnected to search connected containers
                     var notebooks = DataService.LoadAllNotebooksFromZipContainer(SelectedZipContainerFullFilePath);
-                    NotebooksInSelectedNotebookSet = notebooks.ToObservableCollection();
+                    NotebooksInSelectedNotebookSet = notebooks.OrderBy(n => n.OwnerID == Person.AUTHOR_ID ? 0 : 1).ThenBy(n => !n.Owner.IsStudent ? 0 : 1).ThenBy(n => n.Owner.FullName).ToObservableCollection();
                     SelectedNotebook = NotebooksInSelectedNotebookSet.FirstOrDefault();
                 }
             }

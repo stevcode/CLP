@@ -172,6 +172,20 @@ namespace Classroom_Learning_Partner.Services
             ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
         }
 
+        private void AddSessions()
+        {
+            var dirInfo = new DirectoryInfo(ConversionService.ClassesFolder);
+            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
+        }
+
         #region Static Properties
 
         #region Special Folder Paths
@@ -203,31 +217,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #endregion // Static Properties
-
-        #region Methods
-
-        private void GeneratePageNumbers(Notebook notebook)
-        {
-            var initialPageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber - 1 : 0;
-            CLPPage lastPage = null;
-            foreach (var page in notebook.Pages)
-            {
-                if (lastPage == null ||
-                    page.ID != lastPage.ID)
-                {
-                    initialPageNumber++;
-                }
-                if (page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
-                {
-                    page.PageNumber = initialPageNumber;
-                }
-                lastPage = page;
-            }
-
-            // TODO: Optimize into Increase/Decrease pageNumber after this page number?
-        }
-
-        #endregion // Methods
 
         #region Static Methods
 
@@ -364,6 +353,26 @@ namespace Classroom_Learning_Partner.Services
             var pageIDs = pageNameComposites.Where(nc => pageNumbers.Contains(nc.PageNumber)).Select(nc => nc.ID).Distinct().ToList();
 
             return pageIDs;
+        }
+
+        public static Dictionary<string, decimal> GetPageNumbersFromPageIDs(ZipFile zip, List<string> pageIDs)
+        {
+            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
+            var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
+            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
+            var mappedIDs = new Dictionary<string, decimal>();
+            foreach (var pageNameComposite in pageNameComposites)
+            {
+                if (pageIDs.Contains(pageNameComposite.ID))
+                {
+                    if (!mappedIDs.ContainsKey(pageNameComposite.ID))
+                    {
+                        mappedIDs.Add(pageNameComposite.ID, pageNameComposite.PageNumber);
+                    }
+                }
+            }
+
+            return mappedIDs;
         }
 
         public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs)
