@@ -1126,31 +1126,39 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var containerZipFilePath = parentPage.ContainerZipFilePath;
-
-            using (var zip = ZipFile.Read(containerZipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var entry = GetImageEntryFromImageHashID(zip, imageHashID);
-                if (entry == null)
-                {
-                    return null;
-                }
-
-                 
-            }
-
             return null;
+            //var containerZipFilePath = parentPage.ContainerZipFilePath;
 
-            //var bitmapImage = CLPImage.GetImageFromPath(filePath);
-            //if (bitmapImage != null)
+            //using (var zip = ZipFile.Read(containerZipFilePath))
             //{
-            //    SourceImage = bitmapImage;
-            //    App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
+            //    zip.CompressionMethod = CompressionMethod.None;
+            //    zip.CompressionLevel = CompressionLevel.None;
+            //    zip.UseZip64WhenSaving = Zip64Option.Always;
+            //    zip.CaseSensitiveRetrieval = true;
+
+            //    var entry = GetImageEntryFromImageHashID(zip, imageHashID);
+            //    if (entry == null)
+            //    {
+            //        return null;
+            //    }
+
+            //    using (var ms = new MemoryStream())
+            //    {
+            //        entry.Extract(ms);
+
+            //        var genBmpImage = new BitmapImage();
+
+            //        genBmpImage.BeginInit();
+            //        genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
+            //        //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
+            //        genBmpImage.StreamSource = ms;
+            //        genBmpImage.EndInit();
+            //        genBmpImage.Freeze();
+
+            //        ImagePool.Add(imageHashID, genBmpImage);
+
+            //        return genBmpImage;
+            //    }
             //}
         }
 
