@@ -268,7 +268,7 @@ namespace Classroom_Learning_Partner.Services
                           {
                               ID = page.ID,
                               Owner = newPerson,
-                              PageNumber = page.PageNumber,
+                              PageNumber = (int)page.PageNumber,
                               DifferentiationLevel = page.DifferentiationLevel,
                               VersionIndex = page.VersionIndex,
                               LastVersionIndex = page.LastVersionIndex,

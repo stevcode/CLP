@@ -127,13 +127,22 @@ namespace CLP.Entities
         }
 
         /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
-        public decimal PageNumber
+        public int PageNumber
         {
-            get { return GetValue<decimal>(PageNumberProperty); }
+            get { return GetValue<int>(PageNumberProperty); }
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int), 1);
+
+        /// <summary>Identifier for the subpage of a page.</summary>
+        public int SubPageNumber
+        {
+            get { return GetValue<int>(SubPageNumberProperty); }
+            set { SetValue(SubPageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData SubPageNumberProperty = RegisterProperty("SubPageNumber", typeof(int), 0);
 
         /// <summary>Differentiation Level of the <see cref="CLPPage" />.</summary>
         public string DifferentiationLevel
@@ -817,20 +826,21 @@ namespace CLP.Entities
 
         public class NameComposite
         {
-            public decimal PageNumber { get; set; }
+            public int PageNumber { get; set; }
+            public int SubPageNumber { get; set; }
             public string DifferentiationLevel { get; set; }
             public uint VersionIndex { get; set; }
             public string ID { get; set; }
 
             public string ToNameCompositeString()
             {
-                return $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+                return $"p;{PageNumber};{SubPageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
             }
 
             public static NameComposite ParseFromString(string nameCompositeString)
             {
                 var parts = nameCompositeString.Split(';');
-                if (parts.Count() != 5)
+                if (parts.Length != 6)
                 {
                     return null;
                 }
@@ -839,10 +849,11 @@ namespace CLP.Entities
                 {
                     var nameComposite = new NameComposite
                                         {
-                                            PageNumber = Convert.ToDecimal(parts[1]),
-                                            DifferentiationLevel = parts[2],
-                                            VersionIndex = Convert.ToUInt32(parts[3]),
-                                            ID = parts[4]
+                                            PageNumber = Convert.ToInt32(parts[1]),
+                                            SubPageNumber = Convert.ToInt32(parts[2]),
+                                            DifferentiationLevel = parts[3],
+                                            VersionIndex = Convert.ToUInt32(parts[4]),
+                                            ID = parts[5]
                                         };
 
                     return nameComposite;
@@ -854,7 +865,7 @@ namespace CLP.Entities
             }
         }
 
-        public override string DefaultInternalFileName => $"p;{PageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+        public override string DefaultInternalFileName => $"p;{PageNumber};{SubPageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
 
         public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
         {

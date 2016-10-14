@@ -152,10 +152,16 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Constants
 
+        #region Constructors
+
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
         }
+
+        #endregion // Constructors
+
+        #region Tests
 
         private void ConvertEmilyCache()
         {
@@ -168,7 +174,7 @@ namespace Classroom_Learning_Partner.Services
                 var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
                 notebooks.Add(notebook);
             }
-            
+
             ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
         }
 
@@ -185,6 +191,8 @@ namespace Classroom_Learning_Partner.Services
 
             ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
         }
+
+        #endregion // Tests
 
         #region Static Properties
 
@@ -423,7 +431,7 @@ namespace Classroom_Learning_Partner.Services
             return pages;
         }
 
-        public static void ChangePageNumber(Notebook notebook, CLPPage page, decimal newPageNumber, bool isSavingImmediately = true)
+        public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
         {
             var notebookName = notebook.InternalZipFileDirectoryName;
             var oldInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
@@ -441,7 +449,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, decimal newPageNumber, bool isSavingImmediately = true)
+        public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
         {
             var notebookName = notebook.InternalZipFileDirectoryName;
             var oldInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
