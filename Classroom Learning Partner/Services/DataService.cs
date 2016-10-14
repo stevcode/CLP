@@ -1138,7 +1138,7 @@ namespace Classroom_Learning_Partner.Services
                 pageJsonStrings = GetPageJsonStringsFromPageEntries(pageEntries);
             }
 
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath);
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber);
 
             notebook.Pages.AddRange(pages);
             notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
@@ -1165,7 +1165,7 @@ namespace Classroom_Learning_Partner.Services
                 pageJsonStrings = GetPageJsonStringsFromPageEntries(pageEntries);
             }
 
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath);
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber);
 
             notebook.Pages.AddRange(pages);
             notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
