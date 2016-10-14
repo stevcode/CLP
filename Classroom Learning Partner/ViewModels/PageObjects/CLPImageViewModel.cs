@@ -22,13 +22,20 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPImageViewModel : APageObjectBaseViewModel
     {
+        #region Fields
+
+        private readonly IDataService _dataService;
+
+        #endregion // Fields
+
         #region Constructor
 
         /// <summary>Initializes a new instance of the CLPImageViewModel class.</summary>
         public CLPImageViewModel(CLPImage image, IDataService dataService)
         {
             PageObject = image;
-            SourceImage = dataService.GetImage(image.ImageHashID, image);
+            _dataService = dataService;
+            SourceImage = _dataService.GetImage(image.ImageHashID, image);
 
             InitializeCommands();
             InitializeButtons();

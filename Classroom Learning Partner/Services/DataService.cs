@@ -343,6 +343,25 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static ZipEntry GetImageEntryFromImageHashID(ZipFile zip, string imageHashID)
+        {
+            try
+            {
+                var internalImagesDirectory = $"{AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME}/";
+                var allImageEntries = zip.GetEntriesInDirectory(internalImagesDirectory).ToList();
+                var imageEntry = (from entry in allImageEntries
+                                  let hashID = entry.GetEntryNameWithoutExtension().Split(';')[0]
+                                  where hashID == imageHashID
+                                  select entry).FirstOrDefault();
+
+                return imageEntry;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Person notebookOwner)
         {
             var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
@@ -654,6 +673,13 @@ namespace Classroom_Learning_Partner.Services
 
             CurrentNotebook = notebook;
             CurrentNotebookChanged.SafeInvoke(this);
+
+            if (CurrentNotebook.CurrentPage == null)
+            {
+                return;
+            }
+
+            SetCurrentPage(CurrentNotebook.CurrentPage);
         }
 
         #endregion // Notebook Methods
@@ -1046,40 +1072,34 @@ namespace Classroom_Learning_Partner.Services
                     return imageHashID;
                 }
 
-                // TODO: Always auto save. Save as soon as creation in temp folder then move to normal cache if saved. On start, clear temp folder?
+                var bitmapImage = CLPImage.GetImageFromPath(imageFilePath);
+                if (bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image..");
+                    return null;
+                }
 
                 var newFileName = $"{imageHashID};{Path.GetFileNameWithoutExtension(imageFilePath)}{Path.GetExtension(imageFilePath)}";
                 var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, newFileName);
                 var containerZipFilePath = page.ContainerZipFilePath;
 
+                using (var zip = ZipFile.Read(containerZipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
 
-                var newFilePath = Path.Combine(CurrentCacheInfo.ImagesFolderPath, newFileName);
-
-                try
-                {
-                    File.Copy(imageFilePath, newFilePath);
-                }
-                catch (IOException)
-                {
-                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
-                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
-                    return null;
-                }
-
-                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
-                if (bitmapImage == null)
-                {
-                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
-                    return null;
+                    if (!zip.ContainsEntry(internalFilePath))
+                    {
+                        var entry = zip.AddFile(imageFilePath);
+                        entry.FileName = internalFilePath;
+                        zip.Save();
+                    }
                 }
 
                 ImagePool.Add(imageHashID, bitmapImage);
-
-
+                return imageHashID;
             }
             catch (Exception)
             {
@@ -1099,17 +1119,32 @@ namespace Classroom_Learning_Partner.Services
             {
                 return ImagePool[imageHashID];
             }
+
+            var parentPage = pageObject.ParentPage;
+            if (parentPage == null)
+            {
+                return null;
+            }
+
+            var containerZipFilePath = parentPage.ContainerZipFilePath;
+
+            using (var zip = ZipFile.Read(containerZipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var entry = GetImageEntryFromImageHashID(zip, imageHashID);
+                if (entry == null)
+                {
+                    return null;
+                }
+
+                 
+            }
+
             return null;
-            //var filePath = string.Empty;
-            //var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
-            //foreach (var imageFilePath in from imageFilePath in imageFilePaths
-            //                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
-            //                              where imageHashID == image.ImageHashID
-            //                              select imageFilePath)
-            //{
-            //    filePath = imageFilePath;
-            //    break;
-            //}
 
             //var bitmapImage = CLPImage.GetImageFromPath(filePath);
             //if (bitmapImage != null)
