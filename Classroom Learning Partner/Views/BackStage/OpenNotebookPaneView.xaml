@@ -172,21 +172,8 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Grade {0} {1}">
-                            <Binding Path="GradeLevel" />
-                            <Binding Path="SubjectName" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-
-                <TextBlock Text="{Binding StartDate, StringFormat={}{0:MM/dd/yyyy}}" />
 
                 <TextBlock Text="Notebook Name"
                            Style="{StaticResource BackStageHeaderTextBlock}" />
@@ -244,8 +231,12 @@
                 </Grid.Resources>
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+
+                <TextBlock Text="Notebook Owner"
+                           Style="{StaticResource BackStageHeaderTextBlock}" />
 
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Auto"
                          ItemsSource="{Binding NotebooksInSelectedNotebookSet}"

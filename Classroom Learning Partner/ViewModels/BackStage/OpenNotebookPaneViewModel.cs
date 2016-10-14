@@ -40,26 +40,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedClassRosterProperty = RegisterProperty("SelectedClassRoster", typeof(ClassRoster));
 
-        /// <summary>Name of the subject being taught.</summary>
-        [ViewModelToModel("SelectedClassRoster")]
-        public string SubjectName
-        {
-            get { return GetValue<string>(SubjectNameProperty); }
-            set { SetValue(SubjectNameProperty, value); }
-        }
-
-        public static readonly PropertyData SubjectNameProperty = RegisterProperty("SubjectName", typeof(string));
-
-        /// <summary>Grade Level of the subject being taught.</summary>
-        [ViewModelToModel("SelectedClassRoster")]
-        public string GradeLevel
-        {
-            get { return GetValue<string>(GradeLevelProperty); }
-            set { SetValue(GradeLevelProperty, value); }
-        }
-
-        public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string));
-
         /// <summary>List of all the internal and connected NotebookSets available to this class.</summary>
         [ViewModelToModel("SelectedClassRoster")]
         public ObservableCollection<NotebookSet> ListOfNotebookSets
@@ -69,8 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ListOfNotebookSetsProperty = RegisterProperty("ListOfNotebookSets", typeof(ObservableCollection<NotebookSet>), () => new ObservableCollection<NotebookSet>());
-
-        
 
         #endregion // Model
 
