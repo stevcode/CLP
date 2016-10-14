@@ -125,7 +125,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Command="{Binding ConvertDisplaysToPDFCommand}"
+                <!--<Button Command="{Binding ConvertDisplaysToPDFCommand}"
                         IsEnabled="False"
                         Width="160"
                         Height="90"
@@ -153,11 +153,11 @@
                                    TextOptions.TextFormattingMode="Ideal" />
 
                     </StackPanel>
-                </Button>
+                </Button>-->
 
             </WrapPanel>
 
-            <TextBlock Text="Create New Notebook"
+            <!--<TextBlock Text="Create New Notebook"
                        TextAlignment="Left"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center"
@@ -200,7 +200,7 @@
                     </StackPanel>
                 </Button>
 
-            </WrapPanel>
+            </WrapPanel>-->
 
         </StackPanel>
 

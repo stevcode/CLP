@@ -1127,6 +1127,8 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return null;
+
+            // TODO: Needs a lock?
             //var containerZipFilePath = parentPage.ContainerZipFilePath;
 
             //using (var zip = ZipFile.Read(containerZipFilePath))

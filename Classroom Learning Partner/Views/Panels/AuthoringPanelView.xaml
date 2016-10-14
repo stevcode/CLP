@@ -65,7 +65,7 @@
             <Button Content="Differentiate This Page"
                     Command="{Binding DifferentiatePageCommand}" />
 
-            <Rectangle Height="1"
+            <!--<Rectangle Height="1"
                        Margin="1 5"
                        Stroke="{StaticResource GrayBorderColor}" />
 
@@ -87,7 +87,7 @@
                                 Value="Center" />
                     </Style>
                 </ComboBox.ItemContainerStyle>
-            </ComboBox>
+            </ComboBox>-->
         </StackPanel>
 
     </Border>
