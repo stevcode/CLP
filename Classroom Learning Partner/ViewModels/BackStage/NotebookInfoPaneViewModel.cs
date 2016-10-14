@@ -1,6 +1,7 @@
 ﻿using System;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -65,6 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
             EditClassCommand = new Command(OnEditClassCommandExecute, OnSaveCurrentNotebookCanExecute);
             EditSessionsCommand = new Command(OnEditSessionsCommandExecute, OnSaveCurrentNotebookCanExecute);
+            GenerateClassNotebooksCommand = new Command(OnGenerateClassNotebooksCommandExecute, OnGenerateClassNotebooksCanExecute);
         }
 
         /// <summary>Saves the current notebook.</summary>
@@ -103,6 +105,22 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var viewModel = this.CreateViewModel<SessionsViewModel>(null);
             viewModel.ShowWindowAsDialog();
+        }
+
+        /// <summary>Generates class notebooks from the authored version.</summary>
+        public Command GenerateClassNotebooksCommand { get; private set; }
+
+        private void OnGenerateClassNotebooksCommandExecute()
+        {
+            var authorNotebook = Notebook;
+            var classRoster = _dataService.CurrentClassRoster;
+            DataService.GenerateClassNotebooks(authorNotebook, classRoster);
+        }
+
+        private bool OnGenerateClassNotebooksCanExecute()
+        {
+            // TODO: Test to see if all students/teachers in the Class have generated notebooks.
+            return Notebook?.Owner?.ID == Person.Author.ID;
         }
 
         #endregion //Commands

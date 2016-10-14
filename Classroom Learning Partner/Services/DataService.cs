@@ -516,6 +516,72 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static void GenerateClassNotebooks(Notebook authorNotebook, ClassRoster classRoster)
+        {
+            var zipContainerFilePath = authorNotebook.ContainerZipFilePath;
+
+            var entryList = new List<ZipEntrySaver>();
+
+            // TODO: Parallel?
+            foreach (var teacher in classRoster.ListOfTeachers)
+            {
+                var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
+                var parentNotebookName = notebook.InternalZipFileDirectoryName;
+                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                foreach (var authorPage in authorNotebook.Pages)
+                {
+                    var page = CopyPageForNewOwner(authorPage, teacher);
+                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                }
+            }
+
+            // TODO: Parallel?
+            foreach (var student in classRoster.ListOfStudents)
+            {
+                var notebook = CopyNotebookForNewOwner(authorNotebook, student);
+                var parentNotebookName = notebook.InternalZipFileDirectoryName;
+                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                foreach (var authorPage in authorNotebook.Pages)
+                {
+                    var page = CopyPageForNewOwner(authorPage, student);
+                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                }
+            }
+
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static Notebook CopyNotebookForNewOwner(Notebook notebook, Person newOwner)
+        {
+            var newNotebook = notebook.DeepCopy();
+            newNotebook.Owner = newOwner;
+            newNotebook.GenerationDate = DateTime.Now;
+            newNotebook.LastSavedDate = DateTime.Now;
+
+            return newNotebook;
+        }
+
+        public static CLPPage CopyPageForNewOwner(CLPPage page, Person newOwner)
+        {
+            var newPage = page.DeepCopy();
+            newPage.Owner = newOwner;
+
+            return newPage;
+        }
+
         #endregion // Static Methods
 
         #region IDataService Implementation
@@ -979,10 +1045,7 @@ namespace Classroom_Learning_Partner.Services
 
         public void SaveLocal()
         {
-            var cacheFolderPath = CurrentCacheFolderPath;
-            var fileName = $"{ValidateFileNameString(CurrentClassRoster.DefaultContainerFileName)}.{AInternalZipEntryFile.CONTAINER_EXTENSION}";
-            var fullFilePath = Path.Combine(cacheFolderPath, fileName);
-
+            var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
             var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
             var entryList = new List<ZipEntrySaver>
                             {
@@ -995,7 +1058,7 @@ namespace Classroom_Learning_Partner.Services
                 entryList.Add(new ZipEntrySaver(page, parentNotebookName));
             }
 
-            if (File.Exists(fullFilePath))
+            if (File.Exists(zipContainerFilePath))
             {
                 //var readOptions = new ReadOptions
                 //                  {
@@ -1004,7 +1067,7 @@ namespace Classroom_Learning_Partner.Services
 
                 //var zip = ZipFile.Read(fullFilePath, readOptions)
 
-                using (var zip = ZipFile.Read(fullFilePath))
+                using (var zip = ZipFile.Read(zipContainerFilePath))
                 {
                     // TODO: Test if needed. Won't work unless zip has been saved.
                     // Implied that entries are not added to zip.Entries until saved. Need to verify. Code definitely says added to internal _entries before save, so test this
@@ -1013,8 +1076,6 @@ namespace Classroom_Learning_Partner.Services
 
                     //zip.UpdateFile only applies to adding a file from the disc to the zip archive, N/A for clp unless we need it for images?
                     //          for images, probably zip.AddEntry(entryPath, memoryStream); also have byte[] byteArray for content
-
-                    // Change all AddEntry to UpdateEntry
 
                     zip.CompressionMethod = CompressionMethod.None;
                     zip.CompressionLevel = CompressionLevel.None;
@@ -1026,7 +1087,7 @@ namespace Classroom_Learning_Partner.Services
                         zipEntrySaver.UpdateEntry(zip);
                     }
 
-                    zip.Save(fullFilePath);
+                    zip.Save();
                 }
             }
             else
@@ -1043,7 +1104,7 @@ namespace Classroom_Learning_Partner.Services
                         zipEntrySaver.UpdateEntry(zip);
                     }
 
-                    zip.Save(fullFilePath);
+                    zip.Save(zipContainerFilePath);
                 }
             }
 

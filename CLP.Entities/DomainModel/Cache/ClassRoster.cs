@@ -136,19 +136,6 @@ namespace CLP.Entities
 
         #endregion // Properties
 
-        #region Storage
-
-        public string DefaultContainerFileName
-        {
-            get
-            {
-                var teacherName = ListOfTeachers.Any() ? ListOfTeachers.First().FullName : Person.Author.FullName;
-                return $"{teacherName} - {SubjectName}";
-            }
-        }
-
-        #endregion // Storage
-
         #region Overrides of AInternalZipEntryFile
 
         public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;

@@ -24,31 +24,14 @@
                     Width="80"
                     Height="84"
                     Margin="20 0 20 0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
                     Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
 
-                    <TextBlock Text="Save Notebook"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Save Notebook" />
 
                 </StackPanel>
             </Button>
@@ -57,31 +40,14 @@
                     Width="80"
                     Height="84"
                     Margin="20 0 20 0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
                     Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
 
-                    <TextBlock Text="Edit Class"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Edit Class" />
 
                 </StackPanel>
             </Button>
@@ -90,31 +56,30 @@
                     Width="80"
                     Height="84"
                     Margin="20 0 20 0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
                     Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
 
-                    <TextBlock Text="Edit Sessions"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Edit Sessions" />
+
+                </StackPanel>
+            </Button>
+
+            <Button Command="{Binding GenerateClassNotebooksCommand}"
+                    Width="120"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
+
+                    <TextBlock Text="Generate Class Notebooks" />
 
                 </StackPanel>
             </Button>
