@@ -137,25 +137,25 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(_fontColorComboxBox);
 
             // Context
-            var textContextLabel = new TextBlock
-                               {
-                                   Text = "Context:",
-                                   TextAlignment = TextAlignment.Left,
-                                   VerticalAlignment = VerticalAlignment.Center,
-                                   FontFamily = new FontFamily("Segoe UI"),
-                                   FontSize = 12.0,
-                                   FontWeight = FontWeights.Bold
-                               };
-            _contextButtons.Add(textContextLabel);
+            //var textContextLabel = new TextBlock
+            //                   {
+            //                       Text = "Context:",
+            //                       TextAlignment = TextAlignment.Left,
+            //                       VerticalAlignment = VerticalAlignment.Center,
+            //                       FontFamily = new FontFamily("Segoe UI"),
+            //                       FontSize = 12.0,
+            //                       FontWeight = FontWeights.Bold
+            //                   };
+            //_contextButtons.Add(textContextLabel);
 
-            _textContextComboxBox = new ComboBox
-                                    {
-                                        ItemsSource = Enum.GetValues(typeof(TextContexts)),
-                                        SelectedItem = TextContext,
-                                        VerticalContentAlignment = VerticalAlignment.Center
-                                    };
-            _textContextComboxBox.SelectionChanged += _textContextComboxBox_SelectionChanged;
-            _contextButtons.Add(_textContextComboxBox);
+            //_textContextComboxBox = new ComboBox
+            //                        {
+            //                            ItemsSource = Enum.GetValues(typeof(TextContexts)),
+            //                            SelectedItem = TextContext,
+            //                            VerticalContentAlignment = VerticalAlignment.Center
+            //                        };
+            //_textContextComboxBox.SelectionChanged += _textContextComboxBox_SelectionChanged;
+            //_contextButtons.Add(_textContextComboxBox);
         }
 
         private bool _isUpdatingSelection = false;

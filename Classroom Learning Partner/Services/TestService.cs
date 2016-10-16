@@ -26,6 +26,16 @@ namespace Classroom_Learning_Partner.Services
             _dataService = ServiceLocator.Default.ResolveType<IDataService>();
         }
 
+        #region MissingPages
+
+        public static void CompileMissingPages()
+        {
+            var workFolder = Path.Combine(DataService.DesktopFolderPath, "Missing Pages");
+        }
+        
+
+        #endregion // MissingPages
+
         #region Notebook Info Pane
 
         private void OnSaveNotebookForStudentCommandExecute()
