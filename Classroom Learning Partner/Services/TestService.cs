@@ -141,7 +141,46 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
         }
-        
+
+        public static void FindMissingPages()
+        {
+            var missingPages = new Dictionary<string, List<int>>();
+            var cacheFolder = Path.Combine(DataService.DesktopFolderPath, "Cache.Ann.Final - All");
+            var notebooksFolder = Path.Combine(cacheFolder, "Notebooks");
+            var notebooksDirectoryInfo = new DirectoryInfo(notebooksFolder);
+
+            foreach (var notebookDirectoryInfo in notebooksDirectoryInfo.EnumerateDirectories())
+            {
+                var allPageNumbers = Enumerable.Range(1, 386 - 1).ToList();
+
+
+                var pagesPath = Path.Combine(notebookDirectoryInfo.FullName, "Pages");
+                var pagesDirectoryInfo = new DirectoryInfo(pagesPath);
+                foreach (var pageFileInfo in pagesDirectoryInfo.GetFiles("p;*.xml"))
+                {
+                    var pageDoc = XElement.Load(pageFileInfo.FullName);
+
+                    var pageNumber = pageDoc.Descendants("PageNumber").First().Value;
+                    var pageNumberValue = int.Parse(pageNumber);
+                    if (allPageNumbers.Contains(pageNumberValue))
+                    {
+                        allPageNumbers.Remove(pageNumberValue);
+                    }
+                }
+
+                if (allPageNumbers.Any())
+                {
+                    var studentName = notebookDirectoryInfo.Name.Split(';')[2];
+                    missingPages.Add(studentName, allPageNumbers);
+                }
+            }
+
+            foreach (var studentName in missingPages.Keys)
+            {
+                var pagesMissing = string.Join(", ", missingPages[studentName]);
+                Console.WriteLine("{0} is missing pages: {1}", studentName, pagesMissing);
+            }
+        }
 
         #endregion // MissingPages
 

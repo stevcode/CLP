@@ -157,7 +157,6 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
-            TestService.CompileMissingPages();
         }
 
         #endregion // Constructors
