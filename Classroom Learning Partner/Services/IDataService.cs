@@ -47,8 +47,8 @@ namespace Classroom_Learning_Partner.Services
 
 
         BitmapImage GetImage(string imageHashID, IPageObject pageObject);
-        void LoadAllNotebookPages(Notebook notebook);
-        void LoadRangeOfNotebookPages(Notebook notebook, List<decimal> pageNumbers);
+        void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);
+        void LoadRangeOfNotebookPages(Notebook notebook, List<decimal> pageNumbers, bool isLoadingSubmissions = true);
 
         CacheInfo CurrentCacheInfo { get; set; }
         List<NotebookInfo> LoadedNotebooksInfo { get; }
