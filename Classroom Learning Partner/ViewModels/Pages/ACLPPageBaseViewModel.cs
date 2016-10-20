@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,10 +15,10 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
-using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -29,12 +27,14 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
+        private readonly IDataService _dataService;
         private readonly IPageInteractionService _pageInteractionService;
 
         /// <summary>Initializes a new instance of the CLPPageViewModel class.</summary>
-        protected ACLPPageBaseViewModel(CLPPage page)
+        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService)
         {
             Page = page;
+            _dataService = dataService;
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
@@ -46,11 +46,28 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
             SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
+
+            InitializedAsync += ACLPPageBaseViewModel_InitializedAsync;
+            ClosedAsync += ACLPPageBaseViewModel_ClosedAsync;
         }
 
-        public override string Title
+        private Task ACLPPageBaseViewModel_InitializedAsync(object sender, EventArgs e)
         {
-            get { return "APageBaseVM"; }
+            _dataService.CurrentPageChanged += _dataService_CurrentPageChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private Task ACLPPageBaseViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentPageChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentPageChanged(object sender, EventArgs e)
+        {
+            ClearAdorners();
         }
 
         #endregion //Constructor

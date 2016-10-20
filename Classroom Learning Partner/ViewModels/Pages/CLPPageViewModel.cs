@@ -1,4 +1,5 @@
-﻿using CLP.Entities;
+﻿using Classroom_Learning_Partner.Services;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -6,13 +7,8 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public CLPPageViewModel(CLPPage page)
-            : base(page) { }
-
-        public override string Title
-        {
-            get { return "PageVM"; }
-        }
+        public CLPPageViewModel(CLPPage page, IDataService dataService)
+            : base(page, dataService) { }
 
         #endregion //Constructor
     }

@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel;
 using Catel.Collections;
-using Catel.Data;
-using Catel.IoC;
 using Catel.Reflection;
-using Catel.Runtime.Serialization.Json;
-using Classroom_Learning_Partner.ViewModels;
-using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -86,7 +77,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-        public static string CLPProgramFolderPath => typeof(MainWindowView).Assembly.GetDirectory();
+        public static string CLPProgramFolderPath => typeof(DataService).Assembly.GetDirectory();
 
         #endregion // Special Folder Paths
 
@@ -288,10 +279,9 @@ namespace Classroom_Learning_Partner.Services
             var oldPage = CurrentNotebook.CurrentPage;
             if (oldPage != null)
             {
-                ACLPPageBaseViewModel.ClearAdorners(oldPage);
                 AutoSavePage(CurrentNotebook, oldPage);
             }
-            
+
             CurrentNotebook.CurrentPage = page;
             CurrentPage = page;
 
@@ -371,9 +361,9 @@ namespace Classroom_Learning_Partner.Services
             if (!notebook.Pages.Any())
             {
                 var newPage = new CLPPage(Person.Author)
-                {
-                    PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
-                };
+                              {
+                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                              };
 
                 notebook.Pages.Add(newPage);
                 SavePage(notebook, newPage);
@@ -469,9 +459,7 @@ namespace Classroom_Learning_Partner.Services
                     zip.Save(zipContainerFilePath);
                 }
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
         }
 
         private void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
@@ -492,9 +480,7 @@ namespace Classroom_Learning_Partner.Services
                     zip.Save(zipContainerFilePath);
                 }
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
         }
 
         #endregion // Page Methods
@@ -624,7 +610,7 @@ namespace Classroom_Learning_Partner.Services
                     zip.CompressionLevel = CompressionLevel.None;
                     zip.UseZip64WhenSaving = Zip64Option.Always;
                     zip.CaseSensitiveRetrieval = true;
-                    
+
                     foreach (var zipEntrySaver in entryList)
                     {
                         zipEntrySaver.UpdateEntry(zip);
@@ -811,7 +797,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-            
+
             if (isLoadingSubmissions)
             {
                 var submissions = GetSubmissions(notebook, pages);
