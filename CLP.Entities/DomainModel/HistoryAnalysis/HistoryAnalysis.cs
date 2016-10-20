@@ -20,7 +20,7 @@ namespace CLP.Entities
                 Directory.CreateDirectory(fileDirectory);
             }
 
-            var filePath = Path.Combine(fileDirectory, page.DefaultInternalFileName + ".txt");
+            var filePath = Path.Combine(fileDirectory, page.DefaultZipEntryName + ".txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);

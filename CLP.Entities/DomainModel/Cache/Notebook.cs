@@ -279,11 +279,11 @@ namespace CLP.Entities
             }
         }
 
-        public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
+        public override string DefaultZipEntryName => DEFAULT_INTERNAL_FILE_NAME;
 
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
-            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{DefaultInternalFileName}.json";
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{DefaultZipEntryName}.json";
         }
 
         #endregion

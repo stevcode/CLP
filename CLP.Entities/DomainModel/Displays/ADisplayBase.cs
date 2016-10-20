@@ -169,11 +169,11 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
-        public override string DefaultInternalFileName => "grid";
+        public override string DefaultZipEntryName => "grid";
 
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
-            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultInternalFileName}.json";
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }
 
         #endregion

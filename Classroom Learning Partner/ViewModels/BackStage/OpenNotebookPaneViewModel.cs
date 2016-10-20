@@ -195,7 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText).Select(Convert.ToDecimal).ToList();
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText).ToList();
             if (!pageNumbersToOpen.Any())
             {
                 return;
@@ -253,7 +253,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var session = viewModel.CurrentSession;
-            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(session.PageNumbers).Select(Convert.ToDecimal).ToList();
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(session.PageNumbers).ToList();
             if (!pageNumbersToOpen.Any())
             {
                 return;
@@ -273,7 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var selectedExistingZipContainerFileName = e.NewValue as string;
                 if (!string.IsNullOrWhiteSpace(selectedExistingZipContainerFileName))
                 {
-                    var classRoster = DataService.LoadClassRosterFromZipContainer(SelectedZipContainerFullFilePath);
+                    var classRoster = DataService.LoadClassRosterFromCLPContainer(SelectedZipContainerFullFilePath);
                     if (classRoster == null)
                     {
                         MessageBox.Show("Problem loading the selected class.");
@@ -291,7 +291,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (selectedNotebookSet != null)
                 {
                     // TODO: Use notebookSet.NotebookID/.IsConnected to search connected containers
-                    var notebooks = DataService.LoadAllNotebooksFromZipContainer(SelectedZipContainerFullFilePath);
+                    var notebooks = DataService.LoadAllNotebooksFromCLPContainer(SelectedZipContainerFullFilePath);
                     NotebooksInSelectedNotebookSet = notebooks.OrderBy(n => n.OwnerID == Person.AUTHOR_ID ? 0 : 1).ThenBy(n => !n.Owner.IsStudent ? 0 : 1).ThenBy(n => n.Owner.FullName).ToObservableCollection();
                     SelectedNotebook = NotebooksInSelectedNotebookSet.FirstOrDefault();
                 }

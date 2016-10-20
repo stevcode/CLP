@@ -136,7 +136,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var mappedIDs = new Dictionary<string, decimal>();
+            var mappedIDs = new Dictionary<string, int>();
             using (var zip = ZipFile.Read(zipFilePath))
             {
                 zip.CompressionMethod = CompressionMethod.None;

@@ -104,11 +104,11 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
-        public override string DefaultInternalFileName => $"s;{StartTime:yyyy.MM.dd.HH.mm};{ID}";
+        public override string DefaultZipEntryName => $"s;{StartTime:yyyy.MM.dd.HH.mm};{ID}";
 
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
-            return $"{ZIP_SESSIONS_FOLDER_NAME}/{DefaultInternalFileName}.json";
+            return $"{ZIP_SESSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }
 
         #endregion

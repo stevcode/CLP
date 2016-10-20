@@ -138,11 +138,11 @@ namespace CLP.Entities
 
         #region Overrides of AInternalZipEntryFile
 
-        public override string DefaultInternalFileName => DEFAULT_INTERNAL_FILE_NAME;
+        public override string DefaultZipEntryName => DEFAULT_INTERNAL_FILE_NAME;
 
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
-            return $"{DefaultInternalFileName}.json";
+            return $"{DefaultZipEntryName}.json";
         }
 
         #endregion

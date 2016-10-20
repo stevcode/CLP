@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public SessionsViewModel(Notebook notebook, IDataService dataService)
         {
             _dataService = dataService;
-            Sessions = DataService.LoadAllSessionsFromZipContainer(notebook.ContainerZipFilePath).ToObservableCollection();
+            Sessions = DataService.LoadAllSessionsFromCLPContainer(notebook.ContainerZipFilePath).ToObservableCollection();
             CurrentSession = Sessions.FirstOrDefault();
 
             InitializeCommands();
@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public SessionsViewModel(IDataService dataService)
         {
             _dataService = dataService;
-            Sessions = DataService.LoadAllSessionsFromZipContainer(_dataService.CurrentNotebook.ContainerZipFilePath).ToObservableCollection();
+            Sessions = DataService.LoadAllSessionsFromCLPContainer(_dataService.CurrentNotebook.ContainerZipFilePath).ToObservableCollection();
             CurrentSession = Sessions.FirstOrDefault();
 
             InitializeCommands();

@@ -61,13 +61,13 @@ namespace CLP.Entities
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public abstract string DefaultInternalFileName { get; }
+        public abstract string DefaultZipEntryName { get; }
 
         #endregion // Properties
 
         #region Methods
 
-        public abstract string GetFullInternalFilePathWithExtension(string parentNotebookName);
+        public abstract string GetZipEntryFullPath(string parentNotebookName);
 
         #endregion // Methods
 

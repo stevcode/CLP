@@ -212,7 +212,7 @@ namespace Classroom_Learning_Partner.Services
         {
             get
             {
-                var folderPath = Path.Combine(DesktopFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME); // TODO: Change to WindowsDriveFolderPath
+                var folderPath = Path.Combine(WindowsDriveFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -225,376 +225,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #endregion // Static Properties
-
-        #region Static Methods
-
-        public static string ValidateFileNameString(string name)
-        {
-            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
-            return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
-        }
-
-        public static List<FileInfo> GetZipContainersInFolder(string folderPath)
-        {
-            if (!Directory.Exists(folderPath))
-            {
-                return new List<FileInfo>();
-            }
-
-            var directoryInfo = new DirectoryInfo(folderPath);
-            return directoryInfo.GetFiles("*.clp").ToList();
-        }
-
-        public static ClassRoster LoadClassRosterFromZipContainer(FileInfo fileInfo)
-        {
-            if (fileInfo == null)
-            {
-                return null;
-            }
-
-            if (!fileInfo.Exists ||
-                fileInfo.Extension != ".clp")
-            {
-                return null;
-            }
-
-            var entryPath = $"{ClassRoster.DEFAULT_INTERNAL_FILE_NAME}.json";
-
-            return LoadJsonEntry<ClassRoster>(fileInfo.FullName, entryPath);
-        }
-
-        public static ClassRoster LoadClassRosterFromZipContainer(string fullFilePath)
-        {
-            var fileInfo = new FileInfo(fullFilePath);
-            return LoadClassRosterFromZipContainer(fileInfo);
-        }
-
-        public static List<Notebook> LoadAllNotebooksFromZipContainer(string zipContainerFilePath)
-        {
-            var notebooks = new List<Notebook>();
-            try
-            {
-                var notebookStrings = new List<string>();
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
-                    notebookStrings.AddRange(notebookEntries.Select(notebookEntry => notebookEntry.ExtractJsonString()));
-                }
-
-                foreach (var notebookString in notebookStrings)
-                {
-                    var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
-                    notebook.ContainerZipFilePath = zipContainerFilePath;
-                    notebooks.Add(notebook);
-                }
-
-                return notebooks;
-            }
-            catch (Exception)
-            {
-                return notebooks;
-            }
-        }
-
-        public static List<Session> LoadAllSessionsFromZipContainer(string zipContainerFilePath)
-        {
-            var sessions = new List<Session>();
-            try
-            {
-                var sessionStrings = new List<string>();
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    var internalSessionsDirectory = $"{AInternalZipEntryFile.ZIP_SESSIONS_FOLDER_NAME}/";
-                    var sessionEntries = zip.GetEntriesInDirectory(internalSessionsDirectory);
-                    sessionStrings.AddRange(sessionEntries.Select(sessionEntry => sessionEntry.ExtractJsonString()));
-                }
-
-                foreach (var sessionString in sessionStrings)
-                {
-                    var session = AEntityBase.FromJsonString<Session>(sessionString);
-                    session.ContainerZipFilePath = zipContainerFilePath;
-                    sessions.Add(session);
-                }
-
-                return sessions.OrderByDescending(s => s.StartTime).ToList();
-            }
-            catch (Exception)
-            {
-                return sessions;
-            }
-        }
-
-        public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
-        {
-            try
-            {
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    var entry = zip.GetEntry(entryPath);
-                    var zipEntryFile = entry.ExtractJsonEntity<T>();
-                    zipEntryFile.ContainerZipFilePath = zipContainerFilePath;
-
-                    return zipEntryFile;
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static ZipEntry GetImageEntryFromImageHashID(ZipFile zip, string imageHashID)
-        {
-            try
-            {
-                var internalImagesDirectory = $"{AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME}/";
-                var allImageEntries = zip.GetEntriesInDirectory(internalImagesDirectory).ToList();
-                var imageEntry = (from entry in allImageEntries
-                                  let hashID = entry.GetEntryNameWithoutExtension().Split(';')[0]
-                                  where hashID == imageHashID
-                                  select entry).FirstOrDefault();
-
-                return imageEntry;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Person notebookOwner)
-        {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
-            var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
-            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
-            var pageIDs = pageNameComposites.Select(nc => nc.ID).Distinct().ToList();
-
-            return pageIDs;
-        }
-
-        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, List<decimal> pageNumbers)
-        {
-            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
-            var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
-            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
-            var pageIDs = pageNameComposites.Where(nc => pageNumbers.Contains(nc.PageNumber)).Select(nc => nc.ID).Distinct().ToList();
-
-            return pageIDs;
-        }
-
-        public static Dictionary<string, decimal> GetPageNumbersFromPageIDs(ZipFile zip, List<string> pageIDs)
-        {
-            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
-            var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
-            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
-            var mappedIDs = new Dictionary<string, decimal>();
-            foreach (var pageNameComposite in pageNameComposites)
-            {
-                if (pageIDs.Contains(pageNameComposite.ID))
-                {
-                    if (!mappedIDs.ContainsKey(pageNameComposite.ID))
-                    {
-                        mappedIDs.Add(pageNameComposite.ID, pageNameComposite.PageNumber);
-                    }
-                }
-            }
-
-            return mappedIDs;
-        }
-
-        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs)
-        {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
-            var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
-            var pageEntries = (from pageEntry in allPageEntries
-                               let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
-                               where pageIDs.Contains(nameComposite.ID)
-                               select pageEntry).ToList();
-
-            return pageEntries;
-        }
-
-        public static List<ZipEntry> GetSubmissionEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs)
-        {
-            var internalPagesDirectory = notebookOwner.NotebookSubmissionsFolderPath;
-            var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
-            var pageEntries = (from pageEntry in allPageEntries
-                               let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
-                               where pageIDs.Contains(nameComposite.ID)
-                               select pageEntry).ToList();
-
-            return pageEntries;
-        }
-
-        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Person notebookOwner)
-        {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
-            var pageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
-
-            return pageEntries;
-        }
-
-        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Person notebookOwner, List<decimal> pageNumbers)
-        {
-            var pageIDs = GetPageIDsFromPageNumbers(zip, pageNumbers);
-            var pageEntries = GetPageEntriesFromPageIDs(zip, notebookOwner, pageIDs);
-
-            return pageEntries;
-        }
-
-        public static List<string> GetPageJsonStringsFromPageEntries(List<ZipEntry> pageEntries)
-        {
-            var pageJsonStrings = pageEntries.Select(entry => entry.ExtractJsonString()).ToList();
-            return pageJsonStrings;
-        }
-
-        public static List<CLPPage> GetPagesFromJsonStrings(List<string> pageJsonStrings, string zipContainerFilePath)
-        {
-            // TODO: Need to include updated pageNumber from nameComposite on load. Use static dictionary while loading?
-            var pages = new List<CLPPage>();
-            foreach (var jsonString in pageJsonStrings)
-            {
-                var page = AEntityBase.FromJsonString<CLPPage>(jsonString);
-                page.ContainerZipFilePath = zipContainerFilePath;
-                pages.Add(page);
-            }
-
-            return pages;
-        }
-
-        public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
-        {
-            var notebookName = notebook.InternalZipFileDirectoryName;
-            var oldInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
-            page.PageNumber = newPageNumber;
-            var newInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
-
-            var zipContainerFilePath = page.ContainerZipFilePath;
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
-                if (isSavingImmediately)
-                {
-                    zip.Save();
-                }
-            }
-        }
-
-        public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
-        {
-            var notebookName = notebook.InternalZipFileDirectoryName;
-            var oldInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
-            page.PageNumber = newPageNumber;
-            var newInternalFilePath = page.GetFullInternalFilePathWithExtension(notebookName);
-
-            zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
-            if (isSavingImmediately)
-            {
-                zip.Save();
-            }
-        }
-
-        public static void AlterPageNumbersAfterPageNumber(Notebook notebook, decimal pageNumber, bool isIncreasing)
-        {
-            var notebookOwner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                var pageEntries = GetAllPageEntriesInNotebook(zip, notebookOwner);
-                foreach (var pageEntry in pageEntries)
-                {
-                    var oldNameCompositeString = pageEntry.GetEntryNameWithoutExtension();
-                    var pageNameComposite = CLPPage.NameComposite.ParseFromString(oldNameCompositeString);
-                    if (pageNameComposite.PageNumber <= pageNumber)
-                    {
-                        continue;
-                    }
-
-                    if (isIncreasing)
-                    {
-                        pageNameComposite.PageNumber++;
-                    }
-                    else
-                    {
-                        pageNameComposite.PageNumber--;
-                    }
-                    
-                    var newNameCompositeString = pageNameComposite.ToNameCompositeString();
-                    var newEntryName = $"{newNameCompositeString}.json";
-                    pageEntry.RenameEntry(newEntryName);
-                }
-
-                zip.Save();
-            }
-        }
-
-        public static void GenerateClassNotebooks(Notebook authorNotebook, ClassRoster classRoster)
-        {
-            var zipContainerFilePath = authorNotebook.ContainerZipFilePath;
-
-            var entryList = new List<ZipEntrySaver>();
-
-            // TODO: Parallel?
-            foreach (var teacher in classRoster.ListOfTeachers)
-            {
-                var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
-                foreach (var authorPage in authorNotebook.Pages)
-                {
-                    var page = CopyPageForNewOwner(authorPage, teacher);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
-                }
-            }
-
-            // TODO: Parallel?
-            foreach (var student in classRoster.ListOfStudents)
-            {
-                var notebook = CopyNotebookForNewOwner(authorNotebook, student);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
-                foreach (var authorPage in authorNotebook.Pages)
-                {
-                    var page = CopyPageForNewOwner(authorPage, student);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
-                }
-            }
-
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save();
-            }
-        }
-
-        public static Notebook CopyNotebookForNewOwner(Notebook notebook, Person newOwner)
-        {
-            var newNotebook = notebook.DeepCopy();
-            newNotebook.Owner = newOwner;
-            newNotebook.GenerationDate = DateTime.Now;
-            newNotebook.LastSavedDate = DateTime.Now;
-
-            return newNotebook;
-        }
-
-        public static CLPPage CopyPageForNewOwner(CLPPage page, Person newOwner)
-        {
-            var newPage = page.DeepCopy();
-            newPage.Owner = newOwner;
-
-            return newPage;
-        }
-
-        #endregion // Static Methods
 
         #region IDataService Implementation
 
@@ -662,7 +292,7 @@ namespace Classroom_Learning_Partner.Services
             get
             {
                 // ReSharper disable once ConvertPropertyToExpressionBody
-                return GetZipContainersInFolder(CurrentCacheFolderPath);
+                return GetCLPContainersInFolder(CurrentCacheFolderPath);
             }
         }
 
@@ -731,7 +361,7 @@ namespace Classroom_Learning_Partner.Services
             }
             else
             {
-                CurrentClassRoster = LoadClassRosterFromZipContainer(zipContainerFilePath);
+                CurrentClassRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             }
 
             CurrentClassRoster.ContainerZipFilePath = zipContainerFilePath;
@@ -846,7 +476,7 @@ namespace Classroom_Learning_Partner.Services
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
-                zip.RemoveEntry(pageToDelete.GetFullInternalFilePathWithExtension(notebook.Owner.ParentNotebookFolderName));
+                zip.RemoveEntry(pageToDelete.GetZipEntryFullPath(notebook.Owner.ParentNotebookFolderName));
                 zip.Save();
             }
 
@@ -1022,7 +652,7 @@ namespace Classroom_Learning_Partner.Services
             public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
             {
                 EntryFile = entryFile;
-                InternalFilePath = entryFile.GetFullInternalFilePathWithExtension(parentNotebookName);
+                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebookName);
                 JsonString = entryFile.ToJsonString();
             }
 
@@ -1241,7 +871,7 @@ namespace Classroom_Learning_Partner.Services
         {
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
-            var classRoster = LoadClassRosterFromZipContainer(zipContainerFilePath);
+            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             SetCurrentClassRoster(classRoster);
 
             var pageJsonStrings = new List<string>();
@@ -1253,7 +883,7 @@ namespace Classroom_Learning_Partner.Services
                 zip.CaseSensitiveRetrieval = true;
 
                 var pageEntries = GetAllPageEntriesInNotebook(zip, owner);
-                pageJsonStrings = GetPageJsonStringsFromPageEntries(pageEntries);
+                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
             }
 
             var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
@@ -1276,11 +906,11 @@ namespace Classroom_Learning_Partner.Services
             SetCurrentNotebook(notebook);
         }
 
-        public void LoadRangeOfNotebookPages(Notebook notebook, List<decimal> pageNumbers, bool isLoadingSubmissions = true)
+        public void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true)
         {
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
-            var classRoster = LoadClassRosterFromZipContainer(zipContainerFilePath);
+            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             SetCurrentClassRoster(classRoster);
 
             var pageJsonStrings = new List<string>();
@@ -1291,9 +921,9 @@ namespace Classroom_Learning_Partner.Services
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var pageIDs = GetPageIDsFromPageNumbers(zip, pageNumbers);
+                var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
                 var pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
-                pageJsonStrings = GetPageJsonStringsFromPageEntries(pageEntries);
+                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
             }
 
             var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
@@ -1331,8 +961,8 @@ namespace Classroom_Learning_Partner.Services
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var submissionEntries = GetSubmissionEntriesFromPageIDs(zip, owner, pageIDs);
-                submissionJsonStrings = GetPageJsonStringsFromPageEntries(submissionEntries);
+                var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
+                submissionJsonStrings = GetJsonStringsFromEntries(submissionEntries);
             }
 
             var submissions = GetPagesFromJsonStrings(submissionJsonStrings, zipContainerFilePath);
@@ -1345,6 +975,399 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Methods
 
         #endregion // IDataService Implementation
+
+        #region Static Methods
+
+        #region Files
+
+        public static string ValidateFileNameString(string name)
+        {
+            var invalidFileNameCharacters = new string(Path.GetInvalidFileNameChars());
+            return invalidFileNameCharacters.Aggregate(name, (current, c) => current.Replace(c.ToString(), string.Empty));
+        }
+
+        public static List<FileInfo> GetCLPContainersInFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                return new List<FileInfo>();
+            }
+
+            var directoryInfo = new DirectoryInfo(folderPath);
+            return directoryInfo.GetFiles("*.clp").ToList();
+        }
+
+        #endregion // Files
+
+        #region Json
+
+        public static List<string> GetJsonStringsFromEntries(List<ZipEntry> entries)
+        {
+            var jsonStrings = entries.Select(entry => entry.ExtractJsonString()).ToList();
+            return jsonStrings;
+        }
+
+        public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
+        {
+            try
+            {
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    var entry = zip.GetEntry(entryPath);
+                    var zipEntryFile = entry.ExtractJsonEntity<T>();
+                    zipEntryFile.ContainerZipFilePath = zipContainerFilePath;
+
+                    return zipEntryFile;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion // Json
+
+        #region Images
+
+        public static ZipEntry GetImageEntryFromImageHashID(ZipFile zip, string imageHashID)
+        {
+            try
+            {
+                var internalImagesDirectory = $"{AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME}/";
+                var allImageEntries = zip.GetEntriesInDirectory(internalImagesDirectory).ToList();
+                var imageEntry = (from entry in allImageEntries
+                                  let hashID = entry.GetEntryNameWithoutExtension().Split(';')[0]
+                                  where hashID == imageHashID
+                                  select entry).FirstOrDefault();
+
+                return imageEntry;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion // Images
+
+        #region Class Roster
+
+        public static ClassRoster LoadClassRosterFromCLPContainer(string fullFilePath)
+        {
+            var fileInfo = new FileInfo(fullFilePath);
+            return LoadClassRosterFromCLPContainer(fileInfo);
+        }
+
+        public static ClassRoster LoadClassRosterFromCLPContainer(FileInfo fileInfo)
+        {
+            if (fileInfo == null)
+            {
+                return null;
+            }
+
+            if (!fileInfo.Exists ||
+                fileInfo.Extension != ".clp")
+            {
+                return null;
+            }
+
+            var entryPath = $"{ClassRoster.DEFAULT_INTERNAL_FILE_NAME}.json";
+
+            return LoadJsonEntry<ClassRoster>(fileInfo.FullName, entryPath);
+        }
+
+        #endregion // Class Roster
+
+        #region Session
+
+        public static List<Session> LoadAllSessionsFromCLPContainer(string zipContainerFilePath)
+        {
+            var sessions = new List<Session>();
+            try
+            {
+                var sessionStrings = new List<string>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    var internalSessionsDirectory = $"{AInternalZipEntryFile.ZIP_SESSIONS_FOLDER_NAME}/";
+                    var sessionEntries = zip.GetEntriesInDirectory(internalSessionsDirectory);
+                    sessionStrings.AddRange(sessionEntries.Select(sessionEntry => sessionEntry.ExtractJsonString()));
+                }
+
+                foreach (var sessionString in sessionStrings)
+                {
+                    var session = AEntityBase.FromJsonString<Session>(sessionString);
+                    session.ContainerZipFilePath = zipContainerFilePath;
+                    sessions.Add(session);
+                }
+
+                return sessions.OrderByDescending(s => s.StartTime).ToList();
+            }
+            catch (Exception)
+            {
+                return sessions;
+            }
+        }
+
+        #endregion // Session
+
+        #region Notebook
+
+        public static void GenerateClassNotebooks(Notebook authorNotebook, ClassRoster classRoster)
+        {
+            var zipContainerFilePath = authorNotebook.ContainerZipFilePath;
+
+            var entryList = new List<ZipEntrySaver>();
+
+            // TODO: Parallel?
+            foreach (var teacher in classRoster.ListOfTeachers)
+            {
+                var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
+                var parentNotebookName = notebook.InternalZipFileDirectoryName;
+                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                foreach (var authorPage in authorNotebook.Pages)
+                {
+                    var page = CopyPageForNewOwner(authorPage, teacher);
+                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                }
+            }
+
+            // TODO: Parallel?
+            foreach (var student in classRoster.ListOfStudents)
+            {
+                var notebook = CopyNotebookForNewOwner(authorNotebook, student);
+                var parentNotebookName = notebook.InternalZipFileDirectoryName;
+                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                foreach (var authorPage in authorNotebook.Pages)
+                {
+                    var page = CopyPageForNewOwner(authorPage, student);
+                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                }
+            }
+
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static Notebook CopyFullNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
+        {
+            var newNotebook = CopyNotebookForNewOwner(originalNotebook, newOwner);
+            foreach (var originalPage in originalNotebook.Pages)
+            {
+                var newPage = CopyPageForNewOwner(originalPage, newOwner);
+                newNotebook.Pages.Add(newPage);
+            }
+
+            return newNotebook;
+        }
+
+        public static Notebook CopyNotebookForNewOwner(Notebook notebook, Person newOwner)
+        {
+            var newNotebook = notebook.DeepCopy();
+            newNotebook.Owner = newOwner;
+            newNotebook.GenerationDate = DateTime.Now;
+            newNotebook.LastSavedDate = DateTime.Now;
+
+            return newNotebook;
+        }
+
+        public static List<Notebook> LoadAllNotebooksFromCLPContainer(string zipContainerFilePath)
+        {
+            var notebooks = new List<Notebook>();
+            try
+            {
+                var notebookStrings = new List<string>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
+                    notebookStrings.AddRange(notebookEntries.Select(notebookEntry => notebookEntry.ExtractJsonString()));
+                }
+
+                foreach (var notebookString in notebookStrings)
+                {
+                    var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
+                    notebook.ContainerZipFilePath = zipContainerFilePath;
+                    notebooks.Add(notebook);
+                }
+
+                return notebooks;
+            }
+            catch (Exception)
+            {
+                return notebooks;
+            }
+        }
+
+        #endregion // Notebook
+
+        #region Page
+
+        public static CLPPage CopyPageForNewOwner(CLPPage page, Person newOwner)
+        {
+            var newPage = page.DeepCopy();
+            newPage.Owner = newOwner;
+
+            return newPage;
+        }
+
+        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Person notebookOwner)
+        {
+            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
+            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
+            var pageIDs = pageNameComposites.Select(nc => nc.ID).Distinct().ToList();
+
+            return pageIDs;
+        }
+
+        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        {
+            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
+            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
+            var pageIDs = pageNameComposites.Where(nc => pageNumbers.Contains(nc.PageNumber)).Select(nc => nc.ID).Distinct().ToList();
+
+            return pageIDs;
+        }
+
+        // TODO: GetAllPageNumbersInNotebook?
+
+        public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, List<string> pageIDs)
+        {
+            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
+            var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
+            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
+            var mappedIDs = new Dictionary<string, int>();
+            foreach (var pageNameComposite in pageNameComposites)
+            {
+                if (!pageIDs.Contains(pageNameComposite.ID))
+                {
+                    continue;
+                }
+
+                if (!mappedIDs.ContainsKey(pageNameComposite.ID))
+                {
+                    mappedIDs.Add(pageNameComposite.ID, pageNameComposite.PageNumber);
+                }
+            }
+
+            return mappedIDs;
+        }
+
+        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Person notebookOwner)
+        {
+            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var pageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+
+            return pageEntries;
+        }
+
+        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs, bool isSubmissions = false)
+        {
+            var internalPagesDirectory = isSubmissions ? notebookOwner.NotebookSubmissionsFolderPath : notebookOwner.NotebookPagesFolderPath;
+            var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+            var pageEntries = (from pageEntry in allPageEntries
+                               let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
+                               where pageIDs.Contains(nameComposite.ID)
+                               select pageEntry).ToList();
+
+            return pageEntries;
+        }
+
+        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        {
+            var pageIDs = GetPageIDsFromPageNumbers(zip, notebookOwner, pageNumbers);
+            var pageEntries = GetPageEntriesFromPageIDs(zip, notebookOwner, pageIDs);
+
+            return pageEntries;
+        }
+
+        public static List<CLPPage> GetPagesFromJsonStrings(List<string> pageJsonStrings, string zipContainerFilePath)
+        {
+            // TODO: Need to include updated pageNumber from nameComposite on load. Use static dictionary while loading?
+            var pages = new List<CLPPage>();
+            foreach (var jsonString in pageJsonStrings)
+            {
+                var page = AEntityBase.FromJsonString<CLPPage>(jsonString);
+                page.ContainerZipFilePath = zipContainerFilePath;
+                pages.Add(page);
+            }
+
+            return pages;
+        }
+
+        public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
+        {
+            var zipContainerFilePath = page.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                ChangePageNumber(zip, notebook, page, newPageNumber, isSavingImmediately);
+            }
+        }
+
+        public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
+        {
+            var notebookName = notebook.InternalZipFileDirectoryName;
+            var oldInternalFilePath = page.GetZipEntryFullPath(notebookName);
+            page.PageNumber = newPageNumber;
+            var newInternalFilePath = page.GetZipEntryFullPath(notebookName);
+
+            zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
+            if (isSavingImmediately)
+            {
+                zip.Save();
+            }
+        }
+
+        public static void AlterPageNumbersAfterPageNumber(Notebook notebook, decimal pageNumber, bool isIncreasing)
+        {
+            var notebookOwner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                var pageEntries = GetAllPageEntriesInNotebook(zip, notebookOwner);
+                foreach (var pageEntry in pageEntries)
+                {
+                    var oldNameCompositeString = pageEntry.GetEntryNameWithoutExtension();
+                    var pageNameComposite = CLPPage.NameComposite.ParseFromString(oldNameCompositeString);
+                    if (pageNameComposite.PageNumber <= pageNumber)
+                    {
+                        continue;
+                    }
+
+                    if (isIncreasing)
+                    {
+                        pageNameComposite.PageNumber++;
+                    }
+                    else
+                    {
+                        pageNameComposite.PageNumber--;
+                    }
+
+                    var newNameCompositeString = pageNameComposite.ToNameCompositeString();
+                    var newEntryName = $"{newNameCompositeString}.json";
+                    pageEntry.RenameEntry(newEntryName);
+                }
+
+                zip.Save();
+            }
+        }
+
+        #endregion // Page
+
+        #endregion // Static Methods
 
         #region OBSOLETE
 
@@ -1707,18 +1730,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Load Methods
-
-        public void SetCurrentNotebook(NotebookInfo notebookInfo)
-        {
-            //CurrentNotebookInfo = notebookInfo;
-
-            //App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            //App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
-            //App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
-            //App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
-            //App.MainWindowViewModel.IsBackStageVisible = false;
-        }
 
         #region Old ClassPeriod Methods
 

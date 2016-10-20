@@ -865,13 +865,13 @@ namespace CLP.Entities
             }
         }
 
-        public override string DefaultInternalFileName => $"p;{PageNumber};{SubPageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
+        public override string DefaultZipEntryName => $"p;{PageNumber};{SubPageNumber};{DifferentiationLevel};{VersionIndex};{ID}";
 
-        public override string GetFullInternalFilePathWithExtension(string parentNotebookName)
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
             return VersionIndex == 0
-                       ? $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultInternalFileName}.json"
-                       : $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultInternalFileName}.json";
+                       ? $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultZipEntryName}.json"
+                       : $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }
 
         #endregion
