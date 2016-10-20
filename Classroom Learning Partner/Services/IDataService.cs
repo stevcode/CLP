@@ -50,10 +50,7 @@ namespace Classroom_Learning_Partner.Services
         void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);
         void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true);
 
-        CacheInfo CurrentCacheInfo { get; set; }
-        List<NotebookInfo> LoadedNotebooksInfo { get; }
-        
-        void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isSetToNotebookCurrentNotebook = true);
+        //Obsolete
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
     }
 }

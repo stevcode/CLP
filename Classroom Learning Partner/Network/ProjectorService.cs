@@ -162,20 +162,20 @@ namespace Classroom_Learning_Partner
             }
 
             CLPPage page = null;
-            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-            {
-                var notebook = notebookInfo.Notebook;
-                if (notebook == null)
-                {
-                    continue;
-                }
-                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+            //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            //{
+            //    var notebook = notebookInfo.Notebook;
+            //    if (notebook == null)
+            //    {
+            //        continue;
+            //    }
+            //    page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
-                if(page != null)
-                {
-                    break;
-                }
-            }
+            //    if(page != null)
+            //    {
+            //        break;
+            //    }
+            //}
 
             if(page == null)
             {
@@ -218,20 +218,20 @@ namespace Classroom_Learning_Partner
             }
 
             CLPPage page = null;
-            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-            {
-                var notebook = notebookInfo.Notebook;
-                if (notebook == null)
-                {
-                    continue;
-                }
-                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+            //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            //{
+            //    var notebook = notebookInfo.Notebook;
+            //    if (notebook == null)
+            //    {
+            //        continue;
+            //    }
+            //    page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
-                if(page != null)
-                {
-                    break;
-                }
-            }
+            //    if(page != null)
+            //    {
+            //        break;
+            //    }
+            //}
 
             if(page == null)
             {
@@ -276,20 +276,20 @@ namespace Classroom_Learning_Partner
             }
 
             CLPPage page = null;
-            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-            {
-                var notebook = notebookInfo.Notebook;
-                if (notebook == null)
-                {
-                    continue;
-                }
-                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+            //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            //{
+            //    var notebook = notebookInfo.Notebook;
+            //    if (notebook == null)
+            //    {
+            //        continue;
+            //    }
+            //    page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
 
-                if(page != null)
-                {
-                    break;
-                }
-            }
+            //    if(page != null)
+            //    {
+            //        break;
+            //    }
+            //}
 
             if(page == null)
             {
@@ -590,22 +590,22 @@ namespace Classroom_Learning_Partner
             }
 
             CLPPage pageToRedo = null;
-            foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-            {
-                var notebook = notebookInfo.Notebook;
-                if (notebook == null)
-                {
-                    continue;
-                }
+            //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
+            //{
+            //    var notebook = notebookInfo.Notebook;
+            //    if (notebook == null)
+            //    {
+            //        continue;
+            //    }
 
-                var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
-                if (page == null)
-                {
-                    continue;
-                }
+            //    var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
+            //    if (page == null)
+            //    {
+            //        continue;
+            //    }
 
-                pageToRedo = page;
-            }
+            //    pageToRedo = page;
+            //}
 
             if (pageToRedo == null)
             {

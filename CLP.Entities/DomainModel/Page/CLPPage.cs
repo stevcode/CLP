@@ -35,14 +35,6 @@ namespace CLP.Entities
 
     #endregion // Enums
 
-    public class PageNumberComparer : IComparer<CLPPage>
-    {
-        public int Compare(CLPPage x, CLPPage y)
-        {
-            return x.PageNumber.CompareTo(y.PageNumber);
-        }
-    }
-
     [Serializable]
     public class CLPPage : AInternalZipEntryFile
     {

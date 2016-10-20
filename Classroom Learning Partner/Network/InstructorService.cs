@@ -60,20 +60,20 @@ namespace Classroom_Learning_Partner
                 return imageList;
             }
             
-            if (Directory.Exists(dataService.CurrentCacheInfo.ImagesFolderPath))
-            {
-                var localImageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
-                foreach (var localImageFilePath in localImageFilePaths)
-                {
-                    var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
-                    var fileName = Path.GetFileName(localImageFilePath);
-                    if (imageHashIDs.Contains(imageHashID))
-                    {
-                        var byteSource = File.ReadAllBytes(localImageFilePath);
-                        imageList.Add(fileName, byteSource);
-                    }
-                }
-            }
+            //if (Directory.Exists(dataService.CurrentCacheInfo.ImagesFolderPath))
+            //{
+            //    var localImageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
+            //    foreach (var localImageFilePath in localImageFilePaths)
+            //    {
+            //        var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
+            //        var fileName = Path.GetFileName(localImageFilePath);
+            //        if (imageHashIDs.Contains(imageHashID))
+            //        {
+            //            var byteSource = File.ReadAllBytes(localImageFilePath);
+            //            imageList.Add(fileName, byteSource);
+            //        }
+            //    }
+            //}
 
             return imageList;
         }
