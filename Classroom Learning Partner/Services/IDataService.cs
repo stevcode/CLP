@@ -35,16 +35,11 @@ namespace Classroom_Learning_Partner.Services
         void DeletePageAt(Notebook notebook, int index);
         void AutoSavePage(Notebook notebook, CLPPage page);
 
-        void SaveClassRoaster(ClassRoster classRoster);
-
         void AddDisplay(Notebook notebook, IDisplay display);
-
-        void SaveSession(Session session);
 
         void SaveLocal();
 
         string SaveImageToImagePool(string imageFilePath, CLPPage page);
-
 
         BitmapImage GetImage(string imageHashID, IPageObject pageObject);
         void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);

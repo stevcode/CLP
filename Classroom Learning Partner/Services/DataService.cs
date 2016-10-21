@@ -16,6 +16,29 @@ namespace Classroom_Learning_Partner.Services
 {
     public class DataService : IDataService
     {
+        #region Nested Classes
+
+        public class ZipEntrySaver
+        {
+            public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+            {
+                EntryFile = entryFile;
+                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebookName);
+                JsonString = entryFile.ToJsonString();
+            }
+
+            public AInternalZipEntryFile EntryFile { get; set; }
+            private string InternalFilePath { get; set; }
+            private string JsonString { get; set; }
+
+            public void UpdateEntry(ZipFile zip)
+            {
+                zip.UpdateEntry(InternalFilePath, JsonString);
+            }
+        }
+
+        #endregion // Nested Classes
+
         #region Constants
 
         private const string DEFAULT_CLP_DATA_FOLDER_NAME = "CLPData";
@@ -35,71 +58,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Constructors
-
-        #region Tests
-
-        private void ConvertEmilyCache()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.NotebooksFolder);
-            var notebooks = new List<Notebook>();
-            foreach (var directory in dirInfo.EnumerateDirectories())
-            {
-                var notebookFolder = directory.FullName;
-                Console.WriteLine($"Notebook Folder: {notebookFolder}");
-                var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
-                notebooks.Add(notebook);
-            }
-
-            ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
-        }
-
-        private void AddSessions()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.ClassesFolder);
-            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
-            var i = 1;
-            foreach (var session in sessions)
-            {
-                session.SessionTitle = $"Class {i}";
-                i++;
-            }
-
-            ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
-        }
-
-        #endregion // Tests
-
-        #region Static Properties
-
-        #region Special Folder Paths
-
-        public static string WindowsDriveFolderPath => Path.GetPathRoot(Environment.SystemDirectory);
-
-        public static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        public static string CLPProgramFolderPath => typeof(DataService).Assembly.GetDirectory();
-
-        #endregion // Special Folder Paths
-
-        #region Default Folder Paths
-
-        public static string DefaultCLPDataFolderPath
-        {
-            get
-            {
-                var folderPath = Path.Combine(WindowsDriveFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                return folderPath;
-            }
-        }
-
-        #endregion // Default Folder Paths
-
-        #endregion // Static Properties
 
         #region IDataService Implementation
 
@@ -178,10 +136,9 @@ namespace Classroom_Learning_Partner.Services
         //FilePathPair
         //AvailableNotebookSets   
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
-        //CurrentNotebookSet
-
-        public NotebookSet CurrentNotebookSet { get; private set; }
+        
         public ClassRoster CurrentClassRoster { get; private set; }
+        public NotebookSet CurrentNotebookSet { get; private set; }
         public Notebook CurrentNotebook { get; private set; }
         public CLPPage CurrentPage { get; private set; }
 
@@ -225,9 +182,9 @@ namespace Classroom_Learning_Partner.Services
         {
             var notebookSet = new NotebookSet(notebookName);
             var notebook = new Notebook(notebookSet, Person.Author)
-                           {
-                               ContainerZipFilePath = zipContainerFilePath
-                           };
+            {
+                ContainerZipFilePath = zipContainerFilePath
+            };
 
             if (!File.Exists(zipContainerFilePath))
             {
@@ -241,7 +198,7 @@ namespace Classroom_Learning_Partner.Services
 
             CurrentClassRoster.ContainerZipFilePath = zipContainerFilePath;
             CurrentClassRoster.ListOfNotebookSets.Add(notebookSet);
-            SaveClassRoaster(CurrentClassRoster);
+            SaveAInternalZipEntryFile(CurrentClassRoster);
 
             SetCurrentNotebook(notebook);
             AddPage(notebook, new CLPPage(Person.Author));
@@ -361,9 +318,9 @@ namespace Classroom_Learning_Partner.Services
             if (!notebook.Pages.Any())
             {
                 var newPage = new CLPPage(Person.Author)
-                              {
-                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
-                              };
+                {
+                    PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                };
 
                 notebook.Pages.Add(newPage);
                 SavePage(notebook, newPage);
@@ -420,69 +377,6 @@ namespace Classroom_Learning_Partner.Services
             SaveZipEntries(notebook.ContainerZipFilePath, entries);
         }
 
-        public void SaveClassRoaster(ClassRoster classRoster)
-        {
-            if (!File.Exists(classRoster.ContainerZipFilePath))
-            {
-                return;
-            }
-
-            var zipEntrySaver = new ZipEntrySaver(classRoster);
-
-            SaveZipEntry(classRoster.ContainerZipFilePath, zipEntrySaver);
-        }
-
-        public void SaveNotebook(Notebook notebook)
-        {
-            if (!File.Exists(notebook.ContainerZipFilePath))
-            {
-                return;
-            }
-
-            var zipEntrySaver = new ZipEntrySaver(notebook, notebook.InternalZipFileDirectoryName);
-
-            SaveZipEntry(notebook.ContainerZipFilePath, zipEntrySaver);
-        }
-
-        private void SaveZipEntry(string zipContainerFilePath, ZipEntrySaver zipEntrySaver)
-        {
-            try
-            {
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.CaseSensitiveRetrieval = true;
-
-                    zipEntrySaver.UpdateEntry(zip);
-
-                    zip.Save(zipContainerFilePath);
-                }
-            }
-            catch (Exception) { }
-        }
-
-        private void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
-        {
-            try
-            {
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.CaseSensitiveRetrieval = true;
-
-                    foreach (var zipEntrySaver in zipEntrySavers)
-                    {
-                        zipEntrySaver.UpdateEntry(zip);
-                    }
-
-                    zip.Save(zipContainerFilePath);
-                }
-            }
-            catch (Exception) { }
-        }
-
         #endregion // Page Methods
 
         #region Display Methods
@@ -496,64 +390,7 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Display Methods
 
-        #region Session Methods
-
-        public void SaveSession(Session session)
-        {
-            if (!File.Exists(session.ContainerZipFilePath))
-            {
-                return;
-            }
-
-            var entires = new List<ZipEntrySaver>
-                          {
-                              new ZipEntrySaver(session)
-                          };
-
-            SaveZipEntries(session.ContainerZipFilePath, entires);
-        }
-
-        #endregion // Session Methods
-
         #region Save Methods
-
-        public class ZipEntrySaver
-        {
-            public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
-            {
-                EntryFile = entryFile;
-                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebookName);
-                JsonString = entryFile.ToJsonString();
-            }
-
-            public AInternalZipEntryFile EntryFile { get; set; }
-            private string InternalFilePath { get; set; }
-            private string JsonString { get; set; }
-
-            public void UpdateEntry(ZipFile zip)
-            {
-                zip.UpdateEntry(InternalFilePath, JsonString);
-            }
-        }
-
-        public void CreateEmptyZipContainer(string zipContainerFilePath)
-        {
-            if (File.Exists(zipContainerFilePath))
-            {
-                MessageBox.Show(".clp file with that name already exists.");
-                return;
-            }
-
-            using (var zip = new ZipFile())
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                zip.Save(zipContainerFilePath);
-            }
-        }
 
         public void SaveLocal()
         {
@@ -846,6 +683,38 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // IDataService Implementation
 
+        #region Static Properties
+
+        #region Special Folder Paths
+
+        public static string WindowsDriveFolderPath => Path.GetPathRoot(Environment.SystemDirectory);
+
+        public static string DesktopFolderPath => Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        public static string CLPProgramFolderPath => typeof(DataService).Assembly.GetDirectory();
+
+        #endregion // Special Folder Paths
+
+        #region Default Folder Paths
+
+        public static string DefaultCLPDataFolderPath
+        {
+            get
+            {
+                var folderPath = Path.Combine(WindowsDriveFolderPath, DEFAULT_CLP_DATA_FOLDER_NAME);
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                return folderPath;
+            }
+        }
+
+        #endregion // Default Folder Paths
+
+        #endregion // Static Properties
+
         #region Static Methods
 
         #region Files
@@ -867,9 +736,28 @@ namespace Classroom_Learning_Partner.Services
             return directoryInfo.GetFiles("*.clp").ToList();
         }
 
+        public static void CreateEmptyZipContainer(string zipContainerFilePath)
+        {
+            if (File.Exists(zipContainerFilePath))
+            {
+                MessageBox.Show(".clp file with that name already exists.");
+                return;
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                zip.Save(zipContainerFilePath);
+            }
+        }
+
         #endregion // Files
 
-        #region Json
+        #region Entry
 
         public static List<string> GetJsonStringsFromEntries(List<ZipEntry> entries)
         {
@@ -896,7 +784,63 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        #endregion // Json
+        public static void SaveAInternalZipEntryFile(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+        {
+            if (!File.Exists(entryFile.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            SaveZipEntry(entryFile.ContainerZipFilePath, new ZipEntrySaver(entryFile, parentNotebookName));
+        }
+
+        public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, string parentNotebookName = "")
+        {
+            var groupedEntryFiles = entryFiles.GroupBy(e => e.ContainerZipFilePath).Select(x => x);
+
+            foreach (var entryFileGroup in groupedEntryFiles)
+            {
+                var zipContainerFilePath = entryFileGroup.Key;
+                if (!File.Exists(zipContainerFilePath))
+                {
+                    continue;
+                }
+
+                var zipEntrySavers = entryFileGroup.Select(entryFile => new ZipEntrySaver(entryFile, parentNotebookName)).ToList();
+                SaveZipEntries(zipContainerFilePath, zipEntrySavers);
+            }
+        }
+
+        public static void SaveZipEntry(string zipContainerFilePath, ZipEntrySaver zipEntrySaver)
+        {
+            SaveZipEntries(zipContainerFilePath, new List<ZipEntrySaver> { zipEntrySaver });
+        }
+
+        public static void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
+        {
+            try
+            {
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in zipEntrySavers)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save(zipContainerFilePath);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        #endregion // Entry
 
         #region Images
 
@@ -1257,5 +1201,38 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // OBSOLETE
+
+        #region Tests
+
+        private void ConvertEmilyCache()
+        {
+            var dirInfo = new DirectoryInfo(ConversionService.NotebooksFolder);
+            var notebooks = new List<Notebook>();
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+                Console.WriteLine($"Notebook Folder: {notebookFolder}");
+                var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
+                notebooks.Add(notebook);
+            }
+
+            ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
+        }
+
+        private void AddSessions()
+        {
+            var dirInfo = new DirectoryInfo(ConversionService.ClassesFolder);
+            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
+        }
+
+        #endregion // Tests
     }
 }

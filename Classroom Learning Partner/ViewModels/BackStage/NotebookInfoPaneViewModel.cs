@@ -95,7 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
             viewModel.ShowWindowAsDialog();
-            _dataService.SaveClassRoaster(_dataService.CurrentClassRoster);
+            DataService.SaveAInternalZipEntryFile(_dataService.CurrentClassRoster);
         }
 
         /// <summary>Opens a list of sessions in the class.</summary>
