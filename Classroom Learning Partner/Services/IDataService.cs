@@ -12,39 +12,51 @@ namespace Classroom_Learning_Partner.Services
         string CurrentCacheFolderPath { get; }
         string CurrentTempCacheFolderPath { get; }
         string CurrentArchiveFolderPath { get; }
-        Dictionary<string, BitmapImage> ImagePool { get; }
+
         List<FileInfo> AvailableZipContainerFileInfos { get; }
-        NotebookSet CurrentNotebookSet { get; }
+
+        Dictionary<string, BitmapImage> ImagePool { get; }
+        
         ClassRoster CurrentClassRoster { get; }
+        NotebookSet CurrentNotebookSet { get; }
         Notebook CurrentNotebook { get; }
+        IDisplay CurrentMultiDisplay { get; }
         CLPPage CurrentPage { get; }
 
         event EventHandler<EventArgs> CurrentClassRosterChanged;
         event EventHandler<EventArgs> CurrentNotebookChanged;
+        event EventHandler<EventArgs> CurrentDisplayChanged;
         event EventHandler<EventArgs> CurrentPageChanged;
 
+        // Cache
+        void SaveLocal();
+
+        // Images
+        BitmapImage GetImage(string imageHashID, IPageObject pageObject);
+        string SaveImageToImagePool(string imageFilePath, CLPPage page);
+
+        // Class Roster
         void SetCurrentClassRoster(ClassRoster classRoster);
 
-        void CreateAuthorNotebook(string notebookName, string zipContainerFilePath);
-        void SetCurrentNotebook(Notebook notebook);
+        // Session
 
+        // Notebook
+        void SetCurrentNotebook(Notebook notebook);
+        void CreateAuthorNotebook(string notebookName, string zipContainerFilePath);
+        void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);
+        void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true);
+
+        // Display
+        void AddDisplay(Notebook notebook, IDisplay display);
+
+        // Page
         void SetCurrentPage(CLPPage page);
         void AddPage(Notebook notebook, CLPPage page);
         void InsertPageAt(Notebook notebook, CLPPage page, int index);
         void DeletePage(Notebook notebook, CLPPage page);
         void DeletePageAt(Notebook notebook, int index);
         void AutoSavePage(Notebook notebook, CLPPage page);
-
-        void AddDisplay(Notebook notebook, IDisplay display);
-
-        void SaveLocal();
-
-        string SaveImageToImagePool(string imageFilePath, CLPPage page);
-
-        BitmapImage GetImage(string imageHashID, IPageObject pageObject);
-        void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);
-        void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true);
-
+        
         //Obsolete
         List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
     }

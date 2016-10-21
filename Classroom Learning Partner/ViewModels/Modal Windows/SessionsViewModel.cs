@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            DataService.SaveAInternalZipEntryFile(session);
+            DataService.SaveSession(session);
             Sessions.Insert(0, session);
             Sessions = Sessions.OrderByDescending(s => s.StartTime).ToObservableCollection();
             CurrentSession = session;
@@ -181,7 +181,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            DataService.SaveAInternalZipEntryFile(CurrentSession);
+            DataService.SaveSession(CurrentSession);
         }
 
         /// <summary>Deletes the selected Session.</summary>

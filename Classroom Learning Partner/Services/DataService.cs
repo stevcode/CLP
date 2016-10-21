@@ -111,13 +111,6 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Current Folder Paths
 
-        #region Program Properties
-
-        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
-        public Dictionary<string, BitmapImage> ImagePool { get; } = new Dictionary<string, BitmapImage>();
-
-        #endregion // Program Properties
-
         #region Cache Properties
 
         public List<FileInfo> AvailableZipContainerFileInfos
@@ -131,18 +124,23 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Cache Properties
 
+        #region Program Properties
+
+        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
+        public Dictionary<string, BitmapImage> ImagePool { get; } = new Dictionary<string, BitmapImage>();
+
+        #endregion // Program Properties
+
         #region Notebook Properties
 
-        //FilePathPair
         //AvailableNotebookSets   
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
         
         public ClassRoster CurrentClassRoster { get; private set; }
         public NotebookSet CurrentNotebookSet { get; private set; }
         public Notebook CurrentNotebook { get; private set; }
+        public IDisplay CurrentMultiDisplay { get; private set; }
         public CLPPage CurrentPage { get; private set; }
-
-        //CurrentMultiDisplay
 
         #endregion // Notebook Properties
 
@@ -160,11 +158,198 @@ namespace Classroom_Learning_Partner.Services
 
         public event EventHandler<EventArgs> CurrentClassRosterChanged;
         public event EventHandler<EventArgs> CurrentNotebookChanged;
+        public event EventHandler<EventArgs> CurrentDisplayChanged;
         public event EventHandler<EventArgs> CurrentPageChanged;
 
         #endregion // Events
 
         #region Methods
+
+        #region Cache Methods
+
+        public void SaveLocal()
+        {
+            var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
+            var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
+            var entryList = new List<ZipEntrySaver>
+                            {
+                                new ZipEntrySaver(CurrentClassRoster, parentNotebookName),
+                                new ZipEntrySaver(CurrentNotebook, parentNotebookName)
+                            };
+
+            foreach (var page in CurrentNotebook.Pages)
+            {
+                entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+            }
+
+            if (File.Exists(zipContainerFilePath))
+            {
+                //var readOptions = new ReadOptions
+                //                  {
+                //                      ReadProgress = Zip_ReadProgress
+                //                  };
+
+                //var zip = ZipFile.Read(fullFilePath, readOptions)
+
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    // TODO: Test if needed. Won't work unless zip has been saved.
+                    // Implied that entries are not added to zip.Entries until saved. Need to verify. Code definitely says added to internal _entries before save, so test this
+                    //zip.SelectEntries("*.json");
+                    //zip.SelectEntries("p;*.json", "blah/blah/pages/"); test this.
+
+                    //zip.UpdateFile only applies to adding a file from the disc to the zip archive, N/A for clp unless we need it for images?
+                    //          for images, probably zip.AddEntry(entryPath, memoryStream); also have byte[] byteArray for content
+
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;  Only one that seems persistent, but need to test
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save();
+                }
+            }
+            else
+            {
+                using (var zip = new ZipFile())
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save(zipContainerFilePath);
+                }
+            }
+
+            foreach (var zipEntrySaver in entryList)
+            {
+                zipEntrySaver.EntryFile.IsSavedLocally = true;
+            }
+        }
+
+        private void Zip_ReadProgress(object sender, ReadProgressEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion // Cache Methods
+
+        #region Image Methods
+
+        public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
+        {
+            if (ImagePool.ContainsKey(imageHashID))
+            {
+                return ImagePool[imageHashID];
+            }
+
+            var parentPage = pageObject.ParentPage;
+            if (parentPage == null)
+            {
+                return null;
+            }
+
+            return null;
+
+            // TODO: Needs a lock?
+            //var containerZipFilePath = parentPage.ContainerZipFilePath;
+
+            //using (var zip = ZipFile.Read(containerZipFilePath))
+            //{
+            //    zip.CompressionMethod = CompressionMethod.None;
+            //    zip.CompressionLevel = CompressionLevel.None;
+            //    zip.UseZip64WhenSaving = Zip64Option.Always;
+            //    zip.CaseSensitiveRetrieval = true;
+
+            //    var entry = GetImageEntryFromImageHashID(zip, imageHashID);
+            //    if (entry == null)
+            //    {
+            //        return null;
+            //    }
+
+            //    using (var ms = new MemoryStream())
+            //    {
+            //        entry.Extract(ms);
+
+            //        var genBmpImage = new BitmapImage();
+
+            //        genBmpImage.BeginInit();
+            //        genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
+            //        //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
+            //        genBmpImage.StreamSource = ms;
+            //        genBmpImage.EndInit();
+            //        genBmpImage.Freeze();
+
+            //        ImagePool.Add(imageHashID, genBmpImage);
+
+            //        return genBmpImage;
+            //    }
+            //}
+        }
+
+        public string SaveImageToImagePool(string imageFilePath, CLPPage page)
+        {
+            try
+            {
+                var bytes = File.ReadAllBytes(imageFilePath);
+
+                var md5 = new MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
+                if (ImagePool.ContainsKey(imageHashID))
+                {
+                    return imageHashID;
+                }
+
+                var bitmapImage = CLPImage.GetImageFromPath(imageFilePath);
+                if (bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image..");
+                    return null;
+                }
+
+                var newFileName = $"{imageHashID};{Path.GetFileNameWithoutExtension(imageFilePath)}{Path.GetExtension(imageFilePath)}";
+                var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, newFileName);
+                var containerZipFilePath = page.ContainerZipFilePath;
+
+                using (var zip = ZipFile.Read(containerZipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    if (!zip.ContainsEntry(internalFilePath))
+                    {
+                        var entry = zip.AddFile(imageFilePath);
+                        entry.FileName = internalFilePath;
+                        zip.Save();
+                    }
+                }
+
+                ImagePool.Add(imageHashID, bitmapImage);
+                return imageHashID;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error opening image file. Please try again.");
+            }
+
+            return null;
+        }
+
+        #endregion // Image Methods
 
         #region ClassRoster Methods
 
@@ -177,6 +362,24 @@ namespace Classroom_Learning_Partner.Services
         #endregion // ClassRoster Methods
 
         #region Notebook Methods
+
+        public void SetCurrentNotebook(Notebook notebook)
+        {
+            if (CurrentNotebook != null)
+            {
+                SavePage(CurrentNotebook, CurrentNotebook.CurrentPage);
+            }
+
+            CurrentNotebook = notebook;
+            CurrentNotebookChanged.SafeInvoke(this);
+
+            if (CurrentNotebook.CurrentPage == null)
+            {
+                return;
+            }
+
+            SetCurrentPage(CurrentNotebook.CurrentPage);
+        }
 
         public void CreateAuthorNotebook(string notebookName, string zipContainerFilePath)
         {
@@ -198,31 +401,103 @@ namespace Classroom_Learning_Partner.Services
 
             CurrentClassRoster.ContainerZipFilePath = zipContainerFilePath;
             CurrentClassRoster.ListOfNotebookSets.Add(notebookSet);
-            SaveAInternalZipEntryFile(CurrentClassRoster);
+            SaveClassRoster(CurrentClassRoster);
 
             SetCurrentNotebook(notebook);
             AddPage(notebook, new CLPPage(Person.Author));
         }
 
-        public void SetCurrentNotebook(Notebook notebook)
+        public void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true)
         {
-            if (CurrentNotebook != null)
+            var owner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
+            SetCurrentClassRoster(classRoster);
+
+            var pageJsonStrings = new List<string>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
             {
-                SavePage(CurrentNotebook, CurrentNotebook.CurrentPage);
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var pageEntries = GetAllPageEntriesInNotebook(zip, owner);
+                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
             }
 
-            CurrentNotebook = notebook;
-            CurrentNotebookChanged.SafeInvoke(this);
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
 
-            if (CurrentNotebook.CurrentPage == null)
+            if (isLoadingSubmissions)
             {
-                return;
+                var submissions = GetSubmissionsForPages(notebook, pages);
+                foreach (var submission in submissions)
+                {
+                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
+                    if (page != null)
+                    {
+                        page.Submissions.Add(submission);
+                    }
+                }
             }
 
-            SetCurrentPage(CurrentNotebook.CurrentPage);
+            notebook.Pages.AddRange(pages);
+            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
+            SetCurrentNotebook(notebook);
+        }
+
+        public void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true)
+        {
+            var owner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
+            SetCurrentClassRoster(classRoster);
+
+            var pageJsonStrings = new List<string>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
+                var pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
+                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
+            }
+
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
+
+            if (isLoadingSubmissions)
+            {
+                var submissions = GetSubmissionsForPages(notebook, pages);
+                foreach (var submission in submissions)
+                {
+                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
+                    if (page != null)
+                    {
+                        page.Submissions.Add(submission);
+                    }
+                }
+            }
+
+            notebook.Pages.AddRange(pages);
+            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
+            SetCurrentNotebook(notebook);
         }
 
         #endregion // Notebook Methods
+
+        #region Display Methods
+
+        public void AddDisplay(Notebook notebook, IDisplay display)
+        {
+            display.NotebookID = notebook.ID;
+            display.DisplayNumber = notebook.Displays.Any(d => d.GetType() == display.GetType()) ? notebook.Displays.Last().DisplayNumber + 1 : 1;
+            notebook.Displays.Add(display);
+        }
+
+        #endregion // Display Methods
 
         #region Page Methods
 
@@ -344,340 +619,7 @@ namespace Classroom_Learning_Partner.Services
             //save page async to teacher machine, and partial cache folder
         }
 
-        public void SavePage(Notebook notebook, CLPPage page)
-        {
-            if (!File.Exists(page.ContainerZipFilePath))
-            {
-                return;
-            }
-
-            // HACK: get rid of this after history-rewrite.
-            page.History.ClearHistory();
-
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
-            var entires = new List<ZipEntrySaver>
-                          {
-                              new ZipEntrySaver(page, parentNotebookName),
-                              new ZipEntrySaver(notebook, parentNotebookName)
-                          };
-
-            SaveZipEntries(page.ContainerZipFilePath, entires);
-        }
-
-        public void SavePagesInSameNotebook(Notebook notebook, List<CLPPage> pages)
-        {
-            if (!File.Exists(notebook.ContainerZipFilePath))
-            {
-                return;
-            }
-
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
-            var entries = pages.Select(page => new ZipEntrySaver(page, parentNotebookName)).ToList();
-
-            SaveZipEntries(notebook.ContainerZipFilePath, entries);
-        }
-
         #endregion // Page Methods
-
-        #region Display Methods
-
-        public void AddDisplay(Notebook notebook, IDisplay display)
-        {
-            display.NotebookID = notebook.ID;
-            display.DisplayNumber = notebook.Displays.Any(d => d.GetType() == display.GetType()) ? notebook.Displays.Last().DisplayNumber + 1 : 1;
-            notebook.Displays.Add(display);
-        }
-
-        #endregion // Display Methods
-
-        #region Save Methods
-
-        public void SaveLocal()
-        {
-            var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
-            var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
-            var entryList = new List<ZipEntrySaver>
-                            {
-                                new ZipEntrySaver(CurrentClassRoster, parentNotebookName),
-                                new ZipEntrySaver(CurrentNotebook, parentNotebookName)
-                            };
-
-            foreach (var page in CurrentNotebook.Pages)
-            {
-                entryList.Add(new ZipEntrySaver(page, parentNotebookName));
-            }
-
-            if (File.Exists(zipContainerFilePath))
-            {
-                //var readOptions = new ReadOptions
-                //                  {
-                //                      ReadProgress = Zip_ReadProgress
-                //                  };
-
-                //var zip = ZipFile.Read(fullFilePath, readOptions)
-
-                using (var zip = ZipFile.Read(zipContainerFilePath))
-                {
-                    // TODO: Test if needed. Won't work unless zip has been saved.
-                    // Implied that entries are not added to zip.Entries until saved. Need to verify. Code definitely says added to internal _entries before save, so test this
-                    //zip.SelectEntries("*.json");
-                    //zip.SelectEntries("p;*.json", "blah/blah/pages/"); test this.
-
-                    //zip.UpdateFile only applies to adding a file from the disc to the zip archive, N/A for clp unless we need it for images?
-                    //          for images, probably zip.AddEntry(entryPath, memoryStream); also have byte[] byteArray for content
-
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    //zip.UseZip64WhenSaving = Zip64Option.Always;  Only one that seems persistent, but need to test
-                    zip.CaseSensitiveRetrieval = true;
-
-                    foreach (var zipEntrySaver in entryList)
-                    {
-                        zipEntrySaver.UpdateEntry(zip);
-                    }
-
-                    zip.Save();
-                }
-            }
-            else
-            {
-                using (var zip = new ZipFile())
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.UseZip64WhenSaving = Zip64Option.Always;
-                    zip.CaseSensitiveRetrieval = true;
-
-                    foreach (var zipEntrySaver in entryList)
-                    {
-                        zipEntrySaver.UpdateEntry(zip);
-                    }
-
-                    zip.Save(zipContainerFilePath);
-                }
-            }
-
-            foreach (var zipEntrySaver in entryList)
-            {
-                zipEntrySaver.EntryFile.IsSavedLocally = true;
-            }
-        }
-
-        private void Zip_ReadProgress(object sender, ReadProgressEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string SaveImageToImagePool(string imageFilePath, CLPPage page)
-        {
-            try
-            {
-                var bytes = File.ReadAllBytes(imageFilePath);
-
-                var md5 = new MD5CryptoServiceProvider();
-                var hash = md5.ComputeHash(bytes);
-                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
-                if (ImagePool.ContainsKey(imageHashID))
-                {
-                    return imageHashID;
-                }
-
-                var bitmapImage = CLPImage.GetImageFromPath(imageFilePath);
-                if (bitmapImage == null)
-                {
-                    MessageBox.Show("Failed to load image..");
-                    return null;
-                }
-
-                var newFileName = $"{imageHashID};{Path.GetFileNameWithoutExtension(imageFilePath)}{Path.GetExtension(imageFilePath)}";
-                var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, newFileName);
-                var containerZipFilePath = page.ContainerZipFilePath;
-
-                using (var zip = ZipFile.Read(containerZipFilePath))
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.UseZip64WhenSaving = Zip64Option.Always;
-                    zip.CaseSensitiveRetrieval = true;
-
-                    if (!zip.ContainsEntry(internalFilePath))
-                    {
-                        var entry = zip.AddFile(imageFilePath);
-                        entry.FileName = internalFilePath;
-                        zip.Save();
-                    }
-                }
-
-                ImagePool.Add(imageHashID, bitmapImage);
-                return imageHashID;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error opening image file. Please try again.");
-            }
-
-            return null;
-        }
-
-        #endregion // Save Methods
-
-        #region Load Methods
-
-        public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
-        {
-            if (ImagePool.ContainsKey(imageHashID))
-            {
-                return ImagePool[imageHashID];
-            }
-
-            var parentPage = pageObject.ParentPage;
-            if (parentPage == null)
-            {
-                return null;
-            }
-
-            return null;
-
-            // TODO: Needs a lock?
-            //var containerZipFilePath = parentPage.ContainerZipFilePath;
-
-            //using (var zip = ZipFile.Read(containerZipFilePath))
-            //{
-            //    zip.CompressionMethod = CompressionMethod.None;
-            //    zip.CompressionLevel = CompressionLevel.None;
-            //    zip.UseZip64WhenSaving = Zip64Option.Always;
-            //    zip.CaseSensitiveRetrieval = true;
-
-            //    var entry = GetImageEntryFromImageHashID(zip, imageHashID);
-            //    if (entry == null)
-            //    {
-            //        return null;
-            //    }
-
-            //    using (var ms = new MemoryStream())
-            //    {
-            //        entry.Extract(ms);
-
-            //        var genBmpImage = new BitmapImage();
-
-            //        genBmpImage.BeginInit();
-            //        genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
-            //        //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
-            //        genBmpImage.StreamSource = ms;
-            //        genBmpImage.EndInit();
-            //        genBmpImage.Freeze();
-
-            //        ImagePool.Add(imageHashID, genBmpImage);
-
-            //        return genBmpImage;
-            //    }
-            //}
-        }
-
-        public void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true)
-        {
-            var owner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
-            SetCurrentClassRoster(classRoster);
-
-            var pageJsonStrings = new List<string>();
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var pageEntries = GetAllPageEntriesInNotebook(zip, owner);
-                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
-            }
-
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-
-            if (isLoadingSubmissions)
-            {
-                var submissions = GetSubmissions(notebook, pages);
-                foreach (var submission in submissions)
-                {
-                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
-                    if (page != null)
-                    {
-                        page.Submissions.Add(submission);
-                    }
-                }
-            }
-
-            notebook.Pages.AddRange(pages);
-            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
-            SetCurrentNotebook(notebook);
-        }
-
-        public void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true)
-        {
-            var owner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
-            SetCurrentClassRoster(classRoster);
-
-            var pageJsonStrings = new List<string>();
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
-                var pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
-                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
-            }
-
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-
-            if (isLoadingSubmissions)
-            {
-                var submissions = GetSubmissions(notebook, pages);
-                foreach (var submission in submissions)
-                {
-                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
-                    if (page != null)
-                    {
-                        page.Submissions.Add(submission);
-                    }
-                }
-            }
-
-            notebook.Pages.AddRange(pages);
-            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
-            SetCurrentNotebook(notebook);
-        }
-
-        public static List<CLPPage> GetSubmissions(Notebook notebook, List<CLPPage> pages)
-        {
-            var owner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-
-            var pageIDs = pages.Select(p => p.ID).Distinct().ToList();
-
-            var submissionJsonStrings = new List<string>();
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
-                submissionJsonStrings = GetJsonStringsFromEntries(submissionEntries);
-            }
-
-            var submissions = GetPagesFromJsonStrings(submissionJsonStrings, zipContainerFilePath);
-
-            return submissions;
-        }
-
-        #endregion // Load Methods
 
         #endregion // Methods
 
@@ -796,7 +738,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, string parentNotebookName = "")
         {
-            var groupedEntryFiles = entryFiles.GroupBy(e => e.ContainerZipFilePath).Select(x => x);
+            var groupedEntryFiles = entryFiles.GroupBy(e => e.ContainerZipFilePath);
 
             foreach (var entryFileGroup in groupedEntryFiles)
             {
@@ -891,6 +833,11 @@ namespace Classroom_Learning_Partner.Services
             return LoadJsonEntry<ClassRoster>(fileInfo.FullName, entryPath);
         }
 
+        public static void SaveClassRoster(ClassRoster classRoster)
+        {
+            SaveAInternalZipEntryFile(classRoster);
+        }
+
         #endregion // Class Roster
 
         #region Session
@@ -921,6 +868,11 @@ namespace Classroom_Learning_Partner.Services
             {
                 return sessions;
             }
+        }
+
+        public static void SaveSession(Session session)
+        {
+            SaveAInternalZipEntryFile(session);
         }
 
         #endregion // Session
@@ -1024,6 +976,11 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static void SaveNotebook(Notebook notebook)
+        {
+            SaveAInternalZipEntryFile(notebook);
+        }
+
         #endregion // Notebook
 
         #region Page
@@ -1122,6 +1079,30 @@ namespace Classroom_Learning_Partner.Services
             return pages;
         }
 
+        public static List<CLPPage> GetSubmissionsForPages(Notebook notebook, List<CLPPage> pages)
+        {
+            var owner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+
+            var pageIDs = pages.Select(p => p.ID).Distinct().ToList();
+
+            var submissionJsonStrings = new List<string>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
+                submissionJsonStrings = GetJsonStringsFromEntries(submissionEntries);
+            }
+
+            var submissions = GetPagesFromJsonStrings(submissionJsonStrings, zipContainerFilePath);
+
+            return submissions;
+        }
+
         public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
         {
             var zipContainerFilePath = page.ContainerZipFilePath;
@@ -1177,6 +1158,40 @@ namespace Classroom_Learning_Partner.Services
 
                 zip.Save();
             }
+        }
+
+        public static void SavePage(Notebook notebook, CLPPage page)
+        {
+            if (!File.Exists(page.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            // HACK: get rid of this after history-rewrite.
+            page.History.ClearHistory();
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entires = new List<ZipEntrySaver>
+                          {
+                              new ZipEntrySaver(page, parentNotebookName),
+                              new ZipEntrySaver(notebook, parentNotebookName)
+                          };
+
+            SaveZipEntries(page.ContainerZipFilePath, entires);
+        }
+
+        public static void SavePagesInSameNotebook(Notebook notebook, List<CLPPage> pages)
+        {
+            if (!File.Exists(notebook.ContainerZipFilePath))
+            {
+                return;
+            }
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entries = pages.Select(page => new ZipEntrySaver(page, parentNotebookName)).ToList();
+            entries.Add(new ZipEntrySaver(notebook, parentNotebookName));
+
+            SaveZipEntries(notebook.ContainerZipFilePath, entries);
         }
 
         #endregion // Page
