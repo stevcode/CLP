@@ -16,7 +16,9 @@ namespace Classroom_Learning_Partner.Services
         List<FileInfo> AvailableZipContainerFileInfos { get; }
 
         Dictionary<string, BitmapImage> ImagePool { get; }
-        
+
+        List<Notebook> LoadedNotebooks { get; }
+
         ClassRoster CurrentClassRoster { get; }
         NotebookSet CurrentNotebookSet { get; }
         Notebook CurrentNotebook { get; }
@@ -43,8 +45,7 @@ namespace Classroom_Learning_Partner.Services
         // Notebook
         void SetCurrentNotebook(Notebook notebook);
         void CreateAuthorNotebook(string notebookName, string zipContainerFilePath);
-        void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true);
-        void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true);
+        void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true);
 
         // Display
         void AddDisplay(Notebook notebook, IDisplay display);

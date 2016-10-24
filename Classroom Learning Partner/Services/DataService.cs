@@ -136,6 +136,8 @@ namespace Classroom_Learning_Partner.Services
         //AvailableNotebookSets   
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
         
+        public List<Notebook> LoadedNotebooks { get; } = new List<Notebook>();
+
         public ClassRoster CurrentClassRoster { get; private set; }
         public NotebookSet CurrentNotebookSet { get; private set; }
         public Notebook CurrentNotebook { get; private set; }
@@ -409,86 +411,30 @@ namespace Classroom_Learning_Partner.Services
             AddPage(notebook, new CLPPage(Person.Author));
         }
 
-        public void LoadAllNotebookPages(Notebook notebook, bool isLoadingSubmissions = true)
+        public void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true)
         {
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             SetCurrentClassRoster(classRoster);
 
-            var pageJsonStrings = new List<string>();
-            using (var zip = ZipFile.Read(zipContainerFilePath))
+            LoadPagesIntoNotebook(notebook, pageNumbers);
+            LoadedNotebooks.Add(notebook);
+
+            if (!owner.IsStudent &&
+                owner.ID != Person.AUTHOR_ID &&
+                isLoadingStudentNotebooks)
             {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var pageEntries = GetAllPageEntriesInNotebook(zip, owner);
-                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
-            }
-
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-
-            if (isLoadingSubmissions)
-            {
-                var submissions = GetSubmissionsForPages(notebook, pages);
-                foreach (var submission in submissions)
+                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath);
+                foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
-                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
-                    if (page != null)
-                    {
-                        page.Submissions.Add(submission);
-                    }
+                    LoadPagesIntoNotebook(studentNotebook, pageNumbers);
+                    LoadedNotebooks.Add(studentNotebook);
                 }
             }
 
-            notebook.Pages.AddRange(pages);
-            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
             SetCurrentNotebook(notebook);
         }
-
-        public void LoadRangeOfNotebookPages(Notebook notebook, List<int> pageNumbers, bool isLoadingSubmissions = true)
-        {
-            var owner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-            var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
-            SetCurrentClassRoster(classRoster);
-
-            var pageJsonStrings = new List<string>();
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
-                var pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
-                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
-            }
-
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-
-            if (isLoadingSubmissions)
-            {
-                var submissions = GetSubmissionsForPages(notebook, pages);
-                foreach (var submission in submissions)
-                {
-                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
-                    if (page != null)
-                    {
-                        page.Submissions.Add(submission);
-                    }
-                }
-            }
-
-            notebook.Pages.AddRange(pages);
-            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
-            SetCurrentNotebook(notebook);
-        }
-
-
 
         #endregion // Notebook Methods
 
@@ -978,6 +924,52 @@ namespace Classroom_Learning_Partner.Services
             {
                 return notebooks;
             }
+        }
+
+        public static void LoadPagesIntoNotebook(Notebook notebook, List<int> pageNumbers)
+        {
+            var owner = notebook.Owner;
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+
+            var pageJsonStrings = new List<string>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                List<ZipEntry> pageEntries;
+                if (pageNumbers.Any())
+                {
+                    var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
+                    pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
+                }
+                else
+                {
+                    pageEntries = GetAllPageEntriesInNotebook(zip, owner);
+                }
+
+                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
+            }
+
+            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
+
+            if (owner.IsStudent)
+            {
+                var submissions = GetSubmissionsForPages(notebook, pages);
+                foreach (var submission in submissions)
+                {
+                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
+                    if (page != null)
+                    {
+                        page.Submissions.Add(submission);
+                    }
+                }
+            }
+
+            notebook.Pages.AddRange(pages);
+            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
         }
 
         public static void SaveNotebook(Notebook notebook)

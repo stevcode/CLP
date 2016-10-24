@@ -302,9 +302,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var dataService = DependencyResolver.Resolve<IDataService>();
-                if (dataService == null ||
-                    Page == null ||
+                if (Page == null ||
                     Page.Owner == null)
                 {
                     return false;
@@ -315,7 +313,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return Submissions.Any() || Page.LastVersionIndex != null;
                 }
 
-                return false; // dataService.LoadedNotebooksInfo.Any(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Owner.IsStudent && p.VersionIndex != 0));
+                return _dataService.LoadedNotebooks.Any(n => n.Pages.Any(p => p.ID == Page.ID && p.Owner.IsStudent && p.VersionIndex != 0));
             }
         }
 
@@ -323,29 +321,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                //var dataService = DependencyResolver.Resolve<IDataService>();
-                //if (dataService == null ||
-                //    Page == null ||
-                //    Page.Owner == null)
-                //{
-                //    return 0;
-                //}
+                if (Page == null ||
+                    Page.Owner == null)
+                {
+                    return 0;
+                }
 
-                //if (Page.Owner.IsStudent)
-                //{
-                //    return Submissions.Count();
-                //}
+                if (Page.Owner.IsStudent)
+                {
+                    return Submissions.Count();
+                }
 
-                //var count =
-                //    dataService.LoadedNotebooksInfo.Where(n => n.Notebook.Owner.IsStudent)
-                //               .Select(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Notebook.Owner.FullName : string.Empty)
-                //               .Where(s => !string.IsNullOrEmpty(s))
-                //               .Distinct()
-                //               .Count();
+                var count =
+                    _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent)
+                               .Select(n => n.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Owner.FullName : string.Empty)
+                               .Where(s => !string.IsNullOrEmpty(s))
+                               .Distinct()
+                               .Count();
 
-                //return Math.Max(0, count);
-
-                return 0;
+                return Math.Max(0, count);
             }
         }
 

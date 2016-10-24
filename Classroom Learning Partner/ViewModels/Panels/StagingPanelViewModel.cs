@@ -326,31 +326,26 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<string> GetStudentsWithNoSubmissions()
         {
             var userNames = new ObservableCollection<string>();
-            //var dataService = DependencyResolver.Resolve<IDataService>();
-            //if (dataService == null)
-            //{
-            //    return userNames;
-            //}
 
-            //var pageID = LastFilteredPage.ID;
-            //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-            //{
-            //    var studentPage = notebookInfo.Notebook.Pages.FirstOrDefault(p => p.ID == pageID);
-            //    if (studentPage == null)
-            //    {
-            //        if (notebookInfo.Notebook.Owner.IsStudent)
-            //        {
-            //            userNames.Add(notebookInfo.Notebook.Owner.DisplayName);
-            //        }
-            //        continue;
-            //    }
+            var pageID = LastFilteredPage.ID;
+            foreach (var notebook in _dataService.LoadedNotebooks)
+            {
+                var studentPage = notebook.Pages.FirstOrDefault(p => p.ID == pageID);
+                if (studentPage == null)
+                {
+                    if (notebook.Owner.IsStudent)
+                    {
+                        userNames.Add(notebook.Owner.DisplayName);
+                    }
+                    continue;
+                }
 
-            //    if (!studentPage.Submissions.Any() &&
-            //        studentPage.Owner.IsStudent)
-            //    {
-            //        userNames.Add(studentPage.Owner.DisplayName);
-            //    }
-            //}
+                if (!studentPage.Submissions.Any() &&
+                    studentPage.Owner.IsStudent)
+                {
+                    userNames.Add(studentPage.Owner.DisplayName);
+                }
+            }
 
             return new ObservableCollection<string>(userNames.Sort().Distinct());
         }
@@ -710,30 +705,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendSubmissionsForPage(CLPPage page)
         {
-            var dataService = DependencyResolver.Resolve<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
-
-            if (dataService.CurrentNotebook.Owner.IsStudent)
+            if (_dataService.CurrentNotebook.Owner.IsStudent)
             {
                 AppendCollectionOfPagesToStage(page.Submissions);
             }
             else
             {
                 var pageID = page.ID;
-                //foreach (var notebookInfo in dataService.LoadedNotebooksInfo)
-                //{
-                //    var studentPage = notebookInfo.Notebook.Pages.FirstOrDefault(p => p.ID == pageID);
-                //    if (studentPage == null ||
-                //        !studentPage.Owner.IsStudent)
-                //    {
-                //        continue;
-                //    }
+                foreach (var notebook in _dataService.LoadedNotebooks)
+                {
+                    var studentPage = notebook.Pages.FirstOrDefault(p => p.ID == pageID);
+                    if (studentPage == null ||
+                        !studentPage.Owner.IsStudent)
+                    {
+                        continue;
+                    }
 
-                //    AppendCollectionOfPagesToStage(studentPage.Submissions);
-                //}
+                    AppendCollectionOfPagesToStage(studentPage.Submissions);
+                }
             }
 
             if(CurrentSortAndGroupType != SortAndGroupTypes.StudentName)
