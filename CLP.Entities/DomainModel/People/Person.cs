@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -255,6 +256,62 @@ namespace CLP.Entities
         #endregion
 
         #endregion // Methods
+
+        #region Static Methods
+
+        public static Person ParseFromFullName(string fullName, bool isStudent = true)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return null;
+            }
+
+            var nameParts = fullName.Split(' ').ToList();
+            if (!nameParts.Any())
+            {
+                return null;
+            }
+
+            var firstName = nameParts.First();
+            nameParts.RemoveAt(0);
+            if (!nameParts.Any())
+            {
+                var person = new Person
+                             {
+                                 IsStudent = isStudent,
+                                 FirstName = firstName
+                             };
+
+                return person;
+            }
+
+            var lastName = nameParts.Last();
+            nameParts.RemoveAt(nameParts.Count - 1);
+            if (!nameParts.Any())
+            {
+                var person = new Person
+                             {
+                                 IsStudent = isStudent,
+                                 FirstName = firstName,
+                                 LastName = lastName
+                             };
+
+                return person;
+            }
+
+            var middleName = string.Join(" ", nameParts);
+            var personfull = new Person
+                             {
+                                 IsStudent = isStudent,
+                                 FirstName = firstName,
+                                 MiddleName = middleName,
+                                 LastName = lastName
+                             };
+
+            return personfull;
+        }
+
+        #endregion // Static Methods
 
         #region Static Persons
 

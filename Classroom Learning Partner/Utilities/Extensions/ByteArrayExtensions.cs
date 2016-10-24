@@ -12,10 +12,12 @@ namespace Classroom_Learning_Partner
             Argument.IsNotNull("imageByteArray", imageByteArray);
 
             var bitmapImage = new BitmapImage();
+
             bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.StreamSource = new MemoryStream(imageByteArray);
             bitmapImage.EndInit();
+
             bitmapImage.Freeze();
 
             return bitmapImage;

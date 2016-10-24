@@ -349,15 +349,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:
-                    //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     break;
                 case ProgramModes.Projector:
-                    //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     break;
                 case ProgramModes.Student:
-                    Workspace = new UserLoginWorkspaceViewModel();
+                    Workspace = this.CreateViewModel<UserLoginWorkspaceViewModel>(null);
                     break;
             }
         }

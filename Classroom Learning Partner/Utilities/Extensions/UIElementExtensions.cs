@@ -59,12 +59,8 @@ namespace Classroom_Learning_Partner
             Argument.IsNotNull("dpi", dpi);
 
             var imageByteArray = sourceElement.ToImageByteArray(imageWidth, scale, dpi, encoder);
-            if (imageByteArray == null)
-            {
-                return null;
-            }
 
-            var bitmapImage = imageByteArray.ToBitmapImage();
+            var bitmapImage = imageByteArray?.ToBitmapImage();
             return bitmapImage;
         }
     }

@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner
         void AddWebcamImage(List<byte> image);
 
         [OperationContract]
-        void ForceLogOut(string machineName);
+        void OtherAttemptedLogin(string machineName);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -83,27 +83,13 @@ namespace Classroom_Learning_Partner
             //        }, null);
         }
 
-        public void ForceLogOut(string machineName)
+        public void OtherAttemptedLogin(string machineName)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        MessageBox.Show("Some one else logged in with your name on machine " + machineName +
-                                                                                                        ". You will now be logged out.",
-                                                                                                        "Double Login",
-                                                                                                        MessageBoxButton.OK);
-
-                                                                                        //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                                                        //if (notebookService != null)
-                                                                                        //{
-                                                                                        //    notebookService.OpenNotebooks.Clear();
-                                                                                        //    notebookService.CurrentNotebook = null;
-                                                                                        //}
-                                                                                        App.MainWindowViewModel.SetWorkspace();
-
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            UIHelper.RunOnUI(
+                             () =>
+                                 MessageBox.Show($"Someone else tried to log in with your name from machine {machineName}. Make sure you are logged in as the correct person.",
+                                                 "Attempted Incorrect Login",
+                                                 MessageBoxButton.OK));
         }
 
         #endregion

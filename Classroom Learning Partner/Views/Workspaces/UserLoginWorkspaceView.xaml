@@ -7,8 +7,8 @@
 
     <Grid x:Name="TopGrid"
           Margin="20">
-        
-        <ListBox ItemsSource="{Binding MainWindowViewModel.AvailableUsers, Source={x:Static Application.Current}}"
+
+        <ListBox ItemsSource="{Binding AvailableStudents}"
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                  ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
             <ListBox.ItemTemplate>

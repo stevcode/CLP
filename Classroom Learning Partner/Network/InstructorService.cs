@@ -7,6 +7,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.IoC;
 using Classroom_Learning_Partner.Services;
@@ -18,6 +19,12 @@ namespace Classroom_Learning_Partner
     [ServiceContract]
     public interface IInstructorContract
     {
+        [OperationContract]
+        string GetClassRosterJson();
+
+        [OperationContract]
+        Dictionary<string, byte[]> GetImages(List<string> imageHashIDs);
+
         [OperationContract]
         void AddSerializedSubmission(string zippedPage, string notebookID);
 
@@ -39,11 +46,6 @@ namespace Classroom_Learning_Partner
         [OperationContract]
         void SendClassPeriod(string machineAddress);
 
-        [OperationContract]
-        Dictionary<string, byte[]> SendImages(List<string> imageHashIDs);
-
-        //    [OperationContract]
-        //   List<string> SendSubmissions(string ownerID, List<string> pageIDs);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -51,7 +53,21 @@ namespace Classroom_Learning_Partner
     {
         #region IInstructorContract Members
 
-        public Dictionary<string, byte[]> SendImages(List<string> imageHashIDs)
+        public string GetClassRosterJson()
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return string.Empty;
+            }
+
+            var currentClassRoster = dataService.CurrentClassRoster;
+            var classRosterJsonString = currentClassRoster.ToJsonString(false);
+
+            return classRosterJsonString;
+        }
+
+        public Dictionary<string, byte[]> GetImages(List<string> imageHashIDs)
         {
             var imageList = new Dictionary<string, byte[]>();
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
@@ -59,24 +75,28 @@ namespace Classroom_Learning_Partner
             {
                 return imageList;
             }
-            
-            //if (Directory.Exists(dataService.CurrentCacheInfo.ImagesFolderPath))
-            //{
-            //    var localImageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
-            //    foreach (var localImageFilePath in localImageFilePaths)
-            //    {
-            //        var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
-            //        var fileName = Path.GetFileName(localImageFilePath);
-            //        if (imageHashIDs.Contains(imageHashID))
-            //        {
-            //            var byteSource = File.ReadAllBytes(localImageFilePath);
-            //            imageList.Add(fileName, byteSource);
-            //        }
-            //    }
-            //}
+
+            var imageConverter = new ImageSourceConverter();
+            foreach (var keyValuePair in dataService.ImagePool)
+            {
+                var imageHashID = keyValuePair.Key;
+                var bitmapImage = keyValuePair.Value;
+
+                try
+                {
+                    var imageByteSource = (byte[])imageConverter.ConvertTo(bitmapImage, typeof(byte[]));
+                    imageList.Add(imageHashID, imageByteSource);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
 
             return imageList;
         }
+
+        
 
         public void SendClassPeriod(string machineAddress)
         {
@@ -337,6 +357,44 @@ namespace Classroom_Learning_Partner
 
         public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
         {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return string.Empty;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                student = Person.ParseFromFullName(studentName);
+                student.ID = studentID;
+                dataService.CurrentClassRoster.ListOfStudents.Add(student); // TODO: Handle saving of this, as well as not saving GUEST logins
+            }
+
+            if (student.IsConnected)
+            {
+                try
+                {
+                    var studentProxy = NetworkService.CreateStudentProxyFromMachineAddress(student.CurrentMachineAddress);
+                    studentProxy.OtherAttemptedLogin(machineName);
+
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    (studentProxy as ICommunicationObject).Close();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                return student.CurrentMachineAddress;
+            }
+
+            student.CurrentMachineAddress = machineAddress;
+            student.CurrentMachineName = machineName;
+            student.IsConnected = true;
+
+            return "SuccessfullyLoggedIn";
+
             //var task = Task<string>.Factory.StartNew(() =>
             //                                         {
             //                                             var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
@@ -433,8 +491,6 @@ namespace Classroom_Learning_Partner
             //                                         TaskCreationOptions.LongRunning);
 
             //return task.Result;
-
-            return string.Empty;
         }
 
         public void StudentLogout(string studentID)
@@ -445,15 +501,13 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            // TODO: reimplement classPeriod
-            //var student = dataService.CurrentClassPeriod.ClassInformation.StudentList.FirstOrDefault(x => x.ID == studentID);
-            //if (student == null)
-            //{
-            //    Logger.Instance.WriteToLog("Failed to log out student. student is null.");
-            //    return;
-            //}
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                return;
+            }
 
-            //student.IsConnected = false;
+            student.IsConnected = false;
         }
 
         #endregion

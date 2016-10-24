@@ -178,53 +178,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var listOfStudents = new List<Person>();
                 foreach (var line in File.ReadLines(filePath))
                 {
-                    if (string.IsNullOrWhiteSpace(line))
+                    var person = Person.ParseFromFullName(line);
+                    if (person == null)
                     {
                         continue;
                     }
 
-                    var nameParts = line.Split(' ').ToList();
-                    if (!nameParts.Any())
-                    {
-                        continue;
-                    }
-
-                    var firstName = nameParts.First();
-                    nameParts.RemoveAt(0);
-                    if (!nameParts.Any())
-                    {
-                        var person = new Person
-                        {
-                            IsStudent = true,
-                            FirstName = firstName
-                        };
-                        listOfStudents.Add(person);
-                        continue;
-                    }
-
-                    var lastName = nameParts.Last();
-                    nameParts.RemoveAt(nameParts.Count - 1);
-                    if (!nameParts.Any())
-                    {
-                        var person = new Person
-                        {
-                            IsStudent = true,
-                            FirstName = firstName,
-                            LastName = lastName
-                        };
-                        listOfStudents.Add(person);
-                        continue;
-                    }
-
-                    var middleName = string.Join(" ", nameParts);
-                    var personfull = new Person
-                    {
-                        IsStudent = true,
-                        FirstName = firstName,
-                        MiddleName = middleName,
-                        LastName = lastName
-                    };
-                    listOfStudents.Add(personfull);
+                    listOfStudents.Add(person);
                 }
 
                 ListOfStudents.AddRange(listOfStudents.OrderBy(p => p.FullName).ToList());

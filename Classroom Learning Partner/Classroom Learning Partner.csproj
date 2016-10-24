@@ -324,7 +324,9 @@
     <Compile Include="Services\ConversionService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\IDataService.cs" />
+    <Compile Include="Services\INetworkService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
+    <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
@@ -339,6 +341,7 @@
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="Utilities\RangeHelper.cs" />
     <Compile Include="Utilities\TaskQueue.cs" />
+    <Compile Include="Utilities\UIHelper.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
