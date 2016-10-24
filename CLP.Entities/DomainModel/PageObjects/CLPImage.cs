@@ -66,11 +66,14 @@ namespace CLP.Entities
             {
                 return null;
             }
+
             var bitmapImage = new BitmapImage();
+
             bitmapImage.BeginInit();
-            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
             bitmapImage.UriSource = new Uri(filePath, UriKind.Absolute);
             bitmapImage.EndInit();
+
             bitmapImage.Freeze();
 
             return bitmapImage;

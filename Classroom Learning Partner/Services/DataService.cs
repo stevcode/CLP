@@ -247,6 +247,8 @@ namespace Classroom_Learning_Partner.Services
 
         #region Image Methods
 
+        private readonly object _zipLock = new object();
+
         public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
         {
             if (ImagePool.ContainsKey(imageHashID))
@@ -260,42 +262,42 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            return null;
+            lock (_zipLock)
+            {
+                var containerZipFilePath = parentPage.ContainerZipFilePath;
 
-            // TODO: Needs a lock?
-            //var containerZipFilePath = parentPage.ContainerZipFilePath;
+                using (var zip = ZipFile.Read(containerZipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
 
-            //using (var zip = ZipFile.Read(containerZipFilePath))
-            //{
-            //    zip.CompressionMethod = CompressionMethod.None;
-            //    zip.CompressionLevel = CompressionLevel.None;
-            //    zip.UseZip64WhenSaving = Zip64Option.Always;
-            //    zip.CaseSensitiveRetrieval = true;
+                    var entry = GetImageEntryFromImageHashID(zip, imageHashID);
+                    if (entry == null)
+                    {
+                        return null;
+                    }
 
-            //    var entry = GetImageEntryFromImageHashID(zip, imageHashID);
-            //    if (entry == null)
-            //    {
-            //        return null;
-            //    }
+                    using (var ms = new MemoryStream())
+                    {
+                        entry.Extract(ms);
 
-            //    using (var ms = new MemoryStream())
-            //    {
-            //        entry.Extract(ms);
+                        var genBmpImage = new BitmapImage();
 
-            //        var genBmpImage = new BitmapImage();
+                        genBmpImage.BeginInit();
+                        genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                        genBmpImage.StreamSource = ms;
+                        genBmpImage.EndInit();
 
-            //        genBmpImage.BeginInit();
-            //        genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
-            //        //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
-            //        genBmpImage.StreamSource = ms;
-            //        genBmpImage.EndInit();
-            //        genBmpImage.Freeze();
+                        genBmpImage.Freeze();
 
-            //        ImagePool.Add(imageHashID, genBmpImage);
+                        ImagePool.Add(imageHashID, genBmpImage);
 
-            //        return genBmpImage;
-            //    }
-            //}
+                        return genBmpImage;
+                    }
+                }
+            }
         }
 
         public string SaveImageToImagePool(string imageFilePath, CLPPage page)
@@ -485,6 +487,8 @@ namespace Classroom_Learning_Partner.Services
             notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
             SetCurrentNotebook(notebook);
         }
+
+
 
         #endregion // Notebook Methods
 
