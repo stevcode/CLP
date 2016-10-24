@@ -37,6 +37,18 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public class PageZipEntryLoader
+        {
+            public PageZipEntryLoader(string jsonString, int pageNumber)
+            {
+                JsonString = jsonString;
+                PageNumber = pageNumber;
+            }
+
+            public string JsonString { get; set; }
+            public int PageNumber { get; set; }
+        }
+
         #endregion // Nested Classes
 
         #region Constants
@@ -451,7 +463,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Page Methods
 
-        public void SetCurrentPage(CLPPage page)
+        public void SetCurrentPage(CLPPage page, bool isSavingOldPage = true)
         {
             if (CurrentNotebook == null)
             {
@@ -459,7 +471,8 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var oldPage = CurrentNotebook.CurrentPage;
-            if (oldPage != null)
+            if (oldPage != null &&
+                isSavingOldPage)
             {
                 AutoSavePage(CurrentNotebook, oldPage);
             }
@@ -499,10 +512,10 @@ namespace Classroom_Learning_Partner.Services
 
         public void InsertPageAt(Notebook notebook, CLPPage page, int index)
         {
+            ChangePageNumbersAfterGivenPage(notebook, index, true);
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             page.PageNumber = index + 1;
             notebook.Pages.Insert(index, page);
-            AlterPageNumbersAfterPageNumber(notebook, index, true);
             SetCurrentPage(page);
             SavePage(notebook, page);
         }
@@ -536,9 +549,7 @@ namespace Classroom_Learning_Partner.Services
                 zip.Save();
             }
 
-            // TODO: Refactor to include ZipFile as parameter and put above
-            // Refactor all these methods to static.
-            AlterPageNumbersAfterPageNumber(notebook, index, false);
+            ChangePageNumbersAfterGivenPage(notebook, index, false);
 
             if (!notebook.Pages.Any())
             {
@@ -557,7 +568,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var nextPage = notebook.Pages.ElementAt(index);
-            SetCurrentPage(nextPage);
+            SetCurrentPage(nextPage, false);
         }
 
         public void AutoSavePage(Notebook notebook, CLPPage page)
@@ -651,10 +662,20 @@ namespace Classroom_Learning_Partner.Services
 
         #region Entry
 
-        public static List<string> GetJsonStringsFromEntries(List<ZipEntry> entries)
+        public static List<PageZipEntryLoader> GetPageZipEntryLoadersFromEntries(List<ZipEntry> entries)
         {
-            var jsonStrings = entries.Select(entry => entry.ExtractJsonString()).ToList();
-            return jsonStrings;
+            var pageZipEntryLoaders = new List<PageZipEntryLoader>();
+            foreach (var entry in entries)
+            {
+                var jsonString = entry.ExtractJsonString();
+                var nameCompositeString = entry.GetEntryNameWithoutExtension();
+                var pageNameComposite = CLPPage.NameComposite.ParseFromString(nameCompositeString);
+                var pageNumber = pageNameComposite.PageNumber;
+                var pageZipEntryLoader = new PageZipEntryLoader(jsonString, pageNumber);
+                pageZipEntryLoaders.Add(pageZipEntryLoader);
+            }
+
+            return pageZipEntryLoaders;
         }
 
         public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
@@ -931,7 +952,7 @@ namespace Classroom_Learning_Partner.Services
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
 
-            var pageJsonStrings = new List<string>();
+            var pageZipEntryLoaders = new List<PageZipEntryLoader>();
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
                 zip.CompressionMethod = CompressionMethod.None;
@@ -950,10 +971,10 @@ namespace Classroom_Learning_Partner.Services
                     pageEntries = GetAllPageEntriesInNotebook(zip, owner);
                 }
 
-                pageJsonStrings = GetJsonStringsFromEntries(pageEntries);
+                pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries);
             }
 
-            var pages = GetPagesFromJsonStrings(pageJsonStrings, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
+            var pages = GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
 
             if (owner.IsStudent)
             {
@@ -1061,14 +1082,14 @@ namespace Classroom_Learning_Partner.Services
             return pageEntries;
         }
 
-        public static List<CLPPage> GetPagesFromJsonStrings(List<string> pageJsonStrings, string zipContainerFilePath)
+        public static List<CLPPage> GetPagesFromPageZipEntryLoaders(List<PageZipEntryLoader> pageZipEntryLoaders, string zipContainerFilePath)
         {
-            // TODO: Need to include updated pageNumber from nameComposite on load. Use static dictionary while loading?
             var pages = new List<CLPPage>();
-            foreach (var jsonString in pageJsonStrings)
+            foreach (var pageZipEntryLoader in pageZipEntryLoaders)
             {
-                var page = AEntityBase.FromJsonString<CLPPage>(jsonString);
+                var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
                 page.ContainerZipFilePath = zipContainerFilePath;
+                page.PageNumber = pageZipEntryLoader.PageNumber;
                 pages.Add(page);
             }
 
@@ -1082,7 +1103,7 @@ namespace Classroom_Learning_Partner.Services
 
             var pageIDs = pages.Select(p => p.ID).Distinct().ToList();
 
-            var submissionJsonStrings = new List<string>();
+            var submissionZipEntryLoaders = new List<PageZipEntryLoader>();
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
                 zip.CompressionMethod = CompressionMethod.None;
@@ -1091,12 +1112,40 @@ namespace Classroom_Learning_Partner.Services
                 zip.CaseSensitiveRetrieval = true;
 
                 var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
-                submissionJsonStrings = GetJsonStringsFromEntries(submissionEntries);
+                submissionZipEntryLoaders = GetPageZipEntryLoadersFromEntries(submissionEntries);
             }
 
-            var submissions = GetPagesFromJsonStrings(submissionJsonStrings, zipContainerFilePath);
+            var submissions = GetPagesFromPageZipEntryLoaders(submissionZipEntryLoaders, zipContainerFilePath);
 
             return submissions;
+        }
+
+        public static void ChangePageNumbersAfterGivenPage(Notebook notebook, int pageNumber, bool isIncreasing)
+        {
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    if (page.PageNumber <= pageNumber)
+                    {
+                        continue;
+                    }
+
+                    if (isIncreasing)
+                    {
+                        var newPageNumber = page.PageNumber + 1;
+                        ChangePageNumber(zip, notebook, page, newPageNumber, false);
+                    }
+                    else
+                    {
+                        var newPageNumber = page.PageNumber - 1;
+                        ChangePageNumber(zip, notebook, page, newPageNumber, false);
+                    }
+                }
+
+                zip.Save();
+            }
         }
 
         public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
@@ -1118,40 +1167,6 @@ namespace Classroom_Learning_Partner.Services
             zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
             if (isSavingImmediately)
             {
-                zip.Save();
-            }
-        }
-
-        public static void AlterPageNumbersAfterPageNumber(Notebook notebook, decimal pageNumber, bool isIncreasing)
-        {
-            var notebookOwner = notebook.Owner;
-            var zipContainerFilePath = notebook.ContainerZipFilePath;
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                var pageEntries = GetAllPageEntriesInNotebook(zip, notebookOwner);
-                foreach (var pageEntry in pageEntries)
-                {
-                    var oldNameCompositeString = pageEntry.GetEntryNameWithoutExtension();
-                    var pageNameComposite = CLPPage.NameComposite.ParseFromString(oldNameCompositeString);
-                    if (pageNameComposite.PageNumber <= pageNumber)
-                    {
-                        continue;
-                    }
-
-                    if (isIncreasing)
-                    {
-                        pageNameComposite.PageNumber++;
-                    }
-                    else
-                    {
-                        pageNameComposite.PageNumber--;
-                    }
-
-                    var newNameCompositeString = pageNameComposite.ToNameCompositeString();
-                    var newEntryName = $"{newNameCompositeString}.json";
-                    pageEntry.RenameEntry(newEntryName);
-                }
-
                 zip.Save();
             }
         }

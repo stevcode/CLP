@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.Services
         void AddDisplay(Notebook notebook, IDisplay display);
 
         // Page
-        void SetCurrentPage(CLPPage page);
+        void SetCurrentPage(CLPPage page, bool isSavingOldPage = true);
         void AddPage(Notebook notebook, CLPPage page);
         void InsertPageAt(Notebook notebook, CLPPage page, int index);
         void DeletePage(Notebook notebook, CLPPage page);

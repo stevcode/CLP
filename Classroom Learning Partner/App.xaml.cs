@@ -36,8 +36,6 @@ namespace Classroom_Learning_Partner
 
             var currentProgramMode = ProgramModes.Teacher;
 
-            Logger.Instance.InitializeLog(currentProgramMode);
-
             InitializeCatelSettings();
             InitializeServices();
             
