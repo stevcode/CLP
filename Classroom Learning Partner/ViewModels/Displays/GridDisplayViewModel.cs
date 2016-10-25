@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.Data;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -11,8 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the GridDisplayViewModel class.</summary>
-        public GridDisplayViewModel(GridDisplay gridDisplay)
-            : base(gridDisplay)
+        public GridDisplayViewModel(GridDisplay gridDisplay, IDataService dataService)
+            : base(gridDisplay, dataService)
         {
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
@@ -27,11 +28,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-
-        public override string Title
-        {
-            get { return "GridDisplayVM"; }
-        }
 
         #endregion //Constructor
 
@@ -69,7 +65,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.RemovePageFromDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, MultiDisplay.ID);
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
 
@@ -81,7 +80,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, MultiDisplay.ID);
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
         }

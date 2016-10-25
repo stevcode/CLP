@@ -9,18 +9,17 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public abstract class AMultiDisplayViewModelBase : ViewModelBase
     {
-        protected IDataService _dataService;
+        protected readonly IDataService _dataService;
 
         #region Constructor
 
-        protected AMultiDisplayViewModelBase(IDisplay display)
+        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService)
         {
-            _dataService = DependencyResolver.Resolve<IDataService>();
+            _dataService = dataService;
 
             MultiDisplay = display;
 
-            SetPageAsCurrentPageCommand = new Command<CLPPage>(OnSetPageAsCurrentPageCommandExecute);
-            RemovePageFromMultiDisplayCommand = new Command<CLPPage>(OnRemovePageFromMultiDisplayCommandExecute);
+            InitializeCommands();
         }
 
         #endregion //Constructor
@@ -73,6 +72,12 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SetPageAsCurrentPageCommand = new Command<CLPPage>(OnSetPageAsCurrentPageCommandExecute);
+            RemovePageFromMultiDisplayCommand = new Command<CLPPage>(OnRemovePageFromMultiDisplayCommandExecute);
+        }
 
         /// <summary>Sets the specific page as the notebook's CurrentPage</summary>
         public Command<CLPPage> SetPageAsCurrentPageCommand { get; private set; }

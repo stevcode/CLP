@@ -1,4 +1,5 @@
-﻿using CLP.Entities;
+﻿using Classroom_Learning_Partner.Services;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -6,14 +7,9 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        /// <summary>Initializes a new instance of the GridDisplayViewModel class.</summary>
-        public ColumnDisplayViewModel(ColumnDisplay columnDisplay)
-            : base(columnDisplay) { }
-
-        public override string Title
-        {
-            get { return "GridDisplayVM"; }
-        }
+        /// <summary>Initializes a new instance of the ColumnDisplayViewModel class.</summary>
+        public ColumnDisplayViewModel(ColumnDisplay columnDisplay, IDataService dataService)
+            : base(columnDisplay, dataService) { }
 
         #endregion //Constructor
     }
