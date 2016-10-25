@@ -14,6 +14,10 @@ using Ionic.Zlib;
 
 namespace Classroom_Learning_Partner.Services
 {
+    // TODO: Message Service that shows/hides the MainViewModel PensDown screen and modifies the text as appropriate.
+    // TODO: Have property called LastSelectedPage. It and CurrentPage show live viewModels, all others show thumbnails
+    // SetSelectedPage() will immediate change Current to Last and New to Current, then it will screenshot Last and autosave it in the background.
+
     public class DataService : IDataService
     {
         #region Nested Classes
