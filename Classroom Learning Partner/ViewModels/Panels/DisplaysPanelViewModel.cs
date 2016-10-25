@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
@@ -16,28 +17,59 @@ namespace Classroom_Learning_Partner.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
-        private IDataService _dataService;
+        private readonly IDataService _dataService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.</summary>
-        public DisplaysPanelViewModel(Notebook notebook, IDataService dataService)
+        public DisplaysPanelViewModel(IDataService dataService)
         {
             _dataService = dataService;
-            InitializeCommands();
-            Notebook = notebook;
-            InitializedAsync += DisplaysPanelViewModel_InitializedAsync;
+            Notebook = dataService.CurrentNotebook;
+
             IsVisible = false;
+
+            InitializedAsync += DisplaysPanelViewModel_InitializedAsync;
+            ClosedAsync += DisplaysPanelViewModel_ClosedAsync;
+
+            InitializeCommands();
             OnSetSingleDisplayCommandExecute();
         }
 
-        async Task DisplaysPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        #endregion //Constructor
+
+        #region Events
+
+        private Task DisplaysPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
+
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
+
+            return TaskHelper.Completed;
         }
 
-        #endregion //Constructor
+        private Task DisplaysPanelViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+            _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            Notebook = _dataService.CurrentNotebook;
+        }
+
+        private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
+        {
+            CurrentDisplay = _dataService.CurrentDisplay;
+        }
+
+        #endregion // Events
 
         #region Model
 
@@ -146,7 +178,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
-            AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
             RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
         }
@@ -156,8 +187,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddGridDisplayCommandExecute()
         {
-            _dataService.AddDisplay(Notebook, new GridDisplay(Notebook));
-            CurrentDisplay = Displays.LastOrDefault();
+            var gridDisplay = new GridDisplay(Notebook);
+            _dataService.AddDisplay(Notebook, gridDisplay);
+            _dataService.SetCurrentDisplay(gridDisplay);
         }
 
         /// <summary>Adds a ColumnDisplay to the notebook.</summary>
@@ -165,20 +197,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddColumnDisplayCommandExecute()
         {
-            _dataService.AddDisplay(Notebook, new ColumnDisplay(Notebook));
-            CurrentDisplay = Displays.LastOrDefault();
-        }
-
-        /// <summary>Adds the current page on the SingleDisplay to a new GridDisplay.</summary>
-        public Command AddPageToNewGridDisplayCommand { get; private set; }
-
-        private void OnAddPageToNewGridDisplayCommandExecute()
-        {
-            var newGridDisplay = new GridDisplay();
-            _dataService.AddDisplay(Notebook, newGridDisplay);
-            CurrentDisplay = newGridDisplay;
-            PageHistory.UISleep(1300);
-            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
+            var columnDisplay = new ColumnDisplay(Notebook);
+            _dataService.AddDisplay(Notebook, columnDisplay);
+            _dataService.SetCurrentDisplay(columnDisplay);
         }
 
         /// <summary>Sets the current display to the Mirror Display.</summary>
@@ -211,7 +232,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 const string DISPLAY_ID = "SingleDisplay";
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         /// <summary>Hides the Display from the list of Displays. Allows permanently deletion if in Authoring Mode.</summary>
@@ -222,7 +246,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var gridDisplay = display as GridDisplay;
             if (gridDisplay != null)
             {
-                var result = MessageBox.Show("Are you sure you want to delete Grid Display " + gridDisplay.DisplayNumber + "?", "Delete Display?", MessageBoxButton.YesNo);
+                var result = MessageBox.Show($"Are you sure you want to delete Grid Display {gridDisplay.DisplayNumber}?", "Delete Display?", MessageBoxButton.YesNo);
 
                 if (result == MessageBoxResult.No)
                 {

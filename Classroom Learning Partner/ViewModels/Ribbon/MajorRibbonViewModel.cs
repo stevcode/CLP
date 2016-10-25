@@ -51,8 +51,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageInteractionService = pageInteractionService;
             _dataService = dataService;
 
-            
-
             InitializeCommands();
             InitializeButtons();
             SetRibbonButtons();
@@ -63,6 +61,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializedAsync += MajorRibbonViewModel_InitializedAsync;
             ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
+
+        #region Events
 
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
@@ -105,25 +105,13 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
-        }      
-
-        private void InitializeCommands()
-        {
-            ReconnectCommand = new Command(OnReconnectCommandExecute);
-            ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
-            ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
-            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
-            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
-            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
-            AddNewAnimationPageCommand = new Command(OnAddNewAnimationPageCommandExecute);
-            LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
-            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
-            AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
-
-            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
-
-            ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
+
+        #endregion // Events
+
+
+
+        
 
         private void InitializeButtons()
         {
@@ -611,6 +599,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            ReconnectCommand = new Command(OnReconnectCommandExecute);
+            ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
+            ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
+            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
+            AddNewAnimationPageCommand = new Command(OnAddNewAnimationPageCommandExecute);
+            LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
+            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
+            AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+
+            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
+
+            ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
+        }
+
         /// <summary>Restarts the network.</summary>
         public Command ReconnectCommand { get; private set; }
 
@@ -621,10 +627,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.Network.StopNetworking();
-            App.Network.StartNetworking();
-
-            //CLPServiceAgent.Instance.NetworkReconnect();  ?
+            // TODO: _networkService.Reconnect();
         }
 
         /// <summary>Brings up the BackStage.</summary>
@@ -841,7 +844,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
-            _dataService.AddPage(notebookWorkspace.Notebook, newPage);
+            _dataService.AddPage(_dataService.CurrentNotebook, newPage);
             notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 
@@ -862,7 +865,7 @@ namespace Classroom_Learning_Partner.ViewModels
                           {
                               PageType = PageTypes.Animation
                           };
-            _dataService.AddPage(notebookWorkspace.Notebook, newPage);
+            _dataService.AddPage(_dataService.CurrentNotebook, newPage);
             notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 

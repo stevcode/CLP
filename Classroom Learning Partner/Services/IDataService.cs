@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner.Services
         ClassRoster CurrentClassRoster { get; }
         NotebookSet CurrentNotebookSet { get; }
         Notebook CurrentNotebook { get; }
-        IDisplay CurrentMultiDisplay { get; }
+        IDisplay CurrentDisplay { get; }
         CLPPage CurrentPage { get; }
 
         event EventHandler<EventArgs> CurrentClassRosterChanged;
@@ -49,7 +49,9 @@ namespace Classroom_Learning_Partner.Services
         void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true);
 
         // Display
+        void SetCurrentDisplay(IDisplay display);
         void AddDisplay(Notebook notebook, IDisplay display);
+        void AddPageToCurrentDisplay(CLPPage page, bool isSavingOldPage = true);
 
         // Page
         void SetCurrentPage(CLPPage page, bool isSavingOldPage = true);

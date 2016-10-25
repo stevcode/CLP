@@ -17,8 +17,5 @@ namespace CLP.Entities
 
         void AddPageToDisplay(CLPPage page);
         void RemovePageFromDisplay(CLPPage page);
-
-        void ToXML(string filePath);
-        void Save(string folderPath);
     }
 }

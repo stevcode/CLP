@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -18,11 +17,11 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.</summary>
-        public ProgressPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
+        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
         {
-            _dataService = DependencyResolver.Resolve<IDataService>();
+            _dataService = dataService;
+            Notebook = _dataService.CurrentNotebook;
             StagingPanel = stagingPanel;
-            Notebook = notebook;
 
             RefreshProgressPanelData();
             InitializedAsync += ProgressPanelViewModel_InitializedAsync;
@@ -32,6 +31,16 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            RefreshProgressPanelData();
+            SetPanelWidth();
+        }
+
+        #endregion // Events
 
         #region Model
 
@@ -94,16 +103,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public override double InitialLength => 200;
 
         #endregion //IPanel Override
-
-        #region Events
-
-        private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
-        {
-            RefreshProgressPanelData();
-            SetPanelWidth();
-        }
-
-        #endregion // Events
 
         #region Methods
 

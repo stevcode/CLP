@@ -58,6 +58,10 @@ namespace Classroom_Learning_Partner.ViewModels
             ClosedAsync += MainWindowViewModel_ClosedAsync;
         }
 
+        #endregion //Constructor
+
+        #region Events
+
         private Task MainWindowViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
@@ -75,14 +79,14 @@ namespace Classroom_Learning_Partner.ViewModels
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
         {
             Workspace = this.CreateViewModel<BlankWorkspaceViewModel>(null);
-            Workspace = this.CreateViewModel<NotebookWorkspaceViewModel>(_dataService.CurrentNotebook);
+            Workspace = this.CreateViewModel<NotebookWorkspaceViewModel>(null);
             CurrentNotebookName = _dataService.CurrentNotebook.Name;
             CurrentUser = _dataService.CurrentNotebook.Owner;
             IsAuthoring = _dataService.CurrentNotebook.OwnerID == Person.Author.ID;
             IsBackStageVisible = false;
         }
 
-        #endregion //Constructor
+        #endregion // Events
 
         #region Bindings
 

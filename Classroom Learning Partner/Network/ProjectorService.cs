@@ -114,31 +114,31 @@ namespace Classroom_Learning_Partner
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            var isNewDisplay = true;
-                                                                                            foreach(var display in
-                                                                                                notebookWorkspaceViewModel.Displays.Where(display =>
-                                                                                                                                          display.ID == displayID))
-                                                                                            {
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay = display;
+                                                                                            //var isNewDisplay = true;
+                                                                                            //foreach(var display in
+                                                                                            //    notebookWorkspaceViewModel.Displays.Where(display =>
+                                                                                            //                                              display.ID == displayID))
+                                                                                            //{
+                                                                                            //    notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                            //    notebookWorkspaceViewModel.CurrentDisplay = display;
 
-                                                                                                isNewDisplay = false;
-                                                                                                break;
-                                                                                            }
+                                                                                            //    isNewDisplay = false;
+                                                                                            //    break;
+                                                                                            //}
 
-                                                                                            if(isNewDisplay)
-                                                                                            {
-                                                                                                var newGridDisplay = new GridDisplay
-                                                                                                                     {
-                                                                                                                         ID = displayID,
-                                                                                                                         DisplayNumber = displayNumber,
-                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID,
-                                                                                                                         ParentNotebook = notebookWorkspaceViewModel.Notebook
-                                                                                                                     };
-                                                                                                notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
-                                                                                            }
+                                                                                            //if(isNewDisplay)
+                                                                                            //{
+                                                                                            //    var newGridDisplay = new GridDisplay
+                                                                                            //                         {
+                                                                                            //                             ID = displayID,
+                                                                                            //                             DisplayNumber = displayNumber,
+                                                                                            //                             NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                            //                             ParentNotebook = notebookWorkspaceViewModel.Notebook
+                                                                                            //                         };
+                                                                                            //    notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
+                                                                                            //    notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                            //    notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
+                                                                                            //}
                                                                                         }
 
                                                                                         return null;
@@ -185,17 +185,17 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var newGridDisplay = new GridDisplay
-                                                                                                                {
-                                                                                                                    ID = displayID,
-                                                                                                                    DisplayNumber = displayNumber,
-                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID,
-                                                                                                                    ParentNotebook = notebookWorkspaceViewModel.Notebook
-                                                                                                                };
-                                                                                        newGridDisplay.AddPageToDisplay(page);
-                                                                                        notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
-                                                                                        notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                        notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
+                                                                                        //var newGridDisplay = new GridDisplay
+                                                                                        //                        {
+                                                                                        //                            ID = displayID,
+                                                                                        //                            DisplayNumber = displayNumber,
+                                                                                        //                            NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                        //                            ParentNotebook = notebookWorkspaceViewModel.Notebook
+                                                                                        //                        };
+                                                                                        //newGridDisplay.AddPageToDisplay(page);
+                                                                                        //notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
+                                                                                        //notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                        //notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
 
                                                                                         return null;
                                                                                     },
@@ -241,20 +241,20 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        if(displayID == "SingleDisplay")
-                                                                                        {
-                                                                                            notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                            notebookWorkspaceViewModel.Notebook.CurrentPage = page;
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
-                                                                                            if(display == null)
-                                                                                            {
-                                                                                                return null;
-                                                                                            }
-                                                                                            display.AddPageToDisplay(page);
-                                                                                        }
+                                                                                        //if(displayID == "SingleDisplay")
+                                                                                        //{
+                                                                                        //    notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                        //    notebookWorkspaceViewModel.Notebook.CurrentPage = page;
+                                                                                        //}
+                                                                                        //else
+                                                                                        //{
+                                                                                        //    var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
+                                                                                        //    if(display == null)
+                                                                                        //    {
+                                                                                        //        return null;
+                                                                                        //    }
+                                                                                        //    display.AddPageToDisplay(page);
+                                                                                        //}
                                                                                         return null;
                                                                                     },
                                                        null);
@@ -299,20 +299,20 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        if(displayID == "SingleDisplay")
-                                                                                        {
-                                                                                            notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                            notebookWorkspaceViewModel.Notebook.CurrentPage = page;
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
-                                                                                            if(display == null)
-                                                                                            {
-                                                                                                return null;
-                                                                                            }
-                                                                                            display.RemovePageFromDisplay(page);
-                                                                                        }
+                                                                                        //if(displayID == "SingleDisplay")
+                                                                                        //{
+                                                                                        //    notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                        //    notebookWorkspaceViewModel.Notebook.CurrentPage = page;
+                                                                                        //}
+                                                                                        //else
+                                                                                        //{
+                                                                                        //    var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
+                                                                                        //    if(display == null)
+                                                                                        //    {
+                                                                                        //        return null;
+                                                                                        //    }
+                                                                                        //    display.RemovePageFromDisplay(page);
+                                                                                        //}
                                                                                         return null;
                                                                                     },
                                                        null);
@@ -407,14 +407,14 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var page = notebookWorkspaceViewModel.Notebook.CurrentPage;
-                                                                                        var initialHeight = page.Width / page.InitialAspectRatio;
-                                                                                        const int MAX_INCREASE_TIMES = 2;
-                                                                                        const double PAGE_INCREASE_AMOUNT = 200.0;
-                                                                                        if(page.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
-                                                                                        {
-                                                                                            page.Height += PAGE_INCREASE_AMOUNT;
-                                                                                        }
+                                                                                        //var page = notebookWorkspaceViewModel.Notebook.CurrentPage;
+                                                                                        //var initialHeight = page.Width / page.InitialAspectRatio;
+                                                                                        //const int MAX_INCREASE_TIMES = 2;
+                                                                                        //const double PAGE_INCREASE_AMOUNT = 200.0;
+                                                                                        //if(page.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+                                                                                        //{
+                                                                                        //    page.Height += PAGE_INCREASE_AMOUNT;
+                                                                                        //}
                                                                                         return null;
                                                                                     }, null);
         }

@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner.Services
         public ClassRoster CurrentClassRoster { get; private set; }
         public NotebookSet CurrentNotebookSet { get; private set; }
         public Notebook CurrentNotebook { get; private set; }
-        public IDisplay CurrentMultiDisplay { get; private set; }
+        public IDisplay CurrentDisplay { get; private set; }
         public CLPPage CurrentPage { get; private set; }
 
         #endregion // Notebook Properties
@@ -454,11 +454,29 @@ namespace Classroom_Learning_Partner.Services
 
         #region Display Methods
 
+        public void SetCurrentDisplay(IDisplay display)
+        {
+            CurrentDisplay = display;
+
+            CurrentDisplayChanged.SafeInvoke(this);
+        }
+
         public void AddDisplay(Notebook notebook, IDisplay display)
         {
             display.NotebookID = notebook.ID;
             display.DisplayNumber = notebook.Displays.Any(d => d.GetType() == display.GetType()) ? notebook.Displays.Last().DisplayNumber + 1 : 1;
             notebook.Displays.Add(display);
+        }
+
+        public void AddPageToCurrentDisplay(CLPPage page, bool isSavingOldPage = true)
+        {
+            if (CurrentNotebook == null)
+            {
+                return;
+            }
+
+
+            
         }
 
         #endregion // Display Methods

@@ -131,40 +131,6 @@ namespace CLP.Entities
             }
         }
 
-        #region Cache
-
-        public virtual void ToXML(string filePath)
-        {
-            var fileInfo = new FileInfo(filePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using (Stream stream = new FileStream(filePath, FileMode.Create))
-            {
-                var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-        }
-
-        public virtual void Save(string folderPath)
-        {
-            var displayTypeIdentifier = this is GridDisplay ? "grid" : "column";
-
-            var fileName = displayTypeIdentifier + ";" + DisplayNumber + ";" + ID + ".xml";
-            CompositePageIDs.Clear();
-            foreach (var compositeID in Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex))
-            {
-                CompositePageIDs.Add(compositeID);
-            }
-            var filePath = Path.Combine(folderPath, fileName);
-            ToXML(filePath);
-        }
-
-        #endregion //Cache
-
         #endregion //Methods
 
         #region Overrides of AInternalZipEntryFile
