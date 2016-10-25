@@ -191,7 +191,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 StagingPanel.IsVisible = false;
             }
 
-            // TODO: DataService.LoadNotebook (either because it's already open or open it from zip).
+            _dataService.SetCurrentNotebook(notebook);
 
             App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
         }
