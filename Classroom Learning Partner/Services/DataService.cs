@@ -134,6 +134,8 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public bool IsAutoSaveOn { get; set; } = true;
+
         #endregion // Cache Properties
 
         #region Program Properties
@@ -573,6 +575,11 @@ namespace Classroom_Learning_Partner.Services
 
         public void AutoSavePage(Notebook notebook, CLPPage page)
         {
+            if (!IsAutoSaveOn)
+            {
+                return;
+            }
+
             SavePage(notebook, page);
             //TODO: take screenshot of page if not already cached
             //set LastAutoSaveTime of notebook

@@ -372,6 +372,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
             ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
             ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+            ToggleAutoSaveCommand = new Command(OnToggleAutoSaveCommandExecute);
         }
 
         /// <summary>Sets the UserMode of the program.</summary>
@@ -458,6 +459,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             mainWindow.Close();
+        }
+
+        /// <summary>Toggles AutoSave On and Off.</summary>
+        public Command ToggleAutoSaveCommand { get; private set; }
+
+        private void OnToggleAutoSaveCommandExecute()
+        {
+            _dataService.IsAutoSaveOn = !_dataService.IsAutoSaveOn;
         }
 
         #endregion //Commands

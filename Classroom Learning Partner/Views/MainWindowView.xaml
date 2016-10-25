@@ -48,6 +48,8 @@
                     Gesture="CTRL+SHIFT+D" />
         <KeyBinding Command="{Binding ToggleMaximizeStateCommand}"
                     Gesture="CTRL+M" />
+        <KeyBinding Command="{Binding ToggleAutoSaveCommand}"
+                    Gesture="CTRL+SHIFT+A" />
     </Window.InputBindings>
 
     <!-- Grid Margin of -6 necessary to override DataWindow's default stylings -->

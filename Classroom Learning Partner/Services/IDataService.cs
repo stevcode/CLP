@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.Services
         string CurrentArchiveFolderPath { get; }
 
         List<FileInfo> AvailableZipContainerFileInfos { get; }
+        bool IsAutoSaveOn { get; set; }
 
         Dictionary<string, BitmapImage> ImagePool { get; }
 
