@@ -121,6 +121,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
+        /// <summary>Auto-Mapped property of the Notebook Model.</summary>
+        [ViewModelToModel("Notebook")]
+        public IDisplay CurrentDisplay
+        {
+            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
+            set { SetValue(CurrentDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
+
         #endregion // Model
 
         #region Bindings
@@ -166,15 +176,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplayViewModel));
-
-        /// <summary>The Currently Selected Display.</summary>
-        public IDisplay CurrentDisplay
-        {
-            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
-            set { SetValue(CurrentDisplayProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
 
         #endregion //Displays
 
@@ -346,7 +347,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
             var page = Notebook.Pages[index - 1];
-            _dataService.SetCurrentPage(page);
+            _dataService.AddPageToCurrentDisplay(page);
         }
 
         private bool OnPreviousPageCanExecute()
@@ -381,7 +382,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
             var page = Notebook.Pages[index + 1];
-            _dataService.SetCurrentPage(page);
+            _dataService.AddPageToCurrentDisplay(page);
         }
 
         private bool OnNextPageCanExecute()
@@ -422,7 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            _dataService.SetCurrentPage(newPage);
+            _dataService.AddPageToCurrentDisplay(newPage);
         }
 
         private bool OnGoToPageCanExecute()

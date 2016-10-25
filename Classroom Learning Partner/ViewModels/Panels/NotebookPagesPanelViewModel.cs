@@ -116,7 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            _dataService.SetCurrentPage(page);
+            _dataService.AddPageToCurrentDisplay(page);
         }
 
         /// <summary>Shows the submissions for the selected page.</summary>

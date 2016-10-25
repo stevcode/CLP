@@ -188,8 +188,9 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.PageNumber--;
             previousPage.PageNumber++;
 
+            // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemUp(CurrentPage);
-            CurrentPage = Notebook.Pages[currentPageIndex - 1];
+            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex - 1]);
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
@@ -208,8 +209,9 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.PageNumber++;
             nextPage.PageNumber--;
 
+            // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemDown(CurrentPage);
-            CurrentPage = Notebook.Pages[currentPageIndex + 1];
+            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex + 1]);
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
@@ -255,6 +257,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageNumber--;
                 }
 
+                // TODO: Use DataService
                 CurrentPage.PageNumber = newPageNumber;
                 Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
             }
@@ -267,6 +270,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageNumber++;
                 }
 
+                // TODO: Use DataService
                 CurrentPage.PageNumber = newPageNumber;
                 Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
             }
@@ -368,6 +372,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Differentiate(int groups)
         {
+            // TODO: Test how this interacts with autosave delete/move
             var originalPage = CurrentPage;
             originalPage.DifferentiationLevel = "A";
             var index = Notebook.Pages.IndexOf(originalPage);

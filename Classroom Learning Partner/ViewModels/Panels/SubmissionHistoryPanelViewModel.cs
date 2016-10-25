@@ -138,7 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            _dataService.SetCurrentPage(page);
+            _dataService.AddPageToCurrentDisplay(page);
 
             RaisePropertyChanged(nameof(IsSelectedANonSubmission));
         }

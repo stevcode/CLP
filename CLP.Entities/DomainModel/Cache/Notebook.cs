@@ -205,6 +205,18 @@ namespace CLP.Entities
 
         public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
+        /// <summary>The selected display in the list of the Notebook's Displays. SingleDisplay is displayed when null.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public IDisplay CurrentDisplay
+        {
+            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
+            set { SetValue(CurrentDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
+
         #endregion // Non-Serialized
 
         #endregion // Properties

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Threading;
@@ -25,15 +23,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public DisplaysPanelViewModel(IDataService dataService)
         {
             _dataService = dataService;
-            Notebook = dataService.CurrentNotebook;
+            Notebook = _dataService.CurrentNotebook;
 
             IsVisible = false;
 
+            InitializeCommands();
+
             InitializedAsync += DisplaysPanelViewModel_InitializedAsync;
             ClosedAsync += DisplaysPanelViewModel_ClosedAsync;
-
-            InitializeCommands();
-            OnSetSingleDisplayCommandExecute();
         }
 
         #endregion //Constructor
@@ -66,7 +63,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
         {
-            CurrentDisplay = _dataService.CurrentDisplay;
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher)
+            {
+                return;
+            }
+
+            if (App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                if (CurrentDisplay == null)
+                {
+                    const string DISPLAY_ID = "SingleDisplay";
+                    App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
+                }
+                else
+                {
+                    var displayID = CurrentDisplay.ID;
+                    App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, CurrentDisplay.DisplayNumber);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         #endregion // Events
@@ -103,74 +126,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>));
 
-        #endregion //Model
-
-        #region Bindings
-
-        /// <summary>Color of the SingleDisplay background.</summary>
-        public string SingleDisplaySelectedBackgroundColor
-        {
-            get { return GetValue<string>(SingleDisplaySelectedBackgroundColorProperty); }
-            set { SetValue(SingleDisplaySelectedBackgroundColorProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplaySelectedBackgroundColorProperty = RegisterProperty("SingleDisplaySelectedBackgroundColor", typeof(string));
-
-        /// <summary>Color of the highlighted border around the SingleDisplay.</summary>
-        public string SingleDisplaySelectedColor
-        {
-            get { return GetValue<string>(SingleDisplaySelectedColorProperty); }
-            set { SetValue(SingleDisplaySelectedColorProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplaySelectedColorProperty = RegisterProperty("SingleDisplaySelectedColor", typeof(string));
-
-        /// <summary>The selected display in the list of the Notebook's Displays. Does not include the SingleDisplay.</summary>
+        /// <summary>A property mapped to a property on the Model Notebook.</summary>
+        [ViewModelToModel("Notebook")]
         public IDisplay CurrentDisplay
         {
             get { return GetValue<IDisplay>(CurrentDisplayProperty); }
             set { SetValue(CurrentDisplayProperty, value); }
         }
 
-        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay), null, OnCurrentDisplayChanged);
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay), null);
 
-        private static void OnCurrentDisplayChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var displayListPanelViewModel = sender as DisplaysPanelViewModel;
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if (displayListPanelViewModel == null ||
-                notebookWorkspaceViewModel == null ||
-                App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-                args.NewValue == null)
-            {
-                return;
-            }
-
-            var dict = new ResourceDictionary();
-            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
-            dict.Source = uri;
-            var color = dict["GrayBorderColor"].ToString();
-            displayListPanelViewModel.SingleDisplaySelectedColor = color;
-            displayListPanelViewModel.SingleDisplaySelectedBackgroundColor = "Transparent";
-
-            notebookWorkspaceViewModel.CurrentDisplay = null;
-            notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
-
-            if (App.Network.ProjectorProxy == null ||
-                notebookWorkspaceViewModel.CurrentDisplay == null)
-            {
-                return;
-            }
-
-            try
-            {
-                var displayID = notebookWorkspaceViewModel.CurrentDisplay.ID;
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber);
-            }
-            catch (Exception) { }
-        }
-
-        #endregion //Bindings
+        #endregion //Model
 
         #region Commands
 
@@ -178,7 +144,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
-            SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
             RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
         }
 
@@ -202,42 +167,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService.SetCurrentDisplay(columnDisplay);
         }
 
-        /// <summary>Sets the current display to the Mirror Display.</summary>
-        public Command SetSingleDisplayCommand { get; private set; }
-
-        private void OnSetSingleDisplayCommandExecute()
-        {
-            var dict = new ResourceDictionary();
-            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
-            dict.Source = uri;
-            var color = dict["MainColor"].ToString();
-            SingleDisplaySelectedColor = color;
-            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.IsProjectorFrozen ? "Transparent" : "PaleGreen";
-            CurrentDisplay = null;
-
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if (notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-            notebookWorkspaceViewModel.CurrentDisplay = null;
-
-            if (App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
-
-            try
-            {
-                const string DISPLAY_ID = "SingleDisplay";
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
         /// <summary>Hides the Display from the list of Displays. Allows permanently deletion if in Authoring Mode.</summary>
         public Command<IDisplay> RemoveDisplayCommand { get; private set; }
 
@@ -253,12 +182,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
+                // TODO: If IsAuthoring, completely remove/delete display.
                 gridDisplay.IsHidden = true;
             }
 
-            // TODO: Entities
-            //display.IsTrashed = true;
-            OnSetSingleDisplayCommandExecute();
+            if (CurrentDisplay == display)
+            {
+                _dataService.SetCurrentDisplay(Displays.FirstOrDefault());
+            }
         }
 
         #endregion //Commands
@@ -272,8 +203,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if ((viewModel as MainWindowViewModel).IsProjectorFrozen)
                 {
-                    SingleDisplaySelectedBackgroundColor = "Transparent";
-
                     //take snapshot
                     byte[] screenShotByteSource = null;
                     if (CurrentDisplay == null)
@@ -315,7 +244,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    SingleDisplaySelectedBackgroundColor = "PaleGreen";
                     if (App.Network.ProjectorProxy != null)
                     {
                         try

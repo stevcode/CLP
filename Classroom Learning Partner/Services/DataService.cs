@@ -155,8 +155,8 @@ namespace Classroom_Learning_Partner.Services
         public ClassRoster CurrentClassRoster { get; private set; }
         public NotebookSet CurrentNotebookSet { get; private set; }
         public Notebook CurrentNotebook { get; private set; }
-        public IDisplay CurrentDisplay { get; private set; }
-        public CLPPage CurrentPage { get; private set; }
+        public IDisplay CurrentDisplay => CurrentNotebook?.CurrentDisplay;
+        public CLPPage CurrentPage => CurrentNotebook?.CurrentPage;
 
         #endregion // Notebook Properties
 
@@ -396,7 +396,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            SetCurrentPage(CurrentNotebook.CurrentPage);
+            AddPageToCurrentDisplay(CurrentNotebook.CurrentPage);
         }
 
         public void CreateAuthorNotebook(string notebookName, string zipContainerFilePath)
@@ -456,7 +456,7 @@ namespace Classroom_Learning_Partner.Services
 
         public void SetCurrentDisplay(IDisplay display)
         {
-            CurrentDisplay = display;
+            CurrentNotebook.CurrentDisplay = display;
 
             CurrentDisplayChanged.SafeInvoke(this);
         }
@@ -475,8 +475,31 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
+            CurrentDisplay?.Pages.Add(page);
+            SetCurrentPage(page, isSavingOldPage);
+        }
 
-            
+        public void RemovePageFromCurrentDisplay(CLPPage page, bool isSavingRemovedPage = true)
+        {
+            if (CurrentNotebook == null ||
+                CurrentDisplay == null)
+            {
+                return;
+            }
+
+            // Save previously selected page, assuming it wasn't the page being removed.
+            var oldPage = CurrentNotebook.CurrentPage;
+            if (oldPage != null &&
+                isSavingRemovedPage)
+            {
+                AutoSavePage(CurrentNotebook, oldPage);
+            }
+
+            CurrentNotebook.CurrentPage = page;
+
+            CurrentDisplay.Pages.Remove(page);
+            var newSelectedPage = CurrentDisplay.Pages.FirstOrDefault();
+            SetCurrentPage(newSelectedPage, isSavingRemovedPage);
         }
 
         #endregion // Display Methods
@@ -498,16 +521,9 @@ namespace Classroom_Learning_Partner.Services
             }
 
             CurrentNotebook.CurrentPage = page;
-            CurrentPage = page;
 
             // TODO: Handle multiDisplays
-            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //if (notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
-
-            //if (notebookWorkspaceViewModel.CurrentDisplay == null)
+            //if (CurrentDisplay == null)
             //{
             //    //Take thumbnail of page before navigating away from it.
             //    ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
@@ -516,7 +532,7 @@ namespace Classroom_Learning_Partner.Services
             //    return;
             //}
 
-            //notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+            //CurrentDisplay.AddPageToDisplay(page);
 
             CurrentPageChanged.SafeInvoke(this);
         }
@@ -526,7 +542,7 @@ namespace Classroom_Learning_Partner.Services
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
             notebook.Pages.Add(page);
-            SetCurrentPage(page);
+            AddPageToCurrentDisplay(page);
             SavePage(notebook, page);
         }
 
@@ -536,7 +552,7 @@ namespace Classroom_Learning_Partner.Services
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             page.PageNumber = index + 1;
             notebook.Pages.Insert(index, page);
-            SetCurrentPage(page);
+            AddPageToCurrentDisplay(page);
             SavePage(notebook, page);
         }
 
@@ -588,7 +604,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var nextPage = notebook.Pages.ElementAt(index);
-            SetCurrentPage(nextPage, false);
+            AddPageToCurrentDisplay(nextPage, false);
         }
 
         public void AutoSavePage(Notebook notebook, CLPPage page)

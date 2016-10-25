@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -113,25 +111,6 @@ namespace CLP.Entities
         public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof(bool), false);
 
         #endregion //Properties
-
-        #region Methods
-
-        public virtual void AddPageToDisplay(CLPPage page)
-        {
-            Pages.Add(page);
-            ParentNotebook.CurrentPage = Pages.FirstOrDefault();
-        }
-
-        public virtual void RemovePageFromDisplay(CLPPage page)
-        {
-            Pages.Remove(page);
-            if (Pages.Any())
-            {
-                ParentNotebook.CurrentPage = Pages.FirstOrDefault();
-            }
-        }
-
-        #endregion //Methods
 
         #region Overrides of AInternalZipEntryFile
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -34,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(MultiDisplayProperty, value); }
         }
 
-        public static readonly PropertyData MultiDisplayProperty = RegisterProperty("MultiDisplay", typeof (IDisplay));
+        public static readonly PropertyData MultiDisplayProperty = RegisterProperty("MultiDisplay", typeof(IDisplay));
 
         /// <summary>Index of the Display in the notebook.</summary>
         [ViewModelToModel("MultiDisplay")]
@@ -44,7 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DisplayNumberProperty, value); }
         }
 
-        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof (int));
+        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int));
 
         /// <summary>Pages displayed by the MultiDisplay.</summary>
         [ViewModelToModel("MultiDisplay")]
@@ -54,7 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>));
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
 
@@ -67,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsDisplayPreviewProperty, value); }
         }
 
-        public static readonly PropertyData IsDisplayPreviewProperty = RegisterProperty("IsDisplayPreview", typeof (bool), false);
+        public static readonly PropertyData IsDisplayPreviewProperty = RegisterProperty("IsDisplayPreview", typeof(bool), false);
 
         #endregion //Properties
 
@@ -96,7 +95,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Removes a specific page from the MultiDisplay.</summary>
         public Command<CLPPage> RemovePageFromMultiDisplayCommand { get; private set; }
 
-        public void OnRemovePageFromMultiDisplayCommandExecute(CLPPage page) { MultiDisplay.RemovePageFromDisplay(page); }
+        public void OnRemovePageFromMultiDisplayCommandExecute(CLPPage page)
+        {
+            if (_dataService == null ||
+                page == null)
+            {
+                return;
+            }
+
+            _dataService.RemovePageFromCurrentDisplay(page);
+        }
 
         #endregion //Commands
     }

@@ -172,7 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 pageToSwitchTo = page.Submissions.Last();
             }
 
-            _dataService.SetCurrentPage(pageToSwitchTo);
+            _dataService.AddPageToCurrentDisplay(pageToSwitchTo);
         }
 
         /// <summary>Switches current notebook to selected notebook.</summary>

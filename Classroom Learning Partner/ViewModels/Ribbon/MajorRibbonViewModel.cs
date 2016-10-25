@@ -412,6 +412,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
+        /// <summary>Auto-Mapped property of the CurrentNotebook Model.</summary>
+        [ViewModelToModel("CurrentNotebook")]
+        public IDisplay CurrentDisplay
+        {
+            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
+            set { SetValue(CurrentDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
+
         #endregion // Model
 
         #region Bindings
@@ -650,7 +660,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            notebookWorkspace.CurrentDisplay = null;
+            _dataService.SetCurrentDisplay(null);
             CurrentRightPanel = null;
 
             if (App.Network.ProjectorProxy == null)
@@ -671,13 +681,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnExitMultiDisplayCanExecute()
         {
-            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if (notebookWorkspace == null)
-            {
-                return false;
-            }
-
-            return notebookWorkspace.CurrentDisplay != null;
+            return CurrentDisplay != null;
         }
 
         #region History Commands
@@ -894,7 +898,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private bool OnLongerPageCanExecute()

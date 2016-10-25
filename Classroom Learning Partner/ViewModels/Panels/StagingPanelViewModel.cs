@@ -251,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<CLPPage> SetCurrentPageCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(CLPPage page) { _dataService.SetCurrentPage(page); }
+        private void OnSetCurrentPageCommandExecute(CLPPage page) { _dataService.AddPageToCurrentDisplay(page); }
 
         /// <summary>
         /// Removes given page from the Staging Panel.
