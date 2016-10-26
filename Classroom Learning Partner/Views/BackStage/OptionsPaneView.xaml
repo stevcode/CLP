@@ -31,6 +31,22 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
+            <Button Content="Clear History"
+                    Command="{Binding ClearHistoryCommand}"
+                    Height="50"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
+            <Button Content="Generate"
+                    Command="{Binding GenerateCommand}"
+                    Height="50"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
         </StackPanel>
 
     </DockPanel>
