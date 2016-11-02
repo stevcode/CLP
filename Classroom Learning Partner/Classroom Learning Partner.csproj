@@ -176,6 +176,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CLP.Entities\lib\ModifiedCatelJson\Catel.Serialization.Json.dll</HintPath>
     </Reference>
+    <Reference Include="CLP.Entities.Ann, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\CLP.Entities.Ann.dll</HintPath>
+    </Reference>
     <Reference Include="CLP.Entities.Old, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\CLP.Entities.Old.dll</HintPath>
@@ -1142,6 +1146,7 @@
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled.ico" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled720.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogo720.png" />
+    <Content Include="External Libraries\CLP.Entities.Ann.dll" />
     <Content Include="External Libraries\CLP.Entities.Old.dll" />
     <Content Include="External Libraries\itextsharp.dll" />
     <Content Include="External Libraries\NRtfTree.dll" />

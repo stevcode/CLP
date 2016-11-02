@@ -6,6 +6,7 @@ using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
 using Emily = CLP.Entities.Old;
+using Ann = CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -555,5 +556,56 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Emily Conversions
+
+        #region Ann Conversions
+
+        public static Person ConvertPerson(Ann.Person person)
+        {
+            var newPerson = new Person
+            {
+                ID = person.ID,
+                Alias = person.Alias,
+                IsStudent = person.IsStudent
+            };
+
+            if (string.IsNullOrWhiteSpace(person.FullName))
+            {
+                Console.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
+                return newPerson;
+            }
+
+            var nameParts = person.FullName.Split(' ').ToList();
+            if (!nameParts.Any())
+            {
+                Console.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
+                return newPerson;
+            }
+
+            var firstName = nameParts.First();
+            nameParts.RemoveAt(0);
+            if (!nameParts.Any())
+            {
+                newPerson.FirstName = firstName;
+                return newPerson;
+            }
+
+            var lastName = nameParts.Last();
+            nameParts.RemoveAt(nameParts.Count - 1);
+            if (!nameParts.Any())
+            {
+                newPerson.FirstName = firstName;
+                newPerson.LastName = lastName;
+                return newPerson;
+            }
+
+            var middleName = string.Join(" ", nameParts);
+
+            newPerson.FirstName = firstName;
+            newPerson.LastName = lastName;
+            newPerson.MiddleName = middleName;
+            return newPerson;
+        }
+
+        #endregion // Ann Conversions
     }
 }
