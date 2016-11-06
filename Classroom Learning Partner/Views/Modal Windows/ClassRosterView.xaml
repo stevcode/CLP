@@ -6,6 +6,7 @@
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                   Title="Edit Class"
                   ShowInTaskbar="False">
+    
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

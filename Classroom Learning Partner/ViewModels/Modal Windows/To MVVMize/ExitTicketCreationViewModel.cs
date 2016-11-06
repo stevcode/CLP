@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel(CLPPage basePage)
         {
-            GroupCreationViewModel = new GroupCreationViewModel("Temp");
+            GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = basePage.DuplicatePage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel()
         {
-            GroupCreationViewModel = new GroupCreationViewModel("Temp");
+            GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = new CLPPage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
@@ -70,7 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(GroupCreationViewModelProperty, value); }
         }
 
-        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel), () => new GroupCreationViewModel());
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel));
 
         public ObservableCollection<CLPPage> ExitTickets
         {

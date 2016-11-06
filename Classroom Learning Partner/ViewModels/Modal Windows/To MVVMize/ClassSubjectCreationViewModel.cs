@@ -17,8 +17,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                        IsStudent = false
                                    };
 
-            GroupCreationViewModel = new GroupCreationViewModel();
-            TempGroupCreationViewModel = new GroupCreationViewModel("Temp");
+            GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Default);
+            TempGroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
 
             AddStudentCommand = new Command(OnAddStudentCommandExecute);
         }

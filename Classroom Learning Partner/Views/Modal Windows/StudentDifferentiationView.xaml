@@ -1,0 +1,20 @@
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.StudentDifferentiationView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                  Title="Student Groups"
+                  ShowInTaskbar="False">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/BackStageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid>
+
+    </Grid>
+</catel:DataWindow>

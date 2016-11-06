@@ -4,11 +4,12 @@ using Catel.Windows;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>Interaction logic for PersonView.xaml</summary>
-    public partial class PersonView
+    public partial class StudentDifferentiationView
     {
-        public const double WINDOW_WIDTH = 300;
+        public const double WINDOW_HEIGHT = 650;
+        public const double WINDOW_WIDTH = 350;
 
-        public PersonView()
+        public StudentDifferentiationView()
             : base(DataWindowMode.Custom)
         {
             InitializeComponent();

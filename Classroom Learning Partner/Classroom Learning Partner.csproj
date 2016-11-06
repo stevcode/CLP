@@ -354,6 +354,7 @@
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\StudentDifferentiationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\MultipleChoiceCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
@@ -433,6 +434,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\SessionView.xaml.cs">
       <DependentUpon>SessionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\StudentDifferentiationView.xaml.cs">
+      <DependentUpon>StudentDifferentiationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -725,6 +729,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\SessionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\StudentDifferentiationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
