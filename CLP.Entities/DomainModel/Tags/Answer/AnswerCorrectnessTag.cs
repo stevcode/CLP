@@ -75,12 +75,8 @@ namespace CLP.Entities
                 var correctAnswer = Answer.CodedObjectID;
                 var answerAction = Answer.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE ? "filled in" : "inked";
 
-                var answerSet = string.Format("{0}: correct answer is {1}\nStudent {2} {3} ({4})",
-                                              Codings.FriendlyObjects[Answer.CodedObject],
-                                              correctAnswer,
-                                              answerAction,
-                                              answerContents,
-                                              isAnswerCorrect ? "correct" : "incorrect");
+                var answerSet =
+                    $"{Codings.FriendlyObjects[Answer.CodedObject]}: correct answer is {correctAnswer}\nStudent {answerAction} {answerContents} ({(isAnswerCorrect ? "correct" : "incorrect")})";
 
                 return string.Format("{0}{1}", answerSet, string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nCode: " + AnalysisCode);
             }
