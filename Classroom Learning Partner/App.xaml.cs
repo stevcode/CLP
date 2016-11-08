@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
             viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
             viewModelLocator.Register(typeof(NonAsyncPagePreviewView), typeof(CLPPageViewModel));
-            viewModelLocator.Register(typeof(GroupCreationPanel), typeof(GroupCreationViewModel));
+            viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
         private static void InitializeServices()

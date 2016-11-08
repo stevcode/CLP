@@ -4,34 +4,47 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using NuGet;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class GroupCreationViewModel : ViewModelBase
     {
+        public enum GroupTypes
+        {
+            Default,
+            Temporary
+        }
+
         #region Nested Class
 
         public class Group : ViewModelBase
         {
-            public Group(string label)
+            #region Constructor
+
+            public Group(string label, GroupTypes groupType)
             {
+                Label = label;
+                SpecificGroupType = groupType;
+
                 var studentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);
                 SortedMembers.Source = Members;
                 SortedMembers.SortDescriptions.Add(studentNameSort);
-                Label = label;
             }
 
-            public string Label
+            #endregion // Constructor
+
+            #region Properties
+
+            public GroupTypes SpecificGroupType
             {
-                get { return GetValue<string>(LabelProperty); }
-                set { SetValue(LabelProperty, value); }
+                get { return GetValue<GroupTypes>(SpecificGroupTypeProperty); }
+                set { SetValue(SpecificGroupTypeProperty, value); }
             }
 
-            public static readonly PropertyData LabelProperty = RegisterProperty("Label", typeof(string));
+            public static readonly PropertyData SpecificGroupTypeProperty = RegisterProperty("SpecificGroupType", typeof(GroupTypes), GroupTypes.Default);
 
             public ObservableCollection<Person> Members
             {
@@ -41,6 +54,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             public static readonly PropertyData MembersProperty = RegisterProperty("Members", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
+            #endregion // Properties
+
+            #region Bindings
+
+            public string Label
+            {
+                get { return GetValue<string>(LabelProperty); }
+                set { SetValue(LabelProperty, value); }
+            }
+
+            public static readonly PropertyData LabelProperty = RegisterProperty("Label", typeof(string), string.Empty);
+
             public CollectionViewSource SortedMembers
             {
                 get { return GetValue<CollectionViewSource>(SortedMembersProperty); }
@@ -49,86 +74,53 @@ namespace Classroom_Learning_Partner.ViewModels
 
             public static readonly PropertyData SortedMembersProperty = RegisterProperty("SortedMembers", typeof(CollectionViewSource), () => new CollectionViewSource());
 
+            #endregion // Bindings
+
+            #region Methods
+
             public void Add(Person student)
             {
                 Members.Add(student);
+                if (SpecificGroupType == GroupTypes.Default)
+                {
+                    student.CurrentDifferentiationGroup = Label;
+                }
+                else
+                {
+                    student.TemporaryDifferentiationGroup = Label;
+                }
             }
 
             public void Remove(Person student)
             {
                 Members.Remove(student);
+                if (SpecificGroupType == GroupTypes.Default)
+                {
+                    student.CurrentDifferentiationGroup = "";
+                }
+                else
+                {
+                    student.TemporaryDifferentiationGroup = "";
+                }
             }
+
+            #endregion // Methods
         }
 
         #endregion // Nested Class
 
-        public enum GroupTypes
-        {
-            Default,
-            Temporary
-        }
+        #region Constructor
 
-        public GroupCreationViewModel(GroupTypes groupType)
+        public GroupCreationViewModel(ClassRoster classRoster, GroupTypes groupType)
         {
+            ClassRoster = classRoster;
             GroupType = groupType;
-            init();
 
+            InitializeStudentGroups();
             InitializeCommands();
         }
 
-        private void init()
-        {
-            var dataService = DependencyResolver.Resolve<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
-
-            //if (dataService.CurrentClassPeriod != null)
-            //{
-            //    StudentsNotInGroup = new ObservableCollection<Person>(dataService.CurrentClassPeriod.ClassInformation.StudentList);
-            //}
-
-            var studentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);
-            SortedStudentsNotInGroup.Source = StudentsNotInGroup;
-            SortedStudentsNotInGroup.SortDescriptions.Add(studentNameSort);
-
-            foreach (var student in new ObservableCollection<Person>(StudentsNotInGroup))
-            {
-                if (GetDifferentiationGroup(student) == "")
-                {
-                    continue;
-                }
-
-                var added = false;
-                foreach (Group existingGroup in Groups)
-                {
-                    if (existingGroup.Label == GetDifferentiationGroup(student))
-                    {
-                        existingGroup.Add(student);
-                        added = true;
-                        break;
-                    }
-                }
-                if (!added)
-                {
-                    var newGroup = new Group(GetDifferentiationGroup(student));
-                    newGroup.Add(student);
-                    AddGroupInOrder(newGroup);
-                }
-                StudentsNotInGroup.Remove(student);
-            }
-
-            if (Groups.Any())
-            {
-                return;
-            }
-
-            Groups.Add(new Group("A"));
-            Groups.Add(new Group("B"));
-            Groups.Add(new Group("C"));
-            Groups.Add(new Group("D"));
-        }
+        #endregion // Constructor
 
         #region Model
 
@@ -163,7 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(GroupTypeProperty, value); }
         }
 
-        public static readonly PropertyData GroupTypeProperty = RegisterProperty("GroupType", typeof (GroupTypes), GroupTypes.Default);
+        public static readonly PropertyData GroupTypeProperty = RegisterProperty("GroupType", typeof(GroupTypes), GroupTypes.Default);
 
         public ObservableCollection<Person> StudentsNotInGroup
         {
@@ -171,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StudentsNotInGroupProperty, value); }
         }
 
-        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("StudentsNotInGroup", typeof (ObservableCollection<Person>), () => new ObservableCollection<Person>());
+        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("StudentsNotInGroup", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         public CollectionViewSource SortedStudentsNotInGroup
         {
@@ -179,7 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SortedStudentsNotInGroupProperty, value); }
         }
 
-        public static readonly PropertyData SortedStudentsNotInGroupProperty = RegisterProperty("SortedStudentsNotInGroup", typeof (CollectionViewSource), () => new CollectionViewSource());
+        public static readonly PropertyData SortedStudentsNotInGroupProperty = RegisterProperty("SortedStudentsNotInGroup", typeof(CollectionViewSource), () => new CollectionViewSource());
 
         public ObservableCollection<Group> Groups
         {
@@ -187,11 +179,61 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(GroupsProperty, value); }
         }
 
-        public static readonly PropertyData GroupsProperty = RegisterProperty("Groups", typeof (ObservableCollection<Group>), () => new ObservableCollection<Group>());
+        public static readonly PropertyData GroupsProperty = RegisterProperty("Groups", typeof(ObservableCollection<Group>), () => new ObservableCollection<Group>());
 
         #endregion // Bindings
 
         #region Methods
+
+        private void InitializeStudentGroups()
+        {
+            StudentsNotInGroup.Clear();
+            StudentsNotInGroup.AddRange(ListOfStudents);
+
+            var studentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);
+            SortedStudentsNotInGroup.Source = StudentsNotInGroup;
+            SortedStudentsNotInGroup.SortDescriptions.Add(studentNameSort);
+
+            foreach (var student in StudentsNotInGroup.ToList())
+            {
+                if (GetDifferentiationGroup(student) == "")
+                {
+                    continue;
+                }
+
+                var isStudentPartOfExistingGroup = false;
+                foreach (var existingGroup in Groups)
+                {
+                    if (existingGroup.Label != GetDifferentiationGroup(student))
+                    {
+                        continue;
+                    }
+
+                    existingGroup.Add(student);
+                    isStudentPartOfExistingGroup = true;
+                    break;
+                }
+
+                if (!isStudentPartOfExistingGroup)
+                {
+                    var newGroup = new Group(GetDifferentiationGroup(student), GroupType);
+                    newGroup.Add(student);
+                    AddGroupInOrder(newGroup);
+                }
+
+                StudentsNotInGroup.Remove(student);
+            }
+
+            if (Groups.Any())
+            {
+                return;
+            }
+
+            Groups.Add(new Group("A", GroupType));
+            Groups.Add(new Group("B", GroupType));
+            Groups.Add(new Group("C", GroupType));
+            Groups.Add(new Group("D", GroupType));
+        }
 
         private void AddGroupInOrder(Group newGroup)
         {
@@ -269,13 +311,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                Groups.Insert(i, new Group(expectedLabel));
+                Groups.Insert(i, new Group(expectedLabel, GroupType));
                 return;
             }
 
             // fall through to here if there are no gaps in the group labels
             var endLabel = "" + (char)('A' + Groups.Count);
-            Groups.Add(new Group(endLabel));
+            Groups.Add(new Group(endLabel, GroupType));
         }
 
         public Command<Group> RemoveGroupCommand { get; private set; }
@@ -293,4 +335,3 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Commands
     }
 }
-

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Catel.Data;
+﻿using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -12,6 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public StudentDifferentiationViewModel(ClassRoster classRoster)
         {
             ClassRoster = classRoster;
+            GroupCreationViewModel = new GroupCreationViewModel(classRoster, GroupCreationViewModel.GroupTypes.Default);
 
             InitializeCommands();
         }
@@ -30,21 +30,24 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ClassRosterProperty, value); }
         }
 
-        public static readonly PropertyData ClassRosterProperty = RegisterProperty("ClassRoster", typeof (ClassRoster));
-
-        /// <summary>Auto-Mapped property of the Roster Model.</summary>
-        [ViewModelToModel("ClassRoster")]
-        public ObservableCollection<Person> ListOfStudents
-        {
-            get { return GetValue<ObservableCollection<Person>>(ListOfStudentsProperty); }
-            set { SetValue(ListOfStudentsProperty, value); }
-        }
-
-        public static readonly PropertyData ListOfStudentsProperty = RegisterProperty("ListOfStudents", typeof (ObservableCollection<Person>));
+        public static readonly PropertyData ClassRosterProperty = RegisterProperty("ClassRoster", typeof(ClassRoster));
 
         #endregion // ClassRoster
 
         #endregion // Models
+
+        #region Bindings
+
+        /// <summary>ViewModel for the GroupCreation Panel.</summary>
+        public GroupCreationViewModel GroupCreationViewModel
+        {
+            get { return GetValue<GroupCreationViewModel>(GroupCreationViewModelProperty); }
+            set { SetValue(GroupCreationViewModelProperty, value); }
+        }
+
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel));
+
+        #endregion // Bindings
 
         #region Commands
 
@@ -59,6 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private async void OnConfirmChangesCommandExecute()
         {
+            await GroupCreationViewModel.SaveViewModelAsync();
             await SaveViewModelAsync();
             await CloseViewModelAsync(true);
         }
@@ -68,6 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private async void OnCancelChangesCommandExecute()
         {
+            await GroupCreationViewModel.CancelViewModelAsync();
             await CancelViewModelAsync();
             await CloseViewModelAsync(false);
         }

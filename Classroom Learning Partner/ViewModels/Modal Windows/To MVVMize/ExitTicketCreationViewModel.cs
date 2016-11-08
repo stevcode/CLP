@@ -12,11 +12,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel(CLPPage basePage)
         {
-            GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
+            //GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = basePage.DuplicatePage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
-            foreach(Group group in GroupCreationViewModel.Groups)
+            foreach(GroupCreationViewModel.Group group in GroupCreationViewModel.Groups)
             {
                 ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
             }
@@ -26,11 +26,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel()
         {
-            GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
+            //GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = new CLPPage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
-            foreach (Group group in GroupCreationViewModel.Groups)
+            foreach (GroupCreationViewModel.Group group in GroupCreationViewModel.Groups)
             {
                 ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
             }
@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(e.NewItems != null)
             {
-                foreach(Group newGroup in e.NewItems)
+                foreach(GroupCreationViewModel.Group newGroup in e.NewItems)
                 {
                     ExitTickets.Insert(e.NewStartingIndex, DifferentiatePage(BasePage, newGroup.Label));
                 }

@@ -371,10 +371,9 @@
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\To MVVMize\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\StudentSelectorViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\To MVVMize\GroupCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
@@ -450,9 +449,6 @@
     <Compile Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml.cs">
       <DependentUpon>ButtonBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml.cs">
-      <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
     </Compile>
@@ -461,9 +457,6 @@
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml.cs">
       <DependentUpon>StudentSelectorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\GroupCreationView.xaml.cs">
-      <DependentUpon>GroupCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
@@ -637,8 +630,8 @@
     <Compile Include="Views\Panels\DisplaysPanelView.xaml.cs">
       <DependentUpon>DisplaysPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Panels\GroupCreationPanel.xaml.cs">
-      <DependentUpon>GroupCreationPanel.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\GroupCreationView.xaml.cs">
+      <DependentUpon>GroupCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
@@ -752,10 +745,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\ClassSubjectCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -765,10 +754,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\To MVVMize\MVVM\GroupCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -980,7 +965,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Panels\GroupCreationPanel.xaml">
+    <Page Include="Views\Modal Windows\GroupCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

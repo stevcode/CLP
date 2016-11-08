@@ -284,6 +284,22 @@
                 </StackPanel>
             </Button>
 
+            <Button Command="{Binding EditStudentGroupsCommand}"
+                    Height="84"
+                    Margin="26 20"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+
+                    <TextBlock Text="Edit Student Groups" />
+
+                </StackPanel>
+            </Button>
+
         </StackPanel>
 
         <catel:StackGrid HorizontalAlignment="Left"

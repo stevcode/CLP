@@ -1211,63 +1211,6 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Options Pane
 
-        #region New Pane
-
-        public static void CreateClassSubject()
-        {
-            var classSubject = new ClassInformation();
-            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
-            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
-            classSubjectCreationView.ShowDialog();
-
-            if (classSubjectCreationView.DialogResult == null ||
-                classSubjectCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            //foreach (var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
-            //{
-            //    foreach (var student in group.Members)
-            //    {
-            //        if (classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
-            //        {
-            //            student.TemporaryDifferentiationGroup = group.Label;
-            //        }
-            //        else
-            //        {
-            //            student.CurrentDifferentiationGroup = group.Label;
-            //        }
-            //    }
-            //}
-
-            //foreach (var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
-            //{
-            //    foreach (var student in group.Members)
-            //    {
-            //        if (classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
-            //        {
-            //            student.TemporaryDifferentiationGroup = group.Label;
-            //        }
-            //        else
-            //        {
-            //            student.CurrentDifferentiationGroup = group.Label;
-            //        }
-            //    }
-            //}
-
-            //classSubject.Projector = classSubject.Teacher;
-
-            //var classesFolderPath = SelectedCache.ClassesFolderPath;
-            //if (!Directory.Exists(classesFolderPath))
-            //{
-            //    Directory.CreateDirectory(classesFolderPath);
-            //}
-            //classSubject.SaveToXML(classesFolderPath);
-        }
-
-        #endregion // New Pane
-
         #region Export Pane
 
         private void OnCopyNotebookForNewOwnerCommandExecute()

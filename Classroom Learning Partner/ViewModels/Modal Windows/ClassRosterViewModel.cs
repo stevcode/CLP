@@ -150,6 +150,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             ImportStudentNamesCommand = new Command(OnImportStudentNamesCommandExecute);
+            EditStudentGroupsCommand = new Command(OnEditStudentGroupsCommandExecute);
             AddPersonCommand = new Command<bool>(OnAddPersonCommandExecute);
             EditPersonCommand = new Command<Person>(OnEditPersonCommandExecute);
             DeleteTeacherCommand = new Command<Person>(OnDeleteTeacherCommandExecute);
@@ -193,6 +194,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("Sorry, unable to open or read this text file.");
             }
+        }
+
+        /// <summary>Edits the differentiation groups of the students.</summary>
+        public Command EditStudentGroupsCommand { get; private set; }
+
+        private void OnEditStudentGroupsCommandExecute()
+        {
+            var viewModel = new StudentDifferentiationViewModel(ClassRoster);
+            viewModel.ShowWindowAsDialog();
         }
 
         /// <summary>Adds a new person to the roster.</summary>
