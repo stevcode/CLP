@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Catel.IoC;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner
@@ -23,7 +16,22 @@ namespace Classroom_Learning_Partner
         string GetClassRosterJson();
 
         [OperationContract]
+        string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
+
+        [OperationContract]
+        void StudentLogout(string studentID);
+
+        [OperationContract]
+        string GetStudentNotebookJson(string studentID);
+
+        [OperationContract]
         Dictionary<string, byte[]> GetImages(List<string> imageHashIDs);
+
+        [OperationContract]
+        List<string> GetStudentNotebookPagesJson(string studentID);
+
+        [OperationContract]
+        List<string> GetStudentPageSubmissionsJson(string studentID);
 
         [OperationContract]
         void AddSerializedSubmission(string zippedPage, string notebookID);
@@ -38,19 +46,21 @@ namespace Classroom_Learning_Partner
         void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
-        string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
-
-        [OperationContract]
-        void StudentLogout(string studentID);
-
-        [OperationContract]
         void SendClassPeriod(string machineAddress);
-
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class InstructorService : IInstructorContract
     {
+        #region Message Constants
+
+        public const string MESSAGE_NO_DATA_SERVICE = "no data service";
+        public const string MESSAGE_SUCCESSFUL_STUDENT_LOG_IN = "successful student log in";
+        public const string MESSAGE_STUDENT_NOT_IN_ROSTER = "student not in roster";
+        public const string MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER = "notebook not loaded by teacher";
+
+        #endregion // Message Constants
+
         #region IInstructorContract Members
 
         public string GetClassRosterJson()
@@ -65,6 +75,190 @@ namespace Classroom_Learning_Partner
             var classRosterJsonString = currentClassRoster.ToJsonString(false);
 
             return classRosterJsonString;
+        }
+
+        public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return MESSAGE_NO_DATA_SERVICE;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                student = Person.ParseFromFullName(studentName);
+                student.ID = studentID;
+                dataService.CurrentClassRoster.ListOfStudents.Add(student); // TODO: Handle saving of this, as well as not saving GUEST logins
+            }
+
+            if (student.IsConnected)
+            {
+                try
+                {
+                    var studentProxy = NetworkService.CreateStudentProxyFromMachineAddress(student.CurrentMachineAddress);
+                    studentProxy.OtherAttemptedLogin(machineName);
+
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    (studentProxy as ICommunicationObject).Close();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                return student.CurrentMachineAddress;
+            }
+
+            student.CurrentMachineAddress = machineAddress;
+            student.CurrentMachineName = machineName;
+            student.IsConnected = true;
+
+            return MESSAGE_SUCCESSFUL_STUDENT_LOG_IN;
+
+            #region Commented Out
+
+            //var task = Task<string>.Factory.StartNew(() =>
+            //                                         {
+            //                                             var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
+            //                                                                                                                                            {
+            //                                                                                                                                                ID = studentID,
+            //                                                                                                                                                FullName = studentName,
+            //                                                                                                                                                IsStudent = true
+            //                                                                                                                                            };
+
+            //                                             if (App.MainWindowViewModel.AvailableUsers.All(x => x.ID != studentID))
+            //                                             {
+            //                                                 App.MainWindowViewModel.AvailableUsers.Add(student);
+            //                                             }
+
+            //                                             //if (student.IsConnected)
+            //                                             //{
+            //                                             //    try
+            //                                             //    {
+            //                                             //        var binding = new NetTcpBinding
+            //                                             //                      {
+            //                                             //                          Security =
+            //                                             //                          {
+            //                                             //                              Mode = SecurityMode.None
+            //                                             //                          }
+            //                                             //                      };
+            //                                             //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
+            //                                             //                                                                          new EndpointAddress(student.CurrentMachineAddress));
+            //                                             //        studentProxy.ForceLogOut(machineName);
+            //                                             //        (studentProxy as ICommunicationObject).Close();
+            //                                             //    }
+            //                                             //    catch (Exception) { }
+            //                                             //}
+
+            //                                             student.CurrentMachineAddress = machineAddress;
+            //                                             student.CurrentMachineName = machineName;
+            //                                             student.IsConnected = true;
+            //                                             return "connected";
+
+            //                                             //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            //                                             //if (notebookService == null)
+            //                                             //{
+            //                                             //    return string.Empty;
+            //                                             //}
+
+            //                                             //if (!useClassPeriod ||
+            //                                             //    notebookService.CurrentClassPeriod == null)
+            //                                             //{
+            //                                             //    return string.Empty;
+            //                                             //}
+            //                                             //
+            //                                             //try
+            //                                             //{
+            //                                             //    Notebook notebookToZip;
+            //                                             //    var newNotebook = notebookService.OpenNotebooks.First().CopyForNewOwner(student);
+
+            //                                             //    var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" +
+            //                                             //                                    newNotebook.OwnerID;
+            //                                             //    var studentNotebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, studentNotebookFolderName);
+            //                                             //    if (Directory.Exists(studentNotebookFolderPath))
+            //                                             //    {
+            //                                             //        var pageIDs = notebookService.CurrentClassPeriod.PageIDs;
+            //                                             //        var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
+            //                                             //        if (studentNotebook == null)
+            //                                             //        {
+            //                                             //            var newNotebookString = ObjectSerializer.ToString(newNotebook);
+            //                                             //            var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+
+            //                                             //            return zippedNotebook;
+            //                                             //        }
+            //                                             //        var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
+            //                                             //        foreach (var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
+            //                                             //        {
+            //                                             //            studentNotebook.Pages.Add(page);
+            //                                             //        }
+            //                                             //        var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+            //                                             //        studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+            //                                             //        var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
+            //                                             //        var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
+
+            //                                             //        return zippedStudentNotebook;
+            //                                             //    }
+
+            //                                             //    var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
+            //                                             //    var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
+
+            //                                             //    return zippedNotebook2;
+            //                                             //}
+            //                                             //catch (Exception ex)
+            //                                             //{
+            //                                             //    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
+            //                                             //    return string.Empty;
+            //                                             //}
+            //                                         },
+            //                                         TaskCreationOptions.LongRunning);
+
+            //return task.Result;
+
+            #endregion // Commented Out
+        }
+
+        public void StudentLogout(string studentID)
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                return;
+            }
+
+            student.IsConnected = false;
+        }
+
+        public string GetStudentNotebookJson(string studentID)
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return MESSAGE_NO_DATA_SERVICE;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                return MESSAGE_STUDENT_NOT_IN_ROSTER;
+            }
+
+            var notebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.Owner.ID == studentID);
+            if (notebook == null)
+            {
+                return MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER;
+            }
+
+            var notebookJsonString = notebook.ToJsonString(false);
+
+            return notebookJsonString;
         }
 
         public Dictionary<string, byte[]> GetImages(List<string> imageHashIDs)
@@ -96,7 +290,63 @@ namespace Classroom_Learning_Partner
             return imageList;
         }
 
-        
+        public List<string> GetStudentNotebookPagesJson(string studentID)
+        {
+            var pageJsonStrings = new List<string>();
+
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return pageJsonStrings;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                return pageJsonStrings;
+            }
+
+            var notebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.Owner.ID == studentID);
+            if (notebook == null)
+            {
+                return pageJsonStrings;
+            }
+
+            pageJsonStrings.AddRange(notebook.Pages.Select(page => page.ToJsonString(false)));
+
+            return pageJsonStrings;
+        }
+
+        public List<string> GetStudentPageSubmissionsJson(string studentID)
+        {
+            var submissionJsonStrings = new List<string>();
+
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return submissionJsonStrings;
+            }
+
+            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
+            if (student == null)
+            {
+                return submissionJsonStrings;
+            }
+
+            var notebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.Owner.ID == studentID);
+            if (notebook == null)
+            {
+                return submissionJsonStrings;
+            }
+
+            submissionJsonStrings.AddRange(from page in notebook.Pages
+                                           from submission in page.Submissions
+                                           select submission.ToJsonString(false));
+
+            return submissionJsonStrings;
+        }
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public void SendClassPeriod(string machineAddress)
         {
@@ -353,161 +603,6 @@ namespace Classroom_Learning_Partner
             //    var notebookFolderPath = dataService.CurrentNotebookInfo.NotebookFolderPath;
             //    notebook.SavePartialNotebook(notebookFolderPath, false);
             //});
-        }
-
-        public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
-        {
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            if (dataService == null)
-            {
-                return string.Empty;
-            }
-
-            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
-            if (student == null)
-            {
-                student = Person.ParseFromFullName(studentName);
-                student.ID = studentID;
-                dataService.CurrentClassRoster.ListOfStudents.Add(student); // TODO: Handle saving of this, as well as not saving GUEST logins
-            }
-
-            if (student.IsConnected)
-            {
-                try
-                {
-                    var studentProxy = NetworkService.CreateStudentProxyFromMachineAddress(student.CurrentMachineAddress);
-                    studentProxy.OtherAttemptedLogin(machineName);
-
-                    // ReSharper disable once SuspiciousTypeConversion.Global
-                    (studentProxy as ICommunicationObject).Close();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                return student.CurrentMachineAddress;
-            }
-
-            student.CurrentMachineAddress = machineAddress;
-            student.CurrentMachineName = machineName;
-            student.IsConnected = true;
-
-            return "SuccessfullyLoggedIn";
-
-            //var task = Task<string>.Factory.StartNew(() =>
-            //                                         {
-            //                                             var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
-            //                                                                                                                                            {
-            //                                                                                                                                                ID = studentID,
-            //                                                                                                                                                FullName = studentName,
-            //                                                                                                                                                IsStudent = true
-            //                                                                                                                                            };
-
-            //                                             if (App.MainWindowViewModel.AvailableUsers.All(x => x.ID != studentID))
-            //                                             {
-            //                                                 App.MainWindowViewModel.AvailableUsers.Add(student);
-            //                                             }
-
-            //                                             //if (student.IsConnected)
-            //                                             //{
-            //                                             //    try
-            //                                             //    {
-            //                                             //        var binding = new NetTcpBinding
-            //                                             //                      {
-            //                                             //                          Security =
-            //                                             //                          {
-            //                                             //                              Mode = SecurityMode.None
-            //                                             //                          }
-            //                                             //                      };
-            //                                             //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
-            //                                             //                                                                          new EndpointAddress(student.CurrentMachineAddress));
-            //                                             //        studentProxy.ForceLogOut(machineName);
-            //                                             //        (studentProxy as ICommunicationObject).Close();
-            //                                             //    }
-            //                                             //    catch (Exception) { }
-            //                                             //}
-
-            //                                             student.CurrentMachineAddress = machineAddress;
-            //                                             student.CurrentMachineName = machineName;
-            //                                             student.IsConnected = true;
-            //                                             return "connected";
-
-            //                                             //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            //                                             //if (notebookService == null)
-            //                                             //{
-            //                                             //    return string.Empty;
-            //                                             //}
-
-            //                                             //if (!useClassPeriod ||
-            //                                             //    notebookService.CurrentClassPeriod == null)
-            //                                             //{
-            //                                             //    return string.Empty;
-            //                                             //}
-            //                                             //
-            //                                             //try
-            //                                             //{
-            //                                             //    Notebook notebookToZip;
-            //                                             //    var newNotebook = notebookService.OpenNotebooks.First().CopyForNewOwner(student);
-
-            //                                             //    var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" +
-            //                                             //                                    newNotebook.OwnerID;
-            //                                             //    var studentNotebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, studentNotebookFolderName);
-            //                                             //    if (Directory.Exists(studentNotebookFolderPath))
-            //                                             //    {
-            //                                             //        var pageIDs = notebookService.CurrentClassPeriod.PageIDs;
-            //                                             //        var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
-            //                                             //        if (studentNotebook == null)
-            //                                             //        {
-            //                                             //            var newNotebookString = ObjectSerializer.ToString(newNotebook);
-            //                                             //            var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
-
-            //                                             //            return zippedNotebook;
-            //                                             //        }
-            //                                             //        var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
-            //                                             //        foreach (var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
-            //                                             //        {
-            //                                             //            studentNotebook.Pages.Add(page);
-            //                                             //        }
-            //                                             //        var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
-            //                                             //        studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
-            //                                             //        var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
-            //                                             //        var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
-
-            //                                             //        return zippedStudentNotebook;
-            //                                             //    }
-
-            //                                             //    var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
-            //                                             //    var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
-
-            //                                             //    return zippedNotebook2;
-            //                                             //}
-            //                                             //catch (Exception ex)
-            //                                             //{
-            //                                             //    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
-            //                                             //    return string.Empty;
-            //                                             //}
-            //                                         },
-            //                                         TaskCreationOptions.LongRunning);
-
-            //return task.Result;
-        }
-
-        public void StudentLogout(string studentID)
-        {
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
-
-            var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
-            if (student == null)
-            {
-                return;
-            }
-
-            student.IsConnected = false;
         }
 
         #endregion

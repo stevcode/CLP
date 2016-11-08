@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
 using Catel.Collections;
 using Catel.IoC;
-using Catel.Windows.Threading;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using ServiceModelEx;
@@ -81,7 +74,10 @@ namespace Classroom_Learning_Partner.Services
 
         public void Connect()
         {
-            _networkThread = new Thread(Run) { IsBackground = true };
+            _networkThread = new Thread(Run)
+                             {
+                                 IsBackground = true
+                             };
             _networkThread.Start();
         }
 
@@ -96,7 +92,10 @@ namespace Classroom_Learning_Partner.Services
             Stop();
             _networkThread.Join();
             _networkThread = null;
-            _networkThread = new Thread(Run) { IsBackground = true };
+            _networkThread = new Thread(Run)
+                             {
+                                 IsBackground = true
+                             };
             _networkThread.Start();
         }
 
@@ -113,7 +112,10 @@ namespace Classroom_Learning_Partner.Services
             StopNetworking();
         }
 
-        private void Stop() { _stopFlag.Set(); }
+        private void Stop()
+        {
+            _stopFlag.Set();
+        }
 
         private void StartNetworking()
         {
@@ -167,28 +169,27 @@ namespace Classroom_Learning_Partner.Services
                     DiscoveredStudents.Open();
 
                     new Thread(() =>
-                    {
-                        Thread.CurrentThread.IsBackground = true;
-                        while (!DiscoveredProjectors.Addresses.Any())
-                        {
-                            Thread.Sleep(1000);
-                        }
+                               {
+                                   Thread.CurrentThread.IsBackground = true;
+                                   while (!DiscoveredProjectors.Addresses.Any())
+                                   {
+                                       Thread.Sleep(1000);
+                                   }
 
-                        try
-                        {
-                            ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding,
-                                                                                              DiscoveredProjectors.Addresses[0]);
+                                   try
+                                   {
+                                       ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
 
-                            CurrentConnectionStatus = ConnectionStatuses.Connected;
-                            App.MainWindowViewModel.IsProjectorFrozen = false;
+                                       CurrentConnectionStatus = ConnectionStatuses.Connected;
+                                       App.MainWindowViewModel.IsProjectorFrozen = false;
 
-                            // TODO: Send, AllowLogin ping to projector 
-                        }
-                        catch (Exception)
-                        {
-                            CurrentConnectionStatus = ConnectionStatuses.Disconnected;
-                        }
-                    }).Start();
+                                       // TODO: Send, AllowLogin ping to projector 
+                                   }
+                                   catch (Exception)
+                                   {
+                                       CurrentConnectionStatus = ConnectionStatuses.Disconnected;
+                                   }
+                               }).Start();
                     break;
                 case ProgramModes.Projector:
                     break;
@@ -196,59 +197,58 @@ namespace Classroom_Learning_Partner.Services
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>
-                    {
-                        Thread.CurrentThread.IsBackground = true;
-                        while (!DiscoveredInstructors.Addresses.Any())
-                        {
-                            Thread.Sleep(1000);
-                        }
+                               {
+                                   Thread.CurrentThread.IsBackground = true;
+                                   while (!DiscoveredInstructors.Addresses.Any())
+                                   {
+                                       Thread.Sleep(1000);
+                                   }
 
-                        try
-                        {
-                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding,
-                                                                                                DiscoveredInstructors.Addresses[0]);
+                                   try
+                                   {
+                                       InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]);
 
-                            CurrentConnectionStatus = ConnectionStatuses.Connected;
-                            var isNotebookOpen = !(App.MainWindowViewModel.Workspace is UserLoginWorkspaceViewModel);
+                                       CurrentConnectionStatus = ConnectionStatuses.Connected;
+                                       var isNotebookOpen = !(App.MainWindowViewModel.Workspace is UserLoginWorkspaceViewModel);
 
-                            if (isNotebookOpen)
-                            {
-                                //if (App.Network.InstructorProxy == null)
-                                //{
-                                //    return;
-                                //}
+                                       if (isNotebookOpen)
+                                       {
+                                           //if (App.Network.InstructorProxy == null)
+                                           //{
+                                           //    return;
+                                           //}
 
-                                //var connectionString =
-                                //    App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
-                                //                                             App.MainWindowViewModel.CurrentUser.ID,
-                                //                                             App.Network.CurrentMachineName,
-                                //                                             App.Network.CurrentMachineAddress);
+                                           //var connectionString =
+                                           //    App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                           //                                             App.MainWindowViewModel.CurrentUser.ID,
+                                           //                                             App.Network.CurrentMachineName,
+                                           //                                             App.Network.CurrentMachineAddress);
 
-                                //if (connectionString == "connected")
-                                //{
-                                //    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
-                                //}
-                            }
-                            else
-                            {
-                                // TODO: Get classRoster then populate Login
-                                var classRosterJson = InstructorProxy.GetClassRosterJson();
-                                if (!string.IsNullOrWhiteSpace(classRosterJson))
-                                {
-                                    var classRoster = AEntityBase.FromJsonString<ClassRoster>(classRosterJson);
-                                    _dataService.SetCurrentClassRoster(classRoster);
-                                    var students = classRoster.ListOfStudents;
-                                    var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;
+                                           //if (connectionString == "connected")
+                                           //{
+                                           //    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
+                                           //}
+                                       }
+                                       else
+                                       {
+                                           // TODO: Get classRoster then populate Login
+                                           var classRosterJson = InstructorProxy.GetClassRosterJson();
+                                           if (!string.IsNullOrWhiteSpace(classRosterJson))
+                                           {
+                                               var classRoster = AEntityBase.FromJsonString<ClassRoster>(classRosterJson);
+                                               _dataService.SetCurrentClassRoster(classRoster);
+                                               var students = classRoster.ListOfStudents;
+                                               var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;
 
-                                    UIHelper.RunOnUI(() => workspace.AvailableStudents.AddRange(students));
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            CurrentConnectionStatus = ConnectionStatuses.Disconnected;
-                        }
-                    }).Start();
+                                               UIHelper.RunOnUI(() => workspace.AvailableStudents.AddRange(students));
+                                           }
+                                       }
+                                   }
+                                   catch (Exception)
+                                   {
+                                       CurrentConnectionStatus = ConnectionStatuses.Disconnected;
+                                   }
+                               }).Start();
                     break;
             }
 

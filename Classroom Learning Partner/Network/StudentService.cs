@@ -22,9 +22,6 @@ namespace Classroom_Learning_Partner
         void ToggleAutoNumberLine(bool isAutoNumberLineEnabled);
 
         [OperationContract]
-        void AddWebcamImage(List<byte> image);
-
-        [OperationContract]
         void OtherAttemptedLogin(string machineName);
     }
 
@@ -35,52 +32,12 @@ namespace Classroom_Learning_Partner
 
         public void TogglePenDownMode(bool isPenDownModeEnabled)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            UIHelper.RunOnUI(() => App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled);
         }
 
         public void ToggleAutoNumberLine(bool isAutoNumberLineEnabled)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                       {
-                                                           App.MainWindowViewModel.CanUseAutoNumberLine = isAutoNumberLineEnabled;
-                                                           return null;
-                                                       },
-                                                       null);
-        }
-
-        public void AddWebcamImage(List<byte> image)
-        {
-            //var page = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
-
-            //MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            //byte[] hash = md5.ComputeHash(image.ToArray());
-            //string imageID = Convert.ToBase64String(hash);
-
-            //if(!page.ImagePool.ContainsKey(imageID))
-            //{
-            //    page.ImagePool.Add(imageID, image);
-            //}
-            //CLPImage imagePO = new CLPImage(imageID, page, 10, 10);
-            //imagePO.IsBackground = true;
-            //imagePO.Height = 450;
-            //imagePO.Width = 600;
-            //imagePO.YPosition = 225;
-            //imagePO.XPosition = 108;
-
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //        (DispatcherOperationCallback)delegate(object arg)
-            //        {
-            //            page.PageObjects.Add(imagePO);
-
-            //            return null;
-            //        }, null);
+            UIHelper.RunOnUI(() => App.MainWindowViewModel.CanUseAutoNumberLine = isAutoNumberLineEnabled);
         }
 
         public void OtherAttemptedLogin(string machineName)

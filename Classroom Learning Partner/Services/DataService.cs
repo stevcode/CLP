@@ -662,7 +662,7 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #endregion // Static Properties
-
+        
         #region Static Methods
 
         #region Files

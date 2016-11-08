@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using NuGet;
 
 //using Microsoft.Ink;
 
@@ -19,15 +21,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Fields
 
         private readonly INetworkService _networkService;
+        private readonly IDataService _dataService;
 
         #endregion // Fields
 
         #region Constructors
 
         /// <summary>Initializes a new instance of the UserLoginWorkspaceViewModel class.</summary>
-        public UserLoginWorkspaceViewModel(INetworkService networkService)
+        public UserLoginWorkspaceViewModel(INetworkService networkService, IDataService dataService)
         {
             _networkService = networkService;
+            _dataService = dataService;
 
             InitializeCommands();
         }
@@ -113,7 +117,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                      _networkService.CurrentUser.ID,
                                                                                      _networkService.CurrentMachineName,
                                                                                      _networkService.CurrentMachineAddress);
-                if (connectionMessage != "SuccessfullyLoggedIn")
+
+                if (connectionMessage == InstructorService.MESSAGE_NO_DATA_SERVICE)
+                {
+                    IsLoggingIn = false;
+                    return;
+                }
+
+                if (connectionMessage != InstructorService.MESSAGE_SUCCESSFUL_STUDENT_LOG_IN)
                 {
                     MessageBox.Show($"Someone else is already logged in with this name from machine {connectionMessage}. Make sure you are logging in as the correct person.",
                                     "Attempted Incorrect Login",
@@ -121,6 +132,63 @@ namespace Classroom_Learning_Partner.ViewModels
                     IsLoggingIn = false;
                     return;
                 }
+
+                var notebookJson = _networkService.InstructorProxy.GetStudentNotebookJson(_networkService.CurrentUser.ID);
+                switch (notebookJson)
+                {
+                    case InstructorService.MESSAGE_NO_DATA_SERVICE:
+                        IsLoggingIn = false;
+                        return;
+                    case InstructorService.MESSAGE_STUDENT_NOT_IN_ROSTER:
+                        IsLoggingIn = false;
+                        return;
+                    case InstructorService.MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER:
+                        IsLoggingIn = false;
+                        return;
+                }
+
+                if (string.IsNullOrWhiteSpace(notebookJson))
+                {
+                    IsLoggingIn = false;
+                    return;
+                }
+
+                var notebook = AEntityBase.FromJsonString<Notebook>(notebookJson);
+                if (notebook == null)
+                {
+                    IsLoggingIn = false;
+                    return;
+                }
+
+                var pagesJson = _networkService.InstructorProxy.GetStudentNotebookPagesJson(_networkService.CurrentUser.ID);
+                if (!pagesJson.Any())
+                {
+                    IsLoggingIn = false;
+                    return;
+                }
+
+                var pages = pagesJson.Select(AEntityBase.FromJsonString<CLPPage>).OrderBy(p => p.PageNumber).ToList();
+
+                var submissionsJson = _networkService.InstructorProxy.GetStudentPageSubmissionsJson(_networkService.CurrentUser.ID);
+                if (!submissionsJson.Any())
+                {
+                    IsLoggingIn = false;
+                    return;
+                }
+
+                foreach (var submissionJson in submissionsJson)
+                {
+                    var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
+                    var page = pages.FirstOrDefault(p => p.ID == submission.ID);
+                    if (page != null)
+                    {
+                        page.Submissions.Add(submission);
+                    }
+                }
+
+                notebook.Pages.AddRange(pages);
+
+                UIHelper.RunOnUI(() => _dataService.SetCurrentNotebook(notebook));
 
                 // TODO: Successfully connected, now download notebook, pages, and submissions.
                 //var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);

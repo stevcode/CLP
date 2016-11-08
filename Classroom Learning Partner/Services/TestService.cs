@@ -1969,5 +1969,37 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // DataService
+
+        #region Student Service
+
+        public void AddWebcamImage(List<byte> image)
+        {
+            //var page = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
+
+            //MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            //byte[] hash = md5.ComputeHash(image.ToArray());
+            //string imageID = Convert.ToBase64String(hash);
+
+            //if(!page.ImagePool.ContainsKey(imageID))
+            //{
+            //    page.ImagePool.Add(imageID, image);
+            //}
+            //CLPImage imagePO = new CLPImage(imageID, page, 10, 10);
+            //imagePO.IsBackground = true;
+            //imagePO.Height = 450;
+            //imagePO.Width = 600;
+            //imagePO.YPosition = 225;
+            //imagePO.XPosition = 108;
+
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //        (DispatcherOperationCallback)delegate(object arg)
+            //        {
+            //            page.PageObjects.Add(imagePO);
+
+            //            return null;
+            //        }, null);
+        }
+
+        #endregion // Student Service
     }
 }
