@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -34,9 +35,6 @@ namespace Classroom_Learning_Partner
         void RemovePageFromDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID);
 
         [OperationContract]
-        void AddSerializedSubmission(string zippedPage, string notebookID);
-
-        [OperationContract]
         void ScrollPage(double percentOffset);
         
         [OperationContract]
@@ -44,11 +42,28 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void RewindCurrentPage();
+
+
+        [OperationContract]
+        string AddStudentSubmission(string submissionJson, string notebookID);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
+        #region Message Constants
+
+        public const string MESSAGE_NO_DATA_SERVICE = "no data service";
+        public const string MESSAGE_NO_NETWORK_SERVICE = "no network service";
+        public const string MESSAGE_SUCCESSFUL_STUDENT_LOG_IN = "successful student log in";
+        public const string MESSAGE_STUDENT_NOT_IN_ROSTER = "student not in roster";
+        public const string MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER = "notebook not loaded by teacher";
+        public const string MESSAGE_SUBMISSION_NOT_DESERIALIZED = "submission not deserialized";
+        public const string MESSAGE_PAGE_NOT_LOADED_IN_NOTEBOOK = "page not loaded in notebook";
+        public const string MESSAGE_SUBMISSION_SUCCESSFUL = "submission successful";
+
+        #endregion // Message Constants
+
         public void FreezeProjector(bool isFreezing)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -316,61 +331,6 @@ namespace Classroom_Learning_Partner
                                                                                         return null;
                                                                                     },
                                                        null);
-        }
-
-        public void AddSerializedSubmission(string zippedPage, string notebookID)
-        {
-            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            if (dataService == null)
-            {
-                return;
-            }
-
-            var unZippedPage = zippedPage.DecompressFromGZip();
-            var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
-
-            if (submission == null ||
-                submission.Owner == null)
-            {
-                Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
-                return;
-            }
-            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-            submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
-
-            var currentNotebook = dataService.CurrentNotebook;
-            if (currentNotebook == null)
-            {
-                return;
-            }
-
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                       {
-                                                           try
-                                                           {
-                                                               var page =
-                                                                       currentNotebook.Pages.FirstOrDefault(
-                                                                                                            x =>
-                                                                                                            x.ID == submission.ID &&
-                                                                                                            x.DifferentiationLevel ==
-                                                                                                            submission.DifferentiationLevel);
-                                                               if (page == null)
-                                                               {
-                                                                   return null;
-                                                               }
-                                                               page.Submissions.Add(submission);
-                                                           }
-                                                           catch (Exception e)
-                                                           {
-                                                               Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
-                                                                                          e.Message);
-                                                           }
-
-                                                           return null;
-                                                       },
-                                                       null);
-
         }
 
         public void ScrollPage(double percentOffset)
@@ -684,5 +644,67 @@ namespace Classroom_Learning_Partner
         }
 
         #endregion
+
+        public string AddStudentSubmission(string submissionJson, string notebookID)
+        {
+            var dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            if (dataService == null)
+            {
+                return MESSAGE_NO_DATA_SERVICE;
+            }
+
+            var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
+            if (submission == null)
+            {
+                return MESSAGE_SUBMISSION_NOT_DESERIALIZED;
+            }
+
+            var studentID = submission.Owner.ID;
+            var studentNotebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.ID == notebookID && n.Owner.ID == studentID);
+            if (studentNotebook == null)
+            {
+                return MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER;
+            }
+
+            var studentPage = studentNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            if (studentPage == null)
+            {
+                return MESSAGE_PAGE_NOT_LOADED_IN_NOTEBOOK;
+            }
+
+            var teacherNotebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.ID == notebookID && !n.Owner.IsStudent);
+            if (teacherNotebook == null)
+            {
+                return MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER;
+            }
+
+            var teacherPage = teacherNotebook.Pages.FirstOrDefault(p => p.ID == submission.ID);
+            if (teacherPage == null)
+            {
+                return MESSAGE_PAGE_NOT_LOADED_IN_NOTEBOOK;
+            }
+
+            UIHelper.RunOnUI(() =>
+            {
+                studentPage.Submissions.Add(submission);
+                if (teacherPage == null)
+                {
+                    return;
+                }
+
+                var pageViewModels = teacherPage.GetAllViewModels();
+                foreach (var pageViewModel in pageViewModels)
+                {
+                    var pageVM = pageViewModel as ACLPPageBaseViewModel;
+                    if (pageVM == null)
+                    {
+                        continue;
+                    }
+                    pageVM.UpdateSubmissionCount();
+                }
+            });
+
+            return MESSAGE_SUBMISSION_SUCCESSFUL;
+        }
     }
 }

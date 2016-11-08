@@ -45,11 +45,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private IPageInteractionService _pageInteractionService;
         private readonly IDataService _dataService;
+        private readonly INetworkService _networkService;
 
-        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService)
+        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService, INetworkService networkService)
         {
             _pageInteractionService = pageInteractionService;
             _dataService = dataService;
+            _networkService = networkService;
 
             InitializeCommands();
             InitializeButtons();
@@ -108,10 +110,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion // Events
-
-
-
-        
 
         private void InitializeButtons()
         {
@@ -735,87 +733,45 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSubmitPageCommandExecute()
         {
             var currentPage = _dataService.CurrentPage;
-
             currentPage.TrimPage();
-            var page = currentPage;
-            var submission = currentPage.NextVersionCopy();
 
             var tBackground = new Thread(() =>
-                               {
-                                   var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-                                   foreach (var tempArraySkipCountingTag in existingTags)
-                                   {
-                                       submission.RemoveTag(tempArraySkipCountingTag);
-                                   }
+                                         {
+                                             var submission = currentPage.NextVersionCopy();
+                                             var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                                             foreach (var tempArraySkipCountingTag in existingTags)
+                                             {
+                                                 submission.RemoveTag(tempArraySkipCountingTag);
+                                             }
 
-                                   HistoryAnalysis.GenerateHistoryActions(submission);
+                                             HistoryAnalysis.GenerateHistoryActions(submission);
 
-                                   string sPage = string.Empty;
-                                   try
-                                   {
-                                       sPage = ObjectSerializer.ToString(submission);
-                                   }
-                                   catch (Exception e)
-                                   {
-                                       Logger.Instance.WriteToLog("Failed To stringify submission");
-                                       Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
-                                       Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
-                                       Logger.Instance.WriteToLog("[Source]: " + e.Source);
-                                       Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
-                                       Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
-                                   }
+                                             UIHelper.RunOnUI(() => currentPage.Submissions.Add(submission));
 
-                                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                       {
-                                                           try
-                                                           {
-                                                               page.Submissions.Add(submission);
-                                                               //page.IsCached = true;
-                                                           }
-                                                           catch (Exception e)
-                                                           {
-                                                               Logger.Instance.WriteToLog("[ERROR] Error adding submission to current page on submit: " +
-                                                                                          e.Message);
-                                                           }
+                                             if (_dataService == null ||
+                                                 _networkService.InstructorProxy == null)
+                                             {
+                                                 return;
+                                             }
 
-                                                           return null;
-                                                       },
-                                                       null);
+                                             var submissionJson = submission.ToJsonString(false);
+                                             if (string.IsNullOrEmpty(submissionJson))
+                                             {
+                                                 return;
+                                             }
 
-                                   var dataService = DependencyResolver.Resolve<IDataService>();
-                                   if (dataService == null)
-                                   {
-                                       Logger.Instance.WriteToLog("notebook service null on submission");
-                                       return;
-                                   }
-                                   if (string.IsNullOrEmpty(sPage))
-                                   {
-                                       Logger.Instance.WriteToLog("sPage null or empty on submission");
-                                       return;
-                                   }
-                                   if (App.Network.InstructorProxy == null)
-                                   {
-                                       Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-                                       return;
-                                   }
-
-                                   try
-                                   {
-                                       //var sPage = ObjectSerializer.ToString(submission);
-                                       var zippedPage = sPage.CompressWithGZip();
-
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
-                                   }
-                                   catch (Exception ex)
-                                   {
-                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                                       return;
-                                   }
-                               })
-                    {
-                        IsBackground = true
-                    };
+                                             try
+                                             {
+                                                 _networkService.InstructorProxy.AddStudentSubmission(submissionJson, _dataService.CurrentNotebook.ID);
+                                             }
+                                             catch (Exception)
+                                             {
+                                                 // ignored
+                                             }
+                                         })
+                              {
+                                  IsBackground = true
+                              };
             tBackground.Start();
         }
 
