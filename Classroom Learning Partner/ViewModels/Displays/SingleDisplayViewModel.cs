@@ -15,12 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public SingleDisplayViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
-        }
-
-        public override string Title
-        {
-            get { return "SingleDisplayVM"; }
+            InitializeCommands();
         }
 
         #endregion //Constructor
@@ -158,6 +153,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
+        }
+
         /// <summary>Forwards PageScroll events to the Projector.</summary>
         public Command<ScrollChangedEventArgs> PageScrollCommand { get; private set; }
 
@@ -176,7 +176,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.ScrollPage(percentOffset);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         #endregion //Commands

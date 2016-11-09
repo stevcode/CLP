@@ -21,14 +21,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return NotebookWorkspaceViewModel.GetContextRibbon(); }
         }
 
-        protected ObservableCollection<UIElement> _contextButtons = new ObservableCollection<UIElement>();
-        protected IPageInteractionService PageInteractionService;
+        protected readonly ObservableCollection<UIElement> _contextButtons = new ObservableCollection<UIElement>();
+        protected readonly IPageInteractionService _pageInteractionService;
 
         #region Constructor
 
         protected APageObjectBaseViewModel()
         {
-            PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             InitializeCommands();
             _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Resources/Images/Delete.png", RemovePageObjectCommand, null, true));
         }
@@ -45,11 +45,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
             ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
-        }
-
-        public override string Title
-        {
-            get { return "APageObjectBaseVM"; }
         }
 
         #endregion //Constructor
@@ -210,8 +205,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            if (PageInteractionService == null ||
-                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            if (_pageInteractionService == null ||
+                _pageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
             {
                 e.Handled = false;
                 return;
@@ -238,8 +233,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
-            if (PageInteractionService == null ||
-                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            if (_pageInteractionService == null ||
+                _pageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
             {
                 e.Handled = false;
                 return;
@@ -269,8 +264,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            if (PageInteractionService == null ||
-                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            if (_pageInteractionService == null ||
+                _pageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
             {
                 e.Handled = false;
                 return;

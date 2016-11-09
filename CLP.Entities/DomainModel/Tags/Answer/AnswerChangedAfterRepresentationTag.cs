@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -22,12 +21,6 @@ namespace CLP.Entities
             HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
         }
 
-        /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public AnswerChangedAfterRepresentationTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion // Constructors
 
         #region Properties
@@ -39,7 +32,7 @@ namespace CLP.Entities
             set { SetValue(HistoryActionIDsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
 
         #region Calculated Properties
 
@@ -96,15 +89,9 @@ namespace CLP.Entities
             }
         }
 
-        public override Category Category
-        {
-            get { return Category.Answer; }
-        }
+        public override Category Category => Category.Answer;
 
-        public override string FormattedName
-        {
-            get { return "Answer Changed After Representation"; }
-        }
+        public override string FormattedName => "Answer Changed After Representation";
 
         public override string FormattedValue
         {

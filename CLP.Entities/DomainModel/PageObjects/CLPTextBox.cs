@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -32,12 +31,6 @@ namespace CLP.Entities
             Width = 400.0;
         }
 
-        /// <summary>Initializes <see cref="CLPTextBox" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CLPTextBox(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -49,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(TextProperty, value); }
         }
 
-        public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof (string), string.Empty);
+        public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string), string.Empty);
 
         /// <summary>Context associated with <see cref="CLPTextBox" />.</summary>
         public TextContexts TextContext
@@ -58,8 +51,7 @@ namespace CLP.Entities
             set { SetValue(TextContextProperty, value); }
         }
 
-        public static readonly PropertyData TextContextProperty = RegisterProperty("TextContext", typeof (TextContexts), TextContexts.None);
-        
+        public static readonly PropertyData TextContextProperty = RegisterProperty("TextContext", typeof(TextContexts), TextContexts.None);
 
         #endregion //Properties
 

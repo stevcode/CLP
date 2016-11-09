@@ -1,4 +1,4 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -10,9 +10,16 @@ namespace ServiceModelEx
    [Serializable]
    internal class WorkItem
    {
-      object m_State;
-      SendOrPostCallback m_Method;
       ManualResetEvent m_AsyncWaitHandle;
+
+      public object State
+      {get;private set;}
+
+      public SendOrPostCallback Method
+      {get;private set;}
+
+      public AsyncContext AsyncContext
+      {get;private set;}
 
       public WaitHandle AsyncWaitHandle
       {
@@ -22,17 +29,18 @@ namespace ServiceModelEx
          }
       }
 
-      internal WorkItem(SendOrPostCallback method,object state)
+      internal WorkItem(SendOrPostCallback method,object state,AsyncContext asyncContext = null)
       {
-         m_Method = method;
-         m_State = state;
+         Method = method;
+         State = state;
          m_AsyncWaitHandle = new ManualResetEvent(false);
+         AsyncContext = asyncContext;
       }
 
       //This method is called on the worker thread to execute the method
       internal void CallBack()
       {
-         m_Method(m_State);
+         Method(State);
          m_AsyncWaitHandle.Set();
       }
    }

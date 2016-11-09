@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -33,12 +32,6 @@ namespace CLP.Entities
             CompletenessValue = completenessValue;
         }
 
-        /// <summary>Initializes <see cref="DivisionTemplateCompletenessTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateCompletenessTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -50,8 +43,7 @@ namespace CLP.Entities
             set { SetValue(CompletenessValueProperty, value); }
         }
 
-        public static readonly PropertyData CompletenessValueProperty = RegisterProperty("CompletenessValue",
-                                                                                         typeof (DivisionTemplateCompletenessValues));
+        public static readonly PropertyData CompletenessValueProperty = RegisterProperty("CompletenessValue", typeof(DivisionTemplateCompletenessValues));
 
         #region ATagBase Overrides
 

@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -13,7 +13,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.Threading;
-   
+
 namespace ServiceModelEx
 {
    public static class DiscoveryHelper
@@ -58,6 +58,7 @@ namespace ServiceModelEx
                {
                   binding = MetadataExchangeBindings.CreateMexHttpsBinding();
                }
+
                Debug.Assert(binding != null);
                if(binding != null)
                {

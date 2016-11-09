@@ -97,8 +97,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
         {
-            if(!IsResizable ||
-               App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student)
+            if(!IsResizable)
             {
                 return;
             }

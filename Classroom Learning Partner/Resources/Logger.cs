@@ -22,29 +22,29 @@ namespace Classroom_Learning_Partner
 
         public void InitializeLog(ProgramModes currentProgramMode)
         {
-            fileName = "CLPLog" + currentProgramMode + ".log";
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
+            //fileName = "CLPLog" + currentProgramMode + ".log";
+            //if (!Directory.Exists(fileDirectory))
+            //{
+            //    Directory.CreateDirectory(fileDirectory);
+            //}
 
-            filePath = fileDirectory + @"\" + fileName;
-            if (!File.Exists(filePath))
-            {
-                //File.Create(filePath);
-                File.WriteAllText(filePath, "**Log File Created**");
-            }
+            //filePath = fileDirectory + @"\" + fileName;
+            //if (!File.Exists(filePath))
+            //{
+            //    //File.Create(filePath);
+            //    File.WriteAllText(filePath, "**Log File Created**");
+            //}
 
-            var initializeString = "*** New Log Instance - " + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " ***";
-            WriteToLog(initializeString);
+            //var initializeString = "*** New Log Instance - " + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " ***";
+            //WriteToLog(initializeString);
         }
 
         public void WriteToLog(string s)
         {
-            File.AppendAllText(filePath,
-                               Environment.NewLine + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " +
-                               s);
-            Console.WriteLine(DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
+            //File.AppendAllText(filePath,
+            //                   Environment.NewLine + DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " +
+            //                   s);
+            //Console.WriteLine(DateTime.Now.ToString("MM.dd.yyyy") + " " + DateTime.Now.ToLongTimeString() + " [CLP Logger]: " + s);
         }
     }
 }

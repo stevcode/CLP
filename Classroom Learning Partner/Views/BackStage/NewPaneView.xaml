@@ -18,60 +18,36 @@
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       FontFamily="Segoe UI Light"
-                       FontSize="40"
-                       Foreground="#444444"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageTitleTextBlock}" />
 
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Left">
+        <catel:StackGrid DockPanel.Dock="Left"
+                         VerticalAlignment="Stretch">
 
-            <TextBlock Text="In New Folder"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI Light"
-                       FontSize="30"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource DynamicMainColor}"
-                       Margin="0 5"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <TextBox Text="{Binding TypedCacheName}"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Center"
-                     TextAlignment="Left"
-                     FontFamily="Segoe UI"
-                     FontSize="12pt"
-                     Width="225"
-                     TextOptions.TextRenderingMode="Auto"
-                     TextOptions.TextFormattingMode="Ideal" />
+            <TextBlock Text="For New Class"
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <TextBlock Text="In Existing Folder"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI Light"
-                       FontSize="30"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource DynamicMainColor}"
-                       Margin="0 5"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+            <TextBox Text="{Binding NewZipContainerFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                     Style="{StaticResource BackStageTextBox}" />
+
+            <TextBlock Text="For Existing Class"
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding AvailableCaches}"
-                     SelectedItem="{Binding SelectedCache}"
+                     ItemsSource="{Binding AvailableZipContainerFileNames}"
+                     SelectedItem="{Binding SelectedExistingZipContainerFileName}"
                      SelectionMode="Single"
                      ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                      Width="275"
-                     ManipulationBoundaryFeedback="CachesListBox_OnManipulationBoundaryFeedback">
+                     ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
 
@@ -94,23 +70,16 @@
                             </Grid.Style>
 
                             <!-- Button Content -->
-                            <TextBlock Text="{Binding CacheName}"
-                                       TextAlignment="Left"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center"
-                                       FontFamily="Segoe UI"
-                                       FontSize="12pt"
-                                       Foreground="Black"
-                                       Margin="26 0 0 0"
-                                       TextOptions.TextRenderingMode="Auto"
-                                       TextOptions.TextFormattingMode="Ideal" />
+                            <TextBlock Text="{Binding}"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
+
                         </Grid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </StackPanel>
+        </catel:StackGrid>
 
         <Line DockPanel.Dock="Left"
               Stretch="Fill"
@@ -120,95 +89,66 @@
               Stroke="{StaticResource GrayEdgeColor}"
               StrokeThickness="1" />
 
-        <StackPanel Margin="26 0 0 0">
+        <DockPanel LastChildFill="True"
+                   HorizontalAlignment="Stretch">
 
-            <TextBlock Text="{Binding SelectedCacheDirectory}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI Light"
+            <TextBlock DockPanel.Dock="Top"
+                       Text="{Binding SelectedZipContainerFullFilePath}"
                        FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource DynamicMainColor}"
-                       Margin="0 10"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Margin="26 10 0 10"
+                       Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <TextBlock Text="Notebook Name:"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI"
-                       FontSize="12pt"
-                       Foreground="Black"
-                       Margin="0 5"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+            <catel:StackGrid HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="26 0 0 0">
 
-            <TextBox Text="{Binding NotebookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Center"
-                     TextAlignment="Left"
-                     FontFamily="Segoe UI"
-                     FontSize="12pt"
-                     Width="225"
-                     TextOptions.TextRenderingMode="Auto"
-                     TextOptions.TextFormattingMode="Ideal" />
+                <Grid.Resources>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource BackStageTextBlock}">
+                        <Setter Property="Margin"
+                                Value="0 5 5 0" />
+                    </Style>
+                    <Style TargetType="TextBox"
+                           BasedOn="{StaticResource BackStageTextBox}" />
+                </Grid.Resources>
 
-            <TextBlock Text="Curriculum:"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI"
-                       FontSize="12pt"
-                       Foreground="Black"
-                       Margin="0 5"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <TextBox Text="{Binding NotebookCurriculum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Center"
-                     TextAlignment="Left"
-                     FontFamily="Segoe UI"
-                     FontSize="12pt"
-                     Width="225"
-                     TextOptions.TextRenderingMode="Auto"
-                     TextOptions.TextFormattingMode="Ideal" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Button Command="{Binding CreateNotebookCommand}"
-                    Width="80"
-                    Height="84"
-                    Margin="0 20"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource BackStageTopButton}">
+                <TextBlock Grid.Column="0"
+                           Text="Notebook Name:" />
 
-                <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
+                <TextBox Grid.Column="1"
+                         Text="{Binding NotebookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
-                    <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                <Button Grid.Column="0"
+                        Command="{Binding CreateNotebookCommand}"
+                        Width="80"
+                        Height="84"
+                        Margin="0 20"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource BackStageButton}">
 
-                    <TextBlock Text="Create Notebook"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
 
-                </StackPanel>
-            </Button>
+                        <Image Source="pack://application:,,,/Resources/Images/NewNotebook32.png" />
 
-        </StackPanel>
+                        <TextBlock Text="Create Notebook" />
+
+                    </StackPanel>
+                </Button>
+
+            </catel:StackGrid>
+
+        </DockPanel>
 
     </DockPanel>
 

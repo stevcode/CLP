@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class LassoRegion : APageObjectBase
     {
         #region Constructors
@@ -32,18 +33,13 @@ namespace CLP.Entities
             Width = width;
         }
 
-        /// <summary>Initializes <see cref="LassoRegion" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public LassoRegion(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
 
         /// <summary>List of all the lassoed <see cref="IPageObject" />s.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<IPageObject> LassoedPageObjects
         {
@@ -51,10 +47,11 @@ namespace CLP.Entities
             set { SetValue(LassoedPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData LassoedPageObjectsProperty = RegisterProperty("LassoedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
+        public static readonly PropertyData LassoedPageObjectsProperty = RegisterProperty("LassoedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
 
         /// <summary>StrokeCollection of all the lassoed <see cref="Stroke" />s.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection LassoedStrokes
         {
@@ -62,7 +59,7 @@ namespace CLP.Entities
             set { SetValue(LassoedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData LassoedStrokesProperty = RegisterProperty("LassoedStrokes", typeof (StrokeCollection), () => new StrokeCollection());
+        public static readonly PropertyData LassoedStrokesProperty = RegisterProperty("LassoedStrokes", typeof(StrokeCollection), () => new StrokeCollection());
 
         #endregion //Properties
 
@@ -115,10 +112,8 @@ namespace CLP.Entities
 
             try
             {
-                foreach (
-                    var acceptorPageObject in
-                        ParentPage.PageObjects.OfType<IPageObjectAccepter>()
-                                  .Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                foreach (var acceptorPageObject in
+                    ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
                 {
                     var removedPageObjects = new List<IPageObject>();
                     var addedPageObjects = new ObservableCollection<IPageObject>();
@@ -141,10 +136,8 @@ namespace CLP.Entities
                     acceptorPageObject.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
                 }
 
-                foreach (
-                    var acceptorPageObject in
-                        ParentPage.PageObjects.OfType<IStrokeAccepter>()
-                                  .Where(pageObject => pageObject.CanAcceptStrokes && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                foreach (var acceptorPageObject in
+                    ParentPage.PageObjects.OfType<IStrokeAccepter>().Where(pageObject => pageObject.CanAcceptStrokes && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
                 {
                     var pageObjectBounds = new Rect(acceptorPageObject.XPosition, acceptorPageObject.YPosition, acceptorPageObject.Width, acceptorPageObject.Height);
 

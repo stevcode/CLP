@@ -1,50 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20826</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0858C710-AF53-4049-B98E-CFE3638D1228}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ServiceModelEx</RootNamespace>
     <AssemblyName>ServiceModelEx</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Properties\ServiceModelEx.snk</AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <PublishUrl>http://localhost/ServiceModelEx/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -53,25 +30,16 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Design|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Design\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -80,25 +48,16 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Design|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Design\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -107,142 +66,184 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Design|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Design\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Standalone|AnyCPU'">
+    <OutputPath>bin\Standalone\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Standalone|x64'">
+    <OutputPath>bin\x64\Standalone\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Standalone|x86'">
+    <OutputPath>bin\x86\Standalone\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Discovery" />
-    <Reference Include="System.ServiceModel.Web">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.WorkflowServices">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.WorkflowServices" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncOneWayClientBase.cs" />
     <Compile Include="Bindings\BindingRequirementAttribute.cs" />
     <Compile Include="Bindings\NetNamedPipeContextBinding.cs" />
-    <Compile Include="Context\HeaderChannelFactory.cs" />
-    <Compile Include="Data\GenericResolverBehaviorAttribute.cs" />
-    <Compile Include="Data\GenericResolver.cs" />
-    <Compile Include="Data\GenericResolverInstaller.cs" />
-    <Compile Include="GenericInterceptor\InterceptorChannelFactory.cs" />
-    <Compile Include="CustomSyncContext\Affinity\HostThreadAffinity.cs" />
-    <Compile Include="Discovery\AnnouncementSink.cs" />
-    <Compile Include="Discovery\AddressesContainer.cs" />
-    <Compile Include="Discovery\DiscoveryFactory.cs" />
-    <Compile Include="Discovery\DiscoveredServices.cs" />
-    <Compile Include="Discovery\DiscoveryHelper.cs" />
-    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceProviderFactory.cs" />
-    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceProvider.cs" />
-    <Compile Include="Durability\MemoryProvider.cs" />
-    <Compile Include="Durability\MemoryProviderFactory.cs" />
-    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceStore.cs" />
-    <Compile Include="Durability\Shared Memory Storage\TransactionalMemoryStore.cs" />
-    <Compile Include="Durability\File\FilePersistenceProvider.cs" />
-    <Compile Include="Durability\File\FilePersistenceProviderFactory.cs" />
-    <Compile Include="Context\ContextManager.cs" />
+    <Compile Include="Context\Async\AsyncContext.cs" />
+    <Compile Include="Context\Async\AsyncContextScope.cs" />
+    <Compile Include="Context\Async\AsyncExtensions.cs" />
+    <Compile Include="Context\Async\WcfContextAwaiter.cs" />
     <Compile Include="Context\ContextClientBase.cs" />
-    <Compile Include="CustomSyncContext\Priority\PriorityProxy.cs" />
+    <Compile Include="Context\ContextManager.cs" />
+    <Compile Include="Context\GenericContext.cs" />
+    <Compile Include="Context\HeaderChannelFactory.cs" />
+    <Compile Include="Context\HeaderClientBase.cs" />
+    <Compile Include="CustomSyncContext\Affinity\AffinitySynchronizer.cs" />
+    <Compile Include="CustomSyncContext\Affinity\CallbackThreadAffinityBehaviorAttribute.cs" />
+    <Compile Include="CustomSyncContext\Affinity\HostThreadAffinity.cs" />
+    <Compile Include="CustomSyncContext\Affinity\ThreadAffinityBehaviorAttribute.cs" />
+    <Compile Include="CustomSyncContext\Async\AsyncContextBehaviorAttribute.cs" />
+    <Compile Include="CustomSyncContext\Async\AsyncContextSynchronizer.cs" />
+    <Compile Include="CustomSyncContext\Async\HostAsyncContextExtensions.cs" />
+    <Compile Include="CustomSyncContext\CallbackThreadPoolBehaviorAttribute.cs" />
     <Compile Include="CustomSyncContext\Priority\PriorityCallsBehaviorAttribute.cs" />
     <Compile Include="CustomSyncContext\Priority\PriorityContext.cs" />
+    <Compile Include="CustomSyncContext\Priority\PriorityProxy.cs" />
     <Compile Include="CustomSyncContext\Priority\PrioritySynchronizer.cs" />
-    <Compile Include="Duplex\DuplexChannelFactory.cs" />
-    <Compile Include="Errors\Logbook\ILogbookManagerService.cs" />
-    <Compile Include="Errors\Logbook\LogbookEntryService.cs" />
-    <Compile Include="Errors\Logbook\LogbookManager.cs" />
-    <Compile Include="GenericInterceptor\InterceptorClientBase.cs" />
-    <Compile Include="Hosting\WcfWrapper.cs" />
+    <Compile Include="CustomSyncContext\ThreadPoolBehaviorAttribute.cs" />
+    <Compile Include="CustomSyncContext\ThreadPoolHelper.cs" />
+    <Compile Include="CustomSyncContext\ThreadPoolSynchronizer.cs" />
+    <Compile Include="CustomSyncContext\WorkItem.cs" />
+    <Compile Include="Data\DataTableHelper.cs" />
+    <Compile Include="Data\GenericDataContractSerializer.cs" />
+    <Compile Include="Data\GenericResolver.cs" />
+    <Compile Include="Data\GenericResolverBehaviorAttribute.cs" />
+    <Compile Include="Data\GenericResolverInstaller.cs" />
+    <Compile Include="Discovery\AddressesContainer.cs" />
+    <Compile Include="Discovery\AnnouncementSink.cs" />
+    <Compile Include="Discovery\DiscoveredServices.cs" />
+    <Compile Include="Discovery\DiscoveryFactory.cs" />
+    <Compile Include="Discovery\DiscoveryHelper.cs" />
     <Compile Include="Discovery\DiscoveryPublishService.cs" />
-    <Compile Include="AsyncOneWayClientBase.cs" />
-    <Compile Include="Queueing\ServiceResponseBase.cs" />
-    <Compile Include="Transactions\TransactionalBehaviorAttribute.cs" />
+    <Compile Include="Discovery\Tcp\DiscoveryFactory.cs" />
+    <Compile Include="Discovery\Tcp\DiscoveryService.cs" />
+    <Compile Include="Discovery\Tcp\DuplexAnnouncementSink.cs" />
+    <Compile Include="Discovery\Tcp\DuplexDiscoveryClient.cs" />
+    <Compile Include="Discovery\Tcp\IAnnouncements.cs" />
+    <Compile Include="Discovery\Tcp\IAnnouncementsSubscription.cs" />
+    <Compile Include="Discovery\Tcp\IDiscovery.cs" />
+    <Compile Include="Discovery\Tcp\IDiscoveryCallback.cs" />
+    <Compile Include="Discovery\Tcp\IDiscoverySubscription.cs" />
+    <Compile Include="Duplex\DuplexChannelFactory.cs" />
+    <Compile Include="Duplex\DuplexClientBase.cs" />
+    <Compile Include="Duplex\InstanceContext.cs" />
+    <Compile Include="Durability\File\FileInstanceStore.cs" />
+    <Compile Include="Durability\File\FilePersistenceProvider.cs" />
+    <Compile Include="Durability\File\FilePersistenceProviderFactory.cs" />
+    <Compile Include="Durability\IInstanceStore.cs" />
+    <Compile Include="Durability\MemoryProvider.cs" />
+    <Compile Include="Durability\MemoryProviderFactory.cs" />
+    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceProvider.cs" />
+    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceProviderFactory.cs" />
+    <Compile Include="Durability\Per Instance Storage\TransactionalInstanceStore.cs" />
     <Compile Include="Durability\Shared Memory Storage\TransactionalMemoryProvider.cs" />
     <Compile Include="Durability\Shared Memory Storage\TransactionalMemoryProviderFactory.cs" />
-    <Compile Include="Errors\DebugHelper.cs" />
-    <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="GenericInterceptor\ServiceInterceptorBehaviorAttribute.cs" />
-    <Compile Include="GenericInterceptor\OperationInterceptorBehaviorAttribute.cs" />
-    <Compile Include="GenericInterceptor\GenericInvoker.cs" />
-    <Compile Include="Durability\File\FileInstanceStore.cs" />
-    <Compile Include="Durability\IInstanceStore.cs" />
-    <Compile Include="Hosting\ServiceThrottleHelper.cs" />
-    <Compile Include="MetadataHelper.cs" />
-    <Compile Include="Data\GenericDataContractSerializer.cs" />
-    <Compile Include="Context\GenericContext.cs" />
-    <Compile Include="Context\HeaderClientBase.cs" />
-    <Compile Include="PublishSubscribe\PersistentSubscriptionServiceProxy.cs" />
-    <Compile Include="Queueing\ClientResponseBase.cs" />
-    <Compile Include="Queueing\ResponseContext.cs" />
-    <Compile Include="Queueing\QueuedServiceHelper.cs" />
-    <Compile Include="Security\Declarative Security\SecureDuplexClientBase.cs" />
-    <Compile Include="Security\Identity Stack\SecurityCallFrame.cs" />
-    <Compile Include="Security\Identity Stack\SecurityCallStack.cs" />
-    <Compile Include="Security\Identity Stack\SecurityCallStackClientBase.cs" />
-    <Compile Include="Security\Identity Stack\SecurityCallStackContext.cs" />
-    <Compile Include="Security\Identity Stack\SecurityCallStackInterceptor.cs" />
-    <Compile Include="Security\Declarative Security\ServiceSecurity.cs" />
-    <Compile Include="Security\Declarative Security\SecureClientBase.cs" />
-    <Compile Include="Security\Declarative Security\SecurityHelper.cs" />
-    <Compile Include="Security\Declarative Security\SecurityBehaviorAttribute.cs" />
-    <Compile Include="Security\Declarative Security\SecurityBehavior.cs" />
-    <Compile Include="CustomSyncContext\Affinity\AffinitySynchronizer.cs" />
+    <Compile Include="Durability\Shared Memory Storage\TransactionalMemoryStore.cs" />
     <Compile Include="Errors\CallbackErrorHandlerAttribute.cs" />
+    <Compile Include="Errors\DebugHelper.cs" />
     <Compile Include="Errors\ErrorHandlerAttribute.cs" />
-    <Compile Include="Extensions\Collection.cs" />
-    <Compile Include="Data\DataTableHelper.cs" />
     <Compile Include="Errors\ErrorHandlerHelper.cs" />
+    <Compile Include="Errors\Logbook\ILogbookManagerService.cs" />
     <Compile Include="Errors\Logbook\LogbookEntryClient.cs" />
+    <Compile Include="Errors\Logbook\LogbookEntryService.cs" />
+    <Compile Include="Errors\Logbook\LogbookManager.cs" />
     <Compile Include="Errors\Logbook\LogbookManagerProxy.cs" />
+    <Compile Include="Errors\Logbook\WCFLogbookDataSet.cs">
+      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
+      <SubType>code</SubType>
+    </Compile>
+    <Compile Include="Errors\Logbook\WCFLogbookDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions\ArrayExtensions.cs" />
+    <Compile Include="Extensions\Collection.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="GenericInterceptor\GenericInvoker.cs" />
+    <Compile Include="GenericInterceptor\InterceptorChannelFactory.cs" />
+    <Compile Include="GenericInterceptor\InterceptorClientBase.cs" />
+    <Compile Include="GenericInterceptor\OperationInterceptorBehaviorAttribute.cs" />
+    <Compile Include="GenericInterceptor\ServiceInterceptorBehaviorAttribute.cs" />
+    <Compile Include="Hosting\InProcFactory.cs" />
     <Compile Include="Hosting\ServiceHost.cs" />
+    <Compile Include="Hosting\ServiceThrottleHelper.cs" />
+    <Compile Include="Hosting\WcfWrapper.cs" />
+    <Compile Include="MetadataHelper.cs" />
+    <Compile Include="OneWayClientBaseAsync.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PublishSubscribe\FilePublishService.cs" />
+    <Compile Include="PublishSubscribe\FileSubscriptionManager.cs" />
+    <Compile Include="PublishSubscribe\PersistentSubscriptionServiceProxy.cs" />
     <Compile Include="PublishSubscribe\PublishService.cs" />
-    <Compile Include="PublishSubscribe\PublishSubscribeDataSet.Designer.cs" />
+    <Compile Include="PublishSubscribe\PublishSubscribeDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PublishSubscribeDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="PublishSubscribe\PubSubContracts.cs" />
     <Compile Include="PublishSubscribe\SubscriptionManager.cs" />
-    <Compile Include="Properties\Settings.cs" />
-    <Compile Include="Duplex\DuplexClientBase.cs" />
-    <Compile Include="Hosting\InProcFactory.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Duplex\InstanceContext.cs" />
-    <Compile Include="CustomSyncContext\Affinity\CallbackThreadAffinityBehaviorAttribute.cs" />
-    <Compile Include="CustomSyncContext\CallbackThreadPoolBehaviorAttribute.cs" />
-    <Compile Include="CustomSyncContext\WorkItem.cs" />
-    <Compile Include="CustomSyncContext\Affinity\ThreadAffinityBehaviorAttribute.cs" />
-    <Compile Include="CustomSyncContext\ThreadPoolBehaviorAttribute.cs" />
-    <Compile Include="CustomSyncContext\ThreadPoolHelper.cs" />
-    <Compile Include="CustomSyncContext\ThreadPoolSynchronizer.cs" />
+    <Compile Include="Queueing\ClientResponseBase.cs" />
+    <Compile Include="Queueing\QueuedServiceHelper.cs" />
+    <Compile Include="Queueing\ResponseContext.cs" />
+    <Compile Include="Queueing\ServiceResponseBase.cs" />
+    <Compile Include="Security\Declarative Security\SecureClientBase.cs" />
+    <Compile Include="Security\Declarative Security\SecureDuplexClientBase.cs" />
+    <Compile Include="Security\Declarative Security\SecurityBehavior.cs" />
+    <Compile Include="Security\Declarative Security\SecurityBehaviorAttribute.cs" />
+    <Compile Include="Security\Declarative Security\SecurityHelper.cs" />
+    <Compile Include="Security\Declarative Security\ServiceSecurity.cs" />
+    <Compile Include="Security\Identity Stack\SecurityCallFrame.cs" />
+    <Compile Include="Security\Identity Stack\SecurityCallStack.cs" />
+    <Compile Include="Security\Identity Stack\SecurityCallStackClientBase.cs" />
+    <Compile Include="Security\Identity Stack\SecurityCallStackContext.cs" />
+    <Compile Include="Security\Identity Stack\SecurityCallStackInterceptor.cs" />
+    <Compile Include="Transactions\TransactionalBehaviorAttribute.cs" />
     <Compile Include="Transactions\VRMs\ResourceManager.cs" />
     <Compile Include="Transactions\VRMs\Transactional.cs" />
     <Compile Include="Transactions\VRMs\TransactionalArray.cs" />
@@ -255,11 +256,6 @@
     <Compile Include="Transactions\VRMs\TransactionalSortedDictionary.cs" />
     <Compile Include="Transactions\VRMs\TransactionalSortedList.cs" />
     <Compile Include="Transactions\VRMs\TransactionalStack.cs" />
-    <Compile Include="Errors\Logbook\WCFLogbookDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Windows Forms\ActivationMonitor.cs" />
     <Compile Include="Windows Forms\AppSingleton.cs" />
     <Compile Include="Windows Forms\FormHost.cs">
@@ -288,7 +284,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
+    <None Include="app.config" />
+    <None Include="Errors\Logbook\WCFLogbookDataSet.xsc">
+      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="Errors\Logbook\WCFLogbookDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>WCFLogbookDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Errors\Logbook\WCFLogbookDataSet.xss">
+      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -297,49 +304,14 @@
       <DependentUpon>PublishSubscribeDataSet.xsd</DependentUpon>
     </None>
     <None Include="PublishSubscribe\PublishSubscribeDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PublishSubscribeDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <None Include="PublishSubscribe\PublishSubscribeDataSet.xss">
       <DependentUpon>PublishSubscribeDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Properties\ServiceModelEx.snk" />
-    <None Include="Errors\Logbook\WCFLogbookDataSet.xsc">
-      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="Errors\Logbook\WCFLogbookDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>WCFLogbookDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Errors\Logbook\WCFLogbookDataSet.xss">
-      <DependentUpon>WCFLogbookDataSet.xsd</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeButton.resx">
-      <DependentUpon>SafeButton.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeListBox.resx">
-      <DependentUpon>SafeListBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeProgressBar.resx">
-      <DependentUpon>SafeProgressBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeStatusBar.resx">
-      <DependentUpon>SafeStatusBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeTextBox.resx">
-      <DependentUpon>SafeTextBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeTrackBar.resx">
-      <DependentUpon>SafeTrackBar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <None Include="Queueing\ResponseScope from Second Edition.zip" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Windows Forms\Safe Controls\SafeButton.bmp" />
@@ -349,35 +321,27 @@
     <Content Include="Windows Forms\Safe Controls\SafeStatusBar.bmp" />
     <Content Include="Windows Forms\Safe Controls\SafeTextbox.bmp" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.VisualBasic.PowerPacks.10.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft Visual Basic PowerPacks 10.0</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeButton.resx">
+      <DependentUpon>SafeButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeListBox.resx">
+      <DependentUpon>SafeListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeProgressBar.resx">
+      <DependentUpon>SafeProgressBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeStatusBar.resx">
+      <DependentUpon>SafeStatusBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeTextBox.resx">
+      <DependentUpon>SafeTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows Forms\Safe Controls\SafeTrackBar.resx">
+      <DependentUpon>SafeTrackBar.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -385,11 +349,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

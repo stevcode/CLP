@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace CLP.Entities
+﻿namespace CLP.Entities
 {
     public interface IRepresentationComparer
     {

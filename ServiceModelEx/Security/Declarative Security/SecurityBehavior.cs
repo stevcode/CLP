@@ -1,11 +1,10 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Reflection;
@@ -15,27 +14,26 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.ServiceModel.Security;
-using System.Web.Configuration;
-using System.Web.Security;
 using System.Web.Compilation;
-
+using System.Web.Security;
 
 namespace ServiceModelEx
 {
    class SecurityBehavior : IServiceBehavior
    {
-      ServiceSecurity m_Mode;
-      StoreLocation m_StoreLocation;
-      StoreName m_StoreName;
-      X509FindType m_FindType;
-      string m_SubjectName;
+      readonly ServiceSecurity m_Mode;
+      readonly StoreLocation m_StoreLocation;
+      readonly StoreName m_StoreName;
+      readonly X509FindType m_FindType;
+      readonly string m_SubjectName;
+
       bool m_UseAspNetProviders;
       string m_ApplicationName = String.Empty;
 
 
       public bool ImpersonateAll
       {
-         get;set;
+         get; set;
       }
       public string ApplicationName
       {
@@ -81,7 +79,7 @@ namespace ServiceModelEx
          m_FindType = findType;
          m_SubjectName = subjectName;
       }
-           
+
       public void Validate(ServiceDescription description,ServiceHostBase serviceHostBase)
       {
          if(m_SubjectName != null)
@@ -153,8 +151,8 @@ namespace ServiceModelEx
                serviceHostBase.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.MembershipProvider;
             }
          }
-         else 
-         {          
+         else
+         {
             Debug.Assert(m_ApplicationName == null);
             //Reiterate the defaults 
             serviceHostBase.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Windows;
@@ -179,7 +177,7 @@ namespace ServiceModelEx
          }
          if(m_Mode == ServiceSecurity.BusinessToBusiness)
          {
-            serviceHostBase.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.PeerTrust; 
+            serviceHostBase.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.PeerTrust;
          }
       }
 
@@ -217,9 +215,10 @@ namespace ServiceModelEx
                ConfigureIntranet(endpoints);
                break;
             }
+
             default:
             {
-               throw new InvalidOperationException(m_Mode + " is unrecognized security mode");   
+               throw new InvalidOperationException(m_Mode + " is unrecognized security mode");
             }
          }
       }
@@ -227,7 +226,7 @@ namespace ServiceModelEx
       {}
       internal static void ConfigureNone(IEnumerable<ServiceEndpoint> endpoints)
       {
-         foreach(ServiceEndpoint endpoint in endpoints)
+         foreach (ServiceEndpoint endpoint in endpoints)
          {
             Binding binding = endpoint.Binding;
 
@@ -241,12 +240,6 @@ namespace ServiceModelEx
             {
                NetTcpBinding tcpBinding = (NetTcpBinding)binding;
                tcpBinding.Security.Mode = SecurityMode.None;
-               continue;
-            }
-            if(binding is NetPeerTcpBinding)
-            {
-               NetPeerTcpBinding peerBinding = (NetPeerTcpBinding)binding;
-               peerBinding.Security.Mode = SecurityMode.None;
                continue;
             }
             if(binding is NetNamedPipeBinding)
@@ -288,7 +281,7 @@ namespace ServiceModelEx
       }
       internal static void ConfigureAnonymous(IEnumerable<ServiceEndpoint> endpoints)
       {
-         foreach(ServiceEndpoint endpoint in endpoints)
+         foreach (ServiceEndpoint endpoint in endpoints)
          {
             Binding binding = endpoint.Binding;
 
@@ -335,7 +328,7 @@ namespace ServiceModelEx
       }
       internal static void ConfigureBusinessToBusiness(IEnumerable<ServiceEndpoint> endpoints)
       {
-         foreach(ServiceEndpoint endpoint in endpoints)
+         foreach (ServiceEndpoint endpoint in endpoints)
          {
             Binding binding = endpoint.Binding;
 
@@ -375,7 +368,7 @@ namespace ServiceModelEx
       }
       internal static void ConfigureInternet(IEnumerable<ServiceEndpoint> endpoints,bool useAspNetProviders)
       {
-         foreach(ServiceEndpoint endpoint in endpoints)
+         foreach (ServiceEndpoint endpoint in endpoints)
          {
             Binding binding = endpoint.Binding;
 
@@ -416,7 +409,7 @@ namespace ServiceModelEx
       }
       internal static void ConfigureIntranet(IEnumerable<ServiceEndpoint> endpoints)
       {
-         foreach(ServiceEndpoint endpoint in endpoints)
+         foreach (ServiceEndpoint endpoint in endpoints)
          {
             Binding binding = endpoint.Binding;
 
@@ -456,14 +449,14 @@ namespace ServiceModelEx
             throw new InvalidOperationException(binding.GetType() + " is unsupported with ServiceSecurity.Intranet");
          }
       }
-    
+
       internal static void EnableRoleManager()
       {
          try
          {
             //This code requires .NET 4.0
-            PropertyInfo property = typeof(BuildManager).GetProperty("PreStartInitStage",BindingFlags.NonPublic|BindingFlags.Static);
-            property.SetValue(null,1,null); 
+            PropertyInfo property = typeof(BuildManager).GetProperty("PreStartInitStage",BindingFlags.NonPublic | BindingFlags.Static);
+            property.SetValue(null,1,null);
             Roles.Enabled = true;
 
             //Use this code on .NET 3.0 or 3.5

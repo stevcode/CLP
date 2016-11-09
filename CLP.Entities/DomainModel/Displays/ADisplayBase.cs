@@ -1,40 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public abstract class ADisplayBase : AEntityBase, IDisplay
+    public abstract class ADisplayBase : AInternalZipEntryFile, IDisplay
     {
         #region Constructors
 
         /// <summary>Initializes <see cref="ADisplayBase" /> from scratch.</summary>
-        public ADisplayBase()
+        protected ADisplayBase()
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>Initializes <see cref="ADisplayBase" /> from parent <see cref="Notebook" />.</summary>
-        public ADisplayBase(Notebook notebook)
+        protected ADisplayBase(Notebook notebook)
             : this()
         {
             NotebookID = notebook.ID;
             ParentNotebook = notebook;
         }
-
-        /// <summary>Initializes <see cref="ADisplayBase" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ADisplayBase(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -47,7 +39,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Date and Time the <see cref="IDisplay" /> was created.</summary>
         public DateTime CreationDate
@@ -56,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>Index of the <see cref="IDisplay" /> in the notebook.</summary>
         public int DisplayNumber
@@ -65,7 +57,7 @@ namespace CLP.Entities
             set { SetValue(DisplayNumberProperty, value); }
         }
 
-        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof (int), 0);
+        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int), 0);
 
         /// <summary>Unique Identifier of the <see cref="IDisplay" />'s parent <see cref="Notebook" />.</summary>
         public string NotebookID
@@ -74,10 +66,11 @@ namespace CLP.Entities
             set { SetValue(NotebookIDProperty, value); }
         }
 
-        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof (string), string.Empty);
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>Parent notebook the Display belongs to.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public Notebook ParentNotebook
         {
@@ -85,7 +78,7 @@ namespace CLP.Entities
             set { SetValue(ParentNotebookProperty, value); }
         }
 
-        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof (Notebook));
+        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
 
         /// <summary>List of the composite IDs of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.</summary>
         public List<string> CompositePageIDs
@@ -94,10 +87,11 @@ namespace CLP.Entities
             set { SetValue(CompositePageIDsProperty, value); }
         }
 
-        public static readonly PropertyData CompositePageIDsProperty = RegisterProperty("CompositePageIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData CompositePageIDsProperty = RegisterProperty("CompositePageIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
@@ -105,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>Toggles visibility of the <see cref="IDisplay" /> in the list of <see cref="IDisplay" />s.</summary>
         public bool IsHidden
@@ -114,90 +108,19 @@ namespace CLP.Entities
             set { SetValue(IsHiddenProperty, value); }
         }
 
-        public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof (bool), false);
+        public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof(bool), false);
 
         #endregion //Properties
 
-        #region Methods
+        #region Overrides of AInternalZipEntryFile
 
-        public virtual void AddPageToDisplay(CLPPage page)
+        public override string DefaultZipEntryName => "grid";
+
+        public override string GetZipEntryFullPath(string parentNotebookName)
         {
-            Pages.Add(page);
-            ParentNotebook.CurrentPage = Pages.FirstOrDefault();
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }
 
-        public virtual void RemovePageFromDisplay(CLPPage page)
-        {
-            Pages.Remove(page);
-            if (Pages.Any())
-            {
-                ParentNotebook.CurrentPage = Pages.FirstOrDefault();
-            }
-        }
-
-        #region Cache
-
-        public virtual void ToXML(string filePath)
-        {
-            var fileInfo = new FileInfo(filePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using (Stream stream = new FileStream(filePath, FileMode.Create))
-            {
-                var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-        }
-
-        public virtual void Save(string folderPath)
-        {
-            var displayTypeIdentifier = this is GridDisplay ? "grid" : "column";
-
-            var fileName = displayTypeIdentifier + ";" + DisplayNumber + ";" + ID + ".xml";
-            CompositePageIDs.Clear();
-            foreach (var compositeID in Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex))
-            {
-                CompositePageIDs.Add(compositeID);
-            }
-            var filePath = Path.Combine(folderPath, fileName);
-            ToXML(filePath);
-        }
-
-        public static IDisplay Load<T>(string filePath, Notebook notebook) where T : ADisplayBase
-        {
-            var display = Load<T>(filePath, SerializationMode.Xml);
-            if (display == null)
-            {
-                return null;
-            }
-
-            foreach (var compositePageID in display.CompositePageIDs)
-            {
-                var compositeSections = compositePageID.Split(';');
-                var id = compositeSections[0];
-                var ownerID = compositeSections[1];
-                var differentiationlevel = compositeSections[2];
-                var versionIndex = Convert.ToUInt32(compositeSections[3]);
-
-                var page = notebook.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
-                if (page == null)
-                {
-                    continue;
-                }
-
-                display.Pages.Add(page);
-            }
-
-            display.ParentNotebook = notebook;
-            return display;
-        }
-
-        #endregion //Cache
-
-        #endregion //Methods
+        #endregion
     }
 }

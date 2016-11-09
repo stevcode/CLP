@@ -18,44 +18,68 @@
 
             <!-- Pane Title Text -->
             <TextBlock Text="{Binding PaneTitleText}"
-                       TextAlignment="Left"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       FontFamily="Segoe UI Light"
-                       FontSize="40"
-                       Foreground="#444444"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       Style="{StaticResource BackStageTitleTextBlock}" />
 
             <Button Command="{Binding SaveCurrentNotebookCommand}"
                     Width="80"
                     Height="84"
                     Margin="20 0 20 0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Style="{StaticResource BackStageTopButton}">
+                    Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                           Height="32"
-                           Width="32"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Margin="5" />
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
 
-                    <TextBlock Text="Save Notebook"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontFamily="Segoe UI"
-                               FontSize="9pt"
-                               FontWeight="Bold"
-                               Foreground="Black"
-                               TextWrapping="Wrap"
-                               TextOptions.TextRenderingMode="Auto"
-                               TextOptions.TextFormattingMode="Ideal" />
+                    <TextBlock Text="Save Notebook" />
+
+                </StackPanel>
+            </Button>
+
+            <Button Command="{Binding EditClassCommand}"
+                    Width="80"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
+
+                    <TextBlock Text="Edit Class" />
+
+                </StackPanel>
+            </Button>
+
+            <Button Command="{Binding EditSessionsCommand}"
+                    Width="80"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
+
+                    <TextBlock Text="Edit Sessions" />
+
+                </StackPanel>
+            </Button>
+
+            <Button Command="{Binding GenerateClassNotebooksCommand}"
+                    Width="120"
+                    Height="84"
+                    Margin="20 0 20 0"
+                    Style="{StaticResource BackStageButton}">
+
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+
+                    <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
+
+                    <TextBlock Text="Generate Class Notebooks" />
 
                 </StackPanel>
             </Button>

@@ -1,62 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
-using Catel.IO;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
-using Brush = System.Windows.Media.Brush;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// UserControl view model.
-    /// </summary>
+    /// <summary>UserControl view model.</summary>
     [InterestedIn(typeof(MajorRibbonViewModel))]
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
+        private readonly IDataService _dataService;
 
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
-        /// </summary>
-        public NotebookWorkspaceViewModel(Notebook notebook)
+        /// <summary>Initializes a new instance of the <see cref="NotebookWorkspaceViewModel" /> class.</summary>
+        public NotebookWorkspaceViewModel(IDataService dataService)
         {
-            Notebook = notebook;
-            ContextRibbon = new ContextRibbonViewModel();
-            AnimationControlRibbon = new AnimationControlRibbonViewModel(notebook);
+            _dataService = dataService;
+            Notebook = _dataService.CurrentNotebook;
 
-            //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
+            ContextRibbon = this.CreateViewModel<ContextRibbonViewModel>(null);
+            AnimationControlRibbon = this.CreateViewModel<AnimationControlRibbonViewModel>(_dataService.CurrentNotebook);
 
-            ResetDemoCommand = new Command(OnResetDemoCommandExecute);
-            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
-            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
-            GoToPageCommand = new Command(OnGoToPageCommandExecute);
+            InitializeCommands();
 
-            InitializePanels(notebook);
+            InitializePanels(Notebook);
 
             // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+
+            InitializedAsync += NotebookWorkspaceViewModel_InitializedAsync;
+            ClosedAsync += NotebookWorkspaceViewModel_ClosedAsync;
         }
 
         private void InitializePanels(Notebook notebook)
         {
-            SingleDisplay = new SingleDisplayViewModel(notebook);
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
 
-            StagingPanel = new StagingPanelViewModel(notebook)
-            {
-                IsVisible = false
-            };
-            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
-            ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
+            SingleDisplay = viewModelFactory.CreateViewModel<SingleDisplayViewModel>(notebook, null);
+
+            StagingPanel = viewModelFactory.CreateViewModel<StagingPanelViewModel>(notebook, null);
+            StagingPanel.IsVisible = false;
+
+            NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel, null);
+            ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel, null);
             if (App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
             {
                 LeftPanel = ProgressPanel;
@@ -66,8 +64,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 LeftPanel = NotebookPagesPanel;
             }
 
-            DisplaysPanel = new DisplaysPanelViewModel(notebook);
-            PageInformationPanel = new PageInformationPanelViewModel(notebook);
+            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null, null);
+            PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook, null);
             RightPanel = DisplaysPanel;
 
             if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
@@ -78,85 +76,53 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
+        #region Events
+
+        private Task NotebookWorkspaceViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private Task NotebookWorkspaceViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
+        {
+            CurrentDisplay = _dataService.CurrentDisplay;
+        }
+
+        #endregion // Events
+
         #region Model
 
-        /// <summary>
-        /// Model
-        /// </summary>
+        /// <summary>Model of this ViewModel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
             get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
+            set { SetValue(NotebookProperty, value); }
         }
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
-        /// <summary>
-        /// A property mapped to a property on the Model Notebook.
-        /// </summary>
+        /// <summary>Auto-Mapped property of the Notebook Model.</summary>
         [ViewModelToModel("Notebook")]
-        public ObservableCollection<IDisplay> Displays
+        public CLPPage CurrentPage
         {
-            get { return GetValue<ObservableCollection<IDisplay>>(DisplaysProperty); }
-            set { SetValue(DisplaysProperty, value); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
-        #endregion //Model
-
-        #region Bindings
-
-        /// <summary>
-        /// Color of Workspace Background.
-        /// </summary>
-        public Brush WorkspaceBackgroundColor
-        {
-            get { return GetValue<Brush>(WorkspaceBackgroundColorProperty); }
-            set { SetValue(WorkspaceBackgroundColorProperty, value); }
-        }
-
-        public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
-
-        /// <summary>
-        /// The Context Ribbon.
-        /// </summary>
-        public ContextRibbonViewModel ContextRibbon
-        {
-            get { return GetValue<ContextRibbonViewModel>(ContextRibbonProperty); }
-            set { SetValue(ContextRibbonProperty, value); }
-        }
-
-        public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof(ContextRibbonViewModel));
-
-        /// <summary>
-        /// The Animation Control Ribbon.
-        /// </summary>
-        public AnimationControlRibbonViewModel AnimationControlRibbon
-        {
-            get { return GetValue<AnimationControlRibbonViewModel>(AnimationControlRibbonProperty); }
-            set { SetValue(AnimationControlRibbonProperty, value); }
-        }
-
-        public static readonly PropertyData AnimationControlRibbonProperty = RegisterProperty("AnimationControlRibbon", typeof(AnimationControlRibbonViewModel));
-
-        #region Displays
-
-        /// <summary>
-        /// The Single Display.
-        /// </summary>
-        public SingleDisplayViewModel SingleDisplay
-        {
-            get { return GetValue<SingleDisplayViewModel>(SingleDisplayProperty); }
-            set { SetValue(SingleDisplayProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplayViewModel));
-
-        /// <summary>
-        /// The Currently Selected Display.
-        /// </summary>
+        /// <summary>Auto-Mapped property of the Notebook Model.</summary>
+        [ViewModelToModel("Notebook")]
         public IDisplay CurrentDisplay
         {
             get { return GetValue<IDisplay>(CurrentDisplayProperty); }
@@ -165,13 +131,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
 
+        #endregion // Model
+
+        #region Bindings
+
+        /// <summary>Color of Workspace Background.</summary>
+        public Brush WorkspaceBackgroundColor
+        {
+            get { return GetValue<Brush>(WorkspaceBackgroundColorProperty); }
+            set { SetValue(WorkspaceBackgroundColorProperty, value); }
+        }
+
+        public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
+
+        #region Ribbons
+
+        /// <summary>The Context Ribbon.</summary>
+        public ContextRibbonViewModel ContextRibbon
+        {
+            get { return GetValue<ContextRibbonViewModel>(ContextRibbonProperty); }
+            set { SetValue(ContextRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof(ContextRibbonViewModel));
+
+        /// <summary>The Animation Control Ribbon.</summary>
+        public AnimationControlRibbonViewModel AnimationControlRibbon
+        {
+            get { return GetValue<AnimationControlRibbonViewModel>(AnimationControlRibbonProperty); }
+            set { SetValue(AnimationControlRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData AnimationControlRibbonProperty = RegisterProperty("AnimationControlRibbon", typeof(AnimationControlRibbonViewModel));
+
+        #endregion // Ribbons
+
+        #region Displays
+
+        /// <summary>The Single Display.</summary>
+        public SingleDisplayViewModel SingleDisplay
+        {
+            get { return GetValue<SingleDisplayViewModel>(SingleDisplayProperty); }
+            set { SetValue(SingleDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplayViewModel));
+
         #endregion //Displays
 
         #region Panels
 
-        /// <summary>
-        /// Right side Panel.
-        /// </summary>
+        /// <summary>Right side Panel.</summary>
         public IPanel RightPanel
         {
             get { return GetValue<IPanel>(RightPanelProperty); }
@@ -180,9 +190,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RightPanelProperty = RegisterProperty("RightPanel", typeof(IPanel));
 
-        /// <summary>
-        /// Left side Panel.
-        /// </summary>
+        /// <summary>Left side Panel.</summary>
         public IPanel LeftPanel
         {
             get { return GetValue<IPanel>(LeftPanelProperty); }
@@ -191,20 +199,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData LeftPanelProperty = RegisterProperty("LeftPanel", typeof(IPanel));
 
-        /// <summary>
-        /// Bottom Panel.
-        /// </summary>
-        public IPanel BottomPanel
-        {
-            get { return GetValue<IPanel>(BottomPanelProperty); }
-            set { SetValue(BottomPanelProperty, value); }
-        }
-
-        public static readonly PropertyData BottomPanelProperty = RegisterProperty("BottomPanel", typeof(IPanel));
-
-        /// <summary>
-        /// NotebookPagesPanel.
-        /// </summary>
+        /// <summary>NotebookPagesPanel.</summary>
         public NotebookPagesPanelViewModel NotebookPagesPanel
         {
             get { return GetValue<NotebookPagesPanelViewModel>(NotebookPagesPanelProperty); }
@@ -213,9 +208,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
-        /// <summary>
-        /// ProgressPanel.
-        /// </summary>
+        /// <summary>ProgressPanel.</summary>
         public ProgressPanelViewModel ProgressPanel
         {
             get { return GetValue<ProgressPanelViewModel>(ProgressPanelProperty); }
@@ -224,9 +217,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ProgressPanelProperty = RegisterProperty("ProgressPanel", typeof(ProgressPanelViewModel));
 
-        /// <summary>
-        /// DisplaysPanel.
-        /// </summary>
+        /// <summary>DisplaysPanel.</summary>
         public DisplaysPanelViewModel DisplaysPanel
         {
             get { return GetValue<DisplaysPanelViewModel>(DisplaysPanelProperty); }
@@ -235,9 +226,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplaysPanelViewModel));
 
-        /// <summary>
-        /// PageInformationPanel.
-        /// </summary>
+        /// <summary>PageInformationPanel.</summary>
         public PageInformationPanelViewModel PageInformationPanel
         {
             get { return GetValue<PageInformationPanelViewModel>(PageInformationPanelProperty); }
@@ -246,9 +235,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PageInformationPanelProperty = RegisterProperty("PageInformationPanel", typeof(PageInformationPanelViewModel));
 
-        /// <summary>
-        /// SubmissionHistoryPanel.
-        /// </summary>
+        /// <summary>SubmissionHistoryPanel.</summary>
         // TODO: Replace with StagingPanel?
         public SubmissionHistoryPanelViewModel SubmissionHistoryPanel
         {
@@ -258,9 +245,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SubmissionHistoryPanelProperty = RegisterProperty("SubmissionHistoryPanel", typeof(SubmissionHistoryPanelViewModel));
 
-        /// <summary>
-        /// Staging Panel for submissions
-        /// </summary>
+        /// <summary>Staging Panel for submissions</summary>
         public StagingPanelViewModel StagingPanel
         {
             get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
@@ -275,156 +260,153 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        public List<CLPPage> PagesAddedThisSession = new List<CLPPage>();
+        private void InitializeCommands()
+        {
+            ResetDemoCommand = new Command(OnResetDemoCommandExecute);
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
+            GoToPageCommand = new Command(OnGoToPageCommandExecute, OnGoToPageCanExecute);
+        }
 
-        /// <summary>SUMMARY</summary>
+        public readonly List<CLPPage> PagesAddedThisSession = new List<CLPPage>();
+
+        /// <summary>Resets Notebook Pages to initial Demo state.</summary>
         public Command ResetDemoCommand { get; private set; }
 
         private void OnResetDemoCommandExecute()
         {
-            if (MessageBox.Show("Are you sure you want to completely reset the notebook?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
-            {
-                return;
-            }
+            //if (MessageBox.Show("Are you sure you want to completely reset the notebook?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            //{
+            //    return;
+            //}
 
-            foreach (var page in PagesAddedThisSession)
-            {
-                if (Notebook.Pages.Contains(page))
-                {
-                    Notebook.Pages.Remove(page);
-                }
-            }
+            //foreach (var page in PagesAddedThisSession)
+            //{
+            //    if (Notebook.Pages.Contains(page))
+            //    {
+            //        Notebook.Pages.Remove(page);
+            //    }
+            //}
 
-            PagesAddedThisSession.Clear();
+            //PagesAddedThisSession.Clear();
 
-            foreach (var page in Notebook.Pages)
-            {
-                var pageObjectsToDelete = page.PageObjects.Where(p => p.CreatorID == App.MainWindowViewModel.CurrentUser.ID).ToList();
-                foreach (var pageObject in pageObjectsToDelete)
-                {
-                    page.PageObjects.Remove(pageObject);
-                }
+            //foreach (var page in Notebook.Pages)
+            //{
+            //    var pageObjectsToDelete = page.PageObjects.Where(p => p.CreatorID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            //    foreach (var pageObject in pageObjectsToDelete)
+            //    {
+            //        page.PageObjects.Remove(pageObject);
+            //    }
 
-                var strokesToDelete = page.InkStrokes.Where(s => s.GetStrokeOwnerID() == App.MainWindowViewModel.CurrentUser.ID).ToList();
-                foreach (var stroke in strokesToDelete)
-                {
-                    if (page.InkStrokes.Contains(stroke))
-                    {
-                        page.InkStrokes.Remove(stroke);
-                    }
-                }
+            //    var strokesToDelete = page.InkStrokes.Where(s => s.GetStrokeOwnerID() == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            //    foreach (var stroke in strokesToDelete)
+            //    {
+            //        if (page.InkStrokes.Contains(stroke))
+            //        {
+            //            page.InkStrokes.Remove(stroke);
+            //        }
+            //    }
 
-                page.History.ClearHistory();
-                page.History.HistoryActions.Clear();
+            //    page.History.ClearHistory();
+            //    page.History.HistoryActions.Clear();
 
-                var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
-                foreach (var tempArraySkipCountingTag in existingTags)
-                {
-                    page.RemoveTag(tempArraySkipCountingTag);
-                }
-            }
+            //    var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
+            //    foreach (var tempArraySkipCountingTag in existingTags)
+            //    {
+            //        page.RemoveTag(tempArraySkipCountingTag);
+            //    }
+            //}
 
-            ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
-            var newPage = Notebook.Pages.FirstOrDefault();
-            if (newPage == null)
-            {
-                return;
-            }
-            
-            Notebook.CurrentPage = newPage;
+            //ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
+            //var newPage = Notebook.Pages.FirstOrDefault();
+            //if (newPage == null)
+            //{
+            //    return;
+            //}
+
+            //_dataService.SetCurrentPage(newPage);
         }
 
-        /// <summary>
-        /// Navigates to previous page in the notebook.
-        /// </summary>
+        /// <summary>Navigates to previous page in the notebook.</summary>
         public Command PreviousPageCommand { get; private set; }
 
         private void OnPreviousPageCommandExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            // TODO: Take into account Teacher build when in Staging Panel.
+            if (Notebook == null ||
+                CurrentPage == null)
             {
                 return;
             }
-            
-            var index = Notebook.Pages.IndexOf(currentPage);
 
-            if (index > 0)
+            var index = Notebook.Pages.IndexOf(CurrentPage);
+            if (index <= 0)
             {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-                var page = panel.Notebook.Pages[index - 1];
-                panel.CurrentPage = page;
+                return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
+            var page = Notebook.Pages[index - 1];
+            _dataService.AddPageToCurrentDisplay(page);
         }
 
         private bool OnPreviousPageCanExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            if (Notebook == null ||
+                CurrentPage == null)
             {
                 return false;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            var index = Notebook.Pages.IndexOf(CurrentPage);
             return index > 0;
         }
 
-        /// <summary>
-        /// Navigates to the next page in the notebook.
-        /// </summary>
+        /// <summary>Navigates to the next page in the notebook.</summary>
         public Command NextPageCommand { get; private set; }
 
         private void OnNextPageCommandExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            // TODO: Take into account Teacher build when in Staging Panel.
+            if (Notebook == null ||
+                CurrentPage == null)
             {
                 return;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            if (index < panel.Notebook.Pages.Count - 1)
+            var index = Notebook.Pages.IndexOf(CurrentPage);
+            if (index >= Notebook.Pages.Count - 1)
             {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-                var page = panel.Notebook.Pages[index + 1];
-                panel.CurrentPage = page;
+                return;
             }
+
+            ACLPPageBaseViewModel.ClearAdorners(CurrentPage);
+            var page = Notebook.Pages[index + 1];
+            _dataService.AddPageToCurrentDisplay(page);
         }
 
         private bool OnNextPageCanExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if (panel == null || currentPage == null)
+            if (Notebook == null ||
+                CurrentPage == null)
             {
                 return false;
             }
 
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            return index < panel.Notebook.Pages.Count - 1;
+            var index = Notebook.Pages.IndexOf(CurrentPage);
+            return index < Notebook.Pages.Count - 1;
         }
 
-        /// <summary>
-        /// Launched keypad to allow a jump to a specific page.
-        /// </summary>
+        /// <summary>Launched keypad to allow a jump to a specific page.</summary>
         public Command GoToPageCommand { get; private set; }
 
         private void OnGoToPageCommandExecute()
         {
-            if (Notebook == null)
-            {
-                MessageBox.Show("No notebook loaded.");
-                return;
-            }
-
             var keyPad = new KeypadWindowView("Go To Page", 999)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)
@@ -432,18 +414,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var newPageIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+            var newPageIndex = int.Parse(keyPad.NumbersEntered.Text);
 
             var newPage = Notebook.Pages.FirstOrDefault(x => x.PageNumber == newPageIndex);
-
             if (newPage == null)
             {
                 MessageBox.Show("No page with that page number loaded.");
                 return;
             }
 
-            ACLPPageBaseViewModel.ClearAdorners(Notebook.CurrentPage);
-            Notebook.CurrentPage = newPage;
+            _dataService.AddPageToCurrentDisplay(newPage);
+        }
+
+        private bool OnGoToPageCanExecute()
+        {
+            if (Notebook == null)
+            {
+                return false;
+            }
+
+            return Notebook.Pages.Count > 1;
         }
 
         #endregion //Commands

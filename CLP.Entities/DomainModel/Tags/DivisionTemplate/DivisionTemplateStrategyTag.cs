@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -38,12 +37,6 @@ namespace CLP.Entities
             DividerValues = dividerValues;
         }
 
-        /// <summary>Initializes <see cref="DivisionTemplateStrategyTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateStrategyTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -55,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(StrategyProperty, value); }
         }
 
-        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof (DivisionTemplateStrategies));
+        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof(DivisionTemplateStrategies));
 
         /// <summary>List of all divider values used to fill up the Division Template.</summary>
         public List<int> DividerValues
@@ -64,7 +57,7 @@ namespace CLP.Entities
             set { SetValue(DividerValuesProperty, value); }
         }
 
-        public static readonly PropertyData DividerValuesProperty = RegisterProperty("DividerValues", typeof (List<int>), () => new List<int>());
+        public static readonly PropertyData DividerValuesProperty = RegisterProperty("DividerValues", typeof(List<int>), () => new List<int>());
 
         #region ATagBase Overrides
 

@@ -1,4 +1,4 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -13,7 +13,7 @@ namespace ServiceModelEx
    [SecurityPermission(SecurityAction.Demand,ControlThread = true)]
    public class ThreadPoolSynchronizer : SynchronizationContext,IDisposable
    {
-      class WorkerThread
+      protected class WorkerThread
       {
          ThreadPoolSynchronizer m_Context;
          public Thread m_ThreadObj;
@@ -62,6 +62,11 @@ namespace ServiceModelEx
             Debug.Assert(m_ThreadObj.IsAlive == false);
             m_ThreadObj.Start();
          }
+
+         internal virtual void ProcessItem(WorkItem workItem)
+         {
+            workItem.CallBack();
+         }
          void Run()
          {
             Debug.Assert(SynchronizationContext.Current == null);
@@ -72,7 +77,7 @@ namespace ServiceModelEx
                WorkItem workItem = m_Context.GetNext();
                if(workItem != null)
                {
-                  workItem.CallBack();
+                  ProcessItem(workItem);
                }
             }
          }
@@ -91,14 +96,22 @@ namespace ServiceModelEx
          }
       }
 
-      WorkerThread[] m_WorkerThreads;
+      protected WorkerThread[] m_WorkerThreads;
       Queue<WorkItem> m_WorkItemQueue;
       protected Semaphore CallQueued
       {get;private set;}
- 
+
+      protected virtual void InitializeThreads(uint poolSize,string poolName)
+      {
+         m_WorkerThreads = new WorkerThread[poolSize];
+         for(int index = 0;index<poolSize;index++)
+         {
+            m_WorkerThreads[index] = new WorkerThread(poolName + " " + (index+1),this);
+         }
+      }
+
       public ThreadPoolSynchronizer(uint poolSize) : this(poolSize,"Pooled Thread: ")
       {}
-
       public ThreadPoolSynchronizer(uint poolSize,string poolName)
       {
          if(poolSize == 0)
@@ -108,11 +121,7 @@ namespace ServiceModelEx
          CallQueued = new Semaphore(0,Int32.MaxValue);
          m_WorkItemQueue = new Queue<WorkItem>();
 
-         m_WorkerThreads = new WorkerThread[poolSize];
-         for(int index = 0;index<poolSize;index++)
-         {
-            m_WorkerThreads[index] = new WorkerThread(poolName + " " + (index+1),this);
-         }
+         InitializeThreads(poolSize,poolName);
       }
       virtual internal void QueueWorkItem(WorkItem workItem)
       {

@@ -11,10 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public NumberLineCreationViewModel()
         {
-            NumberPressCommand = new Command<string>(OnNumberPressCommandExecute);
-            BackspacePressCommand = new Command(OnBackspacePressCommandExecute);
-            CreateNumberLineCommand = new Command(OnCreateNumberLineCommandExecute);
-            CancelCreationCommand = new Command(OnCancelCreationCommandExecute);
+            InitializeCommands();
         }
 
         #endregion // Constructor
@@ -42,6 +39,14 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            NumberPressCommand = new Command<string>(OnNumberPressCommandExecute);
+            BackspacePressCommand = new Command(OnBackspacePressCommandExecute);
+            CreateNumberLineCommand = new Command(OnCreateNumberLineCommandExecute);
+            CancelCreationCommand = new Command(OnCancelCreationCommandExecute);
+        }
 
         /// <summary>Adds digit to the endpoint value.</summary>
         public Command<string> NumberPressCommand { get; private set; }

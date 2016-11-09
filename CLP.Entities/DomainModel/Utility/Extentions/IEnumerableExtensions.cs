@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Catel;
 
@@ -22,6 +23,13 @@ namespace CLP.Entities
             var haves = haveNots.Select(set => element.Concat(set));
 
             return haves.Concat(haveNots);
+        }
+
+        public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        {
+            Argument.IsNotNull("source", source);
+
+            return new ObservableCollection<T>(source);
         }
     }
 }

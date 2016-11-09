@@ -62,7 +62,7 @@
                                        Margin="20 3 0 3">
                                 
                                 <TextBlock DockPanel.Dock="Left"
-                                           Text="{Binding Notebook.Owner.DisplayName}"
+                                           Text="{Binding Owner.DisplayName}"
                                            TextAlignment="Left"
                                            VerticalAlignment="Center"
                                            Width="100" />
@@ -73,7 +73,7 @@
                                          Fill="LawnGreen"
                                          Margin="5 0 3 0"
                                          VerticalAlignment="Center"
-                                         Visibility="{Binding Notebook.Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
+                                         Visibility="{Binding Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
                                 <Button DockPanel.Dock="Left" 
                                         Margin="0 0 10 0"
@@ -91,7 +91,7 @@
                                         <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
                                     </ScrollViewer.Resources>
 
-                                    <ItemsControl ItemsSource="{Binding Notebook.Pages}">
+                                    <ItemsControl ItemsSource="{Binding Pages}">
 
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -188,7 +188,7 @@
                                            Margin="20 3 0 3">
 
                                     <TextBlock DockPanel.Dock="Left"
-                                               Text="{Binding Notebook.Owner.DisplayName}"
+                                               Text="{Binding Owner.DisplayName}"
                                                TextAlignment="Left"
                                                VerticalAlignment="Center"
                                                Width="100" />
@@ -199,7 +199,7 @@
                                              Fill="LawnGreen"
                                              Margin="5 0 3 0"
                                              VerticalAlignment="Center"
-                                             Visibility="{Binding Notebook.Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
+                                             Visibility="{Binding Owner.IsConnected, Converter={catel:BooleanToHidingVisibilityConverter}}" />
 
                                     <Button DockPanel.Dock="Left"
                                             Margin="0 0 10 0"
@@ -219,7 +219,7 @@
                                                 <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
                                             </ScrollViewer.Resources>
 
-                                            <ItemsControl ItemsSource="{Binding Notebook.Pages}">
+                                            <ItemsControl ItemsSource="{Binding Pages}">
 
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>

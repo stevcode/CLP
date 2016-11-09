@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Discovery;
-using System.Threading;
 using System.Xml;
 using System.Runtime.CompilerServices;
 
@@ -76,14 +75,10 @@ namespace ServiceModelEx
          }
       }
       protected void PublishAvailabilityEvent(Action<string,Uri[]> notification,string address,Uri[] scopes)
-      {
+      {         
          Delegate[] subscribers = notification.GetInvocationList();
-         WaitCallback fire = _=>notification(address,scopes);
-                             
-         foreach(Delegate subscriber in subscribers)
-         {            
-            ThreadPool.QueueUserWorkItem(fire,subscriber);        
-         }
+         Action<Delegate> publish = (subscriber=>subscriber.DynamicInvoke(address,scopes));
+         subscribers.ForEachAsync(publish);
       }
    }
 }

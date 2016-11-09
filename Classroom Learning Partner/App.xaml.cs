@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -21,7 +20,7 @@ namespace Classroom_Learning_Partner
     {
         protected override async void OnStartup(StartupEventArgs e)
         {
-#if !DEBUG
+#if RELEASE
             var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
 
             using (var updateManager = new UpdateManager(testPathForReleases))
@@ -35,8 +34,6 @@ namespace Classroom_Learning_Partner
 
             var currentProgramMode = ProgramModes.Teacher;
 
-            Logger.Instance.InitializeLog(currentProgramMode);
-
             InitializeCatelSettings();
             InitializeServices();
             
@@ -48,14 +45,22 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
-            NetworkSetup();
+            StartNetwork();
             MainWindowViewModel.SetWorkspace();
         }
+
+        #region Static Properties
+
+        public static MainWindowViewModel MainWindowViewModel { get; private set; }
+
+        #endregion // Static Properties
+
+        #region Static Methods
 
         private static void InitializeCatelSettings()
         {
             //Preload all assemblies during startup
-            var directory = typeof (MainWindowView).Assembly.GetDirectory();
+            var directory = typeof(MainWindowView).Assembly.GetDirectory();
             AppDomain.CurrentDomain.PreloadAssemblies(directory);
 
             //var fileLogListener = new FileLogListener();
@@ -79,7 +84,7 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
             viewModelLocator.Register(typeof(CLPPageThumbnailView), typeof(CLPPageViewModel));
             viewModelLocator.Register(typeof(NonAsyncPagePreviewView), typeof(CLPPageViewModel));
-            viewModelLocator.Register(typeof(GroupCreationPanel), typeof(GroupCreationViewModel));
+            viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
         private static void InitializeServices()
@@ -87,11 +92,20 @@ namespace Classroom_Learning_Partner
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
+            var networkService = new NetworkService();
+            ServiceLocator.Default.RegisterInstance<INetworkService>(networkService);
+
             var pageInteractionService = new PageInteractionService();
             ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
         }
 
-        #region Methods
+        private static void StartNetwork()
+        {
+            var networkService = ServiceLocator.Default.ResolveType<INetworkService>();
+            networkService.Connect();
+        }
+
+        #region Error Handling
 
         private static void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -134,40 +148,11 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        #endregion //Methods
+        #endregion // Error Handling
 
-        #region Network Methods
+        #endregion // Static Methods
 
-        private static Thread _networkThread;
-
-        public static void NetworkSetup()
-        {
-            _networkThread = new Thread(Network.Run) { IsBackground = true };
-            _networkThread.Start();
-        }
-
-        public static void NetworkReconnect()
-        {
-            Network.Stop();
-            _networkThread.Join();
-            _networkThread = null;
-
-            Network.Dispose();
-            Network = null;
-            Network = new CLPNetwork();
-            _networkThread = new Thread(Network.Run) { IsBackground = true };
-            _networkThread.Start();
-        }
-
-        public static void NetworkDisconnect()
-        {
-            Network.Stop();
-            _networkThread.Join();
-        }
-
-        #endregion // Network Methods
-
-        #region Properties
+        #region Old Network Methods
 
         private static CLPNetwork _network = new CLPNetwork();
 
@@ -177,8 +162,8 @@ namespace Classroom_Learning_Partner
             set { _network = value; }
         }
 
-        public static MainWindowViewModel MainWindowViewModel { get; private set; }
 
-        #endregion //Properties
+
+        #endregion // Network Methods
     }
 }

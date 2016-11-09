@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 
@@ -37,12 +36,6 @@ namespace CLP.Entities
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
             HistoryActions = historyActions;
         }
-
-        /// <summary>Initializes <see cref="HistoryAction" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public HistoryAction(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 

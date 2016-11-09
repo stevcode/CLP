@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -17,12 +16,6 @@ namespace CLP.Entities
         public TempArraySkipCountingTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
-        /// <summary>Initializes <see cref="TempArraySkipCountingTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public TempArraySkipCountingTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -34,7 +27,7 @@ namespace CLP.Entities
             set { SetValue(CodedIDProperty, value); }
         }
 
-        public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof (string), string.Empty);
+        public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof(string), string.Empty);
 
         /// <summary>Ink Interpretations for each Row in the Array.</summary>
         public string RowInterpretations
@@ -43,7 +36,7 @@ namespace CLP.Entities
             set { SetValue(RowInterpretationsProperty, value); }
         }
 
-        public static readonly PropertyData RowInterpretationsProperty = RegisterProperty("RowInterpretations", typeof (string), string.Empty);
+        public static readonly PropertyData RowInterpretationsProperty = RegisterProperty("RowInterpretations", typeof(string), string.Empty);
 
         /// <summary>Results of heuristic adjustment of row interpretations.</summary>
         public string HeuristicsResults
@@ -56,15 +49,9 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.Array; }
-        }
+        public override Category Category => Category.Array;
 
-        public override string FormattedName
-        {
-            get { return "Array Skip Counting"; }
-        }
+        public override string FormattedName => "Array Skip Counting";
 
         public override string FormattedValue
         {

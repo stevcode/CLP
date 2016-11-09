@@ -15,13 +15,19 @@ set nuGetDirectory=%localDirectory%tools\NuGet
 set scriptsDirectory=%localDirectory%tools\Scripts
 set outputDirectory=%localDirectory%output
 set buildsDirectory=%outputDirectory%\1-builds
-set anyCPUBuild=%buildsDirectory%\AnyCPU
-set x64Build=%buildsDirectory%\x64
-set x86Build=%buildsDirectory%\x86
+set anyCPUBuildRelease=%buildsDirectory%\Release\AnyCPU
+set x64BuildRelease=%buildsDirectory%\Release\x64
+set x86BuildRelease=%buildsDirectory%\Release\x86
+set anyCPUBuildStandalone=%buildsDirectory%\Standalone\AnyCPU
+set x64BuildStandalone=%buildsDirectory%\Standalone\x64
+set x86BuildStandalone=%buildsDirectory%\Standalone\x86
 set releasesDirectory=%outputDirectory%\2-releases
-set anyCPURelease=%releasesDirectory%\AnyCPU
-set x64Release=%releasesDirectory%\x64
-set x86Release=%releasesDirectory%\x86
+set anyCPURelease=%releasesDirectory%\Release\AnyCPU
+set x64Release=%releasesDirectory%\Release\x64
+set x86Release=%releasesDirectory%\Release\x86
+set anyCPUStandalone=%releasesDirectory%\Standalone\AnyCPU
+set x64Standalone=%releasesDirectory%\Standalone\x64
+set x86Standalone=%releasesDirectory%\Standalone\x86
 set packagesDirectory=%outputDirectory%\3-packages
 set installerDirectory=%outputDirectory%\4-installer
 
@@ -34,17 +40,11 @@ echo.
 echo Initializing directories...
 mkdir "%buildsDirectory%" 1>nul 2>nul
 mkdir "%anyCPURelease%" 1>nul 2>nul
-mkdir "%x64Release%" 1>nul 2>nul
-mkdir "%x86Release%" 1>nul 2>nul
+mkdir "%anyCPUStandalone%" 1>nul 2>nul
 mkdir "%packagesDirectory%" 1>nul 2>nul
 mkdir "%installerDirectory%" 1>nul 2>nul
 echo Directories initialized.
 echo.
-
-rem Set build platform: Release, Debug
-rem "%~1" is the first arg
-set buildPlatformConfiguration=Release
-if "%~1" neq "" (set buildPlatformConfiguration=%~1)
 
 rem Set Version
 set /a dailyBuildVersion=0
@@ -72,41 +72,38 @@ echo using System.Reflection; >> "%versionAssemblyInfo%"
 echo [assembly: AssemblyVersion("%assemblyVersion%")] >> "%versionAssemblyInfo%"
 echo [assembly: AssemblyInformationalVersion("%hashVersion%")] >> "%versionAssemblyInfo%"
 
-echo Making Classroom Learning Partner: %buildPlatformConfiguration% Builds. Version %hashVersion%.
+echo Making Classroom Learning Partner: Release and Standalone Builds. Version %hashVersion%.
 echo.
 
-echo Building AnyCPU Configuration...
-%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=%buildPlatformConfiguration% /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
+echo Building Release Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Release /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
 
-rem echo Building x64...
-rem %msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=%buildPlatformConfiguration% /p:Platform="x64" /p:WarningLevel=0 /v:q /t:rebuild
-
-rem echo Building x86...
-rem %msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=%buildPlatformConfiguration% /p:Platform="x86" /p:WarningLevel=0 /v:q /t:rebuild
-
-if not "%ERRORLEVEL%"=="0" (echo ERROR: Build Failed. & goto Quit)
-echo AnyCPU Configuration built.
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Release Build Failed. & goto Quit)
+echo Release Configuration built.
 echo.
 
-echo Releasing AnyCPU...
+echo Building Standalone Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Standalone /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
+
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Standalone Build Failed. & goto Quit)
+echo Standalone Configuration built.
+echo.
+
+echo Releasing AnyCPU Release...
 mkdir "%anyCPURelease%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuild%\"*.dll "%anyCPURelease%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuild%\Classroom Learning Partner.exe" "%anyCPURelease%" 1>nul 2>nul
-xcopy /y "%anyCPUBuild%\Classroom Learning Partner.exe.config" "%anyCPURelease%" 1>nul 2>nul
-echo AnyCPU released.
+xcopy /y "%anyCPUBuildRelease%\"*.dll "%anyCPURelease%\lib" 1>nul 2>nul
+xcopy /y "%anyCPUBuildRelease%\Classroom Learning Partner.exe" "%anyCPURelease%" 1>nul 2>nul
+xcopy /y "%anyCPUBuildRelease%\Classroom Learning Partner.exe.config" "%anyCPURelease%" 1>nul 2>nul
+echo AnyCPU Release released.
 echo.
 
-rem echo Deploying x64...
-rem mkdir "%x64Release%\lib" 1>nul 2>nul
-rem xcopy /y "%x64Build%\"*.dll "%x64Release%\lib" 1>nul 2>nul
-rem xcopy /y "%x64Build%\Classroom Learning Partner.exe" "%x64Release%" 1>nul 2>nul
-rem xcopy /y "%x64Build%\Classroom Learning Partner.exe.config" "%x64Release%" 1>nul 2>nul
-
-rem echo Deploying x86...
-rem mkdir "%x86Release%\lib" 1>nul 2>nul
-rem xcopy /y "%x86Build%\"*.dll "%x86Release%\lib" 1>nul 2>nul
-rem xcopy /y "%x86Build%\Classroom Learning Partner.exe" "%x86Release%" 1>nul 2>nul
-rem xcopy /y "%x86Build%\Classroom Learning Partner.exe.config" "%x86Release%" 1>nul 2>nul
+echo Releasing AnyCPU Standalone...
+mkdir "%anyCPUStandalone%\lib" 1>nul 2>nul
+xcopy /y "%anyCPUBuildStandalone%\"*.dll "%anyCPUStandalone%\lib" 1>nul 2>nul
+xcopy /y "%anyCPUBuildStandalone%\Classroom Learning Partner.exe" "%anyCPUStandalone%" 1>nul 2>nul
+xcopy /y "%anyCPUBuildStandalone%\Classroom Learning Partner.exe.config" "%anyCPUStandalone%" 1>nul 2>nul
+echo AnyCPU Standalone released.
+echo.
 
 rem Create the NuGet package for Squirrel to use
 echo Packaging CLP...

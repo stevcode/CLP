@@ -10,9 +10,7 @@ using Catel;
 
 namespace CLP.Entities
 {
-    /// <summary>
-    /// Extension methods for the <see cref="Stroke" /> class.
-    /// </summary>
+    /// <summary>Extension methods for the <see cref="Stroke" /> class.</summary>
     public static class StrokeExtension
     {
         private static readonly Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
@@ -28,7 +26,6 @@ namespace CLP.Entities
                             {
                                 ID = stroke.GetStrokeID(),
                                 PersonID = stroke.GetStrokeOwnerID(),
-                                //DifferentiationGroup = stroke.GetStrokeDifferentiationGroup(),
                                 Height = stroke.DrawingAttributes.Height,
                                 Width = stroke.DrawingAttributes.Width,
                                 IsHighlighter = stroke.DrawingAttributes.IsHighlighter,
@@ -39,7 +36,7 @@ namespace CLP.Entities
                             };
 
             var strokePoints = new StringBuilder();
-            foreach(StylusPoint strokePoint in stroke.StylusPoints)
+            foreach (var strokePoint in stroke.StylusPoints)
             {
                 strokePoints.Append(strokePoint.X);
                 strokePoints.Append(':');
@@ -124,7 +121,6 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-
             if (stroke.ContainsPropertyData(StrokeVersionIndexKey))
             {
                 return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
@@ -153,15 +149,13 @@ namespace CLP.Entities
             var otherID = otherStroke.GetStrokeID();
 
             return strokeID == otherID && strokeID != "noStrokeID" && otherID != "noStrokeID";
-        } 
+        }
 
         #endregion // Equality
 
         #region Transformation
 
-        /// <summary>
-        /// Scales a <see cref="Stroke" /> with respect to a center point.
-        /// </summary>
+        /// <summary>Scales a <see cref="Stroke" /> with respect to a center point.</summary>
         public static void Stretch(this Stroke stroke, double scaleX, double scaleY, double centerX, double centerY)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -171,9 +165,7 @@ namespace CLP.Entities
             stroke.Transform(transform, false);
         }
 
-        /// <summary>
-        /// Moves every <see cref="StylusPoint" /> in a <see cref="Stroke" /> by an offset.
-        /// </summary>
+        /// <summary>Moves every <see cref="StylusPoint" /> in a <see cref="Stroke" /> by an offset.</summary>
         public static void Move(this Stroke stroke, double deltaX, double deltaY)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -227,7 +219,6 @@ namespace CLP.Entities
                 {
                     var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
                     pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
-                    
                 }
 
                 if (bounds.Contains((Point)stylusPoints[i]))
@@ -272,7 +263,6 @@ namespace CLP.Entities
                 {
                     var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
                     pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
-
                 }
 
                 weight += pointWeight;
@@ -281,10 +271,7 @@ namespace CLP.Entities
             return weight;
         }
 
-        /// <summary>
-        /// Finds the centroid of a stroke. The centroid calculation takes into account pressure
-        /// sensitivity and ascribes more importance to points with higher pressure values.
-        /// </summary>
+        /// <summary>Finds the centroid of a stroke. The centroid calculation takes into account pressure sensitivity and ascribes more importance to points with higher pressure values.</summary>
         /// <param name="stroke"></param>
         /// <returns></returns>
         public static Point WeightedCenter(this Stroke stroke)
@@ -318,7 +305,6 @@ namespace CLP.Entities
                 {
                     var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
                     pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
-
                 }
 
                 var importance = pointWeight / strokeWeight;
@@ -333,10 +319,7 @@ namespace CLP.Entities
 
         #region Distances Squared
 
-        /// <summary>
-        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
-        /// Distance Squared can still be used as a comparison for closeness.
-        /// </summary>
+        /// <summary>Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation. Distance Squared can still be used as a comparison for closeness.</summary>
         public static double DistanceSquaredByCenter(this Stroke stroke, Stroke otherStroke)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -352,10 +335,7 @@ namespace CLP.Entities
             return distanceSquared;
         }
 
-        /// <summary>
-        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
-        /// Distance Squared can still be used as a comparison for closeness.
-        /// </summary>
+        /// <summary>Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation. Distance Squared can still be used as a comparison for closeness.</summary>
         public static double DistanceSquaredByWeightedCenter(this Stroke stroke, Stroke otherStroke)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -371,10 +351,7 @@ namespace CLP.Entities
             return distanceSquared;
         }
 
-        /// <summary>
-        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
-        /// Distance Squared can still be used as a comparison for closeness.
-        /// </summary>
+        /// <summary>Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation. Distance Squared can still be used as a comparison for closeness.</summary>
         public static double DistanceSquaredByClosestPoint(this Stroke stroke, Stroke otherStroke)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -389,10 +366,7 @@ namespace CLP.Entities
             return smallestDistanceSquared;
         }
 
-        /// <summary>
-        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
-        /// Distance Squared can still be used as a comparison for closeness.
-        /// </summary>
+        /// <summary>Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation. Distance Squared can still be used as a comparison for closeness.</summary>
         public static double DistanceSquaredByAveragePointDistance(this Stroke stroke, Stroke otherStroke)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -417,10 +391,7 @@ namespace CLP.Entities
             return allAverageDistanceSquared;
         }
 
-        /// <summary>
-        /// Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation.
-        /// Distance Squared can still be used as a comparison for closeness.
-        /// </summary>
+        /// <summary>Distance Squared is much faster to calculate because Math.Sqrt is a fairly expensive operation. Distance Squared can still be used as a comparison for closeness.</summary>
         public static double DistanceSquaredByAveragePointDistanceOfStrokeHalves(this Stroke stroke, Stroke otherStroke)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -539,9 +510,7 @@ namespace CLP.Entities
             return stroke.Clone();
         }
 
-        /// <summary>
-        /// Signifies the stroke was on the page immediately after the historyItem at the given historyIndex was performed
-        /// </summary>
+        /// <summary>Signifies the stroke was on the page immediately after the historyItem at the given historyIndex was performed</summary>
         public static bool IsOnPageAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -562,10 +531,7 @@ namespace CLP.Entities
             return isOnPageBefore || !isPartOfHistory;
         }
 
-        /// <summary>
-        /// Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the
-        /// historyItems at both historyIndexes)
-        /// </summary>
+        /// <summary>Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the historyItems at both historyIndexes)</summary>
         public static bool IsAddedBetweenHistoryIndexes(this Stroke stroke, CLPPage page, int startHistoryIndex, int endHistoryIndex)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -585,7 +551,10 @@ namespace CLP.Entities
 
         #region Shape Detection
 
-        public static double AbsoluteAngleBetweenStroke(this Stroke stroke, Stroke otherStroke) { return stroke.WeightedCenter().AbsoluteSlopeBetweenPointsInDegrees(otherStroke.WeightedCenter()); }
+        public static double AbsoluteAngleBetweenStroke(this Stroke stroke, Stroke otherStroke)
+        {
+            return stroke.WeightedCenter().AbsoluteSlopeBetweenPointsInDegrees(otherStroke.WeightedCenter());
+        }
 
         public static bool IsInvisiblySmall(this Stroke stroke)
         {
@@ -604,14 +573,16 @@ namespace CLP.Entities
             const double MIN_ASPECT_RATIO = 0.5;
             const double CELL_SIZE_RATIO = 5.0;
 
-            if (stroke.GetBounds().Width < MIN_BOUNDS || stroke.GetBounds().Height < MIN_BOUNDS)
+            if (stroke.GetBounds().Width < MIN_BOUNDS ||
+                stroke.GetBounds().Height < MIN_BOUNDS)
             {
                 return false;
             }
 
             double aspectRatio = stroke.GetBounds().Width / stroke.GetBounds().Height;
 
-            if (aspectRatio < MIN_ASPECT_RATIO || aspectRatio > (1.0/MIN_ASPECT_RATIO))
+            if (aspectRatio < MIN_ASPECT_RATIO ||
+                aspectRatio > (1.0 / MIN_ASPECT_RATIO))
             {
                 return false;
             }
@@ -702,9 +673,7 @@ namespace CLP.Entities
                                 newPath.Add(neighbor);
                                 cellStack.Push(newPath);
                             }
-
                         }
-                        
                     }
                 }
             }
@@ -717,13 +686,14 @@ namespace CLP.Entities
             int minX = 1000000, minY = 1000000;
             int maxX = 0, maxY = 0;
 
-            foreach (var cell in cycle) {
+            foreach (var cell in cycle)
+            {
                 minX = Math.Min(minX, (int)cell.X);
                 minY = Math.Min(minY, (int)cell.Y);
                 maxX = Math.Max(maxX, (int)cell.X);
                 maxY = Math.Max(maxY, (int)cell.Y);
             }
-            return (maxX - minX >= widthThreshold && maxY - minY >= heightThreshold); 
+            return (maxX - minX >= widthThreshold && maxY - minY >= heightThreshold);
         }
 
         private static List<Point> GetNeighbors(Point thisPoint, int CELL_WIDTH, int CELL_HEIGHT)
@@ -772,7 +742,8 @@ namespace CLP.Entities
                         j += CELL_HEIGHT;
                     }
                 }
-                else {
+                else
+                {
                     int j = (int)nextPoint.Y;
                     while (j <= thisPoint.Y)
                     {
@@ -792,7 +763,8 @@ namespace CLP.Entities
                         k += CELL_WIDTH;
                     }
                 }
-                else {
+                else
+                {
                     int k = (int)nextPoint.X;
                     while (k <= thisPoint.X)
                     {
@@ -829,7 +801,8 @@ namespace CLP.Entities
 
             var strokeBounds = stroke.GetBounds();
 
-            foreach(var thisStroke in strokes) {
+            foreach (var thisStroke in strokes)
+            {
                 if (IsInvisiblySmall(thisStroke))
                 {
                     continue;
@@ -945,7 +918,7 @@ namespace CLP.Entities
             const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
             var slopes = getSlopesBetweenPoints(stroke);
-            
+
             //reformat for vertical slopes, so 0 is now facing upward
             int i = 0;
             while (i < slopes.Count)
@@ -970,7 +943,6 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-
             return IsHorizontalLine(stroke) || IsVerticalLine(stroke);
         }
 
@@ -985,8 +957,7 @@ namespace CLP.Entities
 
             // Console.WriteLine("stroke weight: {0}", stroke.StrokeWeight());
 
-            return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && 
-                strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
+            return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
         }
 
         public static bool IsCircle(this Stroke stroke)

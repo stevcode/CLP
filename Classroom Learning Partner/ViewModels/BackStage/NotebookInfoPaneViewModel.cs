@@ -1,7 +1,7 @@
 ﻿using System;
 using Catel.Data;
 using Catel.MVVM;
-using Catel.Windows;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -14,11 +14,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = _dataService.CurrentNotebook;
             InitializeCommands();
-        }
-
-        private void InitializeCommands()
-        {
-            SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
         }
 
         #endregion //Constructor
@@ -60,20 +55,26 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
-        {
-            get { return "Notebook Information"; }
-        }
+        public override string PaneTitleText => "Notebook Information";
 
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
+            EditClassCommand = new Command(OnEditClassCommandExecute, OnSaveCurrentNotebookCanExecute);
+            EditSessionsCommand = new Command(OnEditSessionsCommandExecute, OnSaveCurrentNotebookCanExecute);
+            GenerateClassNotebooksCommand = new Command(OnGenerateClassNotebooksCommandExecute, OnGenerateClassNotebooksCanExecute);
+        }
 
         /// <summary>Saves the current notebook.</summary>
         public Command SaveCurrentNotebookCommand { get; private set; }
 
         private void OnSaveCurrentNotebookCommandExecute()
         {
+            _dataService.SaveLocal();
             SaveCurrentNotebook();
         }
 
@@ -82,24 +83,64 @@ namespace Classroom_Learning_Partner.ViewModels
             return Notebook != null;
         }
 
+        /// <summary>Edits the currently loaded ClassRoster.</summary>
+        public Command EditClassCommand { get; private set; }
+
+        private void OnEditClassCommandExecute()
+        {
+            if (_dataService.CurrentClassRoster == null)
+            {
+                return;
+            }
+
+            var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
+            viewModel.ShowWindowAsDialog();
+            DataService.SaveClassRoster(_dataService.CurrentClassRoster);
+        }
+
+        /// <summary>Opens a list of sessions in the class.</summary>
+        public Command EditSessionsCommand { get; private set; }
+
+        private void OnEditSessionsCommandExecute()
+        {
+            var viewModel = this.CreateViewModel<SessionsViewModel>(null);
+            viewModel.ShowWindowAsDialog();
+        }
+
+        /// <summary>Generates class notebooks from the authored version.</summary>
+        public Command GenerateClassNotebooksCommand { get; private set; }
+
+        private void OnGenerateClassNotebooksCommandExecute()
+        {
+            var authorNotebook = Notebook;
+            var classRoster = _dataService.CurrentClassRoster;
+            DataService.GenerateClassNotebooks(authorNotebook, classRoster);
+        }
+
+        private bool OnGenerateClassNotebooksCanExecute()
+        {
+            // TODO: Test to see if all students/teachers in the Class have generated notebooks.
+            return Notebook?.Owner?.ID == Person.Author.ID;
+        }
+
         #endregion //Commands
 
         #region Methods
 
         private void SaveCurrentNotebook(bool isForceSave = false)
         {
-            if (_dataService == null ||
-                _dataService.CurrentNotebook == null)
-            {
-                return;
-            }
+            //if (_dataService == null ||
+            //    _dataService.CurrentNotebook == null)
+            //{
+            //    return;
+            //}
 
-            if (_dataService.CurrentNotebook.OwnerID == Person.Author.ID)
-            {
-                isForceSave = true;
-            }
+            //if (_dataService.CurrentNotebook.OwnerID == Person.Author.ID)
+            //{
+            //    isForceSave = true;
+            //}
 
-            PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(_dataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
+            //PleaseWaitHelper.Show(() => _dataService.SaveNotebookLocally(_dataService.CurrentNotebookInfo, isForceSave), null, "Saving Notebook");
 
             //PleaseWaitHelper.Show(
             //                      () =>

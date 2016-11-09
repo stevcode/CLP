@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -13,30 +12,35 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ProgressPanelViewModel : APanelBaseViewModel
     {
-        protected readonly IDataService DataService;
+        private readonly IDataService _dataService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.</summary>
-        public ProgressPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
+        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
         {
-            DataService = DependencyResolver.Resolve<IDataService>();
+            _dataService = dataService;
+            Notebook = _dataService.CurrentNotebook;
             StagingPanel = stagingPanel;
-            Notebook = notebook;
 
             RefreshProgressPanelData();
             InitializedAsync += ProgressPanelViewModel_InitializedAsync;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
-            OpenNotebookCommand = new Command<NotebookInfo>(OnOpenNotebookCommandExecute);
-        }
-
-        public override string Title
-        {
-            get { return "ProgressPanelVM"; }
+            OpenNotebookCommand = new Command<Notebook>(OnOpenNotebookCommandExecute);
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            RefreshProgressPanelData();
+            SetPanelWidth();
+        }
+
+        #endregion // Events
 
         #region Model
 
@@ -64,24 +68,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>NotebookInfos for all loaded Teacher Notebooks.</summary>
-        public ObservableCollection<NotebookInfo> TeacherNotebooks
+        /// <summary>All loaded Teacher Notebooks.</summary>
+        public ObservableCollection<Notebook> TeacherNotebooks
         {
-            get { return GetValue<ObservableCollection<NotebookInfo>>(TeacherNotebooksProperty); }
+            get { return GetValue<ObservableCollection<Notebook>>(TeacherNotebooksProperty); }
             set { SetValue(TeacherNotebooksProperty, value); }
         }
 
-        public static readonly PropertyData TeacherNotebooksProperty = RegisterProperty("TeacherNotebooks", typeof (ObservableCollection<NotebookInfo>), () => new ObservableCollection<NotebookInfo>());
+        public static readonly PropertyData TeacherNotebooksProperty = RegisterProperty("TeacherNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
 
-        /// <summary>NotebookInfos for all loaded Student Notebooks.</summary>
-        public ObservableCollection<NotebookInfo> StudentNotebooks
+        /// <summary>All loaded Student Notebooks.</summary>
+        public ObservableCollection<Notebook> StudentNotebooks
         {
-            get { return GetValue<ObservableCollection<NotebookInfo>>(StudentNotebooksProperty); }
+            get { return GetValue<ObservableCollection<Notebook>>(StudentNotebooksProperty); }
             set { SetValue(StudentNotebooksProperty, value); }
         }
 
-        public static readonly PropertyData StudentNotebooksProperty = RegisterProperty("StudentNotebooks", typeof (ObservableCollection<NotebookInfo>), () => new ObservableCollection<NotebookInfo>());
-        
+        public static readonly PropertyData StudentNotebooksProperty = RegisterProperty("StudentNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
+
         /// <summary>Staging Panel for submissions</summary>
         public StagingPanelViewModel StagingPanel
         {
@@ -96,41 +100,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #region IPanel Override
 
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
-        public override double InitialLength
-        {
-            get { return 200; }
-        }
+        public override double InitialLength => 200;
 
         #endregion //IPanel Override
-
-        #region Events
-
-        private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
-        {
-            RefreshProgressPanelData();
-            SetPanelWidth();
-        }
-
-        #endregion // Events
 
         #region Methods
 
         private void SetPanelWidth()
         {
-            if (DataService == null ||
-                !DataService.LoadedNotebooksInfo.Any())
+            if (_dataService == null ||
+                !_dataService.LoadedNotebooks.Any())
             {
                 Length = InitialLength;
                 return;
             }
 
-            var referenceNotebook = DataService.LoadedNotebooksInfo.FirstOrDefault(ni => !ni.Notebook.Owner.IsStudent);
+            var referenceNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => !n.Owner.IsStudent);
             if (referenceNotebook == null)
             {
-                referenceNotebook = DataService.LoadedNotebooksInfo.FirstOrDefault();
+                referenceNotebook = _dataService.LoadedNotebooks.FirstOrDefault();
             }
 
-            var pageCount = referenceNotebook.Notebook.Pages.Count;
+            var pageCount = referenceNotebook.Pages.Count;
 
             var calculatedWidth = pageCount * 40 + 110;
             if (Application.Current.MainWindow.ActualWidth < calculatedWidth * 2)
@@ -149,14 +140,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void RefreshProgressPanelData()
         {
-            if (DataService == null ||
-                !DataService.LoadedNotebooksInfo.Any())
+            if (_dataService == null ||
+                !_dataService.LoadedNotebooks.Any())
             {
                 return;
             }
 
-            TeacherNotebooks = new ObservableCollection<NotebookInfo>(DataService.LoadedNotebooksInfo.Where(ni => !ni.Notebook.Owner.IsStudent).OrderBy(ni => ni.Notebook.Owner.DisplayName));
-            StudentNotebooks = new ObservableCollection<NotebookInfo>(DataService.LoadedNotebooksInfo.Where(ni => ni.Notebook.Owner.IsStudent).OrderBy(ni => ni.Notebook.Owner.DisplayName));
+            TeacherNotebooks = new ObservableCollection<Notebook>(_dataService.LoadedNotebooks.Where(n => !n.Owner.IsStudent).OrderBy(n => n.Owner.DisplayName));
+            StudentNotebooks = new ObservableCollection<Notebook>(_dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent).OrderBy(n => n.Owner.DisplayName));
         }
 
         #endregion // Methods
@@ -169,7 +160,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
             if (page == null ||
-                DataService == null)
+                _dataService == null)
             {
                 return;
             }
@@ -181,15 +172,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 pageToSwitchTo = page.Submissions.Last();
             }
 
-            DataService.SetCurrentPage(pageToSwitchTo);
+            _dataService.AddPageToCurrentDisplay(pageToSwitchTo);
         }
 
         /// <summary>Switches current notebook to selected notebook.</summary>
-        public Command<NotebookInfo> OpenNotebookCommand { get; private set; }
+        public Command<Notebook> OpenNotebookCommand { get; private set; }
 
-        private void OnOpenNotebookCommandExecute(NotebookInfo notebookInfo)
+        private void OnOpenNotebookCommandExecute(Notebook notebook)
         {
-            if (DataService == null)
+            if (_dataService == null)
             {
                 return;
             }
@@ -199,7 +190,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 StagingPanel.IsVisible = false;
             }
 
-            DataService.OpenNotebook(notebookInfo);
+            _dataService.SetCurrentNotebook(notebook);
 
             App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
         }

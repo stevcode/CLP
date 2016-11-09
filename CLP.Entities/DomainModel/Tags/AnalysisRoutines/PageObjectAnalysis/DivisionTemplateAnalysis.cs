@@ -61,14 +61,14 @@ namespace CLP.Entities
             var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
 
             var divisionTemplateIDsInHistory = new List<string>();
-            foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
-            {
-                divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
-                                                      let divisionTemplate =
-                                                          page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate
-                                                      where divisionTemplate != null
-                                                      select pageObjectID);
-            }
+            //foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
+            //{
+            //    divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
+            //                                          let divisionTemplate =
+            //                                              page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate
+            //                                          where divisionTemplate != null
+            //                                          select pageObjectID);
+            //}
 
             return divisionTemplateIDsInHistory;
         }
@@ -80,407 +80,407 @@ namespace CLP.Entities
             var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 
             //DivisionTemplateDeletedTag
-            foreach (var historyItem in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
-            {
-                foreach (var pageObjectID in historyItem.PageObjectIDs)
-                {
-                    var divisionTemplate = page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate;
-                    if (divisionTemplate == null)
-                    {
-                        continue;
-                    }
+            //foreach (var historyItem in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
+            //{
+            //    foreach (var pageObjectID in historyItem.PageObjectIDs)
+            //    {
+            //        var divisionTemplate = page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate;
+            //        if (divisionTemplate == null)
+            //        {
+            //            continue;
+            //        }
 
-                    var arrayDimensions =
-                        divisionTemplate.VerticalDivisions.Where(division => division.Value != 0).Select(division => divisionTemplate.Rows + "x" + division.Value).ToList();
+            //        var arrayDimensions =
+            //            divisionTemplate.VerticalDivisions.Where(division => division.Value != 0).Select(division => divisionTemplate.Rows + "x" + division.Value).ToList();
 
-                    page.AddTag(new DivisionTemplateDeletedTag(page,
-                                                               Origin.StudentPageObjectGenerated,
-                                                               divisionTemplate.ID,
-                                                               divisionTemplate.Dividend,
-                                                               divisionTemplate.Rows,
-                                                               divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                               arrayDimensions));
-                }
-            }
+            //        page.AddTag(new DivisionTemplateDeletedTag(page,
+            //                                                   Origin.StudentPageObjectGenerated,
+            //                                                   divisionTemplate.ID,
+            //                                                   divisionTemplate.Dividend,
+            //                                                   divisionTemplate.Rows,
+            //                                                   divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                   arrayDimensions));
+            //    }
+            //}
 
             var divisionTemplatesOnPage = new List<DivisionTemplateAndRemainder>();
             var arraysOnPage = new List<CLPArray>();
-            foreach (var historyItem in completeOrderedHistory)
-            {
-                var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
-                if (removedPageObjectsHistoryItem != null)
-                {
-                    foreach (var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
-                    {
-                        divisionTemplatesOnPage.RemoveAll(x => x.DivisionTemplate.ID == pageObjectID);
-                        arraysOnPage.RemoveAll(x => x.ID == pageObjectID);
-                    }
-                    continue;
-                }
+            //foreach (var historyItem in completeOrderedHistory)
+            //{
+            //    var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
+            //    if (removedPageObjectsHistoryItem != null)
+            //    {
+            //        foreach (var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
+            //        {
+            //            divisionTemplatesOnPage.RemoveAll(x => x.DivisionTemplate.ID == pageObjectID);
+            //            arraysOnPage.RemoveAll(x => x.ID == pageObjectID);
+            //        }
+            //        continue;
+            //    }
 
-                var arraySnappedInHistoryItem = historyItem as DivisionTemplateArraySnappedInHistoryItem;
-                if (arraySnappedInHistoryItem != null)
-                {
-                    var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
-                    var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.DivisionTemplateID);
-                    if (divisionTemplateAndRemainder != null &&
-                        arrayToRemove != null)
-                    {
-                        arraysOnPage.Remove(arrayToRemove);
-                        divisionTemplateAndRemainder.Remainder -= (arrayToRemove.Rows * arrayToRemove.Columns);
-                    }
-                    continue;
-                }
+            //    var arraySnappedInHistoryItem = historyItem as DivisionTemplateArraySnappedInHistoryItem;
+            //    if (arraySnappedInHistoryItem != null)
+            //    {
+            //        var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
+            //        var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.DivisionTemplateID);
+            //        if (divisionTemplateAndRemainder != null &&
+            //            arrayToRemove != null)
+            //        {
+            //            arraysOnPage.Remove(arrayToRemove);
+            //            divisionTemplateAndRemainder.Remainder -= (arrayToRemove.Rows * arrayToRemove.Columns);
+            //        }
+            //        continue;
+            //    }
 
-                //DivisionTemplateIncorrectArrayCreationTag
-                var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
-                if (addedPageObjectHistoryItem != null)
-                {
-                    foreach (var pageObject in
-                        addedPageObjectHistoryItem.PageObjectIDs.Select(pageObjectID => page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID)))
-                    {
-                        if (pageObject is DivisionTemplate)
-                        {
-                            var divisionTemplate = pageObject as DivisionTemplate;
-                            divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder(divisionTemplate, divisionTemplate.Dividend));
+            //    //DivisionTemplateIncorrectArrayCreationTag
+            //    var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
+            //    if (addedPageObjectHistoryItem != null)
+            //    {
+            //        foreach (var pageObject in
+            //            addedPageObjectHistoryItem.PageObjectIDs.Select(pageObjectID => page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID)))
+            //        {
+            //            if (pageObject is DivisionTemplate)
+            //            {
+            //                var divisionTemplate = pageObject as DivisionTemplate;
+            //                divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder(divisionTemplate, divisionTemplate.Dividend));
 
-                            //DivisionTemplateCreationErrorTag
-                            var divisionDefinitions = page.Tags.OfType<DivisionRelationDefinitionTag>();
+            //                //DivisionTemplateCreationErrorTag
+            //                var divisionDefinitions = page.Tags.OfType<DivisionRelationDefinitionTag>();
 
-                            foreach (var divisionRelationDefinitionTag in divisionDefinitions)
-                            {
-                                if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
-                                    divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
-                                {
-                                    continue;
-                                }
+            //                foreach (var divisionRelationDefinitionTag in divisionDefinitions)
+            //                {
+            //                    if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
+            //                        divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
+            //                    {
+            //                        continue;
+            //                    }
 
-                                ITag divisionCreationErrorTag = null;
-                                if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Divisor &&
-                                    divisionTemplate.Rows == divisionRelationDefinitionTag.Dividend)
-                                {
-                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows,
-                                                                                                    divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
-                                }
+            //                    ITag divisionCreationErrorTag = null;
+            //                    if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Divisor &&
+            //                        divisionTemplate.Rows == divisionRelationDefinitionTag.Dividend)
+            //                    {
+            //                        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
+            //                                                                                        Origin.StudentPageGenerated,
+            //                                                                                        divisionTemplate.ID,
+            //                                                                                        divisionTemplate.Dividend,
+            //                                                                                        divisionTemplate.Rows,
+            //                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                                        DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
+            //                    }
 
-                                if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
-                                    divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
-                                {
-                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows,
-                                                                                                    divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
-                                }
+            //                    if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
+            //                        divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
+            //                    {
+            //                        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
+            //                                                                                        Origin.StudentPageGenerated,
+            //                                                                                        divisionTemplate.ID,
+            //                                                                                        divisionTemplate.Dividend,
+            //                                                                                        divisionTemplate.Rows,
+            //                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                                        DivisionTemplateIncorrectCreationReasons.WrongDivisor);
+            //                    }
 
-                                if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
-                                    divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
-                                {
-                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows,
-                                                                                                    divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
-                                }
+            //                    if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
+            //                        divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
+            //                    {
+            //                        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
+            //                                                                                        Origin.StudentPageGenerated,
+            //                                                                                        divisionTemplate.ID,
+            //                                                                                        divisionTemplate.Dividend,
+            //                                                                                        divisionTemplate.Rows,
+            //                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                                        DivisionTemplateIncorrectCreationReasons.WrongDividend);
+            //                    }
 
-                                if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
-                                    divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
-                                {
-                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows,
-                                                                                                    divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
-                                }
+            //                    if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
+            //                        divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
+            //                    {
+            //                        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
+            //                                                                                        Origin.StudentPageGenerated,
+            //                                                                                        divisionTemplate.ID,
+            //                                                                                        divisionTemplate.Dividend,
+            //                                                                                        divisionTemplate.Rows,
+            //                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                                        DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
+            //                    }
 
-                                if (divisionCreationErrorTag != null)
-                                {
-                                    page.AddTag(divisionCreationErrorTag);
-                                }
-                            }
+            //                    if (divisionCreationErrorTag != null)
+            //                    {
+            //                        page.AddTag(divisionCreationErrorTag);
+            //                    }
+            //                }
 
-                            continue;
-                        }
+            //                continue;
+            //            }
 
-                        var array = pageObject as CLPArray;
-                        if (array != null)
-                        {
-                            arraysOnPage.Add(array);
-                            foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
-                            {
-                                var divisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
+            //            var array = pageObject as CLPArray;
+            //            if (array != null)
+            //            {
+            //                arraysOnPage.Add(array);
+            //                foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+            //                {
+            //                    var divisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
 
-                                if (divisionTemplateAndRemainder.Remainder != divisionTemplate.Dividend % divisionTemplate.Rows)
-                                {
-                                    var existingFactorPairErrorsTag =
-                                        page.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
-                                    var isArrayDimensionErrorsTagOnPage = true;
+            //                    if (divisionTemplateAndRemainder.Remainder != divisionTemplate.Dividend % divisionTemplate.Rows)
+            //                    {
+            //                        var existingFactorPairErrorsTag =
+            //                            page.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+            //                        var isArrayDimensionErrorsTagOnPage = true;
 
-                                    if (existingFactorPairErrorsTag == null)
-                                    {
-                                        existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(page,
-                                                                                                              Origin.StudentPageGenerated,
-                                                                                                              divisionTemplate.ID,
-                                                                                                              divisionTemplate.Dividend,
-                                                                                                              divisionTemplate.Rows,
-                                                                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                                        isArrayDimensionErrorsTagOnPage = false;
-                                    }
+            //                        if (existingFactorPairErrorsTag == null)
+            //                        {
+            //                            existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(page,
+            //                                                                                                  Origin.StudentPageGenerated,
+            //                                                                                                  divisionTemplate.ID,
+            //                                                                                                  divisionTemplate.Dividend,
+            //                                                                                                  divisionTemplate.Rows,
+            //                                                                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+            //                            isArrayDimensionErrorsTagOnPage = false;
+            //                        }
 
-                                    if (array.Columns == divisionTemplate.Dividend ||
-                                        array.Rows == divisionTemplate.Dividend)
-                                    {
-                                        existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                    }
+            //                        if (array.Columns == divisionTemplate.Dividend ||
+            //                            array.Rows == divisionTemplate.Dividend)
+            //                        {
+            //                            existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                        }
 
-                                    if (array.Rows != divisionTemplate.Rows)
-                                    {
-                                        if (array.Columns == divisionTemplate.Rows)
-                                        {
-                                            existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                        }
-                                        else
-                                        {
-                                            existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                        }
-                                    }
+            //                        if (array.Rows != divisionTemplate.Rows)
+            //                        {
+            //                            if (array.Columns == divisionTemplate.Rows)
+            //                            {
+            //                                existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                            }
+            //                            else
+            //                            {
+            //                                existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                            }
+            //                        }
 
-                                    var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
-                                    if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
-                                    {
-                                        existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                    }
+            //                        var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
+            //                        if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
+            //                        {
+            //                            existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                        }
 
-                                    if (!isArrayDimensionErrorsTagOnPage &&
-                                        existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
-                                    {
-                                        page.AddTag(existingFactorPairErrorsTag);
-                                    }
-                                }
-                                else
-                                {
-                                    var existingRemainderErrorsTag =
-                                        page.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
-                                    var isRemainderErrorsTagOnPage = true;
+            //                        if (!isArrayDimensionErrorsTagOnPage &&
+            //                            existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
+            //                        {
+            //                            page.AddTag(existingFactorPairErrorsTag);
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        var existingRemainderErrorsTag =
+            //                            page.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+            //                        var isRemainderErrorsTagOnPage = true;
 
-                                    if (existingRemainderErrorsTag == null)
-                                    {
-                                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(page,
-                                                                                                            Origin.StudentPageGenerated,
-                                                                                                            divisionTemplate.ID,
-                                                                                                            divisionTemplate.Dividend,
-                                                                                                            divisionTemplate.Rows,
-                                                                                                            divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                                        isRemainderErrorsTagOnPage = false;
-                                    }
+            //                        if (existingRemainderErrorsTag == null)
+            //                        {
+            //                            existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(page,
+            //                                                                                                Origin.StudentPageGenerated,
+            //                                                                                                divisionTemplate.ID,
+            //                                                                                                divisionTemplate.Dividend,
+            //                                                                                                divisionTemplate.Rows,
+            //                                                                                                divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+            //                            isRemainderErrorsTagOnPage = false;
+            //                        }
 
-                                    if (array.Columns == divisionTemplate.Dividend ||
-                                        array.Rows == divisionTemplate.Dividend)
-                                    {
-                                        existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                    }
+            //                        if (array.Columns == divisionTemplate.Dividend ||
+            //                            array.Rows == divisionTemplate.Dividend)
+            //                        {
+            //                            existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                        }
 
-                                    if (array.Rows != divisionTemplate.Rows)
-                                    {
-                                        if (array.Columns == divisionTemplate.Rows)
-                                        {
-                                            existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                        }
-                                        else
-                                        {
-                                            existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                        }
-                                    }
+            //                        if (array.Rows != divisionTemplate.Rows)
+            //                        {
+            //                            if (array.Columns == divisionTemplate.Rows)
+            //                            {
+            //                                existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                            }
+            //                            else
+            //                            {
+            //                                existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                            }
+            //                        }
 
-                                    var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
-                                    if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
-                                    {
-                                        existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
-                                    }
+            //                        var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
+            //                        if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
+            //                        {
+            //                            existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", array.Rows, array.Columns));
+            //                        }
 
-                                    if (!isRemainderErrorsTagOnPage &&
-                                        existingRemainderErrorsTag.ErrorAtemptsSum > 0)
-                                    {
-                                        page.AddTag(existingRemainderErrorsTag);
-                                    }
-                                }
-                            }
+            //                        if (!isRemainderErrorsTagOnPage &&
+            //                            existingRemainderErrorsTag.ErrorAtemptsSum > 0)
+            //                        {
+            //                            page.AddTag(existingRemainderErrorsTag);
+            //                        }
+            //                    }
+            //                }
 
-                            continue;
-                        }
-                    }
-                    continue;
-                }
+            //                continue;
+            //            }
+            //        }
+            //        continue;
+            //    }
 
-                //DivisionTemplateRemainderErrorsTag.OrientationChangedAttempts
-                var arrayRotateHistoryItem = historyItem as CLPArrayRotateHistoryItem;
-                if (arrayRotateHistoryItem != null)
-                {
-                    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
-                    {
-                        // Only increase OrientationChanged attempt if Division Template already full.
-                        if (divisionTemplateAndRemainder.Remainder != divisionTemplateAndRemainder.DivisionTemplate.Dividend % divisionTemplateAndRemainder.DivisionTemplate.Rows)
-                        {
-                            continue;
-                        }
+            //    //DivisionTemplateRemainderErrorsTag.OrientationChangedAttempts
+            //    var arrayRotateHistoryItem = historyItem as CLPArrayRotateHistoryItem;
+            //    if (arrayRotateHistoryItem != null)
+            //    {
+            //        foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+            //        {
+            //            // Only increase OrientationChanged attempt if Division Template already full.
+            //            if (divisionTemplateAndRemainder.Remainder != divisionTemplateAndRemainder.DivisionTemplate.Dividend % divisionTemplateAndRemainder.DivisionTemplate.Rows)
+            //            {
+            //                continue;
+            //            }
 
-                        var existingTroubleWithRemaindersTag =
-                            page.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplateAndRemainder.DivisionTemplate.ID);
+            //            var existingTroubleWithRemaindersTag =
+            //                page.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplateAndRemainder.DivisionTemplate.ID);
 
-                        if (existingTroubleWithRemaindersTag == null)
-                        {
-                            existingTroubleWithRemaindersTag = new DivisionTemplateRemainderErrorsTag(page,
-                                                                                                      Origin.StudentPageGenerated,
-                                                                                                      divisionTemplateAndRemainder.DivisionTemplate.ID,
-                                                                                                      divisionTemplateAndRemainder.DivisionTemplate.Dividend,
-                                                                                                      divisionTemplateAndRemainder.DivisionTemplate.Rows,
-                                                                                                      divisionTemplateIDsInHistory.IndexOf(
-                                                                                                                                           divisionTemplateAndRemainder
-                                                                                                                                               .DivisionTemplate.ID));
-                            page.AddTag(existingTroubleWithRemaindersTag);
-                        }
+            //            if (existingTroubleWithRemaindersTag == null)
+            //            {
+            //                existingTroubleWithRemaindersTag = new DivisionTemplateRemainderErrorsTag(page,
+            //                                                                                          Origin.StudentPageGenerated,
+            //                                                                                          divisionTemplateAndRemainder.DivisionTemplate.ID,
+            //                                                                                          divisionTemplateAndRemainder.DivisionTemplate.Dividend,
+            //                                                                                          divisionTemplateAndRemainder.DivisionTemplate.Rows,
+            //                                                                                          divisionTemplateIDsInHistory.IndexOf(
+            //                                                                                                                               divisionTemplateAndRemainder
+            //                                                                                                                                   .DivisionTemplate.ID));
+            //                page.AddTag(existingTroubleWithRemaindersTag);
+            //            }
 
-                        ////existingTroubleWithRemaindersTag.OrientationChangedAttempts++;
-                    }
+            //            ////existingTroubleWithRemaindersTag.OrientationChangedAttempts++;
+            //        }
 
-                    continue;
-                }
+            //        continue;
+            //    }
 
-                //DivisionTemplateFailedSnapTag
-                //var pageObjectMovedHistoryItem = historyItem as PageObjectMoveBatchHistoryItem;
-                //if (pageObjectMovedHistoryItem != null)
-                //{
-                //    var array = page.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray ??
-                //                page.History.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray;
-                //    if (array == null)
-                //    {
-                //        continue;
-                //    }
+            //    //DivisionTemplateFailedSnapTag
+            //    //var pageObjectMovedHistoryItem = historyItem as PageObjectMoveBatchHistoryItem;
+            //    //if (pageObjectMovedHistoryItem != null)
+            //    //{
+            //    //    var array = page.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray ??
+            //    //                page.History.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray;
+            //    //    if (array == null)
+            //    //    {
+            //    //        continue;
+            //    //    }
 
-                //    var endPosition = pageObjectMovedHistoryItem.TravelledPositions.Last();
-                //    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
-                //    {
-                //        var DivisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
+            //    //    var endPosition = pageObjectMovedHistoryItem.TravelledPositions.Last();
+            //    //    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+            //    //    {
+            //    //        var DivisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
 
-                //        var top = Math.Max(endPosition.Y + array.LabelLength, DivisionTemplate.YPosition + DivisionTemplate.LabelLength);
-                //        var bottom = Math.Min(endPosition.Y + array.LabelLength + array.ArrayHeight,
-                //                              persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
-                //        var verticalIntersectionLength = bottom - top;
-                //        var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
+            //    //        var top = Math.Max(endPosition.Y + array.LabelLength, DivisionTemplate.YPosition + DivisionTemplate.LabelLength);
+            //    //        var bottom = Math.Min(endPosition.Y + array.LabelLength + array.ArrayHeight,
+            //    //                              persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
+            //    //        var verticalIntersectionLength = bottom - top;
+            //    //        var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
 
-                //        var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
-                //        var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
-                //                             persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
-                //        var horizontalIntersectionLength = right - left;
-                //        var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
+            //    //        var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
+            //    //        var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
+            //    //                             persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
+            //    //        var horizontalIntersectionLength = right - left;
+            //    //        var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
 
-                //        if (isVerticalIntersection)
-                //        {
-                //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + DivisionTemplate.LastDivisionPosition));
-                //            if (diff < 50)
-                //            {
-                //                if (snappingArray.Rows != DivisionTemplate.Rows)
-                //                {
-                //                    var hasTag = false;
-                //                    if (snappingArray.Columns == DivisionTemplate.Rows)
-                //                    {
-                //                        var existingTag =
-                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+            //    //        if (isVerticalIntersection)
+            //    //        {
+            //    //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + DivisionTemplate.LastDivisionPosition));
+            //    //            if (diff < 50)
+            //    //            {
+            //    //                if (snappingArray.Rows != DivisionTemplate.Rows)
+            //    //                {
+            //    //                    var hasTag = false;
+            //    //                    if (snappingArray.Columns == DivisionTemplate.Rows)
+            //    //                    {
+            //    //                        var existingTag =
+            //    //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+            //    //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
 
-                //                        var previousNumberOfAttempts = 0;
-                //                        if (existingTag != null)
-                //                        {
-                //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                //                            pageObject.ParentPage.RemoveTag(existingTag);
-                //                        }
-                //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
-                //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
-                //                                                                       previousNumberOfAttempts + 1);
-                //                        pageObject.ParentPage.AddTag(newTag);
-                //                    }
-                //                    else
-                //                    {
-                //                        var existingTag =
-                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
+            //    //                        var previousNumberOfAttempts = 0;
+            //    //                        if (existingTag != null)
+            //    //                        {
+            //    //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+            //    //                            pageObject.ParentPage.RemoveTag(existingTag);
+            //    //                        }
+            //    //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+            //    //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+            //    //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
+            //    //                                                                       previousNumberOfAttempts + 1);
+            //    //                        pageObject.ParentPage.AddTag(newTag);
+            //    //                    }
+            //    //                    else
+            //    //                    {
+            //    //                        var existingTag =
+            //    //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+            //    //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
 
-                //                        var previousNumberOfAttempts = 0;
-                //                        if (existingTag != null)
-                //                        {
-                //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                //                            pageObject.ParentPage.RemoveTag(existingTag);
-                //                        }
-                //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
-                //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
-                //                                                                       previousNumberOfAttempts + 1);
-                //                        pageObject.ParentPage.AddTag(newTag);
-                //                    }
+            //    //                        var previousNumberOfAttempts = 0;
+            //    //                        if (existingTag != null)
+            //    //                        {
+            //    //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+            //    //                            pageObject.ParentPage.RemoveTag(existingTag);
+            //    //                        }
+            //    //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+            //    //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+            //    //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
+            //    //                                                                       previousNumberOfAttempts + 1);
+            //    //                        pageObject.ParentPage.AddTag(newTag);
+            //    //                    }
 
-                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
-                //                    foreach (var viewModel in factorCardViewModels)
-                //                    {
-                //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
-                //                    }
-                //                    continue;
-                //                }
-                //                if (DivisionTemplate.CurrentRemainder < DivisionTemplate.Rows * snappingArray.Columns)
-                //                {
-                //                    var existingTag =
-                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
+            //    //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
+            //    //                    foreach (var viewModel in factorCardViewModels)
+            //    //                    {
+            //    //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+            //    //                    }
+            //    //                    continue;
+            //    //                }
+            //    //                if (DivisionTemplate.CurrentRemainder < DivisionTemplate.Rows * snappingArray.Columns)
+            //    //                {
+            //    //                    var existingTag =
+            //    //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+            //    //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
 
-                //                    var previousNumberOfAttempts = 0;
-                //                    if (existingTag != null)
-                //                    {
-                //                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                //                        pageObject.ParentPage.RemoveTag(existingTag);
-                //                    }
-                //                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                //                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
-                //                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                //                                                                   previousNumberOfAttempts + 1);
-                //                    pageObject.ParentPage.AddTag(newTag);
+            //    //                    var previousNumberOfAttempts = 0;
+            //    //                    if (existingTag != null)
+            //    //                    {
+            //    //                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
+            //    //                        pageObject.ParentPage.RemoveTag(existingTag);
+            //    //                    }
+            //    //                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+            //    //                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+            //    //                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+            //    //                                                                   previousNumberOfAttempts + 1);
+            //    //                    pageObject.ParentPage.AddTag(newTag);
 
-                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
-                //                    foreach (var viewModel in factorCardViewModels)
-                //                    {
-                //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
-                //                    }
-                //                    continue;
-                //                }
+            //    //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(DivisionTemplate);
+            //    //                    foreach (var viewModel in factorCardViewModels)
+            //    //                    {
+            //    //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+            //    //                    }
+            //    //                    continue;
+            //    //                }
 
-                //                //If first division - update IsGridOn to match new array
-                //                if (DivisionTemplate.LastDivisionPosition == 0)
-                //                {
-                //                    DivisionTemplate.IsGridOn = snappingArray.IsGridOn;
-                //                }
+            //    //                //If first division - update IsGridOn to match new array
+            //    //                if (DivisionTemplate.LastDivisionPosition == 0)
+            //    //                {
+            //    //                    DivisionTemplate.IsGridOn = snappingArray.IsGridOn;
+            //    //                }
 
-                //                //Add a new division and remove snapping array
-                //                PageObject.ParentPage.PageObjects.Remove(PageObject);
-                //                DivisionTemplate.SnapInArray(snappingArray.Columns);
+            //    //                //Add a new division and remove snapping array
+            //    //                PageObject.ParentPage.PageObjects.Remove(PageObject);
+            //    //                DivisionTemplate.SnapInArray(snappingArray.Columns);
 
-                //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                //                                                           new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
-                //                return;
-                //            }
-                //        }
-                //    }
-                //}
-            }
+            //    //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+            //    //                                                           new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
+            //    //                return;
+            //    //            }
+            //    //        }
+            //    //    }
+            //    //}
+            //}
         }
 
         public static void AnalyzeStrategy(CLPPage page, DivisionTemplate divisionTemplate)

@@ -1,4 +1,4 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -9,8 +9,9 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using ServiceModelEx.PublishSubscribe;
+using ServiceModelEx.PublishSubscribe.PublishSubscribeDataSetTableAdapters;
 using System.ServiceModel.Description;
-using ServiceModelEx.PublishSubscribeDataSetTableAdapters;
 
 namespace ServiceModelEx
 {
@@ -31,7 +32,7 @@ namespace ServiceModelEx
       }
       
       //Helper methods 
-      static void VerifyAddress(string address)
+      static protected void VerifyAddress(string address)
       {
          if(address.StartsWith("http:") || address.StartsWith("https:"))
          {
@@ -49,13 +50,9 @@ namespace ServiceModelEx
          {
             return;
          }
-         if(address.StartsWith("sb:"))
-         {
-            return;
-         }
          throw new InvalidOperationException("Unsupported protocol specified");
       }
-      static Binding GetBindingFromAddress(string address)
+      static protected Binding GetBindingFromAddress(string address)
       {
          if(address.StartsWith("http:") || address.StartsWith("https:"))
          {
@@ -83,10 +80,11 @@ namespace ServiceModelEx
             binding.Security.Mode = NetMsmqSecurityMode.None; 
             return binding;
          }
+
          Debug.Assert(false,"Unsupported binding specified");
          return null;
       }
-      static string[] GetOperations()
+      static protected string[] GetOperations()
       {
          MethodInfo[] methods = typeof(T).GetMethods(BindingFlags.Public|BindingFlags.FlattenHierarchy|BindingFlags.Instance);
          List<string> operations = new List<string>(methods.Length);
@@ -230,6 +228,7 @@ namespace ServiceModelEx
          {
             Binding binding = GetBindingFromAddress(address);
             ChannelFactory<T> factory = new ChannelFactory<T>(binding,new EndpointAddress(address));
+
             T proxy = factory.CreateChannel();
             subscribers.Add(proxy);
          }
@@ -250,7 +249,7 @@ namespace ServiceModelEx
       }
      
       [OperationBehavior(TransactionScopeRequired = true)]   
-      public PersistentSubscription[] GetAllSubscribers()
+      virtual public PersistentSubscription[] GetAllSubscribers()
       {
          PublishSubscribeDataSet.PersistentSubscribersDataTable subscribers = new PublishSubscribeDataSet.PersistentSubscribersDataTable();
          PersistentSubscribersTableAdapter adapter = new PersistentSubscribersTableAdapter();
@@ -258,7 +257,7 @@ namespace ServiceModelEx
          return Convert(subscribers);
       }
       [OperationBehavior(TransactionScopeRequired = true)]   
-      public PersistentSubscription[] GetSubscribersToContract(string eventContract)
+      virtual public PersistentSubscription[] GetSubscribersToContract(string eventContract)
       {
          PublishSubscribeDataSet.PersistentSubscribersDataTable subscribers = new PublishSubscribeDataSet.PersistentSubscribersDataTable();
          PersistentSubscribersTableAdapter adapter = new PersistentSubscribersTableAdapter();
@@ -266,12 +265,12 @@ namespace ServiceModelEx
          return Convert(subscribers);
       }
       [OperationBehavior(TransactionScopeRequired = true)]
-      public string[] GetSubscribersToContractEventType(string eventsContract,string eventOperation)
+      virtual public string[] GetSubscribersToContractEventType(string eventsContract,string eventOperation)
       {
          return GetSubscribersToContractEventOperation(eventsContract,eventOperation);
       }
       [OperationBehavior(TransactionScopeRequired = true)]
-      public PersistentSubscription[] GetAllSubscribersFromAddress(string address)
+      virtual public PersistentSubscription[] GetAllSubscribersFromAddress(string address)
       {
          VerifyAddress(address);
 
@@ -283,7 +282,7 @@ namespace ServiceModelEx
          return Convert(subscribers);
       }
       [OperationBehavior(TransactionScopeRequired = true)]
-      public void Unsubscribe(string address,string eventsContract,string eventOperation)
+      virtual public void Unsubscribe(string address,string eventsContract,string eventOperation)
       {
          VerifyAddress(address);
 
@@ -302,7 +301,7 @@ namespace ServiceModelEx
          }
       }
       [OperationBehavior(TransactionScopeRequired = true)]
-      public void Subscribe(string address,string eventsContract,string eventOperation)
+      virtual public void Subscribe(string address,string eventsContract,string eventOperation)
       {
          VerifyAddress(address);
 

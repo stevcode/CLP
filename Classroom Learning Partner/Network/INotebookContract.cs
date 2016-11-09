@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
-using CLP.Entities;
+﻿using System.ServiceModel;
 
 namespace Classroom_Learning_Partner
 {
@@ -9,12 +7,6 @@ namespace Classroom_Learning_Partner
     [ServiceContract]
     public interface INotebookContract
     {
-        [OperationContract]
-        void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject);
-
-        [OperationContract]
-        void OpenPartialNotebook(string zippedNotebook);
-
         [OperationContract]
         void AddHistoryItem(string compositePageID, string zippedHistoryItem);
 

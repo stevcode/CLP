@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -17,20 +16,11 @@ namespace CLP.Entities
         public ArrayStrategyTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
             : base(parentPage, origin, historyActions, codedStrategies) { }
 
-        /// <summary>Initializes <see cref="ArrayStrategyTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayStrategyTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region ATagBase Overrides
-
-        public override string FormattedName
-        {
-            get { return "Array"; }
-        }
+        
+        public override string FormattedName => "Array";
 
         #endregion //ATagBase Overrides
 
@@ -131,11 +121,11 @@ namespace CLP.Entities
                                 relevantHistoryactions.Add(nextHistoryAction);
                                 ignoredHistoryIndexes.Add(j);
                                 var codedStrategyInner = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentHistoryAction.CodedObjectID)
-                                {
-                                    CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
-                                    CodedResultantID = currentHistoryAction.CodedObjectActionID,
-                                    StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT_SNAP
-                                };
+                                                         {
+                                                             CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
+                                                             CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                             StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT_SNAP
+                                                         };
                                 codedStrategies.Add(codedStrategyInner);
                                 continue;
                             }
@@ -159,14 +149,14 @@ namespace CLP.Entities
                                                         currentHistoryAction.CodedObjectID,
                                                         !string.IsNullOrEmpty(currentHistoryAction.CodedObjectIDIncrement) ? " " + currentHistoryAction.CodedObjectIDIncrement : string.Empty);
                         var codedIDRight = string.Format("{0}{1}",
-                                                        currentHistoryAction.CodedObjectSubID,
-                                                        !string.IsNullOrEmpty(currentHistoryAction.CodedObjectSubIDIncrement) ? " " + currentHistoryAction.CodedObjectSubIDIncrement : string.Empty);
+                                                         currentHistoryAction.CodedObjectSubID,
+                                                         !string.IsNullOrEmpty(currentHistoryAction.CodedObjectSubIDIncrement) ? " " + currentHistoryAction.CodedObjectSubIDIncrement : string.Empty);
                         var fullCodedID = string.Format("{0}, {1}", codedIDLeft, codedIDRight);
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, fullCodedID)
-                        {
-                            CodedResultantID = currentHistoryAction.CodedObjectActionID,
-                            StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_SNAP
-                        };
+                                            {
+                                                CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_SNAP
+                                            };
                         codedStrategies.Add(codedStrategy);
                         continue;
                     }
@@ -181,9 +171,9 @@ namespace CLP.Entities
                 var count = skipArithCount[key];
 
                 var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_SKIP, Codings.OBJECT_ARRAY, codedID)
-                {
-                    CodedIncrementID = incrementID
-                };
+                                    {
+                                        CodedIncrementID = incrementID
+                                    };
 
                 if (count > 0)
                 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -34,12 +33,6 @@ namespace CLP.Entities
             Reason = reason;
         }
 
-        /// <summary>Initializes <see cref="DivisionTemplateCreationErrorTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateCreationErrorTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -51,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(ReasonProperty, value); }
         }
 
-        public static readonly PropertyData ReasonProperty = RegisterProperty("Reason", typeof (DivisionTemplateIncorrectCreationReasons));
+        public static readonly PropertyData ReasonProperty = RegisterProperty("Reason", typeof(DivisionTemplateIncorrectCreationReasons));
 
         #region ATagBase Overrides
 
@@ -62,14 +55,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get
-            {
-                return string.Format("{0} / {1} Created.\n" + "DivisionTemplate {2} on page.\n" + "Reason: {3}",
-                                     Dividend,
-                                     Divisor,
-                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
-                                     Reason);
-            }
+            get { return string.Format("{0} / {1} Created.\n" + "DivisionTemplate {2} on page.\n" + "Reason: {3}", Dividend, Divisor, IsDivisionTemplateStillOnPage ? "still" : "no longer", Reason); }
         }
 
         #endregion //ATagBase Overrides

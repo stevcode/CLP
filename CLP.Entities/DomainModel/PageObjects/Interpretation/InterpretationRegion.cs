@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
 using CLP.InkInterpretation;
@@ -33,12 +32,6 @@ namespace CLP.Entities
         public InterpretationRegion(CLPPage parentPage)
             : base(parentPage) { }
 
-        /// <summary>Initializes <see cref="InterpretationRegion" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public InterpretationRegion(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion // Constructors
 
         #region Properties
@@ -50,7 +43,7 @@ namespace CLP.Entities
             set { SetValue(RegionBorderStyleProperty, value); }
         }
 
-        public static readonly PropertyData RegionBorderStyleProperty = RegisterProperty("RegionBorderStyle", typeof (RegionBorderStyles), RegionBorderStyles.Hidden);
+        public static readonly PropertyData RegionBorderStyleProperty = RegisterProperty("RegionBorderStyle", typeof(RegionBorderStyles), RegionBorderStyles.Hidden);
 
         /// <summary>List of interpreters to run on the region.</summary>
         public ObservableCollection<Interpreters> Interpreters
@@ -59,7 +52,7 @@ namespace CLP.Entities
             set { SetValue(InterpretersProperty, value); }
         }
 
-        public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof (ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
+        public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof(ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
 
         #endregion // Properties
 
@@ -94,7 +87,10 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static string InterpretHandwriting(InterpretationRegion region, StrokeCollection strokes) { return InkInterpreter.StrokesToBestGuessText(strokes); } 
+        public static string InterpretHandwriting(InterpretationRegion region, StrokeCollection strokes)
+        {
+            return InkInterpreter.StrokesToBestGuessText(strokes);
+        }
 
         #endregion // Static Methods
     }

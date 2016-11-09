@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,10 +15,10 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
-using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,12 +27,14 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
+        private readonly IDataService _dataService;
         private readonly IPageInteractionService _pageInteractionService;
 
         /// <summary>Initializes a new instance of the CLPPageViewModel class.</summary>
-        protected ACLPPageBaseViewModel(CLPPage page)
+        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService)
         {
             Page = page;
+            _dataService = dataService;
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
@@ -45,11 +46,28 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
             SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
+
+            InitializedAsync += ACLPPageBaseViewModel_InitializedAsync;
+            ClosedAsync += ACLPPageBaseViewModel_ClosedAsync;
         }
 
-        public override string Title
+        private Task ACLPPageBaseViewModel_InitializedAsync(object sender, EventArgs e)
         {
-            get { return "APageBaseVM"; }
+            _dataService.CurrentPageChanged += _dataService_CurrentPageChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private Task ACLPPageBaseViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentPageChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentPageChanged(object sender, EventArgs e)
+        {
+            ClearAdorners();
         }
 
         #endregion //Constructor
@@ -284,9 +302,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var dataService = DependencyResolver.Resolve<IDataService>();
-                if (dataService == null ||
-                    Page == null ||
+                if (Page == null ||
                     Page.Owner == null)
                 {
                     return false;
@@ -297,7 +313,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return Submissions.Any() || Page.LastVersionIndex != null;
                 }
 
-                return dataService.LoadedNotebooksInfo.Any(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Owner.IsStudent && p.VersionIndex != 0));
+                return _dataService.LoadedNotebooks.Any(n => n.Pages.Any(p => p.ID == Page.ID && p.Owner.IsStudent && p.VersionIndex != 0));
             }
         }
 
@@ -305,9 +321,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var dataService = DependencyResolver.Resolve<IDataService>();
-                if (dataService == null ||
-                    Page == null ||
+                if (Page == null ||
                     Page.Owner == null)
                 {
                     return 0;
@@ -319,8 +333,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var count =
-                    dataService.LoadedNotebooksInfo.Where(n => n.Notebook.Owner.IsStudent)
-                               .Select(n => n.Notebook.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Notebook.Owner.FullName : string.Empty)
+                    _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent)
+                               .Select(n => n.Pages.Any(p => p.ID == Page.ID && p.Submissions.Any()) ? n.Owner.FullName : string.Empty)
                                .Where(s => !string.IsNullOrEmpty(s))
                                .Distinct()
                                .Count();
@@ -551,6 +565,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ClearAdorners(CLPPage page)
         {
+            // TODO: Handle GridDisplays?
             if (page == null)
             {
                 return;
@@ -1129,51 +1144,7 @@ namespace Classroom_Learning_Partner.ViewModels
                    point.Y <= pageObject.YPosition + pageObject.Height;
         }
 
-        private static Task _currentTask = Task.FromResult(Type.Missing);
-        private static readonly object _lock = new Object();
-
-        public static void QueueTask(Action action)
-        {
-            lock (_lock)
-            {
-                _currentTask = _currentTask.ContinueWith(lastTask =>
-                                                         {
-                                                             // re-throw the error of the last completed task (if any)
-                                                             try
-                                                             {
-                                                                 lastTask.GetAwaiter().GetResult();
-                                                             }
-                                                             catch (Exception ex)
-                                                             {
-                                                                 Logger.Instance.WriteToLog("Error on lastTask:");
-                                                                 Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
-                                                                                            (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                                                                 Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                                                                 Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                                                                 Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                                                                 Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
-                                                             }
-                                                             // run the new task
-                                                             try
-                                                             {
-                                                                 action();
-                                                             }
-                                                             catch (Exception ex)
-                                                             {
-                                                                 Logger.Instance.WriteToLog("Error on task action execute:");
-                                                                 Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " +
-                                                                                            (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                                                                 Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                                                                 Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                                                                 Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                                                                 Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
-                                                             }
-                                                         },
-                                                         CancellationToken.None,
-                                                         TaskContinuationOptions.LazyCancellation,
-                                                         TaskScheduler.Default);
-            }
-        }
+        private static readonly TaskQueue TaskQueue = new TaskQueue();
 
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
@@ -1185,51 +1156,84 @@ namespace Classroom_Learning_Partner.ViewModels
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
             //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
             //    App.Network.ProjectorProxy == null ||
-            //    App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
+            //    !(historyItem is ObjectsOnPageChangedHistoryItem))
             //{
             //    return;
             //}
 
-            /*
-            QueueTask(() =>
-                      {
-                          var historyItemCopy = historyItem.CreatePackagedHistoryItem();
-                          if (historyItemCopy == null)
-                          {
-                              Logger.Instance.WriteToLog("Failed to CreatePackagedHistoryItem");
-                              return;
-                          }
-                          var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-                          var zippedHistoryItem = historyItemString.CompressWithGZip();
+            TaskQueue.Enqueue(async () =>
+                               {
+                                   var historyItemCopy = historyItem.CreatePackagedHistoryItem();
+                                   if (historyItemCopy == null)
+                                   {
+                                       return;
+                                   }
 
-                          try
-                          {
-                              var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
-                              App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
-                          }
-                          catch (Exception)
-                          {
-                              Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
-                          }
+                                   //var st = Stopwatch.StartNew();
+                                   //var jsonString = (historyItemCopy as AEntityBase).ToJsonString();
+                                   //var zjson = jsonString.CompressWithGZip();
+                                   //st.Stop();
+                                   //var jTime = st.ElapsedMilliseconds;
+                                   //var jLength = jsonString.Length;
 
-                          //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
-                          //{
-                          //    return;
-                          //}
+                                   //st.Restart();
+                                   //var backToJson = zjson.DecompressFromGZip();
+                                   //var unjHistoryItem = AEntityBase.FromJsonString<object>(backToJson);
+                                   //st.Stop();
+                                   //var unjsonTime = st.ElapsedMilliseconds;
 
-                          //foreach(var student in App.Network.ClassList)
-                          //{
-                          //    try
-                          //    {
-                          //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                          //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
-                          //        (studentProxy as ICommunicationObject).Close();
-                          //    }
-                          //    catch(Exception)
-                          //    {
-                          //    }
-                          //}
-                      });*/
+                                   //st.Restart();
+                                   //var historyItemString = ObjectSerializer.ToString(historyItemCopy);
+                                   //var zippedHistoryItem = historyItemString.CompressWithGZip();
+                                   //st.Stop();
+                                   //var zTime = st.ElapsedMilliseconds;
+                                   //var toStringLength = historyItemString.Length;
+                                   //var toZipLength = zippedHistoryItem.Length;
+
+                                   //st.Restart();
+                                   //var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
+                                   //var uhistoryItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+                                   //st.Stop();
+                                   //var unzipTime = st.ElapsedMilliseconds;
+
+                                   //Console.WriteLine();
+                                   //Console.WriteLine("Json conversion time: {0}", jTime);
+                                   //Console.WriteLine("Zip conversion time {0}", zTime);
+                                   //Console.WriteLine("UnJson conversion time: {0}", unjsonTime);
+                                   //Console.WriteLine("UnZip conversion time {0}", unzipTime);
+                                   //Console.WriteLine("Json string length: {0}", jLength);
+                                   //Console.WriteLine("Json zipped length: {0}", zjson.Length);
+                                   //Console.WriteLine("ToString string length: {0}", toStringLength);
+                                   //Console.WriteLine("Zip string length: {0}", toZipLength);
+
+                                   //try
+                                   //{
+                                   //    var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
+                                   //    App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
+                                   //}
+                                   //catch (Exception)
+                                   //{
+                                   //    Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+                                   //}
+
+                                   //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
+                                   //{
+                                   //    return;
+                                   //}
+
+                                   //foreach(var student in App.Network.ClassList)
+                                   //{
+                                   //    try
+                                   //    {
+                                   //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                                   //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                                   //        (studentProxy as ICommunicationObject).Close();
+                                   //    }
+                                   //    catch(Exception)
+                                   //    {
+                                   //    }
+                                   //}
+                               });
         }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)

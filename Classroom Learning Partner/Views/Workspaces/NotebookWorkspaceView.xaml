@@ -205,11 +205,8 @@
                     <Style.Triggers>
 
                         <!-- SingleDisplay triggers -->
-                        <DataTrigger Binding="{Binding SingleDisplay, Converter={converters:IsNullConverter}}" Value="false">
-                            <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
-                        </DataTrigger>
-                        
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={converters:IsNullConverter}}" Value="true">
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={converters:IsNullConverter}}" 
+                                     Value="true">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
                         </DataTrigger>
 

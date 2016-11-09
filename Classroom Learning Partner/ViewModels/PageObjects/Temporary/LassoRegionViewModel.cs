@@ -38,8 +38,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Clear();
 
             _contextButtons.Add(new RibbonButton("Delete Lassoed Objects", "pack://application:,,,/Resources/Images/Delete.png", RemovePageObjectsCommand, null, true));
-            _contextButtons.Add(MajorRibbonViewModel.Separater);
-            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", DuplicateCommand, null, true));
         }
 
         #region Commands

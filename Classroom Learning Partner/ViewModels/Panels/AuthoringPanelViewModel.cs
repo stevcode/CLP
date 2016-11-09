@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public class AuthoringPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+
         #region Constructor
 
         public AuthoringPanelViewModel(IDataService dataService)
@@ -38,28 +39,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
         }
 
-        private void InitializeCommands()
-        {
-            AddPageCommand = new Command(OnAddPageCommandExecute);
-            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
-            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
-            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
-            MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
-            TrimPageCommand = new Command(OnTrimPageCommandExecute);
-            ClearPageCommand = new Command(OnClearPageCommandExecute);
-            DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
-            DeletePageCommand = new Command(OnDeletePageCommandExecute);
-            DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
-            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
-        }
-
-        //private async Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
-        //{
-        //    Length = InitialLength;
-        //    Location = PanelLocations.Right;
-        //}
-
         private Task AuthoringPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
@@ -72,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Task AuthoringPanelViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
 
             return TaskHelper.Completed;
         }
@@ -83,10 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
-        public override double InitialLength
-        {
-            get { return 175.0; }
-        }
+        public override double InitialLength => 175.0;
 
         #endregion //Constructor
 
@@ -129,6 +105,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            AddPageCommand = new Command(OnAddPageCommandExecute);
+            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
+            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
+            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
+            MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
+            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
+            DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
+            DeletePageCommand = new Command(OnDeletePageCommandExecute);
+            DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
+            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+        }
+
         /// <summary>Adds a new page to the notebook.</summary>
         public Command AddPageCommand { get; private set; }
 
@@ -138,7 +130,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
             var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
 
-            Notebook.InsertPageAt(index, page);
+            _dataService.InsertPageAt(Notebook, page, index);
         }
 
         /// <summary>Converts current page between landscape and portrait.</summary>
@@ -196,9 +188,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.PageNumber--;
             previousPage.PageNumber++;
 
+            // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemUp(CurrentPage);
-            CurrentPage = Notebook.Pages[currentPageIndex - 1];
-            RaisePropertyChanged("CurrentPage");
+            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex - 1]);
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageUpCanExecute()
@@ -216,9 +209,10 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.PageNumber++;
             nextPage.PageNumber--;
 
+            // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemDown(CurrentPage);
-            CurrentPage = Notebook.Pages[currentPageIndex + 1];
-            RaisePropertyChanged("CurrentPage");
+            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex + 1]);
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageDownCanExecute()
@@ -263,6 +257,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageNumber--;
                 }
 
+                // TODO: Use DataService
                 CurrentPage.PageNumber = newPageNumber;
                 Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
             }
@@ -275,11 +270,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageNumber++;
                 }
 
+                // TODO: Use DataService
                 CurrentPage.PageNumber = newPageNumber;
                 Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
             }
 
-            RaisePropertyChanged("CurrentPage");
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageToCanExecute()
@@ -341,7 +337,7 @@ namespace Classroom_Learning_Partner.ViewModels
             index++;
 
             var newPage = CurrentPage.DuplicatePage();
-            Notebook.InsertPageAt(index, newPage);
+            _dataService.InsertPageAt(Notebook, newPage, index);
         }
 
         /// <summary>Deletes current page from the notebook.</summary>
@@ -349,12 +345,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDeletePageCommandExecute()
         {
-            var index = Notebook.Pages.IndexOf(CurrentPage);
-            if (index == -1)
-            {
-                return;
-            }
-            Notebook.RemovePageAt(index);
+            _dataService.DeletePage(Notebook, CurrentPage);
         }
 
         public Command DifferentiatePageCommand { get; private set; }
@@ -381,23 +372,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Differentiate(int groups)
         {
+            // TODO: Test how this interacts with autosave delete/move
             var originalPage = CurrentPage;
             originalPage.DifferentiationLevel = "A";
             var index = Notebook.Pages.IndexOf(originalPage);
             Notebook.Pages.Remove(originalPage);
             Notebook.Pages.Insert(index, originalPage);
-            foreach (var pageObject in originalPage.PageObjects)
-            {
-                pageObject.DifferentiationLevel = originalPage.DifferentiationLevel;
-            }
-            foreach (var historyItem in originalPage.History.UndoItems)
-            {
-                historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
-            }
-            foreach (var historyItem in originalPage.History.RedoItems)
-            {
-                historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
-            }
+
             foreach (var stroke in originalPage.InkStrokes)
             {
                 stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
@@ -409,18 +390,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
-                foreach (var pageObject in differentiatedPage.PageObjects)
-                {
-                    pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
-                }
-                foreach (var historyItem in differentiatedPage.History.UndoItems)
-                {
-                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-                }
-                foreach (var historyItem in differentiatedPage.History.RedoItems)
-                {
-                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-                }
+
                 foreach (var stroke in differentiatedPage.InkStrokes)
                 {
                     stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);

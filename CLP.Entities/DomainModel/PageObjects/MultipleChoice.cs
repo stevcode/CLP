@@ -33,9 +33,6 @@ namespace CLP.Entities
             BubbleContent = labelType == MultipleChoiceLabelTypes.Numbers ? (index + 1).ToString() : IntToUpperLetter(index + 1);
         }
 
-        public ChoiceBubble(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -134,9 +131,6 @@ namespace CLP.Entities
             Height = ChoiceBubbleDiameter;
             Width = 165;
         }
-
-        public MultipleChoice(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 

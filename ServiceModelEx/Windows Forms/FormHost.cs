@@ -1,4 +1,4 @@
-// © 2011 IDesign Inc. All rights reserved 
+// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -13,7 +13,7 @@ namespace ServiceModelEx
    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
    public abstract class FormHost<F> : Form where F : Form
    {
-      protected ServiceHost<F> Host
+      protected ServiceHost Host
       {
          get;set;
       }

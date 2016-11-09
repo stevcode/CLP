@@ -20,10 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class BackStageViewModel : ViewModelBase
     {
-        public MainWindowViewModel MainWindow
-        {
-            get { return App.MainWindowViewModel; }
-        }
+        public MainWindowViewModel MainWindow => App.MainWindowViewModel;
 
         public BackStageViewModel() { InitializeCommands(); }
 
@@ -138,11 +135,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnExitProgramCommandExecute()
         {
             var mainWindow = App.MainWindowViewModel.GetFirstView() as MainWindowView;
-            if (mainWindow == null)
-            {
-                return;
-            }
-            mainWindow.Close();
+            mainWindow?.Close();
         }
 
         #endregion //Commands
@@ -151,22 +144,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void SetBackStagePane()
         {
+            var dependencyResolver = this.GetDependencyResolver();
+            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
+
             switch (CurrentNavigationPane)
             {
                 case NavigationPanes.Info:
-                    DisplayedPane = new NotebookInfoPaneViewModel();
+                    DisplayedPane = viewModelFactory.CreateViewModel<NotebookInfoPaneViewModel>(null, null);
                     break;
                 case NavigationPanes.New:
-                    DisplayedPane = new NewPaneViewModel();
+                    DisplayedPane = viewModelFactory.CreateViewModel<NewPaneViewModel>(null, null);
                     break;
                 case NavigationPanes.Open:
-                    DisplayedPane = new OpenNotebookPaneViewModel();
+                    DisplayedPane = viewModelFactory.CreateViewModel<OpenNotebookPaneViewModel>(null, null);
                     break;
                 case NavigationPanes.Export:
-                    DisplayedPane = new ExportPaneViewModel();
+                    DisplayedPane = viewModelFactory.CreateViewModel<ExportPaneViewModel>(null, null);
                     break;
                 case NavigationPanes.Options:
-                    DisplayedPane = new OptionsPaneViewModel();
+                    DisplayedPane = viewModelFactory.CreateViewModel<OptionsPaneViewModel>(null, null);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

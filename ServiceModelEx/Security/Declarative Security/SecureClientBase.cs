@@ -1,4 +1,4 @@
-﻿// © 2011 IDesign Inc. All rights reserved 
+﻿// © 2016 IDesign Inc. All rights reserved 
 //Questions? Comments? go to 
 //http://www.idesign.net
 
@@ -117,19 +117,19 @@ namespace ServiceModelEx
          switch(mode)
          {
             case ServiceSecurity.None:
-               {
-                  SecurityHelper.UnsecuredProxy(this);
-                  break;
-               }
+            {
+               SecurityHelper.UnsecuredProxy(this);
+               break;
+            }
             case ServiceSecurity.Anonymous:
-               {
-                  SecurityHelper.AnonymousProxy(this);
-                  break;
-               }
+            {
+               SecurityHelper.AnonymousProxy(this);
+               break;
+            }
             default:
-               {
-                  throw new InvalidOperationException(mode + " is unsupported with this constructor");
-               }
+            {
+               throw new InvalidOperationException(mode + " is unsupported with this constructor");
+            }
          }
       }
       protected SecureClientBase(UserNamePasswordClientCredential credentials,Binding binding,EndpointAddress remoteAddress) : base(binding,remoteAddress)

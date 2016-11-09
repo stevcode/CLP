@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -23,46 +22,29 @@ namespace Classroom_Learning_Partner.ViewModels
         public StampedObjectViewModel(StampedObject stampedObject, IDataService dataService)
         {
             PageObject = stampedObject;
-            RaisePropertyChanged("IsGroupStampedObject");
-            if (App.MainWindowViewModel.ImagePool.ContainsKey(stampedObject.ImageHashID))
-            {
-                SourceImage = App.MainWindowViewModel.ImagePool[stampedObject.ImageHashID];
-            }
-            else
-            {
-                var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(dataService.CurrentCacheInfo.ImagesFolderPath);
-                foreach (var imageFilePath in from imageFilePath in imageFilePaths
-                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
-                                              where imageHashID == stampedObject.ImageHashID
-                                              select imageFilePath)
-                {
-                    filePath = imageFilePath;
-                    break;
-                }
+            RaisePropertyChanged(nameof(IsGroupStampedObject));
 
-                var bitmapImage = CLPImage.GetImageFromPath(filePath);
-                if (bitmapImage != null)
-                {
-                    SourceImage = bitmapImage;
-                    App.MainWindowViewModel.ImagePool.Add(stampedObject.ImageHashID, bitmapImage);
-                }
-            }
+            SourceImage = dataService.GetImage(stampedObject.ImageHashID, stampedObject);
 
-            foreach (
-                var strokePath in
-                    stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke())
-                                 .Select(stroke => new StrokePathDTO(stroke)))
+            foreach (var strokePath in
+                stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke()).Select(stroke => new StrokePathDTO(stroke)))
             {
                 StrokePaths.Add(strokePath);
             }
 
-            ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
+            InitializeCommands();
+            InitializeButtons();
+        }
 
-            
+        private void InitializeButtons()
+        {
             if (StampedObjectType == StampedObjectTypes.GroupStampedObject)
             {
-                _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Resources/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.GroupStampedObject, true));
+                _contextButtons.Add(new RibbonButton("Make Copies",
+                                                     "pack://application:,,,/Resources/Images/AddToDisplay.png",
+                                                     ParameterizeStampedObjectCommand,
+                                                     StampedObjectType == StampedObjectTypes.GroupStampedObject,
+                                                     true));
 
                 IsBoundaryVisible = false;
                 IsPartsLabelVisible = false;
@@ -72,9 +54,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _contextButtons.Add(MajorRibbonViewModel.Separater);
                 var toggleChildPartsButton = new ToggleRibbonButton("Show Group Size", "Hide Group Size", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
-                {
-                    IsChecked = IsPartsLabelVisible
-                };
+                                             {
+                                                 IsChecked = IsPartsLabelVisible
+                                             };
                 toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
                 toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
                 _contextButtons.Add(toggleChildPartsButton);
@@ -93,13 +75,6 @@ namespace Classroom_Learning_Partner.ViewModels
             IsPartsLabelVisible = (bool)button.IsChecked;
         }
 
-        /// <summary>Gets the title of the view model.</summary>
-        /// <value>The title.</value>
-        public override string Title
-        {
-            get { return "StampedObjectVM"; }
-        }
-
         #endregion //Constructor
 
         #region Model
@@ -112,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StampedObjectTypeProperty, value); }
         }
 
-        public static readonly PropertyData StampedObjectTypeProperty = RegisterProperty("StampedObjectType", typeof (StampedObjectTypes));
+        public static readonly PropertyData StampedObjectTypeProperty = RegisterProperty("StampedObjectType", typeof(StampedObjectTypes));
 
         /// <summary>Number of parts represented by the StampCopy. Only visible for collection copies.</summary>
         [ViewModelToModel("PageObject")]
@@ -122,11 +97,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PartsProperty, value); }
         }
 
-        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof (int));
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int));
 
-        /// <summary>
-        /// Toggles the visibility of a boundary around the stampedObject.
-        /// </summary>
+        /// <summary>Toggles the visibility of a boundary around the stampedObject.</summary>
         [ViewModelToModel("PageObject")]
         public bool IsBoundaryVisible
         {
@@ -136,9 +109,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof(bool));
 
-        /// <summary>
-        /// Toggles visibility of Parts.
-        /// </summary>
+        /// <summary>Toggles visibility of Parts.</summary>
         [ViewModelToModel("PageObject")]
         public bool IsPartsLabelVisible
         {
@@ -173,7 +144,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SourceImageProperty, value); }
         }
 
-        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource));
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
 
         /// <summary>List of <see cref="StrokePathDTO" />s that make up the <see cref="StampedObject" />.</summary>
         public ObservableCollection<StrokePathDTO> StrokePaths
@@ -182,13 +153,16 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StrokePathsProperty, value); }
         }
 
-        public static readonly PropertyData StrokePathsProperty = RegisterProperty("StrokePaths",
-                                                                                   typeof (ObservableCollection<StrokePathDTO>),
-                                                                                   () => new ObservableCollection<StrokePathDTO>());
+        public static readonly PropertyData StrokePathsProperty = RegisterProperty("StrokePaths", typeof(ObservableCollection<StrokePathDTO>), () => new ObservableCollection<StrokePathDTO>());
 
         #endregion //Binding
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
+        }
 
         /// <summary>Parameterizes the StampedObject.</summary>
         public Command<bool> ParameterizeStampedObjectCommand { get; private set; }
@@ -202,10 +176,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var keyPad = new KeypadWindowView("How many copies?", 21)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)
@@ -219,19 +193,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var numberOfAcceptedStampedObjects = stampedObject.AcceptedPageObjects.Count;
             if (isDuplicateAndTake)
             {
-                var stampedObjects = stampedObject.ParentPage.PageObjects.OfType<StampedObject>()
-                             .Where(x => x.StampedObjectType == StampedObjectTypes.GeneralStampedObject && x.Parts == 1);
+                var stampedObjects = stampedObject.ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.StampedObjectType == StampedObjectTypes.GeneralStampedObject && x.Parts == 1);
 
                 var groupStampedObjects =
                     stampedObject.ParentPage.PageObjects.OfType<StampedObject>()
-                              .Where(
-                                     x =>
-                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject ||
-                                      x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
-                              .ToList();
+                                 .Where(x => (x.StampedObjectType == StampedObjectTypes.GroupStampedObject || x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
+                                 .ToList();
 
-                ungroupedStampedObjects =
-                    stampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) == 0).ToList();
+                ungroupedStampedObjects = stampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) == 0).ToList();
 
                 if (!ungroupedStampedObjects.Any())
                 {
@@ -307,7 +276,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         newPageObject.XPosition = newStampedObject.XPosition + (pageObject.XPosition - stampedObject.XPosition);
                         newPageObject.YPosition = newStampedObject.YPosition + (pageObject.YPosition - stampedObject.YPosition);
                         stampCopiesToAdd.Add(newPageObject);
-                    } 
+                    }
                 }
             }
 

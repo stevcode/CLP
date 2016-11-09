@@ -62,34 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
         }
 
-        private void InitializeCommands()
-        {
-            #region Analysis Commands
-
-            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
-            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
-            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
-            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
-            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
-            v1Command = new Command(Onv1CommandExecute);
-            v2Command = new Command(Onv2CommandExecute);
-            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
-            AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
-            AnalyzeBottomSkipCountingCommand = new Command(OnAnalyzeBottomSkipCountingCommandExecute);
-            TSVCommand = new Command(OnTSVCommandExecute);
-            ShowInitialBoundariesCommand = new Command(OnShowInitialBoundariesCommandExecute);
-
-            #region Obsolete Commands
-
-            AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
-            AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
-            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
-            FixCommand = new Command(OnFixCommandExecute);
-
-            #endregion // Obsolete Commands
-
-            #endregion // Analysis Commands
-        }
+        
 
         private async Task PageInformationPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
@@ -177,13 +150,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
         [ViewModelToModel("CurrentPage")]
-        public decimal PageNumber
+        public int PageNumber
         {
-            get { return GetValue<decimal>(PageNumberProperty); }
+            get { return GetValue<int>(PageNumberProperty); }
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int));
 
         /// <summary>
         ///     <see cref="ATagBase" />s for the <see cref="CLPPage" />.
@@ -364,6 +337,35 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            #region Analysis Commands
+
+            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+            ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
+            ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
+            ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
+            StrokeTestingCommand = new Command(OnStrokeTestingCommandExecute);
+            v1Command = new Command(Onv1CommandExecute);
+            v2Command = new Command(Onv2CommandExecute);
+            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
+            AnalyzeSkipCountingWithDebugCommand = new Command(OnAnalyzeSkipCountingWithDebugCommandExecute);
+            AnalyzeBottomSkipCountingCommand = new Command(OnAnalyzeBottomSkipCountingCommandExecute);
+            TSVCommand = new Command(OnTSVCommandExecute);
+            ShowInitialBoundariesCommand = new Command(OnShowInitialBoundariesCommandExecute);
+
+            #region Obsolete Commands
+
+            AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
+            AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
+            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
+            FixCommand = new Command(OnFixCommandExecute);
+
+            #endregion // Obsolete Commands
+
+            #endregion // Analysis Commands
+        }
 
         #region Analysis Commands
 
@@ -1450,25 +1452,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPrintAllHistoryItemsCommandExecute()
         {
-            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
-            if (!Directory.Exists(fileDirectory))
-            {
-                Directory.CreateDirectory(fileDirectory);
-            }
+            //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            //var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            //if (!Directory.Exists(fileDirectory))
+            //{
+            //    Directory.CreateDirectory(fileDirectory);
+            //}
 
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-            }
-            File.WriteAllText(filePath, "");
-            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+            //var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePage(CurrentPage).ToFileName() + ".txt");
+            //if (File.Exists(filePath))
+            //{
+            //    File.Delete(filePath);
+            //}
+            //File.WriteAllText(filePath, "");
+            //var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
 
-            foreach (var item in historyItems)
-            {
-                File.AppendAllText(filePath, item.FormattedValue + "\n");
-            }
+            //foreach (var item in historyItems)
+            //{
+            //    File.AppendAllText(filePath, item.FormattedValue + "\n");
+            //}
         }
 
         public Command FixCommand { get; private set; }

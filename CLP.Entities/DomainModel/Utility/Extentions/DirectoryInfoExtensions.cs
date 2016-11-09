@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Catel;
 
-namespace CLP.Entities.DomainModel.Utility.Extentions
+namespace CLP.Entities
 {
     public static class DirectoryInfoExtensions
     {

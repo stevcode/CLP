@@ -12,11 +12,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel(CLPPage basePage)
         {
-            GroupCreationViewModel = new GroupCreationViewModel("Temp");
+            //GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = basePage.DuplicatePage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
-            foreach(Group group in GroupCreationViewModel.Groups)
+            foreach(GroupCreationViewModel.Group group in GroupCreationViewModel.Groups)
             {
                 ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
             }
@@ -26,11 +26,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel()
         {
-            GroupCreationViewModel = new GroupCreationViewModel("Temp");
+            //GroupCreationViewModel = new GroupCreationViewModel(GroupCreationViewModel.GroupTypes.Temporary);
             BasePage = new CLPPage();
             BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
-            foreach (Group group in GroupCreationViewModel.Groups)
+            foreach (GroupCreationViewModel.Group group in GroupCreationViewModel.Groups)
             {
                 ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
             }
@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(e.NewItems != null)
             {
-                foreach(Group newGroup in e.NewItems)
+                foreach(GroupCreationViewModel.Group newGroup in e.NewItems)
                 {
                     ExitTickets.Insert(e.NewStartingIndex, DifferentiatePage(BasePage, newGroup.Label));
                 }
@@ -70,7 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(GroupCreationViewModelProperty, value); }
         }
 
-        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel), () => new GroupCreationViewModel());
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel));
 
         public ObservableCollection<CLPPage> ExitTickets
         {
@@ -87,18 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
             differentiatedPage.ID = original.ID;
             differentiatedPage.PageNumber = 999;
             differentiatedPage.DifferentiationLevel = label;
-            foreach(var pageObject in differentiatedPage.PageObjects)
-            {
-                pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
-            }
-            foreach(var historyItem in differentiatedPage.History.UndoItems)
-            {
-                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-            }
-            foreach(var historyItem in differentiatedPage.History.RedoItems)
-            {
-                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-            }
+
             foreach(var stroke in differentiatedPage.InkStrokes)
             {
                 stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);

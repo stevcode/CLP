@@ -14,11 +14,5 @@ namespace CLP.Entities
         List<string> CompositePageIDs { get; set; } 
         ObservableCollection<CLPPage> Pages { get; set; }
         bool IsHidden { get; set; }
-
-        void AddPageToDisplay(CLPPage page);
-        void RemovePageFromDisplay(CLPPage page);
-
-        void ToXML(string filePath);
-        void Save(string folderPath);
     }
 }

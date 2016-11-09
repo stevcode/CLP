@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -7,6 +9,7 @@ using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
+using Catel.Threading;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -43,34 +46,47 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService = ServiceLocator.Default.ResolveType<IDataService>();
             CurrentProgramMode = currentProgramMode;
 
-            var dependencyResolver = this.GetDependencyResolver();
-            var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
-            MajorRibbon = viewModelFactory.CreateViewModel<MajorRibbonViewModel>(typeof(MajorRibbonViewModel), null);
-            BackStage = viewModelFactory.CreateViewModel<BackStageViewModel>(typeof(BackStageViewModel), null);
-            Workspace = viewModelFactory.CreateViewModel<BlankWorkspaceViewModel>(typeof(BlankWorkspaceViewModel), null);
+            MajorRibbon = this.CreateViewModel<MajorRibbonViewModel>(null);
+            BackStage = this.CreateViewModel<BackStageViewModel>(null);
+            Workspace = this.CreateViewModel<BlankWorkspaceViewModel>(null);
 
             InitializeCommands();
 
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
-        }
-
-        public override string Title
-        {
-            get { return "MainWindowVM"; }
-        }
-
-        private void InitializeCommands()
-        {
-            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
-            TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
-            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
-            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
-            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
-            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+            InitializedAsync += MainWindowViewModel_InitializedAsync;
+            ClosedAsync += MainWindowViewModel_ClosedAsync;
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private Task MainWindowViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private Task MainWindowViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+
+            return TaskHelper.Completed;
+        }
+
+        private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
+        {
+            Workspace = this.CreateViewModel<BlankWorkspaceViewModel>(null);
+            Workspace = this.CreateViewModel<NotebookWorkspaceViewModel>(null);
+            CurrentNotebookName = _dataService.CurrentNotebook.Name;
+            CurrentUser = _dataService.CurrentNotebook.Owner;
+            IsAuthoring = _dataService.CurrentNotebook.OwnerID == Person.Author.ID;
+            IsBackStageVisible = false;
+        }
+
+        #endregion // Events
 
         #region Bindings
 
@@ -117,7 +133,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(IsBackStageVisibleProperty, value);
-                ACLPPageBaseViewModel.ClearAdorners(NotebookPagesPanelViewModel.GetCurrentPage());
+                ACLPPageBaseViewModel.ClearAdorners(_dataService.CurrentPage);
             }
         }
 
@@ -286,24 +302,15 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentProgramModeProperty, value);
-                RaisePropertyChanged("TeacherOnlyVisibility");
-                RaisePropertyChanged("ProjectorOnlyVisibility");
-                RaisePropertyChanged("StudentOnlyVisibility");
-                RaisePropertyChanged("NotTeacherVisibility");
-                RaisePropertyChanged("NotStudentVisibility");
+                RaisePropertyChanged(nameof(TeacherOnlyVisibility));
+                RaisePropertyChanged(nameof(ProjectorOnlyVisibility));
+                RaisePropertyChanged(nameof(StudentOnlyVisibility));
+                RaisePropertyChanged(nameof(NotTeacherVisibility));
+                RaisePropertyChanged(nameof(NotStudentVisibility));
             }
         }
 
         public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
-
-        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
-        public Dictionary<string, BitmapImage> ImagePool
-        {
-            get { return GetValue<Dictionary<string, BitmapImage>>(ImagePoolProperty); }
-            set { SetValue(ImagePoolProperty, value); }
-        }
-
-        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof (Dictionary<string, BitmapImage>), () => new Dictionary<string, BitmapImage>());
 
         /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
@@ -313,17 +320,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof (Person));
-
-        /// <summary>List of all available <see cref="Person" />s.</summary>
-        public ObservableCollection<Person> AvailableUsers
-        {
-            get { return GetValue<ObservableCollection<Person>>(AvailableUsersProperty); }
-            set { SetValue(AvailableUsersProperty, value); }
-        }
-
-        public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers",
-                                                                                      typeof (ObservableCollection<Person>),
-                                                                                      () => new ObservableCollection<Person>());
 
         #endregion //Properties
 
@@ -337,17 +333,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:
-                    //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     break;
                 case ProgramModes.Projector:
-                    //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     break;
                 case ProgramModes.Student:
-                    Workspace = new UserLoginWorkspaceViewModel();
-                    IsBackStageVisible = true;
-                    App.MainWindowViewModel.BackStage.CurrentNavigationPane = NavigationPanes.Open;
+                    Workspace = this.CreateViewModel<UserLoginWorkspaceViewModel>(null);
                     break;
             }
         }
@@ -355,6 +347,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
+            TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
+            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
+            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
+            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
+            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+            ToggleAutoSaveCommand = new Command(OnToggleAutoSaveCommandExecute);
+        }
 
         /// <summary>Sets the UserMode of the program.</summary>
         public Command<string> SetUserModeCommand { get; private set; }
@@ -440,6 +443,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             mainWindow.Close();
+        }
+
+        /// <summary>Toggles AutoSave On and Off.</summary>
+        public Command ToggleAutoSaveCommand { get; private set; }
+
+        private void OnToggleAutoSaveCommandExecute()
+        {
+            _dataService.IsAutoSaveOn = !_dataService.IsAutoSaveOn;
         }
 
         #endregion //Commands

@@ -39,7 +39,7 @@ namespace ConsoleScripts
                 foreach (var pageFilePath in pageFilePaths)
                 {
                     var page = AEntityBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                    page.AfterDeserialization();
+                    //page.AfterDeserialization();
 
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 

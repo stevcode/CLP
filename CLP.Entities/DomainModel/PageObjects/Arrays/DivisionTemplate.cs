@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -43,12 +42,6 @@ namespace CLP.Entities
             Width = (gridSquareSize * columns) + DT_LABEL_LENGTH + DT_LARGE_LABEL_LENGTH;
             Height = (gridSquareSize * rows) + (2 * DT_LABEL_LENGTH);
         }
-
-        /// <summary>Initializes <see cref="DivisionTemplate" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplate(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         public void InitializeRemainderTiles()
         {
@@ -121,20 +114,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData RemainderTilesOwnerIDProperty = RegisterProperty("RemainderTilesOwnerID", typeof (string), string.Empty);
 
-        /// <summary>Version Index for the <see cref="RemainderTiles" />.</summary>
-        public uint RemainderTilesVersionIndex
-        {
-            get { return GetValue<uint>(RemainderTilesVersionIndexProperty); }
-            set { SetValue(RemainderTilesVersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData RemainderTilesVersionIndexProperty = RegisterProperty("RemainderTilesVersionIndex", typeof (uint), 0);
-
-        /// <summary>
-        ///     <see cref="RemainderTiles" /> for the <see cref="DivisionTemplate" />.
-        /// </summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual RemainderTiles RemainderTiles
+        /// <summary><see cref="RemainderTiles" /> for the <see cref="DivisionTemplate" />.</summary>
+        public RemainderTiles RemainderTiles
         {
             get { return GetValue<RemainderTiles>(RemainderTilesProperty); }
             set
@@ -144,12 +125,10 @@ namespace CLP.Entities
                 {
                     RemainderTilesID = string.Empty;
                     RemainderTilesOwnerID = string.Empty;
-                    RemainderTilesVersionIndex = 0;
                     return;
                 }
                 RemainderTilesID = value.ID;
                 RemainderTilesOwnerID = value.OwnerID;
-                RemainderTilesVersionIndex = value.VersionIndex;
             }
         }
 
@@ -159,10 +138,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public double LargeLabelLength
-        {
-            get { return DT_LARGE_LABEL_LENGTH; }
-        }
+        public double LargeLabelLength => DT_LARGE_LABEL_LENGTH;
 
         public int GroupsSubtracted
         {
@@ -241,10 +217,7 @@ namespace CLP.Entities
 
         #region ACLPArrayBase Overrides
 
-        public override double LabelLength
-        {
-            get { return DT_LABEL_LENGTH; }
-        }
+        public override double LabelLength => DT_LABEL_LENGTH;
 
         public override double ArrayWidth
         {
@@ -325,28 +298,19 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
+            get { return $"{Dividend} / {Columns} Division Template with {CurrentRemainder} remaining"; }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_DIVISION_TOOL; }
-        }
+        public override string CodedName => Codings.OBJECT_DIVISION_TOOL;
 
         public override string CodedID
         {
-            get { return string.Format("{0} / {1}", Dividend, Rows); }
+            get { return $"{Dividend} / {Rows}"; }
         }
 
-        public override int ZIndex
-        {
-            get { return 40; }
-        }
+        public override int ZIndex => 40;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
+        public override bool IsBackgroundInteractable => true;
 
         public override double MinimumHeight
         {

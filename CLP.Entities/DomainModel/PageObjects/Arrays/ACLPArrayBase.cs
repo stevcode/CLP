@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -14,7 +13,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class CLPArrayDivision : ModelBase
+    public class CLPArrayDivision : AEntityBase
     {
         #region Constructors
 
@@ -29,12 +28,6 @@ namespace CLP.Entities
             IsObscured = isObscured;
         }
 
-        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected CLPArrayDivision(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -46,7 +39,7 @@ namespace CLP.Entities
             set { SetValue(OrientationProperty, value); }
         }
 
-        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof (ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
+        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof(ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
 
         /// <summary>The position of the top (for horizontal) or left (for vertical) of the array division.</summary>
         public double Position
@@ -55,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(PositionProperty, value); }
         }
 
-        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof (double), 0);
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0);
 
         /// <summary>The length of the array division.</summary>
         public double Length
@@ -64,7 +57,7 @@ namespace CLP.Entities
             set { SetValue(LengthProperty, value); }
         }
 
-        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof (double), 0);
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
 
         /// <summary>The value that was written by the student as the label on that side length. 0 if unlabelled.</summary>
         public int Value
@@ -73,7 +66,7 @@ namespace CLP.Entities
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (int), 0);
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(int), 0);
 
         /// <summary>Designates a Divider Region as obscured or not.</summary>
         public bool IsObscured
@@ -84,7 +77,10 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsObscuredProperty = RegisterProperty("IsObscured", typeof(bool), false);
 
-        public double GetActualValue(double gridSquareSize) { return (Length + 1.0) / gridSquareSize; }
+        public double GetActualValue(double gridSquareSize)
+        {
+            return (Length + 1.0) / gridSquareSize;
+        }
 
         #endregion //Properties
 
@@ -110,7 +106,7 @@ namespace CLP.Entities
     [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
-        public const double ARRAY_STARING_Y_POSITION = 100;   // 295.0;
+        public const double ARRAY_STARING_Y_POSITION = 100; // 295.0;
         public const double ARRAY_LABEL_LENGTH = 22.0;
         public const double DT_LABEL_LENGTH = 35.0;
         public const double DT_LARGE_LABEL_LENGTH = 52.5;
@@ -118,13 +114,13 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="ACLPArrayBase" /> from scratch.</summary>
-        public ACLPArrayBase() { }
+        protected ACLPArrayBase() { }
 
         /// <summary>Initializes <see cref="ACLPArrayBase" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ACLPArrayBase" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="ACLPArrayBase" />.</param>
         /// <param name="rows">The number of rows in the <see cref="ACLPArrayBase" />.</param>
-        public ACLPArrayBase(CLPPage parentPage, int columns, int rows)
+        protected ACLPArrayBase(CLPPage parentPage, int columns, int rows)
             : base(parentPage)
         {
             Columns = columns;
@@ -133,20 +129,11 @@ namespace CLP.Entities
             YPosition = ARRAY_STARING_Y_POSITION;
         }
 
-        /// <summary>Initializes <see cref="ACLPArrayBase" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ACLPArrayBase(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
 
-        public virtual double LabelLength
-        {
-            get { return ARRAY_LABEL_LENGTH; }
-        }
+        public virtual double LabelLength => ARRAY_LABEL_LENGTH;
 
         /// <summary>The number of rows in the <see cref="ACLPArrayBase" />.</summary>
         public int Rows
@@ -155,7 +142,7 @@ namespace CLP.Entities
             set { SetValue(RowsProperty, value); }
         }
 
-        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof (int), 1);
+        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(int), 1);
 
         /// <summary>The number of columns in the <see cref="ACLPArrayBase" />.</summary>
         public int Columns
@@ -164,7 +151,7 @@ namespace CLP.Entities
             set { SetValue(ColumnsProperty, value); }
         }
 
-        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof (int), 1);
+        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int), 1);
 
         /// <summary>List of horizontal regions in the array. All regions have the same number of columns as the array. The dividing line is horizontal.</summary>
         public ObservableCollection<CLPArrayDivision> HorizontalDivisions
@@ -176,14 +163,14 @@ namespace CLP.Entities
                 {
                     return new ObservableCollection<CLPArrayDivision>();
                 }
-                
+
                 return val;
             }
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
         public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
-                                                                                           typeof (ObservableCollection<CLPArrayDivision>),
+                                                                                           typeof(ObservableCollection<CLPArrayDivision>),
                                                                                            () => new ObservableCollection<CLPArrayDivision>());
 
         /// <summary>List of vertical regions in the array. All regions have the same number of rows as the array. The dividing line is vertical.</summary>
@@ -203,7 +190,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions",
-                                                                                         typeof (ObservableCollection<CLPArrayDivision>),
+                                                                                         typeof(ObservableCollection<CLPArrayDivision>),
                                                                                          () => new ObservableCollection<CLPArrayDivision>());
 
         #region Behavior Properties
@@ -215,12 +202,12 @@ namespace CLP.Entities
             set
             {
                 SetValue(IsGridOnProperty, value);
-                RaisePropertyChanged("IsVerticalLinesVisible");
-                RaisePropertyChanged("IsHorizontalLinesVisible");
+                RaisePropertyChanged(nameof(IsVerticalLinesVisible));
+                RaisePropertyChanged(nameof(IsHorizontalLinesVisible));
             }
         }
 
-        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof (bool), true);
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool), true);
 
         /// <summary>Turns the division behavior on or off.</summary>
         public bool IsDivisionBehaviorOn
@@ -229,7 +216,7 @@ namespace CLP.Entities
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof (bool), true);
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
 
         /// <summary>Whether the array can be snapped to other arrays or not.</summary>
         public bool IsSnappable
@@ -238,7 +225,7 @@ namespace CLP.Entities
             set { SetValue(IsSnappableProperty, value); }
         }
 
-        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof (bool), true);     
+        public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool), true);
 
         /// <summary>Sets the visibility of the array's top label.</summary>
         public bool IsTopLabelVisible
@@ -247,7 +234,7 @@ namespace CLP.Entities
             set { SetValue(IsTopLabelVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof (bool), true);
+        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool), true);
 
         /// <summary>Sets the visibility of the array's side label.</summary>
         public bool IsSideLabelVisible
@@ -256,7 +243,7 @@ namespace CLP.Entities
             set { SetValue(IsSideLabelVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof (bool), true);
+        public static readonly PropertyData IsSideLabelVisibleProperty = RegisterProperty("IsSideLabelVisible", typeof(bool), true);
 
         /// <summary>SUMMARY</summary>
         public string TopLabelVariable
@@ -265,7 +252,7 @@ namespace CLP.Entities
             set { SetValue(TopLabelVariableProperty, value); }
         }
 
-        public static readonly PropertyData TopLabelVariableProperty = RegisterProperty("TopLabelVariable", typeof (string), "N");
+        public static readonly PropertyData TopLabelVariableProperty = RegisterProperty("TopLabelVariable", typeof(string), "N");
 
         /// <summary>SUMMARY</summary>
         public string LeftLabelVariable
@@ -274,7 +261,7 @@ namespace CLP.Entities
             set { SetValue(LeftLabelVariableProperty, value); }
         }
 
-        public static readonly PropertyData LeftLabelVariableProperty = RegisterProperty("LeftLabelVariable", typeof (string), "N");
+        public static readonly PropertyData LeftLabelVariableProperty = RegisterProperty("LeftLabelVariable", typeof(string), "N");
 
         #endregion //Behavior Properties
 
@@ -299,52 +286,34 @@ namespace CLP.Entities
 
         public bool IsVerticalLinesVisible
         {
-            get
-            {
-                return !IsColumnsObscured && IsGridOn;
-            }
+            get { return !IsColumnsObscured && IsGridOn; }
         }
 
         public bool IsHorizontalLinesVisible
         {
-            get
-            {
-                return !IsRowsObscured && IsGridOn;
-            }
+            get { return !IsRowsObscured && IsGridOn; }
         }
 
         /// <summary>Signifies obscuring shape over Rows.</summary>
         public bool IsRowsObscured
         {
-            get
-            {
-                return HorizontalDivisions != null && HorizontalDivisions.Any(d => d.IsObscured);
-            }
+            get { return HorizontalDivisions != null && HorizontalDivisions.Any(d => d.IsObscured); }
         }
 
         /// <summary>Signifies obscuring shape over Columns.</summary>
         public bool IsColumnsObscured
         {
-            get
-            {
-                return VerticalDivisions != null && VerticalDivisions.Any(d => d.IsObscured);
-            }
+            get { return VerticalDivisions != null && VerticalDivisions.Any(d => d.IsObscured); }
         }
 
         public string TopLabelText
         {
-            get
-            {
-                return IsColumnsObscured ? TopLabelVariable : Columns.ToString();
-            }
+            get { return IsColumnsObscured ? TopLabelVariable : Columns.ToString(); }
         }
 
         public string LeftLabelText
         {
-            get
-            {
-                return IsRowsObscured ? LeftLabelVariable : Rows.ToString();
-            }
+            get { return IsRowsObscured ? LeftLabelVariable : Rows.ToString(); }
         }
 
         #endregion //Calculated Properties
@@ -355,7 +324,10 @@ namespace CLP.Entities
 
         public abstract void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true);
 
-        public double GetClosestGridLine(double position) { return Math.Round(position / GridSquareSize) * GridSquareSize; }
+        public double GetClosestGridLine(double position)
+        {
+            return Math.Round(position / GridSquareSize) * GridSquareSize;
+        }
 
         public CLPArrayDivision FindDivisionAbove(double position, IEnumerable<CLPArrayDivision> divisionList)
         {
@@ -396,7 +368,7 @@ namespace CLP.Entities
                     divBelow = div;
                 }
             }
-            
+
             return divBelow;
         }
 
@@ -471,21 +443,18 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override int ZIndex
-        {
-            get { return 50; }
-        }
+        public override int ZIndex => 50;
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Height")
             {
-                RaisePropertyChanged("ArrayHeight");
+                RaisePropertyChanged(nameof(ArrayHeight));
             }
             if (e.PropertyName == "Width")
             {
-                RaisePropertyChanged("ArrayWidth");
-                RaisePropertyChanged("GridSquareSize");
+                RaisePropertyChanged(nameof(ArrayWidth));
+                RaisePropertyChanged(nameof(GridSquareSize));
             }
             base.OnPropertyChanged(e);
         }
@@ -508,10 +477,7 @@ namespace CLP.Entities
 
         #region Static Properties
 
-        public static double DefaultGridSquareSize //used to be 45.0, then 34.0, now again 45.0
-        {
-            get { return 45.0; }
-        }
+        public static double DefaultGridSquareSize => 45.0; //used to be 45.0, then 34.0, now again 45.0
 
         #endregion //Static Properties
 

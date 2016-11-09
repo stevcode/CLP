@@ -1,4 +1,5 @@
 ﻿using System;
+using Catel;
 
 namespace CLP.Entities
 {
@@ -28,7 +29,10 @@ namespace CLP.Entities
         /// <typeparam name="TSource">The argument's type.</typeparam>
         /// <param name="value">The switch argument.</param>
         /// <returns>An object on which the switch cases can be specified.</returns>
-        public static Switch<TSource> On<TSource>(TSource value) { return new Switch<TSource>(value); }
+        public static Switch<TSource> On<TSource>(TSource value)
+        {
+            return new Switch<TSource>(value);
+        }
 
         /// <summary>Internal class used by the <see cref="TypeSwitch" /> static class.</summary>
         /// <typeparam name="TSource">The source type.</typeparam>
@@ -42,7 +46,10 @@ namespace CLP.Entities
 
             /// <summary>Initializes a new instance of the <see cref="Switch{TSource}" /> class.</summary>
             /// <param name="value">The switch value.</param>
-            internal Switch(TSource value) { _value = value; }
+            internal Switch(TSource value)
+            {
+                _value = value;
+            }
 
             /// <summary>Executes the specified piece of code when the type of the argument is assignable to the specified type.</summary>
             /// <typeparam name="TTarget">The target type.</typeparam>
@@ -50,10 +57,7 @@ namespace CLP.Entities
             /// <returns>An object on which further switch cases can be specified.</returns>
             public Switch<TSource> Case<TTarget>(Action action) where TTarget : TSource
             {
-                if (action == null)
-                {
-                    throw new ArgumentNullException("action");
-                }
+                Argument.IsNotNull("action", action);
 
                 return Case<TTarget>(_ => action());
             }
@@ -64,10 +68,7 @@ namespace CLP.Entities
             /// <returns>An object on which further switch cases can be specified.</returns>
             public Switch<TSource> Case<TTarget>(Action<TTarget> action) where TTarget : TSource
             {
-                if (action == null)
-                {
-                    throw new ArgumentNullException("action");
-                }
+                Argument.IsNotNull("action", action);
 
                 if (!_handled &&
                     _value is TTarget)
@@ -83,10 +84,7 @@ namespace CLP.Entities
             /// <param name="action">The action to execute.</param>
             public void Default(Action action)
             {
-                if (action == null)
-                {
-                    throw new ArgumentNullException("action");
-                }
+                Argument.IsNotNull("action", action);
 
                 Default(_ => action());
             }
@@ -95,10 +93,7 @@ namespace CLP.Entities
             /// <param name="action">The action to execute.</param>
             public void Default(Action<TSource> action)
             {
-                if (action == null)
-                {
-                    throw new ArgumentNullException("action");
-                }
+                Argument.IsNotNull("action", action);
 
                 if (!_handled)
                 {

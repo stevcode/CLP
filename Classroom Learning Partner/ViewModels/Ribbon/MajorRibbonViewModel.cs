@@ -45,13 +45,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private IPageInteractionService _pageInteractionService;
         private readonly IDataService _dataService;
+        private readonly INetworkService _networkService;
 
-        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService)
+        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService, INetworkService networkService)
         {
             _pageInteractionService = pageInteractionService;
             _dataService = dataService;
-
-            
+            _networkService = networkService;
 
             InitializeCommands();
             InitializeButtons();
@@ -64,6 +64,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
 
+        #region Events
+
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
@@ -73,7 +75,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
 
             return TaskHelper.Completed;
         }
@@ -105,25 +107,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
-        }      
-
-        private void InitializeCommands()
-        {
-            ReconnectCommand = new Command(OnReconnectCommandExecute);
-            ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
-            ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
-            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
-            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
-            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
-            AddNewAnimationPageCommand = new Command(OnAddNewAnimationPageCommandExecute);
-            LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
-            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
-            AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
-
-            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
-
-            ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
+
+        #endregion // Events
 
         private void InitializeButtons()
         {
@@ -237,8 +223,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var otherDropDown = new ContextMenu();
             otherDropDown.Items.Add(_insertTextBoxButton);
             otherDropDown.Items.Add(_insertImageButton);
-            otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
-            otherDropDown.Items.Add(_insertRecognitionRegionButton);
+            //otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
+            //otherDropDown.Items.Add(_insertRecognitionRegionButton);
 
             _insertOther.DropDown = otherDropDown;
         }
@@ -424,6 +410,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
+        /// <summary>Auto-Mapped property of the CurrentNotebook Model.</summary>
+        [ViewModelToModel("CurrentNotebook")]
+        public IDisplay CurrentDisplay
+        {
+            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
+            set { SetValue(CurrentDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
+
         #endregion // Model
 
         #region Bindings
@@ -476,59 +472,26 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(BlockStudentPenInputProperty, value);
 
-                var discoveredStudentAddresses = App.Network.DiscoveredStudents.Addresses.ToList();
-                if (discoveredStudentAddresses.Any())
+                var discoveredStudentAddresses = _networkService.DiscoveredStudents.Addresses.ToList();
+                if (!discoveredStudentAddresses.Any())
                 {
-                    Parallel.ForEach(discoveredStudentAddresses,
-                                     address =>
+                    return;
+                }
+
+                Parallel.ForEach(discoveredStudentAddresses,
+                                 address =>
+                                 {
+                                     try
                                      {
-                                         try
-                                         {
-                                             var binding = new NetTcpBinding
-                                                           {
-                                                               Security =
-                                                               {
-                                                                   Mode = SecurityMode.None
-                                                               }
-                                                           };
-                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, address);
-                                             studentProxy.TogglePenDownMode(value);
-                                             (studentProxy as ICommunicationObject).Close();
-                                         }
-                                         catch (Exception e)
-                                         {
-                                             Console.WriteLine(e.Message);
-                                         }
-                                     });
-                }
-                //if (App.MainWindowViewModel.AvailableUsers.Any())
-                //{
-                //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                //                     student =>
-                //                     {
-                //                         try
-                //                         {
-                //                             var binding = new NetTcpBinding
-                //                             {
-                //                                 Security =
-                //                                 {
-                //                                     Mode = SecurityMode.None
-                //                                 }
-                //                             };
-                //                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                //                             studentProxy.TogglePenDownMode(value);
-                //                             (studentProxy as ICommunicationObject).Close();
-                //                         }
-                //                         catch (Exception ex)
-                //                         {
-                //                             Console.WriteLine(ex.Message);
-                //                         }
-                //                     });
-                //}
-                else
-                {
-                    Logger.Instance.WriteToLog("No Students Found");
-                }
+                                         var studentProxy = NetworkService.CreateStudentProxyFromMachineAddress(address);
+                                         studentProxy.TogglePenDownMode(value);
+                                         (studentProxy as ICommunicationObject).Close();
+                                     }
+                                     catch (Exception)
+                                     {
+                                         // ignored
+                                     }
+                                 });
             }
         }
 
@@ -611,6 +574,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            ReconnectCommand = new Command(OnReconnectCommandExecute);
+            ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
+            ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
+            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
+            AddNewAnimationPageCommand = new Command(OnAddNewAnimationPageCommandExecute);
+            LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
+            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
+            AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+
+            TakePageScreenshotCommand = new Command(OnTakePageScreenshotCommandExecute, OnTakePageScreenshotCanExecute);
+
+            ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
+        }
+
         /// <summary>Restarts the network.</summary>
         public Command ReconnectCommand { get; private set; }
 
@@ -621,10 +602,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.Network.StopNetworking();
-            App.Network.StartNetworking();
-
-            //CLPServiceAgent.Instance.NetworkReconnect();  ?
+            // TODO: _networkService.Reconnect();
         }
 
         /// <summary>Brings up the BackStage.</summary>
@@ -647,7 +625,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            notebookWorkspace.CurrentDisplay = null;
+            _dataService.SetCurrentDisplay(null);
             CurrentRightPanel = null;
 
             if (App.Network.ProjectorProxy == null)
@@ -668,13 +646,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnExitMultiDisplayCanExecute()
         {
-            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if (notebookWorkspace == null)
-            {
-                return false;
-            }
-
-            return notebookWorkspace.CurrentDisplay != null;
+            return CurrentDisplay != null;
         }
 
         #region History Commands
@@ -728,87 +700,45 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSubmitPageCommandExecute()
         {
             var currentPage = _dataService.CurrentPage;
-
             currentPage.TrimPage();
-            var page = currentPage;
-            var submission = currentPage.NextVersionCopy();
 
             var tBackground = new Thread(() =>
-                               {
-                                   var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-                                   foreach (var tempArraySkipCountingTag in existingTags)
-                                   {
-                                       submission.RemoveTag(tempArraySkipCountingTag);
-                                   }
+                                         {
+                                             var submission = currentPage.NextVersionCopy();
+                                             var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                                             foreach (var tempArraySkipCountingTag in existingTags)
+                                             {
+                                                 submission.RemoveTag(tempArraySkipCountingTag);
+                                             }
 
-                                   HistoryAnalysis.GenerateHistoryActions(submission);
+                                             HistoryAnalysis.GenerateHistoryActions(submission);
 
-                                   string sPage = string.Empty;
-                                   try
-                                   {
-                                       sPage = ObjectSerializer.ToString(submission);
-                                   }
-                                   catch (Exception e)
-                                   {
-                                       Logger.Instance.WriteToLog("Failed To stringify submission");
-                                       Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
-                                       Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
-                                       Logger.Instance.WriteToLog("[Source]: " + e.Source);
-                                       Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
-                                       Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
-                                   }
+                                             UIHelper.RunOnUI(() => currentPage.Submissions.Add(submission));
 
-                                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                       {
-                                                           try
-                                                           {
-                                                               page.Submissions.Add(submission);
-                                                               page.IsCached = true;
-                                                           }
-                                                           catch (Exception e)
-                                                           {
-                                                               Logger.Instance.WriteToLog("[ERROR] Error adding submission to current page on submit: " +
-                                                                                          e.Message);
-                                                           }
+                                             if (_dataService == null ||
+                                                 _networkService.InstructorProxy == null)
+                                             {
+                                                 return;
+                                             }
 
-                                                           return null;
-                                                       },
-                                                       null);
+                                             var submissionJson = submission.ToJsonString(false);
+                                             if (string.IsNullOrEmpty(submissionJson))
+                                             {
+                                                 return;
+                                             }
 
-                                   var dataService = DependencyResolver.Resolve<IDataService>();
-                                   if (dataService == null)
-                                   {
-                                       Logger.Instance.WriteToLog("notebook service null on submission");
-                                       return;
-                                   }
-                                   if (string.IsNullOrEmpty(sPage))
-                                   {
-                                       Logger.Instance.WriteToLog("sPage null or empty on submission");
-                                       return;
-                                   }
-                                   if (App.Network.InstructorProxy == null)
-                                   {
-                                       Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-                                       return;
-                                   }
-
-                                   try
-                                   {
-                                       //var sPage = ObjectSerializer.ToString(submission);
-                                       var zippedPage = sPage.CompressWithGZip();
-
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, dataService.CurrentNotebook.ID);
-                                   }
-                                   catch (Exception ex)
-                                   {
-                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                                       return;
-                                   }
-                               })
-                    {
-                        IsBackground = true
-                    };
+                                             try
+                                             {
+                                                 _networkService.InstructorProxy.AddStudentSubmission(submissionJson, _dataService.CurrentNotebook.ID);
+                                             }
+                                             catch (Exception)
+                                             {
+                                                 // ignored
+                                             }
+                                         })
+                              {
+                                  IsBackground = true
+                              };
             tBackground.Start();
         }
 
@@ -822,7 +752,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return !_dataService.CurrentPage.IsCached;
+            return true; // !_dataService.CurrentPage.IsCached;
         }
 
         #endregion //Sharing Commands
@@ -841,7 +771,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
-            notebookWorkspace.Notebook.AddPage(newPage);
+            _dataService.AddPage(_dataService.CurrentNotebook, newPage);
             notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 
@@ -862,7 +792,8 @@ namespace Classroom_Learning_Partner.ViewModels
                           {
                               PageType = PageTypes.Animation
                           };
-            notebookWorkspace.Notebook.AddPage(newPage);
+            _dataService.AddPage(_dataService.CurrentNotebook, newPage);
+            notebookWorkspace.PagesAddedThisSession.Add(newPage);
         }
 
         /// <summary>Doubles height of the current page.</summary>
@@ -890,7 +821,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private bool OnLongerPageCanExecute()

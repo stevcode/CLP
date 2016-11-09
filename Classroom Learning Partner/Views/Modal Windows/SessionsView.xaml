@@ -1,0 +1,210 @@
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.SessionsView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                  Title="Sessions"
+                  ShowInTaskbar="False">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/BackStageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True"
+               Margin="-6"
+               Width="{x:Static views:SessionsView.WINDOW_WIDTH}"
+               Height="{x:Static views:SessionsView.WINDOW_HEIGHT}">
+
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal">
+
+            <TextBlock Text="Sessions"
+                       Margin="5 0 0 0"
+                       Style="{StaticResource BackStageTitleTextBlock}" />
+
+        </StackPanel>
+
+        <catel:StackGrid DockPanel.Dock="Left"
+                         VerticalAlignment="Stretch">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding Sessions}"
+                     SelectedItem="{Binding CurrentSession}"
+                     SelectionMode="Single"
+                     ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
+                     Width="275"
+                     ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+
+                        <!-- Control Layout -->
+                        <Grid Name="LayoutGrid"
+                              Height="42">
+
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                     Value="True">
+                                            <Setter Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.5'}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       Text="{Binding SessionTitle}"
+                                       Margin="26 2 5 1"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
+
+                            <TextBlock Grid.Row="1"
+                                       FontSize="12"
+                                       Text="{Binding StartTime, StringFormat={}{0:MM/dd/yyyy HH:mm}}"
+                                       Margin="26 1 5 2"
+                                       Style="{StaticResource BackStageListItemTextBlock}" />
+
+                        </Grid>
+
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </catel:StackGrid>
+
+        <Line DockPanel.Dock="Left"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 0 0 30"
+              Stroke="{StaticResource GrayEdgeColor}"
+              StrokeThickness="1" />
+
+        <catel:StackGrid Margin="10 0">
+
+            <Grid.Resources>
+                
+                <Style TargetType="TextBlock"
+                       BasedOn="{StaticResource BackStageTextBlock}">
+                    <Setter Property="Margin"
+                            Value="0 4 4 0" />
+                </Style>
+
+                <Style TargetType="TextBox"
+                       BasedOn="{StaticResource BackStageTextBox}">
+                    <Setter Property="Width"
+                            Value="Auto" />
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                </Style>
+                
+            </Grid.Resources>
+
+            <catel:StackGrid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </catel:StackGrid.ColumnDefinitions>
+
+            <catel:StackGrid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </catel:StackGrid.RowDefinitions>
+
+            <TextBlock Text="Title:"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding SessionTitle}" />
+
+            <TextBlock Text="Page Numbers:"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding PageNumbers}" />
+
+            <TextBlock Text="Starting Page Number:"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding StartingPageNumber}" />
+
+            <TextBlock Text="Start Date (mm/dd/yyyy):"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding StartingDate}" />
+
+            <TextBlock Text="Start Time (24h) (hh:mm):"
+                       FontWeight="Bold" />
+            <TextBlock Text="{Binding StartingTime}" />
+
+            <TextBlock Grid.ColumnSpan="2"
+                       Text="Comments or Notes:"
+                       FontWeight="Bold" />
+
+            <ScrollViewer Grid.ColumnSpan="2"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding SessionComments}"
+                         TextWrapping="Wrap"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch" />
+            </ScrollViewer>
+
+            <StackPanel Grid.ColumnSpan="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Visibility="{Binding IsOpening, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+
+                <Button Content="Add Session"
+                        Command="{Binding AddSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+                <Button Content="Edit Session"
+                        Command="{Binding EditSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+                <Button Content="Delete Session"
+                        Command="{Binding DeleteSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+            </StackPanel>
+
+            <StackPanel Grid.ColumnSpan="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Visibility="{Binding IsOpening, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
+
+                <Button Content="Open Session"
+                        Command="{Binding OpenSessionCommand}"
+                        Margin="10 5"
+                        Height="30"
+                        Width="100" />
+
+            </StackPanel>
+
+        </catel:StackGrid>
+
+    </DockPanel>
+
+</catel:DataWindow>

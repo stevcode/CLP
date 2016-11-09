@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ScrollViewer Grid.Column="0">
-            <views:GroupCreationPanel DataContext="{Binding GroupCreationViewModel}"/>
+            <views:GroupCreationView DataContext="{Binding GroupCreationViewModel}"/>
         </ScrollViewer>
         <ItemsControl x:Name="ItemsControl" Grid.Column="1"
                       AlternationCount="100"

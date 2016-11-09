@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -17,16 +16,8 @@ namespace CLP.Entities
         public DivisionTemplateCorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness)
             : base(parentPage, origin)
         {
-            IsSingleValueTag = true;
-
             Correctness = correctness;
         }
-
-        /// <summary>Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateCorrectnessSummaryTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -39,7 +30,7 @@ namespace CLP.Entities
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof (Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
         /// <summary>Number of RepresentationCorrectnessTags set to Correct.</summary>
         public int CorrectCount
@@ -48,7 +39,7 @@ namespace CLP.Entities
             set { SetValue(CorrectCountProperty, value); }
         }
 
-        public static readonly PropertyData CorrectCountProperty = RegisterProperty("CorrectCount", typeof (int), 0);
+        public static readonly PropertyData CorrectCountProperty = RegisterProperty("CorrectCount", typeof(int), 0);
 
         /// <summary>Number of RepresentationCorrectnessTags set to PartiallyCorrect.</summary>
         public int PartiallyCorrectCount
@@ -57,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(PartiallyCorrectCountProperty, value); }
         }
 
-        public static readonly PropertyData PartiallyCorrectCountProperty = RegisterProperty("PartiallyCorrectCount", typeof (int), 0);
+        public static readonly PropertyData PartiallyCorrectCountProperty = RegisterProperty("PartiallyCorrectCount", typeof(int), 0);
 
         /// <summary>Number of RepresentationCorrectnessTags set to Incorrect.</summary>
         public int IncorrectCount
@@ -66,19 +57,15 @@ namespace CLP.Entities
             set { SetValue(IncorrectCountProperty, value); }
         }
 
-        public static readonly PropertyData IncorrectCountProperty = RegisterProperty("IncorrectCount", typeof (int), 0);
+        public static readonly PropertyData IncorrectCountProperty = RegisterProperty("IncorrectCount", typeof(int), 0);
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.DivisionTemplate; }
-        }
+        public override bool IsSingleValueTag => true;
 
-        public override string FormattedName
-        {
-            get { return "Division Template Correctness Summary"; }
-        }
+        public override Category Category => Category.DivisionTemplate;
+
+        public override string FormattedName => "Division Template Correctness Summary";
 
         public override string FormattedValue
         {
@@ -86,15 +73,9 @@ namespace CLP.Entities
             {
                 return string.Format("Overall Correctness: {0}{1}{2}{3}",
                                      Correctness,
-                                     CorrectCount == 0
-                                         ? string.Empty
-                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
-                                     PartiallyCorrectCount == 0
-                                         ? string.Empty
-                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
-                                     IncorrectCount == 0
-                                         ? string.Empty
-                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
+                                     CorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
+                                     PartiallyCorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
+                                     IncorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
             }
         }
 

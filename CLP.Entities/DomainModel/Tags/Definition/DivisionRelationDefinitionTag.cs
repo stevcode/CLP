@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -23,12 +22,6 @@ namespace CLP.Entities
         public DivisionRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
-        /// <summary>Initializes <see cref="DivisionRelationDefinitionTag" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionRelationDefinitionTag(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-
         #endregion //Constructors
 
         #region Properties
@@ -40,7 +33,7 @@ namespace CLP.Entities
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (double), 0);
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(double), 0);
 
         /// <summary>Divisor of the division relation.</summary>
         public double Divisor
@@ -49,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(DivisorProperty, value); }
         }
 
-        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof (double), 0);
+        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double), 0);
 
         /// <summary>Quotient of the division relation.</summary>
         public double Quotient
@@ -58,7 +51,7 @@ namespace CLP.Entities
             set { SetValue(QuotientProperty, value); }
         }
 
-        public static readonly PropertyData QuotientProperty = RegisterProperty("Quotient", typeof (double), 0);
+        public static readonly PropertyData QuotientProperty = RegisterProperty("Quotient", typeof(double), 0);
 
         /// <summary>Remainder of the division relation.</summary>
         public double Remainder
@@ -67,7 +60,7 @@ namespace CLP.Entities
             set { SetValue(RemainderProperty, value); }
         }
 
-        public static readonly PropertyData RemainderProperty = RegisterProperty("Remainder", typeof (double), 0);
+        public static readonly PropertyData RemainderProperty = RegisterProperty("Remainder", typeof(double), 0);
 
         /// <summary>Type of division relationship the relation defines.</summary>
         public RelationTypes RelationType
@@ -76,21 +69,13 @@ namespace CLP.Entities
             set { SetValue(RelationTypeProperty, value); }
         }
 
-        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
-                                                                                    typeof (RelationTypes),
-                                                                                    RelationTypes.GeneralDivision);
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralDivision);
 
         #region ATagBase Overrides
 
-        public override Category Category
-        {
-            get { return Category.Definition; }
-        }
+        public override Category Category => Category.Definition;
 
-        public override string FormattedName
-        {
-            get { return "Division Relation Definition"; }
-        }
+        public override string FormattedName => "Division Relation Definition";
 
         public override string FormattedValue
         {

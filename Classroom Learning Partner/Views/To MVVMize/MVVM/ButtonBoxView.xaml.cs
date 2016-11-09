@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for StudentSelectorView.xaml</summary>
+    /// <summary>Interaction logic for ButtonBoxView.xaml</summary>
     public partial class ButtonBoxView
     {
         public ButtonBoxView(string text, List<string> buttonValues)
