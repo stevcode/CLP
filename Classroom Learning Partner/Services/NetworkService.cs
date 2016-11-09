@@ -231,17 +231,18 @@ namespace Classroom_Learning_Partner.Services
                                        }
                                        else
                                        {
-                                           // TODO: Get classRoster then populate Login
                                            var classRosterJson = InstructorProxy.GetClassRosterJson();
-                                           if (!string.IsNullOrWhiteSpace(classRosterJson))
+                                           if (string.IsNullOrWhiteSpace(classRosterJson))
                                            {
-                                               var classRoster = AEntityBase.FromJsonString<ClassRoster>(classRosterJson);
-                                               _dataService.SetCurrentClassRoster(classRoster);
-                                               var students = classRoster.ListOfStudents;
-                                               var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;
-
-                                               UIHelper.RunOnUI(() => workspace.AvailableStudents.AddRange(students));
+                                               return;
                                            }
+
+                                           var classRoster = AEntityBase.FromJsonString<ClassRoster>(classRosterJson);
+                                           _dataService.SetCurrentClassRoster(classRoster);
+                                           var students = classRoster.ListOfStudents;
+                                           var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;
+
+                                           UIHelper.RunOnUI(() => workspace.AvailableStudents.AddRange(students));
                                        }
                                    }
                                    catch (Exception)
@@ -354,13 +355,18 @@ namespace Classroom_Learning_Partner.Services
 
         public static IStudentContract CreateStudentProxyFromMachineAddress(string machineAddress)
         {
+            return CreateStudentProxyFromMachineAddress(new EndpointAddress(machineAddress));
+        }
+
+        public static IStudentContract CreateStudentProxyFromMachineAddress(EndpointAddress machineAddress)
+        {
             var binding = new NetTcpBinding
-                          {
-                              Security = {
+            {
+                Security = {
                                              Mode = SecurityMode.None
                                          }
-                          };
-            var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(machineAddress));
+            };
+            var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, machineAddress);
 
             return studentProxy;
         }

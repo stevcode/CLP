@@ -302,24 +302,15 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentProgramModeProperty, value);
-                RaisePropertyChanged("TeacherOnlyVisibility");
-                RaisePropertyChanged("ProjectorOnlyVisibility");
-                RaisePropertyChanged("StudentOnlyVisibility");
-                RaisePropertyChanged("NotTeacherVisibility");
-                RaisePropertyChanged("NotStudentVisibility");
+                RaisePropertyChanged(nameof(TeacherOnlyVisibility));
+                RaisePropertyChanged(nameof(ProjectorOnlyVisibility));
+                RaisePropertyChanged(nameof(StudentOnlyVisibility));
+                RaisePropertyChanged(nameof(NotTeacherVisibility));
+                RaisePropertyChanged(nameof(NotStudentVisibility));
             }
         }
 
         public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
-
-        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
-        public Dictionary<string, BitmapImage> ImagePool
-        {
-            get { return GetValue<Dictionary<string, BitmapImage>>(ImagePoolProperty); }
-            set { SetValue(ImagePoolProperty, value); }
-        }
-
-        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof (Dictionary<string, BitmapImage>), () => new Dictionary<string, BitmapImage>());
 
         /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
@@ -329,17 +320,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof (Person));
-
-        /// <summary>List of all available <see cref="Person" />s.</summary>
-        public ObservableCollection<Person> AvailableUsers
-        {
-            get { return GetValue<ObservableCollection<Person>>(AvailableUsersProperty); }
-            set { SetValue(AvailableUsersProperty, value); }
-        }
-
-        public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers",
-                                                                                      typeof (ObservableCollection<Person>),
-                                                                                      () => new ObservableCollection<Person>());
 
         #endregion //Properties
 

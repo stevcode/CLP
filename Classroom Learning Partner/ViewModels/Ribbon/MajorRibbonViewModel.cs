@@ -472,59 +472,26 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(BlockStudentPenInputProperty, value);
 
-                var discoveredStudentAddresses = App.Network.DiscoveredStudents.Addresses.ToList();
-                if (discoveredStudentAddresses.Any())
+                var discoveredStudentAddresses = _networkService.DiscoveredStudents.Addresses.ToList();
+                if (!discoveredStudentAddresses.Any())
                 {
-                    Parallel.ForEach(discoveredStudentAddresses,
-                                     address =>
+                    return;
+                }
+
+                Parallel.ForEach(discoveredStudentAddresses,
+                                 address =>
+                                 {
+                                     try
                                      {
-                                         try
-                                         {
-                                             var binding = new NetTcpBinding
-                                                           {
-                                                               Security =
-                                                               {
-                                                                   Mode = SecurityMode.None
-                                                               }
-                                                           };
-                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, address);
-                                             studentProxy.TogglePenDownMode(value);
-                                             (studentProxy as ICommunicationObject).Close();
-                                         }
-                                         catch (Exception e)
-                                         {
-                                             Console.WriteLine(e.Message);
-                                         }
-                                     });
-                }
-                //if (App.MainWindowViewModel.AvailableUsers.Any())
-                //{
-                //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                //                     student =>
-                //                     {
-                //                         try
-                //                         {
-                //                             var binding = new NetTcpBinding
-                //                             {
-                //                                 Security =
-                //                                 {
-                //                                     Mode = SecurityMode.None
-                //                                 }
-                //                             };
-                //                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                //                             studentProxy.TogglePenDownMode(value);
-                //                             (studentProxy as ICommunicationObject).Close();
-                //                         }
-                //                         catch (Exception ex)
-                //                         {
-                //                             Console.WriteLine(ex.Message);
-                //                         }
-                //                     });
-                //}
-                else
-                {
-                    Logger.Instance.WriteToLog("No Students Found");
-                }
+                                         var studentProxy = NetworkService.CreateStudentProxyFromMachineAddress(address);
+                                         studentProxy.TogglePenDownMode(value);
+                                         (studentProxy as ICommunicationObject).Close();
+                                     }
+                                     catch (Exception)
+                                     {
+                                         // ignored
+                                     }
+                                 });
             }
         }
 

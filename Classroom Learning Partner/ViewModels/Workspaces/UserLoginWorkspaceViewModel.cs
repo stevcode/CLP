@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
+using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
-using NuGet;
-
-//using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -94,7 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            
+
             IsLoggingIn = true;
             App.MainWindowViewModel.CurrentUser = user;
             _networkService.CurrentUser = user;
@@ -167,15 +161,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var pages = pagesJson.Select(AEntityBase.FromJsonString<CLPPage>).OrderBy(p => p.PageNumber).ToList();
+                var pages = Enumerable.OrderBy(pagesJson.Select(AEntityBase.FromJsonString<CLPPage>), p => p.PageNumber).ToList();
 
                 var submissionsJson = _networkService.InstructorProxy.GetStudentPageSubmissionsJson(_networkService.CurrentUser.ID);
-                if (!submissionsJson.Any())
-                {
-                    IsLoggingIn = false;
-                    return;
-                }
-
                 foreach (var submissionJson in submissionsJson)
                 {
                     var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
@@ -188,7 +176,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 notebook.Pages.AddRange(pages);
 
-                UIHelper.RunOnUI(() => _dataService.SetCurrentNotebook(notebook));
+                UIHelper.RunOnUI(() =>
+                                 {
+                                     _dataService.SetCurrentNotebook(notebook);
+                                     _dataService.SetCurrentPage(notebook.Pages.FirstOrDefault(), false);
+                                 });
 
                 // TODO: Successfully connected, now download notebook, pages, and submissions.
                 //var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
@@ -208,37 +200,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    return;
                 //}
 
-                //notebook.CurrentPage = notebook.Pages.First();
-                //foreach (var page in notebook.Pages)
-                //{
-                //    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                //    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
-                //}
-                //MainWindowViewModel.ResetCache();
-
-                //var imageHashIDs = notebook.ImagePoolHashIDs;
-                //if (Directory.Exists(MainWindowViewModel.ImageCacheDirectory))
-                //{
-                //    var localImageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
-                //    foreach (var localImageFilePath in localImageFilePaths)
-                //    {
-                //        var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
-                //        if (imageHashIDs.Contains(imageHashID))
-                //        {
-                //            imageHashIDs.Remove(imageHashID);
-                //        }
-                //    }
-                //}
-                //var imageList = App.Network.InstructorProxy.SendImages(imageHashIDs);
-                //foreach (var byteSource in imageList)
-                //{
-                //    var imagePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, byteSource.Key);
-                //    File.WriteAllBytes(imagePath, byteSource.Value);
-                //}
-
-                //App.MainWindowViewModel.CurrentUser.IsConnected = true;
-                //App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                //App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
                 //App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.MainWindowViewModel.CurrentUser.FullName;
                 IsLoggingIn = false;
             }

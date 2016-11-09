@@ -372,7 +372,6 @@
     <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\To MVVMize\StudentSelectorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
@@ -454,9 +453,6 @@
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml.cs">
       <DependentUpon>MultipleChoiceCreationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml.cs">
-      <DependentUpon>StudentSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
@@ -752,10 +748,6 @@
     <Page Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\MVVM\StudentSelectorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\To MVVMize\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>
