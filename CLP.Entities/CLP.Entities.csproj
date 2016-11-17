@@ -133,8 +133,6 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Analysis\IAnalysis.cs" />
-    <Compile Include="Analysis\InkInterpretation.cs" />
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
