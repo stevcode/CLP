@@ -12,8 +12,8 @@ namespace CLP.Entities
         public BinsStrategyTag() { }
 
         /// <summary>Initializes <see cref="BinsStrategyTag" /> from values.</summary>
-        public BinsStrategyTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
-            : base(parentPage, origin, historyActions, codedStrategies) { }
+        public BinsStrategyTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents, List<CodedRepresentationStrategy> codedStrategies)
+            : base(parentPage, origin, semanticEvents, codedStrategies) { }
 
         #endregion //Constructors
 

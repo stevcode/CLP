@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public enum HistoryAnalysisSteps
     {
         Tags,
-        HistoryActions,
+        SemanticEvents,
         HistoryItems
     }
 
@@ -342,7 +342,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             #region Analysis Commands
 
-            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+            GenerateSemanticEventsCommand = new Command(OnGenerateSemanticEventsCommandExecute);
             ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
@@ -369,9 +369,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Analysis Commands
 
-        public Command GenerateHistoryActionsCommand { get; private set; }
+        public Command GenerateSemanticEventsCommand { get; private set; }
 
-        private void OnGenerateHistoryActionsCommandExecute()
+        private void OnGenerateSemanticEventsCommandExecute()
         {
             var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
             foreach (var tempArraySkipCountingTag in existingTags)
@@ -379,7 +379,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.RemoveTag(tempArraySkipCountingTag);
             }
 
-            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
+            HistoryAnalysis.GenerateSemanticEvents(CurrentPage);
         }
 
         public Command ShowAnalysisClustersCommand { get; private set; }
@@ -1021,23 +1021,23 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageNumber = CurrentPage.PageNumber;
             var studentName = CurrentPage.Owner.FullName;
-            var historyActions = CurrentPage.History.HistoryActions;
-            var firstAction = historyActions.FirstOrDefault();
-            var compActions = new ObservableCollection<IHistoryAction>();
+            var semanticEvents = CurrentPage.History.SemanticEvents;
+            var firstAction = semanticEvents.FirstOrDefault();
+            var compActions = new ObservableCollection<ISemanticEvent>();
             var index = 0;
             var strCompActions = "";
             //Store actions logged from Pass 3
-            for (var i = 0; i < historyActions.Count; i++)
+            for (var i = 0; i < semanticEvents.Count; i++)
             {
-                if (historyActions[i].CodedValue == "PASS [3]")
+                if (semanticEvents[i].CodedValue == "PASS [3]")
                 {
                     index = i + 1;
                     break;
                 }
             }
-            for (var j = index; j < historyActions.Count; j++)
+            for (var j = index; j < semanticEvents.Count; j++)
             {
-                compActions.Add(historyActions[j]);
+                compActions.Add(semanticEvents[j]);
             }
 
             foreach (var action in compActions)

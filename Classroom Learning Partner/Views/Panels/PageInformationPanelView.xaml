@@ -92,7 +92,7 @@
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
-                        Command="{Binding GenerateHistoryActionsCommand}"
+                        Command="{Binding GenerateSemanticEventsCommand}"
                         Height="20"
                         Margin="1"
                         Grid.ColumnSpan="2" />
@@ -332,7 +332,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -596,9 +596,9 @@
                             </ListBox>
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="HistoryActionsTemplate">
+                        <ControlTemplate x:Key="SemanticEventsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.HistoryActions}"
+                                 ItemsSource="{Binding CurrentPage.History.SemanticEvents}"
                                  SelectionMode="Single"
                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                  VirtualizingPanel.IsVirtualizing="True"
@@ -654,11 +654,11 @@
                                         Value="{StaticResource TagsTemplate}" />
                                 </DataTrigger>
 
-                                <!-- Show HistoryActionss trigger -->
+                                <!-- Show SemanticEvents trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource HistoryActionsTemplate}" />
+                                        Value="{StaticResource SemanticEventsTemplate}" />
                                 </DataTrigger>
 
                                 <!-- Show HistoryItems trigger -->
@@ -692,7 +692,7 @@
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
-                        Command="{Binding GenerateHistoryActionsCommand}"
+                        Command="{Binding GenerateSemanticEventsCommand}"
                         Height="40"
                         Margin="1 5"
                         Grid.ColumnSpan="2" />

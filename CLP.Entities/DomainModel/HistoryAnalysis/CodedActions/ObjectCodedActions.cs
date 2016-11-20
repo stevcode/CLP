@@ -10,7 +10,7 @@ namespace CLP.Entities
     {
         #region Verify And Generate Methods
 
-        public static IHistoryAction Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
@@ -29,7 +29,7 @@ namespace CLP.Entities
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                                     {
                                         CodedObject = codedObject,
                                         CodedObjectAction = Codings.ACTION_OBJECT_ADD,
@@ -39,7 +39,7 @@ namespace CLP.Entities
                                         ReferencePageObjectID = pageObject.ID
                                     };
 
-                return historyAction;
+                return semanticEvent;
             }
             else
             {
@@ -48,7 +48,7 @@ namespace CLP.Entities
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_OBJECT_ADD,
@@ -57,7 +57,7 @@ namespace CLP.Entities
                     CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
 
-                return historyAction;
+                return semanticEvent;
             }
 
             // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
@@ -65,7 +65,7 @@ namespace CLP.Entities
             //return null;
         }
 
-        public static IHistoryAction Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItem == null ||
@@ -83,7 +83,7 @@ namespace CLP.Entities
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                                     {
                                         CodedObject = codedObject,
                                         CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
@@ -92,7 +92,7 @@ namespace CLP.Entities
                                         ReferencePageObjectID = pageObject.ID
                 };
 
-                return historyAction;
+                return semanticEvent;
             }
             else
             {
@@ -101,7 +101,7 @@ namespace CLP.Entities
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var historyAction = new HistoryAction(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                 {
                     CodedObject = codedObject,
                     CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
@@ -109,7 +109,7 @@ namespace CLP.Entities
                     CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
 
-                return historyAction;
+                return semanticEvent;
             }
 
             // TODO: deal with multiple pageObjects deleted at once (lasso?)
@@ -117,7 +117,7 @@ namespace CLP.Entities
             //return null;
         }
 
-        public static IHistoryAction Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
+        public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
         {
             if (page == null ||
                 objectsMovedHistoryItems == null ||
@@ -145,7 +145,7 @@ namespace CLP.Entities
             var pageObject = movedPageObjects.First();
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var historyAction = new HistoryAction(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
@@ -163,10 +163,10 @@ namespace CLP.Entities
                                     // a student moved the same pageObject several consecutive times.
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction Resize(CLPPage page, List<PageObjectResizeBatchHistoryItem> objectsResizedHistoryItems)
+        public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryItem> objectsResizedHistoryItems)
         {
             if (page == null ||
                 objectsResizedHistoryItems == null ||
@@ -185,7 +185,7 @@ namespace CLP.Entities
             var historyIndex = objectsResizedHistoryItems.First().HistoryIndex;
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var historyAction = new HistoryAction(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
             {
                 CodedObject = codedObject,
                 CodedObjectAction = Codings.ACTION_OBJECT_RESIZE,
@@ -199,7 +199,7 @@ namespace CLP.Entities
                 ReferencePageObjectID = pageObjectID
             };
 
-            return historyAction;
+            return semanticEvent;
         }
 
         #endregion // Verify And Generate Methods

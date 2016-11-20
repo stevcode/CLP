@@ -195,38 +195,38 @@ namespace CLP.Entities
 
         #endregion // Correctness
 
-        public static bool IsAnswerObject(IHistoryAction historyAction) { return historyAction.CodedObject == OBJECT_FILL_IN || historyAction.CodedObject == OBJECT_MULTIPLE_CHOICE; }
+        public static bool IsAnswerObject(ISemanticEvent semanticEvent) { return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE; }
 
-        public static string GetAnswerObjectContent(IHistoryAction historyAction)
+        public static string GetAnswerObjectContent(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(historyAction))
+            if (!IsAnswerObject(semanticEvent))
             {
                 return "[ERROR]: Not Answer Object.";
             }
 
-            var actionID = historyAction.CodedObjectActionID;
+            var actionID = semanticEvent.CodedObjectActionID;
             var delimiterIndex = actionID.LastIndexOf(',');
             var content = new string(actionID.Take(delimiterIndex).ToArray());
             return content;
         }
 
-        public static string GetAnswerObjectCorrectness(IHistoryAction historyAction)
+        public static string GetAnswerObjectCorrectness(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(historyAction))
+            if (!IsAnswerObject(semanticEvent))
             {
                 return "[ERROR]: Not Answer Object.";
             }
 
-            var actionID = historyAction.CodedObjectActionID;
+            var actionID = semanticEvent.CodedObjectActionID;
             var delimiterIndex = actionID.LastIndexOf(',');
             var correctness = new string(actionID.Skip(delimiterIndex + 2).ToArray());
             return correctness;
         }
 
-        public static bool IsRepresentationObject(IHistoryAction historyAction)
+        public static bool IsRepresentationObject(ISemanticEvent semanticEvent)
         {
-            return historyAction.CodedObject == OBJECT_ARRAY || historyAction.CodedObject == OBJECT_NUMBER_LINE || historyAction.CodedObject == OBJECT_STAMP ||
-                   historyAction.CodedObject == OBJECT_STAMPED_OBJECTS || historyAction.CodedObject == OBJECT_BINS;
+            return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
+                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;
         }
     }
 }

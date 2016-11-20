@@ -2,9 +2,9 @@
 
 namespace CLP.Entities
 {
-    public interface IHistoryAction
+    public interface ISemanticEvent
     {
-        int HistoryActionIndex { get; set; }
+        int SemanticEventIndex { get; set; }
         string ID { get; set; }
         string ParentPageID { get; set; }
         string ParentPageOwnerID { get; set; }
@@ -24,7 +24,7 @@ namespace CLP.Entities
         string CodedObjectActionID { get; set; }
         Dictionary<string, string> MetaData { get; set; }
         List<string> HistoryItemIDs { get; set; }
-        List<IHistoryAction> HistoryActions { get; set; }
+        List<ISemanticEvent> SemanticEvents { get; set; }
         string CachedCodedValue { get; set; }
         string CodedValue { get; }
         List<IHistoryItem> HistoryItems { get; }

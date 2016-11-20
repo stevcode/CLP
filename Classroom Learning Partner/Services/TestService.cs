@@ -352,7 +352,7 @@ namespace Classroom_Learning_Partner.Services
             //        totalPages++;
 
             //        Console.WriteLine("Generating Representations Used Tag for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
-            //        HistoryAnalysis.GenerateHistoryActions(lastSubmission);
+            //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
             //        Console.WriteLine("Finished generating Representations Used Tag.\n");
 
             //        var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag) as RepresentationsUsedTag;
@@ -1895,7 +1895,7 @@ namespace Classroom_Learning_Partner.Services
             #region TSV Batch
 
             //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            //var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
+            //var fileDirectory = Path.Combine(desktopDirectory, "SemanticEvents");
             //if (!Directory.Exists(fileDirectory))
             //{
             //    Directory.CreateDirectory(fileDirectory);
@@ -1943,17 +1943,17 @@ namespace Classroom_Learning_Partner.Services
             //                      };
 
             //        Console.WriteLine("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
-            //        HistoryAnalysis.GenerateHistoryActions(lastSubmission);
+            //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
             //        Console.WriteLine("Finished generating SEvents.\n");
 
-            //        var pass2Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
-            //        var pass2Index = lastSubmission.History.HistoryActions.IndexOf(pass2Action);
-            //        var pass3Action = lastSubmission.History.HistoryActions.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
-            //        var pass3Index = lastSubmission.History.HistoryActions.IndexOf(pass3Action);
+            //        var pass2Action = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
+            //        var pass2Index = lastSubmission.History.SemanticEvents.IndexOf(pass2Action);
+            //        var pass3Action = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
+            //        var pass3Index = lastSubmission.History.SemanticEvents.IndexOf(pass3Action);
 
-            //        var pass1 = lastSubmission.History.HistoryActions.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();
-            //        var pass2 = lastSubmission.History.HistoryActions.Skip(pass2Index + 1).Take(pass3Index - pass2Index - 1).Select(h => h.CodedValue).ToList();
-            //        var pass3 = lastSubmission.History.HistoryActions.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
+            //        var pass1 = lastSubmission.History.SemanticEvents.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();
+            //        var pass2 = lastSubmission.History.SemanticEvents.Skip(pass2Index + 1).Take(pass3Index - pass2Index - 1).Select(h => h.CodedValue).ToList();
+            //        var pass3 = lastSubmission.History.SemanticEvents.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
 
             //        columns.Add(string.Join(", ", pass1));
             //        columns.Add(string.Join(", ", pass2));

@@ -8,13 +8,13 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
-        public static void GenerateHistoryActions(CLPPage page)
+        public static void GenerateSemanticEvents(CLPPage page)
         {
             ObjectCodedActions.InitializeIncrementIDs();
-            page.History.HistoryActions.Clear();
+            page.History.SemanticEvents.Clear();
 
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var fileDirectory = Path.Combine(desktopDirectory, "HistoryActions");
+            var fileDirectory = Path.Combine(desktopDirectory, "SemanticEvents");
             if (!Directory.Exists(fileDirectory))
             {
                 Directory.CreateDirectory(fileDirectory);
@@ -29,55 +29,55 @@ namespace CLP.Entities
             File.AppendAllText(filePath, "*****Coded Actions/Steps*****" + "\n\n");
 
             // First Pass
-            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "1"
                                             });
-            var initialHistoryActions = GenerateInitialHistoryActions(page);
-            page.History.HistoryActions.AddRange(initialHistoryActions);
+            var initialSemanticEvents = GenerateInitialSemanticEvents(page);
+            page.History.SemanticEvents.AddRange(initialSemanticEvents);
 
             File.AppendAllText(filePath, "PASS [1]" + "\n");
-            foreach (var item in initialHistoryActions)
+            foreach (var item in initialSemanticEvents)
             {
-                var semi = item == initialHistoryActions.Last() ? string.Empty : "; ";
+                var semi = item == initialSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
             // Second Pass
-            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "2"
                                             });
-            var clusteredInkHistoryActions = ClusterInkHistoryActions(page, initialHistoryActions);
-            page.History.HistoryActions.AddRange(clusteredInkHistoryActions);
+            var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
+            page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
 
             File.AppendAllText(filePath, "\nPASS [2]" + "\n");
-            foreach (var item in clusteredInkHistoryActions)
+            foreach (var item in clusteredInkSemanticEvents)
             {
-                var semi = item == clusteredInkHistoryActions.Last() ? string.Empty : "; ";
+                var semi = item == clusteredInkSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
             // Third Pass
-            page.History.HistoryActions.Add(new HistoryAction(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "3"
                                             });
-            var interpretedInkHistoryActions = InterpretInkHistoryActions(page, clusteredInkHistoryActions);
-            page.History.HistoryActions.AddRange(interpretedInkHistoryActions);
+            var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
+            page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
 
             File.AppendAllText(filePath, "\nPASS [3]" + "\n");
-            foreach (var item in interpretedInkHistoryActions)
+            foreach (var item in interpretedInkSemanticEvents)
             {
-                var semi = item == interpretedInkHistoryActions.Last() ? string.Empty : "; ";
+                var semi = item == interpretedInkSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, item.CodedValue + semi);
             }
 
             // Last Pass
-            GenerateTags(page, interpretedInkHistoryActions);
+            GenerateTags(page, interpretedInkSemanticEvents);
 
             File.AppendAllText(filePath, "\n\n\n*****Tags*****" + "\n\n");
             foreach (var tag in page.Tags)
@@ -95,10 +95,10 @@ namespace CLP.Entities
 
         #region First Pass: Initialization
 
-        public static List<IHistoryAction> GenerateInitialHistoryActions(CLPPage page)
+        public static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
         {
             var historyItemBuffer = new List<IHistoryItem>();
-            var initialHistoryActions = new List<IHistoryAction>();
+            var initialSemanticEvents = new List<ISemanticEvent>();
             var historyItems = page.History.CompleteOrderedHistoryItems;
 
             for (var i = 0; i < historyItems.Count; i++)
@@ -107,55 +107,55 @@ namespace CLP.Entities
                 historyItemBuffer.Add(currentHistoryItem);
                 if (historyItemBuffer.Count == 1)
                 {
-                    var singleHistoryAction = VerifyAndGenerateSingleItemAction(page, historyItemBuffer.First());
-                    if (singleHistoryAction != null)
+                    var singleSemanticEvent = VerifyAndGenerateSingleItemAction(page, historyItemBuffer.First());
+                    if (singleSemanticEvent != null)
                     {
-                        initialHistoryActions.Add(singleHistoryAction);
+                        initialSemanticEvents.Add(singleSemanticEvent);
                         historyItemBuffer.Clear();
                         continue;
                     }
                 }
 
                 var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
-                var compoundHistoryAction = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
-                if (compoundHistoryAction != null)
+                var compoundSemanticEvent = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
+                if (compoundSemanticEvent != null)
                 {
-                    initialHistoryActions.Add(compoundHistoryAction);
+                    initialSemanticEvents.Add(compoundSemanticEvent);
                     historyItemBuffer.Clear();
                 }
             }
 
-            return initialHistoryActions;
+            return initialSemanticEvents;
         }
 
-        public static IHistoryAction VerifyAndGenerateSingleItemAction(CLPPage page, IHistoryItem historyItem)
+        public static ISemanticEvent VerifyAndGenerateSingleItemAction(CLPPage page, IHistoryItem historyItem)
         {
             if (historyItem == null)
             {
                 return null;
             }
 
-            IHistoryAction historyAction = null;
+            ISemanticEvent semanticEvent = null;
             TypeSwitch.On(historyItem)
-                      .Case<ObjectsOnPageChangedHistoryItem>(h => { historyAction = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
+                      .Case<ObjectsOnPageChangedHistoryItem>(h => { semanticEvent = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
                       .Case<PartsValueChangedHistoryItem>(h =>
                                                           {
-                                                              historyAction = new HistoryAction(page, h)
+                                                              semanticEvent = new SemanticEvent(page, h)
                                                                               {
                                                                                   CodedObject = Codings.OBJECT_STAMP,
                                                                                   CodedObjectAction = "parts",
                                                                                   CodedObjectID = "CHANGED"
                                                                               };
                                                           })
-                      .Case<CLPArrayRotateHistoryItem>(h => { historyAction = ArrayCodedActions.Rotate(page, h); })
-                      .Case<PageObjectCutHistoryItem>(h => { historyAction = ArrayCodedActions.Cut(page, h); })
-                      .Case<CLPArraySnapHistoryItem>(h => { historyAction = ArrayCodedActions.Snap(page, h); })
-                      .Case<CLPArrayDivisionsChangedHistoryItem>(h => { historyAction = ArrayCodedActions.Divide(page, h); });
+                      .Case<CLPArrayRotateHistoryItem>(h => { semanticEvent = ArrayCodedActions.Rotate(page, h); })
+                      .Case<PageObjectCutHistoryItem>(h => { semanticEvent = ArrayCodedActions.Cut(page, h); })
+                      .Case<CLPArraySnapHistoryItem>(h => { semanticEvent = ArrayCodedActions.Snap(page, h); })
+                      .Case<CLPArrayDivisionsChangedHistoryItem>(h => { semanticEvent = ArrayCodedActions.Divide(page, h); });
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
+        public static ISemanticEvent VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
         {
             if (!historyItems.Any())
             {
@@ -182,8 +182,8 @@ namespace CLP.Entities
                         }
                     }
 
-                    var historyAction = InkCodedActions.ChangeOrIgnore(page, objectsChangedHistoryItems);
-                    return historyAction;
+                    var semanticEvent = InkCodedActions.ChangeOrIgnore(page, objectsChangedHistoryItems);
+                    return semanticEvent;
                 }
             }
 
@@ -201,8 +201,8 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var historyAction = ObjectCodedActions.Move(page, objectsMovedHistoryItems);
-                    return historyAction;
+                    var semanticEvent = ObjectCodedActions.Move(page, objectsMovedHistoryItems);
+                    return semanticEvent;
                 }
             }
 
@@ -220,8 +220,8 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var historyAction = ObjectCodedActions.Resize(page, objectsResizedHistoryItems);
-                    return historyAction;
+                    var semanticEvent = ObjectCodedActions.Resize(page, objectsResizedHistoryItems);
+                    return semanticEvent;
                 }
             }
 
@@ -239,8 +239,8 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var historyAction = NumberLineCodedActions.EndPointsChange(page, endPointsChangedHistoryItems);
-                    return historyAction;
+                    var semanticEvent = NumberLineCodedActions.EndPointsChange(page, endPointsChangedHistoryItems);
+                    return semanticEvent;
                 }
             }
 
@@ -260,8 +260,8 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var historyAction = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
-                    return historyAction;
+                    var semanticEvent = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
+                    return semanticEvent;
                 }
             }
 
@@ -331,7 +331,7 @@ namespace CLP.Entities
                     }
 
                     _currentCompressedStatus = null;
-                    var historyAction = new HistoryAction(page, historyItems)
+                    var semanticEvent = new SemanticEvent(page, historyItems)
                                         {
                                             CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
                                             CodedObjectAction = objectAction,
@@ -339,7 +339,7 @@ namespace CLP.Entities
                                             CodedObjectID = multipleChoice.CodedID,
                                             CodedObjectActionID = string.Format("{0}, {1}", bubble.BubbleCodedID, correctness)
                                         };
-                    return historyAction;
+                    return semanticEvent;
                 }
             }
 
@@ -446,10 +446,10 @@ namespace CLP.Entities
 
         #region Second Pass: Ink Clustering
 
-        public static List<IHistoryAction> ClusterInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        public static List<ISemanticEvent> ClusterInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             InkCodedActions.InkClusters.Clear();
-            var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, historyActions);
+            var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, semanticEvents);
             // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
             refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);
 
@@ -457,18 +457,18 @@ namespace CLP.Entities
             InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
 
             // TODO: Rename/fix - Refine Temporal Clusters
-            var processedActions = new List<IHistoryAction>();
-            foreach (var historyAction in refinedInkActions)
+            var processedActions = new List<ISemanticEvent>();
+            foreach (var semanticEvent in refinedInkActions)
             {
-                if (historyAction.CodedObject == Codings.OBJECT_INK &&
-                    historyAction.CodedObjectAction == Codings.ACTION_INK_CHANGE)
+                if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
+                    semanticEvent.CodedObjectAction == Codings.ACTION_INK_CHANGE)
                 {
-                    var processedInkChangeActions = InkCodedActions.ProcessInkChangeHistoryAction(page, historyAction);
+                    var processedInkChangeActions = InkCodedActions.ProcessInkChangeSemanticEvent(page, semanticEvent);
                     processedActions.AddRange(processedInkChangeActions);
                 }
                 else
                 {
-                    processedActions.Add(historyAction);
+                    processedActions.Add(semanticEvent);
                 }
             }
 
@@ -479,34 +479,34 @@ namespace CLP.Entities
 
         #region Third Pass: Ink Interpretation
 
-        public static List<IHistoryAction> InterpretInkHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        public static List<ISemanticEvent> InterpretInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var allInterpretedHistoryActions = new List<IHistoryAction>();
+            var allInterpretedSemanticEvents = new List<ISemanticEvent>();
 
-            foreach (var historyAction in historyActions)
+            foreach (var semanticEvent in semanticEvents)
             {
-                if (historyAction.CodedObject == Codings.OBJECT_INK)
+                if (semanticEvent.CodedObject == Codings.OBJECT_INK)
                 {
-                    var interpretedHistoryActions = AttemptHistoryActionInterpretation(page, historyAction);
-                    allInterpretedHistoryActions.AddRange(interpretedHistoryActions);
+                    var interpretedSemanticEvents = AttemptSemanticEventInterpretation(page, semanticEvent);
+                    allInterpretedSemanticEvents.AddRange(interpretedSemanticEvents);
                 }
                 else
                 {
-                    allInterpretedHistoryActions.Add(historyAction);
+                    allInterpretedSemanticEvents.Add(semanticEvent);
                 }
             }
 
-            return allInterpretedHistoryActions;
+            return allInterpretedSemanticEvents;
         }
 
-        public static List<IHistoryAction> AttemptHistoryActionInterpretation(CLPPage page, IHistoryAction historyaction)
+        public static List<ISemanticEvent> AttemptSemanticEventInterpretation(CLPPage page, ISemanticEvent semanticEvent)
         {
-            var allInterpretedActions = new List<IHistoryAction>();
+            var allInterpretedActions = new List<ISemanticEvent>();
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) &&
-                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
+            if (semanticEvent.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) &&
+                semanticEvent.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.SkipCounting(page, historyaction);
+                var interpretedAction = ArrayCodedActions.SkipCounting(page, semanticEvent);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -514,10 +514,10 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
-                historyaction.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
+            if (semanticEvent.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER) &&
+                semanticEvent.CodedObjectActionID.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.ArrayEquation(page, historyaction);
+                var interpretedAction = ArrayCodedActions.ArrayEquation(page, semanticEvent);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -525,9 +525,9 @@ namespace CLP.Entities
                 }
             }
 
-            if (!historyaction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER))
+            if (!semanticEvent.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER))
             {
-                var interpretedAction = InkCodedActions.Arithmetic(page, historyaction);
+                var interpretedAction = InkCodedActions.Arithmetic(page, semanticEvent);
                 if (interpretedAction != null)
                 {
                     allInterpretedActions.Add(interpretedAction);
@@ -539,7 +539,7 @@ namespace CLP.Entities
 
             if (!allInterpretedActions.Any())
             {
-                allInterpretedActions.Add(historyaction);
+                allInterpretedActions.Add(semanticEvent);
             }
 
             return allInterpretedActions;
@@ -549,46 +549,46 @@ namespace CLP.Entities
 
         #region Fourth Pass: Refinement
 
-        public static List<IHistoryAction> RefineHistoryActions(CLPPage page, List<IHistoryAction> historyActions)
+        public static List<ISemanticEvent> RefineSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var allRefinedHistoryActions = new List<IHistoryAction>();
+            var allRefinedSemanticEvents = new List<ISemanticEvent>();
 
             // TODO: Combine ARR skip + Ink ignore + ARR skip into single ARR skip
-            //foreach (var historyAction in historyActions)
+            //foreach (var semanticEvent in semanticEvents)
             //{
-            //    if (historyAction.CodedObject == Codings.OBJECT_INK)
+            //    if (semanticEvent.CodedObject == Codings.OBJECT_INK)
             //    {
-            //        var refinedHistoryActions = AttemptHistoryActionInterpretation(page, historyAction);
-            //        allRefinedHistoryActions.AddRange(refinedHistoryActions);
+            //        var refinedSemanticEvents = AttemptSemanticEventInterpretation(page, semanticEvent);
+            //        allRefinedSemanticEvents.AddRange(refinedSemanticEvents);
             //    }
             //    else
             //    {
-            //        allRefinedHistoryActions.Add(historyAction);
+            //        allRefinedSemanticEvents.Add(semanticEvent);
             //    }
             //}
 
-            return allRefinedHistoryActions;
+            return allRefinedSemanticEvents;
         }
 
         #endregion // Fourth Pass: Refinement
 
         #region Last Pass: Tag Generation
 
-        public static void GenerateTags(CLPPage page, List<IHistoryAction> historyActions)
+        public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            ArrayStrategyTag.IdentifyArrayStrategies(page, historyActions);
-            AttemptAnswerBeforeRepresentationTag(page, historyActions);
-            AttemptAnswerChangedAfterRepresentationTag(page, historyActions);
-            AttemptAnswerTag(page, historyActions);
-            RepresentationsUsedTag.AttemptTagGeneration(page, historyActions);
-            AttemptRepresentationCorrectness(page, historyActions);
+            ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+            AttemptAnswerBeforeRepresentationTag(page, semanticEvents);
+            AttemptAnswerChangedAfterRepresentationTag(page, semanticEvents);
+            AttemptAnswerTag(page, semanticEvents);
+            RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
+            AttemptRepresentationCorrectness(page, semanticEvents);
         }
 
         // TODO: Move each Attempt method to the Tag's class
 
-        public static void AttemptRepresentationCorrectness(CLPPage page, List<IHistoryAction> historyActions)
+        public static void AttemptRepresentationCorrectness(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            //if (!historyActions.Any())
+            //if (!semanticEvents.Any())
             //{
             //    return;
             //}
@@ -662,7 +662,7 @@ namespace CLP.Entities
             #endregion // Answer Definition Relation
 
             var keyIndexes =
-                historyActions.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
+                semanticEvents.Where(h => h.CodedObjectAction == Codings.ACTION_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
                               .Select(h => h.HistoryItems.First().HistoryIndex - 1)
                               .ToList();
             if (!page.History.CompleteOrderedHistoryItems.Any())
@@ -1029,18 +1029,18 @@ namespace CLP.Entities
             return Correctness.Incorrect;
         }
 
-        public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
+        public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerActions = historyActions.Where(Codings.IsAnswerObject).ToList();
+            var answerActions = semanticEvents.Where(Codings.IsAnswerObject).ToList();
             if (answerActions.Count < 1)
             {
                 return;
             }
 
-            var firstAnswer = historyActions.First(Codings.IsAnswerObject);
-            var firstIndex = historyActions.IndexOf(firstAnswer);
+            var firstAnswer = semanticEvents.First(Codings.IsAnswerObject);
+            var firstIndex = semanticEvents.IndexOf(firstAnswer);
 
-            var beforeActions = historyActions.Take(firstIndex + 1).ToList();
+            var beforeActions = semanticEvents.Take(firstIndex + 1).ToList();
             var isUsingRepresentationsBefore = beforeActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
 
             if (isUsingRepresentationsBefore)
@@ -1048,7 +1048,7 @@ namespace CLP.Entities
                 return;
             }
 
-            var afterActions = historyActions.Skip(firstIndex).ToList();
+            var afterActions = semanticEvents.Skip(firstIndex).ToList();
             var isUsingRepresentationsAfter = afterActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
 
             if (!isUsingRepresentationsAfter)
@@ -1061,20 +1061,20 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
-        public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<IHistoryAction> historyActions)
+        public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerActions = historyActions.Where(Codings.IsAnswerObject).ToList();
+            var answerActions = semanticEvents.Where(Codings.IsAnswerObject).ToList();
             if (answerActions.Count < 2)
             {
                 return;
             }
 
-            var firstAnswer = historyActions.First(Codings.IsAnswerObject);
-            var firstIndex = historyActions.IndexOf(firstAnswer);
-            var lastAnswer = historyActions.Last(Codings.IsAnswerObject);
-            var lastIndex = historyActions.IndexOf(lastAnswer);
+            var firstAnswer = semanticEvents.First(Codings.IsAnswerObject);
+            var firstIndex = semanticEvents.IndexOf(firstAnswer);
+            var lastAnswer = semanticEvents.Last(Codings.IsAnswerObject);
+            var lastIndex = semanticEvents.IndexOf(lastAnswer);
 
-            var possibleTagActions = historyActions.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
+            var possibleTagActions = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
             var isUsingRepresentations = possibleTagActions.Any(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD);
 
             if (!isUsingRepresentations)
@@ -1086,10 +1086,10 @@ namespace CLP.Entities
             page.AddTag(tag);
         }
 
-        public static void AttemptAnswerTag(CLPPage page, List<IHistoryAction> historyActions)
+        public static void AttemptAnswerTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             // BUG: will miss instances where mc incorrect, mc correct, mc erase incorrect
-            var lastAnswerAction = historyActions.LastOrDefault(Codings.IsAnswerObject);
+            var lastAnswerAction = semanticEvents.LastOrDefault(Codings.IsAnswerObject);
             if (lastAnswerAction == null ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE ||
                 lastAnswerAction.CodedObjectAction == Codings.ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
@@ -1101,7 +1101,7 @@ namespace CLP.Entities
 
             var tag = new AnswerCorrectnessTag(page,
                                                Origin.StudentPageGenerated,
-                                               new List<IHistoryAction>
+                                               new List<ISemanticEvent>
                                                {
                                                    lastAnswerAction
                                                });

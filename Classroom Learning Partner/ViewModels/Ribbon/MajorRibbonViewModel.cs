@@ -711,7 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                  submission.RemoveTag(tempArraySkipCountingTag);
                                              }
 
-                                             HistoryAnalysis.GenerateHistoryActions(submission);
+                                             HistoryAnalysis.GenerateSemanticEvents(submission);
 
                                              UIHelper.RunOnUI(() => currentPage.Submissions.Add(submission));
 

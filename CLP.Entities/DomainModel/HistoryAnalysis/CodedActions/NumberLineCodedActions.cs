@@ -7,7 +7,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static IHistoryAction EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryItem> endPointsChangedHistoryItems)
+        public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryItem> endPointsChangedHistoryItems)
         {
             if (page == null ||
                 endPointsChangedHistoryItems == null ||
@@ -33,7 +33,7 @@ namespace CLP.Entities
                 codedActionID += " " + codedActionIDIncrementID;
             }
 
-            var historyAction = new HistoryAction(page, endPointsChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_NUMBER_LINE_CHANGE,
@@ -43,10 +43,10 @@ namespace CLP.Entities
                                     ReferencePageObjectID = numberLineID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryItem> jumpSizesChangedHistoryItems)
+        public static ISemanticEvent JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryItem> jumpSizesChangedHistoryItems)
         {
             if (page == null ||
                 jumpSizesChangedHistoryItems == null ||
@@ -82,7 +82,7 @@ namespace CLP.Entities
 
             var codedActionID = NumberLine.ConsolidateJumps(allJumps);
 
-            var historyAction = new HistoryAction(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = isAdding ? Codings.ACTION_NUMBER_LINE_JUMP : Codings.ACTION_NUMBER_LINE_JUMP_ERASE,
@@ -92,7 +92,7 @@ namespace CLP.Entities
                                     ReferencePageObjectID = numberLineID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
         #endregion // Static Methods

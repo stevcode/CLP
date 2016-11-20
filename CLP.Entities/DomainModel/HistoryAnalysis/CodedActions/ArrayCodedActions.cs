@@ -11,7 +11,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static IHistoryAction Rotate(CLPPage page, CLPArrayRotateHistoryItem rotateHistoryItem)
+        public static ISemanticEvent Rotate(CLPPage page, CLPArrayRotateHistoryItem rotateHistoryItem)
         {
             if (page == null ||
                 rotateHistoryItem == null)
@@ -36,7 +36,7 @@ namespace CLP.Entities
                 codedActionID += " " + codedActionIDIncrementID;
             }
 
-            var historyAction = new HistoryAction(page, rotateHistoryItem)
+            var semanticEvent = new SemanticEvent(page, rotateHistoryItem)
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_ARRAY_ROTATE,
@@ -46,10 +46,10 @@ namespace CLP.Entities
                                     ReferencePageObjectID = arrayID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction Cut(CLPPage page, PageObjectCutHistoryItem cutHistoryItem)
+        public static ISemanticEvent Cut(CLPPage page, PageObjectCutHistoryItem cutHistoryItem)
         {
             if (page == null ||
                 cutHistoryItem == null)
@@ -101,7 +101,7 @@ namespace CLP.Entities
 
             var codedActionID = string.Join(", ", codedActionSegments);
 
-            var historyAction = new HistoryAction(page, cutHistoryItem)
+            var semanticEvent = new SemanticEvent(page, cutHistoryItem)
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_ARRAY_CUT,
@@ -111,10 +111,10 @@ namespace CLP.Entities
                                     ReferencePageObjectID = cutArrayID
             };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction Snap(CLPPage page, CLPArraySnapHistoryItem snapHistoryItem)
+        public static ISemanticEvent Snap(CLPPage page, CLPArraySnapHistoryItem snapHistoryItem)
         {
             if (page == null ||
                 snapHistoryItem == null)
@@ -146,7 +146,7 @@ namespace CLP.Entities
                 codedActionID += " " + codedActionIDIncrementID;
             }
 
-            var historyAction = new HistoryAction(page, snapHistoryItem)
+            var semanticEvent = new SemanticEvent(page, snapHistoryItem)
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_ARRAY_SNAP,
@@ -157,10 +157,10 @@ namespace CLP.Entities
                                     CodedObjectActionID = codedActionID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction Divide(CLPPage page, CLPArrayDivisionsChangedHistoryItem divideHistoryItem)
+        public static ISemanticEvent Divide(CLPPage page, CLPArrayDivisionsChangedHistoryItem divideHistoryItem)
         {
             if (page == null ||
                 divideHistoryItem == null)
@@ -216,7 +216,7 @@ namespace CLP.Entities
 
             var codedActionID = string.Join(", ", codedActionSegments);
 
-            var historyAction = new HistoryAction(page, divideHistoryItem)
+            var semanticEvent = new SemanticEvent(page, divideHistoryItem)
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = Codings.ACTION_ARRAY_DIVIDE,
@@ -226,10 +226,10 @@ namespace CLP.Entities
                                     ReferencePageObjectID = dividedArrayID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction InkDivide(CLPPage page, IHistoryItem historyItem)
+        public static ISemanticEvent InkDivide(CLPPage page, IHistoryItem historyItem)
         {
             if (page == null)
             {
@@ -413,7 +413,7 @@ namespace CLP.Entities
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
-            var inkDivideAction = new HistoryAction(page, historyItem)
+            var inkDivideAction = new SemanticEvent(page, historyItem)
                                   {
                                       CodedObject = codedObject,
                                       CodedObjectAction = codedDescription,
@@ -426,7 +426,7 @@ namespace CLP.Entities
             return inkDivideAction;
         }
 
-        public static IHistoryAction SkipCounting(CLPPage page, IHistoryAction inkAction)
+        public static ISemanticEvent SkipCounting(CLPPage page, ISemanticEvent inkAction)
         {
             if (page == null ||
                 inkAction == null ||
@@ -480,7 +480,7 @@ namespace CLP.Entities
 
             var codedActionID = string.Format("{0}, {1}", formattedInterpretation, location);
 
-            var historyAction = new HistoryAction(page, inkAction)
+            var semanticEvent = new SemanticEvent(page, inkAction)
                                 {
                                     CodedObject = codedObject,
                                     CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
@@ -490,10 +490,10 @@ namespace CLP.Entities
                                     ReferencePageObjectID = referenceArrayID
                                 };
 
-            return historyAction;
+            return semanticEvent;
         }
 
-        public static IHistoryAction ArrayEquation(CLPPage page, IHistoryAction inkAction)
+        public static ISemanticEvent ArrayEquation(CLPPage page, ISemanticEvent inkAction)
         {
             if (page == null ||
                 inkAction == null ||
@@ -535,7 +535,7 @@ namespace CLP.Entities
 
                 cluster.ClusterType = InkCluster.ClusterTypes.ARReqn;
 
-                var historyAction = new HistoryAction(page, inkAction)
+                var semanticEvent = new SemanticEvent(page, inkAction)
                                     {
                                         CodedObject = Codings.OBJECT_ARRAY,
                                         CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
@@ -544,7 +544,7 @@ namespace CLP.Entities
                                         ReferencePageObjectID = referenceArrayID
                                     };
 
-                return historyAction;
+                return semanticEvent;
             }
 
             if (cluster.ClusterType == InkCluster.ClusterTypes.ARReqn)
@@ -568,7 +568,7 @@ namespace CLP.Entities
                 onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
                 var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
 
-                var historyAction = new HistoryAction(page, inkAction)
+                var semanticEvent = new SemanticEvent(page, inkAction)
                                     {
                                         CodedObject = Codings.OBJECT_ARRAY,
                                         CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
@@ -577,7 +577,7 @@ namespace CLP.Entities
                                         ReferencePageObjectID = referenceArrayID
                                     };
 
-                return historyAction;
+                return semanticEvent;
             }
 
             return null;

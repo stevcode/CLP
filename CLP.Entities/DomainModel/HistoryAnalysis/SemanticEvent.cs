@@ -7,34 +7,34 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class HistoryAction : AEntityBase, IHistoryAction
+    public class SemanticEvent : AEntityBase, ISemanticEvent
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="HistoryAction" /> from scratch.</summary>
-        public HistoryAction() { ID = Guid.NewGuid().ToCompactID(); }
+        /// <summary>Initializes <see cref="SemanticEvent" /> from scratch.</summary>
+        public SemanticEvent() { ID = Guid.NewGuid().ToCompactID(); }
 
-        public HistoryAction(CLPPage parentPage, IHistoryItem historyItem)
-            : this(parentPage, new List<IHistoryItem> { historyItem }, new List<IHistoryAction>())
+        public SemanticEvent(CLPPage parentPage, IHistoryItem historyItem)
+            : this(parentPage, new List<IHistoryItem> { historyItem }, new List<ISemanticEvent>())
         { }
 
-        public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
-            : this(parentPage, historyItems, new List<IHistoryAction>()) { }
+        public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems)
+            : this(parentPage, historyItems, new List<ISemanticEvent>()) { }
 
-        public HistoryAction(CLPPage parentPage, IHistoryAction historyAction)
-            : this(parentPage, new List<IHistoryItem>(), new List<IHistoryAction> { historyAction })
+        public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
+            : this(parentPage, new List<IHistoryItem>(), new List<ISemanticEvent> { semanticEvent })
         { }
 
-        public HistoryAction(CLPPage parentPage, List<IHistoryAction> historyActions)
-            : this(parentPage, new List<IHistoryItem>(), historyActions)
+        public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
+            : this(parentPage, new List<IHistoryItem>(), semanticEvents)
         { }
 
-        public HistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems, List<IHistoryAction> historyActions)
+        public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems, List<ISemanticEvent> semanticEvents)
             : this()
         {
             ParentPage = parentPage;
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            HistoryActions = historyActions;
+            SemanticEvents = semanticEvents;
         }
 
         #endregion //Constructors
@@ -43,14 +43,14 @@ namespace CLP.Entities
 
         #region Navigation Properties
 
-        /// <summary>Location of the <see cref="IHistoryAction" /> in the list of <see cref="IHistoryAction" />s.</summary>
-        public int HistoryActionIndex
+        /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
+        public int SemanticEventIndex
         {
-            get { return GetValue<int>(HistoryActionIndexProperty); }
-            set { SetValue(HistoryActionIndexProperty, value); }
+            get { return GetValue<int>(SemanticEventIndexProperty); }
+            set { SetValue(SemanticEventIndexProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionIndexProperty = RegisterProperty("HistoryActionIndex", typeof(int), -1);
+        public static readonly PropertyData SemanticEventIndexProperty = RegisterProperty("SemanticEventIndex", typeof(int), -1);
 
         /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
@@ -115,7 +115,7 @@ namespace CLP.Entities
 
         #region Coded Portions
 
-        /// <summary>CodedObject portion of the CodedHistoryAction report.</summary>
+        /// <summary>CodedObject portion of the CodedSemanticEvent report.</summary>
         public string CodedObject
         {
             get { return GetValue<string>(CodedObjectProperty); }
@@ -124,7 +124,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
 
-        /// <summary>SubType portion of the CodedHistoryAction report.</summary>
+        /// <summary>SubType portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectSubType
         {
             get { return GetValue<string>(CodedObjectSubTypeProperty); }
@@ -133,7 +133,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectSubTypeProperty = RegisterProperty("CodedObjectSubType", typeof(string), string.Empty);
 
-        /// <summary>Determines if SubType portion of the CodedHistoryAction is visibly reported.</summary>
+        /// <summary>Determines if SubType portion of the CodedSemanticEvent is visibly reported.</summary>
         public bool IsSubTypeVisisble
         {
             get { return GetValue<bool>(IsSubTypeVisisbleProperty); }
@@ -142,7 +142,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsSubTypeVisisbleProperty = RegisterProperty("IsSubTypeVisisble", typeof(bool), true);
 
-        /// <summary>Forces SubType portion of the CodedHistoryAction to be visibly reported.</summary>
+        /// <summary>Forces SubType portion of the CodedSemanticEvent to be visibly reported.</summary>
         [XmlIgnore]
         public bool IsSubTypeForcedVisible
         {
@@ -152,7 +152,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsSubTypeForcedVisibleProperty = RegisterProperty("IsSubTypeForcedVisible", typeof(bool), false);
 
-        /// <summary>ObjectAction portion of the CodedHistoryAction report.</summary>
+        /// <summary>ObjectAction portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectAction
         {
             get { return GetValue<string>(CodedObjectActionProperty); }
@@ -161,7 +161,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectActionProperty = RegisterProperty("CodedObjectAction", typeof(string), string.Empty);
 
-        /// <summary>Determines if ObjectAction portion of the CodedHistoryAction is visibly reported.</summary>
+        /// <summary>Determines if ObjectAction portion of the CodedSemanticEvent is visibly reported.</summary>
         public bool IsObjectActionVisible
         {
             get { return GetValue<bool>(IsObjectActionVisibleProperty); }
@@ -170,7 +170,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsObjectActionVisibleProperty = RegisterProperty("IsObjectActionVisible", typeof(bool), true);
 
-        /// <summary>Forces ObjectAction portion of the CodedHistoryAction to be visibly reported.</summary>
+        /// <summary>Forces ObjectAction portion of the CodedSemanticEvent to be visibly reported.</summary>
         [XmlIgnore]
         public bool IsObjectActionForcedVisible
         {
@@ -180,7 +180,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsObjectActionForcedVisibleProperty = RegisterProperty("IsObjectActionForcedVisible", typeof(bool), false);
 
-        /// <summary>ObjectID portion of the CodedHistoryAction report.</summary>
+        /// <summary>ObjectID portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectID
         {
             get { return GetValue<string>(CodedObjectIDProperty); }
@@ -189,7 +189,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), string.Empty);
 
-        /// <summary>ObjectID Increment portion of the CodedHistoryaction report.</summary>
+        /// <summary>ObjectID Increment portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectIDIncrement
         {
             get { return GetValue<string>(CodedObjectIDIncrementProperty); }
@@ -198,7 +198,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), string.Empty);
 
-        /// <summary>ObjectSubID portion of the CodedHistoryAction report.</summary>
+        /// <summary>ObjectSubID portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectSubID
         {
             get { return GetValue<string>(CodedObjectSubIDProperty); }
@@ -207,7 +207,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), string.Empty);
 
-        /// <summary>ObjectSubID Increment portion of the CodedHistoryaction report.</summary>
+        /// <summary>ObjectSubID Increment portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectSubIDIncrement
         {
             get { return GetValue<string>(CodedObjectSubIDIncrementProperty); }
@@ -216,7 +216,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), string.Empty);
 
-        /// <summary>ObjectActionID portion of the CodedHistoryAction report.</summary>
+        /// <summary>ObjectActionID portion of the CodedSemanticEvent report.</summary>
         public string CodedObjectActionID
         {
             get { return GetValue<string>(CodedObjectActionIDProperty); }
@@ -229,7 +229,7 @@ namespace CLP.Entities
 
         #region Backing Properties
 
-        /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
+        /// <summary>List of the IDs of the HistoryItems that make up this SemanticEvent.</summary>
         public List<string> HistoryItemIDs
         {
             get { return GetValue<List<string>>(HistoryItemIDsProperty); }
@@ -238,14 +238,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof(List<string>), () => new List<string>());
 
-        /// <summary>List of any HistoryActions that make up this HistoryAction.</summary>
-        public List<IHistoryAction> HistoryActions
+        /// <summary>List of any SemanticEvents that make up this SemanticEvent.</summary>
+        public List<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<List<IHistoryAction>>(HistoryActionsProperty); }
-            set { SetValue(HistoryActionsProperty, value); }
+            get { return GetValue<List<ISemanticEvent>>(SemanticEventsProperty); }
+            set { SetValue(SemanticEventsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof(List<IHistoryAction>), () => new List<IHistoryAction>());
+        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());
 
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
@@ -260,7 +260,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        /// <summary>List of the HistoryItems that make up this HistoryAction.</summary>
+        /// <summary>List of the HistoryItems that make up this SemanticEvent.</summary>
         public List<IHistoryItem> HistoryItems
         {
             get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }

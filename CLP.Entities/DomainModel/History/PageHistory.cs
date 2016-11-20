@@ -211,20 +211,20 @@ namespace CLP.Entities
 
         #endregion //HistoryItems
 
-        #region HistoryActions
+        #region SemanticEvents
 
         /// <summary>
-        /// List of all the IHistoryActions analysis generates.
+        /// List of all the ISemanticEvents analysis generates.
         /// </summary>
-        public ObservableCollection<IHistoryAction> HistoryActions
+        public ObservableCollection<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<ObservableCollection<IHistoryAction>>(HistoryActionsProperty); }
-            set { SetValue(HistoryActionsProperty, value); }
+            get { return GetValue<ObservableCollection<ISemanticEvent>>(SemanticEventsProperty); }
+            set { SetValue(SemanticEventsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>()); 
+        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof (ObservableCollection<ISemanticEvent>), () => new ObservableCollection<ISemanticEvent>()); 
 
-        #endregion //HistoryActions
+        #endregion //SemanticEvents
 
         #region Playback Indication
 
