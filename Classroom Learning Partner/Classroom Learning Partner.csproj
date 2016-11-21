@@ -385,7 +385,6 @@
     <Compile Include="ViewModels\PageObjects\Arrays\DivisionTemplateViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
-    <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
     <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\PageInformationPanelViewModel.cs" />
@@ -453,9 +452,6 @@
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml.cs">
       <DependentUpon>MultipleChoiceCreationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\To MVVMize\ClassPeriodChooserView.xaml.cs">
-      <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PersonView.xaml.cs">
       <DependentUpon>PersonView.xaml</DependentUpon>
@@ -746,10 +742,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\To MVVMize\MVVM\MultipleChoiceCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\To MVVMize\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
