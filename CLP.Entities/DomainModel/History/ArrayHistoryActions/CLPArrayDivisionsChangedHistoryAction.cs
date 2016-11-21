@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -26,14 +25,9 @@ namespace CLP.Entities
             NewRegions = newRegions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string ArrayID
@@ -42,7 +36,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
 
         /// <summary>ArrayDivisions added to Array</summary>
         [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
@@ -52,7 +46,7 @@ namespace CLP.Entities
             set { SetValue(AddedDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData AddedDivisionsProperty = RegisterProperty("AddedDivisions", typeof (List<CLPArrayDivision>));
+        public static readonly PropertyData AddedDivisionsProperty = RegisterProperty("AddedDivisions", typeof(List<CLPArrayDivision>));
 
         /// <summary>ArrayDivisions removed from Array</summary>
         [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
@@ -62,7 +56,7 @@ namespace CLP.Entities
             set { SetValue(RemovedDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof (List<CLPArrayDivision>));
+        public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>));
 
         /// <summary>Old regions, either RowRegions or ColumnRegions; HorizontalDivisions and VerticalDivisions respectively.</summary>
         public List<CLPArrayDivision> OldRegions
@@ -71,7 +65,7 @@ namespace CLP.Entities
             set { SetValue(OldRegionsProperty, value); }
         }
 
-        public static readonly PropertyData OldRegionsProperty = RegisterProperty("OldRegions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
+        public static readonly PropertyData OldRegionsProperty = RegisterProperty("OldRegions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         /// <summary>New regions, either RowRegions or ColumnRegions; HorizontalDivisions and VerticalDivisions respectively.</summary>
         public List<CLPArrayDivision> NewRegions
@@ -80,7 +74,7 @@ namespace CLP.Entities
             set { SetValue(NewRegionsProperty, value); }
         }
 
-        public static readonly PropertyData NewRegionsProperty = RegisterProperty("NewRegions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
+        public static readonly PropertyData NewRegionsProperty = RegisterProperty("NewRegions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         public bool? IsColumnRegionsChange
         {
@@ -98,19 +92,25 @@ namespace CLP.Entities
             }
         }
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 if (array == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
+                    return "[ERROR] Array for Divisions Changed not found on page or in history.";
                 }
 
                 if (IsColumnRegionsChange == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
+                    return "[ERROR] Array Divisions Changed is missing Old and New Regions.";
                 }
 
                 var orientation = (bool)IsColumnRegionsChange ? "vertical" : "horizontal";
@@ -118,13 +118,9 @@ namespace CLP.Entities
                 var newRegion = NewRegions.Any() ? string.Join(",", NewRegions.Select(d => d.Value)) : "none";
 
                 //TODO: Created FormattedValue for situation where IsObscuring is being toggled.
-                return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryActionIndex, orientation, array.FormattedName, oldRegion, newRegion);
+                return $"Changed {orientation} divisions on {array.FormattedName} from {oldRegion} to {newRegion}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -230,15 +226,18 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            return clonedHistoryItem;
+            var clonedHistoryAction = this.DeepCopy();
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return ArrayID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

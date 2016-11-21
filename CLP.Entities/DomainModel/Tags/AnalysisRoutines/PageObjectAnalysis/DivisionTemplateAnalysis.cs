@@ -58,7 +58,7 @@ namespace CLP.Entities
 
         public static List<string> GetListOfDivisionTemplateIDsInHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             var divisionTemplateIDsInHistory = new List<string>();
             //foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
@@ -75,7 +75,7 @@ namespace CLP.Entities
 
         public static void AnalyzeHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 

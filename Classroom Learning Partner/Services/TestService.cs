@@ -545,10 +545,10 @@ namespace Classroom_Learning_Partner.Services
             //            totalRowsTested += array.Rows;
 
             //            var historyIndex = 0;
-            //            var lastHistoryItem = lastSubmission.History.CompleteOrderedHistoryItems.LastOrDefault();
-            //            if (lastHistoryItem != null)
+            //            var lastHistoryAction = lastSubmission.History.CompleteOrderedHistoryActions.LastOrDefault();
+            //            if (lastHistoryAction != null)
             //            {
-            //                historyIndex = lastHistoryItem.HistoryActionIndex;
+            //                historyIndex = lastHistoryAction.HistoryActionIndex;
             //            }
 
             //            var strokes = lastSubmission.InkStrokes.ToList();
@@ -1713,9 +1713,9 @@ namespace Classroom_Learning_Partner.Services
             //                   .ToList();
 
             //        // History
-            //        var undoHistoryItems = pageDoc.Descendants("UndoItems").First().Descendants(anyTypeName);
-            //        var redoHistoryItems = pageDoc.Descendants("RedoItems").First().Descendants(anyTypeName);
-            //        var historyItems = undoHistoryItems.Concat(redoHistoryItems).Where(xe => xe.Descendants("OwnerID").First().Value == studentOwnerID).ToList();
+            //        var undoHistoryActions = pageDoc.Descendants("UndoActions").First().Descendants(anyTypeName);
+            //        var redoHistoryActions = pageDoc.Descendants("RedoActions").First().Descendants(anyTypeName);
+            //        var historyActions = undoHistoryActions.Concat(redoHistoryActions).Where(xe => xe.Descendants("OwnerID").First().Value == studentOwnerID).ToList();
 
             //        // ARR
             //        var arraysOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == ARRAY_ENTITY);
@@ -1729,18 +1729,18 @@ namespace Classroom_Learning_Partner.Services
             //        var trashedArraysCount = trashedArrays.Count();
             //        var arraysUsedCount = arraysOnPageCount + trashedArraysCount;
 
-            //        var cutHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == CUT_ENTITY).ToList();
-            //        var arraysWithACutCount = arraysIDs.Count(arraysID => cutHistoryItems.Any(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => e.Value == arraysID)));
-            //        var cutsOverArrayCount = cutHistoryItems.Count(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => arraysIDs.Contains(e.Value)));
+            //        var cutHistoryActions = historyActions.Where(xe => (string)xe.Attribute(typeName) == CUT_ENTITY).ToList();
+            //        var arraysWithACutCount = arraysIDs.Count(arraysID => cutHistoryActions.Any(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => e.Value == arraysID)));
+            //        var cutsOverArrayCount = cutHistoryActions.Count(xe => xe.Descendants("CutPageObjectIDs").First().Descendants(stringTypeName).Any(e => arraysIDs.Contains(e.Value)));
 
-            //        var snapHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == SNAP_ENTITY).ToList();
-            //        var twoArraysSnappedTogetherCount = snapHistoryItems.Count;
+            //        var snapHistoryActions = historyActions.Where(xe => (string)xe.Attribute(typeName) == SNAP_ENTITY).ToList();
+            //        var twoArraysSnappedTogetherCount = snapHistoryActions.Count;
 
-            //        var divideHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == DIVIDE_ENTITY).ToList();
-            //        var arrayDividersChangedCount = divideHistoryItems.Count;
+            //        var divideHistoryActions = historyActions.Where(xe => (string)xe.Attribute(typeName) == DIVIDE_ENTITY).ToList();
+            //        var arrayDividersChangedCount = divideHistoryActions.Count;
 
-            //        var rotateHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == ROTATE_ENTITY).ToList();
-            //        var arrayRotateCount = rotateHistoryItems.Count;
+            //        var rotateHistoryActions = historyActions.Where(xe => (string)xe.Attribute(typeName) == ROTATE_ENTITY).ToList();
+            //        var arrayRotateCount = rotateHistoryActions.Count;
 
             //        // STAMP
             //        var stampsOnPage = pageObjects.Where(xe => (string)xe.Attribute(typeName) == STAMP_ENTITY);
@@ -1785,8 +1785,8 @@ namespace Classroom_Learning_Partner.Services
             //        var trashedNumberLinesWithJumpsCount = trashedNumberLines.Count(xe => xe.Descendants("JumpSizes").First().HasElements);
             //        var numberLinesWithJumpsCount = numberLinesWithJumpsOnPageCount + trashedNumberLinesWithJumpsCount;
 
-            //        var endPointsChangedHistoryItems = historyItems.Where(xe => (string)xe.Attribute(typeName) == END_POINTS_CHANGED_ENTITY).ToList();
-            //        var numberLinesWithEndPointsChangedCount = numberLineIDs.Count(numberLineID => endPointsChangedHistoryItems.Any(xe => xe.Descendants("NumberLineID").First().Value == numberLineID));
+            //        var endPointsChangedHistoryActions = historyActions.Where(xe => (string)xe.Attribute(typeName) == END_POINTS_CHANGED_ENTITY).ToList();
+            //        var numberLinesWithEndPointsChangedCount = numberLineIDs.Count(numberLineID => endPointsChangedHistoryActions.Any(xe => xe.Descendants("NumberLineID").First().Value == numberLineID));
 
             //        // Sum Stats
             //        var isArrayUsedCount = arraysUsedCount > 0 ? 1 : 0;

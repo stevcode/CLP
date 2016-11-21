@@ -40,7 +40,7 @@ namespace CLP.Entities
 
         public static void AnalyzeHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             //ArrayTriedWrongDividerValuesTag
             var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryAction>>();

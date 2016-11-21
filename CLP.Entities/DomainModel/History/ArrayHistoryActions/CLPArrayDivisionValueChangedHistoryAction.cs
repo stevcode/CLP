@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -15,13 +14,7 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
-        public CLPArrayDivisionValueChangedHistoryAction(CLPPage parentPage,
-                                                       Person owner,
-                                                       string arrayID,
-                                                       bool isHorizontalDivision,
-                                                       int divisionIndex,
-                                                       int previousValue,
-                                                       int newValue)
+        public CLPArrayDivisionValueChangedHistoryAction(CLPPage parentPage, Person owner, string arrayID, bool isHorizontalDivision, int divisionIndex, int previousValue, int newValue)
             : base(parentPage, owner)
         {
             ArrayID = arrayID;
@@ -31,14 +24,9 @@ namespace CLP.Entities
             NewValue = newValue;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string ArrayID
@@ -47,7 +35,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
 
         /// <summary>Whether to operate on a horizontal or vertical division.</summary>
         public bool IsHorizontalDivision
@@ -56,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(IsHorizontalDivisionProperty, value); }
         }
 
-        public static readonly PropertyData IsHorizontalDivisionProperty = RegisterProperty("IsHorizontalDivision", typeof (bool));
+        public static readonly PropertyData IsHorizontalDivisionProperty = RegisterProperty("IsHorizontalDivision", typeof(bool));
 
         /// <summary>Index of the Division who's value has changed.</summary>
         public int DivisionIndex
@@ -65,7 +53,7 @@ namespace CLP.Entities
             set { SetValue(DivisionIndexProperty, value); }
         }
 
-        public static readonly PropertyData DivisionIndexProperty = RegisterProperty("DivisionIndex", typeof (int));
+        public static readonly PropertyData DivisionIndexProperty = RegisterProperty("DivisionIndex", typeof(int));
 
         /// <summary>Previous value of the Division.</summary>
         public int PreviousValue
@@ -74,7 +62,7 @@ namespace CLP.Entities
             set { SetValue(PreviousValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof (int));
+        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int));
 
         /// <summary>New value of the Division.</summary>
         public int NewValue
@@ -83,22 +71,47 @@ namespace CLP.Entities
             set { SetValue(NewValueProperty, value); }
         }
 
-        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof (int));
+        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region Methods
+
+        private void ToggleDivisionValue(bool isUndo)
+        {
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex);
+                return;
+            }
+
+            try
+            {
+                var division = IsHorizontalDivision ? array.HorizontalDivisions[DivisionIndex] : array.VerticalDivisions[DivisionIndex];
+
+                division.Value = isUndo ? PreviousValue : NewValue;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryActionIndex);
+            }
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
-                return array == null
-                           ? string.Format("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex)
-                           : string.Format("Index #{0}, Changed {1} division value from {2} to {3}", HistoryActionIndex, array.FormattedName, PreviousValue, NewValue);
+                return array == null ? "[ERROR] Array for Division Value Changed not found on page or in history." : $"Changed {array.FormattedName} division value from {PreviousValue} to {NewValue}";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -134,53 +147,35 @@ namespace CLP.Entities
             ToggleDivisionValue(false);
         }
 
-        private void ToggleDivisionValue(bool isUndo)
-        {
-            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            try
-            {
-                var division = IsHorizontalDivision ? array.HorizontalDivisions[DivisionIndex] : array.VerticalDivisions[DivisionIndex];
-
-                division.Value = isUndo ? PreviousValue : NewValue;
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryActionIndex);
-            }
-        }
-
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            if (clonedHistoryItem == null)
+            var clonedHistoryAction = this.DeepCopy();
+            if (clonedHistoryAction == null)
             {
                 return null;
             }
             var array = ParentPage.GetPageObjectByID(ArrayID) as CLPArray;
             if (array == null)
             {
-                return clonedHistoryItem;
+                return clonedHistoryAction;
             }
 
             var division = IsHorizontalDivision ? array.HorizontalDivisions[DivisionIndex] : array.VerticalDivisions[DivisionIndex];
 
-            clonedHistoryItem.PreviousValue = division.Value;
+            clonedHistoryAction.PreviousValue = division.Value;
 
-            return clonedHistoryItem;
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return ArrayID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

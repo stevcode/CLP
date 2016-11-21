@@ -114,17 +114,17 @@ namespace CLP.Entities
             //return null;
         }
 
-        public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryItems)
+        public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryActions)
         {
             if (page == null ||
-                objectsMovedHistoryItems == null ||
-                !objectsMovedHistoryItems.Any())
+                objectsMovedHistoryActions == null ||
+                !objectsMovedHistoryActions.Any())
             {
                 return null;
             }
 
-            var movedPageObjects = GetMovedPageObjects(page, objectsMovedHistoryItems);
-            var movedStrokes = GetMovedStrokes(page, objectsMovedHistoryItems);
+            var movedPageObjects = GetMovedPageObjects(page, objectsMovedHistoryActions);
+            var movedStrokes = GetMovedStrokes(page, objectsMovedHistoryActions);
 
             if (movedPageObjects.Count > 1 ||
                 movedStrokes.Any()) // Lasso move
@@ -138,11 +138,11 @@ namespace CLP.Entities
                 return null;
             }
 
-            var historyIndex = objectsMovedHistoryItems.First().HistoryActionIndex;
+            var historyIndex = objectsMovedHistoryActions.First().HistoryActionIndex;
             var pageObject = movedPageObjects.First();
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var semanticEvent = new SemanticEvent(page, objectsMovedHistoryItems.Cast<IHistoryAction>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_OBJECT_MOVE,
@@ -150,39 +150,39 @@ namespace CLP.Entities
                                     CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                     EventInformation =
                                         string.Format("({0}, {1}) to ({2}, {3})",
-                                                      Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
-                                                      Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
-                                                      Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
-                                                      Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y)),
+                                                      Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().X),
+                                                      Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().Y),
+                                                      Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().X),
+                                                      Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().Y)),
                                     ReferencePageObjectID = pageObject.ID
                                     // TODO: make eventInfo to describe distance travelled during move.
-                                    // note that there may be more than one objectsMovedHistoryItem in a row where
+                                    // note that there may be more than one objectsMovedHistoryAction in a row where
                                     // a student moved the same pageObject several consecutive times.
                                 };
 
             return semanticEvent;
         }
 
-        public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryAction> objectsResizedHistoryItems)
+        public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryAction> objectsResizedHistoryActions)
         {
             if (page == null ||
-                objectsResizedHistoryItems == null ||
-                !objectsResizedHistoryItems.Any())
+                objectsResizedHistoryActions == null ||
+                !objectsResizedHistoryActions.Any())
             {
                 return null;
             }
 
-            var pageObjectID = objectsResizedHistoryItems.First().PageObjectID;
+            var pageObjectID = objectsResizedHistoryActions.First().PageObjectID;
             var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectID);
             if (pageObject == null)
             {
                 return null;
             }
 
-            var historyIndex = objectsResizedHistoryItems.First().HistoryActionIndex;
+            var historyIndex = objectsResizedHistoryActions.First().HistoryActionIndex;
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryAction>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsResizedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_OBJECT_RESIZE,
@@ -190,10 +190,10 @@ namespace CLP.Entities
                                     CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                     EventInformation =
                                         string.Format("({0}, {1}) to ({2}, {3})",
-                                                      Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
-                                                      Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
-                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().X),
-                                                      Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().Y)),
+                                                      Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().X),
+                                                      Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().Y),
+                                                      Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().X),
+                                                      Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().Y)),
                                     ReferencePageObjectID = pageObjectID
                                 };
 
@@ -268,19 +268,19 @@ namespace CLP.Entities
             return CurrentIncrementIDForPageObject[compoundID].ToLetter();
         }
 
-        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyItems)
+        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyActions)
         {
-            return historyItems.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
+            return historyActions.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
-        public static List<Stroke> GetMovedStrokes(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyItems)
+        public static List<Stroke> GetMovedStrokes(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyActions)
         {
-            return historyItems.SelectMany(h => h.StrokeIDs.Keys.Select(page.GetStrokeByIDOnPageOrInHistory)).Distinct().ToList();
+            return historyActions.SelectMany(h => h.StrokeIDs.Keys.Select(page.GetStrokeByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
-        public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryAction> historyItems)
+        public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryAction> historyActions)
         {
-            return historyItems.OfType<PageObjectResizeBatchHistoryAction>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
+            return historyActions.OfType<PageObjectResizeBatchHistoryAction>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
         }
 
         #endregion // Utility Methods

@@ -200,8 +200,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
-                    var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                    var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
                 }
             }
 
@@ -223,8 +223,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ((ObjectsMovedBatchHistoryAction)batch).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             PageObject.OnMoved(initialX, initialY);
         }
 

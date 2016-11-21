@@ -282,9 +282,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 (batch as ObjectsMovedBatchHistoryAction).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch() as ObjectsMovedBatchHistoryAction;
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch() as ObjectsMovedBatchHistoryAction;
 
-            var startingPoint = batchHistoryItem.TravelledPositions.FirstOrDefault();
+            var startingPoint = batchHistoryAction.TravelledPositions.FirstOrDefault();
 
             var deltaX = Math.Abs(startingPoint.X - XPosition);
             var deltaY = Math.Abs(startingPoint.Y - YPosition);
@@ -293,7 +293,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (wasDragged)
             {
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
                 PageObject.OnMoved(XPosition, YPosition);
             }
             else
@@ -345,8 +345,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 (batch as PageObjectResizeBatchHistoryAction).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             PageObject.OnResized(initialWidth, initialHeight);
         }
 
@@ -510,8 +510,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
-                    var batchHistoryItem = pageObject.ParentPage.History.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
+                    var batchHistoryAction = pageObject.ParentPage.History.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryActionToPage(pageObject.ParentPage, batchHistoryAction, true);
                 }
             }
 
@@ -536,8 +536,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     Logger.Instance.WriteToLog("Error: Current Batch not ResizeBatch.");
-                    var batchHistoryItem = pageObject.ParentPage.History.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
+                    var batchHistoryAction = pageObject.ParentPage.History.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryActionToPage(pageObject.ParentPage, batchHistoryAction, true);
                 }
             }
 

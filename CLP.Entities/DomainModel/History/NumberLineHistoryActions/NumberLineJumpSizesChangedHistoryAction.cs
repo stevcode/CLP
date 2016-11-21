@@ -344,8 +344,8 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            return clonedHistoryItem;
+            var clonedHistoryAction = this.DeepCopy();
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>

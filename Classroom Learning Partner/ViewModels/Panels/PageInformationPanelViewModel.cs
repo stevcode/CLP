@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         Tags,
         SemanticEvents,
-        HistoryItems
+        HistoryActions
     }
 
     public class PageInformationPanelViewModel : APanelBaseViewModel
@@ -359,7 +359,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
-            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
+            PrintAllHistoryActionsCommand = new Command(OnPrintAllHistoryActionsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
 
             #endregion // Obsolete Commands
@@ -903,10 +903,10 @@ namespace Classroom_Learning_Partner.ViewModels
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var strokes = CurrentPage.InkStrokes.ToList();
             var historyIndex = 0;
-            var lastHistoryItem = CurrentPage.History.CompleteOrderedHistoryItems.LastOrDefault();
-            if (lastHistoryItem != null)
+            var lastHistoryAction = CurrentPage.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
             {
-                historyIndex = lastHistoryItem.HistoryActionIndex;
+                historyIndex = lastHistoryAction.HistoryActionIndex;
             }
 
             //Iterates over arrays on page
@@ -1441,9 +1441,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command PrintAllHistoryItemsCommand { get; private set; }
+        public Command PrintAllHistoryActionsCommand { get; private set; }
 
-        private void OnPrintAllHistoryItemsCommandExecute()
+        private void OnPrintAllHistoryActionsCommandExecute()
         {
             //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             //var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
@@ -1458,9 +1458,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //    File.Delete(filePath);
             //}
             //File.WriteAllText(filePath, "");
-            //var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+            //var historyActions = CurrentPage.History.CompleteOrderedHistoryActions;
 
-            //foreach (var item in historyItems)
+            //foreach (var item in historyActions)
             //{
             //    File.AppendAllText(filePath, item.FormattedValue + "\n");
             //}

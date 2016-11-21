@@ -410,7 +410,7 @@ namespace Classroom_Learning_Partner
 
         #region INotebookContract Members
 
-        public void AddHistoryItem(string compositePageID, string zippedHistoryItem)
+        public void AddHistoryAction(string compositePageID, string zippedHistoryAction)
         {
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
@@ -424,11 +424,11 @@ namespace Classroom_Learning_Partner
             var differentiationLevel = compositeKeys[2];
             var versionIndex = Convert.ToUInt32(compositeKeys[3]);
 
-            var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
-            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryAction;
-            if(historyItem == null)
+            var unzippedHistoryAction = zippedHistoryAction.DecompressFromGZip();
+            var historyAction = ObjectSerializer.ToObject(unzippedHistoryAction) as IHistoryAction;
+            if(historyAction == null)
             {
-                Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");
+                Logger.Instance.WriteToLog("Failed to apply historyAction to projector.");
                 return;
             }
 
@@ -455,14 +455,14 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            historyItem.ParentPage = pageToRedo;
+            historyAction.ParentPage = pageToRedo;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        historyItem.UnpackHistoryAction();
-                                                                                        pageToRedo.History.RedoItems.Clear();
-                                                                                        pageToRedo.History.RedoItems.Add(historyItem);
+                                                                                        historyAction.UnpackHistoryAction();
+                                                                                        pageToRedo.History.RedoActions.Clear();
+                                                                                        pageToRedo.History.RedoActions.Add(historyAction);
 
                                                                                         var tempIsAnimating = pageToRedo.History.IsAnimating;
                                                                                         pageToRedo.History.IsAnimating = true;

@@ -184,7 +184,7 @@ namespace CLP.Entities
         {
             var rows = Rows;
             var columns = Columns;
-            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryActionIndex >= historyIndex).Reverse())
+            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= historyIndex).Reverse())
             {
                 TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryAction>(h =>
                                                                            {
@@ -469,8 +469,8 @@ namespace CLP.Entities
 
         public override Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
             if (resizeHistoryItem == null &&
                 rotateHistoryItem == null)
             {
@@ -497,8 +497,8 @@ namespace CLP.Entities
 
         public override Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
-            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
             if (rotateHistoryItem == null &&
                 moveHistoryItem == null)
             {

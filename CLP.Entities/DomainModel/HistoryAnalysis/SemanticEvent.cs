@@ -226,7 +226,7 @@ namespace CLP.Entities
         /// <summary>List of the HistoryActions that make up this SemanticEvent.</summary>
         public List<IHistoryAction> HistoryActions
         {
-            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryActionIDs.Contains(x.ID)).OrderBy(x => x.HistoryActionIndex).ToList(); }
+            get { return ParentPage.History.CompleteOrderedHistoryActions.Where(x => HistoryActionIDs.Contains(x.ID)).OrderBy(x => x.HistoryActionIndex).ToList(); }
         }
 
         /// <summary> Takes the following form: CODED_OBJECT eventType [ID id_increment, SUB_ID sub_id_increment] eventInfo </summary>

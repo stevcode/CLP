@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -23,14 +22,9 @@ namespace CLP.Entities
             parentPage.History.TrashedPageObjects.Add(snappedInArray);
         }
 
-        #endregion //Constructor
+        #endregion // Constructor
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>UniqueID of the Division Template which had an array snapped inside</summary>
         public string DivisionTemplateID
@@ -39,7 +33,7 @@ namespace CLP.Entities
             set { SetValue(DivisionTemplateIDProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof (string), string.Empty);
+        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof(string), string.Empty);
 
         /// <summary>UniqueID of the array that wass snapped in and then deleted.</summary>
         public string SnappedInArrayID
@@ -48,33 +42,38 @@ namespace CLP.Entities
             set { SetValue(SnappedInArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData SnappedInArrayIDProperty = RegisterProperty("SnappedInArrayID", typeof (string), string.Empty);
+        public static readonly PropertyData SnappedInArrayIDProperty = RegisterProperty("SnappedInArrayID", typeof(string), string.Empty);
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
                 if (divisionTemplate == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                    return "[ERROR] Division Template for Array Snapped In not found on page or in history.";
                 }
 
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedInArrayID) as CLPArray;
                 if (array == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                    return "[ERROR] Array for Array Snapped In not found on page or in history.";
                 }
 
-                return string.Format("Index #{0}, Snapped {1} into {2}.", HistoryActionIndex, array.FormattedName, divisionTemplate.FormattedName);
+                return $"Snapped {array.FormattedName} into {divisionTemplate.FormattedName}.";
             }
         }
 
-        #endregion //Properties
-
-        #region Methods
-
-        protected override void ConversionUndoAction() { UndoAction(false); }
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -123,15 +122,18 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            return clonedHistoryItem;
+            var clonedHistoryAction = this.DeepCopy();
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id || SnappedInArrayID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return DivisionTemplateID == id || SnappedInArrayID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

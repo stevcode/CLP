@@ -114,20 +114,20 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            if (clonedHistoryItem == null)
+            var clonedHistoryAction = this.DeepCopy();
+            if (clonedHistoryAction == null)
             {
                 return null;
             }
             var iCountable = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (iCountable == null)
             {
-                return clonedHistoryItem;
+                return clonedHistoryAction;
             }
 
-            clonedHistoryItem.PreviousValue = iCountable.Parts;
+            clonedHistoryAction.PreviousValue = iCountable.Parts;
 
-            return clonedHistoryItem;
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>

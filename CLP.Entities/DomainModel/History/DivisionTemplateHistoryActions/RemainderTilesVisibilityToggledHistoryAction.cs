@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -22,14 +21,9 @@ namespace CLP.Entities
             IsVisible = isVisibile;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>ID of the Division Template that owns the Remainder Tiles.</summary>
         public string DivisionTemplateID
@@ -38,7 +32,7 @@ namespace CLP.Entities
             set { SetValue(DivisionTemplateIDProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof (string), string.Empty);
+        public static readonly PropertyData DivisionTemplateIDProperty = RegisterProperty("DivisionTemplateID", typeof(string), string.Empty);
 
         /// <summary>Visibility state the Remainder Tiles were toggled into.</summary>
         public bool IsVisible
@@ -47,46 +41,11 @@ namespace CLP.Entities
             set { SetValue(IsVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof (bool), false);
+        public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof(bool), false);
 
-        public override string FormattedValue
-        {
-            get
-            {
-                var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
-                if (divisionTemplate == null)
-                {
-                    return string.Format("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryActionIndex);
-                }
-
-                var toggleState = IsVisible ? "on" : "off";
-                return string.Format("Index #{0}, Toggled Remainder Tiles {1} for {2}.",
-                                     HistoryActionIndex,
-                                     toggleState,
-                                     divisionTemplate.FormattedName);
-            }
-        }
-
-        #endregion //Properties
+        #endregion // Properties
 
         #region Methods
-
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
-
-        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void UndoAction(bool isAnimationUndo)
-        {
-            ToggleRemainderTilesVisibility(!IsVisible);
-        }
-
-        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void RedoAction(bool isAnimationRedo)
-        {
-            ToggleRemainderTilesVisibility(IsVisible);
-        }
 
         private void ToggleRemainderTilesVisibility(bool isToggledVisible)
         {
@@ -110,18 +69,56 @@ namespace CLP.Entities
             divisionTemplate.UpdateReport();
         }
 
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
+        {
+            get
+            {
+                var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
+                if (divisionTemplate == null)
+                {
+                    return "[ERROR] Division Template for Remainder Tiles Toggle not found on page or in history.";
+                }
+
+                var toggleState = IsVisible ? "on" : "off";
+                return $"Toggled Remainder Tiles {toggleState} for {divisionTemplate.FormattedName}.";
+            }
+        }
+
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
+
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
+        protected override void UndoAction(bool isAnimationUndo)
+        {
+            ToggleRemainderTilesVisibility(!IsVisible);
+        }
+
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
+        protected override void RedoAction(bool isAnimationRedo)
+        {
+            ToggleRemainderTilesVisibility(IsVisible);
+        }
+
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            if (clonedHistoryItem == null)
+            var clonedHistoryAction = this.DeepCopy();
+            if (clonedHistoryAction == null)
             {
                 return null;
             }
 
             // TODO: Package history item.
 
-            return clonedHistoryItem;
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
@@ -130,8 +127,11 @@ namespace CLP.Entities
             // TODO: Unpack history item.
         }
 
-        public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return DivisionTemplateID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

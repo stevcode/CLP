@@ -41,7 +41,7 @@ namespace CLP.Entities
 
         //public static List<string> GetListOfNumberLineIDsInHistory(CLPPage page)
         //{
-        //    var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+        //    var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
         //    var numberLineIDsInHistory = new List<string>();
         //    foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())

@@ -107,7 +107,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof(List<string>), () => new List<string>());
 
-        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
+        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="ObjectsOnPageChangedHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]

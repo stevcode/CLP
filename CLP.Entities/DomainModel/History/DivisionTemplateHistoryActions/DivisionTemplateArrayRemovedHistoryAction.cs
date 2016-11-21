@@ -22,14 +22,9 @@ namespace CLP.Entities
             DivisionValue = divisionValue;
         }
 
-        #endregion //Constructor
+        #endregion // Constructor
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>UniqueID of the Division Template which had an array snapped inside</summary>
         public string DivisionTemplateID
@@ -49,26 +44,25 @@ namespace CLP.Entities
 
         public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof (int));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
                 if (divisionTemplate == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
+                    return "[ERROR] Division Template for Array Removed not found on page or in history.";
                 }
 
-                return string.Format("Index #{0}, Removed division of value {1} from {2}.",
-                                     HistoryActionIndex,
-                                     DivisionValue,
-                                     divisionTemplate.FormattedName);
+                return $"Removed division of value {DivisionValue} from {divisionTemplate.FormattedName}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -104,8 +98,8 @@ namespace CLP.Entities
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            return clonedHistoryItem;
+            var clonedHistoryAction = this.DeepCopy();
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
@@ -113,6 +107,6 @@ namespace CLP.Entities
 
         public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

@@ -231,7 +231,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ((PageObjectResizeBatchHistoryAction)batch).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
 
             if (_isClicked)
             {
@@ -285,7 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 PageObject.OnResizing(initialWidth, initialHeight);
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             }
 
             _initialWidth = 0;
@@ -361,7 +361,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObject.OnResized(preStretchedWidth, oldHeight);
             }
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage,
                                                        new NumberLineEndPointsChangedHistoryAction(PageObject.ParentPage,
                                                                                                  App.MainWindowViewModel.CurrentUser,
                                                                                                  PageObject.ID,
@@ -411,7 +411,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 didInteract = true;
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                ACLPPageBaseViewModel.AddHistoryActionToPage(numberLine.ParentPage,
                                                            new NumberLineJumpSizesChangedHistoryAction(numberLine.ParentPage,
                                                                                                      App.MainWindowViewModel.CurrentUser,
                                                                                                      numberLine.ID,
@@ -463,7 +463,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 didInteract = true;
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                ACLPPageBaseViewModel.AddHistoryActionToPage(numberLine.ParentPage,
                                                            new NumberLineJumpSizesChangedHistoryAction(numberLine.ParentPage,
                                                                                                      App.MainWindowViewModel.CurrentUser,
                                                                                                      numberLine.ID,

@@ -224,7 +224,7 @@ namespace CLP.Entities
         /// <summary>Signifies the pageObject was on the page immediately after the historyAction at the given historyIndex was performed</summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
-            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var addedAtAnyPointHistoryItem = orderedObjectsOnPageChangedHistoryItems.FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
@@ -245,7 +245,7 @@ namespace CLP.Entities
         /// <summary>Gets a new Point(Width, Height) just before the historyAction at historyIndex executes Redo(). To get (Width, Height) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>()
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>()
                                               .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
             if (resizeHistoryItem == null ||
                 !resizeHistoryItem.StretchedDimensions.Any())
@@ -262,7 +262,7 @@ namespace CLP.Entities
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
             var moveHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
 
             if (moveHistoryItem == null ||
                 !moveHistoryItem.TravelledPositions.Any())

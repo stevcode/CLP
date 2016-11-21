@@ -87,9 +87,9 @@ namespace CLP.Entities
             }
 
             File.AppendAllText(filePath, "\n*****History Items*****" + "\n\n");
-            foreach (var historyItem in page.History.CompleteOrderedHistoryItems)
+            foreach (var historyAction in page.History.CompleteOrderedHistoryActions)
             {
-                File.AppendAllText(filePath, historyItem.FormattedValue + "\n");
+                File.AppendAllText(filePath, historyAction.FormattedValue + "\n");
             }
         }
 
@@ -97,31 +97,31 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
         {
-            var historyItemBuffer = new List<IHistoryAction>();
+            var historyActionBuffer = new List<IHistoryAction>();
             var initialSemanticEvents = new List<ISemanticEvent>();
-            var historyItems = page.History.CompleteOrderedHistoryItems;
+            var historyActions = page.History.CompleteOrderedHistoryActions;
 
-            for (var i = 0; i < historyItems.Count; i++)
+            for (var i = 0; i < historyActions.Count; i++)
             {
-                var currentHistoryItem = historyItems[i];
-                historyItemBuffer.Add(currentHistoryItem);
-                if (historyItemBuffer.Count == 1)
+                var currentHistoryAction = historyActions[i];
+                historyActionBuffer.Add(currentHistoryAction);
+                if (historyActionBuffer.Count == 1)
                 {
-                    var singleSemanticEvent = VerifyAndGenerateSingleItemEvent(page, historyItemBuffer.First());
+                    var singleSemanticEvent = VerifyAndGenerateSingleItemEvent(page, historyActionBuffer.First());
                     if (singleSemanticEvent != null)
                     {
                         initialSemanticEvents.Add(singleSemanticEvent);
-                        historyItemBuffer.Clear();
+                        historyActionBuffer.Clear();
                         continue;
                     }
                 }
 
-                var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
-                var compoundSemanticEvent = VerifyAndGenerateCompoundItemEvent(page, historyItemBuffer, nextHistoryItem);
+                var nextHistoryAction = i + 1 < historyActions.Count ? historyActions[i + 1] : null;
+                var compoundSemanticEvent = VerifyAndGenerateCompoundItemEvent(page, historyActionBuffer, nextHistoryAction);
                 if (compoundSemanticEvent != null)
                 {
                     initialSemanticEvents.Add(compoundSemanticEvent);
-                    historyItemBuffer.Clear();
+                    historyActionBuffer.Clear();
                 }
             }
 
@@ -171,24 +171,24 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryAction> historyItems, IHistoryAction nextHistoryAction)
+        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
         {
-            if (!historyItems.Any())
+            if (!historyActions.Any())
             {
                 return null;
             }
 
-            if (historyItems.All(h => h is ObjectsOnPageChangedHistoryAction))
+            if (historyActions.All(h => h is ObjectsOnPageChangedHistoryAction))
             {
-                var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
+                var objectsChangedHistoryActions = historyActions.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
                 // TODO: Edge case that recognizes multiple bins added at once.
 
-                if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+                if (objectsChangedHistoryActions.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
-                    var nextObjectsChangedHistoryItem = nextHistoryAction as ObjectsOnPageChangedHistoryAction;
-                    if (nextObjectsChangedHistoryItem != null &&
-                        nextObjectsChangedHistoryItem.IsUsingStrokes &&
-                        !nextObjectsChangedHistoryItem.IsUsingPageObjects)
+                    var nextObjectsChangedHistoryAction = nextHistoryAction as ObjectsOnPageChangedHistoryAction;
+                    if (nextObjectsChangedHistoryAction != null &&
+                        nextObjectsChangedHistoryAction.IsUsingStrokes &&
+                        !nextObjectsChangedHistoryAction.IsUsingPageObjects)
                     {
                         // HACK: Another temp hack to recognize multiple choice box answers. Normally just return null.
                         var h = VerifyAndGenerateSingleItemEvent(page, nextHistoryAction);
@@ -198,113 +198,113 @@ namespace CLP.Entities
                         }
                     }
 
-                    var semanticEvent = InkSemanticEvents.ChangeOrIgnore(page, objectsChangedHistoryItems);
+                    var semanticEvent = InkSemanticEvents.ChangeOrIgnore(page, objectsChangedHistoryActions);
                     return semanticEvent;
                 }
             }
 
-            if (historyItems.All(h => h is ObjectsMovedBatchHistoryAction))
+            if (historyActions.All(h => h is ObjectsMovedBatchHistoryAction))
             {
-                var objectsMovedHistoryItems = historyItems.Cast<ObjectsMovedBatchHistoryAction>().ToList();
+                var objectsMovedHistoryActions = historyActions.Cast<ObjectsMovedBatchHistoryAction>().ToList();
 
-                var firstIDSequence = objectsMovedHistoryItems.First().PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList();
-                if (objectsMovedHistoryItems.All(h => firstIDSequence.SequenceEqual(h.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList())))
+                var firstIDSequence = objectsMovedHistoryActions.First().PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList();
+                if (objectsMovedHistoryActions.All(h => firstIDSequence.SequenceEqual(h.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList())))
                 {
-                    var nextMovedHistoryItem = nextHistoryAction as ObjectsMovedBatchHistoryAction;
-                    if (nextMovedHistoryItem != null &&
-                        firstIDSequence.SequenceEqual(nextMovedHistoryItem.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList()))
+                    var nextMovedHistoryAction = nextHistoryAction as ObjectsMovedBatchHistoryAction;
+                    if (nextMovedHistoryAction != null &&
+                        firstIDSequence.SequenceEqual(nextMovedHistoryAction.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList()))
                     {
                         return null;
                     }
 
-                    var semanticEvent = ObjectSemanticEvents.Move(page, objectsMovedHistoryItems);
+                    var semanticEvent = ObjectSemanticEvents.Move(page, objectsMovedHistoryActions);
                     return semanticEvent;
                 }
             }
 
-            if (historyItems.All(h => h is PageObjectResizeBatchHistoryAction))
+            if (historyActions.All(h => h is PageObjectResizeBatchHistoryAction))
             {
-                var objectsResizedHistoryItems = historyItems.Cast<PageObjectResizeBatchHistoryAction>().ToList();
+                var objectsResizedHistoryActions = historyActions.Cast<PageObjectResizeBatchHistoryAction>().ToList();
 
-                var firstID = objectsResizedHistoryItems.First().PageObjectID;
-                if (objectsResizedHistoryItems.All(h => h.PageObjectID == firstID))
+                var firstID = objectsResizedHistoryActions.First().PageObjectID;
+                if (objectsResizedHistoryActions.All(h => h.PageObjectID == firstID))
                 {
-                    var nextResizedHistoryItem = nextHistoryAction as PageObjectResizeBatchHistoryAction;
-                    if (nextResizedHistoryItem != null &&
-                        firstID == nextResizedHistoryItem.PageObjectID)
+                    var nextResizedHistoryAction = nextHistoryAction as PageObjectResizeBatchHistoryAction;
+                    if (nextResizedHistoryAction != null &&
+                        firstID == nextResizedHistoryAction.PageObjectID)
                     {
                         return null;
                     }
 
-                    var semanticEvent = ObjectSemanticEvents.Resize(page, objectsResizedHistoryItems);
+                    var semanticEvent = ObjectSemanticEvents.Resize(page, objectsResizedHistoryActions);
                     return semanticEvent;
                 }
             }
 
-            if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryAction))
+            if (historyActions.All(h => h is NumberLineEndPointsChangedHistoryAction))
             {
-                var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryAction>().ToList();
+                var endPointsChangedHistoryActions = historyActions.Cast<NumberLineEndPointsChangedHistoryAction>().ToList();
 
-                var firstNumberLineID = endPointsChangedHistoryItems.First().NumberLineID;
-                if (endPointsChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
+                var firstNumberLineID = endPointsChangedHistoryActions.First().NumberLineID;
+                if (endPointsChangedHistoryActions.All(h => h.NumberLineID == firstNumberLineID))
                 {
-                    var nextEndPointsChangedHistoryItem = nextHistoryAction as NumberLineEndPointsChangedHistoryAction;
-                    if (nextEndPointsChangedHistoryItem != null &&
-                        nextEndPointsChangedHistoryItem.NumberLineID == firstNumberLineID)
+                    var nextEndPointsChangedHistoryAction = nextHistoryAction as NumberLineEndPointsChangedHistoryAction;
+                    if (nextEndPointsChangedHistoryAction != null &&
+                        nextEndPointsChangedHistoryAction.NumberLineID == firstNumberLineID)
                     {
                         return null;
                     }
 
-                    var semanticEvent = NumberLineSemanticEvents.EndPointsChange(page, endPointsChangedHistoryItems);
+                    var semanticEvent = NumberLineSemanticEvents.EndPointsChange(page, endPointsChangedHistoryActions);
                     return semanticEvent;
                 }
             }
 
-            if (historyItems.All(h => h is NumberLineJumpSizesChangedHistoryAction))
+            if (historyActions.All(h => h is NumberLineJumpSizesChangedHistoryAction))
             {
-                var jumpSizesChangedHistoryItems = historyItems.Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
+                var jumpSizesChangedHistoryActions = historyActions.Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
 
-                var firstNumberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
-                var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
-                if (jumpSizesChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
+                var firstNumberLineID = jumpSizesChangedHistoryActions.First().NumberLineID;
+                var isAdding = jumpSizesChangedHistoryActions.First().JumpsAdded.Any() && !jumpSizesChangedHistoryActions.First().JumpsRemoved.Any();
+                if (jumpSizesChangedHistoryActions.All(h => h.NumberLineID == firstNumberLineID))
                 {
-                    var nextJumpsChangedHistoryItem = nextHistoryAction as NumberLineJumpSizesChangedHistoryAction;
-                    if (nextJumpsChangedHistoryItem != null &&
-                        nextJumpsChangedHistoryItem.NumberLineID == firstNumberLineID &&
-                        isAdding == (nextJumpsChangedHistoryItem.JumpsAdded.Any() && !nextJumpsChangedHistoryItem.JumpsRemoved.Any()))
+                    var nextJumpsChangedHistoryAction = nextHistoryAction as NumberLineJumpSizesChangedHistoryAction;
+                    if (nextJumpsChangedHistoryAction != null &&
+                        nextJumpsChangedHistoryAction.NumberLineID == firstNumberLineID &&
+                        isAdding == (nextJumpsChangedHistoryAction.JumpsAdded.Any() && !nextJumpsChangedHistoryAction.JumpsRemoved.Any()))
                     {
                         return null;
                     }
 
-                    var semanticEvent = NumberLineSemanticEvents.JumpSizesChange(page, jumpSizesChangedHistoryItems);
+                    var semanticEvent = NumberLineSemanticEvents.JumpSizesChange(page, jumpSizesChangedHistoryActions);
                     return semanticEvent;
                 }
             }
 
-            if (historyItems.All(h => h is MultipleChoiceBubbleStatusChangedHistoryAction))
+            if (historyActions.All(h => h is MultipleChoiceBubbleStatusChangedHistoryAction))
             {
-                var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryAction>().ToList();
-                var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
-                var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
+                var statusChangedHistoryActions = historyActions.Cast<MultipleChoiceBubbleStatusChangedHistoryAction>().ToList();
+                var currentMultipleChoiceID = statusChangedHistoryActions.First().MultipleChoiceID;
+                var currentBubbleIndex = statusChangedHistoryActions.First().ChoiceBubbleIndex;
 
-                if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
+                if (statusChangedHistoryActions.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
                 {
-                    var nextStatusChangedHistoryItems = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
+                    var nextStatusChangedHistoryActions = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
 
                     if (_currentCompressedStatus == null)
                     {
-                        _currentCompressedStatus = statusChangedHistoryItems.First().ChoiceBubbleStatus;
+                        _currentCompressedStatus = statusChangedHistoryActions.First().ChoiceBubbleStatus;
                     }
 
                     ChoiceBubbleStatuses? compressedStatus = null;
-                    if (nextStatusChangedHistoryItems != null)
+                    if (nextStatusChangedHistoryActions != null)
                     {
-                        compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryItems.ChoiceBubbleStatus);
+                        compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryActions.ChoiceBubbleStatus);
                     }
 
-                    if (nextStatusChangedHistoryItems != null &&
-                        nextStatusChangedHistoryItems.MultipleChoiceID == currentMultipleChoiceID &&
-                        nextStatusChangedHistoryItems.ChoiceBubbleIndex == currentBubbleIndex &&
+                    if (nextStatusChangedHistoryActions != null &&
+                        nextStatusChangedHistoryActions.MultipleChoiceID == currentMultipleChoiceID &&
+                        nextStatusChangedHistoryActions.ChoiceBubbleIndex == currentBubbleIndex &&
                         compressedStatus != null)
                     {
                         _currentCompressedStatus = compressedStatus;
@@ -316,7 +316,7 @@ namespace CLP.Entities
                     {
                         return null;
                     }
-                    var bubble = statusChangedHistoryItems.First().Bubble;
+                    var bubble = statusChangedHistoryActions.First().Bubble;
                     var correctness = bubble.IsACorrectValue ? "COR" : "INC";
 
                     var eventType = string.Empty;
@@ -347,7 +347,7 @@ namespace CLP.Entities
                     }
 
                     _currentCompressedStatus = null;
-                    var semanticEvent = new SemanticEvent(page, historyItems)
+                    var semanticEvent = new SemanticEvent(page, historyActions)
                                         {
                                             CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
                                             EventType = eventType,
@@ -680,11 +680,11 @@ namespace CLP.Entities
                 semanticEvents.Where(h => h.EventType == Codings.EVENT_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
                               .Select(h => h.HistoryActions.First().HistoryActionIndex - 1)
                               .ToList();
-            if (!page.History.CompleteOrderedHistoryItems.Any())
+            if (!page.History.CompleteOrderedHistoryActions.Any())
             {
                 return;
             }
-            var lastHistoryIndex = page.History.CompleteOrderedHistoryItems.Last().HistoryActionIndex + 1;
+            var lastHistoryIndex = page.History.CompleteOrderedHistoryActions.Last().HistoryActionIndex + 1;
             keyIndexes.Add(lastHistoryIndex);
             keyIndexes.Reverse();
             var usedPageObjectIDs = new List<string>();

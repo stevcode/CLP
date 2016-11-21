@@ -236,20 +236,20 @@ namespace CLP.Entities
                 return null;
             }
 
-            var objectsChangedHistoryItem = historyAction as ObjectsOnPageChangedHistoryAction;
-            if (objectsChangedHistoryItem == null ||
-                objectsChangedHistoryItem.IsUsingPageObjects ||
-                !objectsChangedHistoryItem.IsUsingStrokes)
+            var objectsChangedHistoryAction = historyAction as ObjectsOnPageChangedHistoryAction;
+            if (objectsChangedHistoryAction == null ||
+                objectsChangedHistoryAction.IsUsingPageObjects ||
+                !objectsChangedHistoryAction.IsUsingStrokes)
             {
                 return null;
             }
 
-            var strokes = objectsChangedHistoryItem.StrokesAdded;
+            var strokes = objectsChangedHistoryAction.StrokesAdded;
             var isAddedStroke = true;
             if (!strokes.Any())
             {
                 isAddedStroke = false;
-                strokes = objectsChangedHistoryItem.StrokesRemoved;
+                strokes = objectsChangedHistoryAction.StrokesRemoved;
             }
 
             if (strokes.Count != 1)
@@ -260,7 +260,7 @@ namespace CLP.Entities
 
             var stroke = strokes.First();
 
-            var historyIndex = objectsChangedHistoryItem.HistoryActionIndex;
+            var historyIndex = objectsChangedHistoryAction.HistoryActionIndex;
             var arraysOnPage = page.GetPageObjectsOnPageAtHistoryIndex(historyIndex).OfType<CLPArray>().Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn).ToList();
 
             if (!arraysOnPage.Any())
@@ -590,10 +590,10 @@ namespace CLP.Entities
         public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
         {
             var historyIndex = 0;
-            var lastHistoryItem = page.History.CompleteOrderedHistoryItems.LastOrDefault();
-            if (lastHistoryItem != null)
+            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
             {
-                historyIndex = lastHistoryItem.HistoryActionIndex;
+                historyIndex = lastHistoryAction.HistoryActionIndex;
             }
 
             var strokes = page.InkStrokes.ToList();
@@ -1392,10 +1392,10 @@ namespace CLP.Entities
         public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
         {
             var historyIndex = 0;
-            var lastHistoryItem = page.History.CompleteOrderedHistoryItems.LastOrDefault();
-            if (lastHistoryItem != null)
+            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
             {
-                historyIndex = lastHistoryItem.HistoryActionIndex;
+                historyIndex = lastHistoryAction.HistoryActionIndex;
             }
 
             var strokes = page.InkStrokes.ToList();

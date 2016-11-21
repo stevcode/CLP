@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -22,14 +21,9 @@ namespace CLP.Entities
             IsToggledOn = isToggledOn;
         }
 
-        #endregion //Constructors
+        #endregion / /Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string ArrayID
@@ -38,7 +32,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
 
         /// <summary>Grid for Array was toggled to visible.</summary>
         public bool IsToggledOn
@@ -47,22 +41,38 @@ namespace CLP.Entities
             set { SetValue(IsToggledOnProperty, value); }
         }
 
-        public static readonly PropertyData IsToggledOnProperty = RegisterProperty("IsToggledOn", typeof (bool), false);
+        public static readonly PropertyData IsToggledOnProperty = RegisterProperty("IsToggledOn", typeof(bool), false);
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region Methods
+
+        private void ToggleGrid(bool isUndo)
+        {
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryActionIndex);
+                return;
+            }
+
+            array.IsGridOn = isUndo ? !IsToggledOn : IsToggledOn;
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
-                return array == null
-                           ? string.Format("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryActionIndex)
-                           : string.Format("Index #{0}, Toggled Grid of {1} {2}.", HistoryActionIndex, array.FormattedName, IsToggledOn ? "on" : "off");
+                return array == null ? "[ERROR] Array for Grid Toggle not found on page or in history." : $"Toggled Grid of {array.FormattedName} {(IsToggledOn ? "on" : "off")}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -79,35 +89,32 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void UndoAction(bool isAnimationUndo) { ToggleGrid(true); }
+        protected override void UndoAction(bool isAnimationUndo)
+        {
+            ToggleGrid(true);
+        }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void RedoAction(bool isAnimationRedo) { ToggleGrid(false); }
-
-        private void ToggleGrid(bool isUndo)
+        protected override void RedoAction(bool isAnimationRedo)
         {
-            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            array.IsGridOn = isUndo ? !IsToggledOn : IsToggledOn;
+            ToggleGrid(false);
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            return clonedHistoryItem;
+            var clonedHistoryAction = this.DeepCopy();
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return ArrayID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

@@ -517,7 +517,7 @@ namespace CLP.Entities
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
-            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokeID = stroke.GetStrokeID();
 
             var addedAtAnyPointHistoryItem = orderedObjectsChangedHistoryItems.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
@@ -539,7 +539,7 @@ namespace CLP.Entities
             Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
             Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
 
-            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokeID = stroke.GetStrokeID();
 
             var isAddedBetweenIndexes = orderedObjectsChangedHistoryItems.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryActionIndex >= startHistoryIndex && h.HistoryActionIndex <= endHistoryIndex);

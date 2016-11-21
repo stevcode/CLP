@@ -370,7 +370,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -618,9 +618,9 @@
                             </ListBox>
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="HistoryItemsTemplate">
+                        <ControlTemplate x:Key="HistoryActionsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryItems}"
+                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
                                  SelectionMode="Single"
                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                  VirtualizingPanel.IsVirtualizing="True"
@@ -661,11 +661,11 @@
                                         Value="{StaticResource SemanticEventsTemplate}" />
                                 </DataTrigger>
 
-                                <!-- Show HistoryItems trigger -->
+                                <!-- Show HistoryActions trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryItems}">
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource HistoryItemsTemplate}" />
+                                        Value="{StaticResource HistoryActionsTemplate}" />
                                 </DataTrigger>
 
                             </Style.Triggers>
@@ -791,7 +791,7 @@
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryItems}}"
+                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center">
                             <ToggleButton.Style>
@@ -982,9 +982,9 @@
                             </ListBox>
                         </ControlTemplate>
 
-                        <ControlTemplate x:Key="HistoryItemsTemplate">
+                        <ControlTemplate x:Key="HistoryActionsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryItems}"
+                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
                                  SelectionMode="Single"
                                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                  VirtualizingPanel.IsVirtualizing="True"
@@ -1018,11 +1018,11 @@
                                         Value="{StaticResource TagsTemplate}" />
                                 </DataTrigger>
 
-                                <!-- Show HistoryItems trigger -->
+                                <!-- Show HistoryActions trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryItems}">
+                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource HistoryItemsTemplate}" />
+                                        Value="{StaticResource HistoryActionsTemplate}" />
                                 </DataTrigger>
 
                             </Style.Triggers>

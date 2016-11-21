@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -16,16 +15,16 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public CLPArrayRotateHistoryAction(CLPPage parentPage,
-                                         Person owner,
-                                         string arrayID,
-                                         double oldXPosition,
-                                         double oldYPosition,
-                                         double newXPosition,
-                                         double newYPosition,
-                                         double oldWidth,
-                                         double oldHeight,
-                                         int oldRows,
-                                         int oldColumns)
+                                           Person owner,
+                                           string arrayID,
+                                           double oldXPosition,
+                                           double oldYPosition,
+                                           double newXPosition,
+                                           double newYPosition,
+                                           double oldWidth,
+                                           double oldHeight,
+                                           int oldRows,
+                                           int oldColumns)
             : base(parentPage, owner)
         {
             // TODO: Need old height/width
@@ -40,14 +39,9 @@ namespace CLP.Entities
             OldColumns = oldColumns;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string ArrayID
@@ -56,7 +50,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
 
         /// <summary>X Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldXPosition.</remarks>
@@ -67,7 +61,7 @@ namespace CLP.Entities
             set { SetValue(ArrayXCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof (double));
+        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof(double));
 
         /// <summary>Y Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldYPosition.</remarks>
@@ -78,7 +72,7 @@ namespace CLP.Entities
             set { SetValue(ArrayYCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof (double));
+        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double));
 
         /// <summary>X Position before rotate.</summary>
         public double OldXPosition
@@ -87,7 +81,7 @@ namespace CLP.Entities
             set { SetValue(OldXPositionProperty, value); }
         }
 
-        public static readonly PropertyData OldXPositionProperty = RegisterProperty("OldXPosition", typeof (double));
+        public static readonly PropertyData OldXPositionProperty = RegisterProperty("OldXPosition", typeof(double));
 
         /// <summary>Y Position before rotate.</summary>
         public double OldYPosition
@@ -96,8 +90,7 @@ namespace CLP.Entities
             set { SetValue(OldYPositionProperty, value); }
         }
 
-        public static readonly PropertyData OldYPositionProperty = RegisterProperty("OldYPosition", typeof (double));
-        
+        public static readonly PropertyData OldYPositionProperty = RegisterProperty("OldYPosition", typeof(double));
 
         /// <summary>X Position after rotate.</summary>
         public double NewXPosition
@@ -106,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(NewXPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewXPositionProperty = RegisterProperty("NewXPosition", typeof (double));
+        public static readonly PropertyData NewXPositionProperty = RegisterProperty("NewXPosition", typeof(double));
 
         /// <summary>Y Position after rotate.</summary>
         public double NewYPosition
@@ -115,7 +108,7 @@ namespace CLP.Entities
             set { SetValue(NewYPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof (double));
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double));
 
         /// <summary>Rows value before rotate.</summary>
         public int OldRows
@@ -124,7 +117,7 @@ namespace CLP.Entities
             set { SetValue(OldRowsProperty, value); }
         }
 
-        public static readonly PropertyData OldRowsProperty = RegisterProperty("OldRows", typeof (int));
+        public static readonly PropertyData OldRowsProperty = RegisterProperty("OldRows", typeof(int));
 
         /// <summary>Columns value before rotate.</summary>
         public int OldColumns
@@ -133,7 +126,7 @@ namespace CLP.Entities
             set { SetValue(OldColumnsProperty, value); }
         }
 
-        public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof (int));
+        public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof(int));
 
         /// <summary>Width before rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -143,8 +136,7 @@ namespace CLP.Entities
             set { SetValue(OldWidthProperty, value); }
         }
 
-        public static readonly PropertyData OldWidthProperty = RegisterProperty("OldWidth", typeof (double));
-
+        public static readonly PropertyData OldWidthProperty = RegisterProperty("OldWidth", typeof(double));
 
         /// <summary>Height before rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -154,7 +146,7 @@ namespace CLP.Entities
             set { SetValue(OldHeightProperty, value); }
         }
 
-        public static readonly PropertyData OldHeightProperty = RegisterProperty("OldHeight", typeof (double));
+        public static readonly PropertyData OldHeightProperty = RegisterProperty("OldHeight", typeof(double));
 
         /// <summary>Width after rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -164,7 +156,7 @@ namespace CLP.Entities
             set { SetValue(NewWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewWidthProperty = RegisterProperty("NewWidth", typeof (double));
+        public static readonly PropertyData NewWidthProperty = RegisterProperty("NewWidth", typeof(double));
 
         /// <summary>Height after rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -174,22 +166,40 @@ namespace CLP.Entities
             set { SetValue(NewHeightProperty, value); }
         }
 
-        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof (double));
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region Methods
+
+        private void RotateArray(bool isUndo)
+        {
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex);
+                return;
+            }
+
+            array.RotateArray();
+            array.XPosition = isUndo ? ArrayXCoord : NewXPosition;
+            array.YPosition = isUndo ? ArrayYCoord : NewYPosition;
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
-                return array == null
-                           ? string.Format("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex)
-                           : string.Format("Index #{0}, Array rotated from [{1}x{2}] to [{2}x{1}]", HistoryActionIndex, OldRows, OldColumns);
+                return array == null ? "[ERROR] Array for Rotate not found on page or in history." : $"Array rotated from [{OldRows}x{OldColumns}] to [{OldColumns}x{OldRows}]";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -227,41 +237,30 @@ namespace CLP.Entities
             RotateArray(false);
         }
 
-        private void RotateArray(bool isUndo)
-        {
-            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            array.RotateArray();
-            array.XPosition = isUndo ? ArrayXCoord : NewXPosition;
-            array.YPosition = isUndo ? ArrayYCoord : NewYPosition;
-        }
-
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
-            var clonedHistoryItem = this.DeepCopy();
-            if (clonedHistoryItem == null)
+            var clonedHistoryAction = this.DeepCopy();
+            if (clonedHistoryAction == null)
             {
                 return null;
             }
 
             var array = ParentPage.GetPageObjectByID(ArrayID) as ACLPArrayBase;
-            clonedHistoryItem.ArrayXCoord = array.XPosition;
-            clonedHistoryItem.ArrayYCoord = array.YPosition;
+            clonedHistoryAction.ArrayXCoord = array.XPosition;
+            clonedHistoryAction.ArrayYCoord = array.YPosition;
 
-            return clonedHistoryItem;
+            return clonedHistoryAction;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return ArrayID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

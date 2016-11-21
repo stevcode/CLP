@@ -225,13 +225,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
             {
-                var undoItem = page.History.UndoItems.First() as IHistoryBatch;
+                var undoItem = page.History.UndoActions.First() as IHistoryBatch;
                 var ticksToUndo = undoItem == null ? 1 : undoItem.CurrentBatchTickIndex;
                 var currentTick = ticksToUndo;
                 while (currentTick > 0 && IsPlaying)
                 {
                     currentTick--;
-                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                    var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                           (DispatcherOperationCallback)delegate
                                                           {
@@ -239,7 +239,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                               return null;
                                                           },
                                                           null);
-                    Thread.Sleep(historyItemAnimationDelay);
+                    Thread.Sleep(historyActionAnimationDelay);
                 }
 
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
@@ -286,13 +286,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
                                {
-                                   var redoItem = page.History.RedoItems.First() as IHistoryBatch;
+                                   var redoItem = page.History.RedoActions.First() as IHistoryBatch;
                                    var ticksToRedo = redoItem == null ? 1 : redoItem.NumberOfBatchTicks - redoItem.CurrentBatchTickIndex;
                                    var currentTick = ticksToRedo;
                                    while (currentTick > 0 && IsPlaying)
                                    {
                                        currentTick--;
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                       var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                        Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                              (DispatcherOperationCallback)delegate
                                                                                                           {
@@ -300,7 +300,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                               return null;
                                                                                                           },
                                                                              null);
-                                       Thread.Sleep(historyItemAnimationDelay);
+                                       Thread.Sleep(historyActionAnimationDelay);
                                    }
 
                                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
@@ -353,21 +353,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                page.History.RedoItems.Clear();
-                var firstUndoItem = page.History.UndoItems.FirstOrDefault() as AnimationIndicatorHistoryAction;
+                page.History.RedoActions.Clear();
+                var firstUndoItem = page.History.UndoActions.FirstOrDefault() as AnimationIndicatorHistoryAction;
                 if (firstUndoItem != null &&
                     firstUndoItem.AnimationIndicatorType == AnimationIndicatorType.Stop)
                 {
-                    page.History.UndoItems.Remove(firstUndoItem);
+                    page.History.UndoActions.Remove(firstUndoItem);
                 }
                 page.History.UpdateTicks();
                 RaisePropertyChanged("IsPlaybackEnabled");
             }
             else
             {
-                page.History.UndoItems.Clear();
-                page.History.RedoItems.Clear();
-                page.History.AddHistoryItem(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
+                page.History.UndoActions.Clear();
+                page.History.RedoActions.Clear();
+                page.History.AddHistoryAction(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
                 RaisePropertyChanged("IsPlaybackEnabled");
             }
         }
@@ -403,9 +403,9 @@ namespace Classroom_Learning_Partner.ViewModels
             page.History.IsAnimating = true;
 
             IsPlaying = true;
-            while (page.History.UndoItems.Any())
+            while (page.History.UndoActions.Any())
             {
-                var animationIndicator = page.History.UndoItems.First() as AnimationIndicatorHistoryAction;
+                var animationIndicator = page.History.UndoActions.First() as AnimationIndicatorHistoryAction;
                 page.History.Undo();
                 if (animationIndicator != null &&
                     animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record &&
@@ -448,9 +448,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
                                {
-                                   while (page.History.RedoItems.Any() && IsPlaying)
+                                   while (page.History.RedoActions.Any() && IsPlaying)
                                    {
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                       var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                        Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                              (DispatcherOperationCallback)delegate
                                                                                                           {
@@ -458,7 +458,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                               return null;
                                                                                                           },
                                                                              null);
-                                       Thread.Sleep(historyItemAnimationDelay);
+                                       Thread.Sleep(historyActionAnimationDelay);
                                    }
 
                                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
@@ -485,7 +485,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (IsRecording)
             {
-                page.History.AddHistoryItem(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop));
+                page.History.AddHistoryAction(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop));
             }
             IsPlaying = false;
             IsRecording = false;
@@ -528,9 +528,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
             {
-                while (page.History.UndoItems.Any() && IsPlaying)
+                while (page.History.UndoActions.Any() && IsPlaying)
                 {
-                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                    var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
                     Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                           (DispatcherOperationCallback)delegate
                                                           {
@@ -538,7 +538,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                               return null;
                                                           },
                                                           null);
-                    Thread.Sleep(historyItemAnimationDelay);
+                    Thread.Sleep(historyActionAnimationDelay);
                 }
 
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
@@ -627,13 +627,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnUndoCommandExecute()
         {
             CurrentPage.History.Undo();
-            CurrentPage.History.RedoItems.Clear();
+            CurrentPage.History.RedoActions.Clear();
         }
 
         private bool OnUndoCanExecute()
         {
-            return !CurrentPage.History.RedoItems.Any() &&
-                   CurrentPage.History.UndoItems.Any();
+            return !CurrentPage.History.RedoActions.Any() &&
+                   CurrentPage.History.UndoActions.Any();
         }
 
         #endregion //Commands

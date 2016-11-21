@@ -7,16 +7,16 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryAction> endPointsChangedHistoryItems)
+        public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryAction> endPointsChangedHistoryActions)
         {
             if (page == null ||
-                endPointsChangedHistoryItems == null ||
-                !endPointsChangedHistoryItems.Any())
+                endPointsChangedHistoryActions == null ||
+                !endPointsChangedHistoryActions.Any())
             {
                 return null;
             }
 
-            var numberLineID = endPointsChangedHistoryItems.First().NumberLineID;
+            var numberLineID = endPointsChangedHistoryActions.First().NumberLineID;
             var numberLine = page.GetPageObjectByIDOnPageOrInHistory(numberLineID);
             if (numberLine == null)
             {
@@ -24,16 +24,16 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
-            var codedID = endPointsChangedHistoryItems.First().PreviousEndValue.ToString();
+            var codedID = endPointsChangedHistoryActions.First().PreviousEndValue.ToString();
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
-            var eventInfo = endPointsChangedHistoryItems.Last().NewEndValue.ToString();
+            var eventInfo = endPointsChangedHistoryActions.Last().NewEndValue.ToString();
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
                 eventInfo += " " + eventInfoIncrementID;
             }
 
-            var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryAction>().ToList())
+            var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_NUMBER_LINE_CHANGE,
@@ -46,17 +46,17 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryAction> jumpSizesChangedHistoryItems)
+        public static ISemanticEvent JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryAction> jumpSizesChangedHistoryActions)
         {
             if (page == null ||
-                jumpSizesChangedHistoryItems == null ||
-                !jumpSizesChangedHistoryItems.Any() ||
-                jumpSizesChangedHistoryItems.Select(h => h.NumberLineID).Distinct().Count() != 1)
+                jumpSizesChangedHistoryActions == null ||
+                !jumpSizesChangedHistoryActions.Any() ||
+                jumpSizesChangedHistoryActions.Select(h => h.NumberLineID).Distinct().Count() != 1)
             {
                 return null;
             }
 
-            var numberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
+            var numberLineID = jumpSizesChangedHistoryActions.First().NumberLineID;
             var numberLine = page.GetPageObjectByIDOnPageOrInHistory(numberLineID);
             if (numberLine == null)
             {
@@ -64,14 +64,14 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
-            var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryActionIndex);
+            var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryActions.First().HistoryActionIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
-            var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
+            var isAdding = jumpSizesChangedHistoryActions.First().JumpsAdded.Any() && !jumpSizesChangedHistoryActions.First().JumpsRemoved.Any();
 
             var allJumps = new List<NumberLineJumpSize>();
-            foreach (var historyItem in jumpSizesChangedHistoryItems)
+            foreach (var historyAction in jumpSizesChangedHistoryActions)
             {
-                var jumps = isAdding ? historyItem.JumpsAdded : historyItem.JumpsRemoved;
+                var jumps = isAdding ? historyAction.JumpsAdded : historyAction.JumpsRemoved;
                 allJumps.AddRange(jumps);
             }
 
@@ -82,7 +82,7 @@ namespace CLP.Entities
 
             var eventInfo = NumberLine.ConsolidateJumps(allJumps);
 
-            var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryAction>().ToList())
+            var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = isAdding ? Codings.EVENT_NUMBER_LINE_JUMP : Codings.EVENT_NUMBER_LINE_JUMP_ERASE,
