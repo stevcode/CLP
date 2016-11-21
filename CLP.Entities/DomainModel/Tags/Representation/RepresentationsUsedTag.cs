@@ -108,7 +108,7 @@ namespace CLP.Entities
 
                 if (semanticEvent.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)
                 {
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_OBJECT_ADD)
+                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -138,7 +138,7 @@ namespace CLP.Entities
                         maxStampedObjectGroups = stampedObjectGroups;
                     }
 
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -188,7 +188,7 @@ namespace CLP.Entities
 
                 if (semanticEvent.CodedObject == Codings.OBJECT_NUMBER_LINE)
                 {
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_NUMBER_LINE_JUMP)
+                    if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP)
                     {
                         var jumpSizesChangedHistoryItems = semanticEvent.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryItem).Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
                         if (jumpSizesChangedHistoryItems == null ||
@@ -215,7 +215,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_NUMBER_LINE_JUMP_ERASE)
+                    if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP_ERASE)
                     {
                         var jumpSizesChangedHistoryItems = semanticEvent.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryItem).Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
                         if (jumpSizesChangedHistoryItems == null ||
@@ -252,7 +252,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -322,7 +322,7 @@ namespace CLP.Entities
 
                 if (semanticEvent.CodedObject == Codings.OBJECT_ARRAY)
                 {
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -332,7 +332,7 @@ namespace CLP.Entities
                         }
 
                         var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var actionID = semanticEvent.CodedObjectActionID;
+                        var actionID = semanticEvent.EventInformation;
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         if (!subArrayGroups.ContainsKey(referenceArrayID))
                         {
@@ -344,7 +344,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK_ERASE)
+                    if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -354,7 +354,7 @@ namespace CLP.Entities
                         }
 
                         var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var actionID = semanticEvent.CodedObjectActionID;
+                        var actionID = semanticEvent.EventInformation;
                         var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         foreach (var subArray in subArrays)
                         {
@@ -372,7 +372,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (semanticEvent.CodedObjectAction == Codings.ACTION_OBJECT_DELETE)
+                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
                         var historyItem = semanticEvent.HistoryItems.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryItem;
@@ -394,9 +394,9 @@ namespace CLP.Entities
                             semanticEvents.Where(h => h.ReferencePageObjectID == referenceArrayID)
                                           .Any(
                                                h =>
-                                                   h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
-                                                   h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
-                                                   (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+                                                   h.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || h.EventType == Codings.EVENT_ARRAY_EQN ||
+                                                   h.EventType == Codings.EVENT_ARRAY_SKIP ||
+                                                   (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
 
                         var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 
@@ -423,9 +423,9 @@ namespace CLP.Entities
                         semanticEvents.Where(h => h.ReferencePageObjectID == referenceArrayID)
                                       .Any(
                                            h =>
-                                               h.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK || h.CodedObjectAction == Codings.ACTION_ARRAY_EQN ||
-                                               h.CodedObjectAction == Codings.ACTION_ARRAY_SKIP ||
-                                               (h.CodedObjectAction == Codings.ACTION_INK_ADD && h.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_OVER)));
+                                               h.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || h.EventType == Codings.EVENT_ARRAY_EQN ||
+                                               h.EventType == Codings.EVENT_ARRAY_SKIP ||
+                                               (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
 
                     var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
 

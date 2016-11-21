@@ -4,30 +4,31 @@ namespace CLP.Entities
 {
     public interface ISemanticEvent
     {
-        int SemanticEventIndex { get; set; }
+        // ID
         string ID { get; set; }
-        string ParentPageID { get; set; }
-        string ParentPageOwnerID { get; set; }
-        uint ParentPageVersionIndex { get; set; }
-        CLPPage ParentPage { get; set; }
+        int SemanticEventIndex { get; set; }
+        string CachedCodedValue { get; set; }
+
+        // Coded Portion
         string CodedObject { get; set; }
-        string CodedObjectSubType { get; set; }
-        bool IsSubTypeVisisble { get; set; }
-        bool IsSubTypeForcedVisible { get; set; }
-        string CodedObjectAction { get; set; }
-        bool IsObjectActionVisible { get; set; }
-        bool IsObjectActionForcedVisible { get; set; }
         string CodedObjectID { get; set; }
         string CodedObjectIDIncrement { get; set; }
         string CodedObjectSubID { get; set; }
         string CodedObjectSubIDIncrement { get; set; }
-        string CodedObjectActionID { get; set; }
+        string EventType { get; set; }
+        string EventInformation { get; set; }
+
+        // Meta Data
         Dictionary<string, string> MetaData { get; set; }
+        string ReferencePageObjectID { get; set; }
+
+        // Backing
         List<string> HistoryItemIDs { get; set; }
         List<ISemanticEvent> SemanticEvents { get; set; }
-        string CachedCodedValue { get; set; }
-        string CodedValue { get; }
+        CLPPage ParentPage { get; set; }
+
+        // Calculated
         List<IHistoryItem> HistoryItems { get; }
-        string ReferencePageObjectID { get; set; }
+        string CodedValue { get; }
     }
 }

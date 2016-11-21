@@ -3,31 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
     public class SemanticEvent : AEntityBase, ISemanticEvent
     {
+        #region Constants
+
+        private const string META_REFERENCE_PAGE_OBJECT_ID = "REFERENCE_PAGE_OBJECT_ID";
+
+        #endregion // Constants
+
         #region Constructors
 
         /// <summary>Initializes <see cref="SemanticEvent" /> from scratch.</summary>
-        public SemanticEvent() { ID = Guid.NewGuid().ToCompactID(); }
+        public SemanticEvent()
+        {
+            ID = Guid.NewGuid().ToCompactID();
+        }
 
         public SemanticEvent(CLPPage parentPage, IHistoryItem historyItem)
-            : this(parentPage, new List<IHistoryItem> { historyItem }, new List<ISemanticEvent>())
-        { }
+            : this(parentPage,
+                   new List<IHistoryItem>
+                   {
+                       historyItem
+                   },
+                   new List<ISemanticEvent>()) { }
 
         public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems)
             : this(parentPage, historyItems, new List<ISemanticEvent>()) { }
 
         public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
-            : this(parentPage, new List<IHistoryItem>(), new List<ISemanticEvent> { semanticEvent })
-        { }
+            : this(parentPage,
+                   new List<IHistoryItem>(),
+                   new List<ISemanticEvent>
+                   {
+                       semanticEvent
+                   }) { }
 
         public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
-            : this(parentPage, new List<IHistoryItem>(), semanticEvents)
-        { }
+            : this(parentPage, new List<IHistoryItem>(), semanticEvents) { }
 
         public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems, List<ISemanticEvent> semanticEvents)
             : this()
@@ -41,7 +59,16 @@ namespace CLP.Entities
 
         #region Properties
 
-        #region Navigation Properties
+        #region ID Properties
+
+        /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />.</summary>
+        public string ID
+        {
+            get { return GetValue<string>(IDProperty); }
+            set { SetValue(IDProperty, value); }
+        }
+
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex
@@ -52,180 +79,113 @@ namespace CLP.Entities
 
         public static readonly PropertyData SemanticEventIndexProperty = RegisterProperty("SemanticEventIndex", typeof(int), -1);
 
-        /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
-        public string ID
+        /// <summary>Cached value of CodedValue with correct page state.</summary>
+        public string CachedCodedValue
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get { return GetValue<string>(CachedCodedValueProperty); }
+            set { SetValue(CachedCodedValueProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), String.Empty);
 
-        /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />'s parent <see cref="CLPPage" />.</summary>
-        /// <remarks>Composite Foreign Key.</remarks>
-        public string ParentPageID
-        {
-            get { return GetValue<string>(ParentPageIDProperty); }
-            set { SetValue(ParentPageIDProperty, value); }
-        }
+        #endregion // ID Properties
 
-        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof (string));
+        #region Coded Portion Properties
 
-        /// <summary>Unique Identifier of the <see cref="Person" /> who owns the parent <see cref="CLPPage" /> of the <see cref="AHistoryItemBase" />.</summary>
-        /// <remarks>Composite Foreign Key.</remarks>
-        public string ParentPageOwnerID
-        {
-            get { return GetValue<string>(ParentPageOwnerIDProperty); }
-            set { SetValue(ParentPageOwnerIDProperty, value); }
-        }
-
-        public static readonly PropertyData ParentPageOwnerIDProperty = RegisterProperty("ParentPageOwnerID", typeof (string));
-
-        /// <summary>The parent <see cref="CLPPage" />'s Version Index.</summary>
-        public uint ParentPageVersionIndex
-        {
-            get { return GetValue<uint>(ParentPageVersionIndexProperty); }
-            set { SetValue(ParentPageVersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData ParentPageVersionIndexProperty = RegisterProperty("ParentPageVersionIndex", typeof (uint), 0);
-
-        /// <summary>The <see cref="AHistoryItemBase" />'s parent <see cref="CLPPage" />.</summary>
-        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
-        public virtual CLPPage ParentPage
-        {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set
-            {
-                SetValue(ParentPageProperty, value);
-                if (value == null)
-                {
-                    return;
-                }
-                ParentPageID = value.ID;
-                ParentPageOwnerID = value.OwnerID;
-                ParentPageVersionIndex = value.VersionIndex;
-            }
-        }
-
-        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof (CLPPage));
-
-        #endregion //Navigation Properties
-
-        #region Coded Portions
-
-        /// <summary>CodedObject portion of the CodedSemanticEvent report.</summary>
+        /// <summary>Coded Object portion of the SemanticEvent report.</summary>
         public string CodedObject
         {
             get { return GetValue<string>(CodedObjectProperty); }
             set { SetValue(CodedObjectProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
+        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), String.Empty);
 
-        /// <summary>SubType portion of the CodedSemanticEvent report.</summary>
-        public string CodedObjectSubType
-        {
-            get { return GetValue<string>(CodedObjectSubTypeProperty); }
-            set { SetValue(CodedObjectSubTypeProperty, value); }
-        }
-
-        public static readonly PropertyData CodedObjectSubTypeProperty = RegisterProperty("CodedObjectSubType", typeof(string), string.Empty);
-
-        /// <summary>Determines if SubType portion of the CodedSemanticEvent is visibly reported.</summary>
-        public bool IsSubTypeVisisble
-        {
-            get { return GetValue<bool>(IsSubTypeVisisbleProperty); }
-            set { SetValue(IsSubTypeVisisbleProperty, value); }
-        }
-
-        public static readonly PropertyData IsSubTypeVisisbleProperty = RegisterProperty("IsSubTypeVisisble", typeof(bool), true);
-
-        /// <summary>Forces SubType portion of the CodedSemanticEvent to be visibly reported.</summary>
-        [XmlIgnore]
-        public bool IsSubTypeForcedVisible
-        {
-            get { return GetValue<bool>(IsSubTypeForcedVisibleProperty); }
-            set { SetValue(IsSubTypeForcedVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsSubTypeForcedVisibleProperty = RegisterProperty("IsSubTypeForcedVisible", typeof(bool), false);
-
-        /// <summary>ObjectAction portion of the CodedSemanticEvent report.</summary>
-        public string CodedObjectAction
-        {
-            get { return GetValue<string>(CodedObjectActionProperty); }
-            set { SetValue(CodedObjectActionProperty, value); }
-        }
-
-        public static readonly PropertyData CodedObjectActionProperty = RegisterProperty("CodedObjectAction", typeof(string), string.Empty);
-
-        /// <summary>Determines if ObjectAction portion of the CodedSemanticEvent is visibly reported.</summary>
-        public bool IsObjectActionVisible
-        {
-            get { return GetValue<bool>(IsObjectActionVisibleProperty); }
-            set { SetValue(IsObjectActionVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsObjectActionVisibleProperty = RegisterProperty("IsObjectActionVisible", typeof(bool), true);
-
-        /// <summary>Forces ObjectAction portion of the CodedSemanticEvent to be visibly reported.</summary>
-        [XmlIgnore]
-        public bool IsObjectActionForcedVisible
-        {
-            get { return GetValue<bool>(IsObjectActionForcedVisibleProperty); }
-            set { SetValue(IsObjectActionForcedVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsObjectActionForcedVisibleProperty = RegisterProperty("IsObjectActionForcedVisible", typeof(bool), false);
-
-        /// <summary>ObjectID portion of the CodedSemanticEvent report.</summary>
+        /// <summary>Coded Object ID portion of the SemanticEvent report.</summary>
         public string CodedObjectID
         {
             get { return GetValue<string>(CodedObjectIDProperty); }
             set { SetValue(CodedObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), string.Empty);
+        public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), String.Empty);
 
-        /// <summary>ObjectID Increment portion of the CodedSemanticEvent report.</summary>
+        /// <summary>Coded Object ID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectIDIncrement
         {
             get { return GetValue<string>(CodedObjectIDIncrementProperty); }
             set { SetValue(CodedObjectIDIncrementProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), string.Empty);
+        public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), String.Empty);
 
-        /// <summary>ObjectSubID portion of the CodedSemanticEvent report.</summary>
+        /// <summary>Coded Object SubID portion of the SemanticEvent report.</summary>
         public string CodedObjectSubID
         {
             get { return GetValue<string>(CodedObjectSubIDProperty); }
             set { SetValue(CodedObjectSubIDProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), string.Empty);
+        public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), String.Empty);
 
-        /// <summary>ObjectSubID Increment portion of the CodedSemanticEvent report.</summary>
+        /// <summary>Coded Object SubID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectSubIDIncrement
         {
             get { return GetValue<string>(CodedObjectSubIDIncrementProperty); }
             set { SetValue(CodedObjectSubIDIncrementProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), string.Empty);
+        public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), String.Empty);
 
-        /// <summary>ObjectActionID portion of the CodedSemanticEvent report.</summary>
-        public string CodedObjectActionID
+        /// <summary>Event Type portion of the SemanticEvent report.</summary>
+        public string EventType
         {
-            get { return GetValue<string>(CodedObjectActionIDProperty); }
-            set { SetValue(CodedObjectActionIDProperty, value); }
+            get { return GetValue<string>(EventTypeProperty); }
+            set { SetValue(EventTypeProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectActionIDProperty = RegisterProperty("CodedObjectActionID", typeof(string), string.Empty);
+        public static readonly PropertyData EventTypeProperty = RegisterProperty("EventType", typeof(string), String.Empty);
 
-        #endregion // Coded Portions
+        /// <summary>Event Information portion of the SemanticEvent report.</summary>
+        public string EventInformation
+        {
+            get { return GetValue<string>(EventInformationProperty); }
+            set { SetValue(EventInformationProperty, value); }
+        }
+
+        public static readonly PropertyData EventInformationProperty = RegisterProperty("EventInformation", typeof(string), String.Empty);
+
+        #endregion // Coded Portion Properties
+
+        #region Meta Data Properties
+
+        /// <summary>Storage dictionary for all meta data.</summary>
+        public Dictionary<string, string> MetaData
+        {
+            get { return GetValue<Dictionary<string, string>>(MetaDataProperty); }
+            set { SetValue(MetaDataProperty, value); }
+        }
+
+        public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
+
+        /// <summary> Used if the CodedObject acts upon another PageObject. </summary>
+        public string ReferencePageObjectID
+        {
+            get { return MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null; }
+            set
+            {
+                if (!MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID))
+                {
+                    MetaData.Add(META_REFERENCE_PAGE_OBJECT_ID, value);
+                }
+                else
+                {
+                    MetaData[META_REFERENCE_PAGE_OBJECT_ID] = value;
+                }
+            }
+        }
+
+        #endregion // Meta Data Properties
 
         #region Backing Properties
 
@@ -247,14 +207,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());
 
-        /// <summary>Cached value of CodedValue with correct page state.</summary>
-        public string CachedCodedValue
+        /// <summary>The <see cref="ISemanticEvent" />'s parent <see cref="CLPPage" />.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public CLPPage ParentPage
         {
-            get { return GetValue<string>(CachedCodedValueProperty); }
-            set { SetValue(CachedCodedValueProperty, value); }
+            get { return GetValue<CLPPage>(ParentPageProperty); }
+            set { SetValue(ParentPageProperty, value); }
         }
 
-        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
+        public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));
 
         #endregion // Backing Properties
 
@@ -266,56 +229,29 @@ namespace CLP.Entities
             get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
         }
 
-        /// <summary>
-        /// Take the following form: OBJECT SUB_TYPE action [ID id_increment, SUB_ID sub_id_increment: action_id]
-        /// Additional actions signified by +action.
-        /// QUESTION: Would like SUB_TYPE to be in parenthesis. Would make analysis easier.
-        /// </summary>
+        /// <summary> Takes the following form: CODED_OBJECT eventType [ID id_increment, SUB_ID sub_id_increment] eventInfo </summary>
         public string CodedValue
         {
             get
             {
-                var subType = !string.IsNullOrWhiteSpace(CodedObjectSubType) && (IsSubTypeForcedVisible || IsSubTypeVisisble) ? " " + CodedObjectSubType : string.Empty;
-                var objectAction = !string.IsNullOrWhiteSpace(CodedObjectAction) && (IsObjectActionForcedVisible || IsObjectActionVisible) ? " " + CodedObjectAction : string.Empty;
-                var idIncrement = string.IsNullOrWhiteSpace(CodedObjectIDIncrement) ? string.Empty : " " + CodedObjectIDIncrement;
-                var subID = string.IsNullOrWhiteSpace(CodedObjectSubID) ? string.Empty : ", " + CodedObjectSubID;
-                var subIDIncrement = string.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? string.Empty : " " + CodedObjectSubIDIncrement;
-                var objectActionID = string.IsNullOrWhiteSpace(CodedObjectActionID) ? string.Empty : ": " + CodedObjectActionID;
-                var bracketsContent = string.IsNullOrWhiteSpace(CodedObjectID) ? string.Empty : string.Format(" [{0}{1}{2}{3}{4}]", CodedObjectID, idIncrement, subID, subIDIncrement, objectActionID);
-                return string.Format("{0}{1}{2}{3}", CodedObject, subType, objectAction, bracketsContent);
+                var idIncrement = String.IsNullOrWhiteSpace(CodedObjectIDIncrement) ? String.Empty : " " + CodedObjectIDIncrement;
+                var subID = String.IsNullOrWhiteSpace(CodedObjectSubID) ? String.Empty : ", " + CodedObjectSubID;
+                var subIDIncrement = String.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? String.Empty : " " + CodedObjectSubIDIncrement;
+                var compositeCodedObjectID = $"{CodedObjectID}{idIncrement}{subID}{subIDIncrement}";
+
+                var eventInfo = String.IsNullOrWhiteSpace(EventInformation) ? String.Empty : " " + EventInformation;
+
+                var codedEvent = $"{CodedObject} {EventType} [{compositeCodedObjectID}]{eventInfo}";
+                if (!codedEvent.Equals(CachedCodedValue))
+                {
+                    CachedCodedValue = codedEvent;
+                }
+
+                return codedEvent;
             }
         }
 
         #endregion //Calculated Properties
-
-        #region Meta Data Properties
-
-        /// <summary>Storage dictionary  for all meta data.</summary>
-        public Dictionary<string, string> MetaData
-        {
-            get { return GetValue<Dictionary<string, string>>(MetaDataProperty); }
-            set { SetValue(MetaDataProperty, value); }
-        }
-
-        public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
-
-        public string ReferencePageObjectID
-        {
-            get { return MetaData.ContainsKey(Codings.META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[Codings.META_REFERENCE_PAGE_OBJECT_ID] : null; }
-            set
-            {
-                if (!MetaData.ContainsKey(Codings.META_REFERENCE_PAGE_OBJECT_ID))
-                {
-                    MetaData.Add(Codings.META_REFERENCE_PAGE_OBJECT_ID, value);
-                }
-                else
-                {
-                    MetaData[Codings.META_REFERENCE_PAGE_OBJECT_ID] = value;
-                }
-            }
-        }
-
-        #endregion // Meta Data Properties
 
         #endregion //Properties
     }

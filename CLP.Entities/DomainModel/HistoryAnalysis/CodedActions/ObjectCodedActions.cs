@@ -32,8 +32,7 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                                     {
                                         CodedObject = codedObject,
-                                        CodedObjectAction = Codings.ACTION_OBJECT_ADD,
-                                        IsObjectActionVisible = false,
+                                        EventType = Codings.EVENT_OBJECT_ADD,
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                         ReferencePageObjectID = pageObject.ID
@@ -51,8 +50,7 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                 {
                     CodedObject = codedObject,
-                    CodedObjectAction = Codings.ACTION_OBJECT_ADD,
-                    IsObjectActionVisible = false,
+                    EventType = Codings.EVENT_OBJECT_ADD,
                     CodedObjectID = codedObjectID,
                     CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
@@ -86,7 +84,7 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                                     {
                                         CodedObject = codedObject,
-                                        CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
+                                        EventType = Codings.EVENT_OBJECT_DELETE,
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                         ReferencePageObjectID = pageObject.ID
@@ -104,7 +102,7 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
                 {
                     CodedObject = codedObject,
-                    CodedObjectAction = Codings.ACTION_OBJECT_DELETE,
+                    EventType = Codings.EVENT_OBJECT_DELETE,
                     CodedObjectID = codedObjectID,
                     CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
                 };
@@ -148,10 +146,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_OBJECT_MOVE,
+                                    EventType = Codings.EVENT_OBJECT_MOVE,
                                     CodedObjectID = codedObjectID,
                                     CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
-                                    CodedObjectActionID =
+                                    EventInformation =
                                         string.Format("({0}, {1}) to ({2}, {3})",
                                                       Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().X),
                                                       Math.Round(objectsMovedHistoryItems.First().TravelledPositions.First().Y),
@@ -188,10 +186,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
             {
                 CodedObject = codedObject,
-                CodedObjectAction = Codings.ACTION_OBJECT_RESIZE,
+                EventType = Codings.EVENT_OBJECT_RESIZE,
                 CodedObjectID = codedObjectID,
                 CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
-                CodedObjectActionID =string.Format("({0}, {1}) to ({2}, {3})",
+                EventInformation =string.Format("({0}, {1}) to ({2}, {3})",
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
                                                       Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().X),

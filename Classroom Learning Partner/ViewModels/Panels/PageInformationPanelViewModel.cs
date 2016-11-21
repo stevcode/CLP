@@ -1043,24 +1043,17 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var action in compActions)
             {
                 if (action.CodedObject == Codings.OBJECT_INK &&
-                    action.CodedObjectAction == Codings.ACTION_INK_IGNORE)
+                    action.EventType == Codings.EVENT_INK_IGNORE)
                 {
                     continue;
                 }
 
-                if (action.CodedObjectAction == Codings.ACTION_OBJECT_MOVE)
+                if (action.EventType == Codings.EVENT_OBJECT_MOVE)
                 {
                     continue;
                 }
 
-                if (!action.IsObjectActionVisible)
-                {
-                    strCompActions += action.CodedObject + "; ";
-                }
-                else
-                {
-                    strCompActions += action.CodedObject + " " + action.CodedObjectAction + "; ";
-                }
+                strCompActions += action.CodedObject + " " + action.EventType + "; ";
             }
 
             //Edit Name and Page Number for comparison from Machine Codes to Human Codes

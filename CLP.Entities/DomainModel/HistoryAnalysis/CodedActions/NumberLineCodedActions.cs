@@ -36,10 +36,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_NUMBER_LINE_CHANGE,
+                                    EventType = Codings.EVENT_NUMBER_LINE_CHANGE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID,
+                                    EventInformation = codedActionID,
                                     ReferencePageObjectID = numberLineID
                                 };
 
@@ -85,10 +85,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = isAdding ? Codings.ACTION_NUMBER_LINE_JUMP : Codings.ACTION_NUMBER_LINE_JUMP_ERASE,
+                                    EventType = isAdding ? Codings.EVENT_NUMBER_LINE_JUMP : Codings.EVENT_NUMBER_LINE_JUMP_ERASE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID, 
+                                    EventInformation = codedActionID, 
                                     ReferencePageObjectID = numberLineID
                                 };
 

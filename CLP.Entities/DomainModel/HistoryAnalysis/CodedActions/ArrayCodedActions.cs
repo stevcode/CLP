@@ -39,10 +39,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, rotateHistoryItem)
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_ARRAY_ROTATE,
+                                    EventType = Codings.EVENT_ARRAY_ROTATE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID,
+                                    EventInformation = codedActionID,
                                     ReferencePageObjectID = arrayID
                                 };
 
@@ -96,7 +96,7 @@ namespace CLP.Entities
             var isVerticalStrokeCut = Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
             if (isVerticalStrokeCut)
             {
-                codedActionSegments.Add(Codings.ACTIONID_ARRAY_CUT_VERTICAL);
+                codedActionSegments.Add(Codings.EVENT_INFO_ARRAY_CUT_VERTICAL);
             }
 
             var codedActionID = string.Join(", ", codedActionSegments);
@@ -104,10 +104,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, cutHistoryItem)
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_ARRAY_CUT,
+                                    EventType = Codings.EVENT_ARRAY_CUT,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID,
+                                    EventInformation = codedActionID,
                                     ReferencePageObjectID = cutArrayID
             };
 
@@ -149,12 +149,12 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, snapHistoryItem)
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_ARRAY_SNAP,
+                                    EventType = Codings.EVENT_ARRAY_SNAP,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
                                     CodedObjectSubID = codedSubID,
                                     CodedObjectSubIDIncrement = incrementSubID,
-                                    CodedObjectActionID = codedActionID
+                                    EventInformation = codedActionID
                                 };
 
             return semanticEvent;
@@ -211,7 +211,7 @@ namespace CLP.Entities
 
             if (divideHistoryItem.IsColumnRegionsChange.Value)
             {
-                codedActionSegments.Add(Codings.ACTIONID_ARRAY_DIVIDER_VERTICAL);
+                codedActionSegments.Add(Codings.EVENT_INFO_ARRAY_DIVIDER_VERTICAL);
             }
 
             var codedActionID = string.Join(", ", codedActionSegments);
@@ -219,10 +219,10 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, divideHistoryItem)
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = Codings.ACTION_ARRAY_DIVIDE,
+                                    EventType = Codings.EVENT_ARRAY_DIVIDE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID,
+                                    EventInformation = codedActionID,
                                     ReferencePageObjectID = dividedArrayID
                                 };
 
@@ -400,7 +400,7 @@ namespace CLP.Entities
                 divideCluster = new InkCluster(new StrokeCollection())
                                 {
                                     ClusterType = InkCluster.ClusterTypes.InkDivide,
-                                    LocationReference = Codings.ACTIONID_INK_LOCATION_OVER,
+                                    LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER,
                                     PageObjectReferenceID = array.ID
                                 };
 
@@ -409,17 +409,17 @@ namespace CLP.Entities
             InkCodedActions.MoveStrokeToDifferentCluster(divideCluster, stroke);
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var codedDescription = isAddedStroke ? Codings.ACTION_ARRAY_DIVIDE_INK : Codings.ACTION_ARRAY_DIVIDE_INK_ERASE;
+            var codedDescription = isAddedStroke ? Codings.EVENT_ARRAY_DIVIDE_INK : Codings.EVENT_ARRAY_DIVIDE_INK_ERASE;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
             var inkDivideAction = new SemanticEvent(page, historyItem)
                                   {
                                       CodedObject = codedObject,
-                                      CodedObjectAction = codedDescription,
+                                      EventType = codedDescription,
                                       CodedObjectID = codedID,
                                       CodedObjectIDIncrement = incrementID,
-                                      CodedObjectActionID = actionID,
+                                      EventInformation = actionID,
                                       ReferencePageObjectID = array.ID
                                   };
 
@@ -431,8 +431,8 @@ namespace CLP.Entities
             if (page == null ||
                 inkAction == null ||
                 inkAction.CodedObject != Codings.OBJECT_INK ||
-                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ||
-                  inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
+                !(inkAction.EventType == Codings.EVENT_INK_ADD ||
+                  inkAction.EventType == Codings.EVENT_INK_ERASE))
             {
                 return null;
             }
@@ -448,7 +448,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var isSkipAdd = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD;
+            var isSkipAdd = inkAction.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isSkipAdd
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
@@ -476,17 +476,17 @@ namespace CLP.Entities
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
-            var location = inkAction.CodedObjectActionID.Contains(Codings.ACTIONID_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
+            var location = inkAction.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
 
             var codedActionID = string.Format("{0}, {1}", formattedInterpretation, location);
 
             var semanticEvent = new SemanticEvent(page, inkAction)
                                 {
                                     CodedObject = codedObject,
-                                    CodedObjectAction = isSkipAdd ? Codings.ACTION_ARRAY_SKIP : Codings.ACTION_ARRAY_SKIP_ERASE,
+                                    EventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    CodedObjectActionID = codedActionID,
+                                    EventInformation = codedActionID,
                                     ReferencePageObjectID = referenceArrayID
                                 };
 
@@ -498,8 +498,8 @@ namespace CLP.Entities
             if (page == null ||
                 inkAction == null ||
                 inkAction.CodedObject != Codings.OBJECT_INK ||
-                !(inkAction.CodedObjectAction == Codings.ACTION_INK_ADD ||
-                  inkAction.CodedObjectAction == Codings.ACTION_INK_ERASE))
+                !(inkAction.EventType == Codings.EVENT_INK_ADD ||
+                  inkAction.EventType == Codings.EVENT_INK_ERASE))
             {
                 return null;
             }
@@ -516,7 +516,7 @@ namespace CLP.Entities
             }
 
             var objectID = array.GetCodedIDAtHistoryIndex(inkAction.HistoryItems.First().HistoryIndex);
-            var isEqnAdd = inkAction.CodedObjectAction == Codings.ACTION_INK_ADD;
+            var isEqnAdd = inkAction.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isEqnAdd
                               ? inkAction.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
@@ -538,9 +538,9 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, inkAction)
                                     {
                                         CodedObject = Codings.OBJECT_ARRAY,
-                                        CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                                        EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
                                         CodedObjectID = objectID,
-                                        CodedObjectActionID = string.Format("\"{0}\"", interpretation),
+                                        EventInformation = string.Format("\"{0}\"", interpretation),
                                         ReferencePageObjectID = referenceArrayID
                                     };
 
@@ -571,9 +571,9 @@ namespace CLP.Entities
                 var semanticEvent = new SemanticEvent(page, inkAction)
                                     {
                                         CodedObject = Codings.OBJECT_ARRAY,
-                                        CodedObjectAction = isEqnAdd ? Codings.ACTION_ARRAY_EQN : Codings.ACTION_ARRAY_EQN_ERASE,
+                                        EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
                                         CodedObjectID = objectID,
-                                        CodedObjectActionID = formattedInterpretation,
+                                        EventInformation = formattedInterpretation,
                                         ReferencePageObjectID = referenceArrayID
                                     };
 
