@@ -1,14 +1,17 @@
-﻿namespace CLP.Entities
+﻿using System;
+
+namespace CLP.Entities
 {
     public interface IHistoryAction
     {
         // ID
         string ID { get; set; }
-        int HistoryIndex { get; set; }
+        int HistoryActionIndex { get; set; }
         string CachedFormattedValue { get; set; }
 
         // Backing
         string OwnerID { get; set; }
+        DateTime CreationTime { get; set; }
         CLPPage ParentPage { get; set; }
 
         // Calculated
@@ -19,8 +22,8 @@
         void ConversionUndo();
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
-        IHistoryAction CreatePackagedHistoryItem();
-        void UnpackHistoryItem();
+        IHistoryAction CreatePackagedHistoryAction();
+        void UnpackHistoryAction();
         bool IsUsingTrashedPageObject(string id);
         bool IsUsingTrashedInkStroke(string id);
     }

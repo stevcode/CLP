@@ -135,7 +135,7 @@ namespace CLP.Entities
                 var objectsMoved = pageObjectsMoved.Any() ? string.Format(" Moved {0}.", string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))) : string.Empty;
                 var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : string.Format(" Moved {0} strokes.", StrokeIDs.Keys.Count) : string.Empty;
 
-                return string.Format("Index #{0},{1}{2}", HistoryIndex, objectsMoved, strokesMoved);
+                return string.Format("Index #{0},{1}{2}", HistoryActionIndex, objectsMoved, strokesMoved);
             }
         }
 
@@ -264,7 +264,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -278,7 +278,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDs.Keys.Contains(id); }
 

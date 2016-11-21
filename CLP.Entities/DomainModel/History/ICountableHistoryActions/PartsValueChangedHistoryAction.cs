@@ -65,8 +65,8 @@ namespace CLP.Entities
             {
                 var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
                 return pageObject == null
-                           ? string.Format("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Changed value of {1} parts from {2} to {3}.", HistoryIndex, pageObject.FormattedName, PreviousValue, NewValue);
+                           ? string.Format("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex)
+                           : string.Format("Index #{0}, Changed value of {1} parts from {2} to {3}.", HistoryActionIndex, pageObject.FormattedName, PreviousValue, NewValue);
             }
         }
 
@@ -79,7 +79,7 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -104,7 +104,7 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -112,7 +112,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -131,7 +131,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return PageObjectID == id; }
 

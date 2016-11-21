@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using Catel.Data;
 
@@ -28,7 +27,7 @@ namespace CLP.Entities
                                   };
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
 
@@ -39,7 +38,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof (string), string.Empty);
+        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof(string), string.Empty);
 
         /// <summary>Each point in the collection represents a change in dimensions during a single resize.</summary>
         public List<Point> StretchedDimensions
@@ -48,59 +47,17 @@ namespace CLP.Entities
             set { SetValue(StretchedDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof (List<Point>));
+        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof(List<Point>));
 
-        public int NumberOfBatchTicks
-        {
-            get { return StretchedDimensions.Count - 1; }
-        }
+        public double OriginalWidth => StretchedDimensions.First().X;
 
-        /// <summary>Location within the Batch.</summary>
-        public int CurrentBatchTickIndex
-        {
-            get { return GetValue<int>(CurrentBatchTickIndexProperty); }
-            set { SetValue(CurrentBatchTickIndexProperty, value); }
-        }
+        public double OriginalHeight => StretchedDimensions.First().Y;
 
-        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof (int), 0);
+        public double FinalWidth => StretchedDimensions.Last().X;
 
-        public override string FormattedValue
-        {
-            get
-            {
-                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
+        public double FinalHeight => StretchedDimensions.Last().Y;
 
-                return pageObject == null
-                           ? string.Format("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
-                                                   HistoryIndex,
-                                                   pageObject.FormattedName,
-                                                   FinalWidth - OriginalWidth,
-                                                   FinalHeight - OriginalHeight);
-            }
-        }
-
-        public double OriginalWidth
-        {
-            get { return StretchedDimensions.First().X; }
-        }
-
-        public double OriginalHeight
-        {
-            get { return StretchedDimensions.First().Y; }
-        }
-
-        public double FinalWidth
-        {
-            get { return StretchedDimensions.Last().X; }
-        }
-
-        public double FinalHeight
-        {
-            get { return StretchedDimensions.Last().Y; }
-        }
-
-        #endregion //Properties
+        #endregion // Properties
 
         #region Methods
 
@@ -112,6 +69,22 @@ namespace CLP.Entities
             }
 
             StretchedDimensions.Add(currentDimensions);
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        protected override string FormattedReport
+        {
+            get
+            {
+                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
+
+                return pageObject == null
+                           ? "[ERROR] Resized PageObject not found on page or in history."
+                           : $"Resized {pageObject.FormattedName}. Changed width by {FinalWidth - OriginalWidth} and height by {FinalHeight - OriginalHeight}";
+            }
         }
 
         protected override void ConversionUndoAction()
@@ -135,14 +108,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
                 CurrentBatchTickIndex = -1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
                 CurrentBatchTickIndex = -1;
                 return;
             }
@@ -183,14 +156,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }
@@ -215,18 +188,8 @@ namespace CLP.Entities
             pageObject.OnResized(initialWidth, initialHeight, true);
         }
 
-        public void ClearBatchAfterCurrentIndex()
-        {
-            var newBatch = new List<Point>();
-            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
-            {
-                newBatch.Add(StretchedDimensions[i]);
-            }
-            StretchedDimensions = newBatch;
-        }
-
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -240,10 +203,38 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return PageObjectID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return PageObjectID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
+
+        #region IHistoryBatch Implementation
+
+        public int NumberOfBatchTicks => StretchedDimensions.Count - 1;
+
+        /// <summary>Location within the Batch.</summary>
+        public int CurrentBatchTickIndex
+        {
+            get { return GetValue<int>(CurrentBatchTickIndexProperty); }
+            set { SetValue(CurrentBatchTickIndexProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
+
+        public void ClearBatchAfterCurrentIndex()
+        {
+            var newBatch = new List<Point>();
+            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
+            {
+                newBatch.Add(StretchedDimensions[i]);
+            }
+            StretchedDimensions = newBatch;
+        }
+
+        #endregion // IHistoryBatch Implementation
     }
 }

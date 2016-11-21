@@ -149,7 +149,7 @@ namespace CLP.Entities
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
                 if (numberLine == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryActionIndex);
                 }
 
                 var removedString = !RemovedJumpStrokeIDs.Any() ? string.Empty : string.Format("Removed {0} jump(s)", RemovedJumpStrokeIDs.Count);
@@ -159,7 +159,7 @@ namespace CLP.Entities
                                             ? string.Format("Added {0} jump(s)", AddedJumpStrokeIDs.Count)
                                             : string.Format(" and added {0} jump(s)", AddedJumpStrokeIDs.Count);
 
-                var formattedValue = string.Format("Index #{0}, {1}{2} on Number Line [{3}].", HistoryIndex, removedString, addedString, numberLine.NumberLineSize);
+                var formattedValue = string.Format("Index #{0}, {1}{2} on Number Line [{3}].", HistoryActionIndex, removedString, addedString, numberLine.NumberLineSize);
                 return formattedValue;
             }
         }
@@ -173,7 +173,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -181,7 +181,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -200,7 +200,7 @@ namespace CLP.Entities
                 if (stroke == null)
                 {
                     Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryIndex);
+                                      HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -226,7 +226,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -234,7 +234,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -252,7 +252,7 @@ namespace CLP.Entities
                 var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
                 if (jumpToRemove == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsAdded not found on Number Line during Undo.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsAdded not found on Number Line during Undo.", HistoryActionIndex);
                     continue;
                 }
 
@@ -264,7 +264,7 @@ namespace CLP.Entities
                 if (stroke == null)
                 {
                     Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryIndex);
+                                      HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -292,7 +292,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -301,7 +301,7 @@ namespace CLP.Entities
                 if (stroke == null)
                 {
                     Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryIndex);
+                                      HistoryActionIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -319,7 +319,7 @@ namespace CLP.Entities
                 var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
                 if (jumpToRemove == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsRemoved not found on Number Line during Redo.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Jump in JumpsRemoved not found on Number Line during Redo.", HistoryActionIndex);
                     continue;
                 }
 
@@ -330,7 +330,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -353,14 +353,14 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return NumberLineID == id; }
 

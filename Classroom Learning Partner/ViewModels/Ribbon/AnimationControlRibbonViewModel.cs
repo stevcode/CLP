@@ -354,7 +354,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 page.History.RedoItems.Clear();
-                var firstUndoItem = page.History.UndoItems.FirstOrDefault() as AnimationIndicator;
+                var firstUndoItem = page.History.UndoItems.FirstOrDefault() as AnimationIndicatorHistoryAction;
                 if (firstUndoItem != null &&
                     firstUndoItem.AnimationIndicatorType == AnimationIndicatorType.Stop)
                 {
@@ -367,7 +367,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.History.UndoItems.Clear();
                 page.History.RedoItems.Clear();
-                page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
+                page.History.AddHistoryItem(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
                 RaisePropertyChanged("IsPlaybackEnabled");
             }
         }
@@ -405,7 +405,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsPlaying = true;
             while (page.History.UndoItems.Any())
             {
-                var animationIndicator = page.History.UndoItems.First() as AnimationIndicator;
+                var animationIndicator = page.History.UndoItems.First() as AnimationIndicatorHistoryAction;
                 page.History.Undo();
                 if (animationIndicator != null &&
                     animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record &&
@@ -485,7 +485,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (IsRecording)
             {
-                page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop));
+                page.History.AddHistoryItem(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop));
             }
             IsPlaying = false;
             IsRecording = false;

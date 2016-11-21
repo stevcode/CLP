@@ -185,8 +185,7 @@ namespace CLP.Entities
 
         public static bool IsAnswerObject(ISemanticEvent semanticEvent)
         {
-            return semanticEvent.CodedObject == OBJECT_FILL_IN || 
-                   semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
+            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
         public static string GetAnswerObjectContent(ISemanticEvent semanticEvent)
@@ -217,11 +216,8 @@ namespace CLP.Entities
 
         public static bool IsRepresentationObject(ISemanticEvent semanticEvent)
         {
-            return semanticEvent.CodedObject == OBJECT_ARRAY || 
-                   semanticEvent.CodedObject == OBJECT_NUMBER_LINE || 
-                   semanticEvent.CodedObject == OBJECT_STAMP ||
-                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || 
-                   semanticEvent.CodedObject == OBJECT_BINS;
+            return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
+                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;
         }
 
         #endregion // Methods

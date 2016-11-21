@@ -137,36 +137,36 @@ namespace CLP.Entities
 
             ISemanticEvent semanticEvent = null;
             TypeSwitch.On(historyAction).Case<ObjectsOnPageChangedHistoryAction>(h =>
-                                                                             {
-                                                                                 semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
-                                                                             }).Case<PartsValueChangedHistoryAction>(h =>
-                                                                                                                   {
-                                                                                                                       semanticEvent = new SemanticEvent(page, h)
-                                                                                                                                       {
-                                                                                                                                           CodedObject = Codings.OBJECT_STAMP,
-                                                                                                                                           EventType = "parts",
-                                                                                                                                           CodedObjectID = "CHANGED"
-                                                                                                                                       };
-                                                                                                                   }).Case<CLPArrayRotateHistoryAction>(h =>
-                                                                                                                                                      {
-                                                                                                                                                          semanticEvent =
-                                                                                                                                                              ArraySemanticEvents.Rotate(page, h);
-                                                                                                                                                      }).Case<PageObjectCutHistoryAction>(h =>
-                                                                                                                                                                                        {
-                                                                                                                                                                                            semanticEvent
-                                                                                                                                                                                                =
-                                                                                                                                                                                                ArraySemanticEvents
-                                                                                                                                                                                                    .Cut
-                                                                                                                                                                                                    (page,
-                                                                                                                                                                                                     h);
-                                                                                                                                                                                        })
+                                                                                 {
+                                                                                     semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                                 }).Case<PartsValueChangedHistoryAction>(h =>
+                                                                                                                         {
+                                                                                                                             semanticEvent = new SemanticEvent(page, h)
+                                                                                                                                             {
+                                                                                                                                                 CodedObject = Codings.OBJECT_STAMP,
+                                                                                                                                                 EventType = "parts",
+                                                                                                                                                 CodedObjectID = "CHANGED"
+                                                                                                                                             };
+                                                                                                                         }).Case<CLPArrayRotateHistoryAction>(h =>
+                                                                                                                                                              {
+                                                                                                                                                                  semanticEvent =
+                                                                                                                                                                      ArraySemanticEvents.Rotate(page, h);
+                                                                                                                                                              }).Case<PageObjectCutHistoryAction>(h =>
+                                                                                                                                                                                                  {
+                                                                                                                                                                                                      semanticEvent
+                                                                                                                                                                                                          =
+                                                                                                                                                                                                          ArraySemanticEvents
+                                                                                                                                                                                                              .Cut
+                                                                                                                                                                                                              (page,
+                                                                                                                                                                                                               h);
+                                                                                                                                                                                                  })
                       .Case<CLPArraySnapHistoryAction>(h =>
-                                                     {
-                                                         semanticEvent = ArraySemanticEvents.Snap(page, h);
-                                                     }).Case<CLPArrayDivisionsChangedHistoryAction>(h =>
-                                                                                                  {
-                                                                                                      semanticEvent = ArraySemanticEvents.Divide(page, h);
-                                                                                                  });
+                                                       {
+                                                           semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                       }).Case<CLPArrayDivisionsChangedHistoryAction>(h =>
+                                                                                                      {
+                                                                                                          semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                                                      });
 
             return semanticEvent;
         }
@@ -678,13 +678,13 @@ namespace CLP.Entities
 
             var keyIndexes =
                 semanticEvents.Where(h => h.EventType == Codings.EVENT_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
-                              .Select(h => h.HistoryItems.First().HistoryIndex - 1)
+                              .Select(h => h.HistoryActions.First().HistoryActionIndex - 1)
                               .ToList();
             if (!page.History.CompleteOrderedHistoryItems.Any())
             {
                 return;
             }
-            var lastHistoryIndex = page.History.CompleteOrderedHistoryItems.Last().HistoryIndex + 1;
+            var lastHistoryIndex = page.History.CompleteOrderedHistoryItems.Last().HistoryActionIndex + 1;
             keyIndexes.Add(lastHistoryIndex);
             keyIndexes.Reverse();
             var usedPageObjectIDs = new List<string>();

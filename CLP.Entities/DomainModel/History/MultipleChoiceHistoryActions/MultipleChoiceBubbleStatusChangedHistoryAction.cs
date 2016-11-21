@@ -130,7 +130,7 @@ namespace CLP.Entities
             {
                 var bubble = Bubble;
                 var formattedBubble = string.Format("{0} \"{1} {2}\", {3}", bubble.BubbleContent, bubble.Answer, bubble.AnswerLabel, bubble.IsACorrectValue ? "Correct" : "Incorrect");
-                return string.Format("Index #{0}, {1} Bubble {2}", HistoryIndex, ChoiceBubbleStatus, formattedBubble);
+                return string.Format("Index #{0}, {1} Bubble {2}", HistoryActionIndex, ChoiceBubbleStatus, formattedBubble);
             }
         }
 
@@ -176,7 +176,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -189,7 +189,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -218,7 +218,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -231,7 +231,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -253,7 +253,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             PackagedSerializedStrokes.Clear();
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
@@ -264,7 +264,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem()
+        public override void UnpackHistoryAction()
         {
             foreach (var stroke in PackagedSerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke()))
             {

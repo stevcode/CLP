@@ -23,12 +23,12 @@ namespace CLP.Entities
         string ReferencePageObjectID { get; set; }
 
         // Backing
-        List<string> HistoryItemIDs { get; set; }
+        List<string> HistoryActionIDs { get; set; }
         List<ISemanticEvent> SemanticEvents { get; set; }
         CLPPage ParentPage { get; set; }
 
         // Calculated
-        List<IHistoryAction> HistoryItems { get; }
+        List<IHistoryAction> HistoryActions { get; }
         string CodedValue { get; }
     }
 }

@@ -57,16 +57,16 @@ namespace CLP.Entities
                 var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as DivisionTemplate;
                 if (divisionTemplate == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 }
 
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedInArrayID) as CLPArray;
                 if (array == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 }
 
-                return string.Format("Index #{0}, Snapped {1} into {2}.", HistoryIndex, array.FormattedName, divisionTemplate.FormattedName);
+                return string.Format("Index #{0}, Snapped {1} into {2}.", HistoryActionIndex, array.FormattedName, divisionTemplate.FormattedName);
             }
         }
 
@@ -82,14 +82,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -104,14 +104,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -121,14 +121,14 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id || SnappedInArrayID == id; }
 

@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                        {
-                                                           historyItem.UnpackHistoryItem();
+                                                           historyItem.UnpackHistoryAction();
                                                            pageToRedo.History.RedoItems.Clear();
                                                            pageToRedo.History.RedoItems.Add(historyItem);
 

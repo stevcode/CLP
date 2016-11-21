@@ -664,7 +664,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
+            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicatorHistoryAction;
             if (recordIndicator != null &&
                 recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
             {

@@ -10,12 +10,11 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        // TODO: Add creation date/time?
-
         /// <summary>Initializes <see cref="AHistoryActionBase" /> from scratch.</summary>
         protected AHistoryActionBase()
         {
             ID = Guid.NewGuid().ToCompactID();
+            CreationTime = DateTime.Now;
         }
 
         /// <summary>Initializes <see cref="APageObjectBase" /> using <see cref="CLPPage" />.</summary>
@@ -44,13 +43,13 @@ namespace CLP.Entities
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Location of the <see cref="IHistoryAction" /> in the entirety of history, including UndoItems and RedoItems.</summary>
-        public int HistoryIndex
+        public int HistoryActionIndex
         {
             get { return GetValue<int>(HistoryIndexProperty); }
             set { SetValue(HistoryIndexProperty, value); }
         }
 
-        public static readonly PropertyData HistoryIndexProperty = RegisterProperty("HistoryIndex", typeof(int), -1);
+        public static readonly PropertyData HistoryIndexProperty = RegisterProperty("HistoryActionIndex", typeof(int), -1);
 
         /// <summary>Cached value of FormattedValue with correct page state.</summary>
         public string CachedFormattedValue
@@ -74,6 +73,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
 
+        /// <summary>Creation Time of the HistoryAction.</summary>
+        public DateTime CreationTime
+        {
+            get { return GetValue<DateTime>(CreationTimeProperty); }
+            set { SetValue(CreationTimeProperty, value); }
+        }
+
+        public static readonly PropertyData CreationTimeProperty = RegisterProperty("CreationTime", typeof(DateTime));
+
         /// <summary>The <see cref="AHistoryActionBase" />'s parent <see cref="CLPPage" />.</summary>
         [XmlIgnore]
         [JsonIgnore]
@@ -92,7 +100,21 @@ namespace CLP.Entities
 
         public virtual int AnimationDelay => 50;
 
-        public abstract string FormattedValue { get; }
+        public string FormattedValue
+        {
+            get
+            {
+                var formattedValue = $"Index #{HistoryActionIndex}, {FormattedReport}";
+                if (!formattedValue.Equals(CachedFormattedValue))
+                {
+                    CachedFormattedValue = formattedValue;
+                }
+
+                return formattedValue;
+            }
+        }
+
+        protected abstract string FormattedReport { get; }
 
         #endregion // Calculated Properties
 
@@ -146,9 +168,9 @@ namespace CLP.Entities
 
         protected abstract void RedoAction(bool isAnimationRedo);
 
-        public abstract IHistoryAction CreatePackagedHistoryItem();
+        public abstract IHistoryAction CreatePackagedHistoryAction();
 
-        public abstract void UnpackHistoryItem();
+        public abstract void UnpackHistoryAction();
 
         public virtual bool IsUsingTrashedPageObject(string id)
         {

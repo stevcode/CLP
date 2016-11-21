@@ -113,9 +113,9 @@ namespace CLP.Entities
             {
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
                 return numberLine == null
-                           ? string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryIndex)
+                           ? string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryActionIndex)
                            : string.Format("Index #{0}, Changed Number Line end point from {1} to {2}.",
-                                           HistoryIndex,
+                                           HistoryActionIndex,
                                            PreviousEndValue - PreviousStartValue,
                                            numberLine.NumberLineSize);
             }
@@ -130,7 +130,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -186,7 +186,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -205,7 +205,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return NumberLineID == id; }
 

@@ -548,7 +548,7 @@ namespace Classroom_Learning_Partner.Services
             //            var lastHistoryItem = lastSubmission.History.CompleteOrderedHistoryItems.LastOrDefault();
             //            if (lastHistoryItem != null)
             //            {
-            //                historyIndex = lastHistoryItem.HistoryIndex;
+            //                historyIndex = lastHistoryItem.HistoryActionIndex;
             //            }
 
             //            var strokes = lastSubmission.InkStrokes.ToList();

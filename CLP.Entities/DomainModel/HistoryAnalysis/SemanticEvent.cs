@@ -51,7 +51,7 @@ namespace CLP.Entities
             : this()
         {
             ParentPage = parentPage;
-            HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            HistoryActionIDs = historyItems.Select(h => h.ID).ToList();
             SemanticEvents = semanticEvents;
         }
 
@@ -61,7 +61,7 @@ namespace CLP.Entities
 
         #region ID Properties
 
-        /// <summary>Unique Identifier for the <see cref="AHistoryActionBase" />.</summary>
+        /// <summary>Unique Identifier for the <see cref="SemanticEvent" />.</summary>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -86,7 +86,7 @@ namespace CLP.Entities
             set { SetValue(CachedCodedValueProperty, value); }
         }
 
-        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), String.Empty);
+        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
 
         #endregion // ID Properties
 
@@ -99,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(CodedObjectProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), String.Empty);
+        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
 
         /// <summary>Coded Object ID portion of the SemanticEvent report.</summary>
         public string CodedObjectID
@@ -108,7 +108,7 @@ namespace CLP.Entities
             set { SetValue(CodedObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), String.Empty);
+        public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), string.Empty);
 
         /// <summary>Coded Object ID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectIDIncrement
@@ -117,7 +117,7 @@ namespace CLP.Entities
             set { SetValue(CodedObjectIDIncrementProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), String.Empty);
+        public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), string.Empty);
 
         /// <summary>Coded Object SubID portion of the SemanticEvent report.</summary>
         public string CodedObjectSubID
@@ -126,7 +126,7 @@ namespace CLP.Entities
             set { SetValue(CodedObjectSubIDProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), String.Empty);
+        public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), string.Empty);
 
         /// <summary>Coded Object SubID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectSubIDIncrement
@@ -135,7 +135,7 @@ namespace CLP.Entities
             set { SetValue(CodedObjectSubIDIncrementProperty, value); }
         }
 
-        public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), String.Empty);
+        public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), string.Empty);
 
         /// <summary>Event Type portion of the SemanticEvent report.</summary>
         public string EventType
@@ -144,7 +144,7 @@ namespace CLP.Entities
             set { SetValue(EventTypeProperty, value); }
         }
 
-        public static readonly PropertyData EventTypeProperty = RegisterProperty("EventType", typeof(string), String.Empty);
+        public static readonly PropertyData EventTypeProperty = RegisterProperty("EventType", typeof(string), string.Empty);
 
         /// <summary>Event Information portion of the SemanticEvent report.</summary>
         public string EventInformation
@@ -153,7 +153,7 @@ namespace CLP.Entities
             set { SetValue(EventInformationProperty, value); }
         }
 
-        public static readonly PropertyData EventInformationProperty = RegisterProperty("EventInformation", typeof(string), String.Empty);
+        public static readonly PropertyData EventInformationProperty = RegisterProperty("EventInformation", typeof(string), string.Empty);
 
         #endregion // Coded Portion Properties
 
@@ -189,14 +189,14 @@ namespace CLP.Entities
 
         #region Backing Properties
 
-        /// <summary>List of the IDs of the HistoryItems that make up this SemanticEvent.</summary>
-        public List<string> HistoryItemIDs
+        /// <summary>List of the IDs of the HistoryActionss that make up this SemanticEvent.</summary>
+        public List<string> HistoryActionIDs
         {
-            get { return GetValue<List<string>>(HistoryItemIDsProperty); }
-            set { SetValue(HistoryItemIDsProperty, value); }
+            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
+            set { SetValue(HistoryActionIDsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of any SemanticEvents that make up this SemanticEvent.</summary>
         public List<ISemanticEvent> SemanticEvents
@@ -223,10 +223,10 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        /// <summary>List of the HistoryItems that make up this SemanticEvent.</summary>
-        public List<IHistoryAction> HistoryItems
+        /// <summary>List of the HistoryActions that make up this SemanticEvent.</summary>
+        public List<IHistoryAction> HistoryActions
         {
-            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
+            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryActionIDs.Contains(x.ID)).OrderBy(x => x.HistoryActionIndex).ToList(); }
         }
 
         /// <summary> Takes the following form: CODED_OBJECT eventType [ID id_increment, SUB_ID sub_id_increment] eventInfo </summary>
@@ -234,12 +234,12 @@ namespace CLP.Entities
         {
             get
             {
-                var idIncrement = String.IsNullOrWhiteSpace(CodedObjectIDIncrement) ? String.Empty : " " + CodedObjectIDIncrement;
-                var subID = String.IsNullOrWhiteSpace(CodedObjectSubID) ? String.Empty : ", " + CodedObjectSubID;
-                var subIDIncrement = String.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? String.Empty : " " + CodedObjectSubIDIncrement;
+                var idIncrement = string.IsNullOrWhiteSpace(CodedObjectIDIncrement) ? string.Empty : " " + CodedObjectIDIncrement;
+                var subID = string.IsNullOrWhiteSpace(CodedObjectSubID) ? string.Empty : ", " + CodedObjectSubID;
+                var subIDIncrement = string.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? string.Empty : " " + CodedObjectSubIDIncrement;
                 var compositeCodedObjectID = $"{CodedObjectID}{idIncrement}{subID}{subIDIncrement}";
 
-                var eventInfo = String.IsNullOrWhiteSpace(EventInformation) ? String.Empty : " " + EventInformation;
+                var eventInfo = string.IsNullOrWhiteSpace(EventInformation) ? string.Empty : " " + EventInformation;
 
                 var codedEvent = $"{CodedObject} {EventType} [{compositeCodedObjectID}]{eventInfo}";
                 if (!codedEvent.Equals(CachedCodedValue))

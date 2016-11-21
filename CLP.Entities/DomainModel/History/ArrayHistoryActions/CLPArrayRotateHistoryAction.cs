@@ -182,8 +182,8 @@ namespace CLP.Entities
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 return array == null
-                           ? string.Format("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Array rotated from [{1}x{2}] to [{2}x{1}]", HistoryIndex, OldRows, OldColumns);
+                           ? string.Format("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex)
+                           : string.Format("Index #{0}, Array rotated from [{1}x{2}] to [{2}x{1}]", HistoryActionIndex, OldRows, OldColumns);
             }
         }
 
@@ -196,7 +196,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -232,7 +232,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -242,7 +242,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -258,7 +258,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
 

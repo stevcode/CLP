@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
     public class PageObjectCutHistoryAction : AHistoryActionBase
     {
+        #region Constants
+
         private const int STROKE_CUT_DELAY = 375;
+
+        #endregion // Constants
 
         #region Constructors
 
@@ -42,7 +47,7 @@ namespace CLP.Entities
             HalvedPageObjectIDs = halvedPageObjectIDs;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
 
@@ -53,17 +58,7 @@ namespace CLP.Entities
             set { SetValue(CuttingStrokeIDProperty, value); }
         }
 
-        public static readonly PropertyData CuttingStrokeIDProperty = RegisterProperty("CuttingStrokeID", typeof (string));
-
-        /// <summary>The IDs of all pageObjects cut. Used to locate pageObjects after an undo.</summary>
-        [Obsolete("Only allow cutting stroke to cut one pageObject at a time, use CutPageObjectID now.")]
-        public List<string> CutPageObjectIDs
-        {
-            get { return GetValue<List<string>>(CutPageObjectIDsProperty); }
-            set { SetValue(CutPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData CutPageObjectIDsProperty = RegisterProperty("CutPageObjectIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData CuttingStrokeIDProperty = RegisterProperty("CuttingStrokeID", typeof(string));
 
         /// <summary>ID of the pageObject that was cut.</summary>
         public string CutPageObjectID
@@ -72,7 +67,7 @@ namespace CLP.Entities
             set { SetValue(CutPageObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData CutPageObjectIDProperty = RegisterProperty("CutPageObjectID", typeof (string), string.Empty);
+        public static readonly PropertyData CutPageObjectIDProperty = RegisterProperty("CutPageObjectID", typeof(string), string.Empty);
 
         /// <summary>UniqueIDs of all new pageObjects placed on page after a cut.</summary>
         public List<string> HalvedPageObjectIDs
@@ -81,42 +76,44 @@ namespace CLP.Entities
             set { SetValue(HalvedPageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData HalvedPageObjectIDsProperty = RegisterProperty("HalvedPageObjectIDs", typeof (List<string>));
+        public static readonly PropertyData HalvedPageObjectIDsProperty = RegisterProperty("HalvedPageObjectIDs", typeof(List<string>));
 
         /// <summary>List of the Halved <see cref="IPageObject" />s to be used on another machine when <see cref="PageObjectCutHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
         public List<IPageObject> PackagedPageObjects
         {
             get { return GetValue<List<IPageObject>>(PackagedPageObjectsProperty); }
             set { SetValue(PackagedPageObjectsProperty, value); }
         }
 
-        public static readonly PropertyData PackagedPageObjectsProperty = RegisterProperty("PackagedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
+        public static readonly PropertyData PackagedPageObjectsProperty = RegisterProperty("PackagedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
 
         /// <summary>Serialized <see cref="Stroke" /> used to cut the <see cref="ICuttable" />.</summary>
         [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
         public StrokeDTO PackagedCuttingStroke
         {
             get { return GetValue<StrokeDTO>(PackagedCuttingStrokeProperty); }
             set { SetValue(PackagedCuttingStrokeProperty, value); }
         }
 
-        public static readonly PropertyData PackagedCuttingStrokeProperty = RegisterProperty("PackagedCuttingStroke", typeof (StrokeDTO));
+        public static readonly PropertyData PackagedCuttingStrokeProperty = RegisterProperty("PackagedCuttingStroke", typeof(StrokeDTO));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        protected override string FormattedReport
         {
             get
             {
                 var cutPageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectID);
-                return cutPageObject == null
-                           ? string.Format("Index #{0}, Nothing Cut.", HistoryIndex)
-                           : string.Format("Index #{0}, Cut {1}.", HistoryIndex, cutPageObject.FormattedName);
+                return cutPageObject == null ? "[ERROR] Cut PageObject not found on page or in history." : $"Cut {cutPageObject.FormattedName}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -143,7 +140,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -203,7 +200,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -249,7 +246,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -273,7 +270,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem()
+        public override void UnpackHistoryAction()
         {
             ParentPage.History.TrashedInkStrokes.Add(PackagedCuttingStroke.ToStroke());
             foreach (var packagedPageObject in PackagedPageObjects)
@@ -282,10 +279,16 @@ namespace CLP.Entities
             }
         }
 
-        public override bool IsUsingTrashedPageObject(string id) { return CutPageObjectID == id || HalvedPageObjectIDs.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return CutPageObjectID == id || HalvedPageObjectIDs.Contains(id);
+        }
 
-        public override bool IsUsingTrashedInkStroke(string id) { return CuttingStrokeID == id; }
+        public override bool IsUsingTrashedInkStroke(string id)
+        {
+            return CuttingStrokeID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

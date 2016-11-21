@@ -137,13 +137,13 @@ namespace CLP.Entities
                 var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PersistingArrayID) as CLPArray;
                 if (persistingArray == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
                 }
 
                 var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedArrayID) as CLPArray;
                 if (snappedArray == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
                 }
 
                 var direction = IsHorizontal ? "horizontally" : "vertically";
@@ -176,7 +176,7 @@ namespace CLP.Entities
                 var presnapPersisitingArrayFormatedName = string.Format("{0}x{1} {2}", persistingArrayRows, persistingArrayColumns, persisitingArrayType);
 
                 return string.Format("Index #{0}, Snapped {1} {2} onto {3} to create {4}.",
-                                     HistoryIndex,
+                                     HistoryActionIndex,
                                      snappedArray.FormattedName,
                                      direction,
                                      presnapPersisitingArrayFormatedName,
@@ -201,14 +201,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -245,14 +245,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -319,7 +319,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
@@ -347,7 +347,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return SnappedArrayID == id || PersistingArrayID == id; }
 

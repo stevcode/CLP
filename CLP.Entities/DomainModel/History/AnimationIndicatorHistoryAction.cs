@@ -10,33 +10,27 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class AnimationIndicator : AHistoryActionBase
+    public class AnimationIndicatorHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="AnimationIndicator" /> from scratch.</summary>
-        public AnimationIndicator() { }
+        /// <summary>Initializes <see cref="AnimationIndicatorHistoryAction" /> from scratch.</summary>
+        public AnimationIndicatorHistoryAction() { }
 
-        /// <summary>Initializes <see cref="AnimationIndicator" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <summary>Initializes <see cref="AnimationIndicatorHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="animationIndicatorType">The <see cref="AnimationIndicatorType" /> of animation indication this <see cref="AnimationIndicator" /> represents.</param>
-        public AnimationIndicator(CLPPage parentPage, Person owner, AnimationIndicatorType animationIndicatorType)
+        /// <param name="animationIndicatorType">The <see cref="AnimationIndicatorType" /> of animation indication this <see cref="AnimationIndicatorHistoryAction" /> represents.</param>
+        public AnimationIndicatorHistoryAction(CLPPage parentPage, Person owner, AnimationIndicatorType animationIndicatorType)
             : base(parentPage, owner)
         {
             AnimationIndicatorType = animationIndicatorType;
-            CachedFormattedValue = FormattedValue;
         }
 
         #endregion //Constructors
 
         #region Properties
 
-        public override int AnimationDelay
-        {
-            get { return 0; }
-        }
-
-        /// <summary>HistoryItem used to indicate when an animation recording has started or stopped.</summary>
+        /// <summary>Indicates when an animation recording has started or stopped.</summary>
         public AnimationIndicatorType AnimationIndicatorType
         {
             get { return GetValue<AnimationIndicatorType>(AnimationIndicatorTypeProperty); }
@@ -45,18 +39,13 @@ namespace CLP.Entities
 
         public static readonly PropertyData AnimationIndicatorTypeProperty = RegisterProperty("AnimationIndicatorType", typeof(AnimationIndicatorType));
 
-        public override string FormattedValue
-        {
-            get
-            {
-                var animationLocation = AnimationIndicatorType == AnimationIndicatorType.Record ? "Animation Start" : "Animation End";
-                return string.Format("Index #{0}, {1}.", HistoryIndex, animationLocation);
-            }
-        }
-
         #endregion //Properties
 
-        #region Methods
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 0;
+
+        protected override string FormattedReport => AnimationIndicatorType == AnimationIndicatorType.Record ? "Animation Start." : "Animation End.";
 
         protected override void ConversionUndoAction() { }
 
@@ -67,14 +56,14 @@ namespace CLP.Entities
         protected override void RedoAction(bool isAnimationRedo) { }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that is can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

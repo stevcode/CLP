@@ -4,6 +4,7 @@
     {
         int NumberOfBatchTicks { get; }
         int CurrentBatchTickIndex { get; set; }
+
         void ClearBatchAfterCurrentIndex();
     }
 }

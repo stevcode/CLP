@@ -906,7 +906,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var lastHistoryItem = CurrentPage.History.CompleteOrderedHistoryItems.LastOrDefault();
             if (lastHistoryItem != null)
             {
-                historyIndex = lastHistoryItem.HistoryIndex;
+                historyIndex = lastHistoryItem.HistoryActionIndex;
             }
 
             //Iterates over arrays on page

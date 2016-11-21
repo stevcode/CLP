@@ -184,7 +184,7 @@ namespace CLP.Entities
         {
             var rows = Rows;
             var columns = Columns;
-            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryIndex >= historyIndex).Reverse())
+            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryActionIndex >= historyIndex).Reverse())
             {
                 TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryAction>(h =>
                                                                            {
@@ -469,16 +469,16 @@ namespace CLP.Entities
 
         public override Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
             if (resizeHistoryItem == null &&
                 rotateHistoryItem == null)
             {
                 return new Point(Width, Height);
             }
 
-            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
-            var resizeHistoryIndex = resizeHistoryItem == null ? int.MaxValue : resizeHistoryItem.HistoryIndex;
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryActionIndex;
+            var resizeHistoryIndex = resizeHistoryItem == null ? int.MaxValue : resizeHistoryItem.HistoryActionIndex;
 
             if (rotateHistoryIndex < resizeHistoryIndex)
             {
@@ -497,16 +497,16 @@ namespace CLP.Entities
 
         public override Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
-            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
             if (rotateHistoryItem == null &&
                 moveHistoryItem == null)
             {
                 return new Point(XPosition, YPosition);
             }
 
-            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryIndex;
-            var moveHistoryIndex = moveHistoryItem == null ? int.MaxValue : moveHistoryItem.HistoryIndex;
+            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryActionIndex;
+            var moveHistoryIndex = moveHistoryItem == null ? int.MaxValue : moveHistoryItem.HistoryActionIndex;
 
             if (rotateHistoryIndex < moveHistoryIndex)
             {

@@ -110,7 +110,7 @@ namespace CLP.Entities
                 {
                     if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -140,7 +140,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -190,7 +190,7 @@ namespace CLP.Entities
                 {
                     if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP)
                     {
-                        var jumpSizesChangedHistoryItems = semanticEvent.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
+                        var jumpSizesChangedHistoryItems = semanticEvent.HistoryActions.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
                         if (jumpSizesChangedHistoryItems == null ||
                             !jumpSizesChangedHistoryItems.Any())
                         {
@@ -217,7 +217,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP_ERASE)
                     {
-                        var jumpSizesChangedHistoryItems = semanticEvent.HistoryItems.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
+                        var jumpSizesChangedHistoryItems = semanticEvent.HistoryActions.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
                         if (jumpSizesChangedHistoryItems == null ||
                             !jumpSizesChangedHistoryItems.Any())
                         {
@@ -254,7 +254,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -324,7 +324,7 @@ namespace CLP.Entities
                 {
                     if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -346,7 +346,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -374,7 +374,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
-                        var historyItem = semanticEvent.HistoryItems.First();
+                        var historyItem = semanticEvent.HistoryActions.First();
                         var objectsChanged = historyItem as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {

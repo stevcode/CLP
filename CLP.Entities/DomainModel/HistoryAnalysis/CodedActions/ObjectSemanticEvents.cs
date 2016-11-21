@@ -24,7 +24,7 @@ namespace CLP.Entities
 
             if (addedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
@@ -42,7 +42,7 @@ namespace CLP.Entities
             else
             {
                 // HACK
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
@@ -76,7 +76,7 @@ namespace CLP.Entities
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
             if (removedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
@@ -94,7 +94,7 @@ namespace CLP.Entities
             else
             {
                 // HACK
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
@@ -138,7 +138,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var historyIndex = objectsMovedHistoryItems.First().HistoryIndex;
+            var historyIndex = objectsMovedHistoryItems.First().HistoryActionIndex;
             var pageObject = movedPageObjects.First();
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
@@ -179,7 +179,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var historyIndex = objectsResizedHistoryItems.First().HistoryIndex;
+            var historyIndex = objectsResizedHistoryItems.First().HistoryActionIndex;
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
             var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryAction>().ToList())

@@ -751,11 +751,11 @@ namespace ConsoleScripts
                     break;
                 }
 
-                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryIndex);
+                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
 
                 #region WorksAsIs
 
-                if (historyItemToUndo is AnimationIndicator ||
+                if (historyItemToUndo is AnimationIndicatorHistoryAction ||
                     historyItemToUndo is CLPArrayRotateHistoryAction ||
                     historyItemToUndo is CLPArrayGridToggleHistoryAction ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryAction ||
@@ -931,61 +931,61 @@ namespace ConsoleScripts
 
                 #region PageObjectCut fix
 
-                if (historyItemToUndo is PageObjectCutHistoryAction)
-                {
-                    //BUG: Fix to allow strokes that don't cut any pageObjects.
-                    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryAction;
-                    if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
-                    {
-                        page.History.ConversionUndo();
-                        continue;
-                    }
-                    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
-                    if (!pageObjectCut.CutPageObjectIDs.Any() ||
-                        cuttingStroke == null)
-                    {
-                        page.History.UndoItems.RemoveFirst();
-                        continue;
-                    }
-                    if (pageObjectCut.CutPageObjectIDs.Count == 1)
-                    {
-                        pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
-                        pageObjectCut.CutPageObjectIDs.Clear();
-                        page.History.ConversionUndo();
-                        continue;
-                    }
+                //if (historyItemToUndo is PageObjectCutHistoryAction)
+                //{
+                //    //BUG: Fix to allow strokes that don't cut any pageObjects.
+                //    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryAction;
+                //    if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
+                //    {
+                //        page.History.ConversionUndo();
+                //        continue;
+                //    }
+                //    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
+                //    if (!pageObjectCut.CutPageObjectIDs.Any() ||
+                //        cuttingStroke == null)
+                //    {
+                //        page.History.UndoItems.RemoveFirst();
+                //        continue;
+                //    }
+                //    if (pageObjectCut.CutPageObjectIDs.Count == 1)
+                //    {
+                //        pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
+                //        pageObjectCut.CutPageObjectIDs.Clear();
+                //        page.History.ConversionUndo();
+                //        continue;
+                //    }
 
-                    var newHistoryItems = new List<PageObjectCutHistoryAction>();
-                    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
-                    {
-                        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
-                        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
-                        {
-                            continue;
-                        }
-                        var halvedPageObjectIDs = new List<string>
-                                                  {
-                                                      pageObjectCut.HalvedPageObjectIDs[0],
-                                                      pageObjectCut.HalvedPageObjectIDs[1]
-                                                  };
-                        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
-                        if (cutPageObject == null)
-                        {
-                            continue;
-                        }
-                        var newCutHistoryItem = new PageObjectCutHistoryAction(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
-                        newHistoryItems.Add(newCutHistoryItem);
-                    }
+                //    var newHistoryItems = new List<PageObjectCutHistoryAction>();
+                //    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
+                //    {
+                //        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
+                //        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
+                //        {
+                //            continue;
+                //        }
+                //        var halvedPageObjectIDs = new List<string>
+                //                                  {
+                //                                      pageObjectCut.HalvedPageObjectIDs[0],
+                //                                      pageObjectCut.HalvedPageObjectIDs[1]
+                //                                  };
+                //        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
+                //        if (cutPageObject == null)
+                //        {
+                //            continue;
+                //        }
+                //        var newCutHistoryItem = new PageObjectCutHistoryAction(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
+                //        newHistoryItems.Add(newCutHistoryItem);
+                //    }
 
-                    page.History.UndoItems.RemoveFirst();
+                //    page.History.UndoItems.RemoveFirst();
 
-                    foreach (var pageObjectCutHistoryItem in newHistoryItems)
-                    {
-                        page.History.UndoItems.Insert(0, pageObjectCutHistoryItem);
-                    }
+                //    foreach (var pageObjectCutHistoryItem in newHistoryItems)
+                //    {
+                //        page.History.UndoItems.Insert(0, pageObjectCutHistoryItem);
+                //    }
 
-                    continue;
-                }
+                //    continue;
+                //}
 
                 #endregion //PageObjectCut fix
 

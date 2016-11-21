@@ -1163,7 +1163,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             TaskQueue.Enqueue(async () =>
                                {
-                                   var historyItemCopy = historyAction.CreatePackagedHistoryItem();
+                                   var historyItemCopy = historyAction.CreatePackagedHistoryAction();
                                    if (historyItemCopy == null)
                                    {
                                        return;

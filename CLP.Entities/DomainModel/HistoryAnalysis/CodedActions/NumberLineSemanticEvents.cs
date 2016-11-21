@@ -64,7 +64,7 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
-            var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryIndex);
+            var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryActionIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
             var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
 

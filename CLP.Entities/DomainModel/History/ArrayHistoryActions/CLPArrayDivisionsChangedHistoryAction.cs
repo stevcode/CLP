@@ -93,7 +93,7 @@ namespace CLP.Entities
                            (NewRegions.Any() && NewRegions.First().Orientation == ArrayDivisionOrientation.Vertical);
                 }
 
-                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
                 return null;
             }
         }
@@ -105,12 +105,12 @@ namespace CLP.Entities
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 if (array == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
                 }
 
                 if (IsColumnRegionsChange == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
                 }
 
                 var orientation = (bool)IsColumnRegionsChange ? "vertical" : "horizontal";
@@ -118,7 +118,7 @@ namespace CLP.Entities
                 var newRegion = NewRegions.Any() ? string.Join(",", NewRegions.Select(d => d.Value)) : "none";
 
                 //TODO: Created FormattedValue for situation where IsObscuring is being toggled.
-                return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryIndex, orientation, array.FormattedName, oldRegion, newRegion);
+                return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryActionIndex, orientation, array.FormattedName, oldRegion, newRegion);
             }
         }
 
@@ -131,7 +131,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -177,13 +177,13 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             if (IsColumnRegionsChange == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
                 return;
             }
 
@@ -205,13 +205,13 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             if (IsColumnRegionsChange == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
                 return;
             }
 
@@ -228,14 +228,14 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryAction CreatePackagedHistoryItem()
+        public override IHistoryAction CreatePackagedHistoryAction()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
-        public override void UnpackHistoryItem() { }
+        public override void UnpackHistoryAction() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
 

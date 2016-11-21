@@ -229,7 +229,7 @@ namespace CLP.Entities
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                orderedObjectsOnPageChangedHistoryItems.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryIndex <= historyIndex);
+                orderedObjectsOnPageChangedHistoryItems.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryActionIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.PageObjectIDsAdded.Contains(ID);
 
@@ -246,7 +246,7 @@ namespace CLP.Entities
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
             var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>()
-                                              .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+                                              .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
             if (resizeHistoryItem == null ||
                 !resizeHistoryItem.StretchedDimensions.Any())
             {
@@ -262,7 +262,7 @@ namespace CLP.Entities
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
             var moveHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
 
             if (moveHistoryItem == null ||
                 !moveHistoryItem.TravelledPositions.Any())
