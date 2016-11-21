@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -24,19 +25,18 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> from scratch.</summary>
-        public MultipleChoiceBubbleStatusChangedHistoryAction()
-        { }
+        public MultipleChoiceBubbleStatusChangedHistoryAction() { }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public MultipleChoiceBubbleStatusChangedHistoryAction(CLPPage parentPage,
-                                               Person owner,
-                                               MultipleChoice multipleChoice,
-                                               int choiceBubbleIndex,
-                                               ChoiceBubbleStatuses status,
-                                               IEnumerable<Stroke> strokesAdded,
-                                               IEnumerable<Stroke> strokesRemoved)
+                                                              Person owner,
+                                                              MultipleChoice multipleChoice,
+                                                              int choiceBubbleIndex,
+                                                              ChoiceBubbleStatuses status,
+                                                              IEnumerable<Stroke> strokesAdded,
+                                                              IEnumerable<Stroke> strokesRemoved)
             : base(parentPage, owner)
         {
             MultipleChoiceID = multipleChoice.ID;
@@ -58,11 +58,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int AnimationDelay
-        {
-            get { return 200; }
-        }
-
         /// <summary>ID of the affected Multiple Choice.</summary>
         public string MultipleChoiceID
         {
@@ -70,7 +65,7 @@ namespace CLP.Entities
             set { SetValue(MultipleChoiceIDProperty, value); }
         }
 
-        public static readonly PropertyData MultipleChoiceIDProperty = RegisterProperty("MultipleChoiceID", typeof (string), string.Empty);
+        public static readonly PropertyData MultipleChoiceIDProperty = RegisterProperty("MultipleChoiceID", typeof(string), string.Empty);
 
         /// <summary>Index of the affected choice bubble.</summary>
         public int ChoiceBubbleIndex
@@ -79,8 +74,7 @@ namespace CLP.Entities
             set { SetValue(ChoiceBubbleIndexProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleIndexProperty = RegisterProperty("ChoiceBubbleIndex", typeof (int), -1);
-        
+        public static readonly PropertyData ChoiceBubbleIndexProperty = RegisterProperty("ChoiceBubbleIndex", typeof(int), -1);
 
         /// <summary>Status of the choice bubble after ink change occurs.</summary>
         public ChoiceBubbleStatuses ChoiceBubbleStatus
@@ -89,10 +83,7 @@ namespace CLP.Entities
             set { SetValue(ChoiceBubbleStatusProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof (ChoiceBubbleStatuses), ChoiceBubbleStatuses.PartiallyFilledIn);
-        
-        
-        #region Strokes
+        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof(ChoiceBubbleStatuses), ChoiceBubbleStatuses.PartiallyFilledIn);
 
         /// <summary>Unique IDs of the strokes added.</summary>
         public List<string> StrokeIDsAdded
@@ -112,8 +103,10 @@ namespace CLP.Entities
 
         public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof(List<string>), () => new List<string>());
 
-        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
+        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="MultipleChoiceBubbleStatusChangedHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
         public List<StrokeDTO> PackagedSerializedStrokes
         {
             get { return GetValue<List<StrokeDTO>>(PackagedSerializedStrokesProperty); }
@@ -122,55 +115,48 @@ namespace CLP.Entities
 
         public static readonly PropertyData PackagedSerializedStrokesProperty = RegisterProperty("PackagedSerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
-        #endregion //Strokes
+        #region Calculated Properties
 
-        public override string FormattedValue
-        {
-            get
-            {
-                var bubble = Bubble;
-                var formattedBubble = string.Format("{0} \"{1} {2}\", {3}", bubble.BubbleContent, bubble.Answer, bubble.AnswerLabel, bubble.IsACorrectValue ? "Correct" : "Incorrect");
-                return string.Format("Index #{0}, {1} Bubble {2}", HistoryActionIndex, ChoiceBubbleStatus, formattedBubble);
-            }
-        }
+        public MultipleChoice PageObject => ParentPage.GetPageObjectByIDOnPageOrInHistory(MultipleChoiceID) as MultipleChoice;
 
-        public MultipleChoice PageObject
-        {
-            get { return ParentPage.GetPageObjectByIDOnPageOrInHistory(MultipleChoiceID) as MultipleChoice; }
-        }
-
-        public ChoiceBubble Bubble
-        {
-            get { return PageObject.ChoiceBubbles[ChoiceBubbleIndex]; }
-        }
+        public ChoiceBubble Bubble => PageObject.ChoiceBubbles[ChoiceBubbleIndex];
 
         public List<Stroke> StrokesAdded
         {
-            get
-            {
-                return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
-            }
+            get { return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
         }
 
         public List<Stroke> StrokesRemoved
         {
+            get { return StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
+        }
+
+        #endregion // Calculated Properties
+
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 200;
+
+        protected override string FormattedReport
+        {
             get
             {
-                return StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
+                var bubble = Bubble;
+                var formattedBubble = $"{bubble.BubbleContent} \"{bubble.Answer} {bubble.AnswerLabel}\", {(bubble.IsACorrectValue ? "Correct" : "Incorrect")}";
+                return $"{ChoiceBubbleStatus} Bubble {formattedBubble}";
             }
         }
 
-        #endregion //Properties
-
-        #region Methods
-
         protected override void ConversionUndoAction()
-        { UndoAction(false); }
+        {
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-
             var addedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
@@ -273,11 +259,15 @@ namespace CLP.Entities
         }
 
         public override bool IsUsingTrashedPageObject(string id)
-        { return MultipleChoiceID == id; }
+        {
+            return MultipleChoiceID == id;
+        }
 
         public override bool IsUsingTrashedInkStroke(string id)
-        { return StrokeIDsRemoved.Contains(id) || StrokeIDsAdded.Contains(id); }
+        {
+            return StrokeIDsRemoved.Contains(id) || StrokeIDsAdded.Contains(id);
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

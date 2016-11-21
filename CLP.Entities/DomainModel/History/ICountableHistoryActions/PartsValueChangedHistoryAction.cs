@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -23,14 +22,9 @@ namespace CLP.Entities
             NewValue = newValue;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>Unique Identifier for the <see cref="ICountable" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string PageObjectID
@@ -39,7 +33,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof (string));
+        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof(string));
 
         /// <summary>Previous value of the Parts Value.</summary>
         public int PreviousValue
@@ -48,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(PreviousValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof (int));
+        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int));
 
         /// <summary>New Value of the Parts Value.</summary>
         public int NewValue
@@ -57,22 +51,40 @@ namespace CLP.Entities
             set { SetValue(NewValueProperty, value); }
         }
 
-        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof (int));
+        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region Methods
+
+        private void TogglePartsValue(bool isUndo)
+        {
+            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
+            if (pageObject == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
+                return;
+            }
+
+            pageObject.Parts = isUndo ? PreviousValue : NewValue;
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
                 return pageObject == null
-                           ? string.Format("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex)
-                           : string.Format("Index #{0}, Changed value of {1} parts from {2} to {3}.", HistoryActionIndex, pageObject.FormattedName, PreviousValue, NewValue);
+                           ? "[ERROR] ICountable for Parts Value Changed not found on page or in history."
+                           : $"Changed value of {pageObject.FormattedName} parts from {PreviousValue} to {NewValue}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -99,18 +111,6 @@ namespace CLP.Entities
             TogglePartsValue(false);
         }
 
-        private void TogglePartsValue(bool isUndo)
-        {
-            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
-            if (pageObject == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            pageObject.Parts = isUndo ? PreviousValue : NewValue;
-        }
-
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
@@ -133,8 +133,11 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return PageObjectID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return PageObjectID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }
