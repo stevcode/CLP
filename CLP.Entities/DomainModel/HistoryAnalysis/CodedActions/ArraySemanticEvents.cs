@@ -11,15 +11,15 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static ISemanticEvent Rotate(CLPPage page, CLPArrayRotateHistoryItem rotateHistoryItem)
+        public static ISemanticEvent Rotate(CLPPage page, CLPArrayRotateHistoryAction rotateHistoryAction)
         {
             if (page == null ||
-                rotateHistoryItem == null)
+                rotateHistoryAction == null)
             {
                 return null;
             }
 
-            var arrayID = rotateHistoryItem.ArrayID;
+            var arrayID = rotateHistoryAction.ArrayID;
             var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
             if (array == null)
             {
@@ -27,16 +27,16 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var codedID = string.Format("{0}x{1}", rotateHistoryItem.OldRows, rotateHistoryItem.OldColumns);
+            var codedID = string.Format("{0}x{1}", rotateHistoryAction.OldRows, rotateHistoryAction.OldColumns);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
-            var eventInfo = string.Format("{0}x{1}", rotateHistoryItem.OldColumns, rotateHistoryItem.OldRows);
+            var eventInfo = string.Format("{0}x{1}", rotateHistoryAction.OldColumns, rotateHistoryAction.OldRows);
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(array.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
                 eventInfo += " " + eventInfoIncrementID;
             }
 
-            var semanticEvent = new SemanticEvent(page, rotateHistoryItem)
+            var semanticEvent = new SemanticEvent(page, rotateHistoryAction)
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_ARRAY_ROTATE,
@@ -49,15 +49,15 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent Cut(CLPPage page, PageObjectCutHistoryItem cutHistoryItem)
+        public static ISemanticEvent Cut(CLPPage page, PageObjectCutHistoryAction cutHistoryAction)
         {
             if (page == null ||
-                cutHistoryItem == null)
+                cutHistoryAction == null)
             {
                 return null;
             }
 
-            var cutArrayID = cutHistoryItem.CutPageObjectID;
+            var cutArrayID = cutHistoryAction.CutPageObjectID;
             var cutArray = page.GetPageObjectByIDOnPageOrInHistory(cutArrayID) as CLPArray;
             if (cutArray == null)
             {
@@ -65,10 +65,10 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var codedID = cutArray.GetCodedIDAtHistoryIndex(cutHistoryItem.HistoryIndex);
+            var codedID = cutArray.GetCodedIDAtHistoryIndex(cutHistoryAction.HistoryIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(cutArray.ID, codedObject, codedID);
             var eventInfoSegments = new List<string>();
-            foreach (var halvedPageObjectID in cutHistoryItem.HalvedPageObjectIDs)
+            foreach (var halvedPageObjectID in cutHistoryAction.HalvedPageObjectIDs)
             {
                 var array = page.GetPageObjectByIDOnPageOrInHistory(halvedPageObjectID) as CLPArray;
                 if (array == null)
@@ -76,13 +76,13 @@ namespace CLP.Entities
                     return null;
                 }
 
-                var arrayCodedID = array.GetCodedIDAtHistoryIndex(cutHistoryItem.HistoryIndex + 1);
+                var arrayCodedID = array.GetCodedIDAtHistoryIndex(cutHistoryAction.HistoryIndex + 1);
                 var arrayIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(array.ID, codedObject, arrayCodedID);
                 var eventInfoSegment = string.IsNullOrWhiteSpace(arrayIncrementID) ? arrayCodedID : $"{arrayCodedID} {arrayIncrementID}";
                 eventInfoSegments.Add(eventInfoSegment);
             }
 
-            var cuttingStroke = page.GetStrokeByIDOnPageOrInHistory(cutHistoryItem.CuttingStrokeID);
+            var cuttingStroke = page.GetStrokeByIDOnPageOrInHistory(cutHistoryAction.CuttingStrokeID);
             if (cuttingStroke == null)
             {
                 return null;
@@ -101,7 +101,7 @@ namespace CLP.Entities
 
             var eventInfo = string.Join(", ", eventInfoSegments);
 
-            var semanticEvent = new SemanticEvent(page, cutHistoryItem)
+            var semanticEvent = new SemanticEvent(page, cutHistoryAction)
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_ARRAY_CUT,
@@ -114,17 +114,17 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent Snap(CLPPage page, CLPArraySnapHistoryItem snapHistoryItem)
+        public static ISemanticEvent Snap(CLPPage page, CLPArraySnapHistoryAction snapHistoryAction)
         {
             if (page == null ||
-                snapHistoryItem == null)
+                snapHistoryAction == null)
             {
                 return null;
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var persistingArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryItem.PersistingArrayID) as CLPArray;
-            var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryItem.SnappedArrayID) as CLPArray;
+            var persistingArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.PersistingArrayID) as CLPArray;
+            var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.SnappedArrayID) as CLPArray;
             if (persistingArray == null ||
                 snappedArray == null)
             {
@@ -135,18 +135,18 @@ namespace CLP.Entities
             // It is the array that remains on the page, therefore it is the one
             // whose dimensions change. The SubID is the array that is snapped onto
             // the persistingArray then disappears.
-            var codedID = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex);
+            var codedID = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryAction.HistoryIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, codedID);
-            var codedSubID = snappedArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex);
+            var codedSubID = snappedArray.GetCodedIDAtHistoryIndex(snapHistoryAction.HistoryIndex);
             var incrementSubID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(snappedArray.ID, codedObject, codedSubID);
-            var eventInfo = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryItem.HistoryIndex + 1);
+            var eventInfo = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryAction.HistoryIndex + 1);
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
                 eventInfo += " " + eventInfoIncrementID;
             }
 
-            var semanticEvent = new SemanticEvent(page, snapHistoryItem)
+            var semanticEvent = new SemanticEvent(page, snapHistoryAction)
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_ARRAY_SNAP,
@@ -160,42 +160,42 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent Divide(CLPPage page, CLPArrayDivisionsChangedHistoryItem divideHistoryItem)
+        public static ISemanticEvent Divide(CLPPage page, CLPArrayDivisionsChangedHistoryAction divideHistoryAction)
         {
             if (page == null ||
-                divideHistoryItem == null)
+                divideHistoryAction == null)
             {
                 return null;
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var dividedArrayID = divideHistoryItem.ArrayID;
+            var dividedArrayID = divideHistoryAction.ArrayID;
             var dividedArray = page.GetPageObjectByIDOnPageOrInHistory(dividedArrayID) as CLPArray;
             if (dividedArray == null ||
-                divideHistoryItem.IsColumnRegionsChange == null)
+                divideHistoryAction.IsColumnRegionsChange == null)
             {
                 return null;
             }
 
-            var codedID = dividedArray.GetCodedIDAtHistoryIndex(divideHistoryItem.HistoryIndex);
+            var codedID = dividedArray.GetCodedIDAtHistoryIndex(divideHistoryAction.HistoryIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(dividedArray.ID, codedObject, codedID);
             var eventInfoSegments = new List<string>();
 
             // QUESTION: Right now, listing all regions after divide. Alternatively, can list just new regions and have SubID for the replaced region
             var index = 0;
-            foreach (var region in divideHistoryItem.NewRegions.OrderBy(r => r.Position))
+            foreach (var region in divideHistoryAction.NewRegions.OrderBy(r => r.Position))
             {
                 int regionRow;
                 int regionColumn;
-                if (divideHistoryItem.IsColumnRegionsChange.Value)
+                if (divideHistoryAction.IsColumnRegionsChange.Value)
                 {
-                    regionColumn = (int)dividedArray.GetColumnsAndRowsAtHistoryIndex(divideHistoryItem.HistoryIndex).X;
+                    regionColumn = (int)dividedArray.GetColumnsAndRowsAtHistoryIndex(divideHistoryAction.HistoryIndex).X;
                     regionRow = region.Value;
                 }
                 else
                 {
                     regionColumn = region.Value;
-                    regionRow = (int)dividedArray.GetColumnsAndRowsAtHistoryIndex(divideHistoryItem.HistoryIndex).Y;
+                    regionRow = (int)dividedArray.GetColumnsAndRowsAtHistoryIndex(divideHistoryAction.HistoryIndex).Y;
                 }
 
                 var segmentID = string.Format("{0}x{1}", regionColumn, regionRow);
@@ -209,14 +209,14 @@ namespace CLP.Entities
                 index++;
             }
 
-            if (divideHistoryItem.IsColumnRegionsChange.Value)
+            if (divideHistoryAction.IsColumnRegionsChange.Value)
             {
                 eventInfoSegments.Add(Codings.EVENT_INFO_ARRAY_DIVIDER_VERTICAL);
             }
 
             var eventInfo = string.Join(", ", eventInfoSegments);
 
-            var semanticEvent = new SemanticEvent(page, divideHistoryItem)
+            var semanticEvent = new SemanticEvent(page, divideHistoryAction)
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_ARRAY_DIVIDE,
@@ -229,14 +229,14 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent InkDivide(CLPPage page, IHistoryItem historyItem)
+        public static ISemanticEvent InkDivide(CLPPage page, IHistoryAction historyAction)
         {
             if (page == null)
             {
                 return null;
             }
 
-            var objectsChangedHistoryItem = historyItem as ObjectsOnPageChangedHistoryItem;
+            var objectsChangedHistoryItem = historyAction as ObjectsOnPageChangedHistoryAction;
             if (objectsChangedHistoryItem == null ||
                 objectsChangedHistoryItem.IsUsingPageObjects ||
                 !objectsChangedHistoryItem.IsUsingStrokes)
@@ -415,7 +415,7 @@ namespace CLP.Entities
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
-            var inkDivideEvent = new SemanticEvent(page, historyItem)
+            var inkDivideEvent = new SemanticEvent(page, historyAction)
                                  {
                                      CodedObject = codedObject,
                                      EventType = codedDescription,
@@ -452,8 +452,8 @@ namespace CLP.Entities
             var isSkipAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isSkipAdd
-                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
-                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
 
             var firstStroke = strokes.First();
             var cluster = InkSemanticEvents.GetContainingCluster(firstStroke);
@@ -519,8 +519,8 @@ namespace CLP.Entities
             var isEqnAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isEqnAdd
-                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
-                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
 
             var firstStroke = strokes.First();
             var cluster = InkSemanticEvents.GetContainingCluster(firstStroke);

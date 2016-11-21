@@ -124,7 +124,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             clpArray.IsGridOn = (bool)toggleButton.IsChecked;
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayGridToggleHistoryItem(PageObject.ParentPage,
+                                                       new CLPArrayGridToggleHistoryAction(PageObject.ParentPage,
                                                                                          App.MainWindowViewModel.CurrentUser,
                                                                                          PageObject.ID,
                                                                                          clpArray.IsGridOn));
@@ -350,9 +350,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if (batch is PageObjectResizeBatchHistoryItem)
+            if (batch is PageObjectResizeBatchHistoryAction)
             {
-                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+                (batch as PageObjectResizeBatchHistoryAction).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
             else
             {
@@ -540,7 +540,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             divisionTemplate.SnapInArray(snappingArray.Columns);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                                       new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage,
+                                                                       new DivisionTemplateArraySnappedInHistoryAction(PageObject.ParentPage,
                                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                                         pageObject.ID,
                                                                                                         snappingArray));
@@ -621,11 +621,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var squareSize = closestPersistingArray.GridSquareSize;
             ObservableCollection<CLPArrayDivision> tempDivisions;
 
-            CLPArraySnapHistoryItem arraySnapHistoryItem;
+            CLPArraySnapHistoryAction arraySnapHistoryAction;
             switch (snapType)
             {
                 case SnapType.Top:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
+                    arraySnapHistoryAction = new CLPArraySnapHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     if (!closestPersistingArray.IsColumnsObscured)
                     {
@@ -669,7 +669,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
                     break;
                 case SnapType.Bottom:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
+                    arraySnapHistoryAction = new CLPArraySnapHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     if (!closestPersistingArray.IsColumnsObscured)
                     {
@@ -708,7 +708,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.Rows += snappingArray.Rows;
                     break;
                 case SnapType.Left:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
+                    arraySnapHistoryAction = new CLPArraySnapHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     if (!closestPersistingArray.IsRowsObscured)
                     {
@@ -752,7 +752,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
                 case SnapType.Right:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
+                    arraySnapHistoryAction = new CLPArraySnapHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     if (!closestPersistingArray.IsRowsObscured)
                     {
@@ -797,7 +797,7 @@ namespace Classroom_Learning_Partner.ViewModels
             closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
             closestPersistingArray.IsDivisionBehaviorOn = true;
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, arraySnapHistoryItem);
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, arraySnapHistoryAction);
 
             //var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
             PageObject.ParentPage.PageObjects.Remove(PageObject);
@@ -866,7 +866,7 @@ namespace Classroom_Learning_Partner.ViewModels
             array.RotateArray();
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayRotateHistoryItem(array.ParentPage,
+                                                       new CLPArrayRotateHistoryAction(array.ParentPage,
                                                                                      App.MainWindowViewModel.CurrentUser,
                                                                                      array.ID,
                                                                                      initXPos,
@@ -955,7 +955,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage,
+                                                       new CLPArrayDivisionValueChangedHistoryAction(PageObject.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
                                                                                                    PageObject.ID,
                                                                                                    isHorizontalDivision,
@@ -1140,7 +1140,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryAction(PageObject.ParentPage,
                                                                                                App.MainWindowViewModel.CurrentUser,
                                                                                                PageObject.ID,
                                                                                                oldRegions,
@@ -1313,7 +1313,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newRegions = array.VerticalDivisions.ToList();
                 ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                           new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
+                                                           new CLPArrayDivisionsChangedHistoryAction(array.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
                                                                                                    array.ID,
                                                                                                    oldRegions,
@@ -1371,7 +1371,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newRegions = array.HorizontalDivisions.ToList();
                 ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                           new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
+                                                           new CLPArrayDivisionsChangedHistoryAction(array.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
                                                                                                    array.ID,
                                                                                                    oldRegions,

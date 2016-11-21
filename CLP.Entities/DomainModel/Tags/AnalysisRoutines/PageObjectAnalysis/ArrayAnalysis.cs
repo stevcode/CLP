@@ -43,13 +43,13 @@ namespace CLP.Entities
             var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
 
             //ArrayTriedWrongDividerValuesTag
-            var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryItem>>();
-            foreach (var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryItem>())
+            var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryAction>>();
+            foreach (var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryAction>())
             {
                 if (!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryItem.ArrayID))
                 {
                     divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryItem.ArrayID,
-                                                             new List<CLPArrayDivisionValueChangedHistoryItem>());
+                                                             new List<CLPArrayDivisionValueChangedHistoryAction>());
                 }
 
                 divisionValueChangedHistoryForArrays[arrayDivisionValueChangedHistoryItem.ArrayID].Add(arrayDivisionValueChangedHistoryItem);

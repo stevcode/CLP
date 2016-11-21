@@ -9,26 +9,26 @@ namespace CLP.Entities
     {
         #region Verify And Generate Methods
 
-        public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             if (page == null ||
-                objectsOnPageChangedHistoryItem == null ||
-                !objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any() ||
-                objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any() ||
-                objectsOnPageChangedHistoryItem.IsUsingStrokes)
+                objectsOnPageChangedHistoryAction == null ||
+                !objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
+                objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
+                objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
                 return null;
             }
 
-            var addedPageObjects = objectsOnPageChangedHistoryItem.PageObjectsAdded;
+            var addedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsAdded;
 
             if (addedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
                                         EventType = Codings.EVENT_OBJECT_ADD,
@@ -42,11 +42,11 @@ namespace CLP.Entities
             else
             {
                 // HACK
-                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
                                         EventType = Codings.EVENT_OBJECT_ADD,
@@ -62,25 +62,25 @@ namespace CLP.Entities
             //return null;
         }
 
-        public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryItem objectsOnPageChangedHistoryItem)
+        public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             if (page == null ||
-                objectsOnPageChangedHistoryItem == null ||
-                !objectsOnPageChangedHistoryItem.PageObjectIDsRemoved.Any() ||
-                objectsOnPageChangedHistoryItem.PageObjectIDsAdded.Any() ||
-                objectsOnPageChangedHistoryItem.IsUsingStrokes)
+                objectsOnPageChangedHistoryAction == null ||
+                !objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
+                objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
+                objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
                 return null;
             }
 
-            var removedPageObjects = objectsOnPageChangedHistoryItem.PageObjectsRemoved;
+            var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
             if (removedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
                                         EventType = Codings.EVENT_OBJECT_DELETE,
@@ -94,11 +94,11 @@ namespace CLP.Entities
             else
             {
                 // HACK
-                var historyIndex = objectsOnPageChangedHistoryItem.HistoryIndex;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryIndex;
                 var pageObject = removedPageObjects.First();
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
+                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
                                         EventType = Codings.EVENT_OBJECT_DELETE,
@@ -114,7 +114,7 @@ namespace CLP.Entities
             //return null;
         }
 
-        public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryItem> objectsMovedHistoryItems)
+        public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryItems)
         {
             if (page == null ||
                 objectsMovedHistoryItems == null ||
@@ -142,7 +142,7 @@ namespace CLP.Entities
             var pageObject = movedPageObjects.First();
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var semanticEvent = new SemanticEvent(page, objectsMovedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsMovedHistoryItems.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_OBJECT_MOVE,
@@ -163,7 +163,7 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryItem> objectsResizedHistoryItems)
+        public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryAction> objectsResizedHistoryItems)
         {
             if (page == null ||
                 objectsResizedHistoryItems == null ||
@@ -182,7 +182,7 @@ namespace CLP.Entities
             var historyIndex = objectsResizedHistoryItems.First().HistoryIndex;
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-            var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_OBJECT_RESIZE,
@@ -268,19 +268,19 @@ namespace CLP.Entities
             return CurrentIncrementIDForPageObject[compoundID].ToLetter();
         }
 
-        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
+        public static List<IPageObject> GetMovedPageObjects(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyItems)
         {
             return historyItems.SelectMany(h => h.PageObjectIDs.Keys.Select(page.GetPageObjectByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
-        public static List<Stroke> GetMovedStrokes(CLPPage page, List<ObjectsMovedBatchHistoryItem> historyItems)
+        public static List<Stroke> GetMovedStrokes(CLPPage page, List<ObjectsMovedBatchHistoryAction> historyItems)
         {
             return historyItems.SelectMany(h => h.StrokeIDs.Keys.Select(page.GetStrokeByIDOnPageOrInHistory)).Distinct().ToList();
         }
 
-        public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryItem> historyItems)
+        public static List<IPageObject> GetResizedPageObjects(CLPPage page, List<IHistoryAction> historyItems)
         {
-            return historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
+            return historyItems.OfType<PageObjectResizeBatchHistoryAction>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
         }
 
         #endregion // Utility Methods

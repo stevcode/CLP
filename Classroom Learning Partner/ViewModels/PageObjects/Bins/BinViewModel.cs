@@ -190,7 +190,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 parentPage.InkStrokes.Remove(strokesToTrash);
                 bin.ChangeAcceptedStrokes(new List<Stroke>(), strokesToTrash);
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(parentPage, new ObjectsOnPageChangedHistoryItem(parentPage, App.MainWindowViewModel.CurrentUser, new List<Stroke>(), strokesToTrash));
+                ACLPPageBaseViewModel.AddHistoryItemToPage(parentPage, new ObjectsOnPageChangedHistoryAction(parentPage, App.MainWindowViewModel.CurrentUser, new List<Stroke>(), strokesToTrash));
             }
         }
 

@@ -8,17 +8,17 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class NumberLineJumpSizesChangedHistoryItem : AHistoryItemBase
+    public class NumberLineJumpSizesChangedHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> from scratch.</summary>
-        public NumberLineJumpSizesChangedHistoryItem() { }
+        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> from scratch.</summary>
+        public NumberLineJumpSizesChangedHistoryAction() { }
 
-        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public NumberLineJumpSizesChangedHistoryItem(CLPPage parentPage,
+        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public NumberLineJumpSizesChangedHistoryAction(CLPPage parentPage,
                                                      Person owner,
                                                      string numberLineID,
                                                      List<Stroke> addedJumpStrokes,
@@ -181,7 +181,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -199,7 +199,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
                                       HistoryIndex);
                     continue;
                 }
@@ -234,7 +234,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -263,7 +263,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
                                       HistoryIndex);
                     continue;
                 }
@@ -300,7 +300,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
                                       HistoryIndex);
                     continue;
                 }
@@ -330,7 +330,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -352,14 +352,14 @@ namespace CLP.Entities
             numberLine.Height = NewHeight;
         }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
-        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return NumberLineID == id; }

@@ -25,29 +25,29 @@ namespace CLP.Entities
             ID = Guid.NewGuid().ToCompactID();
         }
 
-        public SemanticEvent(CLPPage parentPage, IHistoryItem historyItem)
+        public SemanticEvent(CLPPage parentPage, IHistoryAction historyAction)
             : this(parentPage,
-                   new List<IHistoryItem>
+                   new List<IHistoryAction>
                    {
-                       historyItem
+                       historyAction
                    },
                    new List<ISemanticEvent>()) { }
 
-        public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyItems)
             : this(parentPage, historyItems, new List<ISemanticEvent>()) { }
 
         public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
             : this(parentPage,
-                   new List<IHistoryItem>(),
+                   new List<IHistoryAction>(),
                    new List<ISemanticEvent>
                    {
                        semanticEvent
                    }) { }
 
         public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
-            : this(parentPage, new List<IHistoryItem>(), semanticEvents) { }
+            : this(parentPage, new List<IHistoryAction>(), semanticEvents) { }
 
-        public SemanticEvent(CLPPage parentPage, List<IHistoryItem> historyItems, List<ISemanticEvent> semanticEvents)
+        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyItems, List<ISemanticEvent> semanticEvents)
             : this()
         {
             ParentPage = parentPage;
@@ -61,7 +61,7 @@ namespace CLP.Entities
 
         #region ID Properties
 
-        /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />.</summary>
+        /// <summary>Unique Identifier for the <see cref="AHistoryActionBase" />.</summary>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -224,7 +224,7 @@ namespace CLP.Entities
         #region Calculated Properties
 
         /// <summary>List of the HistoryItems that make up this SemanticEvent.</summary>
-        public List<IHistoryItem> HistoryItems
+        public List<IHistoryAction> HistoryItems
         {
             get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
         }

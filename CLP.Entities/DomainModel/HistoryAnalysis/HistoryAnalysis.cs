@@ -29,7 +29,7 @@ namespace CLP.Entities
             File.AppendAllText(filePath, "*****Semantic Events/Steps*****" + "\n\n");
 
             // First Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "1"
@@ -45,7 +45,7 @@ namespace CLP.Entities
             }
 
             // Second Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "2"
@@ -61,7 +61,7 @@ namespace CLP.Entities
             }
 
             // Third Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
                                                 CodedObjectID = "3"
@@ -97,7 +97,7 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
         {
-            var historyItemBuffer = new List<IHistoryItem>();
+            var historyItemBuffer = new List<IHistoryAction>();
             var initialSemanticEvents = new List<ISemanticEvent>();
             var historyItems = page.History.CompleteOrderedHistoryItems;
 
@@ -128,18 +128,18 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        public static ISemanticEvent VerifyAndGenerateSingleItemEvent(CLPPage page, IHistoryItem historyItem)
+        public static ISemanticEvent VerifyAndGenerateSingleItemEvent(CLPPage page, IHistoryAction historyAction)
         {
-            if (historyItem == null)
+            if (historyAction == null)
             {
                 return null;
             }
 
             ISemanticEvent semanticEvent = null;
-            TypeSwitch.On(historyItem).Case<ObjectsOnPageChangedHistoryItem>(h =>
+            TypeSwitch.On(historyAction).Case<ObjectsOnPageChangedHistoryAction>(h =>
                                                                              {
                                                                                  semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
-                                                                             }).Case<PartsValueChangedHistoryItem>(h =>
+                                                                             }).Case<PartsValueChangedHistoryAction>(h =>
                                                                                                                    {
                                                                                                                        semanticEvent = new SemanticEvent(page, h)
                                                                                                                                        {
@@ -147,11 +147,11 @@ namespace CLP.Entities
                                                                                                                                            EventType = "parts",
                                                                                                                                            CodedObjectID = "CHANGED"
                                                                                                                                        };
-                                                                                                                   }).Case<CLPArrayRotateHistoryItem>(h =>
+                                                                                                                   }).Case<CLPArrayRotateHistoryAction>(h =>
                                                                                                                                                       {
                                                                                                                                                           semanticEvent =
                                                                                                                                                               ArraySemanticEvents.Rotate(page, h);
-                                                                                                                                                      }).Case<PageObjectCutHistoryItem>(h =>
+                                                                                                                                                      }).Case<PageObjectCutHistoryAction>(h =>
                                                                                                                                                                                         {
                                                                                                                                                                                             semanticEvent
                                                                                                                                                                                                 =
@@ -160,10 +160,10 @@ namespace CLP.Entities
                                                                                                                                                                                                     (page,
                                                                                                                                                                                                      h);
                                                                                                                                                                                         })
-                      .Case<CLPArraySnapHistoryItem>(h =>
+                      .Case<CLPArraySnapHistoryAction>(h =>
                                                      {
                                                          semanticEvent = ArraySemanticEvents.Snap(page, h);
-                                                     }).Case<CLPArrayDivisionsChangedHistoryItem>(h =>
+                                                     }).Case<CLPArrayDivisionsChangedHistoryAction>(h =>
                                                                                                   {
                                                                                                       semanticEvent = ArraySemanticEvents.Divide(page, h);
                                                                                                   });
@@ -171,27 +171,27 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
+        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryAction> historyItems, IHistoryAction nextHistoryAction)
         {
             if (!historyItems.Any())
             {
                 return null;
             }
 
-            if (historyItems.All(h => h is ObjectsOnPageChangedHistoryItem))
+            if (historyItems.All(h => h is ObjectsOnPageChangedHistoryAction))
             {
-                var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryItem>().ToList();
+                var objectsChangedHistoryItems = historyItems.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
                 // TODO: Edge case that recognizes multiple bins added at once.
 
                 if (objectsChangedHistoryItems.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
-                    var nextObjectsChangedHistoryItem = nextHistoryItem as ObjectsOnPageChangedHistoryItem;
+                    var nextObjectsChangedHistoryItem = nextHistoryAction as ObjectsOnPageChangedHistoryAction;
                     if (nextObjectsChangedHistoryItem != null &&
                         nextObjectsChangedHistoryItem.IsUsingStrokes &&
                         !nextObjectsChangedHistoryItem.IsUsingPageObjects)
                     {
                         // HACK: Another temp hack to recognize multiple choice box answers. Normally just return null.
-                        var h = VerifyAndGenerateSingleItemEvent(page, nextHistoryItem);
+                        var h = VerifyAndGenerateSingleItemEvent(page, nextHistoryAction);
                         if (h == null)
                         {
                             return null;
@@ -203,14 +203,14 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyItems.All(h => h is ObjectsMovedBatchHistoryItem))
+            if (historyItems.All(h => h is ObjectsMovedBatchHistoryAction))
             {
-                var objectsMovedHistoryItems = historyItems.Cast<ObjectsMovedBatchHistoryItem>().ToList();
+                var objectsMovedHistoryItems = historyItems.Cast<ObjectsMovedBatchHistoryAction>().ToList();
 
                 var firstIDSequence = objectsMovedHistoryItems.First().PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList();
                 if (objectsMovedHistoryItems.All(h => firstIDSequence.SequenceEqual(h.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList())))
                 {
-                    var nextMovedHistoryItem = nextHistoryItem as ObjectsMovedBatchHistoryItem;
+                    var nextMovedHistoryItem = nextHistoryAction as ObjectsMovedBatchHistoryAction;
                     if (nextMovedHistoryItem != null &&
                         firstIDSequence.SequenceEqual(nextMovedHistoryItem.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList()))
                     {
@@ -222,14 +222,14 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyItems.All(h => h is PageObjectResizeBatchHistoryItem))
+            if (historyItems.All(h => h is PageObjectResizeBatchHistoryAction))
             {
-                var objectsResizedHistoryItems = historyItems.Cast<PageObjectResizeBatchHistoryItem>().ToList();
+                var objectsResizedHistoryItems = historyItems.Cast<PageObjectResizeBatchHistoryAction>().ToList();
 
                 var firstID = objectsResizedHistoryItems.First().PageObjectID;
                 if (objectsResizedHistoryItems.All(h => h.PageObjectID == firstID))
                 {
-                    var nextResizedHistoryItem = nextHistoryItem as PageObjectResizeBatchHistoryItem;
+                    var nextResizedHistoryItem = nextHistoryAction as PageObjectResizeBatchHistoryAction;
                     if (nextResizedHistoryItem != null &&
                         firstID == nextResizedHistoryItem.PageObjectID)
                     {
@@ -241,14 +241,14 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryItem))
+            if (historyItems.All(h => h is NumberLineEndPointsChangedHistoryAction))
             {
-                var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryItem>().ToList();
+                var endPointsChangedHistoryItems = historyItems.Cast<NumberLineEndPointsChangedHistoryAction>().ToList();
 
                 var firstNumberLineID = endPointsChangedHistoryItems.First().NumberLineID;
                 if (endPointsChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
                 {
-                    var nextEndPointsChangedHistoryItem = nextHistoryItem as NumberLineEndPointsChangedHistoryItem;
+                    var nextEndPointsChangedHistoryItem = nextHistoryAction as NumberLineEndPointsChangedHistoryAction;
                     if (nextEndPointsChangedHistoryItem != null &&
                         nextEndPointsChangedHistoryItem.NumberLineID == firstNumberLineID)
                     {
@@ -260,15 +260,15 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyItems.All(h => h is NumberLineJumpSizesChangedHistoryItem))
+            if (historyItems.All(h => h is NumberLineJumpSizesChangedHistoryAction))
             {
-                var jumpSizesChangedHistoryItems = historyItems.Cast<NumberLineJumpSizesChangedHistoryItem>().ToList();
+                var jumpSizesChangedHistoryItems = historyItems.Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
 
                 var firstNumberLineID = jumpSizesChangedHistoryItems.First().NumberLineID;
                 var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
                 if (jumpSizesChangedHistoryItems.All(h => h.NumberLineID == firstNumberLineID))
                 {
-                    var nextJumpsChangedHistoryItem = nextHistoryItem as NumberLineJumpSizesChangedHistoryItem;
+                    var nextJumpsChangedHistoryItem = nextHistoryAction as NumberLineJumpSizesChangedHistoryAction;
                     if (nextJumpsChangedHistoryItem != null &&
                         nextJumpsChangedHistoryItem.NumberLineID == firstNumberLineID &&
                         isAdding == (nextJumpsChangedHistoryItem.JumpsAdded.Any() && !nextJumpsChangedHistoryItem.JumpsRemoved.Any()))
@@ -281,15 +281,15 @@ namespace CLP.Entities
                 }
             }
 
-            if (historyItems.All(h => h is MultipleChoiceBubbleStatusChangedHistoryItem))
+            if (historyItems.All(h => h is MultipleChoiceBubbleStatusChangedHistoryAction))
             {
-                var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryItem>().ToList();
+                var statusChangedHistoryItems = historyItems.Cast<MultipleChoiceBubbleStatusChangedHistoryAction>().ToList();
                 var currentMultipleChoiceID = statusChangedHistoryItems.First().MultipleChoiceID;
                 var currentBubbleIndex = statusChangedHistoryItems.First().ChoiceBubbleIndex;
 
                 if (statusChangedHistoryItems.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
                 {
-                    var nextStatusChangedHistoryItems = nextHistoryItem as MultipleChoiceBubbleStatusChangedHistoryItem;
+                    var nextStatusChangedHistoryItems = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
 
                     if (_currentCompressedStatus == null)
                     {
@@ -465,7 +465,7 @@ namespace CLP.Entities
         {
             InkSemanticEvents.InkClusters.Clear();
             var refinedInkEvents = InkSemanticEvents.RefineInkDivideClusters(page, semanticEvents);
-            // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
+            // HACK: This should be taken care of at the historyAction level, assessment cache needs another conversion to handle that.
             refinedInkEvents = InkSemanticEvents.RefineANS_FIClusters(page, refinedInkEvents);
 
             InkSemanticEvents.GenerateInitialInkClusters(page, refinedInkEvents);

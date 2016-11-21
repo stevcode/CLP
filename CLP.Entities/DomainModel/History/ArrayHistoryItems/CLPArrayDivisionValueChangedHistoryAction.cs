@@ -5,17 +5,17 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class CLPArrayDivisionValueChangedHistoryItem : AHistoryItemBase
+    public class CLPArrayDivisionValueChangedHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> from scratch.</summary>
-        public CLPArrayDivisionValueChangedHistoryItem() { }
+        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> from scratch.</summary>
+        public CLPArrayDivisionValueChangedHistoryAction() { }
 
-        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public CLPArrayDivisionValueChangedHistoryItem(CLPPage parentPage,
+        /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public CLPArrayDivisionValueChangedHistoryAction(CLPPage parentPage,
                                                        Person owner,
                                                        string arrayID,
                                                        bool isHorizontalDivision,
@@ -40,7 +40,7 @@ namespace CLP.Entities
             get { return 600; }
         }
 
-        /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryItem" /> modifies.</summary>
+        /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string ArrayID
         {
             get { return GetValue<string>(ArrayIDProperty); }
@@ -155,8 +155,8 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -176,7 +176,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }

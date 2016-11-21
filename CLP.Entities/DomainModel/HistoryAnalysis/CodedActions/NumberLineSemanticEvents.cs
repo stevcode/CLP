@@ -7,7 +7,7 @@ namespace CLP.Entities
     {
         #region Static Methods
 
-        public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryItem> endPointsChangedHistoryItems)
+        public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryAction> endPointsChangedHistoryItems)
         {
             if (page == null ||
                 endPointsChangedHistoryItems == null ||
@@ -33,7 +33,7 @@ namespace CLP.Entities
                 eventInfo += " " + eventInfoIncrementID;
             }
 
-            var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = Codings.EVENT_NUMBER_LINE_CHANGE,
@@ -46,7 +46,7 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryItem> jumpSizesChangedHistoryItems)
+        public static ISemanticEvent JumpSizesChange(CLPPage page, List<NumberLineJumpSizesChangedHistoryAction> jumpSizesChangedHistoryItems)
         {
             if (page == null ||
                 jumpSizesChangedHistoryItems == null ||
@@ -82,7 +82,7 @@ namespace CLP.Entities
 
             var eventInfo = NumberLine.ConsolidateJumps(allJumps);
 
-            var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
                                     EventType = isAdding ? Codings.EVENT_NUMBER_LINE_JUMP : Codings.EVENT_NUMBER_LINE_JUMP_ERASE,

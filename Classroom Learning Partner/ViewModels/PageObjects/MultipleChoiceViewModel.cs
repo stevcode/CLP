@@ -200,7 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             multipleChoice.ChangeAcceptedStrokes(addedStrokesList, removedStrokesList);
             ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoice.ParentPage,
-                                                       new MultipleChoiceBubbleStatusChangedHistoryItem(multipleChoice.ParentPage,
+                                                       new MultipleChoiceBubbleStatusChangedHistoryAction(multipleChoice.ParentPage,
                                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                                         multipleChoice,
                                                                                                         index,

@@ -5,17 +5,17 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class PartsValueChangedHistoryItem : AHistoryItemBase
+    public class PartsValueChangedHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="PartsValueChangedHistoryItem" /> from scratch.</summary>
-        public PartsValueChangedHistoryItem() { }
+        /// <summary>Initializes <see cref="PartsValueChangedHistoryAction" /> from scratch.</summary>
+        public PartsValueChangedHistoryAction() { }
 
-        /// <summary>Initializes <see cref="PartsValueChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public PartsValueChangedHistoryItem(CLPPage parentPage, Person owner, string pageObjectID, int previousValue, int newValue)
+        /// <summary>Initializes <see cref="PartsValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public PartsValueChangedHistoryAction(CLPPage parentPage, Person owner, string pageObjectID, int previousValue, int newValue)
             : base(parentPage, owner)
         {
             PageObjectID = pageObjectID;
@@ -32,7 +32,7 @@ namespace CLP.Entities
             get { return 600; }
         }
 
-        /// <summary>Unique Identifier for the <see cref="ICountable" /> this <see cref="IHistoryItem" /> modifies.</summary>
+        /// <summary>Unique Identifier for the <see cref="ICountable" /> this <see cref="IHistoryAction" /> modifies.</summary>
         public string PageObjectID
         {
             get { return GetValue<string>(PageObjectIDProperty); }
@@ -111,8 +111,8 @@ namespace CLP.Entities
             pageObject.Parts = isUndo ? PreviousValue : NewValue;
         }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -130,7 +130,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return PageObjectID == id; }

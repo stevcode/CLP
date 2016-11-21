@@ -221,10 +221,10 @@ namespace CLP.Entities
 
         #region History Methods
 
-        /// <summary>Signifies the pageObject was on the page immediately after the historyItem at the given historyIndex was performed</summary>
+        /// <summary>Signifies the pageObject was on the page immediately after the historyAction at the given historyIndex was performed</summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
-            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().ToList();
+            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var addedAtAnyPointHistoryItem = orderedObjectsOnPageChangedHistoryItems.FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
             var isPartOfHistory = addedAtAnyPointHistoryItem != null;
 
@@ -236,16 +236,16 @@ namespace CLP.Entities
             return isOnPageBefore || !isPartOfHistory;
         }
 
-        /// <summary>Gets CodedID just before the historyItem at historyIndex executes Redo(). To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>Gets CodedID just before the historyAction at historyIndex executes Redo(). To get CodedID just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual string GetCodedIDAtHistoryIndex(int historyIndex)
         {
             return CodedID;
         }
 
-        /// <summary>Gets a new Point(Width, Height) just before the historyItem at historyIndex executes Redo(). To get (Width, Height) just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>Gets a new Point(Width, Height) just before the historyAction at historyIndex executes Redo(). To get (Width, Height) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>()
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>()
                                               .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
             if (resizeHistoryItem == null ||
                 !resizeHistoryItem.StretchedDimensions.Any())
@@ -258,11 +258,11 @@ namespace CLP.Entities
             // TODO: numberline.endpointchange, remainderTiles.updated
         }
 
-        /// <summary>Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo(). To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
             var moveHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
 
             if (moveHistoryItem == null ||
                 !moveHistoryItem.TravelledPositions.Any())
@@ -277,7 +277,7 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        ///     Gets a new Point(XPos, YPos) just before the historyItem at historyIndex executes Redo(). To get (XPos, YPos) just after historyItem executes Redo(), add 1 to historyIndex. // TODO: Modify
+        ///     Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex. // TODO: Modify
         ///     these to be after current historyItems executes Redo().
         /// </summary>
         public virtual Rect GetBoundsAtHistoryIndex(int historyIndex)

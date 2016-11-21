@@ -8,17 +8,17 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ObjectsMovedBatchHistoryItem : AHistoryItemBase, IHistoryBatch
+    public class ObjectsMovedBatchHistoryAction : AHistoryActionBase, IHistoryBatch
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from scratch.</summary>
-        public ObjectsMovedBatchHistoryItem() { }
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from scratch.</summary>
+        public ObjectsMovedBatchHistoryAction() { }
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
             : base(parentPage, owner)
         {
             PageObjectIDs = new Dictionary<string, Point>
@@ -31,10 +31,10 @@ namespace CLP.Entities
                                  };
         }
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, Dictionary<string, Point> pageObjectIDs, Dictionary<string, Point> strokeIDs, Point currentPosition)
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, Dictionary<string, Point> pageObjectIDs, Dictionary<string, Point> strokeIDs, Point currentPosition)
             : base(parentPage, owner)
         {
             PageObjectIDs = pageObjectIDs;
@@ -49,8 +49,8 @@ namespace CLP.Entities
 
         #region Converter
 
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryItem(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
+        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
+        //public ObjectsMovedBatchHistoryAction(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
         //{
         //    ID = obsoleteHistoryItem.ID;
         //    OwnerID = obsoleteHistoryItem.OwnerID;
@@ -65,8 +65,8 @@ namespace CLP.Entities
         //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
         //}
 
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryItem(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
+        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
+        //public ObjectsMovedBatchHistoryAction(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
         //{
         //    ID = obsoleteHistoryItem.ID;
         //    OwnerID = obsoleteHistoryItem.OwnerID;
@@ -263,8 +263,8 @@ namespace CLP.Entities
             TravelledPositions = new List<Point>(newBatch);
         }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             if (clonedHistoryItem == null)
@@ -277,7 +277,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDs.Keys.Contains(id); }

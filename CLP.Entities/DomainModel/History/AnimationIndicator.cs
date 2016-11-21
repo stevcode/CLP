@@ -10,7 +10,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class AnimationIndicator : AHistoryItemBase
+    public class AnimationIndicator : AHistoryActionBase
     {
         #region Constructors
 
@@ -18,7 +18,7 @@ namespace CLP.Entities
         public AnimationIndicator() { }
 
         /// <summary>Initializes <see cref="AnimationIndicator" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="animationIndicatorType">The <see cref="AnimationIndicatorType" /> of animation indication this <see cref="AnimationIndicator" /> represents.</param>
         public AnimationIndicator(CLPPage parentPage, Person owner, AnimationIndicatorType animationIndicatorType)
             : base(parentPage, owner)
@@ -66,8 +66,8 @@ namespace CLP.Entities
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo) { }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that is can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that is can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;

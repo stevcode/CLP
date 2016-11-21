@@ -626,7 +626,7 @@ namespace CLP.Entities
         public int GetNumberLineSizeAtHistoryIndex(int historyIndex)
         {
             var sizeHistoryItem =
-                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>().FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryAction>().FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
             return sizeHistoryItem == null ? NumberLineSize : sizeHistoryItem.PreviousEndValue;
         }
 
@@ -793,7 +793,7 @@ namespace CLP.Entities
             OnMoving(oldX, oldY, fromHistory);
         }
 
-        /// <summary>Gets CodedID just before the historyItem at historyIndex executes Redo(). To get CodedID just after historyItem executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>Gets CodedID just before the historyAction at historyIndex executes Redo(). To get CodedID just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public override string GetCodedIDAtHistoryIndex(int historyIndex)
         {
             return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString();

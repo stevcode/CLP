@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner
             var versionIndex = Convert.ToUInt32(compositeKeys[3]);
 
             var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
-            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryAction;
             if (historyItem == null)
             {
                 Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");

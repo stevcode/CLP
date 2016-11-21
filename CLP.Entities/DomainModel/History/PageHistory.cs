@@ -110,26 +110,26 @@ namespace CLP.Entities
         /// <summary>
         /// All events available for Undo.
         /// </summary>
-        public ObservableCollection<IHistoryItem> UndoItems
+        public ObservableCollection<IHistoryAction> UndoItems
         {
-            get { return GetValue<ObservableCollection<IHistoryItem>>(UndoItemsProperty); }
+            get { return GetValue<ObservableCollection<IHistoryAction>>(UndoItemsProperty); }
             set { SetValue(UndoItemsProperty, value); }
         }
 
-        public static readonly PropertyData UndoItemsProperty = RegisterProperty("UndoItems", typeof(ObservableCollection<IHistoryItem>), () => new ObservableCollection<IHistoryItem>());
+        public static readonly PropertyData UndoItemsProperty = RegisterProperty("UndoItems", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
         /// <summary>
         /// All events available for Redo.
         /// </summary>
-        public ObservableCollection<IHistoryItem> RedoItems
+        public ObservableCollection<IHistoryAction> RedoItems
         {
-            get { return GetValue<ObservableCollection<IHistoryItem>>(RedoItemsProperty); }
+            get { return GetValue<ObservableCollection<IHistoryAction>>(RedoItemsProperty); }
             set { SetValue(RedoItemsProperty, value); }
         }
 
-        public static readonly PropertyData RedoItemsProperty = RegisterProperty("RedoItems", typeof(ObservableCollection<IHistoryItem>), () => new ObservableCollection<IHistoryItem>());
+        public static readonly PropertyData RedoItemsProperty = RegisterProperty("RedoItems", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        public List<IHistoryItem> CompleteOrderedHistoryItems
+        public List<IHistoryAction> CompleteOrderedHistoryItems
         {
             get
             {
@@ -137,7 +137,7 @@ namespace CLP.Entities
             }
         }
 
-        public List<IHistoryItem> OrderedAnimationHistoryItems
+        public List<IHistoryAction> OrderedAnimationHistoryItems
         {
             get
             {
@@ -158,7 +158,7 @@ namespace CLP.Entities
                     startIndex = 0;
                 }
 
-                var animationHistoryItems = new List<IHistoryItem>();
+                var animationHistoryItems = new List<IHistoryAction>();
                 if (stopIndex == 0) //HACK: Above Hack, but where first UndoItem is a Stop.
                 {
                     return animationHistoryItems;
@@ -456,7 +456,7 @@ namespace CLP.Entities
                 if(startIndex > -1)
                 {
                     var animationUndoItems = UndoItems.Take(startIndex + 1);
-                    UndoItems = new ObservableCollection<IHistoryItem>(animationUndoItems);
+                    UndoItems = new ObservableCollection<IHistoryAction>(animationUndoItems);
                 }
                 else
                 {
@@ -469,7 +469,7 @@ namespace CLP.Entities
                 if(stopIndex > -1)
                 {
                     var animationRedoItems = RedoItems.Take(stopIndex + 1);
-                    RedoItems = new ObservableCollection<IHistoryItem>(animationRedoItems);
+                    RedoItems = new ObservableCollection<IHistoryAction>(animationRedoItems);
                 }
                 else
                 {
@@ -601,7 +601,7 @@ namespace CLP.Entities
             return true;
         }
 
-        public bool AddHistoryItem(IHistoryItem historyItem)
+        public bool AddHistoryItem(IHistoryAction historyAction)
         {
             EndBatch();
 
@@ -612,9 +612,9 @@ namespace CLP.Entities
 
             lock(_historyLock)
             {
-                historyItem.HistoryIndex = UndoItems.Count;
-                historyItem.CachedFormattedValue = historyItem.FormattedValue;
-                UndoItems.Insert(0, historyItem);
+                historyAction.HistoryIndex = UndoItems.Count;
+                historyAction.CachedFormattedValue = historyAction.FormattedValue;
+                UndoItems.Insert(0, historyAction);
                 RedoItems.Clear();
             }
 
@@ -646,12 +646,12 @@ namespace CLP.Entities
                 return false;
             }
 
-            IHistoryItem undo = null;
+            IHistoryAction undo = null;
 
             lock(_historyLock)
             {
                 //This if-statement exists to correctly undo any batch items that are half-way through
-                //playing, in the event an animation was paused in the middle of the batch. The historyItem
+                //playing, in the event an animation was paused in the middle of the batch. The historyAction
                 //is already in the RedoItems list, so we don't need to move from the UndoItems list.
                 if(RedoItems.Any() &&
                    RedoItems.First() is IHistoryBatch)
@@ -726,12 +726,12 @@ namespace CLP.Entities
                 return false;
             }
 
-            IHistoryItem redo = null;
+            IHistoryAction redo = null;
 
             lock(_historyLock)
             {
                 //This if-statement exists to correctly redo any batch items that are half-way through
-                //playing, in the event an animation was paused in the middle of the batch. The historyItem
+                //playing, in the event an animation was paused in the middle of the batch. The historyAction
                 //is already in the UndoItems list, so we don't need to move from the RedoItems list.
                 if (UndoItems.Any() &&
                     UndoItems.First() is IHistoryBatch)

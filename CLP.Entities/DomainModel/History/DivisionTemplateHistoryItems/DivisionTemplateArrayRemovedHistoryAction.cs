@@ -5,17 +5,17 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionTemplateArrayRemovedHistoryItem : AHistoryItemBase
+    public class DivisionTemplateArrayRemovedHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionTemplateArrayRemovedHistoryItem" /> from scratch.</summary>
-        public DivisionTemplateArrayRemovedHistoryItem() { }
+        /// <summary>Initializes <see cref="DivisionTemplateArrayRemovedHistoryAction" /> from scratch.</summary>
+        public DivisionTemplateArrayRemovedHistoryAction() { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateArrayRemovedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public DivisionTemplateArrayRemovedHistoryItem(CLPPage parentPage, Person owner, string divisionTemplateID, int divisionValue)
+        /// <summary>Initializes <see cref="DivisionTemplateArrayRemovedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
+        public DivisionTemplateArrayRemovedHistoryAction(CLPPage parentPage, Person owner, string divisionTemplateID, int divisionValue)
             : base(parentPage, owner)
         {
             DivisionTemplateID = divisionTemplateID;
@@ -101,14 +101,14 @@ namespace CLP.Entities
             divisionTemplate.RemoveLastDivision();
         }
 
-        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
-        public override IHistoryItem CreatePackagedHistoryItem()
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
+        public override IHistoryAction CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = this.DeepCopy();
             return clonedHistoryItem;
         }
 
-        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }

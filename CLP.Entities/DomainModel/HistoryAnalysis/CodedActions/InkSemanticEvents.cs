@@ -48,7 +48,7 @@ namespace CLP.Entities
     {
         #region Initialization
 
-        public static ISemanticEvent ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryItem> objectsOnPageChangedHistoryItems, bool isChange = true)
+        public static ISemanticEvent ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryAction> objectsOnPageChangedHistoryItems, bool isChange = true)
         {
             if (page == null ||
                 objectsOnPageChangedHistoryItems == null ||
@@ -58,7 +58,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItems.Cast<IHistoryItem>().ToList())
+            var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItems.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = Codings.OBJECT_INK,
                                     EventType = isChange ? Codings.EVENT_INK_CHANGE : Codings.EVENT_INK_IGNORE
@@ -126,7 +126,7 @@ namespace CLP.Entities
         public static void GenerateInitialInkClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var inkEvents = semanticEvents.Where(h => h.CodedObject == Codings.OBJECT_INK && h.EventType == Codings.EVENT_INK_CHANGE).ToList();
-            var historyItems = inkEvents.SelectMany(h => h.HistoryItems).OfType<ObjectsOnPageChangedHistoryItem>().ToList();
+            var historyItems = inkEvents.SelectMany(h => h.HistoryItems).OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokesAdded = historyItems.SelectMany(i => i.StrokesAdded).ToList();
             var unclusteredStrokes = new StrokeCollection();
             var smallStrokes = strokesAdded.Where(s => s.IsInvisiblySmall()).ToList();
@@ -267,9 +267,9 @@ namespace CLP.Entities
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
                     semanticEvent.EventType == Codings.EVENT_INK_CHANGE)
                 {
-                    var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
+                    var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().OrderBy(h => h.HistoryIndex).ToList();
                     var refinedInkEvents = new List<ISemanticEvent>();
-                    var historyItemBuffer = new List<IHistoryItem>();
+                    var historyItemBuffer = new List<IHistoryAction>();
 
                     foreach (var currentHistoryItem in historyItems)
                     {
@@ -344,8 +344,8 @@ namespace CLP.Entities
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
                     semanticEvent.EventType == Codings.EVENT_INK_CHANGE)
                 {
-                    var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
-                    var historyItemBuffer = new List<IHistoryItem>();
+                    var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().OrderBy(h => h.HistoryIndex).ToList();
+                    var historyItemBuffer = new List<IHistoryAction>();
 
                     var isPreviousInkAdd = false;
                     var isPreviousStrokeOverInterpretationRegion = false;
@@ -394,7 +394,7 @@ namespace CLP.Entities
                         {
                             if (isPreviousStrokeOverInterpretationRegion)
                             {
-                                var strokes = historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => isPreviousInkAdd ? h.StrokesAdded : h.StrokesRemoved).ToList();
+                                var strokes = historyItemBuffer.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => isPreviousInkAdd ? h.StrokesAdded : h.StrokesRemoved).ToList();
                                 foreach (var stroke in strokes)
                                 {
                                     MoveStrokeToDifferentCluster(ansCluster, stroke);
@@ -479,7 +479,7 @@ namespace CLP.Entities
                     {
                         if (isPreviousStrokeOverInterpretationRegion)
                         {
-                            var strokes = historyItemBuffer.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => isPreviousInkAdd ? h.StrokesAdded : h.StrokesRemoved).ToList();
+                            var strokes = historyItemBuffer.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => isPreviousInkAdd ? h.StrokesAdded : h.StrokesRemoved).ToList();
                             foreach (var stroke in strokes)
                             {
                                 MoveStrokeToDifferentCluster(ansCluster, stroke);
@@ -754,8 +754,8 @@ namespace CLP.Entities
         {
             var processedInkEvents = new List<ISemanticEvent>();
 
-            var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().OrderBy(h => h.HistoryIndex).ToList();
-            var historyItemBuffer = new List<IHistoryItem>();
+            var historyItems = semanticEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().OrderBy(h => h.HistoryIndex).ToList();
+            var historyItemBuffer = new List<IHistoryAction>();
 
             var firstHistoryItem = historyItems.First();
             historyItemBuffer.Add(firstHistoryItem);
@@ -972,8 +972,8 @@ namespace CLP.Entities
             var isArithAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isArithAdd
-                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesAdded).ToList()
-                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.StrokesRemoved).ToList();
+                              ? inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkEvent.HistoryItems.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
 
             var firstStroke = strokes.First();
             var cluster = GetContainingCluster(firstStroke);
@@ -1039,7 +1039,7 @@ namespace CLP.Entities
 
         public static List<Stroke> GetOrderStrokesWereAddedToPage(CLPPage page, List<Stroke> strokes)
         {
-            var historyItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().Where(h => h.StrokesAdded.Any()).ToList();
+            var historyItems = page.History.CompleteOrderedHistoryItems.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.StrokesAdded.Any()).ToList();
             var strokesAdded = historyItems.SelectMany(h => h.StrokesAdded).ToList();
             var orderedStrokes = strokesAdded.Where(strokes.Contains).ToList();
 

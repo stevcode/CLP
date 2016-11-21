@@ -87,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     page.PageObjects.Add(divisionTemplate.RemainderTiles);
                     ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                               new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                                                               new RemainderTilesVisibilityToggledHistoryAction(PageObject.ParentPage,
                                                                                                               App.MainWindowViewModel.CurrentUser,
                                                                                                               divisionTemplate.ID,
                                                                                                               true));
@@ -98,7 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.PageObjects.Remove(divisionTemplate.RemainderTiles);
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                           new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                                                           new RemainderTilesVisibilityToggledHistoryAction(PageObject.ParentPage,
                                                                                                           App.MainWindowViewModel.CurrentUser,
                                                                                                           divisionTemplate.ID,
                                                                                                           false));
@@ -357,7 +357,7 @@ namespace Classroom_Learning_Partner.ViewModels
             (PageObject as DivisionTemplate).RemoveLastDivision();
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new DivisionTemplateArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
+                                                       new DivisionTemplateArrayRemovedHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
         }
 
         #endregion //Commands

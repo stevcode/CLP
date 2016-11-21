@@ -835,7 +835,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (!didInteractionOccur)
             {
-                AddHistoryItemToPage(Page, new ObjectsOnPageChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
+                AddHistoryItemToPage(Page, new ObjectsOnPageChangedHistoryAction(Page, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
             }
         }
 
@@ -1013,7 +1013,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 halvedPageObjectIDs.Add(pageObject.ID);
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
-            AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, pageObjectToCut, halvedPageObjectIDs));
+            AddHistoryItemToPage(Page, new PageObjectCutHistoryAction(Page, App.MainWindowViewModel.CurrentUser, stroke, pageObjectToCut, halvedPageObjectIDs));
 
             if (halvedPageObjects.Any())
             {
@@ -1146,24 +1146,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static readonly TaskQueue TaskQueue = new TaskQueue();
 
-        public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
+        public static void AddHistoryItemToPage(CLPPage page, IHistoryAction historyAction, bool isBatch = false)
         {
             if (!isBatch)
             {
-                page.History.AddHistoryItem(historyItem);
+                page.History.AddHistoryItem(historyAction);
             }
 
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
             //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
             //    App.Network.ProjectorProxy == null ||
-            //    !(historyItem is ObjectsOnPageChangedHistoryItem))
+            //    !(historyAction is ObjectsOnPageChangedHistoryAction))
             //{
             //    return;
             //}
 
             TaskQueue.Enqueue(async () =>
                                {
-                                   var historyItemCopy = historyItem.CreatePackagedHistoryItem();
+                                   var historyItemCopy = historyAction.CreatePackagedHistoryItem();
                                    if (historyItemCopy == null)
                                    {
                                        return;
@@ -1192,7 +1192,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                    //st.Restart();
                                    //var unzippedHistoryItem = zippedHistoryItem.DecompressFromGZip();
-                                   //var uhistoryItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+                                   //var uhistoryItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryAction;
                                    //st.Stop();
                                    //var unzipTime = st.ElapsedMilliseconds;
 
@@ -1213,7 +1213,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    //}
                                    //catch (Exception)
                                    //{
-                                   //    Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+                                   //    Logger.Instance.WriteToLog("Failed to send historyAction to Projector");
                                    //}
 
                                    //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
@@ -1271,7 +1271,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (addToHistory)
             {
                 AddHistoryItemToPage(page,
-                                     new ObjectsOnPageChangedHistoryItem(page,
+                                     new ObjectsOnPageChangedHistoryAction(page,
                                                                          App.MainWindowViewModel.CurrentUser,
                                                                          new List<IPageObject>
                                                                          {
@@ -1302,7 +1302,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (addToHistory)
             {
-                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectsAdded, new List<IPageObject>()));
+                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryAction(page, App.MainWindowViewModel.CurrentUser, pageObjectsAdded, new List<IPageObject>()));
             }
 
             foreach (var pageObject in pageObjectsAdded)
@@ -1327,7 +1327,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (addToHistory)
             {
                 AddHistoryItemToPage(page,
-                                     new ObjectsOnPageChangedHistoryItem(page,
+                                     new ObjectsOnPageChangedHistoryAction(page,
                                                                          App.MainWindowViewModel.CurrentUser,
                                                                          new List<IPageObject>(),
                                                                          new List<IPageObject>
@@ -1361,7 +1361,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (addToHistory)
             {
-                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryItem(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>(), pageObjects));
+                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryAction(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>(), pageObjects));
             }
 
             foreach (var pageObject in pageObjects)

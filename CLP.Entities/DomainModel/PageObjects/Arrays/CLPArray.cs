@@ -186,7 +186,7 @@ namespace CLP.Entities
             var columns = Columns;
             foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryIndex >= historyIndex).Reverse())
             {
-                TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryItem>(h =>
+                TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryAction>(h =>
                                                                            {
                                                                                if (h.ArrayID == ID)
                                                                                {
@@ -194,7 +194,7 @@ namespace CLP.Entities
                                                                                    columns = h.OldColumns;
                                                                                }
                                                                            })
-                                          .Case<CLPArraySnapHistoryItem>(h =>
+                                          .Case<CLPArraySnapHistoryAction>(h =>
                                                                          {
                                                                              if (h.PersistingArrayID == ID)
                                                                              {
@@ -469,8 +469,8 @@ namespace CLP.Entities
 
         public override Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
             if (resizeHistoryItem == null &&
                 rotateHistoryItem == null)
             {
@@ -497,8 +497,8 @@ namespace CLP.Entities
 
         public override Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryItem>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
-            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryIndex >= historyIndex);
+            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
             if (rotateHistoryItem == null &&
                 moveHistoryItem == null)
             {
