@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -26,11 +27,11 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsOnPageChangedHistoryAction(CLPPage parentPage,
-                                               Person owner,
-                                               IEnumerable<IPageObject> pageObjectsAdded,
-                                               IEnumerable<IPageObject> pageObjectsRemoved,
-                                               IEnumerable<Stroke> strokesAdded,
-                                               IEnumerable<Stroke> strokesRemoved)
+                                                 Person owner,
+                                                 IEnumerable<IPageObject> pageObjectsAdded,
+                                                 IEnumerable<IPageObject> pageObjectsRemoved,
+                                                 IEnumerable<Stroke> strokesAdded,
+                                                 IEnumerable<Stroke> strokesRemoved)
             : base(parentPage, owner)
         {
             PageObjectIDsAdded = pageObjectsAdded.Select(p => p.ID).ToList();
@@ -48,48 +49,109 @@ namespace CLP.Entities
             }
         }
 
-        #endregion //Constructors
-
-        #region Obsolete Constructors
-
-        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
-        //public ObjectsOnPageChangedHistoryAction(StrokesChangedHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    PageObjectIDsAdded = new List<string>();
-        //    StrokeIDsAdded = obsoleteHistoryItem.StrokeIDsAdded;
-        //    StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
-        //}
-
-        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
-        //public ObjectsOnPageChangedHistoryAction(PageObjectsAddedHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs;
-        //    StrokeIDsAdded = new List<string>();
-        //}
-
-        ///// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
-        //public ObjectsOnPageChangedHistoryAction(PageObjectsRemovedHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
-        //    PageObjectIDsAdded = new List<string>();
-        //    StrokeIDsAdded = new List<string>();
-        //}
-
-        #endregion //Obsolete Constructors
+        #endregion // Constructors
 
         #region Properties
+
+        #region PageObjects
+
+        /// <summary>Unique IDs of the pageObjects added.</summary>
+        public List<string> PageObjectIDsAdded
+        {
+            get { return GetValue<List<string>>(PageObjectIDsAddedProperty); }
+            set { SetValue(PageObjectIDsAddedProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectIDsAddedProperty = RegisterProperty("PageObjectIDsAdded", typeof(List<string>), () => new List<string>());
+
+        /// <summary>Unique IDs of the pageObjects removed.</summary>
+        public List<string> PageObjectIDsRemoved
+        {
+            get { return GetValue<List<string>>(PageObjectIDsRemovedProperty); }
+            set { SetValue(PageObjectIDsRemovedProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof(List<string>), () => new List<string>());
+
+        /// <summary>List of the pageObjects that were removed from the page as a result of the UndoAction(). Cleared on Redo().</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public List<IPageObject> PackagedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(PackagedPageObjectsProperty); }
+            set { SetValue(PackagedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData PackagedPageObjectsProperty = RegisterProperty("PackagedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
+
+        #endregion // PageObjects
+
+        #region Strokes
+
+        /// <summary>Unique IDs of the strokes added.</summary>
+        public List<string> StrokeIDsAdded
+        {
+            get { return GetValue<List<string>>(StrokeIDsAddedProperty); }
+            set { SetValue(StrokeIDsAddedProperty, value); }
+        }
+
+        public static readonly PropertyData StrokeIDsAddedProperty = RegisterProperty("StrokeIDsAdded", typeof(List<string>), () => new List<string>());
+
+        /// <summary>Unique IDs of the strokes removed.</summary>
+        public List<string> StrokeIDsRemoved
+        {
+            get { return GetValue<List<string>>(StrokeIDsRemovedProperty); }
+            set { SetValue(StrokeIDsRemovedProperty, value); }
+        }
+
+        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof(List<string>), () => new List<string>());
+
+        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
+        [XmlIgnore]
+        [JsonIgnore]
+        [ExcludeFromSerialization]
+        public List<StrokeDTO> PackagedSerializedStrokes
+        {
+            get { return GetValue<List<StrokeDTO>>(PackagedSerializedStrokesProperty); }
+            set { SetValue(PackagedSerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData PackagedSerializedStrokesProperty = RegisterProperty("PackagedSerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
+
+        #endregion // Strokes
+
+        #region Calculated Properties
+
+        public bool IsUsingPageObjects => PageObjectIDsAdded.Any() || PageObjectIDsRemoved.Any();
+
+        public bool IsUsingStrokes => StrokeIDsAdded.Any() || StrokeIDsRemoved.Any();
+
+        public List<IPageObject> PageObjectsAdded
+        {
+            get { return PageObjectIDsAdded.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList(); }
+        }
+
+        public List<IPageObject> PageObjectsRemoved
+        {
+            get { return PageObjectIDsRemoved.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList(); }
+        }
+
+        public List<Stroke> StrokesAdded
+        {
+            get { return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
+        }
+
+        public List<Stroke> StrokesRemoved
+        {
+            get { return StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
+        }
+
+        #endregion // Calculated Properties
+
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
 
         public override int AnimationDelay
         {
@@ -109,140 +171,27 @@ namespace CLP.Entities
             }
         }
 
-        #region PageObjects
-
-        /// <summary>Unique IDs of the pageObjects added.</summary>
-        public List<string> PageObjectIDsAdded
-        {
-            get { return GetValue<List<string>>(PageObjectIDsAddedProperty); }
-            set { SetValue(PageObjectIDsAddedProperty, value); }
-        }
-
-        public static readonly PropertyData PageObjectIDsAddedProperty = RegisterProperty("PageObjectIDsAdded", typeof (List<string>), () => new List<string>());
-
-        /// <summary>Unique IDs of the pageObjects removed.</summary>
-        public List<string> PageObjectIDsRemoved
-        {
-            get { return GetValue<List<string>>(PageObjectIDsRemovedProperty); }
-            set { SetValue(PageObjectIDsRemovedProperty, value); }
-        }
-
-        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof (List<string>), () => new List<string>());
-
-        /// <summary>List of the pageObjects that were removed from the page as a result of the UndoAction(). Cleared on Redo().</summary>
-        [XmlIgnore]
-        public List<IPageObject> PackagedPageObjects
-        {
-            get { return GetValue<List<IPageObject>>(PackagedPageObjectsProperty); }
-            set { SetValue(PackagedPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData PackagedPageObjectsProperty = RegisterProperty("PackagedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
-
-        #endregion //PageObjects
-
-        #region Strokes
-
-        /// <summary>Unique IDs of the strokes added.</summary>
-        public List<string> StrokeIDsAdded
-        {
-            get { return GetValue<List<string>>(StrokeIDsAddedProperty); }
-            set { SetValue(StrokeIDsAddedProperty, value); }
-        }
-
-        public static readonly PropertyData StrokeIDsAddedProperty = RegisterProperty("StrokeIDsAdded", typeof (List<string>), () => new List<string>());
-
-        /// <summary>Unique IDs of the strokes removed.</summary>
-        public List<string> StrokeIDsRemoved
-        {
-            get { return GetValue<List<string>>(StrokeIDsRemovedProperty); }
-            set { SetValue(StrokeIDsRemovedProperty, value); }
-        }
-
-        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof (List<string>), () => new List<string>());
-
-        /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
-        [XmlIgnore]
-        public List<StrokeDTO> PackagedSerializedStrokes
-        {
-            get { return GetValue<List<StrokeDTO>>(PackagedSerializedStrokesProperty); }
-            set { SetValue(PackagedSerializedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData PackagedSerializedStrokesProperty = RegisterProperty("PackagedSerializedStrokes", typeof (List<StrokeDTO>), () => new List<StrokeDTO>());
-
-        #endregion //Strokes
-
-        #region Calculated Properties
-
-        public bool IsUsingPageObjects
-        {
-            get { return PageObjectIDsAdded.Any() || PageObjectIDsRemoved.Any(); }
-        }
-
-        public bool IsUsingStrokes
-        {
-            get { return StrokeIDsAdded.Any() || StrokeIDsRemoved.Any(); }
-        }
-
-        #endregion //Calculated Properties
-
-        public override string FormattedValue
+        protected override string FormattedReport
         {
             get
             {
                 var pageObjectsAdded = PageObjectsAdded;
                 var pageObjectsRemoved = PageObjectsRemoved;
 
-                var objectsAdded = pageObjectsAdded.Any() ? string.Format(" Added {0}.", string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))) : string.Empty;
-                var objectsRemoved = pageObjectsRemoved.Any() ? string.Format(" Removed {0}.", string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))) : string.Empty;
+                var objectsAdded = pageObjectsAdded.Any() ? $" Added {string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))}." : string.Empty;
+                var objectsRemoved = pageObjectsRemoved.Any() ? $" Removed {string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))}." : string.Empty;
 
-                var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? " Added 1 stroke." : string.Format(" Added {0} strokes.", StrokeIDsAdded.Count) : string.Empty;
-                var strokesRemoved = StrokeIDsRemoved.Any()
-                                         ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : string.Format(" Removed {0} strokes.", StrokeIDsRemoved.Count)
-                                         : string.Empty;
+                var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? " Added 1 stroke." : $" Added {StrokeIDsAdded.Count} strokes." : string.Empty;
+                var strokesRemoved = StrokeIDsRemoved.Any() ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : $" Removed {StrokeIDsRemoved.Count} strokes." : string.Empty;
 
-                return string.Format("Index #{0},{1}{2}{3}{4}", HistoryActionIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
+                return $"{objectsAdded}{objectsRemoved}{strokesAdded}{strokesRemoved}";
             }
         }
 
-        public List<IPageObject> PageObjectsAdded
+        protected override void ConversionUndoAction()
         {
-            get
-            {
-                return PageObjectIDsAdded.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
-            }
+            UndoAction(false);
         }
-
-        public List<IPageObject> PageObjectsRemoved
-        {
-            get
-            {
-                return PageObjectIDsRemoved.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
-            }
-        }
-
-        public List<Stroke> StrokesAdded
-        {
-            get
-            {
-                return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
-            }
-        }
-
-        public List<Stroke> StrokesRemoved
-        {
-            get
-            {
-                return StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
-            }
-        }
-
-        #endregion //Properties
-
-        #region Methods
-
-        protected override void ConversionUndoAction() { UndoAction(false); }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -312,9 +261,7 @@ namespace CLP.Entities
             foreach (var stroke in removedStrokes)
             {
                 var validStrokeAccepters =
-                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
-                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
-                              .ToList();
+                    ParentPage.PageObjects.OfType<IStrokeAccepter>().Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke)).ToList();
 
                 IStrokeAccepter closestPageObject = null;
                 foreach (var pageObject in validStrokeAccepters)
@@ -412,9 +359,7 @@ namespace CLP.Entities
             foreach (var stroke in addedStrokes)
             {
                 var validStrokeAccepters =
-                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
-                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
-                              .ToList();
+                    ParentPage.PageObjects.OfType<IStrokeAccepter>().Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke)).ToList();
 
                 IStrokeAccepter closestPageObject = null;
                 foreach (var pageObject in validStrokeAccepters)
@@ -464,10 +409,16 @@ namespace CLP.Entities
             }
         }
 
-        public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDsRemoved.Contains(id) || PageObjectIDsAdded.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return PageObjectIDsRemoved.Contains(id) || PageObjectIDsAdded.Contains(id);
+        }
 
-        public override bool IsUsingTrashedInkStroke(string id) { return StrokeIDsRemoved.Contains(id) || StrokeIDsAdded.Contains(id); }
+        public override bool IsUsingTrashedInkStroke(string id)
+        {
+            return StrokeIDsRemoved.Contains(id) || StrokeIDsAdded.Contains(id);
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

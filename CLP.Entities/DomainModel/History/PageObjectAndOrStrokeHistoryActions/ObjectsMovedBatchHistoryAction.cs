@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using Catel.Data;
 
@@ -45,7 +44,7 @@ namespace CLP.Entities
                                  };
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Converter
 
@@ -81,7 +80,7 @@ namespace CLP.Entities
         //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
         //}
 
-        #endregion //Converter
+        #endregion // Converter
 
         #region Properties
 
@@ -92,7 +91,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof (Dictionary<string, Point>), () => new Dictionary<string, Point>());
+        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(Dictionary<string, Point>), () => new Dictionary<string, Point>());
 
         /// <summary>List of the Stroke's IDs that were moved and their x/y offset from the TravelledPositions Point.</summary>
         public Dictionary<string, Point> StrokeIDs
@@ -101,7 +100,7 @@ namespace CLP.Entities
             set { SetValue(StrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof (Dictionary<string, Point>), () => new Dictionary<string, Point>());
+        public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof(Dictionary<string, Point>), () => new Dictionary<string, Point>());
 
         /// <summary>The various points the pageObject has moved through during a single dragging operation.</summary>
         public List<Point> TravelledPositions
@@ -110,40 +109,33 @@ namespace CLP.Entities
             set { SetValue(TravelledPositionsProperty, value); }
         }
 
-        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof (List<Point>));
+        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof(List<Point>));
 
-        public int NumberOfBatchTicks
+        #endregion // Properties
+
+        #region Methods
+
+        public void AddPositionPointToBatch(Point currentPosition)
         {
-            get { return TravelledPositions.Count - 1; }
+            TravelledPositions.Add(currentPosition);
         }
 
-        /// <summary>Location within the Batch.</summary>
-        public int CurrentBatchTickIndex
-        {
-            get { return GetValue<int>(CurrentBatchTickIndexProperty); }
-            set { SetValue(CurrentBatchTickIndexProperty, value); }
-        }
+        #endregion // Methods
 
-        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof (int), 0);
+        #region AHistoryActionBase Overrides
 
-        public override string FormattedValue
+        protected override string FormattedReport
         {
             get
             {
                 var pageObjectsMoved = PageObjectIDs.Keys.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
 
-                var objectsMoved = pageObjectsMoved.Any() ? string.Format(" Moved {0}.", string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))) : string.Empty;
-                var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : string.Format(" Moved {0} strokes.", StrokeIDs.Keys.Count) : string.Empty;
+                var objectsMoved = pageObjectsMoved.Any() ? $" Moved {string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))}." : string.Empty;
+                var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : $" Moved {StrokeIDs.Keys.Count} strokes." : string.Empty;
 
-                return string.Format("Index #{0},{1}{2}", HistoryActionIndex, objectsMoved, strokesMoved);
+                return $"{objectsMoved}{strokesMoved}";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
-
-        public void AddPositionPointToBatch(Point currentPosition) { TravelledPositions.Add(currentPosition); }
 
         protected override void ConversionUndoAction()
         {
@@ -231,14 +223,13 @@ namespace CLP.Entities
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
-                if (isAnimationRedo &&
-                    CurrentBatchTickIndex < TravelledPositions.Count)
+                if (isAnimationRedo && CurrentBatchTickIndex < TravelledPositions.Count)
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
                     pageObject.XPosition = travelledPosition.X + pageObjectID.Value.X;
                     pageObject.YPosition = travelledPosition.Y + pageObjectID.Value.Y;
-        
+
                     CurrentBatchTickIndex++;
                 }
                 else if (TravelledPositions.Any())
@@ -251,16 +242,6 @@ namespace CLP.Entities
                 }
                 pageObject.OnMoved(initialX, initialY, true);
             }
-        }
-
-        public void ClearBatchAfterCurrentIndex()
-        {
-            var newBatch = new List<Point>();
-            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
-            {
-                newBatch.Add(TravelledPositions[i]);
-            }
-            TravelledPositions = new List<Point>(newBatch);
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
@@ -280,10 +261,41 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDs.Keys.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return PageObjectIDs.Keys.Contains(id);
+        }
 
-        public override bool IsUsingTrashedInkStroke(string id) { return StrokeIDs.Keys.Contains(id); }
+        public override bool IsUsingTrashedInkStroke(string id)
+        {
+            return StrokeIDs.Keys.Contains(id);
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
+
+        #region IHistoryBatch Implementation
+
+        public int NumberOfBatchTicks => TravelledPositions.Count - 1;
+
+        /// <summary>Location within the Batch.</summary>
+        public int CurrentBatchTickIndex
+        {
+            get { return GetValue<int>(CurrentBatchTickIndexProperty); }
+            set { SetValue(CurrentBatchTickIndexProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
+
+        public void ClearBatchAfterCurrentIndex()
+        {
+            var newBatch = new List<Point>();
+            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
+            {
+                newBatch.Add(TravelledPositions[i]);
+            }
+            TravelledPositions = new List<Point>(newBatch);
+        }
+
+        #endregion // IHistoryBatch Implementation
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
 
@@ -19,17 +18,17 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public NumberLineJumpSizesChangedHistoryAction(CLPPage parentPage,
-                                                     Person owner,
-                                                     string numberLineID,
-                                                     List<Stroke> addedJumpStrokes,
-                                                     List<Stroke> removedJumpStrokes,
-                                                     List<NumberLineJumpSize> jumpsAdded,
-                                                     List<NumberLineJumpSize> jumpsRemoved,
-                                                     double previousHeight,
-                                                     double previousYPosition,
-                                                     double newHeight,
-                                                     double newYPosition,
-                                                     bool isConversionCreation = false)
+                                                       Person owner,
+                                                       string numberLineID,
+                                                       List<Stroke> addedJumpStrokes,
+                                                       List<Stroke> removedJumpStrokes,
+                                                       List<NumberLineJumpSize> jumpsAdded,
+                                                       List<NumberLineJumpSize> jumpsRemoved,
+                                                       double previousHeight,
+                                                       double previousYPosition,
+                                                       double newHeight,
+                                                       double newYPosition,
+                                                       bool isConversionCreation = false)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
@@ -51,14 +50,9 @@ namespace CLP.Entities
             }
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>ID of the numberline whose values have changed.</summary>
         public string NumberLineID
@@ -67,7 +61,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineIDProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof (string));
+        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string));
 
         /// <summary>IDs of the Strokes used to create a Jump.</summary>
         public List<string> AddedJumpStrokeIDs
@@ -76,7 +70,7 @@ namespace CLP.Entities
             set { SetValue(AddedJumpStrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof (List<string>));
+        public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof(List<string>));
 
         /// <summary>Jumps added by the strokes in AddedJumpStrokeIDs</summary>
         public List<NumberLineJumpSize> JumpsAdded
@@ -85,7 +79,7 @@ namespace CLP.Entities
             set { SetValue(JumpsAddedProperty, value); }
         }
 
-        public static readonly PropertyData JumpsAddedProperty = RegisterProperty("JumpsAdded", typeof (List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
+        public static readonly PropertyData JumpsAddedProperty = RegisterProperty("JumpsAdded", typeof(List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
 
         /// <summary>IDs of the Strokes used in a removed Jump.</summary>
         public List<string> RemovedJumpStrokeIDs
@@ -94,7 +88,7 @@ namespace CLP.Entities
             set { SetValue(RemovedJumpStrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData RemovedJumpStrokeIDsProperty = RegisterProperty("RemovedJumpStrokeIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData RemovedJumpStrokeIDsProperty = RegisterProperty("RemovedJumpStrokeIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>Jumps removed by the strokes in RemovedJumpStrokeIDs</summary>
         public List<NumberLineJumpSize> JumpsRemoved
@@ -103,8 +97,7 @@ namespace CLP.Entities
             set { SetValue(JumpsRemovedProperty, value); }
         }
 
-        public static readonly PropertyData JumpsRemovedProperty = RegisterProperty("JumpsRemoved", typeof (List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
-        
+        public static readonly PropertyData JumpsRemovedProperty = RegisterProperty("JumpsRemoved", typeof(List<NumberLineJumpSize>), () => new List<NumberLineJumpSize>());
 
         /// <summary>Previous Height of the number line.</summary>
         public double PreviousHeight
@@ -113,7 +106,7 @@ namespace CLP.Entities
             set { SetValue(PreviousHeightProperty, value); }
         }
 
-        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof (double));
+        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof(double));
 
         /// <summary>Previous YPosition of the number line.</summary>
         public double PreviousYPosition
@@ -122,7 +115,7 @@ namespace CLP.Entities
             set { SetValue(PreviousYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof (double));
+        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof(double));
 
         /// <summary>New Height of the number line.</summary>
         public double NewHeight
@@ -131,7 +124,7 @@ namespace CLP.Entities
             set { SetValue(NewHeightProperty, value); }
         }
 
-        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof (double));
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double));
 
         /// <summary>New YPositiong of the number line.</summary>
         public double NewYPosition
@@ -140,33 +133,32 @@ namespace CLP.Entities
             set { SetValue(NewYPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof (double));
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
                 if (numberLine == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryActionIndex);
+                    return "[ERROR] Number Line not found on page or in history.";
                 }
 
-                var removedString = !RemovedJumpStrokeIDs.Any() ? string.Empty : string.Format("Removed {0} jump(s)", RemovedJumpStrokeIDs.Count);
+                var removedString = !RemovedJumpStrokeIDs.Any() ? string.Empty : $"Removed {RemovedJumpStrokeIDs.Count} jump(s)";
                 var addedString = !AddedJumpStrokeIDs.Any()
                                       ? string.Empty
-                                      : !RemovedJumpStrokeIDs.Any()
-                                            ? string.Format("Added {0} jump(s)", AddedJumpStrokeIDs.Count)
-                                            : string.Format(" and added {0} jump(s)", AddedJumpStrokeIDs.Count);
+                                      : !RemovedJumpStrokeIDs.Any() ? $"Added {AddedJumpStrokeIDs.Count} jump(s)" : $" and added {AddedJumpStrokeIDs.Count} jump(s)";
 
-                var formattedValue = string.Format("Index #{0}, {1}{2} on Number Line [{3}].", HistoryActionIndex, removedString, addedString, numberLine.NumberLineSize);
-                return formattedValue;
+                return $"{removedString}{addedString} on Number Line [{numberLine.NumberLineSize}].";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -199,8 +191,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryActionIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -263,8 +254,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryActionIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -300,8 +290,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.",
-                                      HistoryActionIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -362,10 +351,16 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return NumberLineID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return NumberLineID == id;
+        }
 
-        public override bool IsUsingTrashedInkStroke(string id) { return AddedJumpStrokeIDs.Contains(id) || RemovedJumpStrokeIDs.Contains(id); }
+        public override bool IsUsingTrashedInkStroke(string id)
+        {
+            return AddedJumpStrokeIDs.Contains(id) || RemovedJumpStrokeIDs.Contains(id);
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }

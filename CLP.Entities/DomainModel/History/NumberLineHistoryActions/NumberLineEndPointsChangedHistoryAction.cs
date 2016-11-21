@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -16,14 +15,14 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public NumberLineEndPointsChangedHistoryAction(CLPPage parentPage,
-                                                     Person owner,
-                                                     string numberLineID,
-                                                     int previousStartValue,
-                                                     int newStartValue,
-                                                     int previousEndValue,
-                                                     int newEndValue,
-                                                     double preStretchedWidth,
-                                                     double newStretchedWidth)
+                                                       Person owner,
+                                                       string numberLineID,
+                                                       int previousStartValue,
+                                                       int newStartValue,
+                                                       int previousEndValue,
+                                                       int newEndValue,
+                                                       double preStretchedWidth,
+                                                       double newStretchedWidth)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
@@ -35,14 +34,9 @@ namespace CLP.Entities
             NewStretchedWidth = newStretchedWidth;
         }
 
-        #endregion //Constructors
+        #endregion // Constructors
 
         #region Properties
-
-        public override int AnimationDelay
-        {
-            get { return 600; }
-        }
 
         /// <summary>ID of the numberline whose values have changed.</summary>
         public string NumberLineID
@@ -51,7 +45,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineIDProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof (string));
+        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string));
 
         /// <summary>Previous start value of the number line.</summary>
         public int PreviousStartValue
@@ -60,7 +54,7 @@ namespace CLP.Entities
             set { SetValue(PreviousStartValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousStartValueProperty = RegisterProperty("PreviousStartValue", typeof (int));
+        public static readonly PropertyData PreviousStartValueProperty = RegisterProperty("PreviousStartValue", typeof(int));
 
         /// <summary>New start value of the number line.</summary>
         public int NewStartValue
@@ -69,7 +63,7 @@ namespace CLP.Entities
             set { SetValue(NewStartValueProperty, value); }
         }
 
-        public static readonly PropertyData NewStartValueProperty = RegisterProperty("NewStartValue", typeof (int));
+        public static readonly PropertyData NewStartValueProperty = RegisterProperty("NewStartValue", typeof(int));
 
         /// <summary>Previous end value of the number line.</summary>
         public int PreviousEndValue
@@ -78,7 +72,7 @@ namespace CLP.Entities
             set { SetValue(PreviousEndValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof (int));
+        public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof(int));
 
         /// <summary>New end value of the number line.</summary>
         public int NewEndValue
@@ -87,7 +81,7 @@ namespace CLP.Entities
             set { SetValue(NewEndValueProperty, value); }
         }
 
-        public static readonly PropertyData NewEndValueProperty = RegisterProperty("NewEndValue", typeof (int));
+        public static readonly PropertyData NewEndValueProperty = RegisterProperty("NewEndValue", typeof(int));
 
         /// <summary>Width before a resize that involves stretching captured ink strokes.</summary>
         public double PreStretchedWidth
@@ -96,7 +90,7 @@ namespace CLP.Entities
             set { SetValue(PreStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof (double));
+        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof(double));
 
         /// <summary>Width after a resize that involves stretching captured ink strokes.</summary>
         public double NewStretchedWidth
@@ -105,25 +99,41 @@ namespace CLP.Entities
             set { SetValue(NewStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof (double));
+        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double));
 
-        public override string FormattedValue
+        #endregion // Properties
+
+        #region Methods
+
+        private void StretchInk(NumberLine numberLine, double newWidth)
+        {
+            if (Math.Abs(NewStretchedWidth - PreStretchedWidth) < 0.0001)
+            {
+                return;
+            }
+
+            var oldWidth = numberLine.Width;
+            var oldHeight = numberLine.Height;
+            numberLine.Width = newWidth;
+            numberLine.OnResized(oldWidth, oldHeight, true);
+        }
+
+        #endregion // Methods
+
+        #region AHistoryActionBase Overrides
+
+        public override int AnimationDelay => 600;
+
+        protected override string FormattedReport
         {
             get
             {
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
                 return numberLine == null
-                           ? string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryActionIndex)
-                           : string.Format("Index #{0}, Changed Number Line end point from {1} to {2}.",
-                                           HistoryActionIndex,
-                                           PreviousEndValue - PreviousStartValue,
-                                           numberLine.NumberLineSize);
+                           ? "[ERROR] Number Line not found on page or in history."
+                           : $"Changed Number Line end point from {PreviousEndValue - PreviousStartValue} to {numberLine.NumberLineSize}.";
             }
         }
-
-        #endregion //Properties
-
-        #region Methods
 
         protected override void ConversionUndoAction()
         {
@@ -172,19 +182,6 @@ namespace CLP.Entities
             StretchInk(numberLine, NewStretchedWidth);
         }
 
-        private void StretchInk(NumberLine numberLine, double newWidth)
-        {
-            if (Math.Abs(NewStretchedWidth - PreStretchedWidth) < 0.0001)
-            {
-                return;
-            }
-
-            var oldWidth = numberLine.Width;
-            var oldHeight = numberLine.Height;
-            numberLine.Width = newWidth;
-            numberLine.OnResized(oldWidth, oldHeight, true);
-        }
-
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryAction CreatePackagedHistoryAction()
         {
@@ -207,8 +204,11 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction() { }
 
-        public override bool IsUsingTrashedPageObject(string id) { return NumberLineID == id; }
+        public override bool IsUsingTrashedPageObject(string id)
+        {
+            return NumberLineID == id;
+        }
 
-        #endregion //Methods
+        #endregion // AHistoryActionBase Overrides
     }
 }
