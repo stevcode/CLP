@@ -148,11 +148,11 @@
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\SemanticEvent.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArrayCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArraySemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\ISemanticEvent.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkSemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryAnalysis.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />

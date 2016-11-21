@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace CLP.Entities
 {
-    public static class NumberLineCodedActions
+    public static class NumberLineSemanticEvents
     {
         #region Static Methods
 
@@ -25,12 +25,12 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
             var codedID = endPointsChangedHistoryItems.First().PreviousEndValue.ToString();
-            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
-            var codedActionID = endPointsChangedHistoryItems.Last().NewEndValue.ToString();
-            var codedActionIDIncrementID = ObjectCodedActions.SetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedActionID);
-            if (!string.IsNullOrWhiteSpace(codedActionIDIncrementID))
+            var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
+            var eventInfo = endPointsChangedHistoryItems.Last().NewEndValue.ToString();
+            var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, eventInfo);
+            if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
-                codedActionID += " " + codedActionIDIncrementID;
+                eventInfo += " " + eventInfoIncrementID;
             }
 
             var semanticEvent = new SemanticEvent(page, endPointsChangedHistoryItems.Cast<IHistoryItem>().ToList())
@@ -39,7 +39,7 @@ namespace CLP.Entities
                                     EventType = Codings.EVENT_NUMBER_LINE_CHANGE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    EventInformation = codedActionID,
+                                    EventInformation = eventInfo,
                                     ReferencePageObjectID = numberLineID
                                 };
 
@@ -65,7 +65,7 @@ namespace CLP.Entities
 
             var codedObject = Codings.OBJECT_NUMBER_LINE;
             var codedID = numberLine.GetCodedIDAtHistoryIndex(jumpSizesChangedHistoryItems.First().HistoryIndex);
-            var incrementID = ObjectCodedActions.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
+            var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(numberLine.ID, codedObject, codedID);
             var isAdding = jumpSizesChangedHistoryItems.First().JumpsAdded.Any() && !jumpSizesChangedHistoryItems.First().JumpsRemoved.Any();
 
             var allJumps = new List<NumberLineJumpSize>();
@@ -80,7 +80,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var codedActionID = NumberLine.ConsolidateJumps(allJumps);
+            var eventInfo = NumberLine.ConsolidateJumps(allJumps);
 
             var semanticEvent = new SemanticEvent(page, jumpSizesChangedHistoryItems.Cast<IHistoryItem>().ToList())
                                 {
@@ -88,7 +88,7 @@ namespace CLP.Entities
                                     EventType = isAdding ? Codings.EVENT_NUMBER_LINE_JUMP : Codings.EVENT_NUMBER_LINE_JUMP_ERASE,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
-                                    EventInformation = codedActionID, 
+                                    EventInformation = eventInfo,
                                     ReferencePageObjectID = numberLineID
                                 };
 

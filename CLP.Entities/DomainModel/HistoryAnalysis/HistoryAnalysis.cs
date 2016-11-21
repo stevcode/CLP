@@ -10,7 +10,7 @@ namespace CLP.Entities
     {
         public static void GenerateSemanticEvents(CLPPage page)
         {
-            ObjectCodedActions.InitializeIncrementIDs();
+            ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();
 
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -26,7 +26,7 @@ namespace CLP.Entities
                 File.Delete(filePath);
             }
             File.WriteAllText(filePath, "");
-            File.AppendAllText(filePath, "*****Coded Actions/Steps*****" + "\n\n");
+            File.AppendAllText(filePath, "*****Semantic Events/Steps*****" + "\n\n");
 
             // First Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryItem>())
@@ -107,7 +107,7 @@ namespace CLP.Entities
                 historyItemBuffer.Add(currentHistoryItem);
                 if (historyItemBuffer.Count == 1)
                 {
-                    var singleSemanticEvent = VerifyAndGenerateSingleItemAction(page, historyItemBuffer.First());
+                    var singleSemanticEvent = VerifyAndGenerateSingleItemEvent(page, historyItemBuffer.First());
                     if (singleSemanticEvent != null)
                     {
                         initialSemanticEvents.Add(singleSemanticEvent);
@@ -117,7 +117,7 @@ namespace CLP.Entities
                 }
 
                 var nextHistoryItem = i + 1 < historyItems.Count ? historyItems[i + 1] : null;
-                var compoundSemanticEvent = VerifyAndGenerateCompoundItemAction(page, historyItemBuffer, nextHistoryItem);
+                var compoundSemanticEvent = VerifyAndGenerateCompoundItemEvent(page, historyItemBuffer, nextHistoryItem);
                 if (compoundSemanticEvent != null)
                 {
                     initialSemanticEvents.Add(compoundSemanticEvent);
@@ -128,7 +128,7 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        public static ISemanticEvent VerifyAndGenerateSingleItemAction(CLPPage page, IHistoryItem historyItem)
+        public static ISemanticEvent VerifyAndGenerateSingleItemEvent(CLPPage page, IHistoryItem historyItem)
         {
             if (historyItem == null)
             {
@@ -136,26 +136,42 @@ namespace CLP.Entities
             }
 
             ISemanticEvent semanticEvent = null;
-            TypeSwitch.On(historyItem)
-                      .Case<ObjectsOnPageChangedHistoryItem>(h => { semanticEvent = ObjectCodedActions.Add(page, h) ?? ObjectCodedActions.Delete(page, h); })
-                      .Case<PartsValueChangedHistoryItem>(h =>
-                                                          {
-                                                              semanticEvent = new SemanticEvent(page, h)
-                                                                              {
-                                                                                  CodedObject = Codings.OBJECT_STAMP,
-                                                                                  EventType = "parts",
-                                                                                  CodedObjectID = "CHANGED"
-                                                                              };
-                                                          })
-                      .Case<CLPArrayRotateHistoryItem>(h => { semanticEvent = ArrayCodedActions.Rotate(page, h); })
-                      .Case<PageObjectCutHistoryItem>(h => { semanticEvent = ArrayCodedActions.Cut(page, h); })
-                      .Case<CLPArraySnapHistoryItem>(h => { semanticEvent = ArrayCodedActions.Snap(page, h); })
-                      .Case<CLPArrayDivisionsChangedHistoryItem>(h => { semanticEvent = ArrayCodedActions.Divide(page, h); });
+            TypeSwitch.On(historyItem).Case<ObjectsOnPageChangedHistoryItem>(h =>
+                                                                             {
+                                                                                 semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                             }).Case<PartsValueChangedHistoryItem>(h =>
+                                                                                                                   {
+                                                                                                                       semanticEvent = new SemanticEvent(page, h)
+                                                                                                                                       {
+                                                                                                                                           CodedObject = Codings.OBJECT_STAMP,
+                                                                                                                                           EventType = "parts",
+                                                                                                                                           CodedObjectID = "CHANGED"
+                                                                                                                                       };
+                                                                                                                   }).Case<CLPArrayRotateHistoryItem>(h =>
+                                                                                                                                                      {
+                                                                                                                                                          semanticEvent =
+                                                                                                                                                              ArraySemanticEvents.Rotate(page, h);
+                                                                                                                                                      }).Case<PageObjectCutHistoryItem>(h =>
+                                                                                                                                                                                        {
+                                                                                                                                                                                            semanticEvent
+                                                                                                                                                                                                =
+                                                                                                                                                                                                ArraySemanticEvents
+                                                                                                                                                                                                    .Cut
+                                                                                                                                                                                                    (page,
+                                                                                                                                                                                                     h);
+                                                                                                                                                                                        })
+                      .Case<CLPArraySnapHistoryItem>(h =>
+                                                     {
+                                                         semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                     }).Case<CLPArrayDivisionsChangedHistoryItem>(h =>
+                                                                                                  {
+                                                                                                      semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                                                  });
 
             return semanticEvent;
         }
 
-        public static ISemanticEvent VerifyAndGenerateCompoundItemAction(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
+        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryItem> historyItems, IHistoryItem nextHistoryItem)
         {
             if (!historyItems.Any())
             {
@@ -175,14 +191,14 @@ namespace CLP.Entities
                         !nextObjectsChangedHistoryItem.IsUsingPageObjects)
                     {
                         // HACK: Another temp hack to recognize multiple choice box answers. Normally just return null.
-                        var h = VerifyAndGenerateSingleItemAction(page, nextHistoryItem);
+                        var h = VerifyAndGenerateSingleItemEvent(page, nextHistoryItem);
                         if (h == null)
                         {
                             return null;
                         }
                     }
 
-                    var semanticEvent = InkCodedActions.ChangeOrIgnore(page, objectsChangedHistoryItems);
+                    var semanticEvent = InkSemanticEvents.ChangeOrIgnore(page, objectsChangedHistoryItems);
                     return semanticEvent;
                 }
             }
@@ -201,7 +217,7 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var semanticEvent = ObjectCodedActions.Move(page, objectsMovedHistoryItems);
+                    var semanticEvent = ObjectSemanticEvents.Move(page, objectsMovedHistoryItems);
                     return semanticEvent;
                 }
             }
@@ -220,7 +236,7 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var semanticEvent = ObjectCodedActions.Resize(page, objectsResizedHistoryItems);
+                    var semanticEvent = ObjectSemanticEvents.Resize(page, objectsResizedHistoryItems);
                     return semanticEvent;
                 }
             }
@@ -239,7 +255,7 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var semanticEvent = NumberLineCodedActions.EndPointsChange(page, endPointsChangedHistoryItems);
+                    var semanticEvent = NumberLineSemanticEvents.EndPointsChange(page, endPointsChangedHistoryItems);
                     return semanticEvent;
                 }
             }
@@ -260,7 +276,7 @@ namespace CLP.Entities
                         return null;
                     }
 
-                    var semanticEvent = NumberLineCodedActions.JumpSizesChange(page, jumpSizesChangedHistoryItems);
+                    var semanticEvent = NumberLineSemanticEvents.JumpSizesChange(page, jumpSizesChangedHistoryItems);
                     return semanticEvent;
                 }
             }
@@ -303,26 +319,26 @@ namespace CLP.Entities
                     var bubble = statusChangedHistoryItems.First().Bubble;
                     var correctness = bubble.IsACorrectValue ? "COR" : "INC";
 
-                    var objectAction = string.Empty;
+                    var eventType = string.Empty;
                     switch (_currentCompressedStatus)
                     {
                         case ChoiceBubbleStatuses.PartiallyFilledIn:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL;
                             break;
                         case ChoiceBubbleStatuses.FilledIn:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ADD;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD;
                             break;
                         case ChoiceBubbleStatuses.AdditionalFilledIn:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL;
                             break;
                         case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL;
                             break;
                         case ChoiceBubbleStatuses.IncompletelyErased:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
                             break;
                         case ChoiceBubbleStatuses.CompletelyErased:
-                            objectAction = Codings.EVENT_MULTIPLE_CHOICE_ERASE;
+                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE;
                             break;
                         case null:
                             return null;
@@ -334,7 +350,7 @@ namespace CLP.Entities
                     var semanticEvent = new SemanticEvent(page, historyItems)
                                         {
                                             CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
-                                            EventType = objectAction,
+                                            EventType = eventType,
                                             CodedObjectID = multipleChoice.CodedID,
                                             EventInformation = string.Format("{0}, {1}", bubble.BubbleCodedID, correctness)
                                         };
@@ -447,31 +463,31 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> ClusterInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            InkCodedActions.InkClusters.Clear();
-            var refinedInkActions = InkCodedActions.RefineInkDivideClusters(page, semanticEvents);
+            InkSemanticEvents.InkClusters.Clear();
+            var refinedInkEvents = InkSemanticEvents.RefineInkDivideClusters(page, semanticEvents);
             // HACK: This should be taken care of at the historyItem level, assessment cache needs another conversion to handle that.
-            refinedInkActions = InkCodedActions.RefineANS_FIClusters(page, refinedInkActions);
+            refinedInkEvents = InkSemanticEvents.RefineANS_FIClusters(page, refinedInkEvents);
 
-            InkCodedActions.GenerateInitialInkClusters(page, refinedInkActions);
-            InkCodedActions.RefineSkipCountClusters(page, refinedInkActions);
+            InkSemanticEvents.GenerateInitialInkClusters(page, refinedInkEvents);
+            InkSemanticEvents.RefineSkipCountClusters(page, refinedInkEvents);
 
             // TODO: Rename/fix - Refine Temporal Clusters
-            var processedActions = new List<ISemanticEvent>();
-            foreach (var semanticEvent in refinedInkActions)
+            var processedEvents = new List<ISemanticEvent>();
+            foreach (var semanticEvent in refinedInkEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
                     semanticEvent.EventType == Codings.EVENT_INK_CHANGE)
                 {
-                    var processedInkChangeActions = InkCodedActions.ProcessInkChangeSemanticEvent(page, semanticEvent);
-                    processedActions.AddRange(processedInkChangeActions);
+                    var processedInkChangeEvents = InkSemanticEvents.ProcessInkChangeSemanticEvent(page, semanticEvent);
+                    processedEvents.AddRange(processedInkChangeEvents);
                 }
                 else
                 {
-                    processedActions.Add(semanticEvent);
+                    processedEvents.Add(semanticEvent);
                 }
             }
 
-            return processedActions;
+            return processedEvents;
         }
 
         #endregion // Second Pass: Ink Clustering
@@ -500,48 +516,48 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> AttemptSemanticEventInterpretation(CLPPage page, ISemanticEvent semanticEvent)
         {
-            var allInterpretedActions = new List<ISemanticEvent>();
+            var allInterpretedEvents = new List<ISemanticEvent>();
 
             if (semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP) &&
                 semanticEvent.EventInformation.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.SkipCounting(page, semanticEvent);
-                if (interpretedAction != null)
+                var interpretedEvent = ArraySemanticEvents.SkipCounting(page, semanticEvent);
+                if (interpretedEvent != null)
                 {
-                    allInterpretedActions.Add(interpretedAction);
-                    return allInterpretedActions;
+                    allInterpretedEvents.Add(interpretedEvent);
+                    return allInterpretedEvents;
                 }
             }
 
             if (semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER) &&
                 semanticEvent.EventInformation.Contains(Codings.OBJECT_ARRAY))
             {
-                var interpretedAction = ArrayCodedActions.ArrayEquation(page, semanticEvent);
-                if (interpretedAction != null)
+                var interpretedEvent = ArraySemanticEvents.ArrayEquation(page, semanticEvent);
+                if (interpretedEvent != null)
                 {
-                    allInterpretedActions.Add(interpretedAction);
-                    return allInterpretedActions;
+                    allInterpretedEvents.Add(interpretedEvent);
+                    return allInterpretedEvents;
                 }
             }
 
             if (!semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER))
             {
-                var interpretedAction = InkCodedActions.Arithmetic(page, semanticEvent);
-                if (interpretedAction != null)
+                var interpretedEvent = InkSemanticEvents.Arithmetic(page, semanticEvent);
+                if (interpretedEvent != null)
                 {
-                    allInterpretedActions.Add(interpretedAction);
-                    return allInterpretedActions;
+                    allInterpretedEvents.Add(interpretedEvent);
+                    return allInterpretedEvents;
                 }
             }
 
             // TODO: Attempt to interpret inked circles around a multiple choice bubbles
 
-            if (!allInterpretedActions.Any())
+            if (!allInterpretedEvents.Any())
             {
-                allInterpretedActions.Add(semanticEvent);
+                allInterpretedEvents.Add(semanticEvent);
             }
 
-            return allInterpretedActions;
+            return allInterpretedEvents;
         }
 
         #endregion // Third Pass: Ink Interpretation
@@ -614,7 +630,7 @@ namespace CLP.Entities
                 definitionRelation.numberOfGroups = div.Divisor;
                 definitionRelation.product = div.Dividend;
                 definitionRelation.isOrderedGroup = false;
-                    // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
+                // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
                 definitionRelation.isProductImportant = true;
             }
 
@@ -1030,8 +1046,8 @@ namespace CLP.Entities
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerActions = semanticEvents.Where(Codings.IsAnswerObject).ToList();
-            if (answerActions.Count < 1)
+            var answerEvents = semanticEvents.Where(Codings.IsAnswerObject).ToList();
+            if (answerEvents.Count < 1)
             {
                 return;
             }
@@ -1039,16 +1055,16 @@ namespace CLP.Entities
             var firstAnswer = semanticEvents.First(Codings.IsAnswerObject);
             var firstIndex = semanticEvents.IndexOf(firstAnswer);
 
-            var beforeActions = semanticEvents.Take(firstIndex + 1).ToList();
-            var isUsingRepresentationsBefore = beforeActions.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var beforeEvents = semanticEvents.Take(firstIndex + 1).ToList();
+            var isUsingRepresentationsBefore = beforeEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (isUsingRepresentationsBefore)
             {
                 return;
             }
 
-            var afterActions = semanticEvents.Skip(firstIndex).ToList();
-            var isUsingRepresentationsAfter = afterActions.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var afterEvents = semanticEvents.Skip(firstIndex).ToList();
+            var isUsingRepresentationsAfter = afterEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (!isUsingRepresentationsAfter)
             {
@@ -1056,14 +1072,14 @@ namespace CLP.Entities
             }
 
             // TODO: Derive this entire Analysis Code from ARA Tag and don't use this Tag
-            var tag = new AnswerBeforeRepresentationTag(page, Origin.StudentPageGenerated, afterActions);
+            var tag = new AnswerBeforeRepresentationTag(page, Origin.StudentPageGenerated, afterEvents);
             page.AddTag(tag);
         }
 
         public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerActions = semanticEvents.Where(Codings.IsAnswerObject).ToList();
-            if (answerActions.Count < 2)
+            var answerEvents = semanticEvents.Where(Codings.IsAnswerObject).ToList();
+            if (answerEvents.Count < 2)
             {
                 return;
             }
@@ -1073,27 +1089,27 @@ namespace CLP.Entities
             var lastAnswer = semanticEvents.Last(Codings.IsAnswerObject);
             var lastIndex = semanticEvents.IndexOf(lastAnswer);
 
-            var possibleTagActions = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
-            var isUsingRepresentations = possibleTagActions.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var possibleTagEvents = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
+            var isUsingRepresentations = possibleTagEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (!isUsingRepresentations)
             {
                 return;
             }
 
-            var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagActions);
+            var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagEvents);
             page.AddTag(tag);
         }
 
         public static void AttemptAnswerTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             // BUG: will miss instances where mc incorrect, mc correct, mc erase incorrect
-            var lastAnswerAction = semanticEvents.LastOrDefault(Codings.IsAnswerObject);
-            if (lastAnswerAction == null ||
-                lastAnswerAction.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE ||
-                lastAnswerAction.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
-                lastAnswerAction.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
-                lastAnswerAction.EventType == Codings.EVENT_FILL_IN_ERASE)
+            var lastAnswerEvent = semanticEvents.LastOrDefault(Codings.IsAnswerObject);
+            if (lastAnswerEvent == null ||
+                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE ||
+                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
+                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
+                lastAnswerEvent.EventType == Codings.EVENT_FILL_IN_ERASE)
             {
                 return;
             }
@@ -1102,7 +1118,7 @@ namespace CLP.Entities
                                                Origin.StudentPageGenerated,
                                                new List<ISemanticEvent>
                                                {
-                                                   lastAnswerAction
+                                                   lastAnswerEvent
                                                });
             page.AddTag(tag);
         }

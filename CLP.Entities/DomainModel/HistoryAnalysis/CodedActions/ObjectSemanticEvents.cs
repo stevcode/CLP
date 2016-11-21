@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Ink;
 
 namespace CLP.Entities
 {
-    public static class ObjectCodedActions
+    public static class ObjectSemanticEvents
     {
         #region Verify And Generate Methods
 
@@ -48,12 +47,12 @@ namespace CLP.Entities
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
-                {
-                    CodedObject = codedObject,
-                    EventType = Codings.EVENT_OBJECT_ADD,
-                    CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
-                };
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = Codings.EVENT_OBJECT_ADD,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
+                                    };
 
                 return semanticEvent;
             }
@@ -88,7 +87,7 @@ namespace CLP.Entities
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
                                         ReferencePageObjectID = pageObject.ID
-                };
+                                    };
 
                 return semanticEvent;
             }
@@ -100,12 +99,12 @@ namespace CLP.Entities
                 var codedObject = pageObject.CodedName;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryItem)
-                {
-                    CodedObject = codedObject,
-                    EventType = Codings.EVENT_OBJECT_DELETE,
-                    CodedObjectID = codedObjectID,
-                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
-                };
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = Codings.EVENT_OBJECT_DELETE,
+                                        CodedObjectID = codedObjectID,
+                                        CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
+                                    };
 
                 return semanticEvent;
             }
@@ -156,7 +155,7 @@ namespace CLP.Entities
                                                       Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().X),
                                                       Math.Round(objectsMovedHistoryItems.Last().TravelledPositions.Last().Y)),
                                     ReferencePageObjectID = pageObject.ID
-                                    // TODO: make coded action to describe distance travelled during move.
+                                    // TODO: make eventInfo to describe distance travelled during move.
                                     // note that there may be more than one objectsMovedHistoryItem in a row where
                                     // a student moved the same pageObject several consecutive times.
                                 };
@@ -184,18 +183,19 @@ namespace CLP.Entities
             var codedObject = pageObject.CodedName;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
             var semanticEvent = new SemanticEvent(page, objectsResizedHistoryItems.Cast<IHistoryItem>().ToList())
-            {
-                CodedObject = codedObject,
-                EventType = Codings.EVENT_OBJECT_RESIZE,
-                CodedObjectID = codedObjectID,
-                CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
-                EventInformation =string.Format("({0}, {1}) to ({2}, {3})",
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = Codings.EVENT_OBJECT_RESIZE,
+                                    CodedObjectID = codedObjectID,
+                                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
+                                    EventInformation =
+                                        string.Format("({0}, {1}) to ({2}, {3})",
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().X),
                                                       Math.Round(objectsResizedHistoryItems.First().StretchedDimensions.First().Y),
                                                       Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().X),
                                                       Math.Round(objectsResizedHistoryItems.Last().StretchedDimensions.Last().Y)),
-                ReferencePageObjectID = pageObjectID
-            };
+                                    ReferencePageObjectID = pageObjectID
+                                };
 
             return semanticEvent;
         }

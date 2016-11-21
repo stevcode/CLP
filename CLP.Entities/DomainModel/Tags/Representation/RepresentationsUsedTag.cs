@@ -332,8 +332,8 @@ namespace CLP.Entities
                         }
 
                         var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var actionID = semanticEvent.EventInformation;
-                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        var eventInfo = semanticEvent.EventInformation;
+                        var subArrays = eventInfo.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         if (!subArrayGroups.ContainsKey(referenceArrayID))
                         {
                             subArrayGroups.Add(referenceArrayID, subArrays);
@@ -354,8 +354,8 @@ namespace CLP.Entities
                         }
 
                         var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var actionID = semanticEvent.EventInformation;
-                        var subArrays = actionID.Split(new[] { ", " }, StringSplitOptions.None).ToList();
+                        var eventInfo = semanticEvent.EventInformation;
+                        var subArrays = eventInfo.Split(new[] { ", " }, StringSplitOptions.None).ToList();
                         foreach (var subArray in subArrays)
                         {
                             if (subArrayGroups.ContainsKey(referenceArrayID))
@@ -431,7 +431,7 @@ namespace CLP.Entities
 
                     var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
 
-                    var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(page, array);
+                    var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
                     {
                         // HACK: temporary print out of Wrong Dimension analysis

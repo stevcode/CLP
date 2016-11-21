@@ -73,10 +73,10 @@ namespace CLP.Entities
                 var isAnswerCorrect = Codings.GetAnswerObjectCorrectness(Answer) == "COR";
                 var answerContents = Codings.GetAnswerObjectContent(Answer);
                 var correctAnswer = Answer.CodedObjectID;
-                var answerAction = Answer.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE ? "filled in" : "inked";
+                var answerEventType = Answer.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE ? "filled in" : "inked";
 
                 var answerSet =
-                    $"{Codings.FriendlyObjects[Answer.CodedObject]}: correct answer is {correctAnswer}\nStudent {answerAction} {answerContents} ({(isAnswerCorrect ? "correct" : "incorrect")})";
+                    $"{Codings.FriendlyObjects[Answer.CodedObject]}: correct answer is {correctAnswer}\nStudent {answerEventType} {answerContents} ({(isAnswerCorrect ? "correct" : "incorrect")})";
 
                 return string.Format("{0}{1}", answerSet, string.IsNullOrWhiteSpace(AnalysisCode) ? string.Empty : "\nCode: " + AnalysisCode);
             }

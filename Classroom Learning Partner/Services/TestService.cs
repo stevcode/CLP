@@ -655,7 +655,7 @@ namespace Classroom_Learning_Partner.Services
 
             //            #region Bottom Skip Counting Calculations
 
-            //            var formattedBottomSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(lastSubmission, array, false);
+            //            var formattedBottomSkips = ArraySemanticEvents.StaticBottomSkipCountAnalysis(lastSubmission, array, false);
             //            if (string.IsNullOrEmpty(formattedBottomSkips))
             //            {
             //                interpretationOfBottomStrokes.Add(vkey, "NO BOTTOM STROKES");
@@ -728,7 +728,7 @@ namespace Classroom_Learning_Partner.Services
 
             //            #endregion // v1 Calculations
 
-            //            var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(lastSubmission, array, strokes, historyIndex);
+            //            var strokeGroupPerRow = ArraySemanticEvents.GroupPossibleSkipCountStrokes(lastSubmission, array, strokes, historyIndex);
 
             //            #region v2 Calculations
 
@@ -746,8 +746,8 @@ namespace Classroom_Learning_Partner.Services
 
             //            #endregion // v2 Calculations
 
-            //            var interpretedRowValuesUncorrected = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex, true);
-            //            var interpretedRowValues = ArrayCodedActions.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex);
+            //            var interpretedRowValuesUncorrected = ArraySemanticEvents.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex, true);
+            //            var interpretedRowValues = ArraySemanticEvents.InterpretSkipCountGroups(lastSubmission, array, strokeGroupPerRow, historyIndex);
             //            if (interpretedRowValues.Any() &&
             //                interpretedRowValuesUncorrected.Any())
             //            {
@@ -796,8 +796,8 @@ namespace Classroom_Learning_Partner.Services
             //                }
             //            }
 
-            //            //var isSkipCountingWhenUncorrected = ArrayCodedActions.IsSkipCounting(interpretedRowValuesUncorrected);
-            //            var isSkipCounting = ArrayCodedActions.IsSkipCounting(interpretedRowValues);
+            //            //var isSkipCountingWhenUncorrected = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesUncorrected);
+            //            var isSkipCounting = ArraySemanticEvents.IsSkipCounting(interpretedRowValues);
             //            if (isSkipCounting)
             //            {
             //                //var trimmedSkip = interpretedRowValues.Select(s => s.Replace(" ", string.Empty)).ToList();
@@ -968,34 +968,34 @@ namespace Classroom_Learning_Partner.Services
             //File.AppendAllText(filePath, string.Format("Total Skip Count Rows Matched Correctly: {0}\n", totalSkipCountRowsMatchedCorrectly));
 
             //File.AppendAllText(filePath, string.Format("\n***Stroke Grouping***\n\n"));
-            //File.AppendAllText(filePath, string.Format("Skip Counting Strokes Count: {0}\n", ArrayCodedActions.SkipStrokesCount));
-            //File.AppendAllText(filePath, string.Format("Rejected Strokes Count: {0}\n", ArrayCodedActions.RejectedStrokesCount));
-            //File.AppendAllText(filePath, string.Format("Overlapping Strokes Count: {0}\n", ArrayCodedActions.OverlappingStrokesCount));
-            //File.AppendAllText(filePath, string.Format("Initially Ungrouped Strokes Count: {0}\n", ArrayCodedActions.UngroupedStrokesCount));
+            //File.AppendAllText(filePath, string.Format("Skip Counting Strokes Count: {0}\n", ArraySemanticEvents.SkipStrokesCount));
+            //File.AppendAllText(filePath, string.Format("Rejected Strokes Count: {0}\n", ArraySemanticEvents.RejectedStrokesCount));
+            //File.AppendAllText(filePath, string.Format("Overlapping Strokes Count: {0}\n", ArraySemanticEvents.OverlappingStrokesCount));
+            //File.AppendAllText(filePath, string.Format("Initially Ungrouped Strokes Count: {0}\n", ArraySemanticEvents.UngroupedStrokesCount));
 
             //File.AppendAllText(filePath, string.Format("\nNumber of strokes rejected (or alternatively grouped) by a rule:\n"));
-            //File.AppendAllText(filePath, string.Format("Rule 1: Stroke is invisibly small: {0}\n", ArrayCodedActions.Rule1Count));
-            //File.AppendAllText(filePath, string.Format("Rule 2: Stroke is too tall (taller than 2 row heights): {0}\n", ArrayCodedActions.Rule2Count));
-            //File.AppendAllText(filePath, string.Format("Rule 3b: Stroke intersects less than 50% of initial boundary: {0}\n", ArrayCodedActions.Rule3bCount));
+            //File.AppendAllText(filePath, string.Format("Rule 1: Stroke is invisibly small: {0}\n", ArraySemanticEvents.Rule1Count));
+            //File.AppendAllText(filePath, string.Format("Rule 2: Stroke is too tall (taller than 2 row heights): {0}\n", ArraySemanticEvents.Rule2Count));
+            //File.AppendAllText(filePath, string.Format("Rule 3b: Stroke intersects less than 50% of initial boundary: {0}\n", ArraySemanticEvents.Rule3bCount));
             //File.AppendAllText(filePath,
-            //                   string.Format("Rule 3c: Stroke intersects less than 90% of initial boundary and weighted center is not in the initial boundary: {0}\n", ArrayCodedActions.Rule3cCount));
-            //File.AppendAllText(filePath, string.Format("Rule 3a: Number of strokes that have NOT been rejected after Rule 3 applied: {0}\n", ArrayCodedActions.Rule3aCount));
+            //                   string.Format("Rule 3c: Stroke intersects less than 90% of initial boundary and weighted center is not in the initial boundary: {0}\n", ArraySemanticEvents.Rule3cCount));
+            //File.AppendAllText(filePath, string.Format("Rule 3a: Number of strokes that have NOT been rejected after Rule 3 applied: {0}\n", ArraySemanticEvents.Rule3aCount));
             //File.AppendAllText(filePath,
             //                   string.Format("Number of times all strokes have been rejected after Rule 3 (aka, no strokes in initial boundary): {0}\n",
-            //                                 ArrayCodedActions.AllStrokesAreOutsideOfAcceptableBoundary));
-            //File.AppendAllText(filePath, string.Format("Rule 4: Stroke is too tall (deviates from average height): {0}\n", ArrayCodedActions.Rule4Count));
-            //File.AppendAllText(filePath, string.Format("Rule 5: Stroke ungrouped for being too short (should match Initially Ungrouped Strokes Count above): {0}\n", ArrayCodedActions.Rule5Count));
-            //File.AppendAllText(filePath, string.Format("Rule 6: Stroke is too far away from other strokes: {0}\n", ArrayCodedActions.Rule6Count));
-            //File.AppendAllText(filePath, string.Format("Rule 7c: Stroke is placed in initial overlap group: {0}\n", ArrayCodedActions.Rule7cCount));
-            //File.AppendAllText(filePath, string.Format("Rule 7d: Stroke does not overlap any row: {0}\n", ArrayCodedActions.Rule7dCount));
-            //File.AppendAllText(filePath, string.Format("Rule 8a: Overlap stroke intersects with an already grouped stroke: {0}\n", ArrayCodedActions.Rule8aCount));
-            //File.AppendAllText(filePath, string.Format("Rule 8b: Overlap stroke intersects 75% with a row: {0}\n", ArrayCodedActions.Rule8bCount));
-            //File.AppendAllText(filePath, string.Format("Rule 8c: Overlap stroke remains an overlap stroke: {0}\n", ArrayCodedActions.Rule8cCount));
-            //File.AppendAllText(filePath, string.Format("Rule 9: Ungrouped stroke matched with a grouped stroke: {0}\n", ArrayCodedActions.Rule9Count));
+            //                                 ArraySemanticEvents.AllStrokesAreOutsideOfAcceptableBoundary));
+            //File.AppendAllText(filePath, string.Format("Rule 4: Stroke is too tall (deviates from average height): {0}\n", ArraySemanticEvents.Rule4Count));
+            //File.AppendAllText(filePath, string.Format("Rule 5: Stroke ungrouped for being too short (should match Initially Ungrouped Strokes Count above): {0}\n", ArraySemanticEvents.Rule5Count));
+            //File.AppendAllText(filePath, string.Format("Rule 6: Stroke is too far away from other strokes: {0}\n", ArraySemanticEvents.Rule6Count));
+            //File.AppendAllText(filePath, string.Format("Rule 7c: Stroke is placed in initial overlap group: {0}\n", ArraySemanticEvents.Rule7cCount));
+            //File.AppendAllText(filePath, string.Format("Rule 7d: Stroke does not overlap any row: {0}\n", ArraySemanticEvents.Rule7dCount));
+            //File.AppendAllText(filePath, string.Format("Rule 8a: Overlap stroke intersects with an already grouped stroke: {0}\n", ArraySemanticEvents.Rule8aCount));
+            //File.AppendAllText(filePath, string.Format("Rule 8b: Overlap stroke intersects 75% with a row: {0}\n", ArraySemanticEvents.Rule8bCount));
+            //File.AppendAllText(filePath, string.Format("Rule 8c: Overlap stroke remains an overlap stroke: {0}\n", ArraySemanticEvents.Rule8cCount));
+            //File.AppendAllText(filePath, string.Format("Rule 9: Ungrouped stroke matched with a grouped stroke: {0}\n", ArraySemanticEvents.Rule9Count));
             //File.AppendAllText(filePath,
             //                   string.Format("Rule 10: Number of times strokes are rejected for being on the inside of an array when the skip counting stroke are on the outside: {0}\n",
-            //                                 ArrayCodedActions.Rule10Count));
-            //File.AppendAllText(filePath, string.Format("Rule 10: Number strokes rejected because of Rule 10: {0}\n", ArrayCodedActions.Rule10RejectedStrokesCount));
+            //                                 ArraySemanticEvents.Rule10Count));
+            //File.AppendAllText(filePath, string.Format("Rule 10: Number strokes rejected because of Rule 10: {0}\n", ArraySemanticEvents.Rule10RejectedStrokesCount));
 
             //File.AppendAllText(filePath, string.Format("\n***Ink Interpretation***\n\n"));
 
@@ -1027,34 +1027,34 @@ namespace Classroom_Learning_Partner.Services
 
             //File.AppendAllText(filePath, string.Format("Rejected Reasons:\n"));
             //File.AppendAllText(filePath, string.Format("Rule 0: Passed null value (ERROR).\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule0));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule0));
 
             //File.AppendAllText(filePath, string.Format("Rule 1: Only 1 row in the array.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule1));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule1));
 
             //File.AppendAllText(filePath, string.Format("Rule 2: Fewer than 2 rows have an interpreted value.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule2));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule2));
 
             //File.AppendAllText(filePath, string.Format("Rule 3: No rows have an interpreted value that is a number.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule3));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule3));
 
             //File.AppendAllText(filePath, string.Format("Rule 4: Of the rows with interpreted values, the percentage of those interpreted values with numeric results is less than 34%.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule4));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule4));
 
             //File.AppendAllText(filePath, string.Format("Rule 5: The first row does not have an interpreted value and only 50% or less of the rows have an interpreted value.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule5));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule5));
 
             //File.AppendAllText(filePath, string.Format("Rule 6: The first 2 rows do not have interpreted values.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule6));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule6));
 
             //File.AppendAllText(filePath, string.Format("Rule 7: There is more than 1 gap of 1 row between interpreted values.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule7));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule7));
 
             //File.AppendAllText(filePath, string.Format("Rule 8: There is a gap of more than 1 row between interpreted values.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule8));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule8));
 
             //File.AppendAllText(filePath, string.Format("Rule 9: More than 2 rows share the same interpreted value.\n"));
-            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArrayCodedActions.ArraysRule9));
+            //File.AppendAllText(filePath, string.Format("Total Arrays: {0}\n\n", ArraySemanticEvents.ArraysRule9));
 
             //File.AppendAllText(filePath, string.Format("\n\nInterpretation improvements for every array."));
             //File.AppendAllText(filePath, string.Format("\nv1: Interpretation of all strokes inside boundary box."));
@@ -1946,9 +1946,9 @@ namespace Classroom_Learning_Partner.Services
             //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
             //        Console.WriteLine("Finished generating SEvents.\n");
 
-            //        var pass2Action = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
+            //        var pass2Event = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
             //        var pass2Index = lastSubmission.History.SemanticEvents.IndexOf(pass2Action);
-            //        var pass3Action = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
+            //        var pass3Event = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
             //        var pass3Index = lastSubmission.History.SemanticEvents.IndexOf(pass3Action);
 
             //        var pass1 = lastSubmission.History.SemanticEvents.Skip(1).Take(pass2Index - 1).Select(h => h.CodedValue).ToList();

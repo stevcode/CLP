@@ -386,7 +386,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowAnalysisClustersCommandExecute()
         {
-            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
+            foreach (var cluster in InkSemanticEvents.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
             {
                 var clusterBounds = cluster.Strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
@@ -912,7 +912,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
+                var strokeGroupPerRow = ArraySemanticEvents.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
                 var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                 if (!skipStrokes.Any())
                 {
@@ -984,14 +984,14 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;
                 }
 
                 var unformattedSkips = formattedSkips.TrimAll().Split(new[] { "\"\"" }, StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
-                var heuristicsResults = ArrayCodedActions.Heuristics(unformattedSkips, array.Rows, array.Columns);
+                var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, array.Rows, array.Columns);
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                           {
@@ -1022,11 +1022,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageNumber = CurrentPage.PageNumber;
             var studentName = CurrentPage.Owner.FullName;
             var semanticEvents = CurrentPage.History.SemanticEvents;
-            var firstAction = semanticEvents.FirstOrDefault();
-            var compActions = new ObservableCollection<ISemanticEvent>();
+            var firstEvent = semanticEvents.FirstOrDefault();
+            var compEvents = new ObservableCollection<ISemanticEvent>();
             var index = 0;
-            var strCompActions = "";
-            //Store actions logged from Pass 3
+            var strCompEvents = "";
+            //Store events logged from Pass 3
             for (var i = 0; i < semanticEvents.Count; i++)
             {
                 if (semanticEvents[i].CodedValue == "PASS [3]")
@@ -1037,23 +1037,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             for (var j = index; j < semanticEvents.Count; j++)
             {
-                compActions.Add(semanticEvents[j]);
+                compEvents.Add(semanticEvents[j]);
             }
 
-            foreach (var action in compActions)
+            foreach (var semanticEvent in compEvents)
             {
-                if (action.CodedObject == Codings.OBJECT_INK &&
-                    action.EventType == Codings.EVENT_INK_IGNORE)
+                if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
+                    semanticEvent.EventType == Codings.EVENT_INK_IGNORE)
                 {
                     continue;
                 }
 
-                if (action.EventType == Codings.EVENT_OBJECT_MOVE)
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
                 {
                     continue;
                 }
 
-                strCompActions += action.CodedObject + " " + action.EventType + "; ";
+                strCompEvents += semanticEvent.CodedObject + " " + semanticEvent.EventType + "; ";
             }
 
             //Edit Name and Page Number for comparison from Machine Codes to Human Codes
@@ -1136,11 +1136,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             //Format changes to allow for comparison
-            strCompActions = strCompActions.Trim(' ');
+            strCompEvents = strCompEvents.Trim(' ');
             changed = changed.Trim(' ');
-            strCompActions = strCompActions.Trim(';');
+            strCompEvents = strCompEvents.Trim(';');
             changed = changed.Trim(';');
-            strCompActions = " " + strCompActions;
+            strCompEvents = " " + strCompEvents;
             changed = " " + changed;
             // Print for Comparison
             var output = string.Format("Student Testing: {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}",
@@ -1148,7 +1148,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                        stringPageNumber,
                                        Environment.NewLine,
                                        "Machine Codes: ",
-                                       strCompActions,
+                                       strCompEvents,
                                        Environment.NewLine,
                                        "People Codes: ",
                                        changed,
@@ -1158,7 +1158,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var consecutive_count = 0;
             var total_matches = 0;
-            var machineElems = strCompActions.Split(';');
+            var machineElems = strCompEvents.Split(';');
             var humanElems = changed.Split(';');
             var elems = Math.Min(machineElems.Length, humanElems.Length);
             var total_codes = Math.Max(machineElems.Length, humanElems.Length);
@@ -1208,7 +1208,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                var formattedSkips = ArraySemanticEvents.StaticBottomSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;
