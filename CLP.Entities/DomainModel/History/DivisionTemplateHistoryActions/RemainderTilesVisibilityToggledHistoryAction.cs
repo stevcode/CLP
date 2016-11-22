@@ -116,7 +116,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            // TODO: Package history item.
+            // TODO: Package history action.
 
             return clonedHistoryAction;
         }
@@ -124,7 +124,7 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryAction" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryAction()
         {
-            // TODO: Unpack history item.
+            // TODO: Unpack history action.
         }
 
         public override bool IsUsingTrashedPageObject(string id)

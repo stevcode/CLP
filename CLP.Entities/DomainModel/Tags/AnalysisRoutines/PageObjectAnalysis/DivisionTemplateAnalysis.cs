@@ -61,9 +61,9 @@ namespace CLP.Entities
             var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             var divisionTemplateIDsInHistory = new List<string>();
-            //foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
+            //foreach (var pageObjectsAddedHistoryAction in completeOrderedHistory.OfType<PageObjectsAddedHistoryAction>())
             //{
-            //    divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
+            //    divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryAction.PageObjectIDs
             //                                          let divisionTemplate =
             //                                              page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate
             //                                          where divisionTemplate != null
@@ -80,7 +80,7 @@ namespace CLP.Entities
             var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 
             //DivisionTemplateDeletedTag
-            //foreach (var historyAction in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
+            //foreach (var historyAction in completeOrderedHistory.OfType<PageObjectsRemovedHistoryAction>())
             //{
             //    foreach (var pageObjectID in historyAction.PageObjectIDs)
             //    {

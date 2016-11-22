@@ -517,21 +517,21 @@ namespace CLP.Entities
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
-            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedObjectsChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokeID = stroke.GetStrokeID();
 
-            var addedAtAnyPointHistoryItem = orderedObjectsChangedHistoryItems.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
-            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+            var addedAtAnyPointHistoryAction = orderedObjectsChangedHistoryActions.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
+            var isPartOfHistory = addedAtAnyPointHistoryAction != null;
 
-            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                orderedObjectsChangedHistoryItems.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryActionIndex <= historyIndex);
+            var addedOrRemovedBeforeThisHistoryIndexHistoryAction =
+                orderedObjectsChangedHistoryActions.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryActionIndex <= historyIndex);
 
-            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.StrokeIDsAdded.Contains(strokeID);
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryAction != null && addedOrRemovedBeforeThisHistoryIndexHistoryAction.StrokeIDsAdded.Contains(strokeID);
 
             return isOnPageBefore || !isPartOfHistory;
         }
 
-        /// <summary>Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the historyItems at both historyIndexes)</summary>
+        /// <summary>Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the historyActions at both historyIndexes)</summary>
         public static bool IsAddedBetweenHistoryIndexes(this Stroke stroke, CLPPage page, int startHistoryIndex, int endHistoryIndex)
         {
             Argument.IsNotNull("stroke", stroke);
@@ -539,10 +539,10 @@ namespace CLP.Entities
             Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
             Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
 
-            var orderedObjectsChangedHistoryItems = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedObjectsChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokeID = stroke.GetStrokeID();
 
-            var isAddedBetweenIndexes = orderedObjectsChangedHistoryItems.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryActionIndex >= startHistoryIndex && h.HistoryActionIndex <= endHistoryIndex);
+            var isAddedBetweenIndexes = orderedObjectsChangedHistoryActions.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryActionIndex >= startHistoryIndex && h.HistoryActionIndex <= endHistoryIndex);
 
             return isAddedBetweenIndexes;
         }

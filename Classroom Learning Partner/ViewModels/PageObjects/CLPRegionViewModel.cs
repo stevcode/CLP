@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //            else
         //            { ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject); }
         //            ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, duplicatePageObject, true);
-        //            //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
+        //            //TODO: Steve - add MassPageObjectAdd history action and MassPageObjectRemove history action.
         //        }
         //    }
         //}

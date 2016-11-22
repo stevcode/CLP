@@ -225,8 +225,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
             {
-                var undoItem = page.History.UndoActions.First() as IHistoryBatch;
-                var ticksToUndo = undoItem == null ? 1 : undoItem.CurrentBatchTickIndex;
+                var undoAction = page.History.UndoActions.First() as IHistoryBatch;
+                var ticksToUndo = undoAction == null ? 1 : undoAction.CurrentBatchTickIndex;
                 var currentTick = ticksToUndo;
                 while (currentTick > 0 && IsPlaying)
                 {
@@ -286,8 +286,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var t = new Thread(() =>
                                {
-                                   var redoItem = page.History.RedoActions.First() as IHistoryBatch;
-                                   var ticksToRedo = redoItem == null ? 1 : redoItem.NumberOfBatchTicks - redoItem.CurrentBatchTickIndex;
+                                   var redoAction = page.History.RedoActions.First() as IHistoryBatch;
+                                   var ticksToRedo = redoAction == null ? 1 : redoAction.NumberOfBatchTicks - redoAction.CurrentBatchTickIndex;
                                    var currentTick = ticksToRedo;
                                    while (currentTick > 0 && IsPlaying)
                                    {
@@ -354,11 +354,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 page.History.RedoActions.Clear();
-                var firstUndoItem = page.History.UndoActions.FirstOrDefault() as AnimationIndicatorHistoryAction;
-                if (firstUndoItem != null &&
-                    firstUndoItem.AnimationIndicatorType == AnimationIndicatorType.Stop)
+                var firstUndoAction = page.History.UndoActions.FirstOrDefault() as AnimationIndicatorHistoryAction;
+                if (firstUndoAction != null &&
+                    firstUndoAction.AnimationIndicatorType == AnimationIndicatorType.Stop)
                 {
-                    page.History.UndoActions.Remove(firstUndoItem);
+                    page.History.UndoActions.Remove(firstUndoAction);
                 }
                 page.History.UpdateTicks();
                 RaisePropertyChanged("IsPlaybackEnabled");

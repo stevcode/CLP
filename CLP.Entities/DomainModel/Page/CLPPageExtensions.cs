@@ -166,7 +166,7 @@ namespace CLP.Entities
 
         #region History
 
-        /// <summary>Gets all pageObjects that were on the page immediately after the historyItem at the given historyIndex was performed</summary>
+        /// <summary>Gets all pageObjects that were on the page immediately after the historyAction at the given historyIndex was performed</summary>
         public static List<IPageObject> GetPageObjectsOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("page", page);
@@ -179,7 +179,7 @@ namespace CLP.Entities
             return pageObjectsOnPage;
         }
 
-        /// <summary>Gets all strokes that were on the page immediately after the historyItem at the given historyIndex was performed</summary>
+        /// <summary>Gets all strokes that were on the page immediately after the historyAction at the given historyIndex was performed</summary>
         public static List<Stroke> GetStrokesOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
         {
             Argument.IsNotNull("page", page);
@@ -192,7 +192,7 @@ namespace CLP.Entities
             return strokesOnPage;
         }
 
-        /// <summary>Gets all strokes that were added to the page between the given historyIndexes (including strokes that were added by the historyItems at both historyIndexes).</summary>
+        /// <summary>Gets all strokes that were added to the page between the given historyIndexes (including strokes that were added by the historyActions at both historyIndexes).</summary>
         public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes(this CLPPage page, int startHistoryIndex, int endHistoryIndex)
         {
             Argument.IsNotNull("page", page);

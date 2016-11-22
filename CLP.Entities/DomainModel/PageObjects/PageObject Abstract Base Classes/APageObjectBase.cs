@@ -224,14 +224,14 @@ namespace CLP.Entities
         /// <summary>Signifies the pageObject was on the page immediately after the historyAction at the given historyIndex was performed</summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
-            var orderedObjectsOnPageChangedHistoryItems = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
-            var addedAtAnyPointHistoryItem = orderedObjectsOnPageChangedHistoryItems.FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
-            var isPartOfHistory = addedAtAnyPointHistoryItem != null;
+            var orderedObjectsOnPageChangedHistoryActions = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var addedAtAnyPointHistoryAction = orderedObjectsOnPageChangedHistoryActions.FirstOrDefault(h => h.PageObjectIDsAdded.Contains(ID));
+            var isPartOfHistory = addedAtAnyPointHistoryAction != null;
 
-            var addedOrRemovedBeforeThisHistoryIndexHistoryItem =
-                orderedObjectsOnPageChangedHistoryItems.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryActionIndex <= historyIndex);
+            var addedOrRemovedBeforeThisHistoryIndexHistoryAction =
+                orderedObjectsOnPageChangedHistoryActions.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryActionIndex <= historyIndex);
 
-            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryItem != null && addedOrRemovedBeforeThisHistoryIndexHistoryItem.PageObjectIDsAdded.Contains(ID);
+            var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryAction != null && addedOrRemovedBeforeThisHistoryIndexHistoryAction.PageObjectIDsAdded.Contains(ID);
 
             return isOnPageBefore || !isPartOfHistory;
         }
@@ -245,15 +245,15 @@ namespace CLP.Entities
         /// <summary>Gets a new Point(Width, Height) just before the historyAction at historyIndex executes Redo(). To get (Width, Height) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>()
+            var resizeHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>()
                                               .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
-            if (resizeHistoryItem == null ||
-                !resizeHistoryItem.StretchedDimensions.Any())
+            if (resizeHistoryAction == null ||
+                !resizeHistoryAction.StretchedDimensions.Any())
             {
                 return new Point(Width, Height);
             }
 
-            return resizeHistoryItem.StretchedDimensions.First();
+            return resizeHistoryAction.StretchedDimensions.First();
 
             // TODO: numberline.endpointchange, remainderTiles.updated
         }
@@ -261,24 +261,24 @@ namespace CLP.Entities
         /// <summary>Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var moveHistoryItem =
+            var moveHistoryAction =
                 ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
 
-            if (moveHistoryItem == null ||
-                !moveHistoryItem.TravelledPositions.Any())
+            if (moveHistoryAction == null ||
+                !moveHistoryAction.TravelledPositions.Any())
             {
                 return new Point(XPosition, YPosition);
             }
 
-            var initialPosition = moveHistoryItem.TravelledPositions.First();
-            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var initialPosition = moveHistoryAction.TravelledPositions.First();
+            var offset = moveHistoryAction.PageObjectIDs[ID];
             var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
             return adjustedPosition;
         }
 
         /// <summary>
         ///     Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex. // TODO: Modify
-        ///     these to be after current historyItems executes Redo().
+        ///     these to be after current historyActions executes Redo().
         /// </summary>
         public virtual Rect GetBoundsAtHistoryIndex(int historyIndex)
         {

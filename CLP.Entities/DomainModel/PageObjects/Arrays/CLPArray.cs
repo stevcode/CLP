@@ -184,9 +184,9 @@ namespace CLP.Entities
         {
             var rows = Rows;
             var columns = Columns;
-            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= historyIndex).Reverse())
+            foreach (var historyAction in ParentPage.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= historyIndex).Reverse())
             {
-                TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryAction>(h =>
+                TypeSwitch.On(historyAction).Case<CLPArrayRotateHistoryAction>(h =>
                                                                            {
                                                                                if (h.ArrayID == ID)
                                                                                {
@@ -469,54 +469,54 @@ namespace CLP.Entities
 
         public override Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
-            var resizeHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
-            if (resizeHistoryItem == null &&
-                rotateHistoryItem == null)
+            var rotateHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var resizeHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
+            if (resizeHistoryAction == null &&
+                rotateHistoryAction == null)
             {
                 return new Point(Width, Height);
             }
 
-            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryActionIndex;
-            var resizeHistoryIndex = resizeHistoryItem == null ? int.MaxValue : resizeHistoryItem.HistoryActionIndex;
+            var rotateHistoryIndex = rotateHistoryAction == null ? int.MaxValue : rotateHistoryAction.HistoryActionIndex;
+            var resizeHistoryIndex = resizeHistoryAction == null ? int.MaxValue : resizeHistoryAction.HistoryActionIndex;
 
             if (rotateHistoryIndex < resizeHistoryIndex)
             {
-                var preRotateWidth = rotateHistoryItem.OldWidth;
-                var preRotateHeight = rotateHistoryItem.OldHeight;
+                var preRotateWidth = rotateHistoryAction.OldWidth;
+                var preRotateHeight = rotateHistoryAction.OldHeight;
                 return new Point(preRotateWidth, preRotateHeight);
             }
 
-            if (!resizeHistoryItem.StretchedDimensions.Any())
+            if (!resizeHistoryAction.StretchedDimensions.Any())
             {
                 return new Point(Width, Height);
             }
 
-            return resizeHistoryItem.StretchedDimensions.First();
+            return resizeHistoryAction.StretchedDimensions.First();
         }
 
         public override Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var rotateHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
-            var moveHistoryItem = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
-            if (rotateHistoryItem == null &&
-                moveHistoryItem == null)
+            var rotateHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<CLPArrayRotateHistoryAction>().FirstOrDefault(h => h.ArrayID == ID && h.HistoryActionIndex >= historyIndex);
+            var moveHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
+            if (rotateHistoryAction == null &&
+                moveHistoryAction == null)
             {
                 return new Point(XPosition, YPosition);
             }
 
-            var rotateHistoryIndex = rotateHistoryItem == null ? int.MaxValue : rotateHistoryItem.HistoryActionIndex;
-            var moveHistoryIndex = moveHistoryItem == null ? int.MaxValue : moveHistoryItem.HistoryActionIndex;
+            var rotateHistoryIndex = rotateHistoryAction == null ? int.MaxValue : rotateHistoryAction.HistoryActionIndex;
+            var moveHistoryIndex = moveHistoryAction == null ? int.MaxValue : moveHistoryAction.HistoryActionIndex;
 
             if (rotateHistoryIndex < moveHistoryIndex)
             {
-                var preRotateX = rotateHistoryItem.ArrayXCoord;
-                var preRotateY = rotateHistoryItem.ArrayYCoord;
+                var preRotateX = rotateHistoryAction.ArrayXCoord;
+                var preRotateY = rotateHistoryAction.ArrayYCoord;
                 return new Point(preRotateX, preRotateY);
             }
 
-            var initialPosition = moveHistoryItem.TravelledPositions.First();
-            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var initialPosition = moveHistoryAction.TravelledPositions.First();
+            var offset = moveHistoryAction.PageObjectIDs[ID];
             var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
             return adjustedPosition;
         }

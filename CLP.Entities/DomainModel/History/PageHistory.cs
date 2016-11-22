@@ -124,7 +124,7 @@ namespace CLP.Entities
                 }
 
                 var animationHistoryActions = new List<IHistoryAction>();
-                if (stopIndex == 0) //HACK: Above Hack, but where first UndoItem is a Stop.
+                if (stopIndex == 0) //HACK: Above Hack, but where first UndoAction is a Stop.
                 {
                     return animationHistoryActions;
                 }
@@ -406,8 +406,8 @@ namespace CLP.Entities
                 var startIndex = UndoActions.IndexOf(startAnimationIndicator);
                 if (startIndex > -1)
                 {
-                    var animationUndoItems = UndoActions.Take(startIndex + 1);
-                    UndoActions = new ObservableCollection<IHistoryAction>(animationUndoItems);
+                    var animationUndoActions = UndoActions.Take(startIndex + 1);
+                    UndoActions = new ObservableCollection<IHistoryAction>(animationUndoActions);
                 }
                 else
                 {
@@ -419,8 +419,8 @@ namespace CLP.Entities
                 var stopIndex = RedoActions.IndexOf(stopAnimationIndicator);
                 if (stopIndex > -1)
                 {
-                    var animationRedoItems = RedoActions.Take(stopIndex + 1);
-                    RedoActions = new ObservableCollection<IHistoryAction>(animationRedoItems);
+                    var animationRedoActions = RedoActions.Take(stopIndex + 1);
+                    RedoActions = new ObservableCollection<IHistoryAction>(animationRedoActions);
                 }
                 else
                 {

@@ -38,10 +38,10 @@ namespace CLP.Entities
             page.History.SemanticEvents.AddRange(initialSemanticEvents);
 
             File.AppendAllText(filePath, "PASS [1]" + "\n");
-            foreach (var item in initialSemanticEvents)
+            foreach (var semanticEvent in initialSemanticEvents)
             {
-                var semi = item == initialSemanticEvents.Last() ? string.Empty : "; ";
-                File.AppendAllText(filePath, item.CodedValue + semi);
+                var semi = semanticEvent == initialSemanticEvents.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
             // Second Pass
@@ -54,10 +54,10 @@ namespace CLP.Entities
             page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
 
             File.AppendAllText(filePath, "\nPASS [2]" + "\n");
-            foreach (var item in clusteredInkSemanticEvents)
+            foreach (var semanticEvent in clusteredInkSemanticEvents)
             {
-                var semi = item == clusteredInkSemanticEvents.Last() ? string.Empty : "; ";
-                File.AppendAllText(filePath, item.CodedValue + semi);
+                var semi = semanticEvent == clusteredInkSemanticEvents.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
             // Third Pass
@@ -70,10 +70,10 @@ namespace CLP.Entities
             page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
 
             File.AppendAllText(filePath, "\nPASS [3]" + "\n");
-            foreach (var item in interpretedInkSemanticEvents)
+            foreach (var semanticEvent in interpretedInkSemanticEvents)
             {
-                var semi = item == interpretedInkSemanticEvents.Last() ? string.Empty : "; ";
-                File.AppendAllText(filePath, item.CodedValue + semi);
+                var semi = semanticEvent == interpretedInkSemanticEvents.Last() ? string.Empty : "; ";
+                File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
             // Last Pass
@@ -86,7 +86,7 @@ namespace CLP.Entities
                 File.AppendAllText(filePath, tag.FormattedValue + "\n\n");
             }
 
-            File.AppendAllText(filePath, "\n*****History Items*****" + "\n\n");
+            File.AppendAllText(filePath, "\n*****History Actions*****" + "\n\n");
             foreach (var historyAction in page.History.CompleteOrderedHistoryActions)
             {
                 File.AppendAllText(filePath, historyAction.FormattedValue + "\n");
@@ -107,7 +107,7 @@ namespace CLP.Entities
                 historyActionBuffer.Add(currentHistoryAction);
                 if (historyActionBuffer.Count == 1)
                 {
-                    var singleSemanticEvent = VerifyAndGenerateSingleItemEvent(page, historyActionBuffer.First());
+                    var singleSemanticEvent = VerifyAndGenerateSingleActionEvent(page, historyActionBuffer.First());
                     if (singleSemanticEvent != null)
                     {
                         initialSemanticEvents.Add(singleSemanticEvent);
@@ -117,7 +117,7 @@ namespace CLP.Entities
                 }
 
                 var nextHistoryAction = i + 1 < historyActions.Count ? historyActions[i + 1] : null;
-                var compoundSemanticEvent = VerifyAndGenerateCompoundItemEvent(page, historyActionBuffer, nextHistoryAction);
+                var compoundSemanticEvent = VerifyAndGenerateCompoundActionEvent(page, historyActionBuffer, nextHistoryAction);
                 if (compoundSemanticEvent != null)
                 {
                     initialSemanticEvents.Add(compoundSemanticEvent);
@@ -128,7 +128,7 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        public static ISemanticEvent VerifyAndGenerateSingleItemEvent(CLPPage page, IHistoryAction historyAction)
+        public static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
         {
             if (historyAction == null)
             {
@@ -171,7 +171,7 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent VerifyAndGenerateCompoundItemEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
+        public static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
         {
             if (!historyActions.Any())
             {
@@ -191,7 +191,7 @@ namespace CLP.Entities
                         !nextObjectsChangedHistoryAction.IsUsingPageObjects)
                     {
                         // HACK: Another temp hack to recognize multiple choice box answers. Normally just return null.
-                        var h = VerifyAndGenerateSingleItemEvent(page, nextHistoryAction);
+                        var h = VerifyAndGenerateSingleActionEvent(page, nextHistoryAction);
                         if (h == null)
                         {
                             return null;

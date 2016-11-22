@@ -625,9 +625,9 @@ namespace CLP.Entities
 
         public int GetNumberLineSizeAtHistoryIndex(int historyIndex)
         {
-            var sizeHistoryItem =
+            var sizeHistoryAction =
                 ParentPage.History.CompleteOrderedHistoryActions.OfType<NumberLineEndPointsChangedHistoryAction>().FirstOrDefault(h => h.NumberLineID == ID && h.HistoryActionIndex >= historyIndex);
-            return sizeHistoryItem == null ? NumberLineSize : sizeHistoryItem.PreviousEndValue;
+            return sizeHistoryAction == null ? NumberLineSize : sizeHistoryAction.PreviousEndValue;
         }
 
         #endregion //Methods

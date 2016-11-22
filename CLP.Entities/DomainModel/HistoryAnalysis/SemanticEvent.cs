@@ -33,8 +33,8 @@ namespace CLP.Entities
                    },
                    new List<ISemanticEvent>()) { }
 
-        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyItems)
-            : this(parentPage, historyItems, new List<ISemanticEvent>()) { }
+        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyActions)
+            : this(parentPage, historyActions, new List<ISemanticEvent>()) { }
 
         public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
             : this(parentPage,
@@ -47,11 +47,11 @@ namespace CLP.Entities
         public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
             : this(parentPage, new List<IHistoryAction>(), semanticEvents) { }
 
-        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyItems, List<ISemanticEvent> semanticEvents)
+        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyActions, List<ISemanticEvent> semanticEvents)
             : this()
         {
             ParentPage = parentPage;
-            HistoryActionIDs = historyItems.Select(h => h.ID).ToList();
+            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
             SemanticEvents = semanticEvents;
         }
 
