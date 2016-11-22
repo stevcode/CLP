@@ -163,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragArrowStartCommandExecute(DragStartedEventArgs e)
         {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage,
+            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryAction(PageObject.ParentPage,
                                                                                           App.MainWindowViewModel.CurrentUser,
                                                                                           PageObject.ID,
                                                                                           new Point(PageObject.Width, PageObject.Height)));
@@ -227,11 +227,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialWidth = Width;
             var initialHeight = Height;
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if (batch is PageObjectResizeBatchHistoryItem)
+            if (batch is PageObjectResizeBatchHistoryAction)
             {
-                ((PageObjectResizeBatchHistoryItem)batch).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+                ((PageObjectResizeBatchHistoryAction)batch).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
 
             if (_isClicked)
             {
@@ -285,7 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 PageObject.OnResizing(initialWidth, initialHeight);
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             }
 
             _initialWidth = 0;
@@ -361,8 +361,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObject.OnResized(preStretchedWidth, oldHeight);
             }
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryAction(PageObject.ParentPage,
                                                                                                  App.MainWindowViewModel.CurrentUser,
                                                                                                  PageObject.ID,
                                                                                                  0,
@@ -411,8 +411,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 didInteract = true;
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
-                                                           new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                ACLPPageBaseViewModel.AddHistoryActionToPage(numberLine.ParentPage,
+                                                           new NumberLineJumpSizesChangedHistoryAction(numberLine.ParentPage,
                                                                                                      App.MainWindowViewModel.CurrentUser,
                                                                                                      numberLine.ID,
                                                                                                      new List<Stroke>(),
@@ -463,8 +463,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 didInteract = true;
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
-                                                           new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                ACLPPageBaseViewModel.AddHistoryActionToPage(numberLine.ParentPage,
+                                                           new NumberLineJumpSizesChangedHistoryAction(numberLine.ParentPage,
                                                                                                      App.MainWindowViewModel.CurrentUser,
                                                                                                      numberLine.ID,
                                                                                                      new List<Stroke>

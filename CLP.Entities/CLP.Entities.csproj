@@ -133,16 +133,10 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Analysis\IAnalysis.cs" />
-    <Compile Include="Analysis\InkInterpretation.cs" />
-    <Compile Include="DAL\DatabaseConfiguration.cs" />
-    <Compile Include="DAL\ClassPeriodContext.cs" />
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
-    <Compile Include="DomainModel\Obsolete\ClassPeriod.cs" />
-    <Compile Include="DomainModel\Obsolete\ClassInformation.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />
@@ -151,27 +145,27 @@
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\HistoryAction.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArrayCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\IHistoryAction.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkCodedActions.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineCodedActions.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\SemanticEvent.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArraySemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectSemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\ISemanticEvent.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkSemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryAnalysis.cs" />
-    <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
-    <Compile Include="DomainModel\History\AnimationIndicator.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionValueChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
-    <Compile Include="DomainModel\History\DivisionTemplateHistoryItems\RemainderTilesVisibilityToggledHistoryItem.cs" />
-    <Compile Include="DomainModel\History\MultipleChoice\MultipleChoiceBubbleStatusChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineEndPointsChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineJumpSizesChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsMovedBatchHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsOnPageChangedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\ICountableHistoryItems\PartsValueChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\AHistoryActionBase.cs" />
+    <Compile Include="DomainModel\History\AnimationIndicatorHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayDivisionsChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayDivisionValueChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayGridToggleHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayRotateHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArraySnapHistoryAction.cs" />
+    <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\RemainderTilesVisibilityToggledHistoryAction.cs" />
+    <Compile Include="DomainModel\History\MultipleChoiceHistoryActions\MultipleChoiceBubbleStatusChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineEndPointsChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineJumpSizesChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryActions\ObjectsMovedBatchHistoryAction.cs" />
+    <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryActions\ObjectsOnPageChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\ICountableHistoryActions\PartsValueChangedHistoryAction.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\Bin.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\BinReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
@@ -197,13 +191,13 @@
     <Compile Include="DomainModel\Tags\Answer\AnswerBeforeRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerCorrectnessTag.cs" />
-    <Compile Include="DomainModel\History\DivisionTemplateHistoryItems\DivisionTemplateArrayRemovedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\DivisionTemplateHistoryItems\DivisionTemplateArraySnappedInHistoryItem.cs" />
+    <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArrayRemovedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArraySnappedInHistoryAction.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
-    <Compile Include="DomainModel\History\IHistoryItem.cs" />
+    <Compile Include="DomainModel\History\IHistoryAction.cs" />
     <Compile Include="DomainModel\History\PageHistory.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectCutHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectResizeBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\PageObjectHistoryActions\PageObjectCutHistoryAction.cs" />
+    <Compile Include="DomainModel\History\PageObjectHistoryActions\PageObjectResizeBatchHistoryAction.cs" />
     <Compile Include="DomainModel\People\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Cache\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectBase.cs" />
@@ -279,9 +273,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
       <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>

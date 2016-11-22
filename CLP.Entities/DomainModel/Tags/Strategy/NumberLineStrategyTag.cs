@@ -12,8 +12,8 @@ namespace CLP.Entities
         public NumberLineStrategyTag() { }
 
         /// <summary>Initializes <see cref="NumberLineStrategyTag" /> from values.</summary>
-        public NumberLineStrategyTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
-            : base(parentPage, origin, historyActions, codedStrategies) { }
+        public NumberLineStrategyTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents, List<CodedRepresentationStrategy> codedStrategies)
+            : base(parentPage, origin, semanticEvents, codedStrategies) { }
 
         #endregion //Constructors
 

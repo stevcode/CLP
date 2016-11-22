@@ -15,40 +15,40 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="AnswerChangedAfterRepresentationTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="AnswerChangedAfterRepresentationTag" /> belongs to.</param>
-        public AnswerChangedAfterRepresentationTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions)
+        public AnswerChangedAfterRepresentationTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents)
             : base(parentPage, origin)
         {
-            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
+            SemanticEventIDs = semanticEvents.Select(h => h.ID).ToList();
         }
 
         #endregion // Constructors
 
         #region Properties
 
-        /// <summary>List of <see cref="IHistoryAction" /> IDs used to generate this Tag.</summary>
-        public List<string> HistoryActionIDs
+        /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>
+        public List<string> SemanticEventIDs
         {
-            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
-            set { SetValue(HistoryActionIDsProperty, value); }
+            get { return GetValue<List<string>>(SemanticEventIDsProperty); }
+            set { SetValue(SemanticEventIDsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData SemanticEventIDsProperty = RegisterProperty("SemanticEventIDs", typeof(List<string>), () => new List<string>());
 
         #region Calculated Properties
 
-        public List<IHistoryAction> HistoryActions
+        public List<ISemanticEvent> SemanticEvents
         {
-            get { return ParentPage.History.HistoryActions.Where(h => HistoryActionIDs.Contains(h.ID)).OrderBy(h => h.HistoryActionIndex).Distinct().ToList(); }
+            get { return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticEventIndex).Distinct().ToList(); }
         }
 
-        public IHistoryAction FirstAnswer
+        public ISemanticEvent FirstAnswer
         {
-            get { return HistoryActions.FirstOrDefault(Codings.IsAnswerObject); }
+            get { return SemanticEvents.FirstOrDefault(Codings.IsAnswerObject); }
         }
 
-        public IHistoryAction LastAnswer
+        public ISemanticEvent LastAnswer
         {
-            get { return HistoryActions.LastOrDefault(Codings.IsAnswerObject); }
+            get { return SemanticEvents.LastOrDefault(Codings.IsAnswerObject); }
         }
 
         #endregion // Calculated Properties
@@ -131,7 +131,7 @@ namespace CLP.Entities
                 var analysisCode = string.IsNullOrWhiteSpace(analysisObjectCode) ? string.Empty : string.Format("{0} [{1}, {2}]", analysisObjectCode, firstAnswerContents, lastAnswerContents);
 
                 var representationsAdded =
-                    HistoryActions.Where(h => Codings.IsRepresentationObject(h) && h.CodedObjectAction == Codings.ACTION_OBJECT_ADD && Codings.FriendlyObjects.ContainsKey(h.CodedObject))
+                    SemanticEvents.Where(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD && Codings.FriendlyObjects.ContainsKey(h.CodedObject))
                                   .Select(h => string.Format("{0} [{1}]", h.CodedObject, h.CodedObjectID));
 
                 return string.Format("{0}\nRepresentations: {1}{2}",

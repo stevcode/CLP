@@ -35,8 +35,8 @@ namespace Classroom_Learning_Partner.ViewModels
     public enum HistoryAnalysisSteps
     {
         Tags,
-        HistoryActions,
-        HistoryItems
+        SemanticEvents,
+        HistoryActions
     }
 
     public class PageInformationPanelViewModel : APanelBaseViewModel
@@ -342,7 +342,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             #region Analysis Commands
 
-            GenerateHistoryActionsCommand = new Command(OnGenerateHistoryActionsCommandExecute);
+            GenerateSemanticEventsCommand = new Command(OnGenerateSemanticEventsCommandExecute);
             ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
@@ -359,7 +359,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
-            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
+            PrintAllHistoryActionsCommand = new Command(OnPrintAllHistoryActionsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
 
             #endregion // Obsolete Commands
@@ -369,9 +369,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Analysis Commands
 
-        public Command GenerateHistoryActionsCommand { get; private set; }
+        public Command GenerateSemanticEventsCommand { get; private set; }
 
-        private void OnGenerateHistoryActionsCommandExecute()
+        private void OnGenerateSemanticEventsCommandExecute()
         {
             var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
             foreach (var tempArraySkipCountingTag in existingTags)
@@ -379,14 +379,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.RemoveTag(tempArraySkipCountingTag);
             }
 
-            HistoryAnalysis.GenerateHistoryActions(CurrentPage);
+            HistoryAnalysis.GenerateSemanticEvents(CurrentPage);
         }
 
         public Command ShowAnalysisClustersCommand { get; private set; }
 
         private void OnShowAnalysisClustersCommandExecute()
         {
-            foreach (var cluster in InkCodedActions.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
+            foreach (var cluster in InkSemanticEvents.InkClusters.Where(c => c.ClusterType != InkCluster.ClusterTypes.Ignore))
             {
                 var clusterBounds = cluster.Strokes.GetBounds();
                 var tempBoundary = new TemporaryBoundary(CurrentPage, clusterBounds.X, clusterBounds.Y, clusterBounds.Height, clusterBounds.Width)
@@ -903,16 +903,16 @@ namespace Classroom_Learning_Partner.ViewModels
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var strokes = CurrentPage.InkStrokes.ToList();
             var historyIndex = 0;
-            var lastHistoryItem = CurrentPage.History.CompleteOrderedHistoryItems.LastOrDefault();
-            if (lastHistoryItem != null)
+            var lastHistoryAction = CurrentPage.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
             {
-                historyIndex = lastHistoryItem.HistoryIndex;
+                historyIndex = lastHistoryAction.HistoryActionIndex;
             }
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var strokeGroupPerRow = ArrayCodedActions.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
+                var strokeGroupPerRow = ArraySemanticEvents.GroupPossibleSkipCountStrokes(CurrentPage, array, strokes, historyIndex);
                 var skipStrokes = strokeGroupPerRow.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                 if (!skipStrokes.Any())
                 {
@@ -984,14 +984,14 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = ArrayCodedActions.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;
                 }
 
                 var unformattedSkips = formattedSkips.TrimAll().Split(new[] { "\"\"" }, StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
-                var heuristicsResults = ArrayCodedActions.Heuristics(unformattedSkips, array.Rows, array.Columns);
+                var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, array.Rows, array.Columns);
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
                           {
@@ -1021,46 +1021,39 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageNumber = CurrentPage.PageNumber;
             var studentName = CurrentPage.Owner.FullName;
-            var historyActions = CurrentPage.History.HistoryActions;
-            var firstAction = historyActions.FirstOrDefault();
-            var compActions = new ObservableCollection<IHistoryAction>();
+            var semanticEvents = CurrentPage.History.SemanticEvents;
+            var firstEvent = semanticEvents.FirstOrDefault();
+            var compEvents = new ObservableCollection<ISemanticEvent>();
             var index = 0;
-            var strCompActions = "";
-            //Store actions logged from Pass 3
-            for (var i = 0; i < historyActions.Count; i++)
+            var strCompEvents = "";
+            //Store events logged from Pass 3
+            for (var i = 0; i < semanticEvents.Count; i++)
             {
-                if (historyActions[i].CodedValue == "PASS [3]")
+                if (semanticEvents[i].CodedValue == "PASS [3]")
                 {
                     index = i + 1;
                     break;
                 }
             }
-            for (var j = index; j < historyActions.Count; j++)
+            for (var j = index; j < semanticEvents.Count; j++)
             {
-                compActions.Add(historyActions[j]);
+                compEvents.Add(semanticEvents[j]);
             }
 
-            foreach (var action in compActions)
+            foreach (var semanticEvent in compEvents)
             {
-                if (action.CodedObject == Codings.OBJECT_INK &&
-                    action.CodedObjectAction == Codings.ACTION_INK_IGNORE)
+                if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
+                    semanticEvent.EventType == Codings.EVENT_INK_IGNORE)
                 {
                     continue;
                 }
 
-                if (action.CodedObjectAction == Codings.ACTION_OBJECT_MOVE)
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
                 {
                     continue;
                 }
 
-                if (!action.IsObjectActionVisible)
-                {
-                    strCompActions += action.CodedObject + "; ";
-                }
-                else
-                {
-                    strCompActions += action.CodedObject + " " + action.CodedObjectAction + "; ";
-                }
+                strCompEvents += semanticEvent.CodedObject + " " + semanticEvent.EventType + "; ";
             }
 
             //Edit Name and Page Number for comparison from Machine Codes to Human Codes
@@ -1143,11 +1136,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             //Format changes to allow for comparison
-            strCompActions = strCompActions.Trim(' ');
+            strCompEvents = strCompEvents.Trim(' ');
             changed = changed.Trim(' ');
-            strCompActions = strCompActions.Trim(';');
+            strCompEvents = strCompEvents.Trim(';');
             changed = changed.Trim(';');
-            strCompActions = " " + strCompActions;
+            strCompEvents = " " + strCompEvents;
             changed = " " + changed;
             // Print for Comparison
             var output = string.Format("Student Testing: {0}{1}{2}{3}{4}{5}{6}{7}{8}{9}",
@@ -1155,7 +1148,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                        stringPageNumber,
                                        Environment.NewLine,
                                        "Machine Codes: ",
-                                       strCompActions,
+                                       strCompEvents,
                                        Environment.NewLine,
                                        "People Codes: ",
                                        changed,
@@ -1165,7 +1158,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var consecutive_count = 0;
             var total_matches = 0;
-            var machineElems = strCompActions.Split(';');
+            var machineElems = strCompEvents.Split(';');
             var humanElems = changed.Split(';');
             var elems = Math.Min(machineElems.Length, humanElems.Length);
             var total_codes = Math.Max(machineElems.Length, humanElems.Length);
@@ -1215,7 +1208,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = ArrayCodedActions.StaticBottomSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                var formattedSkips = ArraySemanticEvents.StaticBottomSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;
@@ -1448,9 +1441,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command PrintAllHistoryItemsCommand { get; private set; }
+        public Command PrintAllHistoryActionsCommand { get; private set; }
 
-        private void OnPrintAllHistoryItemsCommandExecute()
+        private void OnPrintAllHistoryActionsCommandExecute()
         {
             //var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             //var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
@@ -1465,9 +1458,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //    File.Delete(filePath);
             //}
             //File.WriteAllText(filePath, "");
-            //var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+            //var historyActions = CurrentPage.History.CompleteOrderedHistoryActions;
 
-            //foreach (var item in historyItems)
+            //foreach (var item in historyActions)
             //{
             //    File.AppendAllText(filePath, item.FormattedValue + "\n");
             //}

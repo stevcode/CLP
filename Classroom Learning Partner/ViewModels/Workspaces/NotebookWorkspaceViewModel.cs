@@ -308,7 +308,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
 
             //    page.History.ClearHistory();
-            //    page.History.HistoryActions.Clear();
+            //    page.History.SemanticEvents.Clear();
 
             //    var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
             //    foreach (var tempArraySkipCountingTag in existingTags)

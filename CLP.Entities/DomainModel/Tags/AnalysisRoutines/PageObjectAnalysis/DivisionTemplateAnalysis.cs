@@ -58,12 +58,12 @@ namespace CLP.Entities
 
         public static List<string> GetListOfDivisionTemplateIDsInHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             var divisionTemplateIDsInHistory = new List<string>();
-            //foreach (var pageObjectsAddedHistoryItem in completeOrderedHistory.OfType<PageObjectsAddedHistoryItem>())
+            //foreach (var pageObjectsAddedHistoryAction in completeOrderedHistory.OfType<PageObjectsAddedHistoryAction>())
             //{
-            //    divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryItem.PageObjectIDs
+            //    divisionTemplateIDsInHistory.AddRange(from pageObjectID in pageObjectsAddedHistoryAction.PageObjectIDs
             //                                          let divisionTemplate =
             //                                              page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate
             //                                          where divisionTemplate != null
@@ -75,14 +75,14 @@ namespace CLP.Entities
 
         public static void AnalyzeHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 
             //DivisionTemplateDeletedTag
-            //foreach (var historyItem in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
+            //foreach (var historyAction in completeOrderedHistory.OfType<PageObjectsRemovedHistoryAction>())
             //{
-            //    foreach (var pageObjectID in historyItem.PageObjectIDs)
+            //    foreach (var pageObjectID in historyAction.PageObjectIDs)
             //    {
             //        var divisionTemplate = page.GetPageObjectByID(pageObjectID) as DivisionTemplate ?? page.History.GetPageObjectByID(pageObjectID) as DivisionTemplate;
             //        if (divisionTemplate == null)
@@ -105,9 +105,9 @@ namespace CLP.Entities
 
             var divisionTemplatesOnPage = new List<DivisionTemplateAndRemainder>();
             var arraysOnPage = new List<CLPArray>();
-            //foreach (var historyItem in completeOrderedHistory)
+            //foreach (var historyAction in completeOrderedHistory)
             //{
-            //    var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
+            //    var removedPageObjectsHistoryItem = historyAction as PageObjectsRemovedHistoryItem;
             //    if (removedPageObjectsHistoryItem != null)
             //    {
             //        foreach (var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
@@ -118,7 +118,7 @@ namespace CLP.Entities
             //        continue;
             //    }
 
-            //    var arraySnappedInHistoryItem = historyItem as DivisionTemplateArraySnappedInHistoryItem;
+            //    var arraySnappedInHistoryItem = historyAction as DivisionTemplateArraySnappedInHistoryAction;
             //    if (arraySnappedInHistoryItem != null)
             //    {
             //        var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
@@ -133,7 +133,7 @@ namespace CLP.Entities
             //    }
 
             //    //DivisionTemplateIncorrectArrayCreationTag
-            //    var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
+            //    var addedPageObjectHistoryItem = historyAction as PageObjectsAddedHistoryItem;
             //    if (addedPageObjectHistoryItem != null)
             //    {
             //        foreach (var pageObject in
@@ -324,7 +324,7 @@ namespace CLP.Entities
             //    }
 
             //    //DivisionTemplateRemainderErrorsTag.OrientationChangedAttempts
-            //    var arrayRotateHistoryItem = historyItem as CLPArrayRotateHistoryItem;
+            //    var arrayRotateHistoryItem = historyAction as CLPArrayRotateHistoryAction;
             //    if (arrayRotateHistoryItem != null)
             //    {
             //        foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
@@ -358,7 +358,7 @@ namespace CLP.Entities
             //    }
 
             //    //DivisionTemplateFailedSnapTag
-            //    //var pageObjectMovedHistoryItem = historyItem as PageObjectMoveBatchHistoryItem;
+            //    //var pageObjectMovedHistoryItem = historyAction as PageObjectMoveBatchHistoryItem;
             //    //if (pageObjectMovedHistoryItem != null)
             //    //{
             //    //    var array = page.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray ??
@@ -474,7 +474,7 @@ namespace CLP.Entities
             //    //                DivisionTemplate.SnapInArray(snappingArray.Columns);
 
             //    //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-            //    //                                                           new DivisionTemplateArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
+            //    //                                                           new DivisionTemplateArraySnappedInHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
             //    //                return;
             //    //            }
             //    //        }

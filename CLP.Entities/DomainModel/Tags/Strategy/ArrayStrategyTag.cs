@@ -13,8 +13,8 @@ namespace CLP.Entities
         public ArrayStrategyTag() { }
 
         /// <summary>Initializes <see cref="ArrayStrategyTag" /> from values.</summary>
-        public ArrayStrategyTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
-            : base(parentPage, origin, historyActions, codedStrategies) { }
+        public ArrayStrategyTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents, List<CodedRepresentationStrategy> codedStrategies)
+            : base(parentPage, origin, semanticEvents, codedStrategies) { }
 
         #endregion //Constructors
 
@@ -26,67 +26,67 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static void IdentifyArrayStrategies(CLPPage page, List<IHistoryAction> historyActions)
+        public static void IdentifyArrayStrategies(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var relevantHistoryactions = new List<IHistoryAction>();
+            var relevantSemanticEvents = new List<ISemanticEvent>();
             var codedStrategies = new List<CodedRepresentationStrategy>();
             var ignoredHistoryIndexes = new List<int>();
             var skipArithCount = new Dictionary<string, int>();
             var patternStartPoints = new Dictionary<string, string>();
             var patternEndPoints = new List<dynamic>();
 
-            for (var i = 0; i < historyActions.Count; i++)
+            for (var i = 0; i < semanticEvents.Count; i++)
             {
                 if (ignoredHistoryIndexes.Contains(i))
                 {
                     continue;
                 }
 
-                var currentHistoryAction = historyActions[i];
-                var isLastHistoryAction = i + 1 >= historyActions.Count;
+                var currentSemanticEvent = semanticEvents[i];
+                var isLastSemanticEvent = i + 1 >= semanticEvents.Count;
 
-                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARITH &&
-                    currentHistoryAction.CodedObjectAction == Codings.ACTION_ARITH_ADD)
+                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARITH &&
+                    currentSemanticEvent.EventType == Codings.EVENT_ARITH_ADD)
                 {
                     var arrayIDs = patternStartPoints.Keys.ToList();
                     foreach (var arrayID in arrayIDs)
                     {
-                        patternStartPoints[arrayID] = Codings.ACTION_ARITH_ADD;
+                        patternStartPoints[arrayID] = Codings.EVENT_ARITH_ADD;
                     }
                 }
 
-                if (currentHistoryAction.CodedObject == Codings.OBJECT_ARRAY)
+                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARRAY)
                 {
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE)
                     {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentHistoryAction.CodedObjectID)
+                        relevantSemanticEvents.Add(currentSemanticEvent);
+                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
-                                                CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
+                                                CodedResultantID = currentSemanticEvent.EventInformation,
                                                 StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_DIVIDE
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_DIVIDE_INK)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
                     {
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentHistoryAction.CodedObjectID)
+                        relevantSemanticEvents.Add(currentSemanticEvent);
+                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
-                                                CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
+                                                CodedResultantID = currentSemanticEvent.EventInformation,
                                                 StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SKIP)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_SKIP)
                     {
-                        var arrayID = currentHistoryAction.ReferencePageObjectID;
-                        var compoundID = string.Format("{0};{1};{2}", currentHistoryAction.CodedObjectID, currentHistoryAction.CodedObjectIDIncrement, arrayID);
+                        var arrayID = currentSemanticEvent.ReferencePageObjectID;
+                        var compoundID = string.Format("{0};{1};{2}", currentSemanticEvent.CodedObjectID, currentSemanticEvent.CodedObjectIDIncrement, arrayID);
 
                         if (!skipArithCount.ContainsKey(compoundID))
                         {
@@ -95,35 +95,35 @@ namespace CLP.Entities
 
                         if (patternStartPoints.Keys.Contains(arrayID))
                         {
-                            if (patternStartPoints[arrayID] == Codings.ACTION_ARITH_ADD)
+                            if (patternStartPoints[arrayID] == Codings.EVENT_ARITH_ADD)
                             {
                                 skipArithCount[compoundID]++;
                             }
 
-                            patternStartPoints[arrayID] = Codings.ACTION_ARRAY_SKIP;
+                            patternStartPoints[arrayID] = Codings.EVENT_ARRAY_SKIP;
                         }
                         else
                         {
-                            patternStartPoints.Add(arrayID, Codings.ACTION_ARRAY_SKIP);
+                            patternStartPoints.Add(arrayID, Codings.EVENT_ARRAY_SKIP);
                         }
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_CUT)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_CUT)
                     {
-                        for (int j = i + 1; j < historyActions.Count; j++)
+                        for (int j = i + 1; j < semanticEvents.Count; j++)
                         {
-                            var nextHistoryAction = historyActions[j];
-                            if (nextHistoryAction.CodedObject == Codings.OBJECT_ARRAY &&
-                                nextHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP &&
-                                nextHistoryAction.CodedObjectID == currentHistoryAction.CodedObjectID)
+                            var nextSemanticEvent = semanticEvents[j];
+                            if (nextSemanticEvent.CodedObject == Codings.OBJECT_ARRAY &&
+                                nextSemanticEvent.EventType == Codings.EVENT_ARRAY_SNAP &&
+                                nextSemanticEvent.CodedObjectID == currentSemanticEvent.CodedObjectID)
                             {
-                                relevantHistoryactions.Add(currentHistoryAction);
-                                relevantHistoryactions.Add(nextHistoryAction);
+                                relevantSemanticEvents.Add(currentSemanticEvent);
+                                relevantSemanticEvents.Add(nextSemanticEvent);
                                 ignoredHistoryIndexes.Add(j);
-                                var codedStrategyInner = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentHistoryAction.CodedObjectID)
+                                var codedStrategyInner = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                                          {
-                                                             CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
-                                                             CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                             CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
+                                                             CodedResultantID = currentSemanticEvent.EventInformation,
                                                              StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT_SNAP
                                                          };
                                 codedStrategies.Add(codedStrategyInner);
@@ -131,30 +131,30 @@ namespace CLP.Entities
                             }
                         }
 
-                        relevantHistoryactions.Add(currentHistoryAction);
-                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentHistoryAction.CodedObjectID)
+                        relevantSemanticEvents.Add(currentSemanticEvent);
+                        var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentHistoryAction.CodedObjectIDIncrement,
-                                                CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
+                                                CodedResultantID = currentSemanticEvent.EventInformation,
                                                 StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
                     }
 
-                    if (currentHistoryAction.CodedObjectAction == Codings.ACTION_ARRAY_SNAP)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_SNAP)
                     {
-                        relevantHistoryactions.Add(currentHistoryAction);
+                        relevantSemanticEvents.Add(currentSemanticEvent);
                         var codedIDLeft = string.Format("{0}{1}",
-                                                        currentHistoryAction.CodedObjectID,
-                                                        !string.IsNullOrEmpty(currentHistoryAction.CodedObjectIDIncrement) ? " " + currentHistoryAction.CodedObjectIDIncrement : string.Empty);
+                                                        currentSemanticEvent.CodedObjectID,
+                                                        !string.IsNullOrEmpty(currentSemanticEvent.CodedObjectIDIncrement) ? " " + currentSemanticEvent.CodedObjectIDIncrement : string.Empty);
                         var codedIDRight = string.Format("{0}{1}",
-                                                         currentHistoryAction.CodedObjectSubID,
-                                                         !string.IsNullOrEmpty(currentHistoryAction.CodedObjectSubIDIncrement) ? " " + currentHistoryAction.CodedObjectSubIDIncrement : string.Empty);
+                                                         currentSemanticEvent.CodedObjectSubID,
+                                                         !string.IsNullOrEmpty(currentSemanticEvent.CodedObjectSubIDIncrement) ? " " + currentSemanticEvent.CodedObjectSubIDIncrement : string.Empty);
                         var fullCodedID = string.Format("{0}, {1}", codedIDLeft, codedIDRight);
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, fullCodedID)
                                             {
-                                                CodedResultantID = currentHistoryAction.CodedObjectActionID,
+                                                CodedResultantID = currentSemanticEvent.EventInformation,
                                                 StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_SNAP
                                             };
                         codedStrategies.Add(codedStrategy);
@@ -188,7 +188,7 @@ namespace CLP.Entities
                 return;
             }
 
-            var tag = new ArrayStrategyTag(page, Origin.StudentPageGenerated, relevantHistoryactions, codedStrategies);
+            var tag = new ArrayStrategyTag(page, Origin.StudentPageGenerated, relevantSemanticEvents, codedStrategies);
             page.AddTag(tag);
         }
 

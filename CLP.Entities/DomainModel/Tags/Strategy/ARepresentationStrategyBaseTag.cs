@@ -14,11 +14,11 @@ namespace CLP.Entities
         protected ARepresentationStrategyBaseTag() { }
 
         /// <summary>Initializes <see cref="ARepresentationStrategyBaseTag" /> from values.</summary>
-        protected ARepresentationStrategyBaseTag(CLPPage parentPage, Origin origin, List<IHistoryAction> historyActions, List<CodedRepresentationStrategy> codedStrategies)
+        protected ARepresentationStrategyBaseTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents, List<CodedRepresentationStrategy> codedStrategies)
             : base(parentPage, origin)
         {
             CodedStrategies = codedStrategies;
-            HistoryActions = historyActions;
+            SemanticEvents = semanticEvents;
         }
 
         #endregion //Constructors
@@ -35,13 +35,13 @@ namespace CLP.Entities
         public static readonly PropertyData CodedStrategiesProperty = RegisterProperty("CodedStrategies", typeof(List<CodedRepresentationStrategy>), () => new List<CodedRepresentationStrategy>());
 
         /// <summary>List of all the Array Strategies used on the <see cref="CLPPage" />.</summary>
-        public List<IHistoryAction> HistoryActions
+        public List<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<List<IHistoryAction>>(HistoryActionsProperty); }
-            set { SetValue(HistoryActionsProperty, value); }
+            get { return GetValue<List<ISemanticEvent>>(SemanticEventsProperty); }
+            set { SetValue(SemanticEventsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof(List<IHistoryAction>));
+        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>));
 
         #region ATagBase Overrides
 

@@ -301,7 +301,7 @@ namespace CLP.Entities
             get { return $"{Dividend} / {Columns} Division Template with {CurrentRemainder} remaining"; }
         }
 
-        public override string CodedName => Codings.OBJECT_DIVISION_TOOL;
+        public override string CodedName => Codings.OBJECT_DIVISION_TEMPLATE;
 
         public override string CodedID
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -11,6 +10,7 @@ using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -24,17 +24,13 @@ namespace CLP.Entities
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="PageHistory" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="PageHistory" /> from scratch.</summary>
         public PageHistory()
         {
             ID = Guid.NewGuid().ToCompactID();
         }
 
-        /// <summary>
-        /// Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public PageHistory(SerializationInfo info, StreamingContext context)
@@ -46,12 +42,8 @@ namespace CLP.Entities
 
         #region ID
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="PageHistory" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Primary Key.
-        /// </remarks>
+        /// <summary>Unique Identifier for the <see cref="PageHistory" />.</summary>
+        /// <remarks>Composite Primary Key.</remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -60,12 +52,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
-        /// <summary>
-        /// Version Index of the <see cref="PageHistory" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Primary Key.
-        /// </remarks>
+        /// <summary>Version Index of the <see cref="PageHistory" />.</summary>
+        /// <remarks>Composite Primary Key.</remarks>
         public uint VersionIndex
         {
             get { return GetValue<uint>(VersionIndexProperty); }
@@ -74,9 +62,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
 
-        /// <summary>
-        /// Version Index of the latest submission.
-        /// </summary>
+        /// <summary>Version Index of the latest submission.</summary>
         public uint? LastVersionIndex
         {
             get { return GetValue<uint?>(LastVersionIndexProperty); }
@@ -84,17 +70,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
-
-        /// <summary>
-        /// Differentiation Level of the <see cref="PageHistory" />.
-        /// </summary>
-        public string DifferentiationLevel
-        {
-            get { return GetValue<string>(DifferentiationLevelProperty); }
-            set { SetValue(DifferentiationLevelProperty, value); }
-        }
-
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
         #endregion //ID
 
@@ -106,84 +81,73 @@ namespace CLP.Entities
 
         public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
 
-        #region HistoryItems
+        #region HistoryActions
 
-        /// <summary>
-        /// All events available for Undo.
-        /// </summary>
-        public ObservableCollection<IHistoryItem> UndoItems
+        /// <summary>All events available for Undo.</summary>
+        public ObservableCollection<IHistoryAction> UndoActions
         {
-            get { return GetValue<ObservableCollection<IHistoryItem>>(UndoItemsProperty); }
-            set { SetValue(UndoItemsProperty, value); }
+            get { return GetValue<ObservableCollection<IHistoryAction>>(UndoActionsProperty); }
+            set { SetValue(UndoActionsProperty, value); }
         }
 
-        public static readonly PropertyData UndoItemsProperty = RegisterProperty("UndoItems", typeof(ObservableCollection<IHistoryItem>), () => new ObservableCollection<IHistoryItem>());
+        public static readonly PropertyData UndoActionsProperty = RegisterProperty("UndoActions", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        /// <summary>
-        /// All events available for Redo.
-        /// </summary>
-        public ObservableCollection<IHistoryItem> RedoItems
+        /// <summary>All events available for Redo.</summary>
+        public ObservableCollection<IHistoryAction> RedoActions
         {
-            get { return GetValue<ObservableCollection<IHistoryItem>>(RedoItemsProperty); }
-            set { SetValue(RedoItemsProperty, value); }
+            get { return GetValue<ObservableCollection<IHistoryAction>>(RedoActionsProperty); }
+            set { SetValue(RedoActionsProperty, value); }
         }
 
-        public static readonly PropertyData RedoItemsProperty = RegisterProperty("RedoItems", typeof(ObservableCollection<IHistoryItem>), () => new ObservableCollection<IHistoryItem>());
+        public static readonly PropertyData RedoActionsProperty = RegisterProperty("RedoActions", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        public List<IHistoryItem> CompleteOrderedHistoryItems
+        public List<IHistoryAction> CompleteOrderedHistoryActions
+        {
+            get { return UndoActions.Reverse().Concat(RedoActions).ToList(); }
+        }
+
+        public List<IHistoryAction> OrderedAnimationHistoryActions
         {
             get
             {
-                return UndoItems.Reverse().Concat(RedoItems).ToList();
-            }
-        }
-
-        public List<IHistoryItem> OrderedAnimationHistoryItems
-        {
-            get
-            {
-                var combinedHistory = CompleteOrderedHistoryItems;
+                var combinedHistory = CompleteOrderedHistoryActions;
 
                 var startAnimationIndicator =
-                    combinedHistory.FirstOrDefault(
-                                                   clpHistoryItem =>
-                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
+                    combinedHistory.FirstOrDefault(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Record);
                 var stopAnimationIndicator =
-                    combinedHistory.FirstOrDefault(
-                                                   clpHistoryItem =>
-                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                    combinedHistory.FirstOrDefault(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Stop);
                 var startIndex = combinedHistory.IndexOf(startAnimationIndicator);
                 var stopIndex = combinedHistory.IndexOf(stopAnimationIndicator);
-                if (stopIndex > -1) //HACK: This garauntees correct historyItems in the scenario when a student hits Record, then Clear Page, does work and then hits Stop.
+                if (stopIndex > -1) //HACK: This garauntees correct historyActions in the scenario when a student hits Record, then Clear Page, does work and then hits Stop.
                 {
                     startIndex = 0;
                 }
 
-                var animationHistoryItems = new List<IHistoryItem>();
-                if (stopIndex == 0) //HACK: Above Hack, but where first UndoItem is a Stop.
+                var animationHistoryActions = new List<IHistoryAction>();
+                if (stopIndex == 0) //HACK: Above Hack, but where first UndoAction is a Stop.
                 {
-                    return animationHistoryItems;
+                    return animationHistoryActions;
                 }
 
                 if (startIndex > -1)
                 {
-                    animationHistoryItems = combinedHistory.Skip(startIndex).ToList();
+                    animationHistoryActions = combinedHistory.Skip(startIndex).ToList();
                 }
                 else
                 {
-                    return animationHistoryItems;
+                    return animationHistoryActions;
                 }
 
                 if (stopIndex > 0)
                 {
-                    animationHistoryItems = animationHistoryItems.Take(stopIndex - startIndex + 1).ToList();
+                    animationHistoryActions = animationHistoryActions.Take(stopIndex - startIndex + 1).ToList();
                 }
-                else //HACK: This garauntees correct historyItems in the scenario when a student hits Record, but Submits page before hitting Stop.
+                else //HACK: This garauntees correct historyActions in the scenario when a student hits Record, but Submits page before hitting Stop.
                 {
-                    animationHistoryItems = animationHistoryItems.Take(combinedHistory.Count - startIndex).ToList();
+                    animationHistoryActions = animationHistoryActions.Take(combinedHistory.Count - startIndex).ToList();
                 }
 
-                return animationHistoryItems;
+                return animationHistoryActions;
             }
         }
 
@@ -193,7 +157,7 @@ namespace CLP.Entities
             {
                 lock (_historyLock)
                 {
-                    return !_isUndoingOperation && UndoItems.Any() && UseHistory;
+                    return !_isUndoingOperation && UndoActions.Any() && UseHistory;
                 }
             }
         }
@@ -204,33 +168,29 @@ namespace CLP.Entities
             {
                 lock (_historyLock)
                 {
-                    return !_isUndoingOperation && RedoItems.Any() && UseHistory;
+                    return !_isUndoingOperation && RedoActions.Any() && UseHistory;
                 }
             }
         }
 
-        #endregion //HistoryItems
+        #endregion //HistoryActions
 
-        #region HistoryActions
+        #region SemanticEvents
 
-        /// <summary>
-        /// List of all the IHistoryActions analysis generates.
-        /// </summary>
-        public ObservableCollection<IHistoryAction> HistoryActions
+        /// <summary>List of all the ISemanticEvents analysis generates.</summary>
+        public ObservableCollection<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<ObservableCollection<IHistoryAction>>(HistoryActionsProperty); }
-            set { SetValue(HistoryActionsProperty, value); }
+            get { return GetValue<ObservableCollection<ISemanticEvent>>(SemanticEventsProperty); }
+            set { SetValue(SemanticEventsProperty, value); }
         }
 
-        public static readonly PropertyData HistoryActionsProperty = RegisterProperty("HistoryActions", typeof (ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>()); 
+        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(ObservableCollection<ISemanticEvent>), () => new ObservableCollection<ISemanticEvent>());
 
-        #endregion //HistoryActions
+        #endregion //SemanticEvents
 
         #region Playback Indication
 
-        /// <summary>
-        /// Flag to signify history is currently playing or rewinding.
-        /// </summary>
+        /// <summary>Flag to signify history is currently playing or rewinding.</summary>
         public bool IsAnimating
         {
             get { return GetValue<bool>(IsAnimatingProperty); }
@@ -239,9 +199,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsAnimatingProperty = RegisterProperty("IsAnimating", typeof(bool), false);
 
-        /// <summary>
-        /// Current position within the History.
-        /// </summary>
+        /// <summary>Current position within the History.</summary>
         public double CurrentHistoryTick
         {
             get { return GetValue<double>(CurrentHistoryTickProperty); }
@@ -252,35 +210,32 @@ namespace CLP.Entities
 
         public int CurrentHistoryIndex
         {
-            get { return UndoItems.Any() ? UndoItems.First().HistoryIndex : 0; }
+            get { return UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0; }
         }
 
         public int CurrentAnimationDelay
         {
-            get { return RedoItems.Any() ? RedoItems.First().AnimationDelay : 0; }
+            get { return RedoActions.Any() ? RedoActions.First().AnimationDelay : 0; }
         }
 
         public bool IsAnimation
         {
             get
             {
-                return UndoItems.Any(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop) ||
-                       RedoItems.Any(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                return UndoActions.Any(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Stop) ||
+                       RedoActions.Any(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Stop);
             }
         }
 
         /// <summary>Forces playback on non-animation pages.</summary>
-        [XmlIgnore] [ExcludeFromSerialization] private bool _isNonAnimationPlaybackEnabled = false;
-
+        [XmlIgnore] [JsonIgnore] [ExcludeFromSerialization] private bool _isNonAnimationPlaybackEnabled = false;
 
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
-        public bool IsNonAnimationPlaybackEnabled 
+        public bool IsNonAnimationPlaybackEnabled
         {
-            get
-            {
-                return _isNonAnimationPlaybackEnabled;
-            }
+            get { return _isNonAnimationPlaybackEnabled; }
             set
             {
                 if (_isNonAnimationPlaybackEnabled == value)
@@ -291,7 +246,6 @@ namespace CLP.Entities
                 UpdateTicks();
             }
         }
-
 
         public bool IsPlaybackEnabled
         {
@@ -307,11 +261,11 @@ namespace CLP.Entities
             get
             {
                 var totalTicks = 0;
-                foreach (var clpHistoryItem in CompleteOrderedHistoryItems)
+                foreach (var historyAction in CompleteOrderedHistoryActions)
                 {
-                    if (clpHistoryItem is IHistoryBatch)
+                    if (historyAction is IHistoryBatch)
                     {
-                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                        totalTicks += (historyAction as IHistoryBatch).NumberOfBatchTicks;
                     }
                     else
                     {
@@ -329,11 +283,11 @@ namespace CLP.Entities
             {
                 var totalAnimationTicks = 0;
 
-                foreach (var clpHistoryItem in OrderedAnimationHistoryItems)
+                foreach (var historyAction in OrderedAnimationHistoryActions)
                 {
-                    if (clpHistoryItem is IHistoryBatch)
+                    if (historyAction is IHistoryBatch)
                     {
-                        totalAnimationTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                        totalAnimationTicks += (historyAction as IHistoryBatch).NumberOfBatchTicks;
                     }
                     else
                     {
@@ -354,9 +308,7 @@ namespace CLP.Entities
 
         #region Trashed Items
 
-        /// <summary>
-        /// A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
-        /// </summary>
+        /// <summary>A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.</summary>
         public List<IPageObject> TrashedPageObjects
         {
             get { return GetValue<List<IPageObject>>(TrashedPageObjectsProperty); }
@@ -365,10 +317,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
 
-        /// <summary>
-        /// A list of all the <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
-        /// </summary>
+        /// <summary>A list of all the <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.</summary>
         [XmlIgnore]
+        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection TrashedInkStrokes
         {
@@ -378,9 +329,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
 
-        /// <summary>
-        /// A list of all the serialized <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
-        /// </summary>
+        /// <summary>A list of all the serialized <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.</summary>
         public List<StrokeDTO> SerializedTrashedInkStrokes
         {
             get { return GetValue<List<StrokeDTO>>(SerializedTrashedInkStrokesProperty); }
@@ -397,36 +346,37 @@ namespace CLP.Entities
 
         public void RefreshHistoryIndexes()
         {
-            foreach (var historyItem in UndoItems)
+            foreach (var historyAction in UndoActions)
             {
-                historyItem.HistoryIndex = UndoItems.Count - UndoItems.IndexOf(historyItem) - 1;
+                historyAction.HistoryActionIndex = UndoActions.Count - UndoActions.IndexOf(historyAction) - 1;
             }
 
-            foreach (var historyItem in RedoItems)
+            foreach (var historyAction in RedoActions)
             {
-                historyItem.HistoryIndex = UndoItems.Count + RedoItems.IndexOf(historyItem);
+                historyAction.HistoryActionIndex = UndoActions.Count + RedoActions.IndexOf(historyAction);
             }
         }
 
         public void OptimizeTrashedItems()
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
-                                      let isTrashedInkStrokeBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) || 
-                                                                        RedoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
+                                      let isTrashedInkStrokeBeingUsed =
+                                      UndoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) ||
+                                      RedoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
                                       where !isTrashedInkStrokeBeingUsed
                                       select trashedInkStroke).ToList();
-            foreach(var stroke in inkStrokesToRemove)
+            foreach (var stroke in inkStrokesToRemove)
             {
                 TrashedInkStrokes.Remove(stroke);
             }
 
-
             var pageObjectsToRemove = (from trashedPageObject in TrashedPageObjects
-                                       let isTrashedPageObjectBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID)) || 
-                                                                          RedoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID))
+                                       let isTrashedPageObjectBeingUsed =
+                                       UndoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID)) ||
+                                       RedoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID))
                                        where !isTrashedPageObjectBeingUsed
                                        select trashedPageObject).ToList();
-            foreach(var pageObject in pageObjectsToRemove)
+            foreach (var pageObject in pageObjectsToRemove)
             {
                 TrashedPageObjects.Remove(pageObject);
             }
@@ -435,10 +385,10 @@ namespace CLP.Entities
         //Completely clear history.
         public void ClearHistory()
         {
-            lock(_historyLock)
+            lock (_historyLock)
             {
-                UndoItems.Clear();
-                RedoItems.Clear();
+                UndoActions.Clear();
+                RedoActions.Clear();
                 TrashedInkStrokes.Clear();
                 SerializedTrashedInkStrokes.Clear();
                 TrashedPageObjects.Clear();
@@ -449,32 +399,32 @@ namespace CLP.Entities
 
         public void ClearNonAnimationHistory()
         {
-            lock(_historyLock)
+            lock (_historyLock)
             {
                 var startAnimationIndicator =
-                    UndoItems.FirstOrDefault(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
-                var startIndex = UndoItems.IndexOf(startAnimationIndicator);
-                if(startIndex > -1)
+                    UndoActions.FirstOrDefault(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Record);
+                var startIndex = UndoActions.IndexOf(startAnimationIndicator);
+                if (startIndex > -1)
                 {
-                    var animationUndoItems = UndoItems.Take(startIndex + 1);
-                    UndoItems = new ObservableCollection<IHistoryItem>(animationUndoItems);
+                    var animationUndoActions = UndoActions.Take(startIndex + 1);
+                    UndoActions = new ObservableCollection<IHistoryAction>(animationUndoActions);
                 }
                 else
                 {
-                    UndoItems.Clear();
+                    UndoActions.Clear();
                 }
 
                 var stopAnimationIndicator =
-                    RedoItems.FirstOrDefault(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
-                var stopIndex = RedoItems.IndexOf(stopAnimationIndicator);
-                if(stopIndex > -1)
+                    RedoActions.FirstOrDefault(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                var stopIndex = RedoActions.IndexOf(stopAnimationIndicator);
+                if (stopIndex > -1)
                 {
-                    var animationRedoItems = RedoItems.Take(stopIndex + 1);
-                    RedoItems = new ObservableCollection<IHistoryItem>(animationRedoItems);
+                    var animationRedoActions = RedoActions.Take(stopIndex + 1);
+                    RedoActions = new ObservableCollection<IHistoryAction>(animationRedoActions);
                 }
                 else
                 {
-                    RedoItems.Clear();
+                    RedoActions.Clear();
                 }
             }
             OptimizeTrashedItems();
@@ -483,32 +433,30 @@ namespace CLP.Entities
 
         public void UpdateTicks()
         {
-            lock(_historyLock)
+            lock (_historyLock)
             {
-                RaisePropertyChanged("CurrentHistoryIndex");
-                RaisePropertyChanged("HistoryLength");
-                RaisePropertyChanged("AnimationLength");
-                RaisePropertyChanged("PlaybackLength");
-                RaisePropertyChanged("IsAnimation");
-                RaisePropertyChanged("IsPlaybackEnabled");
+                RaisePropertyChanged(nameof(CurrentHistoryIndex));
+                RaisePropertyChanged(nameof(HistoryLength));
+                RaisePropertyChanged(nameof(AnimationLength));
+                RaisePropertyChanged(nameof(PlaybackLength));
+                RaisePropertyChanged(nameof(IsAnimation));
+                RaisePropertyChanged(nameof(IsPlaybackEnabled));
 
                 var currentTick = 0;
 
-                var combinedHistory = CompleteOrderedHistoryItems;
+                var combinedHistory = CompleteOrderedHistoryActions;
 
                 var startAnimationIndicator =
-                    combinedHistory.FirstOrDefault(
-                                                   clpHistoryItem =>
-                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
+                    combinedHistory.FirstOrDefault(h => h is AnimationIndicatorHistoryAction && (h as AnimationIndicatorHistoryAction).AnimationIndicatorType == AnimationIndicatorType.Record);
 
                 var startIndex = Math.Max(0, combinedHistory.IndexOf(startAnimationIndicator));
-                var playbackItems = UndoItems.Reverse().Skip(startIndex);
+                var playbackActions = UndoActions.Reverse().Skip(startIndex);
 
-                foreach (var clpHistoryItem in playbackItems)
+                foreach (var historyAction in playbackActions)
                 {
-                    if(clpHistoryItem is IHistoryBatch)
+                    if (historyAction is IHistoryBatch)
                     {
-                        currentTick += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                        currentTick += (historyAction as IHistoryBatch).NumberOfBatchTicks;
                     }
                     else
                     {
@@ -516,13 +464,13 @@ namespace CLP.Entities
                     }
                 }
 
-                if(RedoItems.Any() &&
-                   RedoItems.First() is IHistoryBatch)
+                if (RedoActions.Any() &&
+                    RedoActions.First() is IHistoryBatch)
                 {
-                    var clpHistoryItem = RedoItems.First() as IHistoryBatch;
-                    if (clpHistoryItem != null)
+                    var historyAction = RedoActions.First() as IHistoryBatch;
+                    if (historyAction != null)
                     {
-                        currentTick += clpHistoryItem.CurrentBatchTickIndex;
+                        currentTick += historyAction.CurrentBatchTickIndex;
                     }
                 }
 
@@ -534,17 +482,17 @@ namespace CLP.Entities
         {
             var diff = Convert.ToInt32(newTick - oldTick);
 
-            if(diff > 0)
+            if (diff > 0)
             {
-                while(diff > 0)
+                while (diff > 0)
                 {
                     diff--;
                     Redo(true);
                 }
             }
-            else if(diff < 0)
+            else if (diff < 0)
             {
-                while(diff < 0)
+                while (diff < 0)
                 {
                     diff++;
                     Undo(true);
@@ -561,7 +509,7 @@ namespace CLP.Entities
 
         public IHistoryBatch EndBatch()
         {
-            if(CurrentHistoryBatch == null)
+            if (CurrentHistoryBatch == null)
             {
                 return null;
             }
@@ -570,7 +518,7 @@ namespace CLP.Entities
             batch.CurrentBatchTickIndex = batch.NumberOfBatchTicks;
             CurrentHistoryBatch = null;
 
-            AddHistoryItem(batch);
+            AddHistoryAction(batch);
 
             return batch;
         }
@@ -586,15 +534,14 @@ namespace CLP.Entities
 
             lock (_historyLock)
             {
-                if (!UndoItems.Any() ||
-                    IsAnimation)
+                if (!UndoActions.Any() || IsAnimation)
                 {
                     return false;
                 }
 
-                UndoItems.Insert(0, new AnimationIndicator(page, owner, AnimationIndicatorType.Stop));
-                UndoItems.Add(new AnimationIndicator(page, owner, AnimationIndicatorType.Record));
-                RedoItems.Clear();
+                UndoActions.Insert(0, new AnimationIndicatorHistoryAction(page, owner, AnimationIndicatorType.Stop));
+                UndoActions.Add(new AnimationIndicatorHistoryAction(page, owner, AnimationIndicatorType.Record));
+                RedoActions.Clear();
                 RefreshHistoryIndexes();
             }
 
@@ -602,21 +549,23 @@ namespace CLP.Entities
             return true;
         }
 
-        public bool AddHistoryItem(IHistoryItem historyItem)
+        public bool AddHistoryAction(IHistoryAction historyAction)
         {
             EndBatch();
 
-            if(_isUndoingOperation || !UseHistory || IsAnimation)
+            if (_isUndoingOperation ||
+                !UseHistory ||
+                IsAnimation)
             {
                 return false;
             }
 
-            lock(_historyLock)
+            lock (_historyLock)
             {
-                historyItem.HistoryIndex = UndoItems.Count;
-                historyItem.CachedFormattedValue = historyItem.FormattedValue;
-                UndoItems.Insert(0, historyItem);
-                RedoItems.Clear();
+                historyAction.HistoryActionIndex = UndoActions.Count;
+                historyAction.CachedFormattedValue = historyAction.FormattedValue;
+                UndoActions.Insert(0, historyAction);
+                RedoActions.Clear();
             }
 
             UpdateTicks();
@@ -628,122 +577,42 @@ namespace CLP.Entities
         {
             lock (_historyLock)
             {
-                var historyItem = UndoItems.FirstOrDefault();
-                if (historyItem == null)
+                var historyAction = UndoActions.FirstOrDefault();
+                if (historyAction == null)
                 {
                     return;
                 }
-                historyItem.ConversionUndo();
+                historyAction.ConversionUndo();
 
-                UndoItems.RemoveFirst();
-                RedoItems.Insert(0, historyItem);
+                UndoActions.RemoveFirst();
+                RedoActions.Insert(0, historyAction);
             }
         }
 
         public bool Undo(bool isAnimationUndo = false)
         {
-            if(!CanUndo)
+            if (!CanUndo)
             {
                 return false;
             }
 
-            IHistoryItem undo = null;
+            IHistoryAction undo = null;
 
-            lock(_historyLock)
+            lock (_historyLock)
             {
                 //This if-statement exists to correctly undo any batch items that are half-way through
-                //playing, in the event an animation was paused in the middle of the batch. The historyItem
-                //is already in the RedoItems list, so we don't need to move from the UndoItems list.
-                if(RedoItems.Any() &&
-                   RedoItems.First() is IHistoryBatch)
+                //playing, in the event an animation was paused in the middle of the batch. The historyAction
+                //is already in the RedoActions list, so we don't need to move from the UndoActions list.
+                if (RedoActions.Any() &&
+                    RedoActions.First() is IHistoryBatch)
                 {
-                    var clpHistoryItem = RedoItems.First() as IHistoryBatch;
-                    if(clpHistoryItem.CurrentBatchTickIndex >= 0)
+                    var historyAction = RedoActions.First() as IHistoryBatch;
+                    if (historyAction.CurrentBatchTickIndex >= 0)
                     {
                         _isUndoingOperation = true;
                         try
                         {
-                            clpHistoryItem.Undo(isAnimationUndo);
-                            UpdateTicks();
-                            return true;
-                        }
-                        finally
-                        {
-                            lock(_historyLock)
-                            {
-                                _isUndoingOperation = false;
-                            }
-                        }
-                    }
-                }
-
-                if(UndoItems.Count > 0)
-                {
-                    _isUndoingOperation = true;
-
-                    undo = UndoItems.First();
-                }
-            }
-
-            if(undo == null)
-            {
-                lock(_historyLock)
-                {
-                    _isUndoingOperation = false;
-                }
-                return false;
-            }
-
-            try
-            {
-                undo.Undo(isAnimationUndo);
-
-                var undoBatch = undo as IHistoryBatch;
-                if((undoBatch != null && undoBatch.CurrentBatchTickIndex < 0) ||
-                   undoBatch == null)
-                {
-                    lock(_historyLock)
-                    {
-                        UndoItems.RemoveFirst();
-                        RedoItems.Insert(0, undo);
-                    }
-                }
-                UpdateTicks();
-                return true;
-            }
-            finally
-            {
-                lock(_historyLock)
-                {
-                    _isUndoingOperation = false;
-                }
-            }
-        }
-
-        public bool Redo(bool isAnimationRedo = false)
-        {
-            if(!CanRedo)
-            {
-                return false;
-            }
-
-            IHistoryItem redo = null;
-
-            lock(_historyLock)
-            {
-                //This if-statement exists to correctly redo any batch items that are half-way through
-                //playing, in the event an animation was paused in the middle of the batch. The historyItem
-                //is already in the UndoItems list, so we don't need to move from the RedoItems list.
-                if (UndoItems.Any() &&
-                    UndoItems.First() is IHistoryBatch)
-                {
-                    var clpHistoryItem = UndoItems.First() as IHistoryBatch;
-                    if (clpHistoryItem.CurrentBatchTickIndex < clpHistoryItem.NumberOfBatchTicks)
-                    {
-                        _isUndoingOperation = true;
-                        try
-                        {
-                            clpHistoryItem.Redo(isAnimationRedo);
+                            historyAction.Undo(isAnimationUndo);
                             UpdateTicks();
                             return true;
                         }
@@ -757,18 +626,97 @@ namespace CLP.Entities
                     }
                 }
 
-
-                if(RedoItems.Count > 0)
+                if (UndoActions.Count > 0)
                 {
                     _isUndoingOperation = true;
 
-                    redo = RedoItems.First();
+                    undo = UndoActions.First();
                 }
             }
 
-            if(redo == null)
+            if (undo == null)
             {
-                lock(_historyLock)
+                lock (_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+                return false;
+            }
+
+            try
+            {
+                undo.Undo(isAnimationUndo);
+
+                var undoBatch = undo as IHistoryBatch;
+                if ((undoBatch != null && undoBatch.CurrentBatchTickIndex < 0) ||
+                    undoBatch == null)
+                {
+                    lock (_historyLock)
+                    {
+                        UndoActions.RemoveFirst();
+                        RedoActions.Insert(0, undo);
+                    }
+                }
+                UpdateTicks();
+                return true;
+            }
+            finally
+            {
+                lock (_historyLock)
+                {
+                    _isUndoingOperation = false;
+                }
+            }
+        }
+
+        public bool Redo(bool isAnimationRedo = false)
+        {
+            if (!CanRedo)
+            {
+                return false;
+            }
+
+            IHistoryAction redo = null;
+
+            lock (_historyLock)
+            {
+                //This if-statement exists to correctly redo any batch items that are half-way through
+                //playing, in the event an animation was paused in the middle of the batch. The historyAction
+                //is already in the UndoActions list, so we don't need to move from the RedoActions list.
+                if (UndoActions.Any() &&
+                    UndoActions.First() is IHistoryBatch)
+                {
+                    var historyAction = UndoActions.First() as IHistoryBatch;
+                    if (historyAction.CurrentBatchTickIndex < historyAction.NumberOfBatchTicks)
+                    {
+                        _isUndoingOperation = true;
+                        try
+                        {
+                            historyAction.Redo(isAnimationRedo);
+                            UpdateTicks();
+                            return true;
+                        }
+                        finally
+                        {
+                            lock (_historyLock)
+                            {
+                                _isUndoingOperation = false;
+                            }
+                        }
+                    }
+                }
+
+                if (RedoActions.Count > 0)
+                {
+                    _isUndoingOperation = true;
+
+                    redo = RedoActions.First();
+                }
+            }
+
+            if (redo == null)
+            {
+                lock (_historyLock)
                 {
                     _isUndoingOperation = false;
                 }
@@ -780,13 +728,13 @@ namespace CLP.Entities
                 redo.Redo(isAnimationRedo);
 
                 var redoBatch = redo as IHistoryBatch;
-                if((redoBatch != null && redoBatch.CurrentBatchTickIndex > redoBatch.NumberOfBatchTicks) ||
-                   redoBatch == null)
+                if ((redoBatch != null && redoBatch.CurrentBatchTickIndex > redoBatch.NumberOfBatchTicks) ||
+                    redoBatch == null)
                 {
-                    lock(_historyLock)
+                    lock (_historyLock)
                     {
-                        RedoItems.RemoveFirst();
-                        UndoItems.Insert(0, redo);
+                        RedoActions.RemoveFirst();
+                        UndoActions.Insert(0, redo);
                     }
                 }
                 UpdateTicks();
@@ -794,24 +742,28 @@ namespace CLP.Entities
             }
             finally
             {
-                lock(_historyLock)
+                lock (_historyLock)
                 {
                     _isUndoingOperation = false;
                 }
             }
         }
 
-        public Stroke GetStrokeByID(string id) { return !TrashedInkStrokes.Any() ? null : TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+        public Stroke GetStrokeByID(string id)
+        {
+            return !TrashedInkStrokes.Any() ? null : TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id);
+        }
 
-        public IPageObject GetPageObjectByID(string id) { return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject != null && pageObject.ID == id); }
+        public IPageObject GetPageObjectByID(string id)
+        {
+            return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject != null && pageObject.ID == id);
+        }
 
         #endregion //Methods
 
         #region Static Methods
 
-        /// <summary>
-        /// Forces the UI Thread to sleep for the given number of milliseconds.
-        /// </summary>
+        /// <summary>Forces the UI Thread to sleep for the given number of milliseconds.</summary>
         /// <param name="timeToWait"></param>
         public static void UISleep(int timeToWait)
         {

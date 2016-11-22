@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageObjectIDs = region.LassoedPageObjects.ToDictionary(p => p.ID, p => new Point(p.XPosition - XPosition, p.YPosition - YPosition));
             var strokeIDs = region.LassoedStrokes.ToDictionary(s => s.GetStrokeID(), s => new Point(s.GetBounds().X - XPosition, s.GetBounds().Y - YPosition));
 
-            PageObject.ParentPage.History.BeginBatch(new ObjectsMovedBatchHistoryItem(PageObject.ParentPage,
+            PageObject.ParentPage.History.BeginBatch(new ObjectsMovedBatchHistoryAction(PageObject.ParentPage,
                                                                                       App.MainWindowViewModel.CurrentUser,
                                                                                       pageObjectIDs,
                                                                                       strokeIDs,
@@ -193,15 +193,15 @@ namespace Classroom_Learning_Partner.ViewModels
             if (diff > PageHistory.SAMPLE_RATE)
             {
                 var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-                if (batch is ObjectsMovedBatchHistoryItem)
+                if (batch is ObjectsMovedBatchHistoryAction)
                 {
-                    ((ObjectsMovedBatchHistoryItem)batch).AddPositionPointToBatch(new Point(newX, newY));
+                    ((ObjectsMovedBatchHistoryAction)batch).AddPositionPointToBatch(new Point(newX, newY));
                 }
                 else
                 {
                     Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
-                    var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                    var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
                 }
             }
 
@@ -219,12 +219,12 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialY = YPosition;
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if (batch is ObjectsMovedBatchHistoryItem)
+            if (batch is ObjectsMovedBatchHistoryAction)
             {
-                ((ObjectsMovedBatchHistoryItem)batch).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
+                ((ObjectsMovedBatchHistoryAction)batch).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            var batchHistoryAction = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             PageObject.OnMoved(initialX, initialY);
         }
 

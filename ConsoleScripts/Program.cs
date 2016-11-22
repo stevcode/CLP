@@ -15,11 +15,11 @@ namespace ConsoleScripts
     {
         private static void Main(string[] args)
         {
-            Convert();
+            //Convert();
             Console.WriteLine("*****Finished*****");
             Console.ReadLine();
         }
-
+        /*
         private static void Convert()
         {
             var convertFromFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Convert");
@@ -743,27 +743,27 @@ namespace ConsoleScripts
 
             page.History.RefreshHistoryIndexes();
 
-            while (page.History.UndoItems.Any())
+            while (page.History.UndoActions.Any())
             {
-                var historyItemToUndo = page.History.UndoItems.FirstOrDefault();
+                var historyItemToUndo = page.History.UndoActions.FirstOrDefault();
                 if (historyItemToUndo == null)
                 {
                     break;
                 }
 
-                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryIndex);
+                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
 
                 #region WorksAsIs
 
-                if (historyItemToUndo is AnimationIndicator ||
-                    historyItemToUndo is CLPArrayRotateHistoryItem ||
-                    historyItemToUndo is CLPArrayGridToggleHistoryItem ||
-                    historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
-                    historyItemToUndo is DivisionTemplateArrayRemovedHistoryItem ||
-                    historyItemToUndo is DivisionTemplateArraySnappedInHistoryItem ||
-                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem ||
-                    historyItemToUndo is PartsValueChangedHistoryItem ||
-                    historyItemToUndo is CLPArraySnapHistoryItem)
+                if (historyItemToUndo is AnimationIndicatorHistoryAction ||
+                    historyItemToUndo is CLPArrayRotateHistoryAction ||
+                    historyItemToUndo is CLPArrayGridToggleHistoryAction ||
+                    historyItemToUndo is CLPArrayDivisionValueChangedHistoryAction ||
+                    historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
+                    historyItemToUndo is DivisionTemplateArraySnappedInHistoryAction ||
+                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryAction ||
+                    historyItemToUndo is PartsValueChangedHistoryAction ||
+                    historyItemToUndo is CLPArraySnapHistoryAction)
                 {
                     page.History.ConversionUndo();
                     continue;
@@ -773,13 +773,13 @@ namespace ConsoleScripts
 
                 #region CLPArrayDivisionsChanged fix
 
-                if (historyItemToUndo is CLPArrayDivisionsChangedHistoryItem)
+                if (historyItemToUndo is CLPArrayDivisionsChangedHistoryAction)
                 {
-                    var divisionsChanged = historyItemToUndo as CLPArrayDivisionsChangedHistoryItem;
+                    var divisionsChanged = historyItemToUndo as CLPArrayDivisionsChangedHistoryAction;
                     if (!divisionsChanged.AddedDivisions.Any() &&
                         !divisionsChanged.RemovedDivisions.Any())
                     {
-                        page.History.UndoItems.RemoveFirst();
+                        page.History.UndoActions.RemoveFirst();
                         continue;
                     }
 
@@ -791,9 +791,9 @@ namespace ConsoleScripts
 
                 #region PageObjectResize fix for old Division Templates
 
-                if (historyItemToUndo is PageObjectResizeBatchHistoryItem)
+                if (historyItemToUndo is PageObjectResizeBatchHistoryAction)
                 {
-                    var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryItem;
+                    var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryAction;
                     var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTemplate;
                     if (divisionTemplate != null)
                     {
@@ -818,13 +818,13 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectsAddedHistoryItem)
                 {
                     var pageObjectsAdded = historyItemToUndo as PageObjectsAddedHistoryItem;
-                    page.History.UndoItems.RemoveFirst();
+                    page.History.UndoActions.RemoveFirst();
                     if (!pageObjectsAdded.PageObjectIDs.Any())
                     {
                         continue;
                     }
 
-                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsAdded);
+                    var objectsChanged = new ObjectsOnPageChangedHistoryAction(pageObjectsAdded);
 
                     foreach (var id in objectsChanged.PageObjectIDsAdded)
                     {
@@ -835,7 +835,7 @@ namespace ConsoleScripts
                         }
                     }
 
-                    page.History.UndoItems.Insert(0, objectsChanged);
+                    page.History.UndoActions.Insert(0, objectsChanged);
                     page.History.ConversionUndo();
                     continue;
                 }
@@ -847,13 +847,13 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectsRemovedHistoryItem)
                 {
                     var pageObjectsRemoved = historyItemToUndo as PageObjectsRemovedHistoryItem;
-                    page.History.UndoItems.RemoveFirst();
+                    page.History.UndoActions.RemoveFirst();
                     if (!pageObjectsRemoved.PageObjectIDs.Any())
                     {
                         continue;
                     }
 
-                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsRemoved);
+                    var objectsChanged = new ObjectsOnPageChangedHistoryAction(pageObjectsRemoved);
 
                     foreach (var id in objectsChanged.PageObjectIDsRemoved)
                     {
@@ -864,7 +864,7 @@ namespace ConsoleScripts
                         }
                     }
 
-                    page.History.UndoItems.Insert(0, objectsChanged);
+                    page.History.UndoActions.Insert(0, objectsChanged);
                     page.History.ConversionUndo();
                     continue;
                 }
@@ -876,7 +876,7 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectMoveBatchHistoryItem)
                 {
                     var pageObjectMove = historyItemToUndo as PageObjectMoveBatchHistoryItem;
-                    page.History.UndoItems.RemoveFirst();
+                    page.History.UndoActions.RemoveFirst();
                     var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectMove.PageObjectID);
                     if (!pageObjectMove.TravelledPositions.Any() ||
                         string.IsNullOrEmpty(pageObjectMove.PageObjectID) ||
@@ -885,7 +885,7 @@ namespace ConsoleScripts
                         continue;
                     }
 
-                    var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectMove);
+                    var objectsMoved = new ObjectsMovedBatchHistoryAction(pageObjectMove);
                     if (objectsMoved.TravelledPositions.Count == 2 &&
                         Math.Abs(objectsMoved.TravelledPositions.First().X - objectsMoved.TravelledPositions.Last().X) < 0.00001 &&
                         Math.Abs(objectsMoved.TravelledPositions.First().Y - objectsMoved.TravelledPositions.Last().Y) < 0.00001)
@@ -893,7 +893,7 @@ namespace ConsoleScripts
                         continue;
                     }
 
-                    page.History.UndoItems.Insert(0, objectsMoved);
+                    page.History.UndoActions.Insert(0, objectsMoved);
                     page.History.ConversionUndo();
                     continue;
                 }
@@ -905,7 +905,7 @@ namespace ConsoleScripts
                 if (historyItemToUndo is PageObjectsMoveBatchHistoryItem)
                 {
                     var pageObjectsMove = historyItemToUndo as PageObjectsMoveBatchHistoryItem;
-                    page.History.UndoItems.RemoveFirst();
+                    page.History.UndoActions.RemoveFirst();
                     var pageObjects = pageObjectsMove.PageObjectIDs.Select(id => pageObjectsMove.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
                     pageObjects = pageObjects.Where(p => p != null).ToList();
                     if (!pageObjectsMove.TravelledPositions.Any() ||
@@ -915,14 +915,14 @@ namespace ConsoleScripts
                         continue;
                     }
 
-                    var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectsMove);
+                    var objectsMoved = new ObjectsMovedBatchHistoryAction(pageObjectsMove);
                     if (objectsMoved.TravelledPositions.Count == 2 &&
                         Math.Abs(objectsMoved.TravelledPositions.First().X - objectsMoved.TravelledPositions.Last().X) < 0.00001 &&
                         Math.Abs(objectsMoved.TravelledPositions.First().Y - objectsMoved.TravelledPositions.Last().Y) < 0.00001)
                     {
                         continue;
                     }
-                    page.History.UndoItems.Insert(0, objectsMoved);
+                    page.History.UndoActions.Insert(0, objectsMoved);
                     page.History.ConversionUndo();
                     continue;
                 }
@@ -931,77 +931,77 @@ namespace ConsoleScripts
 
                 #region PageObjectCut fix
 
-                if (historyItemToUndo is PageObjectCutHistoryItem)
-                {
-                    //BUG: Fix to allow strokes that don't cut any pageObjects.
-                    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryItem;
-                    if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
-                    {
-                        page.History.ConversionUndo();
-                        continue;
-                    }
-                    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
-                    if (!pageObjectCut.CutPageObjectIDs.Any() ||
-                        cuttingStroke == null)
-                    {
-                        page.History.UndoItems.RemoveFirst();
-                        continue;
-                    }
-                    if (pageObjectCut.CutPageObjectIDs.Count == 1)
-                    {
-                        pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
-                        pageObjectCut.CutPageObjectIDs.Clear();
-                        page.History.ConversionUndo();
-                        continue;
-                    }
+                //if (historyItemToUndo is PageObjectCutHistoryAction)
+                //{
+                //    //BUG: Fix to allow strokes that don't cut any pageObjects.
+                //    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryAction;
+                //    if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
+                //    {
+                //        page.History.ConversionUndo();
+                //        continue;
+                //    }
+                //    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
+                //    if (!pageObjectCut.CutPageObjectIDs.Any() ||
+                //        cuttingStroke == null)
+                //    {
+                //        page.History.UndoActions.RemoveFirst();
+                //        continue;
+                //    }
+                //    if (pageObjectCut.CutPageObjectIDs.Count == 1)
+                //    {
+                //        pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
+                //        pageObjectCut.CutPageObjectIDs.Clear();
+                //        page.History.ConversionUndo();
+                //        continue;
+                //    }
 
-                    var newHistoryItems = new List<PageObjectCutHistoryItem>();
-                    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
-                    {
-                        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
-                        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
-                        {
-                            continue;
-                        }
-                        var halvedPageObjectIDs = new List<string>
-                                                  {
-                                                      pageObjectCut.HalvedPageObjectIDs[0],
-                                                      pageObjectCut.HalvedPageObjectIDs[1]
-                                                  };
-                        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
-                        if (cutPageObject == null)
-                        {
-                            continue;
-                        }
-                        var newCutHistoryItem = new PageObjectCutHistoryItem(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
-                        newHistoryItems.Add(newCutHistoryItem);
-                    }
+                //    var newHistoryItems = new List<PageObjectCutHistoryAction>();
+                //    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
+                //    {
+                //        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
+                //        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
+                //        {
+                //            continue;
+                //        }
+                //        var halvedPageObjectIDs = new List<string>
+                //                                  {
+                //                                      pageObjectCut.HalvedPageObjectIDs[0],
+                //                                      pageObjectCut.HalvedPageObjectIDs[1]
+                //                                  };
+                //        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
+                //        if (cutPageObject == null)
+                //        {
+                //            continue;
+                //        }
+                //        var newCutHistoryItem = new PageObjectCutHistoryAction(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
+                //        newHistoryItems.Add(newCutHistoryItem);
+                //    }
 
-                    page.History.UndoItems.RemoveFirst();
+                //    page.History.UndoActions.RemoveFirst();
 
-                    foreach (var pageObjectCutHistoryItem in newHistoryItems)
-                    {
-                        page.History.UndoItems.Insert(0, pageObjectCutHistoryItem);
-                    }
+                //    foreach (var pageObjectCutHistoryItem in newHistoryItems)
+                //    {
+                //        page.History.UndoActions.Insert(0, pageObjectCutHistoryItem);
+                //    }
 
-                    continue;
-                }
+                //    continue;
+                //}
 
                 #endregion //PageObjectCut fix
 
                 #region EndPointChangedHistoryItem Adjustments
 
-                if (historyItemToUndo is NumberLineEndPointsChangedHistoryItem)
+                if (historyItemToUndo is NumberLineEndPointsChangedHistoryAction)
                 {
-                    var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryItem;
-                    var resizeBatchHistoryItem = page.History.RedoItems.FirstOrDefault() as PageObjectResizeBatchHistoryItem;
+                    var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryAction;
+                    var resizeBatchHistoryItem = page.History.RedoActions.FirstOrDefault() as PageObjectResizeBatchHistoryAction;
 
                     if (resizeBatchHistoryItem != null)
                     {
                         var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID) as NumberLine;
                         if (numberLine == null)
                         {
-                            page.History.UndoItems.RemoveFirst();
+                            page.History.UndoActions.RemoveFirst();
                             continue;
                         }
 
@@ -1041,14 +1041,14 @@ namespace ConsoleScripts
                 if (historyItemToUndo is StrokesChangedHistoryItem)
                 {
                     var strokesChanged = historyItemToUndo as StrokesChangedHistoryItem;
-                    page.History.UndoItems.RemoveFirst();
+                    page.History.UndoActions.RemoveFirst();
                     if (!strokesChanged.StrokeIDsAdded.Any() &&
                         !strokesChanged.StrokeIDsRemoved.Any())
                     {
                         continue;
                     }
 
-                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(strokesChanged);
+                    var objectsChanged = new ObjectsOnPageChangedHistoryAction(strokesChanged);
                     var strokesAdded = objectsChanged.StrokesAdded;
                     var strokesRemoved = objectsChanged.StrokesRemoved;
 
@@ -1074,7 +1074,7 @@ namespace ConsoleScripts
 
                             var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
                             var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
-                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
+                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryAction(page,
                                                                                                     page.Owner,
                                                                                                     numberLine.ID,
                                                                                                     new List<Stroke>
@@ -1090,7 +1090,7 @@ namespace ConsoleScripts
                                                                                                     numberLine.YPosition,
                                                                                                     true);
 
-                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
+                            page.History.UndoActions.Insert(0, jumpsChangedHistoryItem);
                             page.History.ConversionUndo();
                             wasJumpAdded = true;
                             break;
@@ -1112,8 +1112,8 @@ namespace ConsoleScripts
                                 var threshold = 80;
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
-                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
-                                page.History.UndoItems.Insert(0, multipleChoiceStatus);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryAction(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
+                                page.History.UndoActions.Insert(0, multipleChoiceStatus);
                                 page.History.ConversionUndo();
                                 continue;
                             }
@@ -1158,7 +1158,7 @@ namespace ConsoleScripts
                                 oldHeight += (numberLine.YPosition - tallestPoint);
                                 oldYPosition = tallestPoint;
                             }
-                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
+                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryAction(page,
                                                                                                     page.Owner,
                                                                                                     numberLine.ID,
                                                                                                     new List<Stroke>(),
@@ -1174,7 +1174,7 @@ namespace ConsoleScripts
                                                                                                     numberLine.YPosition,
                                                                                                     true);
 
-                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
+                            page.History.UndoActions.Insert(0, jumpsChangedHistoryItem);
                             page.History.ConversionUndo();
                             wasJumpRemoved = true;
                             break;
@@ -1196,8 +1196,8 @@ namespace ConsoleScripts
                             {
                                 var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                                 multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
-                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryItem(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
-                                page.History.UndoItems.Insert(0, multipleChoiceStatus);
+                                var multipleChoiceStatus = new MultipleChoiceBubbleStatusChangedHistoryAction(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
+                                page.History.UndoActions.Insert(0, multipleChoiceStatus);
                                 page.History.ConversionUndo();
                                 continue;
                             }
@@ -1216,7 +1216,7 @@ namespace ConsoleScripts
 
                     if (objectsChanged.IsUsingStrokes)
                     {
-                        page.History.UndoItems.Insert(0, objectsChanged);
+                        page.History.UndoActions.Insert(0, objectsChanged);
                         page.History.ConversionUndo();
                     }
 
@@ -1229,11 +1229,11 @@ namespace ConsoleScripts
             }
 
             page.History.RefreshHistoryIndexes();
-            while (page.History.RedoItems.Any())
+            while (page.History.RedoActions.Any())
             {
                 if (_isConvertingAssessmentCache)
                 {
-                    var multipleChoiceStatus = page.History.RedoItems.FirstOrDefault() as MultipleChoiceBubbleStatusChangedHistoryItem;
+                    var multipleChoiceStatus = page.History.RedoActions.FirstOrDefault() as MultipleChoiceBubbleStatusChangedHistoryAction;
                     if (multipleChoiceStatus != null)
                     {
                         var threshold = 80;
@@ -1297,17 +1297,18 @@ namespace ConsoleScripts
             page.History.IsAnimating = false;
         }
 
+    */
         //Clear Authored Histories
-        //var undoItemsToRemove = page.History.UndoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
-        //            foreach(var historyItem in undoItemsToRemove)
+        //var undoItemsToRemove = page.History.UndoActions.Where(historyAction => historyAction.OwnerID == Person.Author.ID).ToList();
+        //            foreach(var historyAction in undoItemsToRemove)
         //            {
-        //                page.History.UndoItems.Remove(historyItem);
+        //                page.History.UndoActions.Remove(historyAction);
         //            }
 
-        //            var redoItemsToRemove = page.History.RedoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
-        //            foreach(var historyItem in redoItemsToRemove)
+        //            var redoItemsToRemove = page.History.RedoActions.Where(historyAction => historyAction.OwnerID == Person.Author.ID).ToList();
+        //            foreach(var historyAction in redoItemsToRemove)
         //            {
-        //                page.History.RedoItems.Remove(historyItem);
+        //                page.History.RedoActions.Remove(historyAction);
         //            }
 
         //            page.History.OptimizeTrashedItems();

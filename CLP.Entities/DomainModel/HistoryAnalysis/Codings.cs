@@ -5,154 +5,138 @@ namespace CLP.Entities
 {
     public static class Codings
     {
-        #region CodedObjects
+        #region Coded Objects
 
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
+        public const string OBJECT_SHAPE = "SHAPE";
         public const string OBJECT_ARRAY = "ARR";
-        public const string OBJECT_DIVISION_TOOL = "DT";
+        public const string OBJECT_DIVISION_TEMPLATE = "DT";
         public const string OBJECT_REMAINDER_TILES = "TILES";
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";
         public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
         public const string OBJECT_BINS = "BINS";
-        public const string OBJECT_TEXT = "TEXT";
         public const string OBJECT_FILL_IN = "ANS FI";
         public const string OBJECT_MULTIPLE_CHOICE = "ANS MC";
+        public const string OBJECT_TEXT = "TEXT";
 
         public static readonly Dictionary<string, string> FriendlyObjects = new Dictionary<string, string>
                                                                             {
                                                                                 { OBJECT_INK, "Ink" },
+                                                                                { OBJECT_ARITH, "Arithmetic" },
+                                                                                { OBJECT_SHAPE, "Shape" },
                                                                                 { OBJECT_ARRAY, "Array" },
+                                                                                { OBJECT_DIVISION_TEMPLATE, "Division Template" },
+                                                                                { OBJECT_REMAINDER_TILES, "Remainder Tiles" },
+                                                                                { OBJECT_NUMBER_LINE, "Number Line" },
                                                                                 { OBJECT_STAMP, "Stamp" },
                                                                                 { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
-                                                                                { OBJECT_NUMBER_LINE, "Number Line" },
+                                                                                { OBJECT_BINS, "Bins" },
                                                                                 { OBJECT_FILL_IN, "Filled In Answer" },
-                                                                                { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" }
+                                                                                { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" },
+                                                                                { OBJECT_TEXT, "Text" },
                                                                             };
 
-        #endregion // CodedObjects
+        #endregion // Coded Objects
 
-        #region CodedActions                                                        // {Variable} (Optional)                                                
+        #region Event Types                                                
 
-        #region Ink Actions
+        #region Ink Event Types
 
-        public const string ACTION_INK_CHANGE = "change"; // ID = string.Empty;
-        public const string ACTION_INK_IGNORE = "ignore"; // ID = string.Empty;
-        public const string ACTION_INK_ADD = "strokes"; // ActionID = "{ActionIDInkLocation} {CodedObject} [{CodedID} {IncrementID}]"
-        public const string ACTION_INK_ERASE = "strokes erase"; // ActionID = "{ActionIDInkLocation} {CodedObject} [{CodedID} {IncrementID}]"
+        public const string EVENT_INK_CHANGE = "change";
+        public const string EVENT_INK_ADD = "add";
+        public const string EVENT_INK_ERASE = "erase";
+        public const string EVENT_INK_IGNORE = "ignore";
 
-        #endregion // Ink Actions
+        #endregion // Ink Event Types
 
-        #region Arith Actions
+        #region Arith Event Types
 
-        public const string ACTION_ARITH_ADD = "add";
-        public const string ACTION_ARITH_ERASE = "erase";
+        public const string EVENT_ARITH_ADD = "add";
+        public const string EVENT_ARITH_ERASE = "erase";
 
-        #endregion // Arith Actions
+        #endregion // Arith Event Types
 
-        #region Dot Actions
+        #region General PageObject Event Types
 
-        // TODO: actually define correctly.
-        public const string ACTION_DOTS_ADD = "add";
-        public const string ACTION_DOTS_ERASE = "erase";
+        public const string EVENT_OBJECT_ADD = "add";
+        public const string EVENT_OBJECT_DELETE = "delete";
+        public const string EVENT_OBJECT_MOVE = "move";
+        public const string EVENT_OBJECT_RESIZE = "resize";
 
-        #endregion // Dot Actions
+        #endregion // General PageObject Event Types
 
-        #region Answer Actions
+        #region Array Event Types
 
-        public const string ACTION_FILL_IN_ADD = "add";
-        public const string ACTION_FILL_IN_ERASE = "erase";
-        public const string ACTION_MULTIPLE_CHOICE_ADD_PARTIAL = "partial";
-        public const string ACTION_MULTIPLE_CHOICE_ADD = "fill in";
-        public const string ACTION_MULTIPLE_CHOICE_ADD_ADDITIONAL = "additional";
-        public const string ACTION_MULTIPLE_CHOICE_ERASE_PARTIAL = "erase partial";
-        public const string ACTION_MULTIPLE_CHOICE_ERASE = "erase";
-        public const string ACTION_MULTIPLE_CHOICE_ERASE_INCOMPLETE = "erase incomplete";
+        public const string EVENT_ARRAY_CUT = "cut";
+        public const string EVENT_ARRAY_DIVIDE = "divide";
+        public const string EVENT_ARRAY_DIVIDE_DELETE = "divide delete";
+        public const string EVENT_ARRAY_DIVIDE_INK = "divide ink";
+        public const string EVENT_ARRAY_DIVIDE_INK_ERASE = "divide ink erase";
+        public const string EVENT_ARRAY_ROTATE = "rotate";
+        public const string EVENT_ARRAY_SNAP = "snap";
+        public const string EVENT_ARRAY_SKIP = "skip";
+        public const string EVENT_ARRAY_SKIP_ERASE = "skip erase";
+        public const string EVENT_ARRAY_EQN = "eqn";
+        public const string EVENT_ARRAY_EQN_ERASE = "eqn erase";
 
-        #endregion // Answer Actions
+        #endregion // Array Event Types
 
-        #region General PageObject Actions
+        #region Number Line Event Types
 
-        public const string ACTION_OBJECT_ADD = "add";
-        public const string ACTION_OBJECT_DELETE = "delete";
-        public const string ACTION_OBJECT_MOVE = "move";
-        public const string ACTION_OBJECT_RESIZE = "resize";
+        public const string EVENT_NUMBER_LINE_JUMP = "jump";
+        public const string EVENT_NUMBER_LINE_JUMP_ERASE = "jump erase";
+        public const string EVENT_NUMBER_LINE_CHANGE = "change";
+        public const string EVENT_NUMBER_LINE_CHANGE_INK = "change ink";
 
-        #endregion // General PageObject Actions
+        #endregion // Number Line Event Types
 
-        #region Number Line Actions
+        #region Answer Event Types
 
-        public const string ACTION_NUMBER_LINE_JUMP = "jump";
-                            // ActionID = "{JumpSizeOfIdenticalConsecutiveJumps}, {StartTick}-{EndTick}(ACTIONID_NUMBER_LINE_JUMP_RUNOFF)(; REPEAT; REPEAT)"   // ACTIONID_NUMBER_LINE_JUMP_RUNOFF replaces {EndTick} if arc of Jump goes past edge of Number Line.
+        public const string EVENT_FILL_IN_ADD = "add";
+        public const string EVENT_FILL_IN_ERASE = "erase";
+        public const string EVENT_MULTIPLE_CHOICE_ADD_PARTIAL = "partial fill in";
+        public const string EVENT_MULTIPLE_CHOICE_ADD = "fill in";
+        public const string EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL = "additional fill in";
+        public const string EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL = "erase partial";
+        public const string EVENT_MULTIPLE_CHOICE_ERASE = "erase";
+        public const string EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE = "erase incomplete";
 
-        public const string ACTION_NUMBER_LINE_JUMP_ERASE = "jump erase";
+        #endregion // Answer Event Types
 
-        public const string ACTION_NUMBER_LINE_JUMP_BELOW = "jump below";
-                            // ActionID = "{JumpSizeOfIdenticalConsecutiveJumps}, {StartTick}-{EndTick}(ACTIONID_NUMBER_LINE_JUMP_RUNOFF)(; REPEAT; REPEAT)"   // ACTIONID_NUMBER_LINE_JUMP_RUNOFF replaces {EndTick} if arc of Jump goes past edge of Number Line.
+        #endregion // Event Types
 
-        public const string ACTION_NUMBER_LINE_CHANGE = "change"; // ActionID = "{NewNumberLineSize} {IncrementID}"
-        public const string ACTION_NUMBER_LINE_CHANGE_INK = "change ink"; // ActionID = "{NewNumberLineSize} {IncrementID}"
+        #region Event Info Variables
 
-        #endregion // Number Line Actions
+        #region Ink Event Info Variables
 
-        #region Array Actions
+        public const string EVENT_INFO_INK_LOCATION_NONE = "";
+        public const string EVENT_INFO_INK_LOCATION_LEFT = "left of";
+        public const string EVENT_INFO_INK_LOCATION_RIGHT = "right of";
+        public const string EVENT_INFO_INK_LOCATION_RIGHT_SKIP = "right skip region of";
+        public const string EVENT_INFO_INK_LOCATION_TOP = "above";
+        public const string EVENT_INFO_INK_LOCATION_BOTTOM = "below";
+        public const string EVENT_INFO_INK_LOCATION_OVER = "over";
+        public const string EVENT_INFO_INK_LOCATION_TOP_LEFT = "left and above";
+        public const string EVENT_INFO_INK_LOCATION_TOP_RIGHT = "right and above";
+        public const string EVENT_INFO_INK_LOCATION_BOTTOM_LEFT = "left and below";
+        public const string EVENT_INFO_INK_LOCATION_BOTTOM_RIGHT = "right and below";
 
-        public const string ACTION_ARRAY_CUT = "cut"; // ActionID = "{NewArrayCodedID} {IncrementID}, {NewArrayCodedID} {IncrementID}(, ACTIONID_ARRAY_CUT_VERTICAL)"
-        public const string ACTION_ARRAY_DIVIDE = "divide"; // ActionID = "{SubArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}(, REPEAT)(, ACTIONID_ARRAY_DIVIDER_VERTICAL)"
-        public const string ACTION_ARRAY_DIVIDE_INK = "divide ink"; // ActionID = "{SubArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}(, REPEAT)(, ACTIONID_ARRAY_DIVIDER_VERTICAL)"
-        public const string ACTION_ARRAY_DIVIDE_INK_ERASE = "divide ink erase";
-        public const string ACTION_ARRAY_ROTATE = "rotate"; // ActionID = "{ArrayCodedID} {IncrementID}"
-        public const string ACTION_ARRAY_SNAP = "snap"; // ID = "{ArrayCodedID} {IncrementID}, {SubArrayCodedID} {IncrementID}", ActionID = "{ArrayCodedID} {IncrementID}"
-        public const string ACTION_ARRAY_SKIP = "skip";
-        public const string ACTION_ARRAY_SKIP_ERASE = "skip erase";
-        public const string ACTION_ARRAY_EQN = "eqn";
-        public const string ACTION_ARRAY_EQN_ERASE = "eqn erase";
+        #endregion // Ink Event Info Variables 
 
-        #endregion // Array Actions
+        #region Array Event Info Variables
 
-        #endregion // CodedActions
+        public const string EVENT_INFO_ARRAY_CUT_VERTICAL = "v";
+        public const string EVENT_INFO_ARRAY_DIVIDER_VERTICAL = "v";
 
-        #region CodedActionIDVariables
+        #endregion // Array Event Info Variables
 
-        #region Ink ActionID Variables
-
-        public const string ACTIONID_INK_LOCATION_NONE = "";
-        public const string ACTIONID_INK_LOCATION_LEFT = "left of";
-        public const string ACTIONID_INK_LOCATION_RIGHT = "right of";
-        public const string ACTIONID_INK_LOCATION_RIGHT_SKIP = "right skip region of";
-        public const string ACTIONID_INK_LOCATION_TOP = "above";
-        public const string ACTIONID_INK_LOCATION_BOTTOM = "below";
-        public const string ACTIONID_INK_LOCATION_OVER = "over";
-        public const string ACTIONID_INK_LOCATION_TOP_LEFT = "left and above";
-        public const string ACTIONID_INK_LOCATION_TOP_RIGHT = "right and above";
-        public const string ACTIONID_INK_LOCATION_BOTTOM_LEFT = "left and below";
-        public const string ACTIONID_INK_LOCATION_BOTTOM_RIGHT = "right and below";
-
-        #endregion // Ink ActionID Variables 
-
-        #region Number Line ActionID Variables
-
-        public const string ACTIONID_NUMBER_LINE_JUMP_RUNOFF = "off NL";
-
-        #endregion // Number Line ActionID Variables
-
-        #region Array ActionID Variables
-
-        public const string ACTIONID_ARRAY_CUT_VERTICAL = "v";
-        public const string ACTIONID_ARRAY_DIVIDER_VERTICAL = "v";
-
-        #endregion // Array ActionID Variables
-
-        #endregion // CodedActionIDVariables
-
-        #region Meta Data
-
-        public const string META_REFERENCE_PAGE_OBJECT_ID = "REFERENCE_PAGE_OBJECT_ID";
-
-        #endregion // Meta Data
+        #endregion // Event Info Variables
 
         #region Analysis Codes
+
+        #region Representation Sequence
 
         public const string ANALYSIS_COR_BEFORE_REP = "ABR-C";
         public const string ANALYSIS_INC_BEFORE_REP = "ABR-I";
@@ -160,6 +144,8 @@ namespace CLP.Entities
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+
+        #endregion // Representation Sequence
 
         #region Strategies
 
@@ -195,38 +181,45 @@ namespace CLP.Entities
 
         #endregion // Correctness
 
-        public static bool IsAnswerObject(IHistoryAction historyAction) { return historyAction.CodedObject == OBJECT_FILL_IN || historyAction.CodedObject == OBJECT_MULTIPLE_CHOICE; }
+        #region Methods
 
-        public static string GetAnswerObjectContent(IHistoryAction historyAction)
+        public static bool IsAnswerObject(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(historyAction))
+            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
+        }
+
+        public static string GetAnswerObjectContent(ISemanticEvent semanticEvent)
+        {
+            if (!IsAnswerObject(semanticEvent))
             {
                 return "[ERROR]: Not Answer Object.";
             }
 
-            var actionID = historyAction.CodedObjectActionID;
-            var delimiterIndex = actionID.LastIndexOf(',');
-            var content = new string(actionID.Take(delimiterIndex).ToArray());
+            var eventInfo = semanticEvent.EventInformation;
+            var delimiterIndex = eventInfo.LastIndexOf(',');
+            var content = new string(eventInfo.Take(delimiterIndex).ToArray());
             return content;
         }
 
-        public static string GetAnswerObjectCorrectness(IHistoryAction historyAction)
+        public static string GetAnswerObjectCorrectness(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(historyAction))
+            if (!IsAnswerObject(semanticEvent))
             {
                 return "[ERROR]: Not Answer Object.";
             }
 
-            var actionID = historyAction.CodedObjectActionID;
-            var delimiterIndex = actionID.LastIndexOf(',');
-            var correctness = new string(actionID.Skip(delimiterIndex + 2).ToArray());
+            var eventInfo = semanticEvent.EventInformation;
+            var delimiterIndex = eventInfo.LastIndexOf(',');
+            var correctness = new string(eventInfo.Skip(delimiterIndex + 2).ToArray());
             return correctness;
         }
 
-        public static bool IsRepresentationObject(IHistoryAction historyAction)
+        public static bool IsRepresentationObject(ISemanticEvent semanticEvent)
         {
-            return historyAction.CodedObject == OBJECT_ARRAY || historyAction.CodedObject == OBJECT_NUMBER_LINE || historyAction.CodedObject == OBJECT_STAMP ||
-                   historyAction.CodedObject == OBJECT_STAMPED_OBJECTS || historyAction.CodedObject == OBJECT_BINS;
+            return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
+                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;
         }
+
+        #endregion // Methods
     }
 }

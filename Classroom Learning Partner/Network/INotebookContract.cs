@@ -8,7 +8,7 @@ namespace Classroom_Learning_Partner
     public interface INotebookContract
     {
         [OperationContract]
-        void AddHistoryItem(string compositePageID, string zippedHistoryItem);
+        void AddHistoryAction(string compositePageID, string zippedHistoryAction);
 
         [OperationContract]
         void AddNewPage(string zippedPage, int index);

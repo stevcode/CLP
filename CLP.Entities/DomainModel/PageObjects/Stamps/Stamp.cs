@@ -130,8 +130,8 @@ namespace CLP.Entities
 
         public int GetPartsAtHistoryIndex(int historyIndex)
         {
-            var partsHistoryItem = ParentPage.History.CompleteOrderedHistoryItems.OfType<PartsValueChangedHistoryItem>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
-            return partsHistoryItem == null ? Parts : partsHistoryItem.PreviousValue;
+            var partsHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<PartsValueChangedHistoryAction>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
+            return partsHistoryAction == null ? Parts : partsHistoryAction.PreviousValue;
         }
 
         #endregion //Methods

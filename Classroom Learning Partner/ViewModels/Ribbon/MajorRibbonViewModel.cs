@@ -664,7 +664,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
+            var recordIndicator = page.History.RedoActions.FirstOrDefault() as AnimationIndicatorHistoryAction;
             if (recordIndicator != null &&
                 recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
             {
@@ -711,7 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                  submission.RemoveTag(tempArraySkipCountingTag);
                                              }
 
-                                             HistoryAnalysis.GenerateHistoryActions(submission);
+                                             HistoryAnalysis.GenerateSemanticEvents(submission);
 
                                              UIHelper.RunOnUI(() => currentPage.Submissions.Add(submission));
 

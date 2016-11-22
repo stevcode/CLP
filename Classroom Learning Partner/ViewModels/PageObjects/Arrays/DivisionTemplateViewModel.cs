@@ -86,8 +86,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (!page.PageObjects.Contains(divisionTemplate.RemainderTiles))
                 {
                     page.PageObjects.Add(divisionTemplate.RemainderTiles);
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                               new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                    ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage,
+                                                               new RemainderTilesVisibilityToggledHistoryAction(PageObject.ParentPage,
                                                                                                               App.MainWindowViewModel.CurrentUser,
                                                                                                               divisionTemplate.ID,
                                                                                                               true));
@@ -97,8 +97,8 @@ namespace Classroom_Learning_Partner.ViewModels
                      page.PageObjects.Contains(divisionTemplate.RemainderTiles))
             {
                 page.PageObjects.Remove(divisionTemplate.RemainderTiles);
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                           new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage,
+                                                           new RemainderTilesVisibilityToggledHistoryAction(PageObject.ParentPage,
                                                                                                           App.MainWindowViewModel.CurrentUser,
                                                                                                           divisionTemplate.ID,
                                                                                                           false));
@@ -338,8 +338,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
             //else
             //{
-            //    var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            //    var batchHistoryAction = PageObject.ParentPage.PageHistory.EndBatch();
+            //    ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage, batchHistoryAction, true);
             //    //TODO: log this error
             //}
         }
@@ -356,8 +356,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var divisionValue = (VerticalDivisions[VerticalDivisions.Count - 2]).Value;
             (PageObject as DivisionTemplate).RemoveLastDivision();
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new DivisionTemplateArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
+            ACLPPageBaseViewModel.AddHistoryActionToPage(PageObject.ParentPage,
+                                                       new DivisionTemplateArrayRemovedHistoryAction(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
         }
 
         #endregion //Commands

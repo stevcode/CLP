@@ -40,19 +40,19 @@ namespace CLP.Entities
 
         public static void AnalyzeHistory(CLPPage page)
         {
-            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
+            var completeOrderedHistory = page.History.UndoActions.Reverse().Concat(page.History.RedoActions).ToList();
 
             //ArrayTriedWrongDividerValuesTag
-            var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryItem>>();
-            foreach (var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryItem>())
+            var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryAction>>();
+            foreach (var arrayDivisionValueChangedHistoryAction in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryAction>())
             {
-                if (!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryItem.ArrayID))
+                if (!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryAction.ArrayID))
                 {
-                    divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryItem.ArrayID,
-                                                             new List<CLPArrayDivisionValueChangedHistoryItem>());
+                    divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryAction.ArrayID,
+                                                             new List<CLPArrayDivisionValueChangedHistoryAction>());
                 }
 
-                divisionValueChangedHistoryForArrays[arrayDivisionValueChangedHistoryItem.ArrayID].Add(arrayDivisionValueChangedHistoryItem);
+                divisionValueChangedHistoryForArrays[arrayDivisionValueChangedHistoryAction.ArrayID].Add(arrayDivisionValueChangedHistoryAction);
             }
 
             foreach (var divisionValueChangedHistoryForArray in divisionValueChangedHistoryForArrays)
@@ -91,19 +91,19 @@ namespace CLP.Entities
 
                 var divisionValueChangedHistory = divisionValueChangedHistoryForArray.Value;
 
-                foreach (var arrayDivisionValueChangedHistoryItem in divisionValueChangedHistory)
+                foreach (var arrayDivisionValueChangedHistoryAction in divisionValueChangedHistory)
                 {
-                    //if (arrayDivisionValueChangedHistoryItem.IsHorizontalDivision)
+                    //if (arrayDivisionValueChangedHistoryAction.IsHorizontalDivision)
                     //{
-                    //    rowValueSum -= array.HorizontalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
-                    //    rowValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    //    rowValueSum -= array.HorizontalDivisions[arrayDivisionValueChangedHistoryAction.DivisionIndex].Value;
+                    //    rowValueSum += arrayDivisionValueChangedHistoryAction.PreviousValue;
                     //    if (rowValueSum > array.Rows)
                     //    {
                     //        var dividerValues =
                     //            array.HorizontalDivisions.Select(
                     //                                             (t, i) =>
-                    //                                             arrayDivisionValueChangedHistoryItem.DivisionIndex == i
-                    //                                                 ? arrayDivisionValueChangedHistoryItem.PreviousValue
+                    //                                             arrayDivisionValueChangedHistoryAction.DivisionIndex == i
+                    //                                                 ? arrayDivisionValueChangedHistoryAction.PreviousValue
                     //                                                 : t.Value).ToList();
 
                     //        page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
@@ -114,20 +114,20 @@ namespace CLP.Entities
                     //                                                        DividerValuesOrientation.Vertical,
                     //                                                        dividerValues));
                     //    }
-                    //    rowValueSum += array.HorizontalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
-                    //    rowValueSum -= arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    //    rowValueSum += array.HorizontalDivisions[arrayDivisionValueChangedHistoryAction.DivisionIndex].Value;
+                    //    rowValueSum -= arrayDivisionValueChangedHistoryAction.PreviousValue;
                     //}
                     //else
                     //{
-                    //    columnValueSum -= array.VerticalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
-                    //    columnValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    //    columnValueSum -= array.VerticalDivisions[arrayDivisionValueChangedHistoryAction.DivisionIndex].Value;
+                    //    columnValueSum += arrayDivisionValueChangedHistoryAction.PreviousValue;
                     //    if (columnValueSum > array.Columns)
                     //    {
                     //        var dividerValues =
                     //            array.VerticalDivisions.Select(
                     //                                           (t, i) =>
-                    //                                           arrayDivisionValueChangedHistoryItem.DivisionIndex == i
-                    //                                               ? arrayDivisionValueChangedHistoryItem.PreviousValue
+                    //                                           arrayDivisionValueChangedHistoryAction.DivisionIndex == i
+                    //                                               ? arrayDivisionValueChangedHistoryAction.PreviousValue
                     //                                               : t.Value).ToList();
 
                     //        page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
@@ -138,8 +138,8 @@ namespace CLP.Entities
                     //                                                        DividerValuesOrientation.Horizontal,
                     //                                                        dividerValues));
                     //    }
-                    //    columnValueSum += array.VerticalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
-                    //    columnValueSum -= arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    //    columnValueSum += array.VerticalDivisions[arrayDivisionValueChangedHistoryAction.DivisionIndex].Value;
+                    //    columnValueSum -= arrayDivisionValueChangedHistoryAction.PreviousValue;
                     //}
                 }
             }
