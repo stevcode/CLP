@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Ann;
 using NAudio;
 using NAudio.Wave;
 

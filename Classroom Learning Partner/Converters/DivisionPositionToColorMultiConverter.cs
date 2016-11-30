@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CLP.Entities;
+using CLP.Entities.Ann;
 using System.Windows.Media;
 
 namespace Classroom_Learning_Partner.Converters

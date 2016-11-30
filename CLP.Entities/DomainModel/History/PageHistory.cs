@@ -11,7 +11,7 @@ using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     public class PageHistory : AEntityBase

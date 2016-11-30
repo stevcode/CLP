@@ -4,7 +4,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     /// <summary>
     /// Extension methods for the <see cref="Stroke" /> class.

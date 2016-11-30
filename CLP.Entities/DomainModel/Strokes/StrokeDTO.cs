@@ -6,7 +6,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public enum StylusTipType
     {

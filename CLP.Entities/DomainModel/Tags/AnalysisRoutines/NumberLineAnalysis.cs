@@ -4,7 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Ink;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public static class NumberLineAnalysis
     {

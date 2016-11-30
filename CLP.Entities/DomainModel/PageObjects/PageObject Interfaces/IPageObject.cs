@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public interface IPageObject
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.Services
 {

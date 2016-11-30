@@ -7,7 +7,7 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
+using CLP.Entities.Ann;
 using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.ViewModels

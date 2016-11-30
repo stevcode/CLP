@@ -1,7 +1,7 @@
 ﻿using System;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public static class GuidExtensions
     {

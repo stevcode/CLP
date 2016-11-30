@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.Services
 {

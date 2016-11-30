@@ -6,7 +6,7 @@ using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     public class StrokesChangedHistoryItem : AHistoryItemBase

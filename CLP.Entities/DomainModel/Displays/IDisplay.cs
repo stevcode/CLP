@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public interface IDisplay
     {

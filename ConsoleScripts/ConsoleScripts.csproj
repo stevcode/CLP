@@ -104,9 +104,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
+    <ProjectReference Include="..\CLP.Entities\CLP.Entities.Ann.csproj">
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
-      <Name>CLP.Entities</Name>
+      <Name>CLP.Entities.Ann</Name>
     </ProjectReference>
     <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
       <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>

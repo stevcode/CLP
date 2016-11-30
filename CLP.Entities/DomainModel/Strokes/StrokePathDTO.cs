@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     public class StrokePathDTO

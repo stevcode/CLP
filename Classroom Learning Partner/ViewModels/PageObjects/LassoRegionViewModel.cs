@@ -7,7 +7,7 @@ using System.Windows.Ink;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

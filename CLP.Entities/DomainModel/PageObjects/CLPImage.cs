@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     public class CLPImage : APageObjectBase

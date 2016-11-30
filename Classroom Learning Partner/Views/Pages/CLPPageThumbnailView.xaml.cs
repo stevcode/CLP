@@ -1,6 +1,6 @@
 ﻿using System;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.Views
 {

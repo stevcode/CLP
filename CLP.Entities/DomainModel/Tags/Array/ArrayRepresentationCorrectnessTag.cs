@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public enum ArrayRepresentationIncorrectReason
     {

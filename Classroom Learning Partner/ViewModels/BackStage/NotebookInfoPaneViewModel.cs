@@ -3,7 +3,7 @@ using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -37,7 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
 
-        /// <summary>Date and Time the <see cref="CLP.Entities.Notebook" /> was last saved.</summary>
+        /// <summary>Date and Time the <see cref="CLP.Entities.Ann.Notebook" /> was last saved.</summary>
         [ViewModelToModel("Notebook")]
         public DateTime? LastSavedDate
         {
@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof (DateTime?));
 
-        /// <summary>Name of the <see cref="CLP.Entities.Notebook" />.</summary>
+        /// <summary>Name of the <see cref="CLP.Entities.Ann.Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
         public string Name
         {

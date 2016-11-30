@@ -6,7 +6,7 @@ using Catel.Data;
 using Catel.Runtime.Serialization;
 using Path = Catel.IO.Path;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     public class ClassSubject : AEntityBase

@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
-using CLP.Entities;
+using CLP.Entities.Ann;
 using Catel.Runtime.Serialization;
 using Path = Catel.IO.Path;
 

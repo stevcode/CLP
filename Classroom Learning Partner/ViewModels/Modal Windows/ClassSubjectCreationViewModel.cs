@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -136,7 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StateProperty = RegisterProperty("State", typeof(string), string.Empty);
 
         /// <summary>
-        /// List of all the Students in the <see cref="CLP.Entities.ClassSubject" />.
+        /// List of all the Students in the <see cref="CLP.Entities.Ann.ClassSubject" />.
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.

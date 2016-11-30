@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     [Serializable]
     [Obsolete("Use PageObjectsMoveBatchHistoryItem instead.")]

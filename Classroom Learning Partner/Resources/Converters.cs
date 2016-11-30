@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using CLP.Entities;
+using CLP.Entities.Ann;
 using Net.Sgoliver.NRtfTree.Core;
 
 namespace Classroom_Learning_Partner.Resources

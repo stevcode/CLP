@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CLP.Entities
+namespace CLP.Entities.Ann
 {
     public class DatabaseConfiguration : DbConfiguration
     {

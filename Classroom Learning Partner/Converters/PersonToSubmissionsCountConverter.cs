@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using CLP.Entities;
+using CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner.Converters
 {
