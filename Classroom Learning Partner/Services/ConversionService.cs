@@ -269,7 +269,7 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var pageObject in page.PageObjects)
             {
-                var newPageObject = ConverPageObject(pageObject, newPage);
+                var newPageObject = ConvertPageObject(pageObject, newPage);
                 newPage.PageObjects.Add(newPageObject);
                 var divisionTemplate = newPageObject as DivisionTemplate;
                 if (divisionTemplate != null &&
@@ -286,7 +286,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region PageObjects
 
-        public static IPageObject ConverPageObject(Emily.IPageObject pageObject, CLPPage newPage)
+        public static IPageObject ConvertPageObject(Emily.IPageObject pageObject, CLPPage newPage)
         {
             IPageObject newPageObject = null;
 
@@ -630,7 +630,7 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var pageObject in page.PageObjects)
             {
-                var newPageObject = ConverPageObject(pageObject, newPage);
+                var newPageObject = ConvertPageObject(pageObject, newPage);
                 newPage.PageObjects.Add(newPageObject);
                 var divisionTemplate = newPageObject as DivisionTemplate;
                 if (divisionTemplate != null &&
@@ -647,7 +647,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region PageObjects
 
-        public static IPageObject ConverPageObject(Ann.IPageObject pageObject, CLPPage newPage)
+        public static IPageObject ConvertPageObject(Ann.IPageObject pageObject, CLPPage newPage)
         {
             IPageObject newPageObject = null;
 
@@ -673,41 +673,41 @@ namespace Classroom_Learning_Partner.Services
             return newPageObject;
         }
 
-        public static Shape ConvertShape(Emily.Shape shape, CLPPage newPage)
+        public static Shape ConvertShape(Ann.Shape shape, CLPPage newPage)
         {
             var newShape = new Shape
-            {
-                ID = shape.ID,
-                XPosition = shape.XPosition,
-                YPosition = shape.YPosition,
-                Height = shape.Height,
-                Width = shape.Width,
-                OwnerID = shape.OwnerID,
-                CreatorID = shape.CreatorID,
-                CreationDate = shape.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = shape.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                           {
+                               ID = shape.ID,
+                               XPosition = shape.XPosition,
+                               YPosition = shape.YPosition,
+                               Height = shape.Height,
+                               Width = shape.Width,
+                               OwnerID = shape.OwnerID,
+                               CreatorID = shape.CreatorID,
+                               CreationDate = shape.CreationDate,
+                               PageObjectFunctionalityVersion = "Emily5.22.2014",
+                               IsManipulatableByNonCreator = shape.IsManipulatableByNonCreator,
+                               ParentPage = newPage
+                           };
 
             switch (shape.ShapeType)
             {
-                case Emily.ShapeType.Rectangle:
+                case Ann.ShapeType.Rectangle:
                     newShape.ShapeType = ShapeType.Rectangle;
                     break;
-                case Emily.ShapeType.Ellipse:
+                case Ann.ShapeType.Ellipse:
                     newShape.ShapeType = ShapeType.Ellipse;
                     break;
-                case Emily.ShapeType.Triangle:
+                case Ann.ShapeType.Triangle:
                     newShape.ShapeType = ShapeType.Triangle;
                     break;
-                case Emily.ShapeType.HorizontalLine:
+                case Ann.ShapeType.HorizontalLine:
                     newShape.ShapeType = ShapeType.HorizontalLine;
                     break;
-                case Emily.ShapeType.VerticalLine:
+                case Ann.ShapeType.VerticalLine:
                     newShape.ShapeType = ShapeType.VerticalLine;
                     break;
-                case Emily.ShapeType.Protractor:
+                case Ann.ShapeType.Protractor:
                     newShape.ShapeType = ShapeType.Protractor;
                     break;
                 default:
@@ -718,7 +718,7 @@ namespace Classroom_Learning_Partner.Services
             return newShape;
         }
 
-        public static CLPTextBox ConvertTextBox(Emily.CLPTextBox textBox, CLPPage newPage)
+        public static CLPTextBox ConvertTextBox(Ann.CLPTextBox textBox, CLPPage newPage)
         {
             var newTextBox = new CLPTextBox
             {
@@ -739,7 +739,7 @@ namespace Classroom_Learning_Partner.Services
             return newTextBox;
         }
 
-        public static CLPImage ConvertImage(Emily.CLPImage image, CLPPage newPage)
+        public static CLPImage ConvertImage(Ann.CLPImage image, CLPPage newPage)
         {
             var newImage = new CLPImage
             {
@@ -760,7 +760,7 @@ namespace Classroom_Learning_Partner.Services
             return newImage;
         }
 
-        public static CLPArray ConvertArray(Emily.CLPArray array, CLPPage newPage)
+        public static CLPArray ConvertArray(Ann.CLPArray array, CLPPage newPage)
         {
             var newArray = new CLPArray
             {
@@ -787,13 +787,13 @@ namespace Classroom_Learning_Partner.Services
 
             switch (array.ArrayType)
             {
-                case Emily.ArrayTypes.Array:
+                case Ann.ArrayTypes.Array:
                     newArray.ArrayType = ArrayTypes.Array;
                     break;
-                case Emily.ArrayTypes.ArrayCard:
+                case Ann.ArrayTypes.ArrayCard:
                     newArray.ArrayType = ArrayTypes.ArrayCard;
                     break;
-                case Emily.ArrayTypes.FactorCard:
+                case Ann.ArrayTypes.FactorCard:
                     newArray.ArrayType = ArrayTypes.FactorCard;
                     break;
                 default:
@@ -816,20 +816,20 @@ namespace Classroom_Learning_Partner.Services
             return newArray;
         }
 
-        public static CLPArrayDivision ConvertArrayDivision(Emily.CLPArrayDivision division)
+        public static CLPArrayDivision ConvertArrayDivision(Ann.CLPArrayDivision division)
         {
             var newDivision = new CLPArrayDivision
             {
                 Position = division.Position,
                 Length = division.Length,
                 Value = division.Value,
-                Orientation = division.Orientation == Emily.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
+                Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
             };
 
             return newDivision;
         }
 
-        public static DivisionTemplate ConvertDivisionTemplate(Emily.FuzzyFactorCard ffc, CLPPage newPage)
+        public static DivisionTemplate ConvertDivisionTemplate(Ann.FuzzyFactorCard ffc, CLPPage newPage)
         {
             var newDivisionTemplate = new DivisionTemplate
             {
@@ -876,7 +876,7 @@ namespace Classroom_Learning_Partner.Services
             return newDivisionTemplate;
         }
 
-        public static RemainderTiles ConvertRemainderTiles(Emily.RemainderTiles remainderTiles, CLPPage newPage)
+        public static RemainderTiles ConvertRemainderTiles(Ann.RemainderTiles remainderTiles, CLPPage newPage)
         {
             var newRemainderTiles = new RemainderTiles
             {
