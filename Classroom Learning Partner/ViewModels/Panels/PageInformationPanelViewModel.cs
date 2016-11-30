@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
             InitializedAsync += PageInformationPanelViewModel_InitializedAsync;
-            IsVisible = false;
+            //IsVisible = false;
 
             PageOrientations.Add("Default - Landscape");
             PageOrientations.Add("Default - Portrait");
@@ -62,8 +62,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
         }
 
-        
-
         private async Task PageInformationPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
@@ -71,10 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
-        public override double InitialLength
-        {
-            get { return 350.0; }
-        }
+        public override double InitialLength => 350.0;
 
         #endregion //Constructor
 
