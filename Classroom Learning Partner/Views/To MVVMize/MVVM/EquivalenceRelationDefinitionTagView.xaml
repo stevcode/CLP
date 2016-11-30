@@ -1,0 +1,200 @@
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.EquivalenceRelationDefinitionTagView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:catel="http://catel.codeplex.com"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
+
+    <catel:DataWindow.Resources>
+        <ObjectDataProvider x:Key="RelationTypes"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </catel:DataWindow.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <!-- Top Labels -->
+        
+        <Label Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="5"
+               Margin="5"
+               Content="Left"
+               HorizontalAlignment="Center" />
+
+        <Label Grid.Row="0"
+               Grid.Column="6"
+               Grid.ColumnSpan="5"
+               Margin="5"
+               Content="Right"
+               HorizontalAlignment="Center" />
+
+        <Label Grid.Row="0"
+               Grid.Column="12"
+               Margin="5"
+               Content="Total"
+               HorizontalAlignment="Center" />
+        
+        <!-- Combo Boxes and Validation Button -->
+
+        <ComboBox Grid.Row="1"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="5"
+                  Margin="5"
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Source={StaticResource RelationTypes}}"
+                  SelectedItem="{Binding LeftRelationType}" />
+
+        <ComboBox Grid.Row="1"
+                  Grid.Column="6"
+                  Grid.ColumnSpan="5"
+                  Margin="5"
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding Source={StaticResource RelationTypes}}"
+                  SelectedItem="{Binding RightRelationType}" />
+
+        <Button Grid.Row="1"
+                Grid.Column="12"
+                Margin="5"
+                Content="Calculate Equivalence"
+                Command="{Binding CalculateEquivalenceCommand}" />
+        
+        <!-- Relations -->
+
+        <TextBox Grid.Row="2"
+                 Grid.Column="0"
+                 Margin="5"
+                 Width="48"
+                 Text="{Binding FirstLeftNumericValue}" />
+
+        <CheckBox Grid.Row="2"
+                  Grid.Column="1"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding IsFirstLeftUnknown}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="2"
+                   Margin="5">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding LeftRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Addition}">
+                            <Setter Property="Text"
+                                    Value=" + " />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding LeftRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Multiplication}">
+                            <Setter Property="Text"
+                                    Value=" x " />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding LeftRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Division}">
+                            <Setter Property="Text"
+                                    Value=" / " />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <TextBox Grid.Row="2"
+                 Grid.Column="3"
+                 Margin="5"
+                 Width="48"
+                 Text="{Binding SecondLeftNumericValue}" />
+
+        <CheckBox Grid.Row="2"
+                  Grid.Column="4"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding IsSecondLeftUnknown}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="5"
+                   Margin="5"
+                   Text=" = " />
+
+        <TextBox Grid.Row="2"
+                 Grid.Column="6"
+                 Margin="5"
+                 Width="48"
+                 Text="{Binding FirstRightNumericValue}" />
+
+        <CheckBox Grid.Row="2"
+                  Grid.Column="7"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding IsFirstRightUnknown}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="8"
+                   Margin="5">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RightRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Addition}">
+                            <Setter Property="Text"
+                                    Value=" + " />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RightRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Multiplication}">
+                            <Setter Property="Text"
+                                    Value=" x " />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RightRelationType}" 
+                                     Value="{x:Static viewModels:EquivalenceRelationDefinitionTagViewModel+RelationTypes.Division}">
+                            <Setter Property="Text"
+                                    Value=" / " />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <TextBox Grid.Row="2"
+                 Grid.Column="9"
+                 Margin="5"
+                 Width="48"
+                 Text="{Binding SecondRightNumericValue}" />
+
+        <CheckBox Grid.Row="2"
+                  Grid.Column="10"
+                  VerticalAlignment="Center"
+                  IsChecked="{Binding IsSecondRightUnknown}" />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="11"
+                   Margin="5"
+                   Text=" = " />
+
+        <TextBlock Grid.Row="2"
+                   Grid.Column="12"
+                   Margin="5"
+                   Text="{Binding CalculatedEquivalence}" />
+
+    </Grid>
+</catel:DataWindow>

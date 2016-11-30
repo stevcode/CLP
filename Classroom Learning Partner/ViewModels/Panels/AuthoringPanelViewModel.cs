@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         Multiplication,
         Division,
         Addition,
+        Equivalence,
         AllFactorsOfAProduct
     }
 
@@ -469,8 +470,24 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     break;
+                case AnswerDefinitions.Equivalence:
+                    answerDefinition = new EquivalenceRelationDefinitionTag(CurrentPage, Origin.Author);
+
+                    var equivalenceViewModel = new EquivalenceRelationDefinitionTagViewModel(answerDefinition as EquivalenceRelationDefinitionTag);
+                    var equivalenceView = new EquivalenceRelationDefinitionTagView(equivalenceViewModel)
+                    {
+                        Owner = Application.Current.MainWindow
+                    };
+                    equivalenceView.ShowDialog();
+
+                    if (equivalenceView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return;
             }
 
             if (answerDefinition == null)

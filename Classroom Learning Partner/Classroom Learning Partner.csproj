@@ -378,6 +378,7 @@
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Tags\EquivalenceRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
@@ -446,6 +447,9 @@
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml.cs">
       <DependentUpon>ButtonBoxView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\To MVVMize\MVVM\EquivalenceRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>EquivalenceRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
@@ -734,6 +738,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\To MVVMize\MVVM\EquivalenceRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
