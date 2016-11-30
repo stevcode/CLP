@@ -29,22 +29,22 @@ namespace CLP.Entities
 
         public static readonly PropertyData NumericValueProperty = RegisterProperty("NumericValue", typeof(double), 0);
 
+        /// <summary>Determines whether the numeric value is a given and as such should be displayed.</summary>
+        public bool IsNotGiven
+        {
+            get { return GetValue<bool>(IsNotGivenProperty); }
+            set { SetValue(IsNotGivenProperty, value); }
+        }
+
+        public static readonly PropertyData IsNotGivenProperty = RegisterProperty("IsNotGiven", typeof(bool), false);
+
         #region IRelationPartImplementation
 
-        public double RelationPartAnswerValue
-        {
-            get { return NumericValue; }
-        }
+        public double RelationPartAnswerValue => NumericValue;
 
-        public string FormattedRelation
-        {
-            get { return string.Format("{0}", RelationPartAnswerValue); }
-        }
+        public string FormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
-        public string ExpandedFormattedRelation
-        {
-            get { return string.Format("{0}", RelationPartAnswerValue); }
-        }
+        public string ExpandedFormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
         #endregion //IRelationPartImplementation
 
