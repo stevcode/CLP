@@ -553,25 +553,28 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Parts
 
-        public static Session ConvertClassPeriod(Ann.ClassPeriod classPeriod)
-        {
-            var newSession = new Session
-            {
-                StartTime = classPeriod.StartTime,
-                PageIDs = classPeriod.PageIDs,
-                StartingPageID = classPeriod.PageIDs.FirstOrDefault()
-            };
+        // TODO
+        //public static Session ConvertClassPeriod(Ann.ClassPeriod classPeriod)
+        //{
+        //    var newSession = new Session
+        //    {
+        //        StartTime = classPeriod.StartTime,
+        //        PageIDs = classPeriod.PageIDs,
+        //        StartingPageID = classPeriod.StartPageID
+        //    };
 
-            newSession.NotebookIDs.Add(classPeriod.NotebookID);
+        //    newSession.NotebookIDs.Add(classPeriod.NotebookID);
 
-            return newSession;
-        }
+        //    return newSession;
+        //}
 
         public static Person ConvertPerson(Ann.Person person)
         {
             var newPerson = Person.ParseFromFullName(person.FullName, person.IsStudent);
             newPerson.ID = person.ID;
             newPerson.Alias = person.Alias;
+            newPerson.CurrentDifferentiationGroup = person.CurrentDifferentiationGroup;
+            newPerson.TemporaryDifferentiationGroup = person.TempDifferentiationGroup;
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
@@ -636,6 +639,7 @@ namespace Classroom_Learning_Partner.Services
                 if (divisionTemplate != null &&
                     divisionTemplate.RemainderTiles != null)
                 {
+                    // ?
                     newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
                 }
             }
@@ -892,7 +896,7 @@ namespace Classroom_Learning_Partner.Services
                 IsManipulatableByNonCreator = remainderTiles.IsManipulatableByNonCreator,
                 ParentPage = newPage
             };
-            newRemainderTiles.TileColors = remainderTiles.TileOffsets;
+            //newRemainderTiles.TileColors = remainderTiles.TileOffsets;
 
             return newRemainderTiles;
         }
