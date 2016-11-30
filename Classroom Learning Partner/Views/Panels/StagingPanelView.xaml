@@ -6,8 +6,8 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:entities="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities"
-                   xmlns:system="clr-namespace:System;assembly=mscorlib">
+                   xmlns:system="clr-namespace:System;assembly=mscorlib"
+                   xmlns:ann="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities.Ann">
 
     <UserControl.Resources>
         <!-- Converters -->
@@ -375,7 +375,7 @@
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:PageTypes.Animation}}"
                                                         Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
@@ -469,7 +469,7 @@
 
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Correct}}"
+                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:Correctness.Correct}}"
                                                         Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
@@ -482,7 +482,7 @@
                                                     </DataTrigger>
 
                                                     <DataTrigger
-                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.PartiallyCorrect}}"
+                                                        Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:Correctness.PartiallyCorrect}}"
                                                         Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
@@ -514,7 +514,7 @@
 
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                            Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:Correctness.Incorrect}}"
+                                                            Binding="{Binding ViewModel.Correctness, ElementName=PagePreviewView, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:Correctness.Incorrect}}"
                                                                  Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>

@@ -6,7 +6,7 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:entities="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities">
+                   xmlns:ann="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities.Ann">
 
     <UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
@@ -282,7 +282,7 @@
                                     Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger
-                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.GeneralStamp}}"
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:StampTypes.GeneralStamp}}"
                                              Value="True">
                                     <Setter Property="Visibility"
                                             Value="Visible" />
@@ -306,19 +306,19 @@
                                     Value="Visible" />
                             <Style.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.EmptyGroupStamp}}"
+                                    Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:StampTypes.EmptyGroupStamp}}"
                                     Value="True">
                                     <Setter Property="Text"
                                             Value="Group" />
                                 </DataTrigger>
                                 <DataTrigger
-                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:StampTypes.ObservingStamp}}"
                                              Value="True">
                                     <Setter Property="Text"
                                             Value="Object" />
                                 </DataTrigger>
                                 <DataTrigger
-                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.GeneralStamp}}"
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:StampTypes.GeneralStamp}}"
                                              Value="True">
                                     <Setter Property="Visibility"
                                             Value="Collapsed" />
@@ -337,7 +337,7 @@
                                     Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger
-                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:StampTypes.ObservingStamp}}"
                                              Value="True">
                                     <Setter Property="Visibility"
                                             Value="Visible" />

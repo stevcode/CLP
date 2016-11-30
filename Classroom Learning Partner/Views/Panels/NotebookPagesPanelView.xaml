@@ -8,7 +8,8 @@
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    xmlns:entities="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities"
                    xmlns:clp="clr-namespace:Classroom_Learning_Partner"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:ann="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities.Ann">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -256,7 +257,7 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                    <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:PageTypes.Animation}}"
                                                                  Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />

@@ -7,8 +7,8 @@
     <ProjectGuid>{C6B95A31-7045-4C7E-A72D-C03468E20B20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CLP.Entities</RootNamespace>
-    <AssemblyName>CLP.Entities</AssemblyName>
+    <RootNamespace>CLP.Entities.Ann</RootNamespace>
+    <AssemblyName>CLP.Entities.Ann</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

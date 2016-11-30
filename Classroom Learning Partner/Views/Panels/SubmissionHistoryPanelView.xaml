@@ -6,7 +6,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   xmlns:entities="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities">
+                   xmlns:ann="clr-namespace:CLP.Entities.Ann;assembly=CLP.Entities.Ann">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -145,7 +145,7 @@
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
                                                     <DataTrigger
-                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static ann:PageTypes.Animation}}"
                                                         Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
