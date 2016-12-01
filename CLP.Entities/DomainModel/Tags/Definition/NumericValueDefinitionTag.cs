@@ -38,6 +38,18 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsNotGivenProperty = RegisterProperty("IsNotGiven", typeof(bool), false);
 
+        #endregion //Properties
+
+        #region ATagBase Overrides
+
+        public override Category Category => Category.Definition;
+
+        public override string FormattedName => "Numeric Value Definition";
+
+        public override string FormattedValue => $"Value: {NumericValue}";
+
+        #endregion //ATagBase Overrides
+
         #region IRelationPartImplementation
 
         public double RelationPartAnswerValue => NumericValue;
@@ -47,20 +59,5 @@ namespace CLP.Entities
         public string ExpandedFormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
         #endregion //IRelationPartImplementation
-
-        #region ATagBase Overrides
-
-        public override Category Category => Category.Definition;
-
-        public override string FormattedName => "Numeric Value Definition";
-
-        public override string FormattedValue
-        {
-            get { return string.Format("Value: {0}", NumericValue); }
-        }
-
-        #endregion //ATagBase Overrides
-
-        #endregion //Properties
     }
 }
