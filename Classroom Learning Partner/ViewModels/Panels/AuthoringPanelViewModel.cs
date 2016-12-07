@@ -120,6 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+            AddMetaDataTagsCommand = new Command(OnAddMetaDataTagsCommandExecute);
         }
 
         /// <summary>Adds a new page to the notebook.</summary>
@@ -307,7 +308,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         /// <summary>Trims the current page's excess height if free of ink strokes and pageObjects.</summary>
@@ -508,6 +512,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 submission.AddTag(answerDefinition);
             }
+        }
+
+        /// <summary>Creates Modal Window to edit the Meta Data Tags on the page.</summary>
+        public Command AddMetaDataTagsCommand { get; private set; }
+
+        private void OnAddMetaDataTagsCommandExecute()
+        {
+            var viewModel = new MetaDataTagsViewModel(CurrentPage);
+            viewModel.ShowWindowAsDialog();
         }
 
         #endregion //Commands

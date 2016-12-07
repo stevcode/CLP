@@ -6,6 +6,23 @@ namespace CLP.Entities
     [Serializable]
     public class MetaDataTag : ATagBase
     {
+        #region Constants
+
+        public const string NAME_WORD_PROBLEM = "Word Problem";
+        public const string NAME_ONLY_TOP_PROBLEM = "Analyzing Only Top Problem";
+        public const string NAME_SPECIAL_INTEREST_GROUP = "Special Interest Group";
+        public const string NAME_DIFFICULTY_LEVEL = "Difficulty Level";
+
+        public const string VALUE_TRUE = "True";
+        public const string VALUE_FALSE = "False";
+
+        public const string VALUE_DIFFICULTY_NONE = "None";
+        public const string VALUE_DIFFICULTY_EASY = "Easy";
+        public const string VALUE_DIFFICULTY_MEDIUM = "Medium";
+        public const string VALUE_DIFFICULTY_HARD = "Hard";
+
+        #endregion // Constants
+
         #region Constructors
 
         /// <summary>Initializes <see cref="MetaDataTag" /> from scratch.</summary>

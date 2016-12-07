@@ -351,6 +351,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionViewModel.cs" />
@@ -426,6 +427,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MetaDataTagsView.xaml.cs">
+      <DependentUpon>MetaDataTagsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\SessionsView.xaml.cs">
       <DependentUpon>SessionsView.xaml</DependentUpon>
@@ -710,6 +714,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ClassRosterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MetaDataTagsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
