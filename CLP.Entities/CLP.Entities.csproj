@@ -237,6 +237,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />

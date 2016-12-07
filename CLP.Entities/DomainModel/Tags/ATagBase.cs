@@ -25,7 +25,8 @@ namespace CLP.Entities
         CurriculumInformation,
         OtherPageInformation,
         Representation,
-        Answer
+        Answer,
+        MetaData
     }
 
     [Serializable]
