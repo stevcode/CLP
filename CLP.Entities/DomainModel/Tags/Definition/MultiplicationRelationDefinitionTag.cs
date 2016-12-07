@@ -74,9 +74,9 @@ namespace CLP.Entities
                 {
                     case RelationTypes.EqualGroups:
                     case RelationTypes.OrderedEqualGroups:
-                        return string.Join(" group(s) of ", Factors.Select(x => x.RelationPartAnswerValue));
+                        return string.Join(" group(s) of ", Factors.Select(x => x.FormattedRelation));
                     default:
-                        return string.Join("x", Factors.Select(x => x.RelationPartAnswerValue));
+                        return string.Join(" x ", Factors.Select(x => x.FormattedRelation));
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace CLP.Entities
                     case RelationTypes.OrderedEqualGroups:
                         return string.Join(" group(s) of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
                     default:
-                        return string.Join("x", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
+                        return string.Join(" x ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
                 }
             }
         }

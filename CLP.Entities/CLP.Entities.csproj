@@ -223,6 +223,7 @@
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
     <Compile Include="DomainModel\Tags\Definition\AdditionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\FactorsOfProductDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\IRelationPart.cs" />
     <Compile Include="DomainModel\Tags\Definition\IRepresentationComparer.cs" />

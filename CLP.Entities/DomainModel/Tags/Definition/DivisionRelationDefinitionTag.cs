@@ -5,7 +5,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase
+    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart
     {
         public enum RelationTypes
         {
@@ -26,25 +26,25 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>Dividend of the division relation.</summary>
-        public double Dividend
+        /// <summary>Dividend of the division relation. Dividend / Divisor = Quotient R Remainder.</summary>
+        public IRelationPart Dividend
         {
-            get { return GetValue<double>(DividendProperty); }
+            get { return GetValue<IRelationPart>(DividendProperty); }
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(double), 0);
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(IRelationPart));
 
-        /// <summary>Divisor of the division relation.</summary>
-        public double Divisor
+        /// <summary>Divisor of the division relation. Dividend / Divisor = Quotient R Remainder.</summary>
+        public IRelationPart Divisor
         {
-            get { return GetValue<double>(DivisorProperty); }
+            get { return GetValue<IRelationPart>(DivisorProperty); }
             set { SetValue(DivisorProperty, value); }
         }
 
-        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double), 0);
+        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(IRelationPart));
 
-        /// <summary>Quotient of the division relation.</summary>
+        /// <summary>Quotient of the division relation. Dividend / Divisor = Quotient R Remainder.</summary>
         public double Quotient
         {
             get { return GetValue<double>(QuotientProperty); }
@@ -53,7 +53,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData QuotientProperty = RegisterProperty("Quotient", typeof(double), 0);
 
-        /// <summary>Remainder of the division relation.</summary>
+        /// <summary>Remainder of the division relation. Dividend / Divisor = Quotient R Remainder.</summary>
         public double Remainder
         {
             get { return GetValue<double>(RemainderProperty); }
@@ -71,20 +71,27 @@ namespace CLP.Entities
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralDivision);
 
+        #endregion //Properties
+
         #region ATagBase Overrides
 
         public override Category Category => Category.Definition;
 
         public override string FormattedName => "Division Relation Definition";
 
-        public override string FormattedValue
-        {
-            get { return string.Format("Relation Type: {0}\n" + "{1} / {2} = {3} R{4}", RelationType, Dividend, Divisor, Quotient, Remainder); }
-        }
+        public override string FormattedValue => $"Relation Type: {RelationType}\n" + $"{Dividend.RelationPartAnswerValue} / {Divisor.RelationPartAnswerValue} = {Quotient} R{Remainder}";
 
-        #endregion //ATagBase Overrides
+        #endregion // ATagBase Overrides
 
-        #endregion //Properties
+        #region IRelationPartImplementation
+
+        public double RelationPartAnswerValue => Math.Abs(Remainder) < 0.0001 ? Quotient : Quotient + (Dividend.RelationPartAnswerValue / Remainder);
+
+        public string FormattedRelation => $"{Dividend.FormattedRelation} / {Divisor.FormattedRelation}";
+
+        public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
+
+        #endregion // IRelationPartImplementation
 
         #region IRepresentationComparer Implementation
 

@@ -528,162 +528,162 @@ namespace CLP.Entities
 
         public static void AnalyzeRepresentationCorrectness(CLPPage page, DivisionRelationDefinitionTag divisionRelationDefinition, DivisionTemplate divisionTemplate)
         {
-            var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
+            //var divisionTemplateIDsInHistory = GetListOfDivisionTemplateIDsInHistory(page);
 
-            // Apply a Completeness tag.
-            var isDivisionTemplateComplete = false;
-            if (divisionTemplate.VerticalDivisions.Count < 2)
-            {
-                var tag = new DivisionTemplateCompletenessTag(page,
-                                                              Origin.StudentPageGenerated,
-                                                              divisionTemplate.ID,
-                                                              divisionTemplate.Dividend,
-                                                              divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                              DivisionTemplateCompletenessValues.NoArrays);
-                page.AddTag(tag);
-            }
-            else if (divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
-            {
-                var tag = new DivisionTemplateCompletenessTag(page,
-                                                              Origin.StudentPageGenerated,
-                                                              divisionTemplate.ID,
-                                                              divisionTemplate.Dividend,
-                                                              divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                              DivisionTemplateCompletenessValues.Complete);
-                page.AddTag(tag);
-                isDivisionTemplateComplete = true;
-            }
-            else
-            {
-                var tag = new DivisionTemplateCompletenessTag(page,
-                                                              Origin.StudentPageGenerated,
-                                                              divisionTemplate.ID,
-                                                              divisionTemplate.Dividend,
-                                                              divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                              DivisionTemplateCompletenessValues.NotEnoughArrays);
-                page.AddTag(tag);
-            }
+            //// Apply a Completeness tag.
+            //var isDivisionTemplateComplete = false;
+            //if (divisionTemplate.VerticalDivisions.Count < 2)
+            //{
+            //    var tag = new DivisionTemplateCompletenessTag(page,
+            //                                                  Origin.StudentPageGenerated,
+            //                                                  divisionTemplate.ID,
+            //                                                  divisionTemplate.Dividend,
+            //                                                  divisionTemplate.Rows,
+            //                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                  DivisionTemplateCompletenessValues.NoArrays);
+            //    page.AddTag(tag);
+            //}
+            //else if (divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
+            //{
+            //    var tag = new DivisionTemplateCompletenessTag(page,
+            //                                                  Origin.StudentPageGenerated,
+            //                                                  divisionTemplate.ID,
+            //                                                  divisionTemplate.Dividend,
+            //                                                  divisionTemplate.Rows,
+            //                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                  DivisionTemplateCompletenessValues.Complete);
+            //    page.AddTag(tag);
+            //    isDivisionTemplateComplete = true;
+            //}
+            //else
+            //{
+            //    var tag = new DivisionTemplateCompletenessTag(page,
+            //                                                  Origin.StudentPageGenerated,
+            //                                                  divisionTemplate.ID,
+            //                                                  divisionTemplate.Dividend,
+            //                                                  divisionTemplate.Rows,
+            //                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                  DivisionTemplateCompletenessValues.NotEnoughArrays);
+            //    page.AddTag(tag);
+            //}
 
-            // Apply a Correctness tag.
-            var incorrectReasons = new List<DivisionTemplateIncorrectReason>();
+            //// Apply a Correctness tag.
+            //var incorrectReasons = new List<DivisionTemplateIncorrectReason>();
 
-            // Correct
-            if (divisionRelationDefinition.Dividend == divisionTemplate.Dividend &&
-                isDivisionTemplateComplete &&
-                divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
-                divisionRelationDefinition.Quotient == divisionTemplate.Columns)
-            {
-                var correctTag = new DivisionTemplateRepresentationCorrectnessTag(page,
-                                                                                  Origin.StudentPageGenerated,
-                                                                                  divisionTemplate.ID,
-                                                                                  divisionTemplate.Dividend,
-                                                                                  divisionTemplate.Rows,
-                                                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                  Correctness.Correct,
-                                                                                  incorrectReasons);
-                page.AddTag(correctTag);
-                return;
-            }
+            //// Correct
+            //if (divisionRelationDefinition.Dividend == divisionTemplate.Dividend &&
+            //    isDivisionTemplateComplete &&
+            //    divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
+            //    divisionRelationDefinition.Quotient == divisionTemplate.Columns)
+            //{
+            //    var correctTag = new DivisionTemplateRepresentationCorrectnessTag(page,
+            //                                                                      Origin.StudentPageGenerated,
+            //                                                                      divisionTemplate.ID,
+            //                                                                      divisionTemplate.Dividend,
+            //                                                                      divisionTemplate.Rows,
+            //                                                                      divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                      Correctness.Correct,
+            //                                                                      incorrectReasons);
+            //    page.AddTag(correctTag);
+            //    return;
+            //}
 
-            // Incorrect
-            if (!isDivisionTemplateComplete)
-            {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.Incomplete);
-            }
+            //// Incorrect
+            //if (!isDivisionTemplateComplete)
+            //{
+            //    incorrectReasons.Add(DivisionTemplateIncorrectReason.Incomplete);
+            //}
 
-            if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend &&
-                divisionRelationDefinition.Divisor != divisionTemplate.Rows)
-            {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividendAndDivisor);
-            }
-            else
-            {
-                if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend)
-                {
-                    incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividend);
-                }
+            //if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend &&
+            //    divisionRelationDefinition.Divisor != divisionTemplate.Rows)
+            //{
+            //    incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividendAndDivisor);
+            //}
+            //else
+            //{
+            //    if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend)
+            //    {
+            //        incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividend);
+            //    }
 
-                if (divisionRelationDefinition.Divisor != divisionTemplate.Rows)
-                {
-                    incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
-                }
-            }
+            //    if (divisionRelationDefinition.Divisor != divisionTemplate.Rows)
+            //    {
+            //        incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
+            //    }
+            //}
 
-            if (!incorrectReasons.Any())
-            {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.Other);
-            }
+            //if (!incorrectReasons.Any())
+            //{
+            //    incorrectReasons.Add(DivisionTemplateIncorrectReason.Other);
+            //}
 
-            var incorrectTag = new DivisionTemplateRepresentationCorrectnessTag(page,
-                                                                                Origin.StudentPageGenerated,
-                                                                                divisionTemplate.ID,
-                                                                                divisionTemplate.Dividend,
-                                                                                divisionTemplate.Rows,
-                                                                                divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
-                                                                                Correctness.Incorrect,
-                                                                                incorrectReasons);
-            page.AddTag(incorrectTag);
+            //var incorrectTag = new DivisionTemplateRepresentationCorrectnessTag(page,
+            //                                                                    Origin.StudentPageGenerated,
+            //                                                                    divisionTemplate.ID,
+            //                                                                    divisionTemplate.Dividend,
+            //                                                                    divisionTemplate.Rows,
+            //                                                                    divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID),
+            //                                                                    Correctness.Incorrect,
+            //                                                                    incorrectReasons);
+            //page.AddTag(incorrectTag);
         }
 
         public static void AnalyzeDivisionTemplateCorrectness(CLPPage page)
         {
-            var representationCorrectnessTags = page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>().ToList();
+            //var representationCorrectnessTags = page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>().ToList();
 
-            if (!representationCorrectnessTags.Any())
-            {
-                return;
-            }
+            //if (!representationCorrectnessTags.Any())
+            //{
+            //    return;
+            //}
 
-            var isCorrectOnce = false;
-            var isPartiallyCorrectOnce = false;
-            var isIncorrectOnce = false;
+            //var isCorrectOnce = false;
+            //var isPartiallyCorrectOnce = false;
+            //var isIncorrectOnce = false;
 
-            foreach (var arrayRepresentationCorrectnessTag in representationCorrectnessTags)
-            {
-                switch (arrayRepresentationCorrectnessTag.Correctness)
-                {
-                    case Correctness.Correct:
-                        isCorrectOnce = true;
-                        break;
-                    case Correctness.PartiallyCorrect:
-                        isPartiallyCorrectOnce = true;
-                        break;
-                    case Correctness.Incorrect:
-                        isIncorrectOnce = true;
-                        break;
-                    case Correctness.Unknown:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
+            //foreach (var arrayRepresentationCorrectnessTag in representationCorrectnessTags)
+            //{
+            //    switch (arrayRepresentationCorrectnessTag.Correctness)
+            //    {
+            //        case Correctness.Correct:
+            //            isCorrectOnce = true;
+            //            break;
+            //        case Correctness.PartiallyCorrect:
+            //            isPartiallyCorrectOnce = true;
+            //            break;
+            //        case Correctness.Incorrect:
+            //            isIncorrectOnce = true;
+            //            break;
+            //        case Correctness.Unknown:
+            //            break;
+            //        default:
+            //            throw new ArgumentOutOfRangeException();
+            //    }
+            //}
 
-            var correctnessSum = Correctness.Unknown;
-            if (isPartiallyCorrectOnce)
-            {
-                correctnessSum = Correctness.PartiallyCorrect;
-            }
-            else if (isCorrectOnce && isIncorrectOnce)
-            {
-                correctnessSum = Correctness.PartiallyCorrect;
-            }
-            else if (isCorrectOnce)
-            {
-                correctnessSum = Correctness.Correct;
-            }
-            else if (isIncorrectOnce)
-            {
-                correctnessSum = Correctness.Incorrect;
-            }
+            //var correctnessSum = Correctness.Unknown;
+            //if (isPartiallyCorrectOnce)
+            //{
+            //    correctnessSum = Correctness.PartiallyCorrect;
+            //}
+            //else if (isCorrectOnce && isIncorrectOnce)
+            //{
+            //    correctnessSum = Correctness.PartiallyCorrect;
+            //}
+            //else if (isCorrectOnce)
+            //{
+            //    correctnessSum = Correctness.Correct;
+            //}
+            //else if (isIncorrectOnce)
+            //{
+            //    correctnessSum = Correctness.Incorrect;
+            //}
 
-            var correctnessSummaryTag = new DivisionTemplateCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum);
-            correctnessSummaryTag.CorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Correct);
-            correctnessSummaryTag.IncorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Incorrect);
-            correctnessSummaryTag.PartiallyCorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.PartiallyCorrect);
-            page.AddTag(correctnessSummaryTag);
+            //var correctnessSummaryTag = new DivisionTemplateCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum);
+            //correctnessSummaryTag.CorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Correct);
+            //correctnessSummaryTag.IncorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Incorrect);
+            //correctnessSummaryTag.PartiallyCorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.PartiallyCorrect);
+            //page.AddTag(correctnessSummaryTag);
         }
 
         public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)

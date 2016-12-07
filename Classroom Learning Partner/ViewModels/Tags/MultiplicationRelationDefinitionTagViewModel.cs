@@ -25,13 +25,6 @@ namespace Classroom_Learning_Partner.ViewModels
             UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
         }
 
-        /// <summary>Gets the title of the view model.</summary>
-        /// <value>The title.</value>
-        public override string Title
-        {
-            get { return "MultiplicationRelationDefinitionTagVM"; }
-        }
-
         #endregion //Constructor
 
         #region Model
@@ -141,6 +134,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-        
     }
 }

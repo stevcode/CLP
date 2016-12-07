@@ -20,6 +20,7 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="AdditionRelationDefinitionTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="AdditionRelationDefinitionTag" /> belongs to.</param>
+        /// <param name="origin">The origin that created the Tag.</param>
         public AdditionRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
@@ -54,22 +55,42 @@ namespace CLP.Entities
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralAddition);
 
+        #endregion //Properties
+
+        #region ATagBase Overrides
+
+        public override Category Category => Category.Definition;
+
+        public override string FormattedName => "Addition Relation Definition";
+
+        public override string FormattedValue
+        {
+            get
+            {
+                var expandedRelation = IsExpandedFormatRelationVisible ? $"\nExpanded Relation:\n{ExpandedFormattedRelation} = {Sum}" : string.Empty;
+                var alternateRelation = string.IsNullOrWhiteSpace(AlternateFormattedRelation) ? string.Empty : $"\nAlternate Relation(s):\n{AlternateFormattedRelation}";
+
+                return $"Relation Type: {RelationType}\n{FormattedRelation} = {Sum}{expandedRelation}{alternateRelation}";
+            }
+        }
+
+        #endregion //ATagBase Overrides
+
         #region IRelationPartImplementation
 
-        public double RelationPartAnswerValue
-        {
-            get { return Sum; }
-        }
+        public double RelationPartAnswerValue => Sum;
 
         public string FormattedRelation
         {
-            get { return string.Join("+", Addends.Select(x => x.RelationPartAnswerValue)); }
+            get { return string.Join(" + ", Addends.Select(x => x.FormattedRelation)); }
         }
 
         public string ExpandedFormattedRelation
         {
-            get { return string.Join("+", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")")); }
+            get { return string.Join(" + ", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.ExpandedFormattedRelation + ")")); }
         }
+
+        #region Support
 
         public bool IsExpandedFormatRelationVisible
         {
@@ -111,7 +132,7 @@ namespace CLP.Entities
                                     firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
                                         ? " group(s) of "
                                         : "x";
-                    var alternateRelation = string.Format("{0}{1}{2} = {3}", numberOfGroups, delimiter, groupSize, Sum);
+                    var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
 
@@ -122,40 +143,16 @@ namespace CLP.Entities
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
                     var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : "x";
-                    var alternateRelation = string.Format("{0}{1}{2} = {3}", numberOfGroups, delimiter, groupSize, Sum);
+                    var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
 
-                if (!alternateRelations.Any())
-                {
-                    return string.Empty;
-                }
-
-                return string.Join("\n", alternateRelations);
+                return !alternateRelations.Any() ? string.Empty : string.Join("\n", alternateRelations);
             }
         }
+
+        #endregion // Support
 
         #endregion //IRelationPartImplementation
-
-        #region ATagBase Overrides
-
-        public override Category Category => Category.Definition;
-
-        public override string FormattedName => "Addition Relation Definition";
-
-        public override string FormattedValue
-        {
-            get
-            {
-                var expandedRelation = !IsExpandedFormatRelationVisible ? string.Empty : string.Format("\nExpanded Relation:\n{0} = {1}", ExpandedFormattedRelation, Sum);
-                var alternateRelation = string.IsNullOrWhiteSpace(AlternateFormattedRelation) ? string.Empty : string.Format("\nAlternate Relation(s):\n{0}", AlternateFormattedRelation);
-
-                return string.Format("Relation Type: {0}\n{1} = {2}{3}{4}", RelationType, FormattedRelation, Sum, expandedRelation, alternateRelation);
-            }
-        }
-
-        #endregion //ATagBase Overrides
-
-        #endregion //Properties
     }
 }
