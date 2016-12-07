@@ -627,8 +627,8 @@ namespace CLP.Entities
             if (div != null)
             {
                 definitionRelation.groupSize = div.Quotient;
-                definitionRelation.numberOfGroups = div.Divisor;
-                definitionRelation.product = div.Dividend;
+                definitionRelation.numberOfGroups = div.Divisor.RelationPartAnswerValue;
+                definitionRelation.product = div.Dividend.RelationPartAnswerValue;
                 definitionRelation.isOrderedGroup = false;
                 // BUG: Actually a needed enhancement. There's no way to specify what type of division problem it is (dealing out, or partitivate or whatever), so group size is indeterminate.
                 definitionRelation.isProductImportant = true;

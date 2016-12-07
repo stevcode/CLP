@@ -335,72 +335,73 @@ namespace CLP.Entities
                 UpdateReport();
             }
 
-            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
+            // TODO: Make part of Semantic Event analysis
+            //var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
 
-            foreach (var divisionRelationDefinitionTag in divisionDefinitions)
-            {
-                if (Dividend == divisionRelationDefinitionTag.Dividend &&
-                    Rows == divisionRelationDefinitionTag.Divisor)
-                {
-                    continue;
-                }
+            //foreach (var divisionRelationDefinitionTag in divisionDefinitions)
+            //{
+            //    if (Dividend == divisionRelationDefinitionTag.Dividend &&
+            //        Rows == divisionRelationDefinitionTag.Divisor)
+            //    {
+            //        continue;
+            //    }
 
-                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+            //    var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
 
-                ITag divisionCreationErrorTag = null;
-                if (Dividend == divisionRelationDefinitionTag.Divisor &&
-                    Rows == divisionRelationDefinitionTag.Dividend)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
-                }
+            //    ITag divisionCreationErrorTag = null;
+            //    if (Dividend == divisionRelationDefinitionTag.Divisor &&
+            //        Rows == divisionRelationDefinitionTag.Dividend)
+            //    {
+            //        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+            //                                                                        Origin.StudentPageGenerated,
+            //                                                                        ID,
+            //                                                                        Dividend,
+            //                                                                        Rows,
+            //                                                                        divisionTemplateIDsInHistory.IndexOf(ID),
+            //                                                                        DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
+            //    }
 
-                if (Dividend == divisionRelationDefinitionTag.Dividend &&
-                    Rows != divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
-                }
+            //    if (Dividend == divisionRelationDefinitionTag.Dividend &&
+            //        Rows != divisionRelationDefinitionTag.Divisor)
+            //    {
+            //        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+            //                                                                        Origin.StudentPageGenerated,
+            //                                                                        ID,
+            //                                                                        Dividend,
+            //                                                                        Rows,
+            //                                                                        divisionTemplateIDsInHistory.IndexOf(ID),
+            //                                                                        DivisionTemplateIncorrectCreationReasons.WrongDivisor);
+            //    }
 
-                if (Dividend != divisionRelationDefinitionTag.Dividend &&
-                    Rows == divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
-                }
+            //    if (Dividend != divisionRelationDefinitionTag.Dividend &&
+            //        Rows == divisionRelationDefinitionTag.Divisor)
+            //    {
+            //        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+            //                                                                        Origin.StudentPageGenerated,
+            //                                                                        ID,
+            //                                                                        Dividend,
+            //                                                                        Rows,
+            //                                                                        divisionTemplateIDsInHistory.IndexOf(ID),
+            //                                                                        DivisionTemplateIncorrectCreationReasons.WrongDividend);
+            //    }
 
-                if (Dividend != divisionRelationDefinitionTag.Dividend &&
-                    Rows != divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
-                }
+            //    if (Dividend != divisionRelationDefinitionTag.Dividend &&
+            //        Rows != divisionRelationDefinitionTag.Divisor)
+            //    {
+            //        divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+            //                                                                        Origin.StudentPageGenerated,
+            //                                                                        ID,
+            //                                                                        Dividend,
+            //                                                                        Rows,
+            //                                                                        divisionTemplateIDsInHistory.IndexOf(ID),
+            //                                                                        DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
+            //    }
 
-                if (divisionCreationErrorTag != null)
-                {
-                    ParentPage.AddTag(divisionCreationErrorTag);
-                }
-            }
+            //    if (divisionCreationErrorTag != null)
+            //    {
+            //        ParentPage.AddTag(divisionCreationErrorTag);
+            //    }
+            //}
         }
 
         public override void OnDeleted(bool fromHistory = false)
@@ -431,7 +432,7 @@ namespace CLP.Entities
                 ResizeDivisions();
             }
 
-            RaisePropertyChanged("LastDivisionPosition");
+            RaisePropertyChanged(nameof(LastDivisionPosition));
         }
 
         #endregion //APageObjectBase Overrides
