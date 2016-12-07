@@ -5,7 +5,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase
+    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart
     {
         public enum RelationTypes
         {
@@ -71,6 +71,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralDivision);
 
+        #endregion //Properties
+
         #region ATagBase Overrides
 
         public override Category Category => Category.Definition;
@@ -79,9 +81,17 @@ namespace CLP.Entities
 
         public override string FormattedValue => $"Relation Type: {RelationType}\n" + $"{Dividend.RelationPartAnswerValue} / {Divisor.RelationPartAnswerValue} = {Quotient} R{Remainder}";
 
-        #endregion //ATagBase Overrides
+        #endregion // ATagBase Overrides
 
-        #endregion //Properties
+        #region IRelationPartImplementation
+
+        public double RelationPartAnswerValue => Math.Abs(Remainder) < 0.0001 ? Quotient : Quotient + (Dividend.RelationPartAnswerValue / Remainder);
+
+        public string FormattedRelation => $"{Dividend.FormattedRelation} / {Divisor.FormattedRelation}";
+
+        public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
+
+        #endregion // IRelationPartImplementation
 
         #region IRepresentationComparer Implementation
 

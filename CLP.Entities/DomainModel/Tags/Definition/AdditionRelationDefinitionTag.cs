@@ -82,12 +82,12 @@ namespace CLP.Entities
 
         public string FormattedRelation
         {
-            get { return string.Join("+", Addends.Select(x => x.FormattedRelation)); }
+            get { return string.Join(" + ", Addends.Select(x => x.FormattedRelation)); }
         }
 
         public string ExpandedFormattedRelation
         {
-            get { return string.Join("+", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.ExpandedFormattedRelation + ")")); }
+            get { return string.Join(" + ", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.ExpandedFormattedRelation + ")")); }
         }
 
         #region Support

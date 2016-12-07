@@ -471,20 +471,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     break;
                 case AnswerDefinitions.Equivalence:
-                    answerDefinition = new EquivalenceRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var equivalenceDefinition = new EquivalenceRelationDefinitionTag(CurrentPage, Origin.Author);
 
-                    var equivalenceViewModel = new EquivalenceRelationDefinitionTagViewModel(answerDefinition as EquivalenceRelationDefinitionTag);
+                    var equivalenceViewModel = new EquivalenceRelationDefinitionTagViewModel(equivalenceDefinition);
                     var equivalenceView = new EquivalenceRelationDefinitionTagView(equivalenceViewModel)
                     {
                         Owner = Application.Current.MainWindow
                     };
                     equivalenceView.ShowDialog();
 
-                    if (equivalenceView.DialogResult != true)
+                    if (equivalenceView.DialogResult != true ||
+                        equivalenceDefinition.LeftRelationPart == null ||
+                        equivalenceDefinition.RightRelationPart == null)
                     {
                         return;
                     }
 
+                    answerDefinition = equivalenceDefinition;
                     break;
                 default:
                     return;

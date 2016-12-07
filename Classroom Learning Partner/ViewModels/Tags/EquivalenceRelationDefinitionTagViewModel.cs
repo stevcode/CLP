@@ -187,13 +187,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     leftRelationPart = multiplicationRelationPart;
                     break;
                 case RelationTypes.Division:
-                    //var divisionRelationPart = new DivisionRelationDefinitionTag(DefinitionTag.ParentPage, DefinitionTag.Origin);
-                    //divisionRelationPart.Dividend = firstLeftNumericPart;
-                    //divisionRelationPart.Divisor = secondLeftNumericPart;
-                    //divisionRelationPart.Quotient = Math.Floor(divisionRelationPart.Dividend / divisionRelationPart.Divisor);
-                    //divisionRelationPart.Remainder = divisionRelationPart.Dividend % divisionRelationPart.Divisor;
-                    //leftRelationPart = divisionRelationPart;
-                    return;
+                    var divisionRelationPart = new DivisionRelationDefinitionTag(DefinitionTag.ParentPage, DefinitionTag.Origin);
+                    divisionRelationPart.Dividend = firstLeftNumericPart;
+                    divisionRelationPart.Divisor = secondLeftNumericPart;
+                    divisionRelationPart.Quotient = Math.Floor(divisionRelationPart.Dividend.RelationPartAnswerValue / divisionRelationPart.Divisor.RelationPartAnswerValue);
+                    divisionRelationPart.Remainder = divisionRelationPart.Dividend.RelationPartAnswerValue % divisionRelationPart.Divisor.RelationPartAnswerValue;
+                    leftRelationPart = divisionRelationPart;
                     break;
                 default:
                     return;
@@ -229,13 +228,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     rightRelationPart = multiplicationRelationPart;
                     break;
                 case RelationTypes.Division:
-                    //var divisionRelationPart = new DivisionRelationDefinitionTag(DefinitionTag.ParentPage, DefinitionTag.Origin);
-                    //divisionRelationPart.Dividend = firstRightNumericPart;
-                    //divisionRelationPart.Divisor = secondRightNumericPart;
-                    //divisionRelationPart.Quotient = Math.Floor(divisionRelationPart.Dividend / divisionRelationPart.Divisor);
-                    //divisionRelationPart.Remainder = divisionRelationPart.Dividend % divisionRelationPart.Divisor;
-                    //rightRelationPart = divisionRelationPart;
-                    return;
+                    var divisionRelationPart = new DivisionRelationDefinitionTag(DefinitionTag.ParentPage, DefinitionTag.Origin);
+                    divisionRelationPart.Dividend = firstRightNumericPart;
+                    divisionRelationPart.Divisor = secondRightNumericPart;
+                    divisionRelationPart.Quotient = Math.Floor(divisionRelationPart.Dividend.RelationPartAnswerValue / divisionRelationPart.Divisor.RelationPartAnswerValue);
+                    divisionRelationPart.Remainder = divisionRelationPart.Dividend.RelationPartAnswerValue % divisionRelationPart.Divisor.RelationPartAnswerValue;
+                    rightRelationPart = divisionRelationPart;
                     break;
                 default:
                     return;
