@@ -33,10 +33,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        public double TickHeight
-        {
-            get { return 25.0; }
-        }
+        public double TickHeight => 25.0;
 
         /// <summary>Number of the Tick</summary>
         public int TickValue

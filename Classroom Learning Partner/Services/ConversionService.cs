@@ -553,21 +553,33 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Parts
 
-        // TODO
-        //public static Session ConvertClassPeriod(Ann.ClassPeriod classPeriod)
-        //{
-        //    var newSession = new Session
-        //    {
-        //        StartTime = classPeriod.StartTime,
-        //        PageIDs = classPeriod.PageIDs,
-        //        StartingPageID = classPeriod.StartPageID
-        //    };
+        public static Dictionary<int, string> PageNumberToIDMap = new Dictionary<int, string>();
+        public static Dictionary<string, int> PageIDToNumberMap = new Dictionary<string, int>();
 
-        //    newSession.NotebookIDs.Add(classPeriod.NotebookID);
+        // 12/7
+        public static Session ConvertClassPeriod(Ann.ClassPeriod classPeriod)
+        {
+            var newSession = new Session
+                             {
+                                 StartTime = classPeriod.StartTime,
+                                 StartingPageID = classPeriod.StartPageID
+                             };
 
-        //    return newSession;
-        //}
+            var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
+            var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages);
+            var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
+            if (!pageIDs.Contains(classPeriod.TitlePageID))
+            {
+                pageIDs.Insert(0, classPeriod.TitlePageID);
+            }
 
+            newSession.PageIDs = pageIDs;
+            newSession.NotebookIDs.Add(classPeriod.NotebookID);
+
+            return newSession;
+        }
+
+        // 12/7
         public static Person ConvertPerson(Ann.Person person)
         {
             var newPerson = Person.ParseFromFullName(person.FullName, person.IsStudent);
@@ -578,30 +590,32 @@ namespace Classroom_Learning_Partner.Services
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
-                Console.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
+                Console.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
             }
 
             return newPerson;
         }
 
+        // 12/7
         public static Notebook ConvertNotebook(Ann.Notebook notebook)
         {
             var newPerson = ConvertPerson(notebook.Owner);
 
             var newNotebook = new Notebook
-            {
-                ID = notebook.ID,
-                Owner = newPerson,
-                Name = notebook.Name,
-                CreationDate = notebook.CreationDate,
-                LastSavedDate = notebook.LastSavedDate,
-                CurrentPageID = notebook.CurrentPageID,
-                CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
-            };
+                              {
+                                  ID = notebook.ID,
+                                  Owner = newPerson,
+                                  Name = notebook.Name,
+                                  CreationDate = notebook.CreationDate,
+                                  LastSavedDate = notebook.LastSavedDate,
+                                  CurrentPageID = notebook.CurrentPageID,
+                                  CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
+                              };
 
             return newNotebook;
         }
 
+        // 12/7
         public static CLPPage ConvertPage(Ann.CLPPage page)
         {
             var newPerson = ConvertPerson(page.Owner);
@@ -639,7 +653,7 @@ namespace Classroom_Learning_Partner.Services
                 if (divisionTemplate != null &&
                     divisionTemplate.RemainderTiles != null)
                 {
-                    // ?
+                    // TODO: ?
                     newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
                 }
             }
@@ -667,16 +681,15 @@ namespace Classroom_Learning_Partner.Services
             }).Case<Ann.CLPArray>(p =>
             {
                 newPageObject = ConvertArray(p, newPage);
-            }).Case<Ann.FuzzyFactorCard>(p =>
-            {
-                newPageObject =
-                    ConvertDivisionTemplate(p,
-                                            newPage);
-            });
+            }).Case<Ann.NumberLine>(p =>
+                                    {
+                                        newPageObject = ConvertNumberLine(p, newPage);
+                                    });
 
             return newPageObject;
         }
 
+        // 12/7
         public static Shape ConvertShape(Ann.Shape shape, CLPPage newPage)
         {
             var newShape = new Shape
@@ -689,7 +702,7 @@ namespace Classroom_Learning_Partner.Services
                                OwnerID = shape.OwnerID,
                                CreatorID = shape.CreatorID,
                                CreationDate = shape.CreationDate,
-                               PageObjectFunctionalityVersion = "Emily5.22.2014",
+                               PageObjectFunctionalityVersion = "Ann12.19.2014",
                                IsManipulatableByNonCreator = shape.IsManipulatableByNonCreator,
                                ParentPage = newPage
                            };
@@ -719,76 +732,99 @@ namespace Classroom_Learning_Partner.Services
                     break;
             }
 
+            newShape.Parts = shape.Parts;
+            newShape.IsInnerPart = shape.IsInnerPart;
+            newShape.IsPartsAutoGenerated = shape.IsPartsAutoGenerated;
+
             return newShape;
         }
 
+        // 12/7
         public static CLPTextBox ConvertTextBox(Ann.CLPTextBox textBox, CLPPage newPage)
         {
             var newTextBox = new CLPTextBox
-            {
-                ID = textBox.ID,
-                XPosition = textBox.XPosition,
-                YPosition = textBox.YPosition,
-                Height = textBox.Height,
-                Width = textBox.Width,
-                OwnerID = textBox.OwnerID,
-                CreatorID = textBox.CreatorID,
-                CreationDate = textBox.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                             {
+                                 ID = textBox.ID,
+                                 XPosition = textBox.XPosition,
+                                 YPosition = textBox.YPosition,
+                                 Height = textBox.Height,
+                                 Width = textBox.Width,
+                                 OwnerID = textBox.OwnerID,
+                                 CreatorID = textBox.CreatorID,
+                                 CreationDate = textBox.CreationDate,
+                                 PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                 IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
+                                 ParentPage = newPage
+                             };
+
             newTextBox.Text = textBox.Text;
 
             return newTextBox;
         }
 
+        // 12/7
         public static CLPImage ConvertImage(Ann.CLPImage image, CLPPage newPage)
         {
             var newImage = new CLPImage
-            {
-                ID = image.ID,
-                XPosition = image.XPosition,
-                YPosition = image.YPosition,
-                Height = image.Height,
-                Width = image.Width,
-                OwnerID = image.OwnerID,
-                CreatorID = image.CreatorID,
-                CreationDate = image.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = image.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                           {
+                               ID = image.ID,
+                               XPosition = image.XPosition,
+                               YPosition = image.YPosition,
+                               Height = image.Height,
+                               Width = image.Width,
+                               OwnerID = image.OwnerID,
+                               CreatorID = image.CreatorID,
+                               CreationDate = image.CreationDate,
+                               PageObjectFunctionalityVersion = "Ann12.19.2014",
+                               IsManipulatableByNonCreator = image.IsManipulatableByNonCreator,
+                               ParentPage = newPage
+                           };
+
             newImage.ImageHashID = image.ImageHashID;
 
             return newImage;
         }
 
+        // 12/7
         public static CLPArray ConvertArray(Ann.CLPArray array, CLPPage newPage)
         {
             var newArray = new CLPArray
-            {
-                ID = array.ID,
-                XPosition = array.XPosition,
-                YPosition = array.YPosition,
-                Height = array.Height,
-                Width = array.Width,
-                OwnerID = array.OwnerID,
-                CreatorID = array.CreatorID,
-                CreationDate = array.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = array.IsManipulatableByNonCreator,
-                ParentPage = newPage,
-                Rows = array.Rows,
-                Columns = array.Columns,
-                IsGridOn = array.IsGridOn,
-                IsDivisionBehaviorOn = array.IsDivisionBehaviorOn,
-                IsSnappable = array.IsSnappable,
-                IsTopLabelVisible = array.IsTopLabelVisible,
-                IsSideLabelVisible = array.IsSideLabelVisible,
-                CanAcceptStrokes = false
-            };
+                           {
+                               ID = array.ID,
+                               XPosition = array.XPosition,
+                               YPosition = array.YPosition,
+                               Height = array.Height,
+                               Width = array.Width,
+                               OwnerID = array.OwnerID,
+                               CreatorID = array.CreatorID,
+                               CreationDate = array.CreationDate,
+                               PageObjectFunctionalityVersion = "Ann12.19.2014",
+                               IsManipulatableByNonCreator = array.IsManipulatableByNonCreator,
+                               ParentPage = newPage
+                           };
 
+            // ACLPArrayBase
+            newArray.Rows = array.Rows;
+            newArray.Columns = array.Columns;
+            newArray.IsGridOn = array.IsGridOn;
+            newArray.IsDivisionBehaviorOn = array.IsDivisionBehaviorOn;
+            newArray.IsSnappable = array.IsSnappable;
+            newArray.IsTopLabelVisible = array.IsTopLabelVisible;
+            newArray.IsSideLabelVisible = array.IsSideLabelVisible;
+
+            foreach (var division in array.HorizontalDivisions)
+            {
+                var newDivision = ConvertArrayDivision(division);
+                newArray.HorizontalDivisions.Add(newDivision);
+            }
+
+            foreach (var division in array.VerticalDivisions)
+            {
+                var newDivision = ConvertArrayDivision(division);
+                newArray.VerticalDivisions.Add(newDivision);
+            }
+
+            // CLPArray
             switch (array.ArrayType)
             {
                 case Ann.ArrayTypes.Array:
@@ -805,100 +841,97 @@ namespace Classroom_Learning_Partner.Services
                     break;
             }
 
-            foreach (var division in array.HorizontalDivisions)
-            {
-                var newDivision = ConvertArrayDivision(division);
-                newArray.HorizontalDivisions.Add(newDivision);
-            }
-
-            foreach (var division in array.VerticalDivisions)
-            {
-                var newDivision = ConvertArrayDivision(division);
-                newArray.VerticalDivisions.Add(newDivision);
-            }
+            newArray.CanAcceptStrokes = array.CanAcceptStrokes;
+            newArray.AcceptedStrokes = array.AcceptedStrokes;  // TODO: Confirm this is necessary?
+            newArray.AcceptedStrokeParentIDs = array.AcceptedStrokeParentIDs;
+            newArray.IsInnerPart = array.IsInnerPart;
+            newArray.IsPartsAutoGenerated = array.IsPartsAutoGenerated;
 
             return newArray;
         }
 
+        // 12/7
         public static CLPArrayDivision ConvertArrayDivision(Ann.CLPArrayDivision division)
         {
             var newDivision = new CLPArrayDivision
-            {
-                Position = division.Position,
-                Length = division.Length,
-                Value = division.Value,
-                Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
-            };
+                              {
+                                  Position = division.Position,
+                                  Length = division.Length,
+                                  Value = division.Value,
+                                  Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
+                              };
 
             return newDivision;
         }
 
-        public static DivisionTemplate ConvertDivisionTemplate(Ann.FuzzyFactorCard ffc, CLPPage newPage)
+        // 12/7
+        public static NumberLine ConvertNumberLine(Ann.NumberLine numberLine, CLPPage newPage)
         {
-            var newDivisionTemplate = new DivisionTemplate
-            {
-                ID = ffc.ID,
-                XPosition = ffc.XPosition,
-                YPosition = ffc.YPosition,
-                Height = ffc.Height,
-                Width = ffc.Width,
-                OwnerID = ffc.OwnerID,
-                CreatorID = ffc.CreatorID,
-                CreationDate = ffc.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = ffc.IsManipulatableByNonCreator,
-                ParentPage = newPage,
-                Rows = ffc.Rows,
-                Columns = ffc.Columns,
-                IsGridOn = ffc.IsGridOn,
-                IsDivisionBehaviorOn = ffc.IsDivisionBehaviorOn,
-                IsSnappable = ffc.IsSnappable,
-                IsTopLabelVisible = ffc.IsTopLabelVisible,
-                IsSideLabelVisible = ffc.IsSideLabelVisible,
-                Dividend = ffc.Dividend
-            };
+            var newNumberLine = new NumberLine
+                                {
+                                    ID = numberLine.ID,
+                                    XPosition = numberLine.XPosition,
+                                    YPosition = numberLine.YPosition,
+                                    Height = numberLine.Height,
+                                    Width = numberLine.Width,
+                                    OwnerID = numberLine.OwnerID,
+                                    CreatorID = numberLine.CreatorID,
+                                    CreationDate = numberLine.CreationDate,
+                                    PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                    IsManipulatableByNonCreator = numberLine.IsManipulatableByNonCreator,
+                                    ParentPage = newPage
+                                };
 
-            if (!object.Equals(ffc.RemainderTiles, null))
+            newNumberLine.NumberLineType = NumberLineTypes.NumberLine;
+            newNumberLine.NumberLineSize = numberLine.NumberLineSize;
+            newNumberLine.IsJumpSizeLabelsVisible = numberLine.IsJumpSizeLabelsVisible;
+            newNumberLine.IsAutoArcsVisible = false;
+
+            foreach (var jumpSize in numberLine.JumpSizes)
             {
-                var newRemainderTiles = ConvertRemainderTiles(ffc.RemainderTiles, newPage);
-                newDivisionTemplate.RemainderTiles = newRemainderTiles;
-                newDivisionTemplate.IsRemainderTilesVisible = true;
+                var newJumpSize = ConvertNumberLineJumpSize(jumpSize);
+                newNumberLine.JumpSizes.Add(newJumpSize);
             }
 
-            foreach (var division in ffc.HorizontalDivisions)
+            foreach (var tick in numberLine.Ticks)
             {
-                var newDivision = ConvertArrayDivision(division);
-                newDivisionTemplate.HorizontalDivisions.Add(newDivision);
+                var newTick = ConvertNumberLineTick(tick);
+                newNumberLine.Ticks.Add(newTick);
             }
 
-            foreach (var division in ffc.VerticalDivisions)
-            {
-                var newDivision = ConvertArrayDivision(division);
-                newDivisionTemplate.VerticalDivisions.Add(newDivision);
-            }
+            newNumberLine.CanAcceptStrokes = numberLine.CanAcceptStrokes;
+            newNumberLine.AcceptedStrokes = numberLine.AcceptedStrokes;  // TODO: Confirm this is necessary?
+            newNumberLine.AcceptedStrokeParentIDs = numberLine.AcceptedStrokeParentIDs;
 
-            return newDivisionTemplate;
+            return newNumberLine;
         }
 
-        public static RemainderTiles ConvertRemainderTiles(Ann.RemainderTiles remainderTiles, CLPPage newPage)
+        // 12/7
+        public static NumberLineJumpSize ConvertNumberLineJumpSize(Ann.NumberLineJumpSize jumpSize)
         {
-            var newRemainderTiles = new RemainderTiles
-            {
-                ID = remainderTiles.ID,
-                XPosition = remainderTiles.XPosition,
-                YPosition = remainderTiles.YPosition,
-                Height = remainderTiles.Height,
-                Width = remainderTiles.Width,
-                OwnerID = remainderTiles.OwnerID,
-                CreatorID = remainderTiles.CreatorID,
-                CreationDate = remainderTiles.CreationDate,
-                PageObjectFunctionalityVersion = "Emily5.22.2014",
-                IsManipulatableByNonCreator = remainderTiles.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
-            //newRemainderTiles.TileColors = remainderTiles.TileOffsets;
+            var newJumpeSize = new NumberLineJumpSize
+                               {
+                                   JumpSize = jumpSize.JumpSize,
+                                   StartingTickIndex = jumpSize.StartingTickIndex,
+                                   JumpColor = "Black"
+                               };
 
-            return newRemainderTiles;
+            return newJumpeSize;
+        }
+
+        // 12/7
+        public static NumberLineTick ConvertNumberLineTick(Ann.NumberLineTick tick)
+        {
+            var newTick = new NumberLineTick
+                          {
+                              TickValue = tick.TickValue,
+                              IsNumberVisible = tick.IsNumberVisible,
+                              IsTickVisible = tick.IsTickVisible,
+                              IsMarked = tick.IsMarked,
+                              TickColor = tick.TickColor
+                          };
+
+            return newTick;
         }
 
         #endregion // PageObjects
