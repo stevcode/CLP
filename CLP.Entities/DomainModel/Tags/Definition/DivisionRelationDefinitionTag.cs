@@ -9,7 +9,9 @@ namespace CLP.Entities
     {
         public enum RelationTypes
         {
-            GeneralDivision
+            GeneralDivision,
+            Partitive,
+            Quotative
         }
 
         #region Constructors
