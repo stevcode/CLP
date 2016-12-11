@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -137,6 +138,26 @@
                 Content="Calculate Sum"
                 Command="{Binding CalculateSumCommand}" />
 
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+
+            <Button Content="Confirm"
+                    Command="{Binding ConfirmChangesCommand}"
+                    Margin="10 5"
+                    Height="30"
+                    Width="100" />
+
+            <Button Content="Cancel"
+                    Command="{Binding CancelChangesCommand}"
+                    Margin="10 5"
+                    Height="30"
+                    Width="100" />
+
+        </StackPanel>
+        
     </Grid>
 
 </catel:DataWindow>

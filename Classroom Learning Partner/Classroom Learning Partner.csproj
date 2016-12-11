@@ -351,7 +351,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\MetaDataTagsViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\Tags\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionViewModel.cs" />
@@ -370,8 +370,8 @@
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
-    <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
-    <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\Tags\AdditionRelationDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\To MVVMize\ExitTicketCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonViewModel.cs" />
@@ -379,8 +379,8 @@
     <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Tags\EquivalenceRelationDefinitionTagViewModel.cs" />
-    <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\Tags\EquivalenceRelationDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
@@ -428,7 +428,7 @@
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MetaDataTagsView.xaml.cs">
+    <Compile Include="Views\Modal Windows\Tags\MetaDataTagsView.xaml.cs">
       <DependentUpon>MetaDataTagsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\SessionsView.xaml.cs">
@@ -443,16 +443,16 @@
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\Tags\AdditionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>AdditionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\Tags\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ButtonBoxView.xaml.cs">
       <DependentUpon>ButtonBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\EquivalenceRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\Tags\EquivalenceRelationDefinitionTagView.xaml.cs">
       <DependentUpon>EquivalenceRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\MVVM\ExitTicketCreationView.xaml.cs">
@@ -549,7 +549,7 @@
     <Compile Include="Views\To MVVMize\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\Tags\MultiplicationRelationDefinitionTagView.xaml.cs">
       <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AggregationGridRowSelecterWindow.xaml.cs">
@@ -717,7 +717,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MetaDataTagsView.xaml">
+    <Page Include="Views\Modal Windows\Tags\MetaDataTagsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -737,11 +737,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\AdditionRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\Tags\AdditionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\DivisionRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\Tags\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -749,7 +749,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\EquivalenceRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\Tags\EquivalenceRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -857,7 +857,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\To MVVMize\MVVM\MultiplicationRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\Tags\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

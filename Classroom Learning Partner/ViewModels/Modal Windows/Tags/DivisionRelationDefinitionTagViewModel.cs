@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>UserControl view model.</summary>
     public class DivisionRelationDefinitionTagViewModel : ViewModelBase
     {
         #region Constructor
@@ -14,11 +14,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public DivisionRelationDefinitionTagViewModel(DivisionRelationDefinitionTag divisionRelationDefinition)
         {
             Model = divisionRelationDefinition;
+            InitializeCommands();
 
             Model.Dividend = new NumericValueDefinitionTag(Model.ParentPage, Model.Origin);
             Model.Divisor = new NumericValueDefinitionTag(Model.ParentPage, Model.Origin);
-
-            InitializeCommands();
         }
 
         #endregion // Constructor
@@ -91,9 +90,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private bool _isCalculated;
+
         private void InitializeCommands()
         {
             CalculateQuotientCommand = new Command(OnCalculateQuotientCommandExecute);
+            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
+            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
         }
 
         /// <summary>Calculates the Quotient and Remainder given the Dividend and Divisor.</summary>
@@ -103,6 +106,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (Math.Abs(Divisor) < 0.0001)
             {
+                MessageBox.Show("Cannot divide by zero.");
+                _isCalculated = false;
                 return;
             }
 
@@ -121,6 +126,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Model.Dividend = dividend;
             Model.Divisor = divisor;
+
+            _isCalculated = true;
+        }
+
+        /// <summary>Validates and confirms changes to the person.</summary>
+        public Command ConfirmChangesCommand { get; private set; }
+
+        private async void OnConfirmChangesCommandExecute()
+        {
+            OnCalculateQuotientCommandExecute();
+
+            if (!_isCalculated)
+            {
+                return;
+            }
+
+            await CloseViewModelAsync(true);
+        }
+
+        /// <summary>Cancels changes to the person.</summary>
+        public Command CancelChangesCommand { get; private set; }
+
+        private async void OnCancelChangesCommandExecute()
+        {
+            await CloseViewModelAsync(false);
         }
 
         #endregion // Commands

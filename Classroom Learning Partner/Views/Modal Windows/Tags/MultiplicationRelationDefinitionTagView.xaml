@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -56,15 +57,15 @@
                       Padding="5 0"
                       ItemsSource="{Binding Factors}"
                       AlternationCount="2">
-            
+
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-            
+
             <ItemsControl.Resources>
-                
+
                 <DataTemplate DataType="{x:Type entities:NumericValueDefinitionTag}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -72,7 +73,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" 
+                        <StackPanel Grid.Column="0"
                                     Orientation="Vertical"
                                     Margin="5 1">
                             <TextBox Text="{Binding NumericValue}" />
@@ -85,8 +86,7 @@
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    <Condition Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                                                Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
                                                     <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
                                                                Value="0" />
@@ -130,8 +130,7 @@
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
-                                                    <Condition
-                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    <Condition Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                                                Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
                                                     <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
                                                                Value="0" />
@@ -154,7 +153,7 @@
                                 Margin="1" />
                     </Grid>
                 </DataTemplate>
-                
+
             </ItemsControl.Resources>
 
         </ItemsControl>
@@ -199,6 +198,26 @@
                 VerticalAlignment="Top"
                 Content="Calculate Product"
                 Command="{Binding CalculateProductCommand}" />
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2">
+
+            <Button Content="Confirm"
+                    Command="{Binding ConfirmChangesCommand}"
+                    Margin="10 5"
+                    Height="30"
+                    Width="100" />
+
+            <Button Content="Cancel"
+                    Command="{Binding CancelChangesCommand}"
+                    Margin="10 5"
+                    Height="30"
+                    Width="100" />
+
+        </StackPanel>
 
     </Grid>
 
