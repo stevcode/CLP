@@ -107,10 +107,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             viewModel.SortedTags.Source = viewModel.CurrentPage.Tags;
-            viewModel.RaisePropertyChanged("StandardDeviationZScore");
-            viewModel.RaisePropertyChanged("AnimationStandardDeviationZScore");
-            viewModel.RaisePropertyChanged("FormattedMinMaxAverageHistoryLength");
-            viewModel.RaisePropertyChanged("FormattedMinMaxAverageAnimationLength");
+            viewModel.RaisePropertyChanged(nameof(StandardDeviationZScore));
+            viewModel.RaisePropertyChanged(nameof(AnimationStandardDeviationZScore));
+            viewModel.RaisePropertyChanged(nameof(FormattedMinMaxAverageHistoryLength));
+            viewModel.RaisePropertyChanged(nameof(FormattedMinMaxAverageAnimationLength));
         }
 
         /// <summary>Unique Identifier for the <see cref="CLPPage" />.</summary>
@@ -360,6 +360,8 @@ namespace Classroom_Learning_Partner.ViewModels
             #endregion // Obsolete Commands
 
             #endregion // Analysis Commands
+
+            DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
         }
 
         #region Analysis Commands
@@ -1491,6 +1493,14 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Obsolete Commands 
 
         #endregion // Analysis Commands
+
+        /// <summary>Deletes the currently selected Tag.</summary>
+        public Command<ITag> DeleteTagCommand { get; private set; }
+
+        private void OnDeleteTagCommandExecute(ITag tag)
+        {
+            CurrentPage.RemoveTag(tag);
+        }
 
         #endregion //Commands
     }
