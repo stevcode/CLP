@@ -226,7 +226,6 @@
     <Compile Include="DomainModel\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\FactorsOfProductDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\IRelationPart.cs" />
-    <Compile Include="DomainModel\Tags\Definition\IRepresentationComparer.cs" />
     <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />

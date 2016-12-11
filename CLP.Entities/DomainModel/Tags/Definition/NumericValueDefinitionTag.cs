@@ -54,6 +54,8 @@ namespace CLP.Entities
 
         public double RelationPartAnswerValue => NumericValue;
 
+        public string FormattedAnswerValue => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
+
         public string FormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
         public string ExpandedFormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();

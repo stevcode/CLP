@@ -80,14 +80,16 @@ namespace CLP.Entities
 
         public double RelationPartAnswerValue => Sum;
 
+        public string FormattedAnswerValue => Sum.ToString();
+
         public string FormattedRelation
         {
-            get { return string.Join(" + ", Addends.Select(x => x.FormattedRelation)); }
+            get { return string.Join(" + ", Addends.Select(x => x.FormattedAnswerValue)); }
         }
 
         public string ExpandedFormattedRelation
         {
-            get { return string.Join(" + ", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.ExpandedFormattedRelation + ")")); }
+            get { return string.Join(" + ", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedAnswerValue : $"({x.ExpandedFormattedRelation})")); }
         }
 
         #region Support
@@ -128,21 +130,20 @@ namespace CLP.Entities
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue + secondAddend.Factors.First().RelationPartAnswerValue;
-                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ||
-                                    firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
                                         ? " group(s) of "
-                                        : "x";
+                                        : " x ";
                     var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
 
                 // Number of Groups Matches
                 if (Math.Abs(firstAddend.Factors.First().RelationPartAnswerValue - secondAddend.Factors.First().RelationPartAnswerValue) < 0.001 &&
-                    firstAddend.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+                    firstAddend.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
-                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : "x";
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : " x ";
                     var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }

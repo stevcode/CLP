@@ -11,9 +11,8 @@ namespace CLP.Entities
         public enum RelationTypes
         {
             GeneralMultiplication,
-            Area,
             EqualGroups,
-            OrderedEqualGroups,
+            Area,
             Commutativity,
             Associativity
         }
@@ -59,49 +58,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(RelationTypes), RelationTypes.GeneralMultiplication);
 
-        #region IRelationPartImplementation
-
-        public double RelationPartAnswerValue
-        {
-            get { return Product; }
-        }
-
-        public string FormattedRelation
-        {
-            get
-            {
-                switch (RelationType)
-                {
-                    case RelationTypes.EqualGroups:
-                    case RelationTypes.OrderedEqualGroups:
-                        return string.Join(" group(s) of ", Factors.Select(x => x.FormattedRelation));
-                    default:
-                        return string.Join(" x ", Factors.Select(x => x.FormattedRelation));
-                }
-            }
-        }
-
-        public string ExpandedFormattedRelation
-        {
-            get
-            {
-                switch (RelationType)
-                {
-                    case RelationTypes.EqualGroups:
-                    case RelationTypes.OrderedEqualGroups:
-                        return string.Join(" group(s) of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
-                    default:
-                        return string.Join(" x ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
-                }
-            }
-        }
-
-        public bool IsExpandedFormatRelationVisible
-        {
-            get { return !Factors.All(r => r is NumericValueDefinitionTag); }
-        }
-
-        #endregion //IRelationPartImplementation
+        #endregion //Properties
 
         #region ATagBase Overrides
 
@@ -113,15 +70,54 @@ namespace CLP.Entities
         {
             get
             {
-                var expandedRelation = !IsExpandedFormatRelationVisible ? string.Empty : string.Format("\nExpanded Relation:\n{0} = {1}", ExpandedFormattedRelation, Product);
+                var expandedRelation = !IsExpandedFormatRelationVisible ? string.Empty : $"\nExpanded Relation:\n{ExpandedFormattedRelation} = {Product}";
                 var alternateRelation = string.Empty;
 
-                return string.Format("Relation Type: {0}\n{1} = {2}{3}{4}", RelationType, FormattedRelation, Product, expandedRelation, alternateRelation);
+                return $"Relation Type: {RelationType}\n{FormattedRelation} = {Product}{expandedRelation}{alternateRelation}";
             }
         }
 
         #endregion //ATagBase Overrides
 
-        #endregion //Properties
+        #region IRelationPartImplementation
+
+        public double RelationPartAnswerValue => Product;
+
+        public string FormattedAnswerValue => Product.ToString();
+
+        public string FormattedRelation
+        {
+            get
+            {
+                switch (RelationType)
+                {
+                    case RelationTypes.EqualGroups:
+                        return string.Join(" group(s) of ", Factors.Select(x => x.FormattedAnswerValue));
+                    default:
+                        return string.Join(" x ", Factors.Select(x => x.FormattedAnswerValue));
+                }
+            }
+        }
+
+        public string ExpandedFormattedRelation
+        {
+            get
+            {
+                switch (RelationType)
+                {
+                    case RelationTypes.EqualGroups:
+                        return string.Join(" group(s) of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedAnswerValue : $"({x.ExpandedFormattedRelation})"));
+                    default:
+                        return string.Join(" x ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedAnswerValue : $"({x.ExpandedFormattedRelation})"));
+                }
+            }
+        }
+
+        public bool IsExpandedFormatRelationVisible
+        {
+            get { return !Factors.All(r => r is NumericValueDefinitionTag); }
+        }
+
+        #endregion //IRelationPartImplementation
     }
 }
