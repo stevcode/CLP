@@ -50,6 +50,17 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </catel:StackGrid.RowDefinitions>
 
         <Label Content="Is A Word Problem: " />
@@ -62,17 +73,70 @@
                   VerticalAlignment="Center"
                   HorizontalAlignment="Right" />
 
-        <Label Content="Is Special Interest Group: " />
-        <CheckBox IsChecked="{Binding IsSpecialInterestGroup}"
-                  VerticalAlignment="Center"
-                  HorizontalAlignment="Right" />
-
         <Label Content="Difficulty Level: " />
         <ComboBox ItemsSource="{Binding Source={StaticResource DifficultyLevels}}"
                   SelectedValue="{Binding DifficultyLevel}"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Center"
                   VerticalContentAlignment="Center" />
+
+        <Label Content="Special Interest Groups"
+               Grid.ColumnSpan="2"
+               HorizontalAlignment="Center" />
+
+        <Label Content="Commutative Equivalence: " />
+        <CheckBox IsChecked="{Binding IsCommutativeEquivalence}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Multiplication With Zero: " />
+        <CheckBox IsChecked="{Binding IsMultiplicationWithZero}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Scaffolded: " />
+        <CheckBox IsChecked="{Binding IsScaffolded}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="2-Part, Shared Factor: " />
+        <CheckBox IsChecked="{Binding Is2PSF}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="2-Part, Switched Factor: " />
+        <CheckBox IsChecked="{Binding Is2PSS}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Required Representations (Check One or None)"
+               Grid.ColumnSpan="2"
+               HorizontalAlignment="Center" />
+
+        <Label Content="Array: " />
+        <CheckBox IsChecked="{Binding IsArrayRequired}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Stamp: " />
+        <CheckBox IsChecked="{Binding IsStampRequired}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Number Line: " />
+        <CheckBox IsChecked="{Binding IsNumberLineRequired}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Array Or Number Line: " />
+        <CheckBox IsChecked="{Binding IsArrayOrNumberLineRequired}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
+
+        <Label Content="Array And Stamp: " />
+        <CheckBox IsChecked="{Binding IsArrayAndStampRequired}"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right" />
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right"

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -60,15 +61,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsTopProblemProperty = RegisterProperty("IsTopProblem", typeof(bool), false);
 
-        /// <summary>Value for NAME_SPECIAL_INTEREST_GROUP</summary>
-        public bool IsSpecialInterestGroup
-        {
-            get { return GetValue<bool>(IsSpecialInterestGroupProperty); }
-            set { SetValue(IsSpecialInterestGroupProperty, value); }
-        }
-
-        public static readonly PropertyData IsSpecialInterestGroupProperty = RegisterProperty("IsSpecialInterestGroup", typeof(bool), false);
-
         /// <summary>Value for NAME_DIFFICULTY_LEVEL</summary>
         public DifficultyLevels DifficultyLevel
         {
@@ -77,6 +69,96 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DifficultyLevelProperty = RegisterProperty("DifficultyLevel", typeof(DifficultyLevels), DifficultyLevels.None);
+
+        /// <summary>Value for VALUE_SPECIAL_INTEREST_GROUP_CE</summary>
+        public bool IsCommutativeEquivalence
+        {
+            get { return GetValue<bool>(IsCommutativeEquivalenceProperty); }
+            set { SetValue(IsCommutativeEquivalenceProperty, value); }
+        }
+
+        public static readonly PropertyData IsCommutativeEquivalenceProperty = RegisterProperty("IsCommutativeEquivalence", typeof(bool), false);
+
+        /// <summary>Value for VALUE_SPECIAL_INTEREST_GROUP_ZERO</summary>
+        public bool IsMultiplicationWithZero
+        {
+            get { return GetValue<bool>(IsMultiplicationWithZeroProperty); }
+            set { SetValue(IsMultiplicationWithZeroProperty, value); }
+        }
+
+        public static readonly PropertyData IsMultiplicationWithZeroProperty = RegisterProperty("IsMultiplicationWithZero", typeof(bool), false);
+
+        /// <summary>Value for VALUE_SPECIAL_INTEREST_GROUP_SCAF</summary>
+        public bool IsScaffolded
+        {
+            get { return GetValue<bool>(IsScaffoldedProperty); }
+            set { SetValue(IsScaffoldedProperty, value); }
+        }
+
+        public static readonly PropertyData IsScaffoldedProperty = RegisterProperty("IsScaffolded", typeof(bool), false);
+
+        /// <summary>Value for VALUE_SPECIAL_INTEREST_GROUP_2PSF</summary>
+        public bool Is2PSF
+        {
+            get { return GetValue<bool>(Is2PSFProperty); }
+            set { SetValue(Is2PSFProperty, value); }
+        }
+
+        public static readonly PropertyData Is2PSFProperty = RegisterProperty("Is2PSF", typeof(bool), false);
+
+        /// <summary>Value for VALUE_SPECIAL_INTEREST_GROUP_2PSS</summary>
+        public bool Is2PSS
+        {
+            get { return GetValue<bool>(Is2PSSProperty); }
+            set { SetValue(Is2PSSProperty, value); }
+        }
+
+        public static readonly PropertyData Is2PSSProperty = RegisterProperty("Is2PSS", typeof(bool), false);
+
+        /// <summary>Value for </summary>
+        public bool IsArrayRequired
+        {
+            get { return GetValue<bool>(IsArrayRequiredProperty); }
+            set { SetValue(IsArrayRequiredProperty, value); }
+        }
+
+        public static readonly PropertyData IsArrayRequiredProperty = RegisterProperty("IsArrayRequired", typeof(bool), false);
+
+        /// <summary>Value for </summary>
+        public bool IsStampRequired
+        {
+            get { return GetValue<bool>(IsStampRequiredProperty); }
+            set { SetValue(IsStampRequiredProperty, value); }
+        }
+
+        public static readonly PropertyData IsStampRequiredProperty = RegisterProperty("IsStampRequired", typeof(bool), false);
+
+        /// <summary>Value for </summary>
+        public bool IsNumberLineRequired
+        {
+            get { return GetValue<bool>(IsNumberLineRequiredProperty); }
+            set { SetValue(IsNumberLineRequiredProperty, value); }
+        }
+
+        public static readonly PropertyData IsNumberLineRequiredProperty = RegisterProperty("IsNumberLineRequired", typeof(bool), false);
+
+        /// <summary>Value for </summary>
+        public bool IsArrayOrNumberLineRequired
+        {
+            get { return GetValue<bool>(IsArrayOrNumberLineRequiredProperty); }
+            set { SetValue(IsArrayOrNumberLineRequiredProperty, value); }
+        }
+
+        public static readonly PropertyData IsArrayOrNumberLineRequiredProperty = RegisterProperty("IsArrayOrNumberLineRequired", typeof(bool), false);
+
+        /// <summary>Value for </summary>
+        public bool IsArrayAndStampRequired
+        {
+            get { return GetValue<bool>(IsArrayAndStampRequiredProperty); }
+            set { SetValue(IsArrayAndStampRequiredProperty, value); }
+        }
+
+        public static readonly PropertyData IsArrayAndStampRequiredProperty = RegisterProperty("IsArrayAndStampRequired", typeof(bool), false);
 
         #endregion // Bindings
 
@@ -95,9 +177,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     case MetaDataTag.NAME_ONLY_TOP_PROBLEM:
                         IsTopProblem = metaDataTag.TagContents == MetaDataTag.VALUE_TRUE;
                         break;
-                    case MetaDataTag.NAME_SPECIAL_INTEREST_GROUP:
-                        IsSpecialInterestGroup = metaDataTag.TagContents == MetaDataTag.VALUE_TRUE;
-                        break;
                     case MetaDataTag.NAME_DIFFICULTY_LEVEL:
                         switch (metaDataTag.TagContents)
                         {
@@ -114,6 +193,20 @@ namespace Classroom_Learning_Partner.ViewModels
                                 DifficultyLevel = DifficultyLevels.Hard;
                                 break;
                         }
+                        break;
+                    case MetaDataTag.NAME_SPECIAL_INTEREST_GROUPS:
+                        IsCommutativeEquivalence = metaDataTag.TagContents.Contains(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_CE);
+                        IsMultiplicationWithZero = metaDataTag.TagContents.Contains(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_ZERO);
+                        IsScaffolded = metaDataTag.TagContents.Contains(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_SCAF);
+                        Is2PSF = metaDataTag.TagContents.Contains(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_2PSF);
+                        Is2PSS = metaDataTag.TagContents.Contains(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_2PSS);
+                        break;
+                    case MetaDataTag.NAME_REQUIRED_REPRESENTATIONS:
+                        IsArrayRequired = metaDataTag.TagContents == MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY;
+                        IsStampRequired = metaDataTag.TagContents == MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_STAMP;
+                        IsNumberLineRequired = metaDataTag.TagContents == MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_NUMBER_LINE;
+                        IsArrayOrNumberLineRequired = metaDataTag.TagContents == MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY_OR_NUMBER_LINE;
+                        IsArrayAndStampRequired = metaDataTag.TagContents == MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY_AND_STAMP;
                         break;
                 }
             }
@@ -133,10 +226,60 @@ namespace Classroom_Learning_Partner.ViewModels
             var onlyTopProblemContent = IsTopProblem ? MetaDataTag.VALUE_TRUE : MetaDataTag.VALUE_FALSE;
             Page.AddTag(new MetaDataTag(Page, Origin.Author, MetaDataTag.NAME_ONLY_TOP_PROBLEM, onlyTopProblemContent));
 
-            var specialInterestGroupContent = IsSpecialInterestGroup ? MetaDataTag.VALUE_TRUE : MetaDataTag.VALUE_FALSE;
-            Page.AddTag(new MetaDataTag(Page, Origin.Author, MetaDataTag.NAME_SPECIAL_INTEREST_GROUP, specialInterestGroupContent));
-
             Page.AddTag(new MetaDataTag(Page, Origin.Author, MetaDataTag.NAME_DIFFICULTY_LEVEL, DifficultyLevel.ToString()));
+
+            var specialInterestGroups = new List<string>();
+            if (IsCommutativeEquivalence)
+            {
+                specialInterestGroups.Add(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_CE);
+            }
+            if (IsMultiplicationWithZero)
+            {
+                specialInterestGroups.Add(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_ZERO);
+            }
+            if (IsScaffolded)
+            {
+                specialInterestGroups.Add(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_SCAF);
+            }
+            if (Is2PSF)
+            {
+                specialInterestGroups.Add(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_2PSF);
+            }
+            if (Is2PSS)
+            {
+                specialInterestGroups.Add(MetaDataTag.VALUE_SPECIAL_INTEREST_GROUP_2PSS);
+            }
+            if (!specialInterestGroups.Any())
+            {
+                specialInterestGroups.Add("None");
+            }
+
+            var specialInterestGroupContent = string.Join(", ", specialInterestGroups);
+            Page.AddTag(new MetaDataTag(Page, Origin.Author, MetaDataTag.NAME_SPECIAL_INTEREST_GROUPS, specialInterestGroupContent));
+
+            var requiredRepresentationsContent = "None";
+            if (IsArrayRequired)
+            {
+                requiredRepresentationsContent = MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY;
+            }
+            else if (IsStampRequired)
+            {
+                requiredRepresentationsContent = MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_STAMP;
+            }
+            else if (IsNumberLineRequired)
+            {
+                requiredRepresentationsContent = MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_NUMBER_LINE;
+            }
+            else if (IsArrayOrNumberLineRequired)
+            {
+                requiredRepresentationsContent = MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY_OR_NUMBER_LINE;
+            }
+            else if (IsArrayAndStampRequired)
+            {
+                requiredRepresentationsContent = MetaDataTag.VALUE_REQUIRED_REPRESENTATIONS_ARRAY_AND_STAMP;
+            }
+
+            Page.AddTag(new MetaDataTag(Page, Origin.Author, MetaDataTag.NAME_REQUIRED_REPRESENTATIONS, requiredRepresentationsContent));
         }
 
         #endregion // Methods

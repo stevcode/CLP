@@ -10,8 +10,9 @@ namespace CLP.Entities
 
         public const string NAME_WORD_PROBLEM = "Word Problem";
         public const string NAME_ONLY_TOP_PROBLEM = "Analyzing Only Top Problem";
-        public const string NAME_SPECIAL_INTEREST_GROUP = "Special Interest Group";
         public const string NAME_DIFFICULTY_LEVEL = "Difficulty Level";
+        public const string NAME_SPECIAL_INTEREST_GROUPS = "Special Interest Groups";
+        public const string NAME_REQUIRED_REPRESENTATIONS = "Required Representations";
 
         public const string VALUE_TRUE = "True";
         public const string VALUE_FALSE = "False";
@@ -20,6 +21,18 @@ namespace CLP.Entities
         public const string VALUE_DIFFICULTY_EASY = "Easy";
         public const string VALUE_DIFFICULTY_MEDIUM = "Medium";
         public const string VALUE_DIFFICULTY_HARD = "Hard";
+
+        public const string VALUE_SPECIAL_INTEREST_GROUP_CE = "CE";
+        public const string VALUE_SPECIAL_INTEREST_GROUP_ZERO = "Zero";
+        public const string VALUE_SPECIAL_INTEREST_GROUP_SCAF = "Scaf";
+        public const string VALUE_SPECIAL_INTEREST_GROUP_2PSF = "2PSF";
+        public const string VALUE_SPECIAL_INTEREST_GROUP_2PSS = "2PSS";
+
+        public const string VALUE_REQUIRED_REPRESENTATIONS_ARRAY = "Array";
+        public const string VALUE_REQUIRED_REPRESENTATIONS_STAMP = "Stamp";
+        public const string VALUE_REQUIRED_REPRESENTATIONS_NUMBER_LINE = "Number Line";
+        public const string VALUE_REQUIRED_REPRESENTATIONS_ARRAY_OR_NUMBER_LINE = "Array Or Number Line";
+        public const string VALUE_REQUIRED_REPRESENTATIONS_ARRAY_AND_STAMP = "Array And Stamp";
 
         #endregion // Constants
 
