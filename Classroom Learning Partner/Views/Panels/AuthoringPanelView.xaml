@@ -88,6 +88,10 @@
                     </Style>
                 </ComboBox.ItemContainerStyle>
             </ComboBox>
+
+            <Button Content="Add Meta Data Tags"
+                    Command="{Binding AddMetaDataTagsCommand}" />
+            
         </StackPanel>
 
     </Border>

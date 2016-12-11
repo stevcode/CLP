@@ -9,7 +9,9 @@ namespace CLP.Entities
     {
         public enum RelationTypes
         {
-            GeneralDivision
+            GeneralDivision,
+            Partitive,
+            Quotative
         }
 
         #region Constructors
@@ -87,19 +89,12 @@ namespace CLP.Entities
 
         public double RelationPartAnswerValue => Math.Abs(Remainder) < 0.0001 ? Quotient : Quotient + (Dividend.RelationPartAnswerValue / Remainder);
 
-        public string FormattedRelation => $"{Dividend.FormattedRelation} / {Divisor.FormattedRelation}";
+        public string FormattedAnswerValue => RelationPartAnswerValue.ToString();
+
+        public string FormattedRelation => $"{Dividend.FormattedAnswerValue} / {Divisor.FormattedAnswerValue}";
 
         public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
 
         #endregion // IRelationPartImplementation
-
-        #region IRepresentationComparer Implementation
-
-        public Correctness CompareRelationToRepresentations(List<IPageObject> pageObjects)
-        {
-            return Correctness.Correct;
-        }
-
-        #endregion // IRepresentationComparer Implementation
     }
 }

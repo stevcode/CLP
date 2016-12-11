@@ -1,7 +1,9 @@
-﻿using Catel.Data;
+﻿using System;
+using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class EquivalenceRelationDefinitionTag : ATagBase
     {
         #region Constructors

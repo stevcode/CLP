@@ -55,12 +55,12 @@
                     <ToggleButton.Style>
                         <Style TargetType="{x:Type ToggleButton}">
                             <Setter Property="Content"
-                                Value="Show Analysis Commands" />
+                                    Value="Show Analysis Commands" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
-                                     Value="True">
+                                         Value="True">
                                     <Setter Property="Content"
-                                        Value="Hide Analysis Commands" />
+                                            Value="Hide Analysis Commands" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -68,8 +68,8 @@
                 </ToggleButton>
 
                 <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=AnalysisCommandsToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
+                                 Margin="5 0"
+                                 Visibility="{Binding IsChecked, ElementName=AnalysisCommandsToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -92,102 +92,103 @@
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
-                        Command="{Binding GenerateSemanticEventsCommand}"
-                        Height="20"
-                        Margin="1"
-                        Grid.ColumnSpan="2" />
+                            Command="{Binding GenerateSemanticEventsCommand}"
+                            Height="20"
+                            Margin="1"
+                            Grid.ColumnSpan="2" />
 
                     <Button Content="Show Analysis Clusters"
-                        Command="{Binding ShowAnalysisClustersCommand}"
-                        Height="20"
-                        Margin="1"
-                        Grid.ColumnSpan="2" />
+                            Command="{Binding ShowAnalysisClustersCommand}"
+                            Height="20"
+                            Margin="1"
+                            Grid.ColumnSpan="2" />
 
                     <Button Content="Cluster:"
-                        Command="{Binding ClusterTestCommand}"
-                        CommandParameter="{Binding SelectedItem, ElementName=ClusterTypes}"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding ClusterTestCommand}"
+                            CommandParameter="{Binding SelectedItem, ElementName=ClusterTypes}"
+                            Height="20"
+                            Margin="1" />
 
-                    <ComboBox x:Name="ClusterTypes" 
-                          ItemsSource="{Binding ClusterTypes}"
-                          FontSize="12"
-                          Height="18"
-                          Margin="1"
-                          Padding="5 0"
-                          VerticalAlignment="Center">
+                    <ComboBox x:Name="ClusterTypes"
+                              ItemsSource="{Binding ClusterTypes}"
+                              FontSize="12"
+                              Height="18"
+                              Margin="1"
+                              Padding="5 0"
+                              VerticalAlignment="Center">
                         <ComboBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ComboBoxItem}">
-                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontSize"
+                                        Value="18" />
                             </Style>
                         </ComboBox.ItemContainerStyle>
                     </ComboBox>
 
                     <Button Content="Clear Temp Boundaries"
-                        Command="{Binding ClearTempBoundariesCommand}"
-                        Height="20"
-                        Margin="1"
-                        Grid.ColumnSpan="2" />
-
-                    <Button Content="Stroke Testing"
-                        Command="{Binding StrokeTestingCommand}"
-                        Height="20"
-                        Margin="1"
-                        Grid.ColumnSpan="2" />
-
-                    <StackPanel Orientation="Horizontal"
+                            Command="{Binding ClearTempBoundariesCommand}"
                             Height="20"
                             Margin="1"
-                            Grid.ColumnSpan="2">
+                            Grid.ColumnSpan="2" />
+
+                    <Button Content="Stroke Testing"
+                            Command="{Binding StrokeTestingCommand}"
+                            Height="20"
+                            Margin="1"
+                            Grid.ColumnSpan="2" />
+
+                    <StackPanel Orientation="Horizontal"
+                                Height="20"
+                                Margin="1"
+                                Grid.ColumnSpan="2">
                         <CheckBox IsChecked="{Binding IsDebuggingFlag}" />
                         <TextBlock Text="Debug" />
                     </StackPanel>
 
                     <Button Content="v1: Boundary Interpretation"
-                        Command="{Binding v1Command}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding v1Command}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
 
                     <Button Content="v2: Potential SC Interpretation"
-                        Command="{Binding v2Command}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
-                    
+                            Command="{Binding v2Command}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
+
                     <Button Content="Run Skip Counting Analysis"
-                        Command="{Binding AnalyzeSkipCountingCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding AnalyzeSkipCountingCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
 
                     <Button Content="Run Bottom Skip Counting Analysis"
-                        Command="{Binding AnalyzeBottomSkipCountingCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding AnalyzeBottomSkipCountingCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
 
                     <Button Content="Show All Initial Accepted Boundaries"
-                        Command="{Binding ShowInitialBoundariesCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding ShowInitialBoundariesCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
 
                     <Button Content="TSV Testing"
-                        Command="{Binding TSVCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="20"
-                        Margin="1" />
+                            Command="{Binding TSVCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
 
                     <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
+                               Height="1"
+                               Margin="1 5"
+                               Stroke="{StaticResource GrayBorderColor}" />
 
                 </catel:StackGrid>
 
                 <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0">
+                                 Margin="5 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -204,48 +205,48 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.ColumnSpan="2"
-                           TextAlignment="Center"
-                           FontWeight="Bold">
+                               TextAlignment="Center"
+                               FontWeight="Bold">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="Page {0}{1} - {2}">
                                 <Binding Path="PageNumber" />
                                 <Binding Path="DifferentiationLevel"
-                                     Converter="{converters:StringToEmptyStringConverter}"
-                                     ConverterParameter="0" />
+                                         Converter="{converters:StringToEmptyStringConverter}"
+                                         ConverterParameter="0" />
                                 <Binding Path="CurrentPage.Owner.DisplayName" />
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
 
                     <TextBlock Grid.ColumnSpan="2"
-                           TextAlignment="Center">
-                    <Run Text="Submitted at:" />
-                    <Run Text="{Binding CurrentPage.SubmissionTime, StringFormat=MM/dd/yy HH:mm tt}" />
+                               TextAlignment="Center">
+                        <Run Text="Submitted at:" />
+                        <Run Text="{Binding CurrentPage.SubmissionTime, StringFormat=MM/dd/yy HH:mm tt}" />
                     </TextBlock>
 
                     <TextBlock Text="History Length:" />
                     <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
+                             IsReadOnly="True" />
 
                     <TextBlock Text="History Z-Score:" />
                     <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
+                             IsReadOnly="True" />
 
                     <TextBlock Text="Min/Max/Avg:" />
                     <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageHistoryLength, Mode=OneWay}"
-                         Background="#66FF8C00" />
+                             Text="{Binding FormattedMinMaxAverageHistoryLength, Mode=OneWay}"
+                             Background="#66FF8C00" />
 
                     <catel:StackGrid Grid.ColumnSpan="2">
                         <catel:StackGrid.Style>
                             <Style TargetType="catel:StackGrid">
                                 <Setter Property="Visibility"
-                                    Value="Collapsed" />
+                                        Value="Collapsed" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding CurrentPage.PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                             Value="True">
+                                                 Value="True">
                                         <Setter Property="Visibility"
-                                            Value="Visible" />
+                                                Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -264,55 +265,55 @@
 
                         <TextBlock Text="Animation Length:" />
                         <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
-                             IsReadOnly="True" />
+                                 IsReadOnly="True" />
 
                         <TextBlock Text="Animation Z-Score:" />
                         <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
-                             IsReadOnly="True" />
+                                 IsReadOnly="True" />
 
                         <TextBlock Text="Min/Max/Avg:" />
                         <TextBox IsReadOnly="True"
-                             Text="{Binding FormattedMinMaxAverageAnimationLength, Mode=OneWay}"
-                             Background="#66FF8C00" />
+                                 Text="{Binding FormattedMinMaxAverageAnimationLength, Mode=OneWay}"
+                                 Background="#66FF8C00" />
 
                     </catel:StackGrid>
 
                     <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
+                               Height="1"
+                               Margin="1 5"
+                               Stroke="{StaticResource GrayBorderColor}" />
 
                 </catel:StackGrid>
 
                 <Grid DockPanel.Dock="Top"
-                  Height="24">
+                      Height="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <UniformGrid Grid.Column="0"
-                             Columns="3">
+                                 Columns="3">
 
                         <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Image Source="pack://application:,,,/Resources/Images/Tags128.png"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="IsEnabled"
-                                        Value="True" />
+                                            Value="True" />
                                     <Style.Triggers>
                                         <Trigger Property="IsChecked"
-                                             Value="True">
+                                                 Value="True">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -320,88 +321,90 @@
                                                                    FontWeight="Bold"
                                                                    FontSize="16"
                                                                    HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center"/>
+                                                                   VerticalAlignment="Center" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="IsEnabled"
-                                                Value="False" />
+                                                    Value="False" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
+                        <ToggleButton
+                            IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Image Source="pack://application:,,,/Resources/Images/Steps512.png"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="IsEnabled"
-                                        Value="True" />
+                                            Value="True" />
                                     <Style.Triggers>
                                         <Trigger Property="IsChecked"
-                                             Value="True">
+                                                 Value="True">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                         <TextBlock Text="STEPS"
-                                                               FontWeight="Bold"
-                                                               FontSize="16"
-                                                               HorizontalAlignment="Center"
-                                                               VerticalAlignment="Center" />
+                                                                   FontWeight="Bold"
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="IsEnabled"
-                                                Value="False" />
+                                                    Value="False" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
+                        <ToggleButton
+                            IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Image Source="pack://application:,,,/Resources/Images/Hourglass256.png"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="IsEnabled"
-                                        Value="True" />
+                                            Value="True" />
                                     <Style.Triggers>
                                         <Trigger Property="IsChecked"
-                                             Value="True">
+                                                 Value="True">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                         <TextBlock Text="HISTORY"
-                                                               FontWeight="Bold"
-                                                               FontSize="16"
-                                                               HorizontalAlignment="Center"
-                                                               VerticalAlignment="Center" />
+                                                                   FontWeight="Bold"
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="IsEnabled"
-                                                Value="False" />
+                                                    Value="False" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -410,14 +413,14 @@
 
                     </UniformGrid>
 
-                    <ToggleButton x:Name="TagLockToggleButton" 
-                              Grid.Column="1"
-                              Width="18"
-                              Height="18"
-                              VerticalAlignment="Top"
-                              HorizontalAlignment="Right"
-                              Margin="5 0"
-                              IsChecked="True">
+                    <ToggleButton x:Name="TagLockToggleButton"
+                                  Grid.Column="1"
+                                  Width="18"
+                                  Height="18"
+                                  VerticalAlignment="Top"
+                                  HorizontalAlignment="Right"
+                                  Margin="5 0"
+                                  IsChecked="True">
 
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
@@ -430,12 +433,12 @@
                                 </Setter>
                                 <Style.Triggers>
                                     <Trigger Property="IsChecked"
-                                         Value="True">
+                                             Value="True">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                     <Image Source="pack://application:,,,/Resources/Temp/Lock.png"
-                                                       Opacity="0.5" />
+                                                           Opacity="0.5" />
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -448,23 +451,23 @@
                 </Grid>
 
                 <Control HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     Margin="5 0">
+                         VerticalAlignment="Stretch"
+                         Margin="5 0">
 
                     <Control.Resources>
 
                         <ControlTemplate x:Key="TagsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
-                                 ItemsSource="{Binding SortedTags.View, IsAsync=True}"
-                                 SelectionMode="Single"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                 VirtualizingStackPanel.CacheLength="2,3"
-                                 VirtualizingStackPanel.CacheLengthUnit="Page"
-                                 VirtualizingStackPanel.ScrollUnit="Pixel"
-                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                     ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                                     ItemsSource="{Binding SortedTags.View, IsAsync=True}"
+                                     SelectionMode="Single"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                     VirtualizingStackPanel.CacheLength="2,3"
+                                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
@@ -481,34 +484,34 @@
                                                                 </Grid.RowDefinitions>
 
                                                                 <Border Grid.Row="0"
-                                                        VerticalAlignment="Bottom"
-                                                        Background="Transparent"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="2 2 2 0"
-                                                        Margin="2 2 2 0"
-                                                        Height="10" />
+                                                                        VerticalAlignment="Bottom"
+                                                                        Background="Transparent"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="2 2 2 0"
+                                                                        Margin="2 2 2 0"
+                                                                        Height="10" />
 
                                                                 <Border Grid.Row="0"
-                                                        Background="White"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="1"
-                                                        Margin="10 0 50 0"
-                                                        Height="20">
+                                                                        Background="White"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="1"
+                                                                        Margin="10 0 50 0"
+                                                                        Height="20">
 
                                                                     <TextBlock Margin="5 0"
-                                                               FontWeight="Bold"
-                                                               HorizontalAlignment="Left"
-                                                               VerticalAlignment="Center">
-                                                        <Run Text="{Binding Name, Mode=OneWay}" />
+                                                                               FontWeight="Bold"
+                                                                               HorizontalAlignment="Left"
+                                                                               VerticalAlignment="Center">
+                                                                        <Run Text="{Binding Name, Mode=OneWay}" />
                                                                     </TextBlock>
 
                                                                 </Border>
 
                                                                 <Border Grid.Row="1"
-                                                        Background="Transparent"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="2 0 2 2"
-                                                        Margin="2 0 2 2">
+                                                                        Background="Transparent"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="2 0 2 2"
+                                                                        Margin="2 0 2 2">
 
                                                                     <ItemsPresenter />
 
@@ -525,7 +528,7 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="5 2"
-                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -537,53 +540,37 @@
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       FontWeight="Bold"
-                                       Text="{Binding FormattedName, Mode=OneWay}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseUp">
-                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                              CommandParameter="{Binding}"
-                                                              PassEventArgsToCommand="False" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                            </TextBlock>
+                                                       Grid.Column="0"
+                                                       FontWeight="Bold"
+                                                       Text="{Binding FormattedName, Mode=OneWay}" />
 
                                             <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Text="{Binding FormattedValue, Mode=OneWay}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseUp">
-                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                              CommandParameter="{Binding}"
-                                                              PassEventArgsToCommand="False" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                            </TextBlock>
+                                                       Grid.Column="0"
+                                                       Text="{Binding FormattedValue, Mode=OneWay}" />
 
                                             <Button Grid.Row="0"
-                                    Grid.RowSpan="2"
-                                    Grid.Column="1"
-                                    Cursor="Hand"
-                                    Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}"
-                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                                    Grid.RowSpan="2"
+                                                    Grid.Column="1"
+                                                    Cursor="Hand"
+                                                    Height="25"
+                                                    Width="25"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="{x:Type Button}">
                                                         <Grid>
                                                             <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
+                                                                     StrokeThickness="3"
+                                                                     Fill="White"
+                                                                     VerticalAlignment="Stretch"
+                                                                     HorizontalAlignment="Stretch" />
                                                             <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
+                                                                  Stretch="Fill"
+                                                                  Margin="5"
+                                                                  Stroke="Red"
+                                                                  StrokeThickness="3" />
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Button.Template>
@@ -598,20 +585,20 @@
 
                         <ControlTemplate x:Key="SemanticEventsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.SemanticEvents}"
-                                 SelectionMode="Single"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                 VirtualizingStackPanel.CacheLength="2,3"
-                                 VirtualizingStackPanel.CacheLengthUnit="Page"
-                                 VirtualizingStackPanel.ScrollUnit="Pixel"
-                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                     ItemsSource="{Binding CurrentPage.History.SemanticEvents}"
+                                     SelectionMode="Single"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                     VirtualizingStackPanel.CacheLength="2,3"
+                                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock FontWeight="Bold"
-                                    Text="{Binding CodedValue, Mode=OneWay}" />
+                                                   Text="{Binding CodedValue, Mode=OneWay}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
 
@@ -620,20 +607,20 @@
 
                         <ControlTemplate x:Key="HistoryActionsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
-                                 SelectionMode="Single"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                 VirtualizingStackPanel.CacheLength="2,3"
-                                 VirtualizingStackPanel.CacheLengthUnit="Page"
-                                 VirtualizingStackPanel.ScrollUnit="Pixel"
-                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                     ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
+                                     SelectionMode="Single"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                     VirtualizingStackPanel.CacheLength="2,3"
+                                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock FontWeight="Bold"
-                                    Text="{Binding CachedFormattedValue, Mode=OneWay}" />
+                                                   Text="{Binding CachedFormattedValue, Mode=OneWay}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
 
@@ -649,23 +636,23 @@
 
                                 <!-- Show Tags trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
+                                             Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource TagsTemplate}" />
+                                            Value="{StaticResource TagsTemplate}" />
                                 </DataTrigger>
 
                                 <!-- Show SemanticEvents trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}">
+                                             Value="{x:Static viewModel:HistoryAnalysisSteps.SemanticEvents}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource SemanticEventsTemplate}" />
+                                            Value="{StaticResource SemanticEventsTemplate}" />
                                 </DataTrigger>
 
                                 <!-- Show HistoryActions trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
+                                             Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource HistoryActionsTemplate}" />
+                                            Value="{StaticResource HistoryActionsTemplate}" />
                                 </DataTrigger>
 
                             </Style.Triggers>
@@ -679,7 +666,7 @@
                        Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0">
+                                 Margin="5 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -692,26 +679,26 @@
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
-                        Command="{Binding GenerateSemanticEventsCommand}"
-                        Height="40"
-                        Margin="1 5"
-                        Grid.ColumnSpan="2" />
+                            Command="{Binding GenerateSemanticEventsCommand}"
+                            Height="40"
+                            Margin="1 5"
+                            Grid.ColumnSpan="2" />
 
                     <Button Content="Run Skip Counting Analysis"
-                        Command="{Binding AnalyzeSkipCountingWithDebugCommand}"
-                        Grid.ColumnSpan="2"
-                        Height="40"
-                        Margin="1 5" />
+                            Command="{Binding AnalyzeSkipCountingWithDebugCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="40"
+                            Margin="1 5" />
 
                     <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
+                               Height="1"
+                               Margin="1 5"
+                               Stroke="{StaticResource GrayBorderColor}" />
 
                 </catel:StackGrid>
 
                 <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0">
+                                 Margin="5 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -723,55 +710,55 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.ColumnSpan="2"
-                           TextAlignment="Center"
-                           FontWeight="Bold">
+                               TextAlignment="Center"
+                               FontWeight="Bold">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="Page {0}{1} - {2}">
                                 <Binding Path="PageNumber" />
                                 <Binding Path="DifferentiationLevel"
-                                     Converter="{converters:StringToEmptyStringConverter}"
-                                     ConverterParameter="0" />
+                                         Converter="{converters:StringToEmptyStringConverter}"
+                                         ConverterParameter="0" />
                                 <Binding Path="CurrentPage.Owner.DisplayName" />
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
 
                     <Rectangle Grid.ColumnSpan="2"
-                           Height="1"
-                           Margin="1 5"
-                           Stroke="{StaticResource GrayBorderColor}" />
+                               Height="1"
+                               Margin="1 5"
+                               Stroke="{StaticResource GrayBorderColor}" />
 
                 </catel:StackGrid>
 
                 <Grid DockPanel.Dock="Top"
-                  Height="24">
+                      Height="24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <UniformGrid Grid.Column="0"
-                             Columns="2">
+                                 Columns="2">
 
                         <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.Tags}}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Image Source="pack://application:,,,/Resources/Images/Tags128.png"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="IsEnabled"
-                                        Value="True" />
+                                            Value="True" />
                                     <Style.Triggers>
                                         <Trigger Property="IsChecked"
-                                             Value="True">
+                                                 Value="True">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -779,50 +766,51 @@
                                                                    FontWeight="Bold"
                                                                    FontSize="16"
                                                                    HorizontalAlignment="Center"
-                                                                   VerticalAlignment="Center"/>
+                                                                   VerticalAlignment="Center" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="IsEnabled"
-                                                Value="False" />
+                                                    Value="False" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ToggleButton.Style>
                         </ToggleButton>
 
-                        <ToggleButton IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center">
+                        <ToggleButton
+                            IsChecked="{Binding CurrentAnalysisStep, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModel:HistoryAnalysisSteps.HistoryActions}}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Image Source="pack://application:,,,/Resources/Images/Hourglass256.png"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="IsEnabled"
-                                        Value="True" />
+                                            Value="True" />
                                     <Style.Triggers>
                                         <Trigger Property="IsChecked"
-                                             Value="True">
+                                                 Value="True">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                         <TextBlock Text="HISTORY"
-                                                               FontWeight="Bold"
-                                                               FontSize="16"
-                                                               HorizontalAlignment="Center"
-                                                               VerticalAlignment="Center" />
+                                                                   FontWeight="Bold"
+                                                                   FontSize="16"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                             <Setter Property="IsEnabled"
-                                                Value="False" />
+                                                    Value="False" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -834,23 +822,23 @@
                 </Grid>
 
                 <Control HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch"
-                     Margin="5 0">
+                         VerticalAlignment="Stretch"
+                         Margin="5 0">
 
                     <Control.Resources>
 
                         <ControlTemplate x:Key="TagsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
-                                 ItemsSource="{Binding SortedTags.View, IsAsync=True}"
-                                 SelectionMode="Single"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                 VirtualizingStackPanel.CacheLength="2,3"
-                                 VirtualizingStackPanel.CacheLengthUnit="Page"
-                                 VirtualizingStackPanel.ScrollUnit="Pixel"
-                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                     ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                                     ItemsSource="{Binding SortedTags.View, IsAsync=True}"
+                                     SelectionMode="Single"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                     VirtualizingStackPanel.CacheLength="2,3"
+                                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
                                 <ListBox.GroupStyle>
                                     <GroupStyle>
@@ -867,34 +855,34 @@
                                                                 </Grid.RowDefinitions>
 
                                                                 <Border Grid.Row="0"
-                                                        VerticalAlignment="Bottom"
-                                                        Background="Transparent"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="2 2 2 0"
-                                                        Margin="2 2 2 0"
-                                                        Height="10" />
+                                                                        VerticalAlignment="Bottom"
+                                                                        Background="Transparent"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="2 2 2 0"
+                                                                        Margin="2 2 2 0"
+                                                                        Height="10" />
 
                                                                 <Border Grid.Row="0"
-                                                        Background="White"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="1"
-                                                        Margin="10 0 50 0"
-                                                        Height="20">
+                                                                        Background="White"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="1"
+                                                                        Margin="10 0 50 0"
+                                                                        Height="20">
 
                                                                     <TextBlock Margin="5 0"
-                                                               FontWeight="Bold"
-                                                               HorizontalAlignment="Left"
-                                                               VerticalAlignment="Center">
-                                                        <Run Text="{Binding Name, Mode=OneWay}" />
+                                                                               FontWeight="Bold"
+                                                                               HorizontalAlignment="Left"
+                                                                               VerticalAlignment="Center">
+                                                                        <Run Text="{Binding Name, Mode=OneWay}" />
                                                                     </TextBlock>
 
                                                                 </Border>
 
                                                                 <Border Grid.Row="1"
-                                                        Background="Transparent"
-                                                        BorderBrush="Black"
-                                                        BorderThickness="2 0 2 2"
-                                                        Margin="2 0 2 2">
+                                                                        Background="Transparent"
+                                                                        BorderBrush="Black"
+                                                                        BorderThickness="2 0 2 2"
+                                                                        Margin="2 0 2 2">
 
                                                                     <ItemsPresenter />
 
@@ -911,7 +899,7 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Margin="5 2"
-                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                              Visibility="{Binding IsHiddenTag, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -923,53 +911,55 @@
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       FontWeight="Bold"
-                                       Text="{Binding FormattedName, Mode=OneWay}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseUp">
-                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                              CommandParameter="{Binding}"
-                                                              PassEventArgsToCommand="False" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
+                                                       Grid.Column="0"
+                                                       FontWeight="Bold"
+                                                       Text="{Binding FormattedName, Mode=OneWay}">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseUp">
+                                                        <catel:EventToCommand
+                                                            Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                            CommandParameter="{Binding}"
+                                                            PassEventArgsToCommand="False" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
                                             </TextBlock>
 
                                             <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Text="{Binding FormattedValue, Mode=OneWay}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseUp">
-                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                              CommandParameter="{Binding}"
-                                                              PassEventArgsToCommand="False" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
+                                                       Grid.Column="0"
+                                                       Text="{Binding FormattedValue, Mode=OneWay}">
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseUp">
+                                                        <catel:EventToCommand
+                                                            Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                            CommandParameter="{Binding}"
+                                                            PassEventArgsToCommand="False" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
                                             </TextBlock>
 
                                             <Button Grid.Row="0"
-                                    Grid.RowSpan="2"
-                                    Grid.Column="1"
-                                    Cursor="Hand"
-                                    Height="25"
-                                    Width="25"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}"
-                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                                                    Grid.RowSpan="2"
+                                                    Grid.Column="1"
+                                                    Cursor="Hand"
+                                                    Height="25"
+                                                    Width="25"
+                                                    VerticalAlignment="Center"
+                                                    Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="{x:Type Button}">
                                                         <Grid>
                                                             <Ellipse Stroke="Black"
-                                                     StrokeThickness="3"
-                                                     Fill="White"
-                                                     VerticalAlignment="Stretch"
-                                                     HorizontalAlignment="Stretch" />
+                                                                     StrokeThickness="3"
+                                                                     Fill="White"
+                                                                     VerticalAlignment="Stretch"
+                                                                     HorizontalAlignment="Stretch" />
                                                             <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                                  Stretch="Fill"
-                                                  Margin="5"
-                                                  Stroke="Red"
-                                                  StrokeThickness="3" />
+                                                                  Stretch="Fill"
+                                                                  Margin="5"
+                                                                  Stroke="Red"
+                                                                  StrokeThickness="3" />
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Button.Template>
@@ -984,20 +974,20 @@
 
                         <ControlTemplate x:Key="HistoryActionsTemplate">
                             <ListBox DataContext="{Binding}"
-                                 ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
-                                 SelectionMode="Single"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                 VirtualizingPanel.IsVirtualizing="True"
-                                 VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                                 VirtualizingStackPanel.CacheLength="2,3"
-                                 VirtualizingStackPanel.CacheLengthUnit="Page"
-                                 VirtualizingStackPanel.ScrollUnit="Pixel"
-                                 ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                     ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
+                                     SelectionMode="Single"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     VirtualizingPanel.IsVirtualizing="True"
+                                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                                     VirtualizingStackPanel.CacheLength="2,3"
+                                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock FontWeight="Bold"
-                                    Text="{Binding CachedFormattedValue, Mode=OneWay}" />
+                                                   Text="{Binding CachedFormattedValue, Mode=OneWay}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
 
@@ -1013,16 +1003,16 @@
 
                                 <!-- Show Tags trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
+                                             Value="{x:Static viewModel:HistoryAnalysisSteps.Tags}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource TagsTemplate}" />
+                                            Value="{StaticResource TagsTemplate}" />
                                 </DataTrigger>
 
                                 <!-- Show HistoryActions trigger -->
                                 <DataTrigger Binding="{Binding CurrentAnalysisStep}"
-                                         Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
+                                             Value="{x:Static viewModel:HistoryAnalysisSteps.HistoryActions}">
                                     <Setter Property="Template"
-                                        Value="{StaticResource HistoryActionsTemplate}" />
+                                            Value="{StaticResource HistoryActionsTemplate}" />
                                 </DataTrigger>
 
                             </Style.Triggers>

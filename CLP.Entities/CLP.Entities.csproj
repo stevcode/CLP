@@ -226,7 +226,6 @@
     <Compile Include="DomainModel\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\FactorsOfProductDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\IRelationPart.cs" />
-    <Compile Include="DomainModel\Tags\Definition\IRepresentationComparer.cs" />
     <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
@@ -237,6 +236,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />

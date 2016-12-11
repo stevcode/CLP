@@ -15,20 +15,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public AdditionRelationDefinitionTagViewModel(AdditionRelationDefinitionTag additionRelationDefinition)
         {
             Model = additionRelationDefinition;
+            InitializeCommands();
+
             Addends.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
             Addends.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
-
-            AddAddendCommand = new Command(OnAddAddendCommandExecute);
-            CalculateSumCommand = new Command(OnCalculateSumCommandExecute);
-            TagCommand = new Command<IRelationPart>(OnTagCommandExecute);
-            UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
-        }
-
-        /// <summary>Gets the title of the view model.</summary>
-        /// <value>The title.</value>
-        public override string Title
-        {
-            get { return "AdditionRelationDefinitionTagVM"; }
         }
 
         #endregion //Constructor
@@ -43,17 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(ModelProperty, value); }
         }
 
-        public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof (AdditionRelationDefinitionTag));
-
-        /// <summary>Value of the Sum.</summary>
-        [ViewModelToModel("Model")]
-        public double Sum
-        {
-            get { return GetValue<double>(SumProperty); }
-            set { SetValue(SumProperty, value); }
-        }
-
-        public static readonly PropertyData SumProperty = RegisterProperty("Sum", typeof (double));
+        public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof(AdditionRelationDefinitionTag));
 
         /// <summary>Type of addition relationship the relation defines.</summary>
         [ViewModelToModel("Model")]
@@ -63,7 +43,17 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RelationTypeProperty, value); }
         }
 
-        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof (AdditionRelationDefinitionTag.RelationTypes));
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(AdditionRelationDefinitionTag.RelationTypes));
+
+        /// <summary>Value of the Sum.</summary>
+        [ViewModelToModel("Model")]
+        public double Sum
+        {
+            get { return GetValue<double>(SumProperty); }
+            set { SetValue(SumProperty, value); }
+        }
+
+        public static readonly PropertyData SumProperty = RegisterProperty("Sum", typeof(double));
 
         #endregion //Model
 
@@ -76,27 +66,31 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(AddendsProperty, value); }
         }
 
-        public static readonly PropertyData AddendsProperty = RegisterProperty("Addends",
-                                                                               typeof (ObservableCollection<IRelationPart>),
-                                                                               () => new ObservableCollection<IRelationPart>());
+        public static readonly PropertyData AddendsProperty = RegisterProperty("Addends", typeof(ObservableCollection<IRelationPart>), () => new ObservableCollection<IRelationPart>());
 
         #endregion //Bindings
 
         #region Commands
 
+        private void InitializeCommands()
+        {
+            AddAddendCommand = new Command(OnAddAddendCommandExecute);
+            TagCommand = new Command<IRelationPart>(OnTagCommandExecute);
+            UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
+            CalculateSumCommand = new Command(OnCalculateSumCommandExecute);
+            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
+            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
+        }
+
         /// <summary>Adds a zero value addend to the relation definition.</summary>
         public Command AddAddendCommand { get; private set; }
 
-        private void OnAddAddendCommandExecute() { Addends.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin)); }
+        private void OnAddAddendCommandExecute()
+        {
+            Addends.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
+        }
 
-        /// <summary>Calculates the value of the sum</summary>
-        public Command CalculateSumCommand { get; private set; }
-
-        private void OnCalculateSumCommandExecute() { Sum = Addends.Select(x => x.RelationPartAnswerValue).Aggregate((x, y) => x + y); }
-
-        /// <summary>
-        /// Switches a numeric value to a relation Tag.
-        /// </summary>
+        /// <summary>Switches a numeric value to a relation Tag.</summary>
         public Command<IRelationPart> TagCommand { get; private set; }
 
         private void OnTagCommandExecute(IRelationPart numericPart)
@@ -104,10 +98,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var multiplicationDefinition = new MultiplicationRelationDefinitionTag(Model.ParentPage, Model.Origin);
 
             var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(multiplicationDefinition);
-            var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel);
-            multiplicationView.ShowDialog();
-
-            if (multiplicationView.DialogResult != true)
+            var multiplicationResult = multiplicationViewModel.ShowWindowAsDialog();
+            if (multiplicationResult != true)
             {
                 return;
             }
@@ -124,9 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Addends.Insert(index, multiplicationDefinition);
         }
 
-        /// <summary>
-        /// Switches a relation tag for a numeric value.
-        /// </summary>
+        /// <summary>Switches a relation tag for a numeric value.</summary>
         public Command<IRelationPart> UntagCommand { get; private set; }
 
         private void OnUntagCommandExecute(IRelationPart relationPart)
@@ -134,6 +124,35 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = Addends.IndexOf(relationPart);
             Addends.Remove(relationPart);
             Addends.Insert(index, new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
+        }
+
+        /// <summary>Calculates the value of the sum</summary>
+        public Command CalculateSumCommand { get; private set; }
+
+        private void OnCalculateSumCommandExecute()
+        {
+            Sum = Addends.Select(x => x.RelationPartAnswerValue).Aggregate((x, y) => x + y);
+
+            Model.Addends.Clear();
+            Model.Addends.AddRange(Addends);
+        }
+
+        /// <summary>Validates and confirms changes to the person.</summary>
+        public Command ConfirmChangesCommand { get; private set; }
+
+        private async void OnConfirmChangesCommandExecute()
+        {
+            OnCalculateSumCommandExecute();
+
+            await CloseViewModelAsync(true);
+        }
+
+        /// <summary>Cancels changes to the person.</summary>
+        public Command CancelChangesCommand { get; private set; }
+
+        private async void OnCancelChangesCommandExecute()
+        {
+            await CloseViewModelAsync(false);
         }
 
         #endregion //Commands

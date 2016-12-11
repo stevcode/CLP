@@ -147,9 +147,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
+        private bool _isCalculated;
+
         private void InitializeCommands()
         {
             CalculateEquivalenceCommand = new Command(OnCalculateEquivalenceCommandExecute);
+            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
+            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
         }
 
         /// <summary>Validates the equivalence of the left and right sides.</summary>
@@ -243,6 +247,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("Equations are not equivalent.");
                 CalculatedEquivalence = null;
+                _isCalculated = false;
                 return;
             }
 
@@ -268,12 +273,38 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("Only one number can be checked as Unknown.");
                 CalculatedEquivalence = null;
+                _isCalculated = false;
                 return;
             }
 
             CalculatedEquivalence = (int)leftRelationPart.RelationPartAnswerValue;
             DefinitionTag.LeftRelationPart = leftRelationPart;
             DefinitionTag.RightRelationPart = rightRelationPart;
+
+            _isCalculated = true;
+        }
+
+        /// <summary>Validates and confirms changes to the person.</summary>
+        public Command ConfirmChangesCommand { get; private set; }
+
+        private async void OnConfirmChangesCommandExecute()
+        {
+            OnCalculateEquivalenceCommandExecute();
+
+            if (!_isCalculated)
+            {
+                return;
+            }
+
+            await CloseViewModelAsync(true);
+        }
+
+        /// <summary>Cancels changes to the person.</summary>
+        public Command CancelChangesCommand { get; private set; }
+
+        private async void OnCancelChangesCommandExecute()
+        {
+            await CloseViewModelAsync(false);
         }
 
         #endregion // Commands

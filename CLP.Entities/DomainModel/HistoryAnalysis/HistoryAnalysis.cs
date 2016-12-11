@@ -640,7 +640,7 @@ namespace CLP.Entities
                 definitionRelation.numberOfGroups = mult.Factors.First().RelationPartAnswerValue;
                 definitionRelation.groupSize = mult.Factors.Last().RelationPartAnswerValue;
                 definitionRelation.product = mult.Product;
-                definitionRelation.isOrderedGroup = mult.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                definitionRelation.isOrderedGroup = mult.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;  // TODO: Was OrderedEqualGroups, confirm
                 definitionRelation.isProductImportant = true;
             }
 
@@ -653,14 +653,14 @@ namespace CLP.Entities
                 definitionRelation.groupSize = m1.Factors.Last().RelationPartAnswerValue;
                 definitionRelation.numberOfGroups = m1.Factors.First().RelationPartAnswerValue;
                 definitionRelation.product = m1.Product;
-                definitionRelation.isOrderedGroup = m1.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                definitionRelation.isOrderedGroup = m1.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;  // TODO: Was OrderedEqualGroups, confirm
                 definitionRelation.isProductImportant = true;
 
                 isOtherDefinitionUsed = true;
                 otherDefinitionRelation.groupSize = m2.Factors.Last().RelationPartAnswerValue;
                 otherDefinitionRelation.numberOfGroups = m2.Factors.First().RelationPartAnswerValue;
                 otherDefinitionRelation.product = m2.Product;
-                otherDefinitionRelation.isOrderedGroup = m2.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups;
+                otherDefinitionRelation.isOrderedGroup = m2.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;  // TODO: Was OrderedEqualGroups, confirm
                 otherDefinitionRelation.isProductImportant = true;
 
                 if (definitionRelation.groupSize == otherDefinitionRelation.groupSize)

@@ -120,6 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+            AddMetaDataTagsCommand = new Command(OnAddMetaDataTagsCommandExecute);
         }
 
         /// <summary>Adds a new page to the notebook.</summary>
@@ -307,7 +308,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         /// <summary>Trims the current page's excess height if free of ink strokes and pageObjects.</summary>
@@ -409,80 +413,47 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (SelectedAnswerDefinition)
             {
                 case AnswerDefinitions.Multiplication:
-                    answerDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var multiplicationDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(multiplicationDefinition);
+                    var multiplicationResult = multiplicationViewModel.ShowWindowAsDialog();
 
-                    var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
-                    var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel)
-                                             {
-                                                 Owner = Application.Current.MainWindow
-                                             };
-                    multiplicationView.ShowDialog();
-
-                    if (multiplicationView.DialogResult != true)
+                    if (multiplicationResult != true)
                     {
                         return;
                     }
 
-                    ((MultiplicationRelationDefinitionTag)answerDefinition).Factors.Clear();
-
-                    foreach (var relationPart in multiplicationViewModel.Factors)
-                    {
-                        ((MultiplicationRelationDefinitionTag)answerDefinition).Factors.Add(relationPart);
-                    }
-
+                    answerDefinition = multiplicationDefinition;
                     break;
                 case AnswerDefinitions.Division:
-                    answerDefinition = new DivisionRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var divisionDefinition = new DivisionRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var divisionViewModel = new DivisionRelationDefinitionTagViewModel(divisionDefinition);
+                    var divisionResult = divisionViewModel.ShowWindowAsDialog();
 
-                    var divisionViewModel = new DivisionRelationDefinitionTagViewModel(answerDefinition as DivisionRelationDefinitionTag);
-                    var divisionView = new DivisionRelationDefinitionTagView(divisionViewModel)
-                                       {
-                                           Owner = Application.Current.MainWindow
-                                       };
-                    divisionView.ShowDialog();
-
-                    if (divisionView.DialogResult != true)
+                    if (divisionResult != true)
                     {
                         return;
                     }
 
+                    answerDefinition = divisionDefinition;
                     break;
                 case AnswerDefinitions.Addition:
-                    answerDefinition = new AdditionRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var additionDefinition = new AdditionRelationDefinitionTag(CurrentPage, Origin.Author);
+                    var additionViewModel = new AdditionRelationDefinitionTagViewModel(additionDefinition);
+                    var additionResult = additionViewModel.ShowWindowAsDialog();
 
-                    var additionViewModel = new AdditionRelationDefinitionTagViewModel(answerDefinition as AdditionRelationDefinitionTag);
-                    var additionView = new AdditionRelationDefinitionTagView(additionViewModel)
-                                       {
-                                           Owner = Application.Current.MainWindow
-                                       };
-                    additionView.ShowDialog();
-
-                    if (additionView.DialogResult != true)
+                    if (additionResult != true)
                     {
                         return;
                     }
 
-                    ((AdditionRelationDefinitionTag)answerDefinition).Addends.Clear();
-
-                    foreach (var relationPart in additionViewModel.Addends)
-                    {
-                        ((AdditionRelationDefinitionTag)answerDefinition).Addends.Add(relationPart);
-                    }
-
+                    answerDefinition = additionDefinition;
                     break;
                 case AnswerDefinitions.Equivalence:
                     var equivalenceDefinition = new EquivalenceRelationDefinitionTag(CurrentPage, Origin.Author);
-
                     var equivalenceViewModel = new EquivalenceRelationDefinitionTagViewModel(equivalenceDefinition);
-                    var equivalenceView = new EquivalenceRelationDefinitionTagView(equivalenceViewModel)
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
-                    equivalenceView.ShowDialog();
+                    var equivalenceResult = equivalenceViewModel.ShowWindowAsDialog();
 
-                    if (equivalenceView.DialogResult != true ||
-                        equivalenceDefinition.LeftRelationPart == null ||
-                        equivalenceDefinition.RightRelationPart == null)
+                    if (equivalenceResult != true)
                     {
                         return;
                     }
@@ -508,6 +479,15 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 submission.AddTag(answerDefinition);
             }
+        }
+
+        /// <summary>Creates Modal Window to edit the Meta Data Tags on the page.</summary>
+        public Command AddMetaDataTagsCommand { get; private set; }
+
+        private void OnAddMetaDataTagsCommandExecute()
+        {
+            var viewModel = new MetaDataTagsViewModel(CurrentPage);
+            viewModel.ShowWindowAsDialog();
         }
 
         #endregion //Commands

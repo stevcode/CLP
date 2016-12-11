@@ -7,7 +7,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>UserControl view model.</summary>
     public class MultiplicationRelationDefinitionTagViewModel : ViewModelBase
     {
         #region Constructor
@@ -16,13 +15,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public MultiplicationRelationDefinitionTagViewModel(MultiplicationRelationDefinitionTag multiplicationRelationDefinition)
         {
             Model = multiplicationRelationDefinition;
-            Factors.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
-            Factors.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
+            InitializeCommands();
 
-            AddFactorCommand = new Command(OnAddFactorCommandExecute);
-            CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
-            TagCommand = new Command<IRelationPart>(OnTagCommandExecute);
-            UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
+            Factors.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
+            Factors.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
         }
 
         #endregion //Constructor
@@ -37,17 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(ModelProperty, value); }
         }
 
-        public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof (MultiplicationRelationDefinitionTag));
-
-        /// <summary>Value of the Product.</summary>
-        [ViewModelToModel("Model")]
-        public double Product
-        {
-            get { return GetValue<double>(ProductProperty); }
-            set { SetValue(ProductProperty, value); }
-        }
-
-        public static readonly PropertyData ProductProperty = RegisterProperty("Product", typeof (double));
+        public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof(MultiplicationRelationDefinitionTag));
 
         /// <summary>Type of multiplication relationship the relation defines.</summary>
         [ViewModelToModel("Model")]
@@ -57,7 +43,17 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RelationTypeProperty, value); }
         }
 
-        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof (MultiplicationRelationDefinitionTag.RelationTypes)); 
+        public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(MultiplicationRelationDefinitionTag.RelationTypes));
+
+        /// <summary>Value of the Product.</summary>
+        [ViewModelToModel("Model")]
+        public double Product
+        {
+            get { return GetValue<double>(ProductProperty); }
+            set { SetValue(ProductProperty, value); }
+        }
+
+        public static readonly PropertyData ProductProperty = RegisterProperty("Product", typeof(double));
 
         #endregion //Model
 
@@ -76,9 +72,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Adds a zero value factor to the relation definition.
-        /// </summary>
+        private void InitializeCommands()
+        {
+            AddFactorCommand = new Command(OnAddFactorCommandExecute);
+            TagCommand = new Command<IRelationPart>(OnTagCommandExecute);
+            UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
+            CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
+            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
+            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
+        }
+
+        /// <summary>Adds a zero value factor to the relation definition.</summary>
         public Command AddFactorCommand { get; private set; }
 
         private void OnAddFactorCommandExecute()
@@ -86,14 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Factors.Add(new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
         }
 
-        /// <summary>Calculates the value of the product</summary>
-        public Command CalculateProductCommand { get; private set; }
-
-        private void OnCalculateProductCommandExecute() { Product = Factors.Select(x => x.RelationPartAnswerValue).Aggregate((x, y) => x * y); }
-
-        /// <summary>
-        /// Switches a numeric value to a relation Tag.
-        /// </summary>
+        /// <summary>Switches a numeric value to a relation Tag.</summary>
         public Command<IRelationPart> TagCommand { get; private set; }
 
         private void OnTagCommandExecute(IRelationPart numericPart)
@@ -101,10 +98,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var additionDefinition = new AdditionRelationDefinitionTag(Model.ParentPage, Model.Origin);
 
             var additionViewModel = new AdditionRelationDefinitionTagViewModel(additionDefinition);
-            var additionView = new AdditionRelationDefinitionTagView(additionViewModel);
-            additionView.ShowDialog();
-
-            if (additionView.DialogResult != true)
+            var additionResult = additionViewModel.ShowWindowAsDialog();
+            if (additionResult != true)
             {
                 return;
             }
@@ -121,9 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Factors.Insert(index, additionDefinition);
         }
 
-        /// <summary>
-        /// Switches a relation tag for a numeric value.
-        /// </summary>
+        /// <summary>Switches a relation tag for a numeric value.</summary>
         public Command<IRelationPart> UntagCommand { get; private set; }
 
         private void OnUntagCommandExecute(IRelationPart relationPart)
@@ -131,6 +124,35 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = Factors.IndexOf(relationPart);
             Factors.Remove(relationPart);
             Factors.Insert(index, new NumericValueDefinitionTag(Model.ParentPage, Model.Origin));
+        }
+
+        /// <summary>Calculates the value of the product</summary>
+        public Command CalculateProductCommand { get; private set; }
+
+        private void OnCalculateProductCommandExecute()
+        {
+            Product = Factors.Select(x => x.RelationPartAnswerValue).Aggregate((x, y) => x * y);
+
+            Model.Factors.Clear();
+            Model.Factors.AddRange(Factors);
+        }
+
+        /// <summary>Validates and confirms changes to the person.</summary>
+        public Command ConfirmChangesCommand { get; private set; }
+
+        private async void OnConfirmChangesCommandExecute()
+        {
+            OnCalculateProductCommandExecute();
+
+            await CloseViewModelAsync(true);
+        }
+
+        /// <summary>Cancels changes to the person.</summary>
+        public Command CancelChangesCommand { get; private set; }
+
+        private async void OnCancelChangesCommandExecute()
+        {
+            await CloseViewModelAsync(false);
         }
 
         #endregion //Commands
