@@ -1067,7 +1067,7 @@ namespace Classroom_Learning_Partner.Services
                                         ID = multipleChoiceBox.ID,
                                         XPosition = multipleChoiceBox.XPosition,
                                         YPosition = multipleChoiceBox.YPosition,
-                                        Height = multipleChoiceBox.Height,
+                                        Height = 35,
                                         Width = multipleChoiceBox.Width,
                                         OwnerID = multipleChoiceBox.OwnerID,
                                         CreatorID = multipleChoiceBox.CreatorID,
@@ -1078,6 +1078,8 @@ namespace Classroom_Learning_Partner.Services
                                     };
 
             newMultipleChoice.Orientation = MultipleChoiceOrientations.Horizontal;
+            var segmentWidth = (multipleChoiceBox.Width - 35.0) / 3;
+            newMultipleChoice.Width = segmentWidth * 4;
 
             switch (newPage.PageNumber)
             {
@@ -1086,22 +1088,22 @@ namespace Classroom_Learning_Partner.Services
                     var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
                              {
                                  Offset = 0,
-                                 Answer = "8"
+                                 Answer = "8",
+                                 IsACorrectValue = true
                              };
                     var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 184.04362101313319,
-                                 Answer = "7",
-                                 IsACorrectValue = true
+                                 Offset = segmentWidth,
+                                 Answer = "7"
                              };
                     var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 368.08724202626638,
+                                 Offset = segmentWidth * 2,
                                  Answer = "4"
                              };
                     var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                              {
-                                 Offset = 552.13086303939963,
+                                 Offset = segmentWidth * 3,
                                  Answer = "2 + 4"
                              };
                     newMultipleChoice.ChoiceBubbles.Add(b1);
@@ -1111,120 +1113,120 @@ namespace Classroom_Learning_Partner.Services
                 }
                     break;
                 case 382:
-                    {
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "2"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 184.04362101313319,
-                            Answer = "3",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 368.08724202626638,
-                            Answer = "4"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 552.13086303939963,
-                            Answer = "6"
-                        };
-                        newMultipleChoice.ChoiceBubbles.Add(b1);
-                        newMultipleChoice.ChoiceBubbles.Add(b2);
-                        newMultipleChoice.ChoiceBubbles.Add(b3);
-                        newMultipleChoice.ChoiceBubbles.Add(b4);
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "2",
+                                 IsACorrectValue = true
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "3"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "4"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "6"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                }
                     break;
                 case 383:
-                    {
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "3"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 184.04362101313319,
-                            Answer = "4",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 368.08724202626638,
-                            Answer = "6"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 552.13086303939963,
-                            Answer = "4"
-                        };
-                        newMultipleChoice.ChoiceBubbles.Add(b1);
-                        newMultipleChoice.ChoiceBubbles.Add(b2);
-                        newMultipleChoice.ChoiceBubbles.Add(b3);
-                        newMultipleChoice.ChoiceBubbles.Add(b4);
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "3"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "4"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "6"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "4",
+                                 IsACorrectValue = true
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                }
                     break;
                 case 384:
-                    {
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "9"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 184.04362101313319,
-                            Answer = "3",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 368.08724202626638,
-                            Answer = "6"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 552.13086303939963,
-                            Answer = "7"
-                        };
-                        newMultipleChoice.ChoiceBubbles.Add(b1);
-                        newMultipleChoice.ChoiceBubbles.Add(b2);
-                        newMultipleChoice.ChoiceBubbles.Add(b3);
-                        newMultipleChoice.ChoiceBubbles.Add(b4);
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "9"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "3",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "6"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "7"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                }
                     break;
                 case 385:
-                    {
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "8"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 184.04362101313319,
-                            Answer = "4",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 368.08724202626638,
-                            Answer = "52"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 552.13086303939963,
-                            Answer = "6"
-                        };
-                        newMultipleChoice.ChoiceBubbles.Add(b1);
-                        newMultipleChoice.ChoiceBubbles.Add(b2);
-                        newMultipleChoice.ChoiceBubbles.Add(b3);
-                        newMultipleChoice.ChoiceBubbles.Add(b4);
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "8"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "4"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "52"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "6",
+                                 IsACorrectValue = true
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                }
                     break;
                 default:
                     newMultipleChoice = null;

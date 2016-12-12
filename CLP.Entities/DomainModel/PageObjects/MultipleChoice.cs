@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
@@ -93,10 +92,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public string BubbleCodedID
-        {
-            get { return string.Format("{0} \"{1}\"", BubbleContent, Answer); }
-        }
+        public string BubbleCodedID => $"{BubbleContent} \"{Answer}\"";
 
         #endregion // Calculated Properties
 
@@ -104,7 +100,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        public static string IntToUpperLetter(int index)
+        private static string IntToUpperLetter(int index)
         {
             if (index < 1 ||
                 index > 26)
@@ -136,10 +132,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        public double ChoiceBubbleDiameter
-        {
-            get { return 35.0; }
-        }
+        public double ChoiceBubbleDiameter => 35.0;
 
         /// <summary>Orientation of box.</summary>
         public MultipleChoiceOrientations Orientation

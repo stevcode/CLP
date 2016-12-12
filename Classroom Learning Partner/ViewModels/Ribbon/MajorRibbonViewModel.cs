@@ -223,7 +223,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var otherDropDown = new ContextMenu();
             otherDropDown.Items.Add(_insertTextBoxButton);
             otherDropDown.Items.Add(_insertImageButton);
-            //otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
+            otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
             otherDropDown.Items.Add(_insertRecognitionRegionButton);
 
             _insertOther.DropDown = otherDropDown;
