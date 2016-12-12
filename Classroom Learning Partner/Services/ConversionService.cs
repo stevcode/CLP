@@ -18,10 +18,10 @@ namespace Classroom_Learning_Partner.Services
 
         #region Locations
 
-        public static string CacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
-        public static string NotebooksFolder => Path.Combine(CacheFolder, "Notebooks");
-        public static string ClassesFolder => Path.Combine(CacheFolder, "Classes");
-        public static string ZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
+        public static string EmilyCacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
+        public static string EmilyNotebooksFolder => Path.Combine(EmilyCacheFolder, "Notebooks");
+        public static string EmilyClassesFolder => Path.Combine(EmilyCacheFolder, "Classes");
+        public static string EmilyZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
 
         #endregion // Locations
 

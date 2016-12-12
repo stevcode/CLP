@@ -1280,7 +1280,7 @@ namespace Classroom_Learning_Partner.Services
 
         private void ConvertEmilyCache()
         {
-            var dirInfo = new DirectoryInfo(ConversionService.NotebooksFolder);
+            var dirInfo = new DirectoryInfo(ConversionService.EmilyNotebooksFolder);
             var notebooks = new List<Notebook>();
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
@@ -1290,12 +1290,12 @@ namespace Classroom_Learning_Partner.Services
                 notebooks.Add(notebook);
             }
 
-            ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
+            ConversionService.SaveNotebooksToZip(ConversionService.EmilyZipFilePath, notebooks);
         }
 
         private void AddEmilySessions()
         {
-            var dirInfo = new DirectoryInfo(ConversionService.ClassesFolder);
+            var dirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
             var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
@@ -1304,7 +1304,7 @@ namespace Classroom_Learning_Partner.Services
                 i++;
             }
 
-            ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
+            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions);
         }
 
         private void ConvertAnnCache()
@@ -1319,12 +1319,12 @@ namespace Classroom_Learning_Partner.Services
             //    notebooks.Add(notebook);
             //}
 
-            var notebookFolder = Path.Combine(ConversionService.NotebooksFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;AUTHOR;AUTHOR0000000000000000;A");
+            var notebookFolder = Path.Combine(ConversionService.AnnNotebooksFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;AUTHOR;AUTHOR0000000000000000;A");
 
             var notebook = ConversionService.ConvertCacheAnnNotebook(notebookFolder);
             ConversionService.SaveAnnNotebookToZip(ConversionService.AnnZipFilePath, notebook);
 
-            var subjectFilePath = Path.Combine(ConversionService.ClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
+            var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
             var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
             ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
         }
