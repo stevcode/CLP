@@ -544,12 +544,159 @@ namespace Classroom_Learning_Partner.Services
 
         #region Locations
 
-        public static string AnnCacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
-        public static string AnnNotebooksFolder => Path.Combine(CacheFolder, "Notebooks");
-        public static string AnnClassesFolder => Path.Combine(CacheFolder, "Classes");
-        public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Spring 2014.clp");
+        public static string AnnCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Ann.Complete");
+        public static string AnnNotebooksFolder => Path.Combine(AnnCacheFolder, "Notebooks");
+        public static string AnnClassesFolder => Path.Combine(AnnCacheFolder, "Classes");
+        public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
 
         #endregion // Locations
+
+        #region Conversion Loop
+
+        public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
+        {
+            var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            var newNotebook = ConvertNotebook(oldNotebook);
+
+            foreach (var page in oldNotebook.Pages)
+            {
+                var newPage = ConvertPage(page);
+                //foreach (var submission in page.Submissions)
+                //{
+                //    var newSubmission = ConvertPage(submission);
+                //    newPage.Submissions.Add(newSubmission);
+                //}
+
+                newNotebook.Pages.Add(newPage);
+
+                if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
+                {
+                    PageNumberToIDMap.Add(newPage.PageNumber, newPage.ID);
+                }
+
+                if (!PageIDToNumberMap.ContainsKey(newPage.ID))
+                {
+                    PageIDToNumberMap.Add(newPage.ID, newPage.PageNumber);
+                }
+            }
+
+            return newNotebook;
+        }
+
+        public static Session ConvertCacheAnnClassPeriod(string filePath)
+        {
+            var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
+            var session = ConvertClassPeriod(classPeriod);
+
+            return session;
+        }
+
+        public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
+        {
+            var classSubject = Ann.ClassSubject.OpenClassSubject(filePath);
+            var classRoster = ConvertAnnClassSubject(classSubject, notebook);
+
+            return classRoster;
+        }
+
+        public static void SaveAnnNotebookToZip(string zipFilePath, Notebook notebook)
+        {
+            if (File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var parentNotebookName = notebook.InternalZipFileDirectoryName;
+            var entryList = new List<DataService.ZipEntrySaver>
+                            {
+                                new DataService.ZipEntrySaver(notebook, parentNotebookName)
+                            };
+
+            foreach (var page in notebook.Pages)
+            {
+                entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                foreach (var submission in page.Submissions)
+                {
+                    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save(zipFilePath);
+            }
+        }
+
+        public static void SaveAnnClassRosterToZip(string zipFilePath, ClassRoster classRoster)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            classRoster.ContainerZipFilePath = zipFilePath;
+
+            entryList.Add(new DataService.ZipEntrySaver(classRoster));
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static void SaveAnnSessionsToZip(string zipFilePath, List<Session> sessions)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var session in sessions)
+            {
+                session.ContainerZipFilePath = zipFilePath;
+
+                entryList.Add(new DataService.ZipEntrySaver(session));
+            }
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        #endregion // Conversion Loop
 
         #region Notebook Parts
 
@@ -566,17 +713,56 @@ namespace Classroom_Learning_Partner.Services
                              };
 
             var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
-            var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages);
+            newSession.StartingPageNumber = startPageNumber.ToString();
+
+            var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages).ToList();
             var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
             if (!pageIDs.Contains(classPeriod.TitlePageID))
             {
                 pageIDs.Insert(0, classPeriod.TitlePageID);
+                pageNumberRange.Insert(0, PageIDToNumberMap[classPeriod.TitlePageID]);
             }
 
             newSession.PageIDs = pageIDs;
+            newSession.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumberRange, false, true);
             newSession.NotebookIDs.Add(classPeriod.NotebookID);
 
             return newSession;
+        }
+
+        public static ClassRoster ConvertAnnClassSubject(Ann.ClassSubject classSubject, Notebook notebook)
+        {
+            var notebookSet = new NotebookSet
+                              {
+                                  NotebookName = notebook.Name,
+                                  NotebookID = notebook.ID,
+                                  CreationDate = notebook.CreationDate
+                              };
+
+            var newClassRoster = new ClassRoster
+                                 {
+                                     SubjectName = classSubject.Name,
+                                     GradeLevel = classSubject.GradeLevel,
+                                     StartDate = classSubject.StartDate,
+                                     EndDate = classSubject.EndDate,
+                                     SchoolName = classSubject.SchoolName,
+                                     SchoolDistrict = classSubject.SchoolDistrict,
+                                     City = classSubject.City,
+                                     State = classSubject.State
+                                 };
+
+            newClassRoster.ListOfNotebookSets.Add(notebookSet);
+
+            var teacher = ConvertPerson(classSubject.Teacher);
+            newClassRoster.ListOfTeachers.Add(teacher);
+
+            foreach (var person in classSubject.StudentList.OrderBy(p => p.FullName))
+            {
+                var newPerson = ConvertPerson(person);
+                newClassRoster.ListOfStudents.Add(newPerson);
+            }
+
+            return newClassRoster;
         }
 
         // 12/7
@@ -647,15 +833,26 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var pageObject in page.PageObjects)
             {
+                // Ignores the TextBoxes that were part of the old Multiple Choice
+                if (pageObject is Ann.CLPTextBox &&
+                    (pageObject.ID == "Qgvdw-4oTk2JmSUECrftNQ" ||     // page 385
+                     pageObject.ID == "F66Db6O3a0uTF0SGRiUemw" ||     // page 384
+                     pageObject.ID == "MAnCvJx2HkmhNwY9AMNbNQ" ||     // page 383
+                     pageObject.ID == "gXG3pxqR00S8dsJqmCrl9g" ||     // page 382
+                     pageObject.ID == "wPC1vKURUk-iZExkAu9cwQ"))      // page 381
+                {
+                    continue;
+                }
+
                 var newPageObject = ConvertPageObject(pageObject, newPage);
                 newPage.PageObjects.Add(newPageObject);
-                var divisionTemplate = newPageObject as DivisionTemplate;
-                if (divisionTemplate != null &&
-                    divisionTemplate.RemainderTiles != null)
-                {
-                    // TODO: ?
-                    newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
-                }
+                //var divisionTemplate = newPageObject as DivisionTemplate;
+                //if (divisionTemplate != null &&
+                //    divisionTemplate.RemainderTiles != null)
+                //{
+                //    // TODO: ?
+                //    newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
+                //}
             }
 
             return newPage;
@@ -1060,6 +1257,7 @@ namespace Classroom_Learning_Partner.Services
             return newStamp;
         }
 
+        // 12/12
         public static MultipleChoice ConvertMultipleChoiceBox(Ann.MultipleChoiceBox multipleChoiceBox, CLPPage newPage)
         {
             var newMultipleChoice = new MultipleChoice
