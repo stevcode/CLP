@@ -6,7 +6,6 @@ using Catel.Data;
 using Catel.MVVM;
 using Catel.Threading;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 

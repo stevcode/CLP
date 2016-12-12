@@ -690,7 +690,15 @@ namespace Classroom_Learning_Partner.Services
             }).Case<Ann.Stamp>(p =>
             {
                 newPageObject = ConvertStamp(p, newPage);
+            }).Case<Ann.MultipleChoiceBox>(p =>
+            {
+                newPageObject = ConvertMultipleChoiceBox(p, newPage);
             });
+
+            if (newPageObject == null)
+            {
+                Console.WriteLine($"[ERROR] newPageObject is NULL. Original pageObject is {pageObject.GetType()}");
+            }
 
             return newPageObject;
         }
@@ -999,6 +1007,7 @@ namespace Classroom_Learning_Partner.Services
             return newStampedObject;
         }
 
+        // 12/7
         public static Stamp ConvertStamp(Ann.Stamp stamp, CLPPage newPage)
         {
             var newStamp = new Stamp
@@ -1049,6 +1058,180 @@ namespace Classroom_Learning_Partner.Services
             newStamp.AcceptedPageObjectIDs = stamp.AcceptedPageObjectIDs;
 
             return newStamp;
+        }
+
+        public static MultipleChoice ConvertMultipleChoiceBox(Ann.MultipleChoiceBox multipleChoiceBox, CLPPage newPage)
+        {
+            var newMultipleChoice = new MultipleChoice
+                                    {
+                                        ID = multipleChoiceBox.ID,
+                                        XPosition = multipleChoiceBox.XPosition,
+                                        YPosition = multipleChoiceBox.YPosition,
+                                        Height = multipleChoiceBox.Height,
+                                        Width = multipleChoiceBox.Width,
+                                        OwnerID = multipleChoiceBox.OwnerID,
+                                        CreatorID = multipleChoiceBox.CreatorID,
+                                        CreationDate = multipleChoiceBox.CreationDate,
+                                        PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                        IsManipulatableByNonCreator = multipleChoiceBox.IsManipulatableByNonCreator,
+                                        ParentPage = newPage
+                                    };
+
+            newMultipleChoice.Orientation = MultipleChoiceOrientations.Horizontal;
+
+            switch (newPage.PageNumber)
+            {
+                case 381:
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "8"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 184.04362101313319,
+                                 Answer = "7",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 368.08724202626638,
+                                 Answer = "4"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 552.13086303939963,
+                                 Answer = "2 + 4"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                }
+                    break;
+                case 382:
+                    {
+                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 0,
+                            Answer = "2"
+                        };
+                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 184.04362101313319,
+                            Answer = "3",
+                            IsACorrectValue = true
+                        };
+                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 368.08724202626638,
+                            Answer = "4"
+                        };
+                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 552.13086303939963,
+                            Answer = "6"
+                        };
+                        newMultipleChoice.ChoiceBubbles.Add(b1);
+                        newMultipleChoice.ChoiceBubbles.Add(b2);
+                        newMultipleChoice.ChoiceBubbles.Add(b3);
+                        newMultipleChoice.ChoiceBubbles.Add(b4);
+                    }
+                    break;
+                case 383:
+                    {
+                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 0,
+                            Answer = "3"
+                        };
+                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 184.04362101313319,
+                            Answer = "4",
+                            IsACorrectValue = true
+                        };
+                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 368.08724202626638,
+                            Answer = "6"
+                        };
+                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 552.13086303939963,
+                            Answer = "4"
+                        };
+                        newMultipleChoice.ChoiceBubbles.Add(b1);
+                        newMultipleChoice.ChoiceBubbles.Add(b2);
+                        newMultipleChoice.ChoiceBubbles.Add(b3);
+                        newMultipleChoice.ChoiceBubbles.Add(b4);
+                    }
+                    break;
+                case 384:
+                    {
+                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 0,
+                            Answer = "9"
+                        };
+                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 184.04362101313319,
+                            Answer = "3",
+                            IsACorrectValue = true
+                        };
+                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 368.08724202626638,
+                            Answer = "6"
+                        };
+                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 552.13086303939963,
+                            Answer = "7"
+                        };
+                        newMultipleChoice.ChoiceBubbles.Add(b1);
+                        newMultipleChoice.ChoiceBubbles.Add(b2);
+                        newMultipleChoice.ChoiceBubbles.Add(b3);
+                        newMultipleChoice.ChoiceBubbles.Add(b4);
+                    }
+                    break;
+                case 385:
+                    {
+                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 0,
+                            Answer = "8"
+                        };
+                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 184.04362101313319,
+                            Answer = "4",
+                            IsACorrectValue = true
+                        };
+                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 368.08724202626638,
+                            Answer = "52"
+                        };
+                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                        {
+                            Offset = 552.13086303939963,
+                            Answer = "6"
+                        };
+                        newMultipleChoice.ChoiceBubbles.Add(b1);
+                        newMultipleChoice.ChoiceBubbles.Add(b2);
+                        newMultipleChoice.ChoiceBubbles.Add(b3);
+                        newMultipleChoice.ChoiceBubbles.Add(b4);
+                    }
+                    break;
+                default:
+                    newMultipleChoice = null;
+                    break;
+            }
+
+            return newMultipleChoice;
         }
 
         #endregion // PageObjects
