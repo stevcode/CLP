@@ -72,8 +72,8 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
-            ConvertAnnCache();
-            AddAnnSessions();
+            //ConvertAnnCache();
+            //AddAnnSessions();
         }
 
         #endregion // Constructors
@@ -274,6 +274,11 @@ namespace Classroom_Learning_Partner.Services
 
         public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
         {
+            if (string.IsNullOrWhiteSpace(imageHashID))
+            {
+                return null;
+            }
+
             if (ImagePool.ContainsKey(imageHashID))
             {
                 return ImagePool[imageHashID];

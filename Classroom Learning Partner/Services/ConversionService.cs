@@ -603,7 +603,7 @@ namespace Classroom_Learning_Partner.Services
         {
             if (File.Exists(zipFilePath))
             {
-                return;
+                File.Delete(zipFilePath);
             }
 
             var parentNotebookName = notebook.InternalZipFileDirectoryName;
@@ -614,18 +614,23 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var page in notebook.Pages)
             {
+                //if (page.PageNumber <= 50)
+                //{
+                //    continue;
+                //}
+
                 entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
-                foreach (var submission in page.Submissions)
-                {
-                    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
-                }
+                //foreach (var submission in page.Submissions)
+                //{
+                //    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                //}
             }
 
             using (var zip = new ZipFile())
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
                 foreach (var zipEntrySaver in entryList)
@@ -653,7 +658,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
                 foreach (var zipEntrySaver in entryList)
@@ -684,7 +689,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
                 foreach (var zipEntrySaver in entryList)
@@ -730,6 +735,7 @@ namespace Classroom_Learning_Partner.Services
             return newSession;
         }
 
+        // 12/12
         public static ClassRoster ConvertAnnClassSubject(Ann.ClassSubject classSubject, Notebook notebook)
         {
             var notebookSet = new NotebookSet
