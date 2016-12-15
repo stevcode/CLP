@@ -33,7 +33,7 @@ namespace CLP.Entities
                                         DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
                                     };
 
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
                 jsonSerializer.Serialize(this, stream, configuration);
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
@@ -48,10 +48,17 @@ namespace CLP.Entities
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
+                var configuration = new JsonSerializationConfiguration
+                                    {
+                                        DateParseHandling = DateParseHandling.DateTime,
+                                        DateTimeKind = DateTimeKind.Unspecified,
+                                        DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
+                                    };
+
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
                 //try
                 //{
-                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, null);
+                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, configuration);
                     return (T)deserialized;
                 //}
                 //catch (Exception ex)
