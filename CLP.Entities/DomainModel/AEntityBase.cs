@@ -6,6 +6,8 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
+using Newtonsoft.Json;
+using JsonSerializer = Catel.Runtime.Serialization.Json.JsonSerializer;
 
 namespace CLP.Entities
 {
@@ -23,11 +25,16 @@ namespace CLP.Entities
         {
             using (var stream = new MemoryStream())
             {
+                var configuration = new JsonSerializationConfiguration
+                                    {
+                                        FormatWithIndents = formatWithIndents,
+                                        DateParseHandling = DateParseHandling.DateTime,
+                                        DateTimeKind = DateTimeKind.Unspecified,
+                                        DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
+                                    };
+
                 var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                jsonSerializer.WriteTypeInfo = true;
-                jsonSerializer.PreserveReferences = true;
-                jsonSerializer.FormatWithIndents = formatWithIndents;
-                jsonSerializer.Serialize(this, stream, null);
+                jsonSerializer.Serialize(this, stream, configuration);
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {
