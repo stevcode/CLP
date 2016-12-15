@@ -71,6 +71,9 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
+
+            //ConvertAnnCache();
+            //AddAnnSessions();
         }
 
         #endregion // Constructors
@@ -271,6 +274,11 @@ namespace Classroom_Learning_Partner.Services
 
         public BitmapImage GetImage(string imageHashID, IPageObject pageObject)
         {
+            if (string.IsNullOrWhiteSpace(imageHashID))
+            {
+                return null;
+            }
+
             if (ImagePool.ContainsKey(imageHashID))
             {
                 return ImagePool[imageHashID];
@@ -1277,7 +1285,7 @@ namespace Classroom_Learning_Partner.Services
 
         private void ConvertEmilyCache()
         {
-            var dirInfo = new DirectoryInfo(ConversionService.NotebooksFolder);
+            var dirInfo = new DirectoryInfo(ConversionService.EmilyNotebooksFolder);
             var notebooks = new List<Notebook>();
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
@@ -1287,12 +1295,12 @@ namespace Classroom_Learning_Partner.Services
                 notebooks.Add(notebook);
             }
 
-            ConversionService.SaveNotebooksToZip(ConversionService.ZipFilePath, notebooks);
+            ConversionService.SaveNotebooksToZip(ConversionService.EmilyZipFilePath, notebooks);
         }
 
-        private void AddSessions()
+        private void AddEmilySessions()
         {
-            var dirInfo = new DirectoryInfo(ConversionService.ClassesFolder);
+            var dirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
             var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
@@ -1301,7 +1309,43 @@ namespace Classroom_Learning_Partner.Services
                 i++;
             }
 
-            ConversionService.SaveSessionsToZip(ConversionService.ZipFilePath, sessions);
+            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions);
+        }
+
+        private void ConvertAnnCache()
+        {
+            //var dirInfo = new DirectoryInfo(ConversionService.AnnNotebooksFolder);
+            //var notebooks = new List<Notebook>();
+            //foreach (var directory in dirInfo.EnumerateDirectories())
+            //{
+            //    var notebookFolder = directory.FullName;
+            //    Console.WriteLine($"Notebook Folder: {notebookFolder}");
+            //    var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
+            //    notebooks.Add(notebook);
+            //}
+
+            var notebookFolder = Path.Combine(ConversionService.AnnNotebooksFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;AUTHOR;AUTHOR0000000000000000;A");
+
+            var notebook = ConversionService.ConvertCacheAnnNotebook(notebookFolder);
+            ConversionService.SaveAnnNotebookToZip(ConversionService.AnnZipFilePath, notebook);
+
+            var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
+            var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
+            ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
+        }
+
+        private void AddAnnSessions()
+        {
+            var dirInfo = new DirectoryInfo(ConversionService.AnnClassesFolder);
+            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            ConversionService.SaveAnnSessionsToZip(ConversionService.AnnZipFilePath, sessions);
         }
 
         #endregion // Tests

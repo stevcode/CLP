@@ -42,8 +42,16 @@ namespace CLP.Entities
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
-                var deserialized = jsonSerializer.Deserialize(typeof(T), stream, null);
-                return (T)deserialized;
+                //try
+                //{
+                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, null);
+                    return (T)deserialized;
+                //}
+                //catch (Exception ex)
+                //{
+                //    Console.WriteLine($"Error trying to deserialize {typeof(T)} via json.\n{ex.Message}");
+                //    return null;
+                //}
             }
         }
     }
