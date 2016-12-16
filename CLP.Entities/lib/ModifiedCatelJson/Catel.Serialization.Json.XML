@@ -74,12 +74,12 @@
             The date time zone handling.
             </value>
         </member>
-        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.FormatWithIndents">
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.Formatting">
             <summary>
-            Gets or sets a value indicating whether to format the json string with indentation.
+            Gets or sets the json formatting.
             </summary>
             <value>
-              <c>true</c> if json string should be formatted with indents; otherwise, <c>false</c>.
+            The json formatting.
             </value>
         </member>
         <member name="T:Catel.Runtime.Serialization.Json.JsonSerializationContextInfoFactory">
@@ -432,6 +432,15 @@
             </summary>
             <param name="context">The context.</param>
             <param name="stream">The stream.</param>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.ShouldExternalSerializerHandleMember(System.Type)">
+            <summary>
+            Returns whether json.net should handle the member.  
+            <para />
+            By default it only handles non-class types.
+            </summary>
+            <param name="memberType">Type of the member.</param>
+            <returns><c>true</c> if json.net should handle the type, <c>false</c> otherwise.</returns>
         </member>
         <member name="T:Catel.JsonExtensions">
             <summary>

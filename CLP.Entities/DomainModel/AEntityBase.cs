@@ -27,7 +27,7 @@ namespace CLP.Entities
             {
                 var configuration = new JsonSerializationConfiguration
                                     {
-                                        FormatWithIndents = formatWithIndents,
+                                        Formatting = formatWithIndents ? Formatting.Indented : Formatting.None,
                                         DateParseHandling = DateParseHandling.DateTime,
                                         DateTimeKind = DateTimeKind.Unspecified,
                                         DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
