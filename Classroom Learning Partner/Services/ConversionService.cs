@@ -55,6 +55,14 @@ namespace Classroom_Learning_Partner.Services
             return session;
         }
 
+        public static ClassRoster ConvertCacheEmilyClassSubject(string filePath, Notebook notebook)
+        {
+            var classSubject = Emily.ClassSubject.OpenClassSubject(filePath);
+            var classRoster = ConvertEmilyClassSubject(classSubject, notebook);
+
+            return classRoster;
+        }
+
         public static void SaveNotebookToZip(string zipFilePath, Notebook notebook)
         {
             if (File.Exists(zipFilePath))
@@ -188,6 +196,34 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public static void SaveEmilyClassRosterToZip(string zipFilePath, ClassRoster classRoster)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            classRoster.ContainerZipFilePath = zipFilePath;
+
+            entryList.Add(new DataService.ZipEntrySaver(classRoster));
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
         #endregion // Conversion Loop
 
         #region Notebook Parts
@@ -218,6 +254,41 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return newPerson;
+        }
+
+        public static ClassRoster ConvertEmilyClassSubject(Emily.ClassSubject classSubject, Notebook notebook)
+        {
+            var notebookSet = new NotebookSet
+            {
+                NotebookName = notebook.Name,
+                NotebookID = notebook.ID,
+                CreationDate = notebook.CreationDate
+            };
+
+            var newClassRoster = new ClassRoster
+                                 {
+                                     SubjectName = classSubject.Name,
+                                     GradeLevel = classSubject.GradeLevel,
+                                     StartDate = classSubject.StartDate,
+                                     EndDate = classSubject.EndDate,
+                                     SchoolName = classSubject.SchoolName,
+                                     SchoolDistrict = classSubject.SchoolDistrict,
+                                     City = classSubject.City,
+                                     State = classSubject.State
+                                 };
+
+            newClassRoster.ListOfNotebookSets.Add(notebookSet);
+
+            var teacher = ConvertPerson(classSubject.Teacher);
+            newClassRoster.ListOfTeachers.Add(teacher);
+
+            foreach (var person in classSubject.StudentList.OrderBy(p => p.FullName))
+            {
+                var newPerson = ConvertPerson(person);
+                newClassRoster.ListOfStudents.Add(newPerson);
+            }
+
+            return newClassRoster;
         }
 
         public static Notebook ConvertNotebook(Emily.Notebook notebook)

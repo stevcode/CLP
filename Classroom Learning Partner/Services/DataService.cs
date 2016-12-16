@@ -74,6 +74,9 @@ namespace Classroom_Learning_Partner.Services
 
             //ConvertAnnCache();
             //AddAnnSessions();
+
+            //ConvertEmilyCache();
+            //AddEmilySessions();
         }
 
         #endregion // Constructors
@@ -1287,15 +1290,41 @@ namespace Classroom_Learning_Partner.Services
         {
             var dirInfo = new DirectoryInfo(ConversionService.EmilyNotebooksFolder);
             var notebooks = new List<Notebook>();
+            Notebook authorNotebook = null;
+            var students = new List<Person>();
+            Person teacher = null;
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
                 Console.WriteLine($"Notebook Folder: {notebookFolder}");
                 var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
                 notebooks.Add(notebook);
+
+                if (notebook.OwnerID == Person.AUTHOR_ID)
+                {
+                    authorNotebook = notebook;
+                }
+
+                if (notebook.Owner.IsStudent)
+                {
+                    students.Add(notebook.Owner);
+                }
+                else
+                {
+                    teacher = notebook.Owner;
+                }
             }
 
             ConversionService.SaveNotebooksToZip(ConversionService.EmilyZipFilePath, notebooks);
+
+            var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
+            var classRoster = ConversionService.ConvertCacheEmilyClassSubject(subjectFilePath, authorNotebook);
+            classRoster.ListOfTeachers.Clear();
+            classRoster.ListOfTeachers.Add(teacher);
+            classRoster.ListOfStudents.Clear();
+            classRoster.ListOfStudents.AddRange(students);
+
+            ConversionService.SaveEmilyClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
         }
 
         private void AddEmilySessions()
