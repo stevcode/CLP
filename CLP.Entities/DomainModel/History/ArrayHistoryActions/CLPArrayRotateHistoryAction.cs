@@ -50,7 +50,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string), string.Empty);
 
         /// <summary>X Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldXPosition.</remarks>
@@ -61,7 +61,7 @@ namespace CLP.Entities
             set { SetValue(ArrayXCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof(double));
+        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof(double), 0);
 
         /// <summary>Y Position before rotate.</summary>
         /// <remarks>Legacy property name prior to conversion, should be OldYPosition.</remarks>
@@ -72,7 +72,7 @@ namespace CLP.Entities
             set { SetValue(ArrayYCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double));
+        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double), 0);
 
         /// <summary>X Position before rotate.</summary>
         public double OldXPosition
@@ -81,7 +81,7 @@ namespace CLP.Entities
             set { SetValue(OldXPositionProperty, value); }
         }
 
-        public static readonly PropertyData OldXPositionProperty = RegisterProperty("OldXPosition", typeof(double));
+        public static readonly PropertyData OldXPositionProperty = RegisterProperty("OldXPosition", typeof(double), 0);
 
         /// <summary>Y Position before rotate.</summary>
         public double OldYPosition
@@ -90,7 +90,7 @@ namespace CLP.Entities
             set { SetValue(OldYPositionProperty, value); }
         }
 
-        public static readonly PropertyData OldYPositionProperty = RegisterProperty("OldYPosition", typeof(double));
+        public static readonly PropertyData OldYPositionProperty = RegisterProperty("OldYPosition", typeof(double), 0);
 
         /// <summary>X Position after rotate.</summary>
         public double NewXPosition
@@ -99,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(NewXPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewXPositionProperty = RegisterProperty("NewXPosition", typeof(double));
+        public static readonly PropertyData NewXPositionProperty = RegisterProperty("NewXPosition", typeof(double), 0);
 
         /// <summary>Y Position after rotate.</summary>
         public double NewYPosition
@@ -108,7 +108,7 @@ namespace CLP.Entities
             set { SetValue(NewYPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double));
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double), 0);
 
         /// <summary>Rows value before rotate.</summary>
         public int OldRows
@@ -117,7 +117,7 @@ namespace CLP.Entities
             set { SetValue(OldRowsProperty, value); }
         }
 
-        public static readonly PropertyData OldRowsProperty = RegisterProperty("OldRows", typeof(int));
+        public static readonly PropertyData OldRowsProperty = RegisterProperty("OldRows", typeof(int), 0);
 
         /// <summary>Columns value before rotate.</summary>
         public int OldColumns
@@ -126,7 +126,7 @@ namespace CLP.Entities
             set { SetValue(OldColumnsProperty, value); }
         }
 
-        public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof(int));
+        public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof(int), 0);
 
         /// <summary>Width before rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -136,7 +136,7 @@ namespace CLP.Entities
             set { SetValue(OldWidthProperty, value); }
         }
 
-        public static readonly PropertyData OldWidthProperty = RegisterProperty("OldWidth", typeof(double));
+        public static readonly PropertyData OldWidthProperty = RegisterProperty("OldWidth", typeof(double), 0);
 
         /// <summary>Height before rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -146,7 +146,7 @@ namespace CLP.Entities
             set { SetValue(OldHeightProperty, value); }
         }
 
-        public static readonly PropertyData OldHeightProperty = RegisterProperty("OldHeight", typeof(double));
+        public static readonly PropertyData OldHeightProperty = RegisterProperty("OldHeight", typeof(double), 0);
 
         /// <summary>Width after rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -156,7 +156,7 @@ namespace CLP.Entities
             set { SetValue(NewWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewWidthProperty = RegisterProperty("NewWidth", typeof(double));
+        public static readonly PropertyData NewWidthProperty = RegisterProperty("NewWidth", typeof(double), 0);
 
         /// <summary>Height after rotate.</summary>
         /// <remarks>Not necessary for history playback, but serves in history analysis.</remarks>
@@ -166,7 +166,7 @@ namespace CLP.Entities
             set { SetValue(NewHeightProperty, value); }
         }
 
-        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double));
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double), 0);
 
         #endregion // Properties
 

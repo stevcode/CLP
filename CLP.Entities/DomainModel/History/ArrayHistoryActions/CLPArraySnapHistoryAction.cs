@@ -44,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(IsHorizontalProperty, value); }
         }
 
-        public static readonly PropertyData IsHorizontalProperty = RegisterProperty("IsHorizontal", typeof(bool));
+        public static readonly PropertyData IsHorizontalProperty = RegisterProperty("IsHorizontal", typeof(bool), false);
 
         /// <summary>UniqueID of the array that is snapped onto and then deleted.</summary>
         public string SnappedArrayID
@@ -62,7 +62,7 @@ namespace CLP.Entities
             set { SetValue(SnappedArraySquareSizeProperty, value); }
         }
 
-        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double));
+        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double), 0);
 
         /// <summary>UniqueID of the array that snaps on and continues to exist.</summary>
         public string PersistingArrayID
@@ -102,7 +102,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayDivisionBehaviorProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayDivisionBehaviorProperty = RegisterProperty("PersistingArrayDivisionBehavior", typeof(bool));
+        public static readonly PropertyData PersistingArrayDivisionBehaviorProperty = RegisterProperty("PersistingArrayDivisionBehavior", typeof(bool), false);
 
         /// <summary>Rows or columns that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public int PersistingArrayRowsOrColumns
@@ -111,7 +111,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayRowsOrColumnsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayRowsOrColumnsProperty = RegisterProperty("PersistingArrayRowsOrColumns", typeof(int));
+        public static readonly PropertyData PersistingArrayRowsOrColumnsProperty = RegisterProperty("PersistingArrayRowsOrColumns", typeof(int), 0);
 
         /// <summary>Rows or columns that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public double PersistingArrayXOrYPosition
@@ -120,7 +120,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayXOrYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double));
+        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double), 0);
 
         #endregion // Properties
 

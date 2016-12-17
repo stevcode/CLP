@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -42,7 +41,7 @@ namespace CLP.Entities
             set { SetValue(DivisionValueProperty, value); }
         }
 
-        public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof (int));
+        public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof (int), 0);
 
         #endregion // Properties
 

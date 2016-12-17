@@ -35,7 +35,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string), string.Empty);
 
         /// <summary>Whether to operate on a horizontal or vertical division.</summary>
         public bool IsHorizontalDivision
@@ -44,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(IsHorizontalDivisionProperty, value); }
         }
 
-        public static readonly PropertyData IsHorizontalDivisionProperty = RegisterProperty("IsHorizontalDivision", typeof(bool));
+        public static readonly PropertyData IsHorizontalDivisionProperty = RegisterProperty("IsHorizontalDivision", typeof(bool), false);
 
         /// <summary>Index of the Division who's value has changed.</summary>
         public int DivisionIndex
@@ -53,7 +53,7 @@ namespace CLP.Entities
             set { SetValue(DivisionIndexProperty, value); }
         }
 
-        public static readonly PropertyData DivisionIndexProperty = RegisterProperty("DivisionIndex", typeof(int));
+        public static readonly PropertyData DivisionIndexProperty = RegisterProperty("DivisionIndex", typeof(int), 0);
 
         /// <summary>Previous value of the Division.</summary>
         public int PreviousValue
@@ -62,7 +62,7 @@ namespace CLP.Entities
             set { SetValue(PreviousValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int));
+        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int), 0);
 
         /// <summary>New value of the Division.</summary>
         public int NewValue
@@ -71,7 +71,7 @@ namespace CLP.Entities
             set { SetValue(NewValueProperty, value); }
         }
 
-        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int));
+        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int), 0);
 
         #endregion // Properties
 

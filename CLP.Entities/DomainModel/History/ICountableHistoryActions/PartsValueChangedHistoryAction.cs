@@ -33,7 +33,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof(string));
+        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof(string), string.Empty);
 
         /// <summary>Previous value of the Parts Value.</summary>
         public int PreviousValue
@@ -42,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(PreviousValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int));
+        public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int), 0);
 
         /// <summary>New Value of the Parts Value.</summary>
         public int NewValue
@@ -51,7 +51,7 @@ namespace CLP.Entities
             set { SetValue(NewValueProperty, value); }
         }
 
-        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int));
+        public static readonly PropertyData NewValueProperty = RegisterProperty("NewValue", typeof(int), 0);
 
         #endregion // Properties
 

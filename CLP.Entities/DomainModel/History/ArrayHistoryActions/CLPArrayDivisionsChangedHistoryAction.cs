@@ -36,7 +36,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string), string.Empty);
 
         /// <summary>ArrayDivisions added to Array</summary>
         [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
@@ -46,7 +46,7 @@ namespace CLP.Entities
             set { SetValue(AddedDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData AddedDivisionsProperty = RegisterProperty("AddedDivisions", typeof(List<CLPArrayDivision>));
+        public static readonly PropertyData AddedDivisionsProperty = RegisterProperty("AddedDivisions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         /// <summary>ArrayDivisions removed from Array</summary>
         [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
@@ -56,7 +56,7 @@ namespace CLP.Entities
             set { SetValue(RemovedDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>));
+        public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         /// <summary>Old regions, either RowRegions or ColumnRegions; HorizontalDivisions and VerticalDivisions respectively.</summary>
         public List<CLPArrayDivision> OldRegions

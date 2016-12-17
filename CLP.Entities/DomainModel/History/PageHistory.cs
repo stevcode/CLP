@@ -50,7 +50,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Version Index of the <see cref="PageHistory" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
@@ -83,7 +83,7 @@ namespace CLP.Entities
 
         #region HistoryActions
 
-        /// <summary>All events available for Undo.</summary>
+        /// <summary>All actions available for Undo.</summary>
         public ObservableCollection<IHistoryAction> UndoActions
         {
             get { return GetValue<ObservableCollection<IHistoryAction>>(UndoActionsProperty); }
@@ -92,7 +92,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData UndoActionsProperty = RegisterProperty("UndoActions", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        /// <summary>All events available for Redo.</summary>
+        /// <summary>All actions available for Redo.</summary>
         public ObservableCollection<IHistoryAction> RedoActions
         {
             get { return GetValue<ObservableCollection<IHistoryAction>>(RedoActionsProperty); }

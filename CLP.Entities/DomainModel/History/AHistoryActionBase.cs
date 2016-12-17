@@ -40,7 +40,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Location of the <see cref="IHistoryAction" /> in the entirety of history, including UndoActions and RedoActions.</summary>
         public int HistoryActionIndex

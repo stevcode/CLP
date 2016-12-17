@@ -37,7 +37,7 @@ namespace CLP.Entities
             set { SetValue(AnimationIndicatorTypeProperty, value); }
         }
 
-        public static readonly PropertyData AnimationIndicatorTypeProperty = RegisterProperty("AnimationIndicatorType", typeof(AnimationIndicatorType));
+        public static readonly PropertyData AnimationIndicatorTypeProperty = RegisterProperty("AnimationIndicatorType", typeof(AnimationIndicatorType), AnimationIndicatorType.Record);
 
         #endregion //Properties
 
