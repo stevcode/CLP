@@ -68,7 +68,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex

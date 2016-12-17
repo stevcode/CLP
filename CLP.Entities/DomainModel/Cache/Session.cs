@@ -26,7 +26,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>A title describing the session.</summary>
         public string SessionTitle

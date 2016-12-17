@@ -79,7 +79,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="CLPPage" />.</summary>
         public string OwnerID
@@ -162,7 +162,7 @@ namespace CLP.Entities
             set { SetValue(LastVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?), 0);
 
         /// <summary>Date and Time the <see cref="CLPPage" /> was created.</summary>
         public DateTime CreationDate
@@ -225,7 +225,7 @@ namespace CLP.Entities
             set { SetValue(InitialAspectRatioProperty, value); }
         }
 
-        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
+        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double), 0);
 
         /// <summary>Type of lines on the background of the <see cref="CLPPage" />.</summary>
         public PageLineTypes PageLineType

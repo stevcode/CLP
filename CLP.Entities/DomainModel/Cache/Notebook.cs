@@ -43,7 +43,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
         public string OwnerID
@@ -126,7 +126,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
+        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string), string.Empty);
 
         /// <summary>Version Index of the currently selected <see cref="CLPPage" />.</summary>
         public uint CurrentPageVersionIndex
@@ -135,7 +135,7 @@ namespace CLP.Entities
             set { SetValue(CurrentPageVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint));
+        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint), 0);
 
         #region Calculated Properties
 
