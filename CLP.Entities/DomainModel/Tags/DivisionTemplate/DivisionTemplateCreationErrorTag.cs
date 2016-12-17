@@ -44,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(ReasonProperty, value); }
         }
 
-        public static readonly PropertyData ReasonProperty = RegisterProperty("Reason", typeof(DivisionTemplateIncorrectCreationReasons));
+        public static readonly PropertyData ReasonProperty = RegisterProperty("Reason", typeof(DivisionTemplateIncorrectCreationReasons), DivisionTemplateIncorrectCreationReasons.WrongDividend);
 
         #region ATagBase Overrides
 

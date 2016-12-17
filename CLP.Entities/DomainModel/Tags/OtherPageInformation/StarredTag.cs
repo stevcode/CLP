@@ -37,7 +37,7 @@ namespace CLP.Entities
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues), AcceptedValues.Unstarred);
 
         #region ATagBase Overrides
 

@@ -30,7 +30,7 @@ namespace CLP.Entities
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
 
         /// <summary>Number of RepresentationCorrectnessTags set to Correct.</summary>
         public int CorrectCount

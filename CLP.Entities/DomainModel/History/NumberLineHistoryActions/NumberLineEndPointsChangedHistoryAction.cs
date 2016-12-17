@@ -99,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(NewStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double)), 0;
+        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double), 0);
 
         #endregion // Properties
 

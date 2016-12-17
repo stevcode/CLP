@@ -60,7 +60,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="ATagBase" />.</summary>
         public string OwnerID
