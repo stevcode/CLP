@@ -40,7 +40,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Location of the <see cref="IHistoryAction" /> in the entirety of history, including UndoActions and RedoActions.</summary>
         public int HistoryActionIndex
@@ -86,7 +86,7 @@ namespace CLP.Entities
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public CLPPage ParentPage
+        public CLPPage ParentPage    // TODO: Have to set after Deserialization, otherwise null
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
             set { SetValue(ParentPageProperty, value); }

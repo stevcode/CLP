@@ -43,7 +43,7 @@ namespace CLP.Entities
             set { SetValue(CompletenessValueProperty, value); }
         }
 
-        public static readonly PropertyData CompletenessValueProperty = RegisterProperty("CompletenessValue", typeof(DivisionTemplateCompletenessValues));
+        public static readonly PropertyData CompletenessValueProperty = RegisterProperty("CompletenessValue", typeof(DivisionTemplateCompletenessValues), DivisionTemplateCompletenessValues.NoArrays);
 
         #region ATagBase Overrides
 

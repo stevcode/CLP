@@ -40,10 +40,10 @@ namespace CLP.Entities
     {
         #region Constants
 
-        public const double LANDSCAPE_HEIGHT = 816;
-        public const double LANDSCAPE_WIDTH = 1056;
-        public const double PORTRAIT_HEIGHT = 1056;
-        public const double PORTRAIT_WIDTH = 816;
+        public const double LANDSCAPE_HEIGHT = 816.0;
+        public const double LANDSCAPE_WIDTH = 1056.0;
+        public const double PORTRAIT_HEIGHT = 1056.0;
+        public const double PORTRAIT_WIDTH = 816.0;
 
         #endregion // Constants
 
@@ -79,7 +79,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="CLPPage" />.</summary>
         public string OwnerID
@@ -225,7 +225,7 @@ namespace CLP.Entities
             set { SetValue(InitialAspectRatioProperty, value); }
         }
 
-        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
+        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double), 0.0);
 
         /// <summary>Type of lines on the background of the <see cref="CLPPage" />.</summary>
         public PageLineTypes PageLineType

@@ -6,6 +6,8 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
+using Newtonsoft.Json;
+using JsonSerializer = Catel.Runtime.Serialization.Json.JsonSerializer;
 
 namespace CLP.Entities
 {
@@ -23,11 +25,16 @@ namespace CLP.Entities
         {
             using (var stream = new MemoryStream())
             {
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                jsonSerializer.WriteTypeInfo = true;
-                jsonSerializer.PreserveReferences = true;
-                jsonSerializer.FormatWithIndents = formatWithIndents;
-                jsonSerializer.Serialize(this, stream, null);
+                var configuration = new JsonSerializationConfiguration
+                                    {
+                                        Formatting = formatWithIndents ? Formatting.Indented : Formatting.None,
+                                        DateParseHandling = DateParseHandling.DateTime,
+                                        DateTimeKind = DateTimeKind.Unspecified,
+                                        DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
+                                    };
+
+                var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
+                jsonSerializer.Serialize(this, stream, configuration);
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {
@@ -41,10 +48,17 @@ namespace CLP.Entities
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
+                var configuration = new JsonSerializationConfiguration
+                                    {
+                                        DateParseHandling = DateParseHandling.DateTime,
+                                        DateTimeKind = DateTimeKind.Unspecified,
+                                        DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
+                                    };
+
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
                 //try
                 //{
-                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, null);
+                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, configuration);
                     return (T)deserialized;
                 //}
                 //catch (Exception ex)

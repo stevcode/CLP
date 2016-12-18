@@ -41,7 +41,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
         /// <summary>Person's First Name</summary>
         public string FirstName
@@ -125,9 +125,6 @@ namespace CLP.Entities
         #region Calculated Properties
 
         /// <summary>Formatted full name of the person.</summary>
-        [XmlIgnore]
-        [JsonIgnore]
-        [ExcludeFromSerialization]
         public string FullName
         {
             get

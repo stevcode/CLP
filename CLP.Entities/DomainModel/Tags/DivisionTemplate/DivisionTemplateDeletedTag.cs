@@ -31,7 +31,7 @@ namespace CLP.Entities
             set { SetValue(ArrayDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayDimensionsProperty = RegisterProperty("ArrayDimensions", typeof(List<string>));
+        public static readonly PropertyData ArrayDimensionsProperty = RegisterProperty("ArrayDimensions", typeof(List<string>), () => new List<string>());
 
         #region ATagBase Overrides
 

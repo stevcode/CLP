@@ -42,7 +42,7 @@ namespace CLP.Entities
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(double));
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(double), 0.0);
 
         /// <summary>Divisor of the DivisionTemplate being compared against.</summary>
         public double Divisor
@@ -51,7 +51,7 @@ namespace CLP.Entities
             set { SetValue(DivisorProperty, value); }
         }
 
-        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double));
+        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double), 0.0);
 
         /// <summary>Order in which the associated Division Template occured in the history.</summary>
         public int DivisionTemplateNumber

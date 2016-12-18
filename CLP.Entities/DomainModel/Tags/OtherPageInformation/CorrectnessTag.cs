@@ -38,7 +38,7 @@ namespace CLP.Entities
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
 
         /// <summary>Signifies the Correctness Tag was set by an analysis routine.</summary>
         public bool IsCorrectnessAutomaticallySet

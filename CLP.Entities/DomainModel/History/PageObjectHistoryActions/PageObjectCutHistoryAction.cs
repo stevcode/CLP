@@ -58,7 +58,7 @@ namespace CLP.Entities
             set { SetValue(CuttingStrokeIDProperty, value); }
         }
 
-        public static readonly PropertyData CuttingStrokeIDProperty = RegisterProperty("CuttingStrokeID", typeof(string));
+        public static readonly PropertyData CuttingStrokeIDProperty = RegisterProperty("CuttingStrokeID", typeof(string), string.Empty);
 
         /// <summary>ID of the pageObject that was cut.</summary>
         public string CutPageObjectID
@@ -76,7 +76,7 @@ namespace CLP.Entities
             set { SetValue(HalvedPageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData HalvedPageObjectIDsProperty = RegisterProperty("HalvedPageObjectIDs", typeof(List<string>));
+        public static readonly PropertyData HalvedPageObjectIDsProperty = RegisterProperty("HalvedPageObjectIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of the Halved <see cref="IPageObject" />s to be used on another machine when <see cref="PageObjectCutHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]

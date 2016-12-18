@@ -41,7 +41,7 @@ namespace CLP.Entities
             set { SetValue(SemanticEventsProperty, value); }
         }
 
-        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>));
+        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());
 
         #region ATagBase Overrides
 

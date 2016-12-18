@@ -55,7 +55,7 @@ namespace CLP.Entities
             set { SetValue(ParentStampIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentStampIDProperty = RegisterProperty("ParentStampID", typeof(string));
+        public static readonly PropertyData ParentStampIDProperty = RegisterProperty("ParentStampID", typeof(string), string.Empty);
 
         /// <summary>The unique Hash of the image this <see cref="StampedObject" /> contains.</summary>
         public string ImageHashID

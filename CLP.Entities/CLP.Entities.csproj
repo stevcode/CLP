@@ -96,12 +96,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Core.4.5.3\lib\net46\Catel.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Catel.Extensions.EntityFramework6, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.EntityFramework6.4.5.3\lib\net45\Catel.Extensions.EntityFramework6.dll</HintPath>
+    <Reference Include="Catel.Core, Version=4.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Catel.Core.4.5.4\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Catel.Serialization.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -246,9 +242,7 @@
     <Compile Include="DomainModel\Tags\OtherPageInformation\HighlightedObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\Representation\RepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Representation\RepresentationsUsedTag.cs" />
-    <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\ProblemTypeTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\TagAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Stamp\StampTroubleWithGroupingTag.cs" />

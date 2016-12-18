@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(WebcamRotationProperty, value); }
         }
 
-        public static readonly PropertyData WebcamRotationProperty = RegisterProperty("WebcamRotation", typeof(double), 180d);
+        public static readonly PropertyData WebcamRotationProperty = RegisterProperty("WebcamRotation", typeof(double), 180.0);
 
         /// <summary>
         /// Gets or sets the property value.

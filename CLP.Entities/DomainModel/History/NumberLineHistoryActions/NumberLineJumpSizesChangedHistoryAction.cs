@@ -61,7 +61,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineIDProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string));
+        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string), string.Empty);
 
         /// <summary>IDs of the Strokes used to create a Jump.</summary>
         public List<string> AddedJumpStrokeIDs
@@ -70,7 +70,7 @@ namespace CLP.Entities
             set { SetValue(AddedJumpStrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof(List<string>));
+        public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>Jumps added by the strokes in AddedJumpStrokeIDs</summary>
         public List<NumberLineJumpSize> JumpsAdded
@@ -106,7 +106,7 @@ namespace CLP.Entities
             set { SetValue(PreviousHeightProperty, value); }
         }
 
-        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof(double));
+        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof(double), 0.0);
 
         /// <summary>Previous YPosition of the number line.</summary>
         public double PreviousYPosition
@@ -115,7 +115,7 @@ namespace CLP.Entities
             set { SetValue(PreviousYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof(double));
+        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof(double), 0.0);
 
         /// <summary>New Height of the number line.</summary>
         public double NewHeight
@@ -124,7 +124,7 @@ namespace CLP.Entities
             set { SetValue(NewHeightProperty, value); }
         }
 
-        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double));
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double), 0.0);
 
         /// <summary>New YPositiong of the number line.</summary>
         public double NewYPosition
@@ -133,7 +133,7 @@ namespace CLP.Entities
             set { SetValue(NewYPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double));
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double), 0.0);
 
         #endregion // Properties
 

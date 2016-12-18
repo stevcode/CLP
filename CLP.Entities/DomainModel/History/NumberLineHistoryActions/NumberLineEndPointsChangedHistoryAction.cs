@@ -45,7 +45,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineIDProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string));
+        public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof(string), string.Empty);
 
         /// <summary>Previous start value of the number line.</summary>
         public int PreviousStartValue
@@ -54,7 +54,7 @@ namespace CLP.Entities
             set { SetValue(PreviousStartValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousStartValueProperty = RegisterProperty("PreviousStartValue", typeof(int));
+        public static readonly PropertyData PreviousStartValueProperty = RegisterProperty("PreviousStartValue", typeof(int), 0);
 
         /// <summary>New start value of the number line.</summary>
         public int NewStartValue
@@ -63,7 +63,7 @@ namespace CLP.Entities
             set { SetValue(NewStartValueProperty, value); }
         }
 
-        public static readonly PropertyData NewStartValueProperty = RegisterProperty("NewStartValue", typeof(int));
+        public static readonly PropertyData NewStartValueProperty = RegisterProperty("NewStartValue", typeof(int), 0);
 
         /// <summary>Previous end value of the number line.</summary>
         public int PreviousEndValue
@@ -72,7 +72,7 @@ namespace CLP.Entities
             set { SetValue(PreviousEndValueProperty, value); }
         }
 
-        public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof(int));
+        public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof(int), 0);
 
         /// <summary>New end value of the number line.</summary>
         public int NewEndValue
@@ -81,7 +81,7 @@ namespace CLP.Entities
             set { SetValue(NewEndValueProperty, value); }
         }
 
-        public static readonly PropertyData NewEndValueProperty = RegisterProperty("NewEndValue", typeof(int));
+        public static readonly PropertyData NewEndValueProperty = RegisterProperty("NewEndValue", typeof(int), 0);
 
         /// <summary>Width before a resize that involves stretching captured ink strokes.</summary>
         public double PreStretchedWidth
@@ -90,7 +90,7 @@ namespace CLP.Entities
             set { SetValue(PreStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof(double));
+        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof(double), 0.0);
 
         /// <summary>Width after a resize that involves stretching captured ink strokes.</summary>
         public double NewStretchedWidth
@@ -99,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(NewStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double));
+        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double), 0.0);
 
         #endregion // Properties
 

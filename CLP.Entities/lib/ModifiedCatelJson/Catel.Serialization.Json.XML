@@ -17,12 +17,85 @@
             Initializes the module.
             </summary>
         </member>
-        <member name="T:Catel.Runtime.Serialization.Binary.JsonSerializationContextInfoFactory">
+        <member name="T:Catel.Runtime.Serialization.Json.ICustomJsonSerializable">
+            <summary>
+            Allows a type to implement their own (de)serialization mechanism.
+            </summary>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.ICustomJsonSerializable.Serialize(Newtonsoft.Json.JsonWriter)">
+            <summary>
+            Serializes the object to the specified json writer.
+            </summary>
+            <param name="jsonWriter">The json writer.</param>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.ICustomJsonSerializable.Deserialize(Newtonsoft.Json.JsonReader)">
+            <summary>
+            Serializes the object from the specified json reader.
+            <para />
+            Note that the object is always constructed by the serialization engine, the
+            object itself must read the values from the <paramref name="jsonReader"/>.
+            </summary>
+            <param name="jsonReader">The json reader.</param>
+        </member>
+        <member name="T:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration">
+            <summary>
+            Serialization configuration with additional json configuration.
+            </summary>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.UseBson">
+            <summary>
+            Gets or sets a value indicating whether the use bson instead of json.
+            </summary>
+            <value>
+              <c>true</c> if bson should be used instead of json; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.DateTimeKind">
+            <summary>
+            Gets or sets the kind of the date time.
+            </summary>
+            <value>
+            The kind of the date time.
+            </value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.DateParseHandling">
+            <summary>
+            Gets or sets the date parse handling.
+            </summary>
+            <value>
+            The date parse handling.
+            </value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.DateTimeZoneHandling">
+            <summary>
+            Gets or sets the date time zone handling.
+            </summary>
+            <value>
+            The date time zone handling.
+            </value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.Formatting">
+            <summary>
+            Gets or sets the json formatting.
+            </summary>
+            <value>
+            The json formatting.
+            </value>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.IsEnumSerializedWithString">
+            <summary>
+            Gets or sets a value indicating whether to serialize Enum as string instead of int.
+            </summary>
+            <value>
+                <c>true</c> if Enum is serialized as string; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:Catel.Runtime.Serialization.Json.JsonSerializationContextInfoFactory">
             <summary>
             Json serialization context factory.
             </summary>
         </member>
-        <member name="M:Catel.Runtime.Serialization.Binary.JsonSerializationContextInfoFactory.GetSerializationContextInfo(Catel.Runtime.Serialization.ISerializer,System.Object,System.Object)">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializationContextInfoFactory.GetSerializationContextInfo(Catel.Runtime.Serialization.ISerializer,System.Object,System.Object)">
             <summary>
             Gets the serialization context information.
             </summary>
@@ -33,7 +106,7 @@
             ISerializationContextInfo.
             </returns>
         </member>
-        <member name="M:Catel.Runtime.Serialization.Binary.JsonSerializationContextInfoFactory.GetSerializationContextInfo(Catel.Runtime.Serialization.ISerializer,System.Object,System.Object,Catel.Runtime.Serialization.ISerializationConfiguration)">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializationContextInfoFactory.GetSerializationContextInfo(Catel.Runtime.Serialization.ISerializer,System.Object,System.Object,Catel.Runtime.Serialization.ISerializationConfiguration)">
             <summary>
             Gets the serialization context information.
             </summary>
@@ -57,6 +130,43 @@
             <param name="objectType">Type of the object.</param>
             <returns>JsonConverter.</returns>
         </member>
+        <member name="T:Catel.Runtime.Serialization.Json.CatelJsonConverter">
+            <summary>
+            Converts Catel models manually using the Catel serializer.
+            </summary>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.CatelJsonConverter.#ctor(Catel.Runtime.Serialization.Json.IJsonSerializer,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Runtime.Serialization.Json.CatelJsonConverter" /> class.
+            </summary>
+            <param name="jsonSerializer">The json serializer.</param>
+            <param name="configuration">The configuration.</param>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.CatelJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Writes the json.
+            </summary>
+            <param name="writer">The writer.</param>
+            <param name="value">The value.</param>
+            <param name="serializer">The serializer.</param>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.CatelJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Reads the json.
+            </summary>
+            <param name="reader">The reader.</param>
+            <param name="objectType">Type of the object.</param>
+            <param name="existingValue">The existing value.</param>
+            <param name="serializer">The serializer.</param>
+            <returns>System.Object.</returns>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.CatelJsonConverter.CanConvert(System.Type)">
+            <summary>
+            Determines whether this instance can convert the specified object type.
+            </summary>
+            <param name="objectType">Type of the object.</param>
+            <returns><c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="T:Catel.Runtime.Serialization.Json.IJsonSerializer">
             <summary>
             Interface for the binary serializer.
@@ -75,12 +185,6 @@
             Gets or sets a value indicating whether type information should be written to the json output.
             </summary>
             <value><c>true</c> if type info should be written; otherwise, <c>false</c>.</value>
-        </member>
-        <member name="P:Catel.Runtime.Serialization.Json.IJsonSerializer.FormatWithIndents">
-            <summary>
-            Gets or sets a value indicating whether the json output is formatted with indents.
-            </summary>
-            <value><c>true</c> if json output is formatted with indents; otherwise, <c>false</c>.</value>
         </member>
         <member name="M:Catel.Runtime.Serialization.Json.IJsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter)">
             <summary>
@@ -210,11 +314,20 @@
             </summary>
             <value><c>true</c> if type info should be written; otherwise, <c>false</c>.</value>
         </member>
-        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializer.FormatWithIndents">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Serialize(System.Object,Catel.Runtime.Serialization.ISerializationContext{Catel.Runtime.Serialization.Json.JsonSerializationContextInfo})">
             <summary>
-            Gets or sets a value indicating whether the json output is formatted with indents.
+            Serializes the specified model.
             </summary>
-            <value><c>true</c> if json output is formatted with indents; otherwise, <c>false</c>.</value>
+            <param name="model">The model.</param>
+            <param name="context">The context.</param>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Deserialize(System.Object,Catel.Runtime.Serialization.ISerializationContext{Catel.Runtime.Serialization.Json.JsonSerializationContextInfo})">
+            <summary>
+            Deserializes the specified model.
+            </summary>
+            <param name="model">The model.</param>
+            <param name="context">The context.</param>
+            <returns></returns>
         </member>
         <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.Serialize(System.Object,Newtonsoft.Json.JsonWriter)">
             <summary>
@@ -328,42 +441,14 @@
             <param name="context">The context.</param>
             <param name="stream">The stream.</param>
         </member>
-        <member name="T:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter">
+        <member name="M:Catel.Runtime.Serialization.Json.JsonSerializer.ShouldExternalSerializerHandleMember(System.Type)">
             <summary>
-            Converts Catel models manually using the Catel serializer.
+            Returns whether json.net should handle the member.  
+            <para />
+            By default it only handles non-class types.
             </summary>
-        </member>
-        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.#ctor(Catel.Runtime.Serialization.Json.IJsonSerializer,Catel.Runtime.Serialization.ISerializationConfiguration)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter" /> class.
-            </summary>
-            <param name="jsonSerializer">The json serializer.</param>
-            <param name="configuration">The configuration.</param>
-        </member>
-        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
-            <summary>
-            Writes the json.
-            </summary>
-            <param name="writer">The writer.</param>
-            <param name="value">The value.</param>
-            <param name="serializer">The serializer.</param>
-        </member>
-        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
-            <summary>
-            Reads the json.
-            </summary>
-            <param name="reader">The reader.</param>
-            <param name="objectType">Type of the object.</param>
-            <param name="existingValue">The existing value.</param>
-            <param name="serializer">The serializer.</param>
-            <returns>System.Object.</returns>
-        </member>
-        <member name="M:Catel.Runtime.Serialization.JsonSerialization.CatelJsonConverter.CanConvert(System.Type)">
-            <summary>
-            Determines whether this instance can convert the specified object type.
-            </summary>
-            <param name="objectType">Type of the object.</param>
-            <returns><c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.</returns>
+            <param name="memberType">Type of the member.</param>
+            <returns><c>true</c> if json.net should handle the type, <c>false</c> otherwise.</returns>
         </member>
         <member name="T:Catel.JsonExtensions">
             <summary>
@@ -385,6 +470,16 @@
             <param name="configuration">The configuration.</param>
             <returns>
             System.String.
+            </returns>
+        </member>
+        <member name="M:Catel.JsonExtensions.CreateReader(Newtonsoft.Json.Linq.JToken,Catel.Runtime.Serialization.ISerializationConfiguration)">
+            <summary>
+            Creates a json reader with the right configuration.
+            </summary>
+            <param name="token">The token.</param>
+            <param name="configuration">The configuration.</param>
+            <returns>
+            The json reader.
             </returns>
         </member>
         <member name="T:Catel.SerializationJsonModule">

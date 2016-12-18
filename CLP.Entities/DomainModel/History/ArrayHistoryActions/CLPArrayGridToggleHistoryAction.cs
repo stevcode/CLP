@@ -32,7 +32,7 @@ namespace CLP.Entities
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string), string.Empty);
 
         /// <summary>Grid for Array was toggled to visible.</summary>
         public bool IsToggledOn

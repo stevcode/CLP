@@ -53,7 +53,7 @@ namespace CLP.Entities
             set { SetValue(QuotientProperty, value); }
         }
 
-        public static readonly PropertyData QuotientProperty = RegisterProperty("Quotient", typeof(double), 0);
+        public static readonly PropertyData QuotientProperty = RegisterProperty("Quotient", typeof(double), 0.0);
 
         /// <summary>Remainder of the division relation. Dividend / Divisor = Quotient R Remainder.</summary>
         public double Remainder
@@ -62,7 +62,7 @@ namespace CLP.Entities
             set { SetValue(RemainderProperty, value); }
         }
 
-        public static readonly PropertyData RemainderProperty = RegisterProperty("Remainder", typeof(double), 0);
+        public static readonly PropertyData RemainderProperty = RegisterProperty("Remainder", typeof(double), 0.0);
 
         /// <summary>Type of division relationship the relation defines.</summary>
         public RelationTypes RelationType

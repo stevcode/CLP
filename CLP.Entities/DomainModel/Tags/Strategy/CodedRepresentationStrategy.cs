@@ -77,19 +77,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData StrategySpecificsProperty = RegisterProperty("StrategySpecifics", typeof(string), string.Empty);
 
-        #region Backing Properties
-
-        /// <summary>Cached value of CodedValue.</summary>
-        public string CachedCodedValue
-        {
-            get { return GetValue<string>(CachedCodedValueProperty); }
-            set { SetValue(CachedCodedValueProperty, value); }
-        }
-
-        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
-
-        #endregion // Backing Properties
-
         #region Calculated Properties
 
         /// <summary>Takes the following form: STRATEGY: REPRESENTATION [ID increment_id: resultant_id] specifics</summary>

@@ -109,7 +109,7 @@ namespace CLP.Entities
             set { SetValue(TravelledPositionsProperty, value); }
         }
 
-        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof(List<Point>));
+        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof(List<Point>), () => new List<Point>());
 
         #endregion // Properties
 

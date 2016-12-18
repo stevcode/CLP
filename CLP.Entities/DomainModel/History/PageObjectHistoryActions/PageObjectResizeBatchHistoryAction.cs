@@ -47,7 +47,7 @@ namespace CLP.Entities
             set { SetValue(StretchedDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof(List<Point>));
+        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof(List<Point>), () => new List<Point>());
 
         public double OriginalWidth => StretchedDimensions.First().X;
 

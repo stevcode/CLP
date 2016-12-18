@@ -48,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(StrategyProperty, value); }
         }
 
-        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof(DivisionTemplateStrategies));
+        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof(DivisionTemplateStrategies), DivisionTemplateStrategies.Other);
 
         /// <summary>List of all divider values used to fill up the Division Template.</summary>
         public List<int> DividerValues
