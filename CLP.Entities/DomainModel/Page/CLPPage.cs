@@ -162,7 +162,7 @@ namespace CLP.Entities
             set { SetValue(LastVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?), 0);
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
         /// <summary>Date and Time the <see cref="CLPPage" /> was created.</summary>
         public DateTime CreationDate
