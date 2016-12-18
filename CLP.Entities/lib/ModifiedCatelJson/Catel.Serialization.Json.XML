@@ -82,6 +82,14 @@
             The json formatting.
             </value>
         </member>
+        <member name="P:Catel.Runtime.Serialization.Json.JsonSerializationConfiguration.IsEnumSerializedWithString">
+            <summary>
+            Gets or sets a value indicating whether to serialize Enum as string instead of int.
+            </summary>
+            <value>
+                <c>true</c> if Enum is serialized as string; otherwise, <c>false</c>.
+            </value>
+        </member>
         <member name="T:Catel.Runtime.Serialization.Json.JsonSerializationContextInfoFactory">
             <summary>
             Json serialization context factory.
