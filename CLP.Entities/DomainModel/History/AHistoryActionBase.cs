@@ -86,7 +86,7 @@ namespace CLP.Entities
         [XmlIgnore]
         [JsonIgnore]
         [ExcludeFromSerialization]
-        public CLPPage ParentPage    // TODO: Have to se after Deserialization, otherwise null
+        public CLPPage ParentPage    // TODO: Have to set after Deserialization, otherwise null
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
             set { SetValue(ParentPageProperty, value); }
