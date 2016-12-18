@@ -90,7 +90,7 @@ namespace CLP.Entities
             set { SetValue(PreStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof(double), 0);
+        public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof(double), 0.0);
 
         /// <summary>Width after a resize that involves stretching captured ink strokes.</summary>
         public double NewStretchedWidth
@@ -99,7 +99,7 @@ namespace CLP.Entities
             set { SetValue(NewStretchedWidthProperty, value); }
         }
 
-        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double), 0);
+        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof(double), 0.0);
 
         #endregion // Properties
 

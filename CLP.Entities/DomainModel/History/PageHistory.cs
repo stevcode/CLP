@@ -206,7 +206,7 @@ namespace CLP.Entities
             set { SetValue(CurrentHistoryTickProperty, value); }
         }
 
-        public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0);
+        public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0.0);
 
         public int CurrentHistoryIndex
         {

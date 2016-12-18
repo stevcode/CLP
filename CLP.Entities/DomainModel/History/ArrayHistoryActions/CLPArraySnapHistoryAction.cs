@@ -62,7 +62,7 @@ namespace CLP.Entities
             set { SetValue(SnappedArraySquareSizeProperty, value); }
         }
 
-        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double), 0);
+        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double), 0.0);
 
         /// <summary>UniqueID of the array that snaps on and continues to exist.</summary>
         public string PersistingArrayID
@@ -120,7 +120,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayXOrYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double), 0);
+        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double), 0.0);
 
         #endregion // Properties
 

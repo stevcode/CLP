@@ -48,7 +48,7 @@ namespace CLP.Entities
             set { SetValue(PositionProperty, value); }
         }
 
-        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0);
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0.0);
 
         /// <summary>The length of the array division.</summary>
         public double Length
@@ -57,7 +57,7 @@ namespace CLP.Entities
             set { SetValue(LengthProperty, value); }
         }
 
-        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0.0);
 
         /// <summary>The value that was written by the student as the label on that side length. 0 if unlabelled.</summary>
         public int Value

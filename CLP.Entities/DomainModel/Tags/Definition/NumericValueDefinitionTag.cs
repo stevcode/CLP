@@ -27,7 +27,7 @@ namespace CLP.Entities
             set { SetValue(NumericValueProperty, value); }
         }
 
-        public static readonly PropertyData NumericValueProperty = RegisterProperty("NumericValue", typeof(double), 0);
+        public static readonly PropertyData NumericValueProperty = RegisterProperty("NumericValue", typeof(double), 0.0);
 
         /// <summary>Determines whether the numeric value is a given and as such should be displayed.</summary>
         public bool IsNotGiven

@@ -106,7 +106,7 @@ namespace CLP.Entities
             set { SetValue(PreviousHeightProperty, value); }
         }
 
-        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof(double), 0);
+        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof(double), 0.0);
 
         /// <summary>Previous YPosition of the number line.</summary>
         public double PreviousYPosition
@@ -115,7 +115,7 @@ namespace CLP.Entities
             set { SetValue(PreviousYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof(double), 0);
+        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof(double), 0.0);
 
         /// <summary>New Height of the number line.</summary>
         public double NewHeight
@@ -124,7 +124,7 @@ namespace CLP.Entities
             set { SetValue(NewHeightProperty, value); }
         }
 
-        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double), 0);
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof(double), 0.0);
 
         /// <summary>New YPositiong of the number line.</summary>
         public double NewYPosition
@@ -133,7 +133,7 @@ namespace CLP.Entities
             set { SetValue(NewYPositionProperty, value); }
         }
 
-        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double), 0);
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof(double), 0.0);
 
         #endregion // Properties
 

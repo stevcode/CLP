@@ -44,7 +44,7 @@ namespace CLP.Entities
             set { SetValue(SumProperty, value); }
         }
 
-        public static readonly PropertyData SumProperty = RegisterProperty("Sum", typeof(double), 0);
+        public static readonly PropertyData SumProperty = RegisterProperty("Sum", typeof(double), 0.0);
 
         /// <summary>Type of multiplication relationship the relation defines.</summary>
         public RelationTypes RelationType
