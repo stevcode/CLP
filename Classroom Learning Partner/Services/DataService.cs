@@ -1361,6 +1361,7 @@ namespace Classroom_Learning_Partner.Services
             var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
             var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
             ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
+            ConversionService.SaveAnnImagesToZip(ConversionService.AnnZipFilePath);
         }
 
         private void AddAnnSessions()
