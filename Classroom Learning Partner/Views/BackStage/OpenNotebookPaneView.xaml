@@ -95,8 +95,48 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Class"
-                       Style="{StaticResource BackStageHeaderTextBlock}" />
+            <DockPanel LastChildFill="True">
+
+                <Button DockPanel.Dock="Right"
+                        Command="{Binding OpenCacheFolderCommand}"
+                        Width="24"
+                        Height="24"
+                        Margin="3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+
+                            <Setter Property="SnapsToDevicePixels"
+                                    Value="true" />
+
+                            <Setter Property="OverridesDefaultStyle"
+                                    Value="true" />
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                    <Image Source="pack://application:,,,/Resources/Images/Folder128.png"
+                           Height="24"
+                           Width="24" />
+
+                </Button>
+
+                <TextBlock Text="Class"
+                           Style="{StaticResource BackStageHeaderTextBlock}" />
+
+            </DockPanel>
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding AvailableZipContainerFileNames}"
@@ -155,7 +195,7 @@
                        Margin="26 10 0 10"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <catel:StackGrid DockPanel.Dock="Left" 
+            <catel:StackGrid DockPanel.Dock="Left"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Margin="26 0 0 0">

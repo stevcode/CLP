@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -126,6 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
             OpenSessionCommand = new Command(OnOpenSessionCommandExecute, OnOpenNotebookCanExecute);
+            OpenCacheFolderCommand = new Command(OnOpenCacheFolderCommandExecute);
         }
 
         /// <summary>Opens selected notebook.</summary>
@@ -204,6 +206,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _dataService.LoadNotebook(SelectedNotebook, pageNumbersToOpen, IsIncludeSubmissionsChecked);
+        }
+
+        /// <summary>Opens the cache folder in Windows Exploerer.</summary>
+        public Command OpenCacheFolderCommand { get; private set; }
+
+        private void OnOpenCacheFolderCommandExecute()
+        {
+            var cacheFolder = _dataService.CurrentCacheFolderPath;
+            const string EXPLORER_PROCESS_NAME = "explorer";
+
+            Process.Start(EXPLORER_PROCESS_NAME, cacheFolder);
         }
 
         #endregion //Commands
