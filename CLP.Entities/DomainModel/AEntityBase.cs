@@ -28,6 +28,7 @@ namespace CLP.Entities
                 var configuration = new JsonSerializationConfiguration
                                     {
                                         Formatting = formatWithIndents ? Formatting.Indented : Formatting.None,
+                                        IsEnumSerializedWithString = true,
                                         DateParseHandling = DateParseHandling.DateTime,
                                         DateTimeKind = DateTimeKind.Unspecified,
                                         DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
@@ -50,6 +51,7 @@ namespace CLP.Entities
             {
                 var configuration = new JsonSerializationConfiguration
                                     {
+                                        IsEnumSerializedWithString = true,
                                         DateParseHandling = DateParseHandling.DateTime,
                                         DateTimeKind = DateTimeKind.Unspecified,
                                         DateTimeZoneHandling = DateTimeZoneHandling.Unspecified
