@@ -43,7 +43,7 @@ namespace CLP.Entities
             set { SetValue(OffsetProperty, value); }
         }
 
-        public static readonly PropertyData OffsetProperty = RegisterProperty("Offset", typeof (double), 0);
+        public static readonly PropertyData OffsetProperty = RegisterProperty("Offset", typeof (double), 0.0);
 
         /// <summary>Label inside the choice bubble.</summary>
         public string BubbleContent
