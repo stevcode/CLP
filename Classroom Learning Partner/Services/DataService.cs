@@ -529,12 +529,6 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var oldPage = CurrentNotebook.CurrentPage;
-            if (oldPage != null &&
-                isSavingOldPage)
-            {
-                AutoSavePage(CurrentNotebook, oldPage);
-            }
-
             CurrentNotebook.CurrentPage = page;
 
             // TODO: Handle multiDisplays
@@ -550,6 +544,11 @@ namespace Classroom_Learning_Partner.Services
             //CurrentDisplay.AddPageToDisplay(page);
 
             CurrentPageChanged.SafeInvoke(this);
+            if (oldPage != null &&
+                isSavingOldPage)
+            {
+                AutoSavePage(CurrentNotebook, oldPage);
+            }
         }
 
         public void AddPage(Notebook notebook, CLPPage page)
@@ -1361,6 +1360,7 @@ namespace Classroom_Learning_Partner.Services
             var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
             var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
             ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
+            ConversionService.SaveAnnImagesToZip(ConversionService.AnnZipFilePath);
         }
 
         private void AddAnnSessions()

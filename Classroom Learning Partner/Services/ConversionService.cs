@@ -619,6 +619,7 @@ namespace Classroom_Learning_Partner.Services
         public static string AnnNotebooksFolder => Path.Combine(AnnCacheFolder, "Notebooks");
         public static string AnnClassesFolder => Path.Combine(AnnCacheFolder, "Classes");
         public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
+        public static string AnnImageFolder => Path.Combine(DataService.DesktopFolderPath, "images");
 
         #endregion // Locations
 
@@ -766,6 +767,40 @@ namespace Classroom_Learning_Partner.Services
                 foreach (var zipEntrySaver in entryList)
                 {
                     zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static void SaveAnnImagesToZip(string zipFilePath)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var directoryInfo = new DirectoryInfo(AnnImageFolder);
+                foreach (var fileInfo in directoryInfo.GetFiles())
+                {
+                    var fileNameWithExtension = fileInfo.Name;
+                    var imageFilePath = fileInfo.FullName;
+
+                    var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, fileNameWithExtension);
+                    if (zip.ContainsEntry(internalFilePath))
+                    {
+                        continue;
+                    }
+
+                    var entry = zip.AddFile(imageFilePath);
+                    entry.FileName = internalFilePath;
                 }
 
                 zip.Save();
