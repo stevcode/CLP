@@ -210,6 +210,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPersonCommandExecute(bool isTeacher)
         {
+            if (isTeacher && ListOfTeachers.Any())
+            {
+                MessageBox.Show("Only one Teacher may be added.");
+                return;
+            }
+
             var person = new Person
             {
                 IsStudent = !isTeacher
