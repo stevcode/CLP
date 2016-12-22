@@ -46,7 +46,7 @@ namespace Classroom_Learning_Partner.Services
         // Notebook
         void SetCurrentNotebook(Notebook notebook);
         void CreateAuthorNotebook(string notebookName, string zipContainerFilePath);
-        void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true);
+        void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true, string overwrittenStartingPageID = "");
 
         // Display
         void SetCurrentDisplay(IDisplay display);

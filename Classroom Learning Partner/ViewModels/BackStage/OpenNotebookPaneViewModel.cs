@@ -205,7 +205,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            _dataService.LoadNotebook(SelectedNotebook, pageNumbersToOpen, IsIncludeSubmissionsChecked);
+            var startingPageID = session.StartingPageID;
+
+            _dataService.LoadNotebook(SelectedNotebook, pageNumbersToOpen, IsIncludeSubmissionsChecked, startingPageID);
         }
 
         /// <summary>Opens the cache folder in Windows Exploerer.</summary>

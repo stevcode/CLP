@@ -440,14 +440,14 @@ namespace Classroom_Learning_Partner.Services
             AddPage(notebook, new CLPPage(Person.Author));
         }
 
-        public void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true)
+        public void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true, string overwrittenStartingPageID = "")
         {
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             SetCurrentClassRoster(classRoster);
 
-            LoadPagesIntoNotebook(notebook, pageNumbers);
+            LoadPagesIntoNotebook(notebook, pageNumbers, overwrittenStartingPageID);
             LoadedNotebooks.Add(notebook);
 
             if (!owner.IsStudent &&
@@ -457,7 +457,7 @@ namespace Classroom_Learning_Partner.Services
                 var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath);
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
-                    LoadPagesIntoNotebook(studentNotebook, pageNumbers);
+                    LoadPagesIntoNotebook(studentNotebook, pageNumbers, overwrittenStartingPageID);
                     LoadedNotebooks.Add(studentNotebook);
                 }
             }
@@ -1002,7 +1002,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void LoadPagesIntoNotebook(Notebook notebook, List<int> pageNumbers)
+        public static void LoadPagesIntoNotebook(Notebook notebook, List<int> pageNumbers, string overwrittenStartingPageID = "")
         {
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
@@ -1046,6 +1046,10 @@ namespace Classroom_Learning_Partner.Services
 
             notebook.Pages.AddRange(pages);
             notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(overwrittenStartingPageID))
+            {
+                notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == overwrittenStartingPageID) ?? pages.FirstOrDefault();
+            }
         }
 
         public static void SaveNotebook(Notebook notebook)
