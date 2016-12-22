@@ -161,7 +161,7 @@
 
         <!-- Animation Control Ribbon -->
         <DockPanel DockPanel.Dock="Top"
-                   Height="69"
+                   Height="34"
                    LastChildFill="True"
                    HorizontalAlignment="Stretch"
                    Background="{StaticResource GrayBackgroundColor}"
