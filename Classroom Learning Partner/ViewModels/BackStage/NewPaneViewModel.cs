@@ -92,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (AvailableZipContainerFileNames.Select(s => s.ToUpper()).Contains(NewZipContainerFileName.ToUpper()))
             {
-                MessageBox.Show("The new class name cannot be the same as an existing class name.");
+                MessageBox.Show("The new class roster name cannot be the same as an existing class roster name.");
                 return;
             }
 

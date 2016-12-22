@@ -47,7 +47,7 @@
 
                     <Image Source="pack://application:,,,/Resources/Images/SaveNotebook32.png" />
 
-                    <TextBlock Text="Edit Class" />
+                    <TextBlock Text="Edit Class Roster" />
 
                 </StackPanel>
             </Button>

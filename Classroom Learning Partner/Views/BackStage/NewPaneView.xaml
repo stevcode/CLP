@@ -32,13 +32,13 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="For New Class"
+            <TextBlock Text="For New Class Roster"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
             <TextBox Text="{Binding NewZipContainerFileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                      Style="{StaticResource BackStageTextBox}" />
 
-            <TextBlock Text="For Existing Class"
+            <TextBlock Text="For Existing Class Roster"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -46,7 +46,7 @@
                      SelectedItem="{Binding SelectedExistingZipContainerFileName}"
                      SelectionMode="Single"
                      ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
-                     Width="275"
+                     Width="315"
                      ManipulationBoundaryFeedback="ListBox_OnManipulationBoundaryFeedback">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

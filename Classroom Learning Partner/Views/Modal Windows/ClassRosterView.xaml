@@ -4,7 +4,7 @@
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:system="clr-namespace:System;assembly=mscorlib"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                  Title="Edit Class"
+                  Title="Edit Class Roster"
                   ShowInTaskbar="False">
     
     <Window.Resources>
@@ -22,7 +22,7 @@
         <StackPanel DockPanel.Dock="Top"
                     Orientation="Horizontal">
 
-            <TextBlock Text="Edit Class"
+            <TextBlock Text="Edit Class Roster"
                        Margin="5 0 0 0"
                        Style="{StaticResource BackStageTitleTextBlock}" />
 
