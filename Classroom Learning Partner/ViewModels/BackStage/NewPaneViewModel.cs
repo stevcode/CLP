@@ -132,7 +132,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var selectedExistingZipContainerFileName = e.NewValue as string;
                 if (!string.IsNullOrWhiteSpace(selectedExistingZipContainerFileName))
                 {
-                    NewZipContainerFileName = null;
+                    NewZipContainerFileName = string.Empty;
                     ZipContainerFileNameToUse = selectedExistingZipContainerFileName;
                 }
 
