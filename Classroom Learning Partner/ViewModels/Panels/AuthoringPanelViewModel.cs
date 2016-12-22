@@ -424,6 +424,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
                 }
                 Notebook.Pages.Insert(index + i, differentiatedPage);
+                _dataService.AutoSavePage(Notebook, differentiatedPage);
             }
 
             var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);

@@ -616,7 +616,7 @@ namespace Classroom_Learning_Partner.Services
                 page.PageNumber = notebook.Pages[index].PageNumber;
             }
 
-            ChangePageNumbersAfterGivenPage(notebook, index, true);
+            ChangePageNumbersAfterGivenPage(notebook, page.PageNumber - 1, true);
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
             
             notebook.Pages.Insert(index, page);
