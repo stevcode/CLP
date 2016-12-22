@@ -358,7 +358,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (CurrentPage.DifferentiationLevel != "0")
             {
-                MessageBox.Show("You cannot differentiate a page that has already been differentiated.");
+                MessageBox.Show("This page has already been differentiated.");
                 return;
             }
 
