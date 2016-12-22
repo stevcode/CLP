@@ -426,7 +426,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 Notebook.Pages.Insert(index + i, differentiatedPage);
             }
 
-            _dataService.SetCurrentPage(originalPage, false);
+            var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);
+            _dataService.SetCurrentPage(lastDifferentiatedPage, false);
         }
 
         /// <summary>Adds a Definiton Tag to the <see cref="CLPPage" />.</summary>
