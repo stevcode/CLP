@@ -14,10 +14,7 @@ namespace Classroom_Learning_Partner
         public Person CurrentUser { get; set; }
         public string CurrentMachineAddress { get; set; }
 
-        public string CurrentMachineName
-        {
-            get { return Environment.MachineName; }
-        }
+        public string CurrentMachineName => Environment.MachineName;
 
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
@@ -29,7 +26,7 @@ namespace Classroom_Learning_Partner
         public IProjectorContract ProjectorProxy { get; set; }
 
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
-        public NetTcpBinding DefaultBinding = new NetTcpBinding("ProxyBinding");
+        public readonly NetTcpBinding DefaultBinding = new NetTcpBinding("ProxyBinding");
 
         public CLPNetwork()
         {
