@@ -356,6 +356,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDifferentiatePageCommandExecute()
         {
+            if (CurrentPage.DifferentiationLevel != "0")
+            {
+                MessageBox.Show("You cannot differentiate a page that has already been differentiated.");
+                return;
+            }
+
             var numberPageVersions = new KeypadWindowView
                                      {
                                          Owner = Application.Current.MainWindow,
