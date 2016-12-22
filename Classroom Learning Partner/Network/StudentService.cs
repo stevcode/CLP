@@ -19,9 +19,6 @@ namespace Classroom_Learning_Partner
         void TogglePenDownMode(bool isPenDownModeEnabled);
 
         [OperationContract]
-        void ToggleAutoNumberLine(bool isAutoNumberLineEnabled);
-
-        [OperationContract]
         void OtherAttemptedLogin(string machineName);
     }
 
@@ -33,11 +30,6 @@ namespace Classroom_Learning_Partner
         public void TogglePenDownMode(bool isPenDownModeEnabled)
         {
             UIHelper.RunOnUI(() => App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled);
-        }
-
-        public void ToggleAutoNumberLine(bool isAutoNumberLineEnabled)
-        {
-            UIHelper.RunOnUI(() => App.MainWindowViewModel.CanUseAutoNumberLine = isAutoNumberLineEnabled);
         }
 
         public void OtherAttemptedLogin(string machineName)

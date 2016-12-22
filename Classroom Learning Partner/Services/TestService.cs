@@ -1087,33 +1087,6 @@ namespace Classroom_Learning_Partner.Services
             //}
         }
 
-        private void OnApplyRenameToCacheCommandExecute()
-        {
-            //var notebookService = DependencyResolver.Resolve<INotebookService>();
-            //if (notebookService == null)
-            //{
-            //    return;
-            //}
-
-            //const string NEW_NAME = "Elvis Garzona";
-            //App.MainWindowViewModel.CurrentUser.FullName = NEW_NAME;
-            //var newPerson = App.MainWindowViewModel.CurrentUser;
-            //var notebook = notebookService.CurrentNotebook;
-            //notebook.Owner = newPerson;
-            //foreach (var page in notebook.Pages)
-            //{
-            //    page.Owner = newPerson;
-            //    foreach (var submission in page.Submissions)
-            //    {
-            //        submission.Owner = newPerson;
-            //    }
-            //}
-        }
-
-        private void OnToggleBindingStyleCommandExecute()
-        {
-            App.MainWindowViewModel.IsUsingOldPageObjectBoundary = !App.MainWindowViewModel.IsUsingOldPageObjectBoundary;
-        }
 
         private void OnReplayHistoryCommandExecute()
         {
