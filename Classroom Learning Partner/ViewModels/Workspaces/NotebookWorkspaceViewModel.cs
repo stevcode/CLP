@@ -36,8 +36,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InitializePanels(Notebook);
 
-            // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
-            WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+            if (Notebook.Owner.ID == Person.AUTHOR_ID)
+            {
+                WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
+            }
+            else
+            {
+                // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
+                WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+            }
 
             InitializedAsync += NotebookWorkspaceViewModel_InitializedAsync;
             ClosedAsync += NotebookWorkspaceViewModel_ClosedAsync;

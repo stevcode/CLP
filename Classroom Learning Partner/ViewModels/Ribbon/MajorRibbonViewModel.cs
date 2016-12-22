@@ -1126,6 +1126,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AddAuthorButtons()
         {
+            if (Buttons.Contains(_insertOther))
+            {
+                return;
+            }
+
             Buttons.Add(Separater);
             Buttons.Add(_insertOther);
         }
