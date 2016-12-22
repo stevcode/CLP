@@ -551,6 +551,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        // TODO: Release, None of these functions act on a partially opened author notebook
         public void AddPage(Notebook notebook, CLPPage page)
         {
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
@@ -562,9 +563,22 @@ namespace Classroom_Learning_Partner.Services
 
         public void InsertPageAt(Notebook notebook, CLPPage page, int index)
         {
+            if (index <= 0)
+            {
+                page.PageNumber = 1;
+            }
+            else if (index >= notebook.Pages.Count)
+            {
+                page.PageNumber = notebook.Pages.Last().PageNumber + 1;
+            }
+            else
+            {
+                page.PageNumber = notebook.Pages[index].PageNumber;
+            }
+
             ChangePageNumbersAfterGivenPage(notebook, index, true);
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
-            page.PageNumber = index + 1;
+            
             notebook.Pages.Insert(index, page);
             AddPageToCurrentDisplay(page);
             SavePage(notebook, page);
@@ -578,11 +592,6 @@ namespace Classroom_Learning_Partner.Services
 
         public void DeletePageAt(Notebook notebook, int index)
         {
-            //TODO: Delete page from notebook
-            //delete page's json
-            //renumber existing pages
-            //function with full cache
-
             if (notebook.Pages.Count <= index ||
                 index < 0)
             {
@@ -932,6 +941,11 @@ namespace Classroom_Learning_Partner.Services
                 entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
                 foreach (var authorPage in authorNotebook.Pages)
                 {
+                    if (authorPage.DifferentiationLevel != student.CurrentDifferentiationGroup &&
+                        authorPage.DifferentiationLevel != "0")
+                    {
+                        continue; // TODO: Release,  confirm only copy differentiated page
+                    }
                     var page = CopyPageForNewOwner(authorPage, student);
                     entryList.Add(new ZipEntrySaver(page, parentNotebookName));
                 }
