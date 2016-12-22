@@ -27,9 +27,9 @@ namespace CLP.Entities
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var codedID = string.Format("{0}x{1}", rotateHistoryAction.OldRows, rotateHistoryAction.OldColumns);
+            var codedID = $"{rotateHistoryAction.OldRows}x{rotateHistoryAction.OldColumns}";
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
-            var eventInfo = string.Format("{0}x{1}", rotateHistoryAction.OldColumns, rotateHistoryAction.OldRows);
+            var eventInfo = $"{rotateHistoryAction.OldColumns}x{rotateHistoryAction.OldRows}";
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(array.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
@@ -145,7 +145,7 @@ namespace CLP.Entities
             {
                 eventInfo += " " + eventInfoIncrementID;
             }
-
+            // TODO: Consider changing from ARR snap [5x4, 2x4] 7x4 to ARR snap [5x4] 2x4 to 7x4?
             var semanticEvent = new SemanticEvent(page, snapHistoryAction)
                                 {
                                     CodedObject = codedObject,
@@ -472,14 +472,14 @@ namespace CLP.Entities
             var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
             var formattedSkipsOnPage = FormatInterpretedSkipCountGroups(interpretedRowValuesOnPage);
 
-            var formattedInterpretation = string.Format("{0};\n\t{1}", formattedSkips, formattedSkipsOnPage);
+            var formattedInterpretation = $"{formattedSkips};\n\t{formattedSkipsOnPage}";
 
             var codedObject = Codings.OBJECT_ARRAY;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
             var location = inkEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
 
-            var eventInfo = string.Format("{0}, {1}", formattedInterpretation, location);
+            var eventInfo = $"{formattedInterpretation}, {location}";
 
             var semanticEvent = new SemanticEvent(page, inkEvent)
                                 {

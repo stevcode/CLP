@@ -451,7 +451,7 @@ namespace CLP.Entities
                                                       CodedObject = Codings.OBJECT_FILL_IN,
                                                       EventType = isPreviousInkAdd ? Codings.EVENT_FILL_IN_ADD : Codings.EVENT_FILL_IN_ERASE,
                                                       CodedObjectID = answer,
-                                                      EventInformation = string.Format("\"{0}\"; \"{1}\", {2}", interpretation, interpretationOnPage, correctness)
+                                                      EventInformation = $"\"{interpretation}\"; \"{interpretationOnPage}\", {correctness}"
                                                   };
 
                                 allRefinedEvents.Add(fillInEvent);
