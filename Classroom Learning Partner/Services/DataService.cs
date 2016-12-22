@@ -448,7 +448,28 @@ namespace Classroom_Learning_Partner.Services
             SetCurrentClassRoster(classRoster);
 
             LoadPagesIntoNotebook(notebook, pageNumbers, overwrittenStartingPageID);
-            LoadedNotebooks.Add(notebook);
+            var existingNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == notebook.ID && n.Owner.ID == notebook.Owner.ID);
+            if (existingNotebook == null)
+            {
+                LoadedNotebooks.Add(notebook);
+                existingNotebook = notebook;
+            }
+            else
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    var existingPage = existingNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                    if (existingPage != null)
+                    {
+                        continue;
+                    }
+
+                    existingNotebook.Pages.Add(page);
+                }
+
+                existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+            }
+            
 
             if (!owner.IsStudent &&
                 owner.ID != Person.AUTHOR_ID &&
@@ -458,11 +479,30 @@ namespace Classroom_Learning_Partner.Services
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
                     LoadPagesIntoNotebook(studentNotebook, pageNumbers, overwrittenStartingPageID);
-                    LoadedNotebooks.Add(studentNotebook);
+
+                    var existingStudentNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == studentNotebook.ID && n.Owner.ID == studentNotebook.Owner.ID);
+                    if (existingStudentNotebook == null)
+                    {
+                        LoadedNotebooks.Add(studentNotebook);
+                    }
+                    else
+                    {
+                        foreach (var page in studentNotebook.Pages)
+                        {
+                            var existingPage = existingStudentNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                            if (existingPage != null)
+                            {
+                                continue;
+                            }
+
+                            existingStudentNotebook.Pages.Add(page);
+                        }
+                        existingStudentNotebook.Pages = existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                    }
                 }
             }
 
-            SetCurrentNotebook(notebook);
+            SetCurrentNotebook(existingNotebook);
         }
 
         #endregion // Notebook Methods
