@@ -1435,6 +1435,16 @@ namespace Classroom_Learning_Partner.Services
             ConversionService.SaveAnnSessionsToZip(ConversionService.AnnZipFilePath, sessions);
         }
 
+        private void UpdateZipFile(string zipContainerFilePath)
+        {
+            if (!File.Exists(zipContainerFilePath))
+            {
+                return;
+            }
+
+            
+        }
+
         #endregion // Tests
     }
 }
