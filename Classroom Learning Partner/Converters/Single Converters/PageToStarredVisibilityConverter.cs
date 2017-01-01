@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.Converters
                 return Visibility.Hidden;
             }
 
-            return page.Submissions.Any() ? page.Submissions.ToList().Last().IsStarred == "Starred" ? Visibility.Visible : Visibility.Hidden : Visibility.Hidden;
+            return page.Submissions.Any(s => s.IsStarred == "Starred") ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }
