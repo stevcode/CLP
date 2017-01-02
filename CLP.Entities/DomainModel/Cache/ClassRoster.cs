@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -8,12 +7,6 @@ namespace CLP.Entities
     [Serializable]
     public class ClassRoster : AInternalZipEntryFile
     {
-        #region Constants
-
-        public const string DEFAULT_INTERNAL_FILE_NAME = "classRoster";
-
-        #endregion // Constants
-
         #region Constructor
 
         /// <summary>Initializes <see cref="ClassRoster" /> from scratch.</summary>
@@ -52,7 +45,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ListOfNotebookSetsProperty = RegisterProperty("ListOfNotebookSets", typeof(ObservableCollection<NotebookSet>), () => new ObservableCollection<NotebookSet>());
-        
+
         /// <summary>List of all the Teachers in the class.</summary>
         public ObservableCollection<Person> ListOfTeachers
         {
@@ -136,11 +129,17 @@ namespace CLP.Entities
 
         #endregion // Properties
 
+        #region Storage
+
+        public const string DEFAULT_INTERNAL_FILE_NAME = "classRoster";
+
+        #endregion // Storage
+
         #region Overrides of AInternalZipEntryFile
 
         public override string DefaultZipEntryName => DEFAULT_INTERNAL_FILE_NAME;
 
-        public override string GetZipEntryFullPath(string parentNotebookName)
+        public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
             return $"{DefaultZipEntryName}.json";
         }

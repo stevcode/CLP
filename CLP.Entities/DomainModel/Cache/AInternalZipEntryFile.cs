@@ -67,7 +67,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        public abstract string GetZipEntryFullPath(string parentNotebookName);
+        public abstract string GetZipEntryFullPath(Notebook parentNotebook);
 
         #endregion // Methods
 

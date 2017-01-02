@@ -137,7 +137,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnAddPageCanExecute()
         {
-            if (CurrentPage.DifferentiationLevel == "0" ||
+            if (CurrentPage == null ||
+                CurrentPage.DifferentiationLevel == "0" ||
                 !Notebook.Pages.Any())
             {
                 return true;

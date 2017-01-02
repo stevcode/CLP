@@ -251,7 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     // TODO: Use notebookSet.NotebookID/.IsConnected to search connected containers
                     var notebooks = DataService.LoadAllNotebooksFromCLPContainer(SelectedZipContainerFullFilePath);
-                    NotebooksInSelectedNotebookSet = notebooks.OrderBy(n => n.OwnerID == Person.AUTHOR_ID ? 0 : 1).ThenBy(n => !n.Owner.IsStudent ? 0 : 1).ThenBy(n => n.Owner.FullName).ToObservableCollection();
+                    NotebooksInSelectedNotebookSet = notebooks.Where(n => n.ID == selectedNotebookSet.NotebookID).OrderBy(n => n.OwnerID == Person.AUTHOR_ID ? 0 : 1).ThenBy(n => !n.Owner.IsStudent ? 0 : 1).ThenBy(n => n.Owner.FullName).ToObservableCollection();
                     SelectedNotebook = NotebooksInSelectedNotebookSet.FirstOrDefault();
                 }
             }

@@ -12,12 +12,6 @@ namespace CLP.Entities
     [Serializable]
     public class Notebook : AInternalZipEntryFile
     {
-        #region Constants
-
-        public const string DEFAULT_INTERNAL_FILE_NAME = "notebook";
-
-        #endregion // Constants
-
         #region Constructors
 
         /// <summary>Initializes <see cref="Notebook" /> from scratch.</summary>
@@ -240,12 +234,6 @@ namespace CLP.Entities
 
         #endregion //Methods
 
-        #region Storage
-
-        public string InternalZipFileDirectoryName => Owner.ParentNotebookFolderName;
-
-        #endregion // Storage
-
         #region Overrides of ModelBase
 
         protected override void OnSerializing()
@@ -257,45 +245,27 @@ namespace CLP.Entities
 
         #endregion
 
+        #region Storage
+
+        public const string DEFAULT_INTERNAL_FILE_NAME = "notebook";
+
+        public string NotebookSetDirectoryName => $"{Name};{ID}";
+
+        public string NotebookOwnerDirectoryName => Owner.NotebookOwnerDirectoryName;
+
+        public string NotebookPagesDirectoryPath => $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{NotebookSetDirectoryName}/{NotebookOwnerDirectoryName}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/";
+
+        public string NotebookSubmissionsDirectoryPath => $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{NotebookSetDirectoryName}/{NotebookOwnerDirectoryName}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/";
+
+        #endregion // Storage
+
         #region Overrides of AInternalZipEntryFile
-
-        public class NameComposite
-        {
-            public string OwnerType { get; set; }
-            public string OwnerName { get; set; }
-            public string OwnerID { get; set; }
-
-            public static NameComposite ParseFromString(string nameCompositeString)
-            {
-                var parts = nameCompositeString.Split(';');
-                if (parts.Count() != 3)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    var nameComposite = new NameComposite
-                    {
-                        OwnerType = parts[0],
-                        OwnerName = parts[1],
-                        OwnerID = parts[2]
-                    };
-
-                    return nameComposite;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-        }
 
         public override string DefaultZipEntryName => DEFAULT_INTERNAL_FILE_NAME;
 
-        public override string GetZipEntryFullPath(string parentNotebookName)
+        public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
-            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{DefaultZipEntryName}.json";
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{NotebookSetDirectoryName}/{NotebookOwnerDirectoryName}/{DefaultZipEntryName}.json";
         }
 
         #endregion

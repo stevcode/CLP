@@ -24,10 +24,10 @@ namespace Classroom_Learning_Partner.Services
 
         public class ZipEntrySaver
         {
-            public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+            public ZipEntrySaver(AInternalZipEntryFile entryFile, Notebook parentNotebook = null)
             {
                 EntryFile = entryFile;
-                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebookName);
+                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebook);
                 JsonString = entryFile.ToJsonString();
             }
 
@@ -159,7 +159,7 @@ namespace Classroom_Learning_Partner.Services
 
         //AvailableNotebookSets   
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
-        
+
         public List<Notebook> LoadedNotebooks { get; } = new List<Notebook>();
 
         public ClassRoster CurrentClassRoster { get; private set; }
@@ -196,16 +196,15 @@ namespace Classroom_Learning_Partner.Services
         public void SaveLocal()
         {
             var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
-            var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
             var entryList = new List<ZipEntrySaver>
                             {
-                                new ZipEntrySaver(CurrentClassRoster, parentNotebookName),
-                                new ZipEntrySaver(CurrentNotebook, parentNotebookName)
+                                new ZipEntrySaver(CurrentClassRoster, CurrentNotebook),
+                                new ZipEntrySaver(CurrentNotebook, CurrentNotebook)
                             };
 
             foreach (var page in CurrentNotebook.Pages)
             {
-                entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
             }
 
             if (File.Exists(zipContainerFilePath))
@@ -418,9 +417,9 @@ namespace Classroom_Learning_Partner.Services
         {
             var notebookSet = new NotebookSet(notebookName);
             var notebook = new Notebook(notebookSet, Person.Author)
-            {
-                ContainerZipFilePath = zipContainerFilePath
-            };
+                           {
+                               ContainerZipFilePath = zipContainerFilePath
+                           };
 
             if (!File.Exists(zipContainerFilePath))
             {
@@ -469,13 +468,12 @@ namespace Classroom_Learning_Partner.Services
 
                 existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
             }
-            
 
             if (!owner.IsStudent &&
                 owner.ID != Person.AUTHOR_ID &&
                 isLoadingStudentNotebooks)
             {
-                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath);
+                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID);
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
                     LoadPagesIntoNotebook(studentNotebook, pageNumbers, overwrittenStartingPageID);
@@ -489,7 +487,8 @@ namespace Classroom_Learning_Partner.Services
                     {
                         foreach (var page in studentNotebook.Pages)
                         {
-                            var existingPage = existingStudentNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                            var existingPage =
+                                existingStudentNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
                             if (existingPage != null)
                             {
                                 continue;
@@ -497,7 +496,8 @@ namespace Classroom_Learning_Partner.Services
 
                             existingStudentNotebook.Pages.Add(page);
                         }
-                        existingStudentNotebook.Pages = existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                        existingStudentNotebook.Pages =
+                            existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
                     }
                 }
             }
@@ -544,8 +544,7 @@ namespace Classroom_Learning_Partner.Services
 
             // Save previously selected page, assuming it wasn't the page being removed.
             var oldPage = CurrentNotebook.CurrentPage;
-            if (oldPage != null &&
-                isSavingRemovedPage)
+            if (oldPage != null && isSavingRemovedPage)
             {
                 AutoSavePage(CurrentNotebook, oldPage);
             }
@@ -584,8 +583,7 @@ namespace Classroom_Learning_Partner.Services
             //CurrentDisplay.AddPageToDisplay(page);
 
             CurrentPageChanged.SafeInvoke(this);
-            if (oldPage != null &&
-                isSavingOldPage)
+            if (oldPage != null && isSavingOldPage)
             {
                 AutoSavePage(CurrentNotebook, oldPage);
             }
@@ -618,7 +616,7 @@ namespace Classroom_Learning_Partner.Services
 
             ChangePageNumbersAfterGivenPage(notebook, page.PageNumber - 1, true);
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
-            
+
             notebook.Pages.Insert(index, page);
             AddPageToCurrentDisplay(page);
             SavePage(notebook, page);
@@ -644,7 +642,7 @@ namespace Classroom_Learning_Partner.Services
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
-                zip.RemoveEntry(pageToDelete.GetZipEntryFullPath(notebook.Owner.ParentNotebookFolderName));
+                zip.RemoveEntry(pageToDelete.GetZipEntryFullPath(notebook));
                 zip.Save();
             }
 
@@ -653,9 +651,9 @@ namespace Classroom_Learning_Partner.Services
             if (!notebook.Pages.Any())
             {
                 var newPage = new CLPPage(Person.Author)
-                {
-                    PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
-                };
+                              {
+                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                              };
 
                 notebook.Pages.Add(newPage);
                 SavePage(notebook, newPage);
@@ -721,7 +719,7 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #endregion // Static Properties
-        
+
         #region Static Methods
 
         #region Files
@@ -801,17 +799,17 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void SaveAInternalZipEntryFile(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+        public static void SaveAInternalZipEntryFile(AInternalZipEntryFile entryFile, Notebook parentNotebook = null)
         {
             if (!File.Exists(entryFile.ContainerZipFilePath))
             {
                 return;
             }
 
-            SaveZipEntry(entryFile.ContainerZipFilePath, new ZipEntrySaver(entryFile, parentNotebookName));
+            SaveZipEntry(entryFile.ContainerZipFilePath, new ZipEntrySaver(entryFile, parentNotebook));
         }
 
-        public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, string parentNotebookName = "")
+        public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, Notebook parentNotebook = null)
         {
             var groupedEntryFiles = entryFiles.GroupBy(e => e.ContainerZipFilePath);
 
@@ -823,14 +821,18 @@ namespace Classroom_Learning_Partner.Services
                     continue;
                 }
 
-                var zipEntrySavers = entryFileGroup.Select(entryFile => new ZipEntrySaver(entryFile, parentNotebookName)).ToList();
+                var zipEntrySavers = entryFileGroup.Select(entryFile => new ZipEntrySaver(entryFile, parentNotebook)).ToList();
                 SaveZipEntries(zipContainerFilePath, zipEntrySavers);
             }
         }
 
         public static void SaveZipEntry(string zipContainerFilePath, ZipEntrySaver zipEntrySaver)
         {
-            SaveZipEntries(zipContainerFilePath, new List<ZipEntrySaver> { zipEntrySaver });
+            SaveZipEntries(zipContainerFilePath,
+                           new List<ZipEntrySaver>
+                           {
+                               zipEntrySaver
+                           });
         }
 
         public static void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
@@ -964,12 +966,11 @@ namespace Classroom_Learning_Partner.Services
             foreach (var teacher in classRoster.ListOfTeachers)
             {
                 var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(notebook, notebook));
                 foreach (var authorPage in authorNotebook.Pages)
                 {
                     var page = CopyPageForNewOwner(authorPage, teacher);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                    entryList.Add(new ZipEntrySaver(page, notebook));
                 }
             }
 
@@ -977,8 +978,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var student in classRoster.ListOfStudents)
             {
                 var notebook = CopyNotebookForNewOwner(authorNotebook, student);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(notebook, notebook));
                 foreach (var authorPage in authorNotebook.Pages)
                 {
                     if (authorPage.DifferentiationLevel != student.CurrentDifferentiationGroup &&
@@ -987,7 +987,7 @@ namespace Classroom_Learning_Partner.Services
                         continue; // TODO: Release,  confirm only copy differentiated page
                     }
                     var page = CopyPageForNewOwner(authorPage, student);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                    entryList.Add(new ZipEntrySaver(page, notebook));
                 }
             }
 
@@ -1072,12 +1072,12 @@ namespace Classroom_Learning_Partner.Services
                 List<ZipEntry> pageEntries;
                 if (pageNumbers.Any())
                 {
-                    var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
-                    pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
+                    var pageIDs = GetPageIDsFromPageNumbers(zip, notebook, pageNumbers);
+                    pageEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs);
                 }
                 else
                 {
-                    pageEntries = GetAllPageEntriesInNotebook(zip, owner);
+                    pageEntries = GetAllPageEntriesInNotebook(zip, notebook);
                 }
 
                 pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries);
@@ -1123,9 +1123,9 @@ namespace Classroom_Learning_Partner.Services
             return newPage;
         }
 
-        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Person notebookOwner)
+        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Notebook notebook)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var pageIDs = pageNameComposites.Select(nc => nc.ID).Distinct().ToList();
@@ -1133,9 +1133,9 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs;
         }
 
-        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Notebook notebook, List<int> pageNumbers)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var pageIDs = pageNameComposites.Where(nc => pageNumbers.Contains(nc.PageNumber)).Select(nc => nc.ID).Distinct().ToList();
@@ -1145,9 +1145,9 @@ namespace Classroom_Learning_Partner.Services
 
         // TODO: GetAllPageNumbersInNotebook?
 
-        public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, List<string> pageIDs)
+        public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs)
         {
-            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
+            var internalAuthorPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var mappedIDs = new Dictionary<string, int>();
@@ -1167,17 +1167,17 @@ namespace Classroom_Learning_Partner.Services
             return mappedIDs;
         }
 
-        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Person notebookOwner)
+        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Notebook notebook)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
 
             return pageEntries;
         }
 
-        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs, bool isSubmissions = false)
+        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs, bool isSubmissions = false)
         {
-            var internalPagesDirectory = isSubmissions ? notebookOwner.NotebookSubmissionsFolderPath : notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = isSubmissions ? notebook.NotebookSubmissionsDirectoryPath : notebook.NotebookPagesDirectoryPath;
             var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
             var pageEntries = (from pageEntry in allPageEntries
                                let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
@@ -1187,10 +1187,10 @@ namespace Classroom_Learning_Partner.Services
             return pageEntries;
         }
 
-        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Notebook notebook, List<int> pageNumbers)
         {
-            var pageIDs = GetPageIDsFromPageNumbers(zip, notebookOwner, pageNumbers);
-            var pageEntries = GetPageEntriesFromPageIDs(zip, notebookOwner, pageIDs);
+            var pageIDs = GetPageIDsFromPageNumbers(zip, notebook, pageNumbers);
+            var pageEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs);
 
             return pageEntries;
         }
@@ -1211,7 +1211,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static List<CLPPage> GetSubmissionsForPages(Notebook notebook, List<CLPPage> pages)
         {
-            var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
 
             var pageIDs = pages.Select(p => p.ID).Distinct().ToList();
@@ -1224,7 +1223,7 @@ namespace Classroom_Learning_Partner.Services
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
+                var submissionEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs, true);
                 submissionZipEntryLoaders = GetPageZipEntryLoadersFromEntries(submissionEntries);
             }
 
@@ -1272,10 +1271,9 @@ namespace Classroom_Learning_Partner.Services
 
         public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
         {
-            var notebookName = notebook.InternalZipFileDirectoryName;
-            var oldInternalFilePath = page.GetZipEntryFullPath(notebookName);
+            var oldInternalFilePath = page.GetZipEntryFullPath(notebook);
             page.PageNumber = newPageNumber;
-            var newInternalFilePath = page.GetZipEntryFullPath(notebookName);
+            var newInternalFilePath = page.GetZipEntryFullPath(notebook);
 
             zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
             if (isSavingImmediately)
@@ -1294,11 +1292,10 @@ namespace Classroom_Learning_Partner.Services
             // HACK: get rid of this after history-rewrite.
             page.History.ClearHistory();
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
             var entires = new List<ZipEntrySaver>
                           {
-                              new ZipEntrySaver(page, parentNotebookName),
-                              new ZipEntrySaver(notebook, parentNotebookName)
+                              new ZipEntrySaver(page, notebook),
+                              new ZipEntrySaver(notebook, notebook)
                           };
 
             SaveZipEntries(page.ContainerZipFilePath, entires);
@@ -1311,9 +1308,8 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
-            var entries = pages.Select(page => new ZipEntrySaver(page, parentNotebookName)).ToList();
-            entries.Add(new ZipEntrySaver(notebook, parentNotebookName));
+            var entries = pages.Select(page => new ZipEntrySaver(page, notebook)).ToList();
+            entries.Add(new ZipEntrySaver(notebook, notebook));
 
             SaveZipEntries(notebook.ContainerZipFilePath, entries);
         }
@@ -1382,12 +1378,9 @@ namespace Classroom_Learning_Partner.Services
             classRoster.ListOfStudents.AddRange(students);
 
             ConversionService.SaveEmilyClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
-        }
 
-        private void AddEmilySessions()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
-            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var classesDirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
             {
@@ -1395,7 +1388,7 @@ namespace Classroom_Learning_Partner.Services
                 i++;
             }
 
-            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions);
+            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions, authorNotebook);
         }
 
         private void ConvertAnnCache()
@@ -1441,8 +1434,6 @@ namespace Classroom_Learning_Partner.Services
             {
                 return;
             }
-
-            
         }
 
         #endregion // Tests

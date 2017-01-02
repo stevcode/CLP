@@ -70,18 +70,17 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
             var entryList = new List<DataService.ZipEntrySaver>
                             {
-                                new DataService.ZipEntrySaver(notebook, parentNotebookName)
+                                new DataService.ZipEntrySaver(notebook, notebook)
                             };
 
             foreach (var page in notebook.Pages)
             {
-                entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                entryList.Add(new DataService.ZipEntrySaver(page, notebook));
                 foreach (var submission in page.Submissions)
                 {
-                    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                    entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
                 }
             }
 
@@ -113,17 +112,16 @@ namespace Classroom_Learning_Partner.Services
             {
                 notebook.ContainerZipFilePath = zipFilePath;
 
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new DataService.ZipEntrySaver(notebook, parentNotebookName));
+                entryList.Add(new DataService.ZipEntrySaver(notebook, notebook));
 
                 foreach (var page in notebook.Pages)
                 {
                     page.ContainerZipFilePath = zipFilePath;
-                    entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                    entryList.Add(new DataService.ZipEntrySaver(page, notebook));
                     foreach (var submission in page.Submissions)
                     {
                         submission.ContainerZipFilePath = zipFilePath;
-                        entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
+                        entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
                     }
                 }
             }
@@ -144,7 +142,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions)
+        public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions, Notebook notebook)
         {
             if (!File.Exists(zipFilePath))
             {
@@ -159,8 +157,8 @@ namespace Classroom_Learning_Partner.Services
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var allPageIDs = DataService.GetAllPageIDsInNotebook(zip, Person.Author);
-                mappedIDs = DataService.GetPageNumbersFromPageIDs(zip, allPageIDs);
+                var allPageIDs = DataService.GetAllPageIDsInNotebook(zip, notebook);
+                mappedIDs = DataService.GetPageNumbersFromPageIDs(zip, notebook, allPageIDs);
             }
 
             var entryList = new List<DataService.ZipEntrySaver>();
@@ -678,10 +676,9 @@ namespace Classroom_Learning_Partner.Services
                 File.Delete(zipFilePath);
             }
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
             var entryList = new List<DataService.ZipEntrySaver>
                             {
-                                new DataService.ZipEntrySaver(notebook, parentNotebookName)
+                                new DataService.ZipEntrySaver(notebook, notebook)
                             };
 
             foreach (var page in notebook.Pages)
@@ -691,7 +688,7 @@ namespace Classroom_Learning_Partner.Services
                 //    continue;
                 //}
 
-                entryList.Add(new DataService.ZipEntrySaver(page, parentNotebookName));
+                entryList.Add(new DataService.ZipEntrySaver(page, notebook));
                 //foreach (var submission in page.Submissions)
                 //{
                 //    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
