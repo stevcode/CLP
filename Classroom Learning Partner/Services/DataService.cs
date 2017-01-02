@@ -469,9 +469,9 @@ namespace Classroom_Learning_Partner.Services
                 existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
             }
 
-            if (!owner.IsStudent &&
-                owner.ID != Person.AUTHOR_ID &&
-                isLoadingStudentNotebooks)
+            if ((!owner.IsStudent &&
+                 isLoadingStudentNotebooks) ||
+                owner.ID == Person.AUTHOR_ID)
             {
                 var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID);
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
