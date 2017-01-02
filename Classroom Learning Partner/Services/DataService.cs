@@ -469,6 +469,7 @@ namespace Classroom_Learning_Partner.Services
                 existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
             }
 
+            // Load Student Notebooks
             if ((!owner.IsStudent &&
                  isLoadingStudentNotebooks) ||
                 owner.ID == Person.AUTHOR_ID)
@@ -498,6 +499,37 @@ namespace Classroom_Learning_Partner.Services
                         }
                         existingStudentNotebook.Pages =
                             existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                    }
+                }
+
+                // Also Load Teacher Notebooks for Editing
+                if (owner.ID == Person.AUTHOR_ID)
+                {
+                    foreach (var teacherNotebook in otherNotebooks.Where(n => !n.Owner.IsStudent && classRoster.ListOfTeachers.Any(p => n.Owner.DisplayName == p.DisplayName)))
+                    {
+                        LoadPagesIntoNotebook(teacherNotebook, pageNumbers, overwrittenStartingPageID);
+
+                        var existingTeacherNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == teacherNotebook.ID && n.Owner.ID == teacherNotebook.Owner.ID);
+                        if (existingTeacherNotebook == null)
+                        {
+                            LoadedNotebooks.Add(teacherNotebook);
+                        }
+                        else
+                        {
+                            foreach (var page in teacherNotebook.Pages)
+                            {
+                                var existingPage =
+                                    existingTeacherNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                                if (existingPage != null)
+                                {
+                                    continue;
+                                }
+
+                                existingTeacherNotebook.Pages.Add(page);
+                            }
+                            existingTeacherNotebook.Pages =
+                                existingTeacherNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                        }
                     }
                 }
             }
