@@ -709,6 +709,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             SavePage(notebook, page);
+            if (notebook.Owner.ID == Person.AUTHOR_ID)
+            {
+                var otherNotebooks = LoadedNotebooks.ToList();
+                PropogatePageChanges(notebook, otherNotebooks, page);
+            }
             //TODO: take screenshot of page if not already cached
             //set LastAutoSaveTime of notebook
             //save page locally, and to export folder
@@ -1332,6 +1337,74 @@ namespace Classroom_Learning_Partner.Services
                           };
 
             SaveZipEntries(page.ContainerZipFilePath, entires);
+        }
+
+        public static void PropogatePageChanges(Notebook authorNotebook, List<Notebook> otherNotebooks, CLPPage authorPage)
+        {
+            var entires = new List<ZipEntrySaver>();
+
+            foreach (var otherNotebook in otherNotebooks.Where(n => n.ID == authorNotebook.ID && n.Owner.ID != Person.AUTHOR_ID))
+            {
+                var page = otherNotebook.Pages.FirstOrDefault(p => p.ID == authorPage.ID);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                PropogatePageProperties(authorPage, page);
+                PropogatePageAuthoredPageObjects(authorPage, page);
+                PropogatePageAuthoredInk(authorPage, page);
+                PropogatePageTags(authorPage, page);
+
+                entires.Add(new ZipEntrySaver(page, otherNotebook));
+            }
+
+            SaveZipEntries(authorPage.ContainerZipFilePath, entires);
+        }
+
+        public static void PropogatePageProperties(CLPPage authorPage, CLPPage otherPage)
+        {
+            otherPage.PageType = authorPage.PageType;
+            otherPage.Height = authorPage.Height;
+            otherPage.Width = authorPage.Width;
+            otherPage.InitialAspectRatio = authorPage.InitialAspectRatio;
+            otherPage.PageType = authorPage.PageType;
+            otherPage.PageLineLength = authorPage.PageLineLength;
+        }
+
+        public static void PropogatePageAuthoredPageObjects(CLPPage authorPage, CLPPage otherPage)
+        {
+            var pageObjectsToDelete = otherPage.PageObjects.Where(p => p.CreatorID == Person.AUTHOR_ID).ToList();
+            foreach (var pageObject in pageObjectsToDelete)
+            {
+                otherPage.PageObjects.Remove(pageObject);
+            }
+
+            var pageObjectsToAdd = authorPage.PageObjects.Where(p => p.CreatorID == Person.AUTHOR_ID).ToList();
+            foreach (var pageObject in pageObjectsToAdd)
+            {
+                otherPage.PageObjects.Insert(0, pageObject);
+            }
+        }
+
+        public static void PropogatePageAuthoredInk(CLPPage authorPage, CLPPage otherPage)
+        {
+            var strokesToDelete = otherPage.InkStrokes.Where(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID).ToList();
+            foreach (var stroke in strokesToDelete)
+            {
+                otherPage.InkStrokes.Remove(stroke);
+            }
+
+            var strokesToAdd = authorPage.InkStrokes.Where(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID).ToList();
+            foreach (var stroke in strokesToAdd)
+            {
+                otherPage.InkStrokes.Insert(0, stroke);
+            }
+        }
+
+        public static void PropogatePageTags(CLPPage authorPage, CLPPage otherPage)
+        {
+            // TODO
         }
 
         public static void SavePagesInSameNotebook(Notebook notebook, List<CLPPage> pages)

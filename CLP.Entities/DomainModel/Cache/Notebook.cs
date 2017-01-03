@@ -238,9 +238,9 @@ namespace CLP.Entities
 
         protected override void OnSerializing()
         {
-            base.OnSerializing();
-
             LastSavedDate = DateTime.Now;
+
+            base.OnSerializing();
         }
 
         #endregion

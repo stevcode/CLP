@@ -77,30 +77,62 @@ namespace CLP.Entities
         protected override void OnPropertyObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnPropertyObjectCollectionChanged(sender, e);
-            IsSavedLocally = false;
-            IsSavedOverTheNetwork = false;
+
+            if (!IsDirty)
+            {
+                return;
+            }
+
+            //IsSavedLocally = false;
+            //IsSavedOverTheNetwork = false;
+
+
         }
 
         // TODO: Take into account and ignore Person.IsConnected changes
         protected override void OnPropertyObjectCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnPropertyObjectCollectionItemPropertyChanged(sender, e);
-            IsSavedLocally = false;
-            IsSavedOverTheNetwork = false;
+
+            if (!IsDirty ||
+                e.PropertyName == nameof(IsDirty))
+            {
+                return;
+            }
+            //IsSavedLocally = false;
+            //IsSavedOverTheNetwork = false;
+        }
+
+        /// <summary>
+        /// Determines whether a specific property change should update <c>IsDirty</c> to <c>true</c>.
+        /// </summary>
+        /// <returns><c>true</c> if <c>IsDirty</c> should be set to <c>true</c> when the specified property has changed, <c>false</c> otherwise.</returns>
+        protected override bool ShouldPropertyChangeUpdateIsDirty(string propertyName)
+        {
+            return true;
         }
 
         #endregion
 
         #region Overrides of ObservableObject
 
+        // Because all CLPPages are in a list on Notebook.Pages (or Submissions), OnPropertyObjectCollectionItemPropertyChanged above catches
+        // changes to top level properties of CLPPage that change (such as Width or Height) and are handled above. This should only be used to
+        // handle top-level changes on ClassRoster, Notebook, NotebookSet, or Session.
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            IsSavedLocally = false;
-            IsSavedOverTheNetwork = false;
 
-            Debug.WriteLine("Testing");
-            Debug.WriteLine($"Property Changed: {e.PropertyName}, Old Value: {e.OldValue}, New Value: {e.NewValue}");
+            if (!IsDirty ||
+                e.PropertyName == nameof(IsDirty))
+            {
+                return;
+            }
+
+            //IsSavedLocally = false;
+            //IsSavedOverTheNetwork = false;
+
+            //Debug.WriteLine($"Property Changed: {e.PropertyName}, Old Value: {e.OldValue}, New Value: {e.NewValue}");
         }
 
         #endregion
