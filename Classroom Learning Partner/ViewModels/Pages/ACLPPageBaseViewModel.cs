@@ -387,7 +387,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                Debug.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
@@ -1196,15 +1196,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                    //st.Stop();
                                    //var unzipTime = st.ElapsedMilliseconds;
 
-                                   //Console.WriteLine();
-                                   //Console.WriteLine("Json conversion time: {0}", jTime);
-                                   //Console.WriteLine("Zip conversion time {0}", zTime);
-                                   //Console.WriteLine("UnJson conversion time: {0}", unjsonTime);
-                                   //Console.WriteLine("UnZip conversion time {0}", unzipTime);
-                                   //Console.WriteLine("Json string length: {0}", jLength);
-                                   //Console.WriteLine("Json zipped length: {0}", zjson.Length);
-                                   //Console.WriteLine("ToString string length: {0}", toStringLength);
-                                   //Console.WriteLine("Zip string length: {0}", toZipLength);
+                                   //Debug.WriteLine();
+                                   //Debug.WriteLine("Json conversion time: {0}", jTime);
+                                   //Debug.WriteLine("Zip conversion time {0}", zTime);
+                                   //Debug.WriteLine("UnJson conversion time: {0}", unjsonTime);
+                                   //Debug.WriteLine("UnZip conversion time {0}", unzipTime);
+                                   //Debug.WriteLine("Json string length: {0}", jLength);
+                                   //Debug.WriteLine("Json zipped length: {0}", zjson.Length);
+                                   //Debug.WriteLine("ToString string length: {0}", toStringLength);
+                                   //Debug.WriteLine("Zip string length: {0}", toZipLength);
 
                                    //try
                                    //{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -81,14 +82,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -103,14 +104,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
                 return;
             }
 

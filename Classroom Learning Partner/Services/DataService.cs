@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -1381,7 +1382,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
-                Console.WriteLine($"Notebook Folder: {notebookFolder}");
+                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
                 var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
                 notebooks.Add(notebook);
 
@@ -1430,7 +1431,7 @@ namespace Classroom_Learning_Partner.Services
             //foreach (var directory in dirInfo.EnumerateDirectories())
             //{
             //    var notebookFolder = directory.FullName;
-            //    Console.WriteLine($"Notebook Folder: {notebookFolder}");
+            //    Debug.WriteLine($"Notebook Folder: {notebookFolder}");
             //    var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
             //    notebooks.Add(notebook);
             //}

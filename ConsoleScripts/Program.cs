@@ -16,7 +16,7 @@ namespace ConsoleScripts
         private static void Main(string[] args)
         {
             //Convert();
-            Console.WriteLine("*****Finished*****");
+            Debug.WriteLine("*****Finished*****");
             Console.ReadLine();
         }
         /*
@@ -41,7 +41,7 @@ namespace ConsoleScripts
                     var page = AEntityBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
                     //page.AfterDeserialization();
 
-                    Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
+                    Debug.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 
 
                     _isConvertingEmilyCache = false;
@@ -751,7 +751,7 @@ namespace ConsoleScripts
                     break;
                 }
 
-                Console.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
+                Debug.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
 
                 #region WorksAsIs
 
@@ -1211,7 +1211,7 @@ namespace ConsoleScripts
                     else
                     {
                         // TODO: ERROR - This shouldn't be possible
-                        Console.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single add, single erase, or point erase!!!!!");
+                        Debug.WriteLine("[ERROR]: StrokesChangedHistoryItem is not a single add, single erase, or point erase!!!!!");
                     }
 
                     if (objectsChanged.IsUsingStrokes)

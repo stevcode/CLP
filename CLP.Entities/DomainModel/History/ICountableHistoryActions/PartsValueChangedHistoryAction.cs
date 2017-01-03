@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -62,7 +63,7 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -91,7 +92,7 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 

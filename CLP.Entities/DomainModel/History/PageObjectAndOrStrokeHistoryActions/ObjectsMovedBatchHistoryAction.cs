@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using Catel.Data;
@@ -156,7 +157,7 @@ namespace CLP.Entities
 
             if (!PageObjectIDs.Any())
             {
-                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                Debug.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
                 CurrentBatchTickIndex = -1;
                 return;
             }
@@ -207,7 +208,7 @@ namespace CLP.Entities
 
             if (!PageObjectIDs.Any())
             {
-                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                Debug.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }

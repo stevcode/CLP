@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using CLP.Entities;
@@ -248,7 +249,7 @@ namespace Classroom_Learning_Partner.Services
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
-                Console.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
+                Debug.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
             }
 
             return newPerson;
@@ -885,7 +886,7 @@ namespace Classroom_Learning_Partner.Services
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
-                Console.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
+                Debug.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
             }
 
             return newPerson;
@@ -1003,7 +1004,7 @@ namespace Classroom_Learning_Partner.Services
 
             if (newPageObject == null)
             {
-                Console.WriteLine($"[ERROR] newPageObject is NULL. Original pageObject is {pageObject.GetType()}");
+                Debug.WriteLine($"[ERROR] newPageObject is NULL. Original pageObject is {pageObject.GetType()}");
             }
 
             return newPageObject;

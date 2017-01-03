@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using System.Xml.Serialization;
@@ -199,7 +200,7 @@ namespace CLP.Entities
             if (!IsUsingPageObjects &&
                 !IsUsingStrokes)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                 return;
             }
 
@@ -207,7 +208,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.PageObjects.Remove(pageObject);
@@ -219,7 +220,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedPageObjects.Remove(pageObject);
@@ -232,7 +233,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -245,7 +246,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -297,7 +298,7 @@ namespace CLP.Entities
             if (!IsUsingPageObjects &&
                 !IsUsingStrokes)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                 return;
             }
 
@@ -305,7 +306,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.PageObjects.Remove(pageObject);
@@ -317,7 +318,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 ParentPage.History.TrashedPageObjects.Remove(pageObject);
@@ -330,7 +331,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -343,7 +344,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);

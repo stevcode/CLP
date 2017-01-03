@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -97,6 +98,9 @@ namespace CLP.Entities
             base.OnPropertyChanged(e);
             IsSavedLocally = false;
             IsSavedOverTheNetwork = false;
+
+            Debug.WriteLine("Testing");
+            Debug.WriteLine($"Property Changed: {e.PropertyName}, Old Value: {e.OldValue}, New Value: {e.NewValue}");
         }
 
         #endregion

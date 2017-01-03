@@ -65,7 +65,7 @@ namespace CLP.Entities
                 //}
                 //catch (Exception ex)
                 //{
-                //    Console.WriteLine($"Error trying to deserialize {typeof(T)} via json.\n{ex.Message}");
+                //    Debug.WriteLine($"Error trying to deserialize {typeof(T)} via json.\n{ex.Message}");
                 //    return null;
                 //}
             }

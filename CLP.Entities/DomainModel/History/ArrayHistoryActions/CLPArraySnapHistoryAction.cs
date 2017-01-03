@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Catel.Data;
 
@@ -232,14 +233,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -276,14 +277,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
                 return;
             }
 

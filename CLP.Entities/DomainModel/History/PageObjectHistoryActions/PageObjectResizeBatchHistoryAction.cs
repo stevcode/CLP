@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using Catel.Data;
@@ -108,14 +109,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
                 CurrentBatchTickIndex = -1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
                 CurrentBatchTickIndex = -1;
                 return;
             }
@@ -156,14 +157,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }

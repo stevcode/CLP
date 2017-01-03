@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -74,7 +75,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -87,7 +88,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
