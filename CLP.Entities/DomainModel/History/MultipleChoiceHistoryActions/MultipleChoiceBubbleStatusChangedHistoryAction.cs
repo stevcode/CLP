@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using System.Xml.Serialization;
@@ -162,7 +163,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -175,7 +176,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -204,7 +205,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -217,7 +218,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);

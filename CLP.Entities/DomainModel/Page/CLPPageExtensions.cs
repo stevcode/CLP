@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using Catel;
@@ -36,7 +37,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Console.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
+            Debug.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
             page.History.TrashedPageObjects.Remove(pageObject);
             page.PageObjects.Add(pageObject);
 
@@ -61,7 +62,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Console.WriteLine("PageObject incorrectly existed on Page.");
+            Debug.WriteLine("PageObject incorrectly existed on Page.");
             page.History.TrashedPageObjects.Add(pageObject);
             page.PageObjects.Remove(pageObject);
 
@@ -114,7 +115,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Console.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
+            Debug.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
             page.History.TrashedInkStrokes.Remove(stroke);
             page.InkStrokes.Add(stroke);
 
@@ -139,7 +140,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Console.WriteLine("Stroke incorrectly existed on Page.");
+            Debug.WriteLine("Stroke incorrectly existed on Page.");
             page.History.TrashedInkStrokes.Add(stroke);
             page.InkStrokes.Remove(stroke);
 
@@ -218,7 +219,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Console.WriteLine("Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    Debug.WriteLine("Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
                 }
             }
 
@@ -226,7 +227,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Console.WriteLine("Trashed Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    Debug.WriteLine("Trashed Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
                 }
             }
         }

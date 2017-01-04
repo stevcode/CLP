@@ -224,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
             otherDropDown.Items.Add(_insertTextBoxButton);
             otherDropDown.Items.Add(_insertImageButton);
             otherDropDown.Items.Add(_insertMultipleChoiceTextBoxButton);
-            otherDropDown.Items.Add(_insertRecognitionRegionButton);
+            //otherDropDown.Items.Add(_insertRecognitionRegionButton);
 
             _insertOther.DropDown = otherDropDown;
         }
@@ -1126,6 +1126,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AddAuthorButtons()
         {
+            if (Buttons.Contains(_insertOther))
+            {
+                return;
+            }
+
             Buttons.Add(Separater);
             Buttons.Add(_insertOther);
         }

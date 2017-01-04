@@ -116,9 +116,11 @@ namespace CLP.Entities
 
         public override string DefaultZipEntryName => "grid";
 
-        public override string GetZipEntryFullPath(string parentNotebookName)
+        public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
-            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebookName}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+            var notebookOwnerDirectoryPath = $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebook.NotebookSetDirectoryName}/{parentNotebook.NotebookOwnerDirectoryName}";
+
+            return $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }
 
         #endregion

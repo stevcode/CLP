@@ -105,6 +105,7 @@
         <!--Playback Controls-->
         <DockPanel Name="PlaybackControls"
                    Grid.Row="0"
+                   Visibility="Collapsed"
                    Height="34"
                    Background="LightSkyBlue"
                    LastChildFill="False">
@@ -186,23 +187,23 @@
             </Button>
 
             <!-- Clear Page -->
-            <Button Content="Clear Page"
+            <!--<Button Content="Clear Page"
                     DockPanel.Dock="Right"
                     Width="70"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
-                    Command="{Binding ClearAnimationPageCommand}" />
+                    Command="{Binding ClearAnimationPageCommand}" />-->
 
             <!-- Create Animation from History -->
-            <Button Content="Forgot To Record?"
+            <!--<Button Content="Forgot To Record?"
                     DockPanel.Dock="Right"
                     Padding="5 0"
                     Margin="20 0"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="CornflowerBlue"
-                    Command="{Binding MakeAnimationFromHistoryCommand}" />
+                    Command="{Binding MakeAnimationFromHistoryCommand}" />-->
 
             <!--<Button Content="Undo"
                     Margin="20 0"
@@ -378,8 +379,8 @@
             </Button>
 
             <!--Play Backwards Button-->
-            <Button DockPanel.Dock="Left"
-                    Width="70"
+            <!--<Button DockPanel.Dock="Left"
+                    Width="85"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
                     IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
@@ -470,7 +471,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-            </Button>
+            </Button>-->
 
             <!-- Playback Speed -->
             <StackPanel DockPanel.Dock="Left"

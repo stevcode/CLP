@@ -106,7 +106,7 @@ namespace CLP.Entities
 
         public override string DefaultZipEntryName => $"s;{StartTime:yyyy.MM.dd.HH.mm};{ID}";
 
-        public override string GetZipEntryFullPath(string parentNotebookName)
+        public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
             return $"{ZIP_SESSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
         }

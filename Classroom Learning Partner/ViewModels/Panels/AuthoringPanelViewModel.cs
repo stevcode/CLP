@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Catel.Collections;
@@ -107,7 +108,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
-            AddPageCommand = new Command(OnAddPageCommandExecute);
+            AddPageCommand = new Command(OnAddPageCommandExecute, OnAddPageCanExecute);
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
             MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
@@ -132,6 +133,24 @@ namespace Classroom_Learning_Partner.ViewModels
             var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
 
             _dataService.InsertPageAt(Notebook, page, index);
+        }
+
+        private bool OnAddPageCanExecute()
+        {
+            if (CurrentPage == null ||
+                CurrentPage.DifferentiationLevel == "0" ||
+                !Notebook.Pages.Any())
+            {
+                return true;
+            }
+
+            var lastDifferentiatedPageOfCurrentPage = Notebook.Pages.LastOrDefault(p => p.ID == CurrentPage.ID);
+            if (lastDifferentiatedPageOfCurrentPage == null)
+            {
+                return true;
+            }
+
+            return lastDifferentiatedPageOfCurrentPage.DifferentiationLevel == CurrentPage.DifferentiationLevel;
         }
 
         /// <summary>Converts current page between landscape and portrait.</summary>
@@ -358,7 +377,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (CurrentPage.DifferentiationLevel != "0")
             {
-                MessageBox.Show("You cannot differentiate a page that has already been differentiated.");
+                MessageBox.Show("This page has already been differentiated.");
                 return;
             }
 
@@ -406,7 +425,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
                 }
                 Notebook.Pages.Insert(index + i, differentiatedPage);
+                _dataService.AutoSavePage(Notebook, differentiatedPage);
             }
+
+            var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);
+            _dataService.SetCurrentPage(lastDifferentiatedPage, false);
         }
 
         /// <summary>Adds a Definiton Tag to the <see cref="CLPPage" />.</summary>

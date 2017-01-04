@@ -52,7 +52,7 @@ namespace Classroom_Learning_Partner
             }
 
             var directoryEndingIndex = entryDirectory.LastIndexOf('/');
-            return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory) && e.FileName.LastIndexOf('/') == directoryEndingIndex).ToList();
+            return zip.Entries.Where(e => e.FileName.StartsWith(entryDirectory) && e.FileName.LastIndexOf('/') == directoryEndingIndex && !e.FileName.EndsWith("/")).ToList();
         }
 
         /// <summary>Renames an entry based on full internal file paths.</summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
@@ -20,7 +21,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("Null stroke in StrokeCollection of StretchAll");
+                    Debug.WriteLine("Null stroke in StrokeCollection of StretchAll");
                     continue;
                 }
 
@@ -36,7 +37,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("Null stroke in StrokeCollection of MoveAll");
+                    Debug.WriteLine("Null stroke in StrokeCollection of MoveAll");
                     continue;
                 }
 
@@ -52,7 +53,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("Null stroke in StrokeCollection of RotateAll");
+                    Debug.WriteLine("Null stroke in StrokeCollection of RotateAll");
                     continue;
                 }
 
@@ -156,7 +157,7 @@ namespace CLP.Entities
                 page.PageObjects.Add(tempGrid);
             }
 
-            Console.WriteLine("found " + occupiedCells.Count + " occupied cells");
+            Debug.WriteLine("found " + occupiedCells.Count + " occupied cells");
 
             return StrokeExtension.DetectCycle(occupiedCells, cellWidth, cellHeight);
 

@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner.Resources
             //            hint.Factoid = Factoid.SystemDictionary;
             //            break;
             //        default:
-            //            Console.WriteLine("Not a valid ink analysis type");
+            //            Debug.WriteLine("Not a valid ink analysis type");
             //            break;
             //    }
             //    hint.CoerceToFactoid = true;
@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.Resources
 
             foreach (System.Windows.Ink.Stroke s in strokes)
             {
-                //Console.WriteLine("no of points: " + s.StylusPoints.Count);
+                //Debug.WriteLine("no of points: " + s.StylusPoints.Count);
                 foreach (StylusPoint sp in s.StylusPoints)
                 {
                     double pointX = sp.X;

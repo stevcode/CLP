@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -24,10 +25,10 @@ namespace Classroom_Learning_Partner.Services
 
         public class ZipEntrySaver
         {
-            public ZipEntrySaver(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+            public ZipEntrySaver(AInternalZipEntryFile entryFile, Notebook parentNotebook = null)
             {
                 EntryFile = entryFile;
-                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebookName);
+                InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebook);
                 JsonString = entryFile.ToJsonString();
             }
 
@@ -159,7 +160,7 @@ namespace Classroom_Learning_Partner.Services
 
         //AvailableNotebookSets   
         //LoadedNotebookSets      //Differentiate between a .clp file and the individual notebooks within?
-        
+
         public List<Notebook> LoadedNotebooks { get; } = new List<Notebook>();
 
         public ClassRoster CurrentClassRoster { get; private set; }
@@ -196,16 +197,15 @@ namespace Classroom_Learning_Partner.Services
         public void SaveLocal()
         {
             var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
-            var parentNotebookName = CurrentNotebook.InternalZipFileDirectoryName;
             var entryList = new List<ZipEntrySaver>
                             {
-                                new ZipEntrySaver(CurrentClassRoster, parentNotebookName),
-                                new ZipEntrySaver(CurrentNotebook, parentNotebookName)
+                                new ZipEntrySaver(CurrentClassRoster, CurrentNotebook),
+                                new ZipEntrySaver(CurrentNotebook, CurrentNotebook)
                             };
 
             foreach (var page in CurrentNotebook.Pages)
             {
-                entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
             }
 
             if (File.Exists(zipContainerFilePath))
@@ -418,9 +418,9 @@ namespace Classroom_Learning_Partner.Services
         {
             var notebookSet = new NotebookSet(notebookName);
             var notebook = new Notebook(notebookSet, Person.Author)
-            {
-                ContainerZipFilePath = zipContainerFilePath
-            };
+                           {
+                               ContainerZipFilePath = zipContainerFilePath
+                           };
 
             if (!File.Exists(zipContainerFilePath))
             {
@@ -448,21 +448,94 @@ namespace Classroom_Learning_Partner.Services
             SetCurrentClassRoster(classRoster);
 
             LoadPagesIntoNotebook(notebook, pageNumbers, overwrittenStartingPageID);
-            LoadedNotebooks.Add(notebook);
-
-            if (!owner.IsStudent &&
-                owner.ID != Person.AUTHOR_ID &&
-                isLoadingStudentNotebooks)
+            var existingNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == notebook.ID && n.Owner.ID == notebook.Owner.ID);
+            if (existingNotebook == null)
             {
-                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath);
+                LoadedNotebooks.Add(notebook);
+                existingNotebook = notebook;
+            }
+            else
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    var existingPage = existingNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                    if (existingPage != null)
+                    {
+                        continue;
+                    }
+
+                    existingNotebook.Pages.Add(page);
+                }
+
+                existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+            }
+
+            // Load Student Notebooks
+            if ((!owner.IsStudent &&
+                 isLoadingStudentNotebooks) ||
+                owner.ID == Person.AUTHOR_ID)
+            {
+                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID);
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
                     LoadPagesIntoNotebook(studentNotebook, pageNumbers, overwrittenStartingPageID);
-                    LoadedNotebooks.Add(studentNotebook);
+
+                    var existingStudentNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == studentNotebook.ID && n.Owner.ID == studentNotebook.Owner.ID);
+                    if (existingStudentNotebook == null)
+                    {
+                        LoadedNotebooks.Add(studentNotebook);
+                    }
+                    else
+                    {
+                        foreach (var page in studentNotebook.Pages)
+                        {
+                            var existingPage =
+                                existingStudentNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                            if (existingPage != null)
+                            {
+                                continue;
+                            }
+
+                            existingStudentNotebook.Pages.Add(page);
+                        }
+                        existingStudentNotebook.Pages =
+                            existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                    }
+                }
+
+                // Also Load Teacher Notebooks for Editing
+                if (owner.ID == Person.AUTHOR_ID)
+                {
+                    foreach (var teacherNotebook in otherNotebooks.Where(n => !n.Owner.IsStudent && classRoster.ListOfTeachers.Any(p => n.Owner.DisplayName == p.DisplayName)))
+                    {
+                        LoadPagesIntoNotebook(teacherNotebook, pageNumbers, overwrittenStartingPageID);
+
+                        var existingTeacherNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == teacherNotebook.ID && n.Owner.ID == teacherNotebook.Owner.ID);
+                        if (existingTeacherNotebook == null)
+                        {
+                            LoadedNotebooks.Add(teacherNotebook);
+                        }
+                        else
+                        {
+                            foreach (var page in teacherNotebook.Pages)
+                            {
+                                var existingPage =
+                                    existingTeacherNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
+                                if (existingPage != null)
+                                {
+                                    continue;
+                                }
+
+                                existingTeacherNotebook.Pages.Add(page);
+                            }
+                            existingTeacherNotebook.Pages =
+                                existingTeacherNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+                        }
+                    }
                 }
             }
 
-            SetCurrentNotebook(notebook);
+            SetCurrentNotebook(existingNotebook);
         }
 
         #endregion // Notebook Methods
@@ -504,8 +577,7 @@ namespace Classroom_Learning_Partner.Services
 
             // Save previously selected page, assuming it wasn't the page being removed.
             var oldPage = CurrentNotebook.CurrentPage;
-            if (oldPage != null &&
-                isSavingRemovedPage)
+            if (oldPage != null && isSavingRemovedPage)
             {
                 AutoSavePage(CurrentNotebook, oldPage);
             }
@@ -544,31 +616,28 @@ namespace Classroom_Learning_Partner.Services
             //CurrentDisplay.AddPageToDisplay(page);
 
             CurrentPageChanged.SafeInvoke(this);
-            if (oldPage != null &&
-                isSavingOldPage)
+            if (oldPage != null && isSavingOldPage)
             {
                 AutoSavePage(CurrentNotebook, oldPage);
             }
         }
 
-        // TODO: Release, None of these functions act on a partially opened author notebook
         public void AddPage(Notebook notebook, CLPPage page)
         {
-            page.ContainerZipFilePath = notebook.ContainerZipFilePath;
-            page.PageNumber = notebook.Pages.Any() ? notebook.Pages.Last().PageNumber + 1 : 1;
-            notebook.Pages.Add(page);
-            AddPageToCurrentDisplay(page);
-            SavePage(notebook, page);
+            var pageIndex = notebook.Pages.Count;
+            InsertPageAt(notebook, page, pageIndex);
         }
 
         public void InsertPageAt(Notebook notebook, CLPPage page, int index)
         {
             if (index <= 0)
             {
+                index = 0;
                 page.PageNumber = 1;
             }
             else if (index >= notebook.Pages.Count)
             {
+                index = notebook.Pages.Count;
                 page.PageNumber = notebook.Pages.Last().PageNumber + 1;
             }
             else
@@ -576,12 +645,42 @@ namespace Classroom_Learning_Partner.Services
                 page.PageNumber = notebook.Pages[index].PageNumber;
             }
 
-            ChangePageNumbersAfterGivenPage(notebook, index, true);
+            ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), page.PageNumber - 1, true);
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
-            
+
             notebook.Pages.Insert(index, page);
             AddPageToCurrentDisplay(page);
             SavePage(notebook, page);
+
+            var entryList = new List<ZipEntrySaver>();
+            foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
+            {
+                var newOwner = loadedNotebook.Owner;
+                var newPage = CopyPageForNewOwner(page, newOwner);
+                newPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
+                loadedNotebook.Pages.Insert(index, newPage);
+                entryList.Add(new ZipEntrySaver(newPage, loadedNotebook));
+            }
+
+            if (!entryList.Any())
+            {
+                return;
+            }
+
+            using (var zip = ZipFile.Read(notebook.ContainerZipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
         }
 
         public void DeletePage(Notebook notebook, CLPPage page)
@@ -604,21 +703,59 @@ namespace Classroom_Learning_Partner.Services
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
-                zip.RemoveEntry(pageToDelete.GetZipEntryFullPath(notebook.Owner.ParentNotebookFolderName));
+                zip.RemoveEntry(pageToDelete.GetZipEntryFullPath(notebook));
+
+                foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
+                {
+                    var otherPageToDelete = loadedNotebook.Pages[index];
+                    loadedNotebook.Pages.RemoveAt(index);
+                    zip.RemoveEntry(otherPageToDelete.GetZipEntryFullPath(loadedNotebook));
+                }
+
                 zip.Save();
             }
 
-            ChangePageNumbersAfterGivenPage(notebook, index, false);
+            ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), index, false);
 
             if (!notebook.Pages.Any())
             {
                 var newPage = new CLPPage(Person.Author)
-                {
-                    PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
-                };
+                              {
+                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                              };
 
                 notebook.Pages.Add(newPage);
                 SavePage(notebook, newPage);
+
+                var entryList = new List<ZipEntrySaver>();
+                foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
+                {
+                    var newOwner = loadedNotebook.Owner;
+                    var generatedNewPage = CopyPageForNewOwner(newPage, newOwner);
+                    generatedNewPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
+                    loadedNotebook.Pages.Insert(index, generatedNewPage);
+                    entryList.Add(new ZipEntrySaver(generatedNewPage, loadedNotebook));
+                }
+
+                if (!entryList.Any())
+                {
+                    return;
+                }
+
+                using (var zip = ZipFile.Read(notebook.ContainerZipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save();
+                }
             }
 
             if (index >= notebook.Pages.Count)
@@ -638,6 +775,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             SavePage(notebook, page);
+            if (notebook.Owner.ID == Person.AUTHOR_ID)
+            {
+                var otherNotebooks = LoadedNotebooks.ToList();
+                PropogatePageChanges(notebook, otherNotebooks, page);
+            }
             //TODO: take screenshot of page if not already cached
             //set LastAutoSaveTime of notebook
             //save page locally, and to export folder
@@ -681,7 +823,7 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Default Folder Paths
 
         #endregion // Static Properties
-        
+
         #region Static Methods
 
         #region Files
@@ -761,17 +903,17 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void SaveAInternalZipEntryFile(AInternalZipEntryFile entryFile, string parentNotebookName = "")
+        public static void SaveAInternalZipEntryFile(AInternalZipEntryFile entryFile, Notebook parentNotebook = null)
         {
             if (!File.Exists(entryFile.ContainerZipFilePath))
             {
                 return;
             }
 
-            SaveZipEntry(entryFile.ContainerZipFilePath, new ZipEntrySaver(entryFile, parentNotebookName));
+            SaveZipEntry(entryFile.ContainerZipFilePath, new ZipEntrySaver(entryFile, parentNotebook));
         }
 
-        public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, string parentNotebookName = "")
+        public static void SaveAInternalZipEntryFiles(List<AInternalZipEntryFile> entryFiles, Notebook parentNotebook = null)
         {
             var groupedEntryFiles = entryFiles.GroupBy(e => e.ContainerZipFilePath);
 
@@ -783,14 +925,18 @@ namespace Classroom_Learning_Partner.Services
                     continue;
                 }
 
-                var zipEntrySavers = entryFileGroup.Select(entryFile => new ZipEntrySaver(entryFile, parentNotebookName)).ToList();
+                var zipEntrySavers = entryFileGroup.Select(entryFile => new ZipEntrySaver(entryFile, parentNotebook)).ToList();
                 SaveZipEntries(zipContainerFilePath, zipEntrySavers);
             }
         }
 
         public static void SaveZipEntry(string zipContainerFilePath, ZipEntrySaver zipEntrySaver)
         {
-            SaveZipEntries(zipContainerFilePath, new List<ZipEntrySaver> { zipEntrySaver });
+            SaveZipEntries(zipContainerFilePath,
+                           new List<ZipEntrySaver>
+                           {
+                               zipEntrySaver
+                           });
         }
 
         public static void SaveZipEntries(string zipContainerFilePath, List<ZipEntrySaver> zipEntrySavers)
@@ -924,12 +1070,11 @@ namespace Classroom_Learning_Partner.Services
             foreach (var teacher in classRoster.ListOfTeachers)
             {
                 var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(notebook, notebook));
                 foreach (var authorPage in authorNotebook.Pages)
                 {
                     var page = CopyPageForNewOwner(authorPage, teacher);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                    entryList.Add(new ZipEntrySaver(page, notebook));
                 }
             }
 
@@ -937,8 +1082,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var student in classRoster.ListOfStudents)
             {
                 var notebook = CopyNotebookForNewOwner(authorNotebook, student);
-                var parentNotebookName = notebook.InternalZipFileDirectoryName;
-                entryList.Add(new ZipEntrySaver(notebook, parentNotebookName));
+                entryList.Add(new ZipEntrySaver(notebook, notebook));
                 foreach (var authorPage in authorNotebook.Pages)
                 {
                     if (authorPage.DifferentiationLevel != student.CurrentDifferentiationGroup &&
@@ -947,7 +1091,7 @@ namespace Classroom_Learning_Partner.Services
                         continue; // TODO: Release,  confirm only copy differentiated page
                     }
                     var page = CopyPageForNewOwner(authorPage, student);
-                    entryList.Add(new ZipEntrySaver(page, parentNotebookName));
+                    entryList.Add(new ZipEntrySaver(page, notebook));
                 }
             }
 
@@ -1032,12 +1176,12 @@ namespace Classroom_Learning_Partner.Services
                 List<ZipEntry> pageEntries;
                 if (pageNumbers.Any())
                 {
-                    var pageIDs = GetPageIDsFromPageNumbers(zip, owner, pageNumbers);
-                    pageEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs);
+                    var pageIDs = GetPageIDsFromPageNumbers(zip, notebook, pageNumbers);
+                    pageEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs);
                 }
                 else
                 {
-                    pageEntries = GetAllPageEntriesInNotebook(zip, owner);
+                    pageEntries = GetAllPageEntriesInNotebook(zip, notebook);
                 }
 
                 pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries);
@@ -1083,9 +1227,9 @@ namespace Classroom_Learning_Partner.Services
             return newPage;
         }
 
-        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Person notebookOwner)
+        public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Notebook notebook)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var pageIDs = pageNameComposites.Select(nc => nc.ID).Distinct().ToList();
@@ -1093,9 +1237,9 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs;
         }
 
-        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Notebook notebook, List<int> pageNumbers)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var pageIDs = pageNameComposites.Where(nc => pageNumbers.Contains(nc.PageNumber)).Select(nc => nc.ID).Distinct().ToList();
@@ -1105,9 +1249,9 @@ namespace Classroom_Learning_Partner.Services
 
         // TODO: GetAllPageNumbersInNotebook?
 
-        public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, List<string> pageIDs)
+        public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs)
         {
-            var internalAuthorPagesDirectory = Person.Author.NotebookPagesFolderPath;
+            var internalAuthorPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntryNames = zip.GetEntriesInDirectory(internalAuthorPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
             var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
             var mappedIDs = new Dictionary<string, int>();
@@ -1127,17 +1271,17 @@ namespace Classroom_Learning_Partner.Services
             return mappedIDs;
         }
 
-        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Person notebookOwner)
+        public static List<ZipEntry> GetAllPageEntriesInNotebook(ZipFile zip, Notebook notebook)
         {
-            var internalPagesDirectory = notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
             var pageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
 
             return pageEntries;
         }
 
-        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Person notebookOwner, List<string> pageIDs, bool isSubmissions = false)
+        public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs, bool isSubmissions = false)
         {
-            var internalPagesDirectory = isSubmissions ? notebookOwner.NotebookSubmissionsFolderPath : notebookOwner.NotebookPagesFolderPath;
+            var internalPagesDirectory = isSubmissions ? notebook.NotebookSubmissionsDirectoryPath : notebook.NotebookPagesDirectoryPath;
             var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
             var pageEntries = (from pageEntry in allPageEntries
                                let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
@@ -1147,10 +1291,10 @@ namespace Classroom_Learning_Partner.Services
             return pageEntries;
         }
 
-        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Person notebookOwner, List<int> pageNumbers)
+        public static List<ZipEntry> GetPageEntriesFromPageNumbers(ZipFile zip, Notebook notebook, List<int> pageNumbers)
         {
-            var pageIDs = GetPageIDsFromPageNumbers(zip, notebookOwner, pageNumbers);
-            var pageEntries = GetPageEntriesFromPageIDs(zip, notebookOwner, pageIDs);
+            var pageIDs = GetPageIDsFromPageNumbers(zip, notebook, pageNumbers);
+            var pageEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs);
 
             return pageEntries;
         }
@@ -1171,7 +1315,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static List<CLPPage> GetSubmissionsForPages(Notebook notebook, List<CLPPage> pages)
         {
-            var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
 
             var pageIDs = pages.Select(p => p.ID).Distinct().ToList();
@@ -1184,7 +1327,7 @@ namespace Classroom_Learning_Partner.Services
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var submissionEntries = GetPageEntriesFromPageIDs(zip, owner, pageIDs, true);
+                var submissionEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs, true);
                 submissionZipEntryLoaders = GetPageZipEntryLoadersFromEntries(submissionEntries);
             }
 
@@ -1193,53 +1336,101 @@ namespace Classroom_Learning_Partner.Services
             return submissions;
         }
 
-        public static void ChangePageNumbersAfterGivenPage(Notebook notebook, int pageNumber, bool isIncreasing)
+        public static void ChangePageNumbersAfterGivenPage(Notebook notebook, List<Notebook> otherNotebooks, int pageNumber, bool isIncreasing)
         {
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
-                foreach (var page in notebook.Pages)
+                foreach (var otherNotebook in otherNotebooks.Where(n => n.ID == notebook.ID))
                 {
-                    if (page.PageNumber <= pageNumber)
+                    var pageEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookPagesDirectoryPath);
+                    var submissionEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookSubmissionsDirectoryPath);
+
+                    foreach (var pageEntry in pageEntries)
                     {
-                        continue;
+                        var entryName = pageEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
+
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            pageNameComposite.PageNumber <= pageNumber)
+                        {
+                            continue;
+                        }
+
+                        var page = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID);
+
+                        if (isIncreasing)
+                        {
+                            pageNameComposite.PageNumber++;
+                            if (page != null)
+                            {
+                                page.PageNumber++;
+                            }
+                        }
+                        else
+                        {
+                            pageNameComposite.PageNumber--;
+                            if (page != null)
+                            {
+                                page.PageNumber--;
+                            }
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        pageEntry.FileName = newEntryFullPath;
                     }
 
-                    if (isIncreasing)
+                    foreach (var submissionEntry in submissionEntries)
                     {
-                        var newPageNumber = page.PageNumber + 1;
-                        ChangePageNumber(zip, notebook, page, newPageNumber, false);
-                    }
-                    else
-                    {
-                        var newPageNumber = page.PageNumber - 1;
-                        ChangePageNumber(zip, notebook, page, newPageNumber, false);
+                        var entryName = submissionEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
+
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            pageNameComposite.PageNumber <= pageNumber)
+                        {
+                            continue;
+                        }
+
+                        var page = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID);
+
+                        if (isIncreasing)
+                        {
+                            pageNameComposite.PageNumber++;
+                            if (page != null)
+                            {
+                                foreach (var submission in page.Submissions)
+                                {
+                                    submission.PageNumber++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            pageNameComposite.PageNumber--;
+                            if (page != null)
+                            {
+                                foreach (var submission in page.Submissions)
+                                {
+                                    submission.PageNumber--;
+                                }
+                            }
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        submissionEntry.FileName = newEntryFullPath;
                     }
                 }
 
-                zip.Save();
-            }
-        }
-
-        public static void ChangePageNumber(Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
-        {
-            var zipContainerFilePath = page.ContainerZipFilePath;
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                ChangePageNumber(zip, notebook, page, newPageNumber, isSavingImmediately);
-            }
-        }
-
-        public static void ChangePageNumber(ZipFile zip, Notebook notebook, CLPPage page, int newPageNumber, bool isSavingImmediately = true)
-        {
-            var notebookName = notebook.InternalZipFileDirectoryName;
-            var oldInternalFilePath = page.GetZipEntryFullPath(notebookName);
-            page.PageNumber = newPageNumber;
-            var newInternalFilePath = page.GetZipEntryFullPath(notebookName);
-
-            zip.RenameEntry(oldInternalFilePath, newInternalFilePath);
-            if (isSavingImmediately)
-            {
                 zip.Save();
             }
         }
@@ -1254,14 +1445,81 @@ namespace Classroom_Learning_Partner.Services
             // HACK: get rid of this after history-rewrite.
             page.History.ClearHistory();
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
             var entires = new List<ZipEntrySaver>
                           {
-                              new ZipEntrySaver(page, parentNotebookName),
-                              new ZipEntrySaver(notebook, parentNotebookName)
+                              new ZipEntrySaver(page, notebook),
+                              new ZipEntrySaver(notebook, notebook)
                           };
 
             SaveZipEntries(page.ContainerZipFilePath, entires);
+        }
+
+        public static void PropogatePageChanges(Notebook authorNotebook, List<Notebook> otherNotebooks, CLPPage authorPage)
+        {
+            var entires = new List<ZipEntrySaver>();
+
+            foreach (var otherNotebook in otherNotebooks.Where(n => n.ID == authorNotebook.ID && n.Owner.ID != Person.AUTHOR_ID))
+            {
+                var page = otherNotebook.Pages.FirstOrDefault(p => p.ID == authorPage.ID);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                PropogatePageProperties(authorPage, page);
+                PropogatePageAuthoredPageObjects(authorPage, page);
+                PropogatePageAuthoredInk(authorPage, page);
+                PropogatePageTags(authorPage, page);
+
+                entires.Add(new ZipEntrySaver(page, otherNotebook));
+            }
+
+            SaveZipEntries(authorPage.ContainerZipFilePath, entires);
+        }
+
+        public static void PropogatePageProperties(CLPPage authorPage, CLPPage otherPage)
+        {
+            otherPage.PageType = authorPage.PageType;
+            otherPage.Height = authorPage.Height;
+            otherPage.Width = authorPage.Width;
+            otherPage.InitialAspectRatio = authorPage.InitialAspectRatio;
+            otherPage.PageType = authorPage.PageType;
+            otherPage.PageLineLength = authorPage.PageLineLength;
+        }
+
+        public static void PropogatePageAuthoredPageObjects(CLPPage authorPage, CLPPage otherPage)
+        {
+            var pageObjectsToDelete = otherPage.PageObjects.Where(p => p.CreatorID == Person.AUTHOR_ID).ToList();
+            foreach (var pageObject in pageObjectsToDelete)
+            {
+                otherPage.PageObjects.Remove(pageObject);
+            }
+
+            var pageObjectsToAdd = authorPage.PageObjects.Where(p => p.CreatorID == Person.AUTHOR_ID).ToList();
+            foreach (var pageObject in pageObjectsToAdd)
+            {
+                otherPage.PageObjects.Insert(0, pageObject);
+            }
+        }
+
+        public static void PropogatePageAuthoredInk(CLPPage authorPage, CLPPage otherPage)
+        {
+            var strokesToDelete = otherPage.InkStrokes.Where(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID).ToList();
+            foreach (var stroke in strokesToDelete)
+            {
+                otherPage.InkStrokes.Remove(stroke);
+            }
+
+            var strokesToAdd = authorPage.InkStrokes.Where(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID).ToList();
+            foreach (var stroke in strokesToAdd)
+            {
+                otherPage.InkStrokes.Insert(0, stroke);
+            }
+        }
+
+        public static void PropogatePageTags(CLPPage authorPage, CLPPage otherPage)
+        {
+            // TODO
         }
 
         public static void SavePagesInSameNotebook(Notebook notebook, List<CLPPage> pages)
@@ -1271,9 +1529,8 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var parentNotebookName = notebook.InternalZipFileDirectoryName;
-            var entries = pages.Select(page => new ZipEntrySaver(page, parentNotebookName)).ToList();
-            entries.Add(new ZipEntrySaver(notebook, parentNotebookName));
+            var entries = pages.Select(page => new ZipEntrySaver(page, notebook)).ToList();
+            entries.Add(new ZipEntrySaver(notebook, notebook));
 
             SaveZipEntries(notebook.ContainerZipFilePath, entries);
         }
@@ -1313,7 +1570,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
-                Console.WriteLine($"Notebook Folder: {notebookFolder}");
+                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
                 var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
                 notebooks.Add(notebook);
 
@@ -1342,12 +1599,9 @@ namespace Classroom_Learning_Partner.Services
             classRoster.ListOfStudents.AddRange(students);
 
             ConversionService.SaveEmilyClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
-        }
 
-        private void AddEmilySessions()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
-            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var classesDirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
             {
@@ -1355,7 +1609,7 @@ namespace Classroom_Learning_Partner.Services
                 i++;
             }
 
-            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions);
+            ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions, authorNotebook);
         }
 
         private void ConvertAnnCache()
@@ -1365,7 +1619,7 @@ namespace Classroom_Learning_Partner.Services
             //foreach (var directory in dirInfo.EnumerateDirectories())
             //{
             //    var notebookFolder = directory.FullName;
-            //    Console.WriteLine($"Notebook Folder: {notebookFolder}");
+            //    Debug.WriteLine($"Notebook Folder: {notebookFolder}");
             //    var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
             //    notebooks.Add(notebook);
             //}
@@ -1393,6 +1647,14 @@ namespace Classroom_Learning_Partner.Services
             }
 
             ConversionService.SaveAnnSessionsToZip(ConversionService.AnnZipFilePath, sessions);
+        }
+
+        private void UpdateZipFile(string zipContainerFilePath)
+        {
+            if (!File.Exists(zipContainerFilePath))
+            {
+                return;
+            }
         }
 
         #endregion // Tests

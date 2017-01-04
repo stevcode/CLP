@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
@@ -157,7 +158,7 @@ namespace CLP.Entities
             }
             catch (Exception ex)
             {
-                Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
+                Debug.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
                 base.OnMoved(oldX, oldY, fromHistory);
             }
         }

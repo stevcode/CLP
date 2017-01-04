@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -655,7 +656,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnStrokeTestingCommandExecute()
         {
-            Console.WriteLine("NEW STROKE TEST");
+            Debug.WriteLine("NEW STROKE TEST");
             var strokes = CurrentPage.InkStrokes.ToList();
             var strokeIndexesInEnclosure = new List<int>();
             for (var i = 0; i < strokes.Count; i++)
@@ -685,7 +686,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             var otherStroke = strokes[j];
                             if (closeMatch(stroke, otherStroke))
                             {
-                                Console.WriteLine("close match");
+                                Debug.WriteLine("close match");
                                 var strokeCollection = new StrokeCollection();
                                 strokeCollection.Add(stroke);
                                 strokeCollection.Add(otherStroke);
@@ -708,22 +709,22 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                // Console.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
+                // Debug.WriteLine("Strokes start at ({0}, {1}), IsEnclosedShape: {2}", strokeStartPoint.X, strokeStartPoint.Y, isEnclosed);
                 /*
-                Console.WriteLine("Horizontal Line Test");
+                Debug.WriteLine("Horizontal Line Test");
                 if (stroke.IsHorizontalLine())
                 {
                     stroke.DrawingAttributes.Color = Colors.Purple;
                 }
 
 
-                Console.WriteLine("Vertical Line Test");
+                Debug.WriteLine("Vertical Line Test");
                 if (stroke.IsVerticalLine())
                 {
                      stroke.DrawingAttributes.Color = Colors.Orange;
                 }
 
-                Console.WriteLine("Dot Test");
+                Debug.WriteLine("Dot Test");
                 if (stroke.IsDot())
                 {
                     stroke.DrawingAttributes.Color = Colors.Blue;
@@ -926,7 +927,7 @@ namespace Classroom_Learning_Partner.ViewModels
                               RowInterpretations = guess
                           };
 
-                Console.WriteLine(tag.FormattedValue);
+                Debug.WriteLine(tag.FormattedValue);
 
                 CurrentPage.AddTag(tag);
 
@@ -997,7 +998,7 @@ namespace Classroom_Learning_Partner.ViewModels
                               HeuristicsResults = heuristicsResults
                           };
 
-                Console.WriteLine(tag.FormattedValue);
+                Debug.WriteLine(tag.FormattedValue);
 
                 CurrentPage.AddTag(tag);
             }
@@ -1151,7 +1152,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                        changed,
                                        "Human Analysis Codes: ",
                                        analysisCodes);
-            Console.WriteLine(output);
+            Debug.WriteLine(output);
 
             var consecutive_count = 0;
             var total_matches = 0;
@@ -1162,7 +1163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var copyMachineElems = machineElems.ToList();
             for (int i = 0; i < elems; i++)
             {
-                //Console.WriteLine(humanElems[i]);
+                //Debug.WriteLine(humanElems[i]);
                 if (machineElems[i] == humanElems[i])
                 {
                     consecutive_count++;
@@ -1175,8 +1176,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             for (int j = 0; j < humanElems.Length; j++)
             {
-                //Console.WriteLine(humanElems[j]);
-                //Console.WriteLine(copyMachineElems.Contains(humanElems[j]));
+                //Debug.WriteLine(humanElems[j]);
+                //Debug.WriteLine(copyMachineElems.Contains(humanElems[j]));
                 if (copyMachineElems.Contains(humanElems[j]))
                 {
                     copyMachineElems.RemoveAt(copyMachineElems.FindIndex(humanElems[j]));
@@ -1184,9 +1185,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            Console.WriteLine("Total Matches: " + total_matches + " out of " + total_codes);
-            Console.WriteLine("Consecutive Matches: " + consecutive_count + " out of " + total_codes);
-            Console.WriteLine();
+            Debug.WriteLine("Total Matches: " + total_matches + " out of " + total_codes);
+            Debug.WriteLine("Consecutive Matches: " + consecutive_count + " out of " + total_codes);
+            Debug.WriteLine("");
         }
 
         /// <summary>Analyzes ink strokes near array objects to determine if skip counting was used</summary>
@@ -1254,16 +1255,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //CurrentPage.PageObjects.Add(tempyBoundary);
 
-            //Console.WriteLine("Top: {0}", bounds.Y);
-            //Console.WriteLine("Bottom: {0}", bounds.Y + bounds.Height);
-            //Console.WriteLine("Left: {0}", bounds.X);
-            //Console.WriteLine("Right: {0}", bounds.X + bounds.Width);
+            //Debug.WriteLine("Top: {0}", bounds.Y);
+            //Debug.WriteLine("Bottom: {0}", bounds.Y + bounds.Height);
+            //Debug.WriteLine("Left: {0}", bounds.X);
+            //Debug.WriteLine("Right: {0}", bounds.X + bounds.Width);
 
             //foreach (var array in CurrentPage.PageObjects.OfType<CLPArray>().ToList())
             //{
             //    var arrayBottom = array.YPosition + array.Height - array.LabelLength;
-            //    Console.WriteLine("Top Delta: {0}", arrayBottom - bounds.Y);
-            //    Console.WriteLine("Bottom Delta: {0}", bounds.Y + bounds.Height - arrayBottom);
+            //    Debug.WriteLine("Top Delta: {0}", arrayBottom - bounds.Y);
+            //    Debug.WriteLine("Bottom Delta: {0}", bounds.Y + bounds.Height - arrayBottom);
             //}
 
             //return;
@@ -1486,7 +1487,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // var output = strokes.Select(s => string.Format("Weight: {0}, Num Points: {1}", s.StrokeWeight(), s.StylusPoints.Count)).ToList();
             // foreach (var line in output)
             // {
-            // Console.WriteLine(line);
+            // Debug.WriteLine(line);
             // }
         }
 

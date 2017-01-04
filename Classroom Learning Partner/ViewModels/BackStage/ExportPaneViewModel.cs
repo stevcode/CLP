@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -111,11 +112,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    Console.WriteLine("Skipping Submission from Page #: " + submission.PageNumber);
+                    Debug.WriteLine("Skipping Submission from Page #: " + submission.PageNumber);
                     if (lastSubmissionAdded != null)
                     {
-                        Console.WriteLine("Last Submission Page #: " + lastSubmissionAdded.PageNumber);
-                        Console.WriteLine("Last Submission Page Owner: " + lastSubmissionAdded.Owner.FullName);
+                        Debug.WriteLine("Last Submission Page #: " + lastSubmissionAdded.PageNumber);
+                        Debug.WriteLine("Last Submission Page Owner: " + lastSubmissionAdded.Owner.FullName);
                     }
                 }
             }

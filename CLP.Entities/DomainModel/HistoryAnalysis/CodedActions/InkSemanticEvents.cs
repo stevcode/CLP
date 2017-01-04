@@ -246,8 +246,8 @@ namespace CLP.Entities
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
 
-            //Console.WriteLine("Num of Clusters: {0}", InkClusters.Count);
-            //Console.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
+            //Debug.WriteLine("Num of Clusters: {0}", InkClusters.Count);
+            //Debug.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
 
             // HACK: INK ignore testing
             //foreach (var stroke in ignoredCluster.Strokes)

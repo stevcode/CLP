@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //    : base()
         //{
         //    PageObject = inkRegion;
-        //    //Console.WriteLine(DataTableCols + " *** " + DataTableRows);
+        //    //Debug.WriteLine(DataTableCols + " *** " + DataTableRows);
         //}
 
         ///// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using System.Xml.Serialization;
@@ -140,7 +141,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
                 return;
             }
 
@@ -200,7 +201,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
+                Debug.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
                 return;
             }
 

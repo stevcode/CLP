@@ -192,7 +192,7 @@
                                     </i:Interaction.Triggers>
                                 </Rectangle>
                                 
-                                <Button Grid.Column="1"
+                                <!--<Button Grid.Column="1"
                                         Width="25"
                                         Height="25"
                                         Cursor="Hand"
@@ -231,7 +231,7 @@
                                             </Grid>
                                         </ControlTemplate>
                                     </Button.Template>
-                                </Button>
+                                </Button>-->
                                 
                                 <StackPanel Grid.Column="1"
                                             Height="16"
