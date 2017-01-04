@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum MultipleChoiceOrientations
     {

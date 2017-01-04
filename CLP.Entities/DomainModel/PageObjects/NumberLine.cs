@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum NumberLineTypes
     {

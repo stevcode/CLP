@@ -1,6 +1,6 @@
 ﻿using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -26,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PersonProperty = RegisterProperty("Person", typeof(Person));
 
         /// <summary>
-        /// Unique Identifier for the <see cref="CLP.Entities.Person" />.
+        /// Unique Identifier for the <see cref="CLP.Entities.Demo.Person" />.
         /// </summary>
         [ViewModelToModel("Person")]
         public string ID
@@ -38,7 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>
-        /// Full Name of the <see cref="CLP.Entities.Person" />, delimited by spaces.
+        /// Full Name of the <see cref="CLP.Entities.Demo.Person" />, delimited by spaces.
         /// </summary>
         [ViewModelToModel("Person")]
         public string FullName
@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
 
         /// <summary>
-        /// Alternate name for the <see cref="CLP.Entities.Person" />, delimited by spaces.
+        /// Alternate name for the <see cref="CLP.Entities.Demo.Person" />, delimited by spaces.
         /// </summary>
         [ViewModelToModel("Person")]
         public string Alias
@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
         /// <summary>
-        /// Signifies the <see cref="CLP.Entities.Person" /> is a student.
+        /// Signifies the <see cref="CLP.Entities.Demo.Person" /> is a student.
         /// </summary>
         [ViewModelToModel("Person")]
         public bool IsStudent

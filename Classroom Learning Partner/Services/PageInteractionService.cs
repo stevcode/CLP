@@ -7,7 +7,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.Services
 {

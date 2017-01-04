@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Catel.Collections;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class HistoryAnalysis
     {

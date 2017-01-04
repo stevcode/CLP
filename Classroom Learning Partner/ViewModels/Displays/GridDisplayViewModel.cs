@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Catel.Data;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

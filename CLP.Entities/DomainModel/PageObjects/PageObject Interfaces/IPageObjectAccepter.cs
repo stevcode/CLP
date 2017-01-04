@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public interface IPageObjectAccepter : IPageObject
     {

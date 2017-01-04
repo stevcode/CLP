@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Ink;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     /// <summary>Extension methods for the <see cref="StrokeCollectionExtension" /> class.</summary>
     public static class StrokeCollectionExtension

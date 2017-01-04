@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class ModelBaseExtensions
     {

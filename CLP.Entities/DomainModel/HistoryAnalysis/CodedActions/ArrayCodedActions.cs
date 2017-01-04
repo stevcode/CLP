@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Ink;
 using CLP.InkInterpretation;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class ArrayCodedActions
     {

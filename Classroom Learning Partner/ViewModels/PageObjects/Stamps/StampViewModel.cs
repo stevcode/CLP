@@ -16,7 +16,7 @@ using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
-using CLP.Entities;
+using CLP.Entities.Demo;
 using Microsoft.Win32;
 
 namespace Classroom_Learning_Partner.ViewModels

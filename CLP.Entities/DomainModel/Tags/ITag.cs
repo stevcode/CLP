@@ -1,6 +1,6 @@
 using System;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public interface ITag {
         /// <summary>

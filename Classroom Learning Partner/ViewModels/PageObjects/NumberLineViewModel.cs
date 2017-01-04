@@ -11,7 +11,7 @@ using Catel.MVVM;
 using Catel.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

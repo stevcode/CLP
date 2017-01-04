@@ -7,7 +7,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Catel.Threading;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

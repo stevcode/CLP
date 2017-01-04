@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                  xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
+                  xmlns:entities="clr-namespace:CLP.Entities.Demo;assembly=CLP.Entities.Demo"
                   Title="Create New Person">
     
     <Window.Resources>

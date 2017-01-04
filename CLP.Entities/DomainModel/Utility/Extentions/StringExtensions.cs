@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class StringExtensions
     {

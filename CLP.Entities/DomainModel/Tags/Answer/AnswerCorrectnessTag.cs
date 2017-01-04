@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     [Serializable]
     public class AnswerCorrectnessTag : ATagBase

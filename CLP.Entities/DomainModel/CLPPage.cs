@@ -15,7 +15,7 @@ using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum PageTypes
     {

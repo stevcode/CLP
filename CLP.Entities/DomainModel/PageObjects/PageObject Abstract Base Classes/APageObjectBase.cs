@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public abstract class APageObjectBase : AEntityBase, IPageObject
     {

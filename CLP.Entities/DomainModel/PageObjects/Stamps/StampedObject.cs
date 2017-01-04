@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using Catel.Collections;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum StampedObjectTypes
     {

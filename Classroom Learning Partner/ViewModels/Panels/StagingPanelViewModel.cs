@@ -11,7 +11,7 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
-using CLP.Entities;
+using CLP.Entities.Demo;
 using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.ViewModels

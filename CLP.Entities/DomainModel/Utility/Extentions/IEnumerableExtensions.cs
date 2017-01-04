@@ -2,7 +2,7 @@
 using System.Linq;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class IEnumerableExtensions
     {

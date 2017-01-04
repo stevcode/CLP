@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.Services
 {

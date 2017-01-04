@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Ink;
 using Catel.Collections;
 using Catel.Data;
-using CLP.Entities;
+using CLP.Entities.Demo;
 using Path = Catel.IO.Path;
 
 namespace ConsoleScripts

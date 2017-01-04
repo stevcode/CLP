@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classroom Learning Partner", "Classroom Learning Partner\Classroom Learning Partner.csproj", "{86FEBAD6-E946-4865-B189-D064B37DE607}"
 EndProject
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleScripts", "ConsoleSc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceModelEx", "ServiceModelEx\ServiceModelEx.csproj", "{0858C710-AF53-4049-B98E-CFE3638D1228}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.Entities", "CLP.Entities\CLP.Entities.csproj", "{C6B95A31-7045-4C7E-A72D-C03468E20B20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.Entities.Demo", "CLP.Entities\CLP.Entities.Demo.csproj", "{C6B95A31-7045-4C7E-A72D-C03468E20B20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.CustomControls", "CLP.CustomControls\CLP.CustomControls.csproj", "{9A23526F-813C-428B-9480-E83B90EFC3C8}"
 EndProject

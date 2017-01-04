@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using Catel.IoC;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner
 {

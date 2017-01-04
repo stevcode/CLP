@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Catel.MVVM.Converters;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.Converters
 {

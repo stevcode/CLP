@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum ArrayTypes
     {

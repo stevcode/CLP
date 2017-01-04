@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class RectExtensions
     {

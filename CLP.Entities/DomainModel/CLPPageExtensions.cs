@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Ink;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class CLPPageExtensions
     {

@@ -7,7 +7,7 @@
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   xmlns:local="clr-namespace:CLP.Entities;assembly=CLP.Entities">
+                   xmlns:local="clr-namespace:CLP.Entities.Demo;assembly=CLP.Entities.Demo">
 
     <UserControl.Resources>
         <ResourceDictionary>

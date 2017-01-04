@@ -9,7 +9,7 @@ using System.Windows;
 using Catel;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.Services
 {

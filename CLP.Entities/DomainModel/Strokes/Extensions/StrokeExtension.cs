@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     /// <summary>
     /// Extension methods for the <see cref="Stroke" /> class.

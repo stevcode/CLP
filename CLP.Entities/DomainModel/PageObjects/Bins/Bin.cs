@@ -7,7 +7,7 @@ using System.Windows.Media;
 using Catel.Collections;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     [Serializable]
     public class Bin : AStrokeAndPageObjectAccepter, ICountable

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     [Serializable]
     public class ColumnDisplay : ADisplayBase

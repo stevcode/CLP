@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     [Serializable]
     public class NumberLineStrategyTag : ARepresentationStrategyBaseTag

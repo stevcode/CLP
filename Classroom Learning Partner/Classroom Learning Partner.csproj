@@ -997,9 +997,9 @@
       <Project>{9a23526f-813c-428b-9480-e83b90efc3c8}</Project>
       <Name>CLP.CustomControls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
+    <ProjectReference Include="..\CLP.Entities\CLP.Entities.Demo.csproj">
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
-      <Name>CLP.Entities</Name>
+      <Name>CLP.Entities.Demo</Name>
     </ProjectReference>
     <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
       <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>

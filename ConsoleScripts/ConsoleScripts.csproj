@@ -96,9 +96,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
+    <ProjectReference Include="..\CLP.Entities\CLP.Entities.Demo.csproj">
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
-      <Name>CLP.Entities</Name>
+      <Name>CLP.Entities.Demo</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -6,7 +6,7 @@ using System.Windows.Ink;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public class InkCluster
     {

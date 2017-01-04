@@ -1,4 +1,4 @@
-﻿namespace CLP.Entities
+﻿namespace CLP.Entities.Demo
 {
     public interface ISubmittablePageObject : IPageObject  //TODO: Used for AggregationDataTable, nothing else implements this yet.
     {

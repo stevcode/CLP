@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public class TemporaryGrid : APageObjectBase
     {

@@ -5,7 +5,7 @@ using System.Windows.Ink;
 using Catel.Data;
 using CLP.InkInterpretation;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum RegionBorderStyles
     {

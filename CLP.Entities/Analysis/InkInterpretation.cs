@@ -1,6 +1,6 @@
 ﻿using System.Windows.Ink;
 
-namespace CLP.Entities.Analysis
+namespace CLP.Entities.Demo.Demo.Analysis
 {
     public static class InkInterpretation
     {

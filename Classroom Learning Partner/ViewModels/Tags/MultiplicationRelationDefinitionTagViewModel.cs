@@ -3,7 +3,7 @@ using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

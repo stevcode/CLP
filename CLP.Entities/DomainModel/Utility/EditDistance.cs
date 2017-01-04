@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     // Adapted From: https://blogs.msdn.microsoft.com/toub/2006/05/05/generic-levenshtein-edit-distance-with-c/
     public static class EditDistance

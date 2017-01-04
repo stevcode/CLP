@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     /// <summary>Executes a particular piece of code based on the type of the argument.</summary>
     /// <example>

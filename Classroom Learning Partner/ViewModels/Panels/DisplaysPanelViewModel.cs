@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

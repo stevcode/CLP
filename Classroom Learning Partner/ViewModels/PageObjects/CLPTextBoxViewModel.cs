@@ -13,7 +13,7 @@ using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
-using CLP.Entities;
+using CLP.Entities.Demo;
 using Shape = System.Windows.Shapes.Shape;
 
 namespace Classroom_Learning_Partner.ViewModels

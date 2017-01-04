@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public interface IPageObject
     {

@@ -5,7 +5,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
+                   xmlns:entities="clr-namespace:CLP.Entities.Demo;assembly=CLP.Entities.Demo">
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside"

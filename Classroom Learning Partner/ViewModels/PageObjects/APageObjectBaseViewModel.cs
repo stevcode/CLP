@@ -10,7 +10,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
-using CLP.Entities;
+using CLP.Entities.Demo;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

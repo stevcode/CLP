@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     // Derived from: http://www.johndcook.com/blog/standard_deviation/
     public class RollingStandardDeviation

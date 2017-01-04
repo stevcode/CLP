@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class TagAnalysis
     {

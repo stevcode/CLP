@@ -11,8 +11,7 @@ using Catel.MVVM;
 using Catel.Windows;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
-using CLP.Entities.DomainModel.Utility.Extentions;
+using CLP.Entities.Demo;
 using CLP.InkInterpretation;
 using Path = Catel.IO.Path;
 
@@ -1271,7 +1270,7 @@ namespace Classroom_Learning_Partner.Services
             //#region Generate Stats
 
             //XNamespace typeNamespace = "http://www.w3.org/2001/XMLSchema-instance";
-            //XNamespace entityNamespace = "http://schemas.datacontract.org/2004/07/CLP.Entities";
+            //XNamespace entityNamespace = "http://schemas.datacontract.org/2004/07/CLP.Entities.Demo";
             //XNamespace serializationNamespace = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
             //var typeName = typeNamespace + "type";
             //var anyTypeName = serializationNamespace + "anyType";

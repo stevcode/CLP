@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using Catel;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public static class ColorExtensions
     {

@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
 
-namespace CLP.Entities
+namespace CLP.Entities.Demo
 {
     public enum ShapeType
     {
