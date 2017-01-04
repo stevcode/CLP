@@ -71,20 +71,8 @@
       <HintPath>..\packages\Catel.Core.4.5.2\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Extensions.EntityFramework6, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Extensions.EntityFramework6.4.5.2\lib\net45\Catel.Extensions.EntityFramework6.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Catel.Serialization.Json, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Catel.Serialization.Json.4.5.2\lib\net46\Catel.Serialization.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -103,8 +91,6 @@
   <ItemGroup>
     <Compile Include="Analysis\IAnalysis.cs" />
     <Compile Include="Analysis\InkInterpretation.cs" />
-    <Compile Include="DAL\DatabaseConfiguration.cs" />
-    <Compile Include="DAL\ClassPeriodContext.cs" />
     <Compile Include="DomainModel\ClassPeriod.cs" />
     <Compile Include="DomainModel\ClassInformation.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
