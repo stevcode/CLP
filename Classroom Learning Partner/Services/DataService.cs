@@ -74,8 +74,6 @@ namespace Classroom_Learning_Partner.Services
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
             //ConvertAnnCache();
-            //AddAnnSessions();
-
             //ConvertEmilyCache();
         }
 
