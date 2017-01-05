@@ -71,10 +71,6 @@
       <HintPath>..\packages\Catel.Core.4.5.2\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Serialization.Json, Version=4.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Catel.Serialization.Json.4.5.2\lib\net46\Catel.Serialization.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>

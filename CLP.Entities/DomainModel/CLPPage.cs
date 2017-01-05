@@ -13,7 +13,6 @@ using System.Xml.Serialization;
 using Catel.Data;
 using Catel.IoC;
 using Catel.Runtime.Serialization;
-using Catel.Runtime.Serialization.Json;
 
 namespace CLP.Entities.Demo
 {
@@ -1096,27 +1095,27 @@ namespace CLP.Entities.Demo
 
         public void ToJSON(string pageFilePath, bool serializeInkStrokes = true)
         {
-            if (serializeInkStrokes)
-            {
-                SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
-                History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
-            }
+            //if (serializeInkStrokes)
+            //{
+            //    SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            //    History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
+            //}
 
-            var fileInfo = new FileInfo(pageFilePath);
-            if (!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
+            //var fileInfo = new FileInfo(pageFilePath);
+            //if (!Directory.Exists(fileInfo.DirectoryName))
+            //{
+            //    Directory.CreateDirectory(fileInfo.DirectoryName);
+            //}
 
-            using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
-            {
-                var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                jsonSerializer.WriteTypeInfo = true;
-                jsonSerializer.PreserveReferences = true;
-                jsonSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-            IsCached = true;
+            //using (Stream stream = new FileStream(pageFilePath, FileMode.Create))
+            //{
+            //    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+            //    jsonSerializer.WriteTypeInfo = true;
+            //    jsonSerializer.PreserveReferences = true;
+            //    jsonSerializer.Serialize(this, stream);
+            //    ClearIsDirtyOnAllChilds();
+            //}
+            //IsCached = true;
         }
 
         public void ToXML(string pageFilePath, bool serializeInkStrokes = true)
@@ -1207,26 +1206,26 @@ namespace CLP.Entities.Demo
                 }
 
                 CLPPage page;
-                using (var stream = new FileStream(pageFilePath, FileMode.Open))
-                {
-                    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
-                    jsonSerializer.WriteTypeInfo = true;
-                    jsonSerializer.PreserveReferences = true;
-                    //page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
-                    var uncastPage = jsonSerializer.Deserialize(typeof(CLPPage), stream);
-                    page = (CLPPage)uncastPage;
-                }
+                //using (var stream = new FileStream(pageFilePath, FileMode.Open))
+                //{
+                //    var jsonSerializer = ServiceLocator.Default.ResolveType<IJsonSerializer>();
+                //    jsonSerializer.WriteTypeInfo = true;
+                //    jsonSerializer.PreserveReferences = true;
+                //    //page = (CLPPage)jsonSerializer.Deserialize(typeof(CLPPage), stream);
+                //    var uncastPage = jsonSerializer.Deserialize(typeof(CLPPage), stream);
+                //    page = (CLPPage)uncastPage;
+                //}
 
-                if (page == null)
-                {
-                    return null;
-                }
+                //if (page == null)
+                //{
+                //    return null;
+                //}
 
-                page.PageNumber = decimal.Parse(nameComposite.PageNumber);
-                page.ID = nameComposite.ID;
-                page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
-                page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                page.AfterDeserialization();
+                //page.PageNumber = decimal.Parse(nameComposite.PageNumber);
+                //page.ID = nameComposite.ID;
+                //page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
+                //page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
+                //page.AfterDeserialization();
 
                 // BUG: loaded thumbnails don't let go of their disk reference.
                 //var fileInfo = new FileInfo(pageFilePath);
@@ -1234,7 +1233,9 @@ namespace CLP.Entities.Demo
                 //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
                 //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
 
-                return page;
+                //return page;
+
+                return null;
             }
             catch (Exception e)
             {
