@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var currentNotebookID = Notebook.ID;
-            TeacherNotebooks = new ObservableCollection<Notebook>(_dataService.LoadedNotebooks.Where(n => !n.Owner.IsStudent && n.ID == currentNotebookID).OrderBy(n => n.Owner.DisplayName));
+            TeacherNotebooks = new ObservableCollection<Notebook>(_dataService.LoadedNotebooks.Where(n => !n.Owner.IsStudent && n.ID == currentNotebookID && n.Owner.ID != Person.AUTHOR_ID).OrderBy(n => n.Owner.DisplayName));
             StudentNotebooks = new ObservableCollection<Notebook>(_dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent && n.ID == currentNotebookID).OrderBy(n => n.Owner.DisplayName));
         }
 
