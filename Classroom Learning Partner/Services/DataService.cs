@@ -1602,7 +1602,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 var notebookFolder = directory.FullName;
                 Debug.WriteLine($"Notebook Folder: {notebookFolder}");
-                var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
+                var notebook = ConversionService.ConvertCacheEmilyNotebook(notebookFolder);
                 notebooks.Add(notebook);
 
                 if (notebook.OwnerID == Person.AUTHOR_ID)
@@ -1629,10 +1629,10 @@ namespace Classroom_Learning_Partner.Services
             classRoster.ListOfStudents.Clear();
             classRoster.ListOfStudents.AddRange(students);
 
-            ConversionService.SaveEmilyClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
+            ConversionService.SaveClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
 
             var classesDirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
-            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheEmilyClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
             {
@@ -1645,25 +1645,39 @@ namespace Classroom_Learning_Partner.Services
 
         private void ConvertAnnCache()
         {
-            //var dirInfo = new DirectoryInfo(ConversionService.AnnNotebooksFolder);
-            //var notebooks = new List<Notebook>();
-            //foreach (var directory in dirInfo.EnumerateDirectories())
-            //{
-            //    var notebookFolder = directory.FullName;
-            //    Debug.WriteLine($"Notebook Folder: {notebookFolder}");
-            //    var notebook = ConversionService.ConvertCacheNotebook(notebookFolder);
-            //    notebooks.Add(notebook);
-            //}
+            var dirInfo = new DirectoryInfo(ConversionService.AnnNotebooksFolder);
+            var notebooks = new List<Notebook>();
+            Notebook authorNotebook = null;
+            var students = new List<Person>();
+            Person teacher = null;
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
+                var notebook = ConversionService.ConvertCacheAnnNotebook(notebookFolder);
+                notebooks.Add(notebook);
 
-            var notebookFolder = Path.Combine(ConversionService.AnnNotebooksFolder, "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA;AUTHOR;AUTHOR0000000000000000;A");
+                if (notebook.OwnerID == Person.AUTHOR_ID)
+                {
+                    authorNotebook = notebook;
+                }
 
-            var notebook = ConversionService.ConvertCacheAnnNotebook(notebookFolder);
-            ConversionService.SaveAnnNotebookToZip(ConversionService.AnnZipFilePath, notebook);
+                if (notebook.Owner.IsStudent)
+                {
+                    students.Add(notebook.Owner);
+                }
+                else
+                {
+                    teacher = notebook.Owner;
+                }
+            }
+
+            ConversionService.SaveNotebooksToZip(ConversionService.AnnZipFilePath, notebooks);
 
             var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
-            var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
-            ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
-            ConversionService.SaveAnnImagesToZip(ConversionService.AnnZipFilePath);
+            var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
+            ConversionService.SaveClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
+            ConversionService.SaveImagesToZip(ConversionService.AnnZipFilePath, ConversionService.AnnImageFolder);
 
             var classesDirInfo = new DirectoryInfo(ConversionService.AnnClassesFolder);
             var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
@@ -1674,7 +1688,7 @@ namespace Classroom_Learning_Partner.Services
                 i++;
             }
 
-            ConversionService.SaveAnnSessionsToZip(ConversionService.AnnZipFilePath, sessions);
+            ConversionService.SaveSessionsToZip(ConversionService.AnnZipFilePath, sessions, authorNotebook);
         }
 
         #endregion // Tests

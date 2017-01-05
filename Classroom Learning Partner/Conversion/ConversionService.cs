@@ -16,56 +16,9 @@ namespace Classroom_Learning_Partner
     {
         public ConversionService() { }
 
-        #region Emily Conversions
+        #region All
 
-        #region Locations
-
-        public static string EmilyCacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
-        public static string EmilyNotebooksFolder => Path.Combine(EmilyCacheFolder, "Notebooks");
-        public static string EmilyClassesFolder => Path.Combine(EmilyCacheFolder, "Classes");
-        public static string EmilyZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
-
-        #endregion // Locations
-
-        #region Conversion Loop
-
-        public static Notebook ConvertCacheNotebook(string notebookFolder)
-        {
-            var oldNotebook = Emily.Notebook.OpenNotebook(notebookFolder);
-            var newNotebook = ConvertNotebook(oldNotebook);
-
-            foreach (var page in oldNotebook.Pages)
-            {
-                var newPage = ConvertPage(page);
-                foreach (var submission in page.Submissions)
-                {
-                    var newSubmission = ConvertPage(submission);
-                    newPage.Submissions.Add(newSubmission);
-                }
-
-                newNotebook.Pages.Add(newPage);
-            }
-
-            return newNotebook;
-        }
-
-        public static Session ConvertCacheClassPeriod(string filePath)
-        {
-            var classPeriod = Emily.ClassPeriod.OpenClassPeriod(filePath);
-            var session = ConvertClassPeriod(classPeriod);
-
-            return session;
-        }
-
-        public static ClassRoster ConvertCacheEmilyClassSubject(string filePath, Notebook notebook)
-        {
-            var classSubject = Emily.ClassSubject.OpenClassSubject(filePath);
-            var classRoster = ConvertEmilyClassSubject(classSubject, notebook);
-
-            return classRoster;
-        }
-
-        public static void SaveNotebookToZip(string zipFilePath, Notebook notebook)
+        public static void SaveNotebookToZip(string zipFilePath, Notebook notebook, bool isIncludingSubmissions = true)
         {
             if (File.Exists(zipFilePath))
             {
@@ -80,9 +33,10 @@ namespace Classroom_Learning_Partner
             foreach (var page in notebook.Pages)
             {
                 entryList.Add(new DataService.ZipEntrySaver(page, notebook));
-                foreach (var submission in page.Submissions)
+
+                if (isIncludingSubmissions)
                 {
-                    entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
+                    entryList.AddRange(page.Submissions.Select(submission => new DataService.ZipEntrySaver(submission, notebook)));
                 }
             }
 
@@ -90,7 +44,7 @@ namespace Classroom_Learning_Partner
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
                 foreach (var zipEntrySaver in entryList)
@@ -132,7 +86,7 @@ namespace Classroom_Learning_Partner
             {
                 zip.CompressionMethod = CompressionMethod.None;
                 zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
                 foreach (var zipEntrySaver in entryList)
@@ -144,59 +98,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions, Notebook notebook)
-        {
-            if (!File.Exists(zipFilePath))
-            {
-                return;
-            }
-
-            var mappedIDs = new Dictionary<string, int>();
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var allPageIDs = DataService.GetAllPageIDsInNotebook(zip, notebook);
-                mappedIDs = DataService.GetPageNumbersFromPageIDs(zip, notebook, allPageIDs);
-            }
-
-            var entryList = new List<DataService.ZipEntrySaver>();
-            foreach (var session in sessions)
-            {
-                session.ContainerZipFilePath = zipFilePath;
-                session.StartingPageNumber = mappedIDs[session.StartingPageID].ToString();
-                var pageNumbers = new List<int>();
-                foreach (var pageID in session.PageIDs)
-                {
-                    var pageNumber = mappedIDs[pageID];
-                    pageNumbers.Add((int)pageNumber.ToInt());
-                }
-
-                session.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, false, true);
-
-                entryList.Add(new DataService.ZipEntrySaver(session));
-            }
-
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save();
-            }
-        }
-
-        public static void SaveEmilyClassRosterToZip(string zipFilePath, ClassRoster classRoster)
+        public static void SaveClassRosterToZip(string zipFilePath, ClassRoster classRoster)
         {
             if (!File.Exists(zipFilePath))
             {
@@ -224,23 +126,146 @@ namespace Classroom_Learning_Partner
             }
         }
 
+        public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions, Notebook authorNotebook)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            var mappedIDs = new Dictionary<string, int>();
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var allPageIDs = DataService.GetAllPageIDsInNotebook(zip, authorNotebook);
+                mappedIDs = DataService.GetPageNumbersFromPageIDs(zip, authorNotebook, allPageIDs);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var session in sessions)
+            {
+                session.ContainerZipFilePath = zipFilePath;
+                session.StartingPageNumber = mappedIDs[session.StartingPageID].ToString();
+                var pageNumbers = new List<int>();
+                foreach (var pageID in session.PageIDs)
+                {
+                    var pageNumber = mappedIDs[pageID];
+                    pageNumbers.Add((int)pageNumber.ToInt());
+                }
+
+                session.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, false, true);
+
+                entryList.Add(new DataService.ZipEntrySaver(session));
+            }
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save();
+            }
+        }
+
+        public static void SaveImagesToZip(string zipFilePath, string imageDirectoryPath)
+        {
+            if (!File.Exists(zipFilePath))
+            {
+                return;
+            }
+
+            using (var zip = ZipFile.Read(zipFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var directoryInfo = new DirectoryInfo(imageDirectoryPath);
+                foreach (var fileInfo in directoryInfo.GetFiles())
+                {
+                    var fileNameWithExtension = fileInfo.Name;
+                    var imageFilePath = fileInfo.FullName;
+
+                    var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, fileNameWithExtension);
+                    if (zip.ContainsEntry(internalFilePath))
+                    {
+                        continue;
+                    }
+
+                    var entry = zip.AddFile(imageFilePath);
+                    entry.FileName = internalFilePath;
+                }
+
+                zip.Save();
+            }
+        }
+
+        #endregion // All
+
+        #region Emily Conversions
+
+        #region Locations
+
+        public static string EmilyCacheFolder => Path.Combine(DataService.DesktopFolderPath, "CacheT");
+        public static string EmilyNotebooksFolder => Path.Combine(EmilyCacheFolder, "Notebooks");
+        public static string EmilyClassesFolder => Path.Combine(EmilyCacheFolder, "Classes");
+        public static string EmilyZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Emily - Spring 2014.clp");
+
+        #endregion // Locations
+
+        #region Conversion Loop
+
+        public static Notebook ConvertCacheEmilyNotebook(string notebookFolder)
+        {
+            var oldNotebook = Emily.Notebook.OpenNotebook(notebookFolder);
+            var newNotebook = ConvertNotebook(oldNotebook);
+
+            foreach (var page in oldNotebook.Pages)
+            {
+                var newPage = ConvertPage(page);
+                foreach (var submission in page.Submissions)
+                {
+                    var newSubmission = ConvertPage(submission);
+                    newPage.Submissions.Add(newSubmission);
+                }
+
+                newNotebook.Pages.Add(newPage);
+            }
+
+            return newNotebook;
+        }
+
+        public static ClassRoster ConvertCacheEmilyClassSubject(string filePath, Notebook notebook)
+        {
+            var classSubject = Emily.ClassSubject.OpenClassSubject(filePath);
+            var classRoster = ConvertEmilyClassSubject(classSubject, notebook);
+
+            return classRoster;
+        }
+
+        public static Session ConvertCacheEmilyClassPeriod(string filePath)
+        {
+            var classPeriod = Emily.ClassPeriod.OpenClassPeriod(filePath);
+            var session = ConvertClassPeriod(classPeriod);
+
+            return session;
+        }
+
         #endregion // Conversion Loop
 
         #region Notebook Parts
-
-        public static Session ConvertClassPeriod(Emily.ClassPeriod classPeriod)
-        {
-            var newSession = new Session
-            {
-                StartTime = classPeriod.StartTime,
-                PageIDs = classPeriod.PageIDs,
-                StartingPageID = classPeriod.PageIDs.FirstOrDefault()
-            };
-
-            newSession.NotebookIDs.Add(classPeriod.NotebookID);
-
-            return newSession;
-        }
 
         public static Person ConvertPerson(Emily.Person person)
         {
@@ -259,11 +284,11 @@ namespace Classroom_Learning_Partner
         public static ClassRoster ConvertEmilyClassSubject(Emily.ClassSubject classSubject, Notebook notebook)
         {
             var notebookSet = new NotebookSet
-            {
-                NotebookName = notebook.Name,
-                NotebookID = notebook.ID,
-                CreationDate = notebook.CreationDate
-            };
+                              {
+                                  NotebookName = notebook.Name,
+                                  NotebookID = notebook.ID,
+                                  CreationDate = notebook.CreationDate
+                              };
 
             var newClassRoster = new ClassRoster
                                  {
@@ -291,20 +316,34 @@ namespace Classroom_Learning_Partner
             return newClassRoster;
         }
 
+        public static Session ConvertClassPeriod(Emily.ClassPeriod classPeriod)
+        {
+            var newSession = new Session
+                             {
+                                 StartTime = classPeriod.StartTime,
+                                 PageIDs = classPeriod.PageIDs,
+                                 StartingPageID = classPeriod.PageIDs.FirstOrDefault()
+                             };
+
+            newSession.NotebookIDs.Add(classPeriod.NotebookID);
+
+            return newSession;
+        }
+
         public static Notebook ConvertNotebook(Emily.Notebook notebook)
         {
             var newPerson = ConvertPerson(notebook.Owner);
 
             var newNotebook = new Notebook
-            {
-                ID = notebook.ID,
-                Owner = newPerson,
-                Name = notebook.Name,
-                CreationDate = notebook.CreationDate,
-                LastSavedDate = notebook.LastSavedDate,
-                CurrentPageID = notebook.CurrentPageID,
-                CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
-            };
+                              {
+                                  ID = notebook.ID,
+                                  Owner = newPerson,
+                                  Name = notebook.Name,
+                                  CreationDate = notebook.CreationDate,
+                                  LastSavedDate = notebook.LastSavedDate,
+                                  CurrentPageID = notebook.CurrentPageID,
+                                  CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
+                              };
 
             return newNotebook;
         }
@@ -314,21 +353,21 @@ namespace Classroom_Learning_Partner
             var newPerson = ConvertPerson(page.Owner);
 
             var newPage = new CLPPage
-            {
-                ID = page.ID,
-                Owner = newPerson,
-                PageNumber = (int)page.PageNumber,
-                DifferentiationLevel = page.DifferentiationLevel,
-                VersionIndex = page.VersionIndex,
-                LastVersionIndex = page.LastVersionIndex,
-                CreationDate = page.CreationDate,
-                PageType = page.PageType == Emily.PageTypes.Animation ? PageTypes.Animation : PageTypes.Default,
-                SubmissionType = page.SubmissionType == Emily.SubmissionTypes.Single ? SubmissionTypes.Single : SubmissionTypes.Unsubmitted,
-                SubmissionTime = page.SubmissionTime,
-                Height = page.Height,
-                Width = page.Width,
-                InitialAspectRatio = page.InitialAspectRatio
-            };
+                          {
+                              ID = page.ID,
+                              Owner = newPerson,
+                              PageNumber = (int)page.PageNumber,
+                              DifferentiationLevel = page.DifferentiationLevel,
+                              VersionIndex = page.VersionIndex,
+                              LastVersionIndex = page.LastVersionIndex,
+                              CreationDate = page.CreationDate,
+                              PageType = page.PageType == Emily.PageTypes.Animation ? PageTypes.Animation : PageTypes.Default,
+                              SubmissionType = page.SubmissionType == Emily.SubmissionTypes.Single ? SubmissionTypes.Single : SubmissionTypes.Unsubmitted,
+                              SubmissionTime = page.SubmissionTime,
+                              Height = page.Height,
+                              Width = page.Width,
+                              InitialAspectRatio = page.InitialAspectRatio
+                          };
 
             // TODO: Convert History
             // TODO: Tags

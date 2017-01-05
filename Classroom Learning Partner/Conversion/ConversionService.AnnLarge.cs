@@ -5,8 +5,6 @@ using System.IO;
 using System.Linq;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
-using Ionic.Zip;
-using Ionic.Zlib;
 using Ann = CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner
@@ -27,7 +25,7 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
-        public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
+        public static Notebook ConvertCacheAnnNotebook(string notebookFolder, bool isAuthorNotebook = false)
         {
             var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
             var newNotebook = ConvertNotebook(oldNotebook);
@@ -43,6 +41,11 @@ namespace Classroom_Learning_Partner
 
                 newNotebook.Pages.Add(newPage);
 
+                if (!isAuthorNotebook)
+                {
+                    continue;
+                }
+
                 if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
                 {
                     PageNumberToIDMap.Add(newPage.PageNumber, newPage.ID);
@@ -57,14 +60,6 @@ namespace Classroom_Learning_Partner
             return newNotebook;
         }
 
-        public static Session ConvertCacheAnnClassPeriod(string filePath)
-        {
-            var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
-            var session = ConvertClassPeriod(classPeriod);
-
-            return session;
-        }
-
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
         {
             var classSubject = Ann.ClassSubject.OpenClassSubject(filePath);
@@ -73,144 +68,70 @@ namespace Classroom_Learning_Partner
             return classRoster;
         }
 
-        public static void SaveAnnNotebookToZip(string zipFilePath, Notebook notebook)
+        public static Session ConvertCacheAnnClassPeriod(string filePath)
         {
-            if (File.Exists(zipFilePath))
-            {
-                File.Delete(zipFilePath);
-            }
+            var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
+            var session = ConvertClassPeriod(classPeriod);
 
-            var entryList = new List<DataService.ZipEntrySaver>
-                            {
-                                new DataService.ZipEntrySaver(notebook, notebook)
-                            };
-
-            foreach (var page in notebook.Pages)
-            {
-                //if (page.PageNumber <= 50)
-                //{
-                //    continue;
-                //}
-
-                entryList.Add(new DataService.ZipEntrySaver(page, notebook));
-                //foreach (var submission in page.Submissions)
-                //{
-                //    entryList.Add(new DataService.ZipEntrySaver(submission, parentNotebookName));
-                //}
-            }
-
-            using (var zip = new ZipFile())
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save(zipFilePath);
-            }
-        }
-
-        public static void SaveAnnClassRosterToZip(string zipFilePath, ClassRoster classRoster)
-        {
-            if (!File.Exists(zipFilePath))
-            {
-                return;
-            }
-
-            var entryList = new List<DataService.ZipEntrySaver>();
-            classRoster.ContainerZipFilePath = zipFilePath;
-
-            entryList.Add(new DataService.ZipEntrySaver(classRoster));
-
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save();
-            }
-        }
-
-        public static void SaveAnnSessionsToZip(string zipFilePath, List<Session> sessions)
-        {
-            if (!File.Exists(zipFilePath))
-            {
-                return;
-            }
-
-            var entryList = new List<DataService.ZipEntrySaver>();
-            foreach (var session in sessions)
-            {
-                session.ContainerZipFilePath = zipFilePath;
-
-                entryList.Add(new DataService.ZipEntrySaver(session));
-            }
-
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save();
-            }
-        }
-
-        public static void SaveAnnImagesToZip(string zipFilePath)
-        {
-            if (!File.Exists(zipFilePath))
-            {
-                return;
-            }
-
-            using (var zip = ZipFile.Read(zipFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var directoryInfo = new DirectoryInfo(AnnImageFolder);
-                foreach (var fileInfo in directoryInfo.GetFiles())
-                {
-                    var fileNameWithExtension = fileInfo.Name;
-                    var imageFilePath = fileInfo.FullName;
-
-                    var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, fileNameWithExtension);
-                    if (zip.ContainsEntry(internalFilePath))
-                    {
-                        continue;
-                    }
-
-                    var entry = zip.AddFile(imageFilePath);
-                    entry.FileName = internalFilePath;
-                }
-
-                zip.Save();
-            }
+            return session;
         }
 
         #endregion // Conversion Loop
 
         #region Notebook Parts
+
+        // 12/7
+        public static Person ConvertPerson(Ann.Person person)
+        {
+            var newPerson = Person.ParseFromFullName(person.FullName, person.IsStudent);
+            newPerson.ID = person.ID;
+            newPerson.Alias = person.Alias;
+            newPerson.CurrentDifferentiationGroup = person.CurrentDifferentiationGroup;
+            newPerson.TemporaryDifferentiationGroup = person.TempDifferentiationGroup;
+
+            if (string.IsNullOrWhiteSpace(newPerson.FullName))
+            {
+                Debug.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
+            }
+
+            return newPerson;
+        }
+
+        // 12/12
+        public static ClassRoster ConvertAnnClassSubject(Ann.ClassSubject classSubject, Notebook notebook)
+        {
+            var notebookSet = new NotebookSet
+                              {
+                                  NotebookName = notebook.Name,
+                                  NotebookID = notebook.ID,
+                                  CreationDate = notebook.CreationDate
+                              };
+
+            var newClassRoster = new ClassRoster
+                                 {
+                                     SubjectName = classSubject.Name,
+                                     GradeLevel = classSubject.GradeLevel,
+                                     StartDate = classSubject.StartDate,
+                                     EndDate = classSubject.EndDate,
+                                     SchoolName = classSubject.SchoolName,
+                                     SchoolDistrict = classSubject.SchoolDistrict,
+                                     City = classSubject.City,
+                                     State = classSubject.State
+                                 };
+
+            newClassRoster.ListOfNotebookSets.Add(notebookSet);
+
+            var teacher = ConvertPerson(classSubject.Teacher);
+            newClassRoster.ListOfTeachers.Add(teacher);
+
+            foreach (var person in classSubject.StudentList.OrderBy(p => p.FullName))
+            {
+                var newPerson = ConvertPerson(person);
+                newClassRoster.ListOfStudents.Add(newPerson);
+            }
+
+            return newClassRoster;
+        }
 
         private static readonly Dictionary<int, string> PageNumberToIDMap = new Dictionary<int, string>();
         private static readonly Dictionary<string, int> PageIDToNumberMap = new Dictionary<string, int>();
@@ -242,74 +163,21 @@ namespace Classroom_Learning_Partner
             return newSession;
         }
 
-        // 12/12
-        public static ClassRoster ConvertAnnClassSubject(Ann.ClassSubject classSubject, Notebook notebook)
-        {
-            var notebookSet = new NotebookSet
-            {
-                NotebookName = notebook.Name,
-                NotebookID = notebook.ID,
-                CreationDate = notebook.CreationDate
-            };
-
-            var newClassRoster = new ClassRoster
-            {
-                SubjectName = classSubject.Name,
-                GradeLevel = classSubject.GradeLevel,
-                StartDate = classSubject.StartDate,
-                EndDate = classSubject.EndDate,
-                SchoolName = classSubject.SchoolName,
-                SchoolDistrict = classSubject.SchoolDistrict,
-                City = classSubject.City,
-                State = classSubject.State
-            };
-
-            newClassRoster.ListOfNotebookSets.Add(notebookSet);
-
-            var teacher = ConvertPerson(classSubject.Teacher);
-            newClassRoster.ListOfTeachers.Add(teacher);
-
-            foreach (var person in classSubject.StudentList.OrderBy(p => p.FullName))
-            {
-                var newPerson = ConvertPerson(person);
-                newClassRoster.ListOfStudents.Add(newPerson);
-            }
-
-            return newClassRoster;
-        }
-
-        // 12/7
-        public static Person ConvertPerson(Ann.Person person)
-        {
-            var newPerson = Person.ParseFromFullName(person.FullName, person.IsStudent);
-            newPerson.ID = person.ID;
-            newPerson.Alias = person.Alias;
-            newPerson.CurrentDifferentiationGroup = person.CurrentDifferentiationGroup;
-            newPerson.TemporaryDifferentiationGroup = person.TempDifferentiationGroup;
-
-            if (string.IsNullOrWhiteSpace(newPerson.FullName))
-            {
-                Debug.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
-            }
-
-            return newPerson;
-        }
-
         // 12/7
         public static Notebook ConvertNotebook(Ann.Notebook notebook)
         {
             var newPerson = ConvertPerson(notebook.Owner);
 
             var newNotebook = new Notebook
-            {
-                ID = notebook.ID,
-                Owner = newPerson,
-                Name = notebook.Name,
-                CreationDate = notebook.CreationDate,
-                LastSavedDate = notebook.LastSavedDate,
-                CurrentPageID = notebook.CurrentPageID,
-                CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
-            };
+                              {
+                                  ID = notebook.ID,
+                                  Owner = newPerson,
+                                  Name = notebook.Name,
+                                  CreationDate = notebook.CreationDate,
+                                  LastSavedDate = notebook.LastSavedDate,
+                                  CurrentPageID = notebook.CurrentPageID,
+                                  CurrentPageVersionIndex = notebook.CurrentPageVersionIndex
+                              };
 
             return newNotebook;
         }
@@ -320,21 +188,21 @@ namespace Classroom_Learning_Partner
             var newPerson = ConvertPerson(page.Owner);
 
             var newPage = new CLPPage
-            {
-                ID = page.ID,
-                Owner = newPerson,
-                PageNumber = (int)page.PageNumber,
-                DifferentiationLevel = page.DifferentiationLevel,
-                VersionIndex = page.VersionIndex,
-                LastVersionIndex = page.LastVersionIndex,
-                CreationDate = page.CreationDate,
-                PageType = page.PageType == Ann.PageTypes.Animation ? PageTypes.Animation : PageTypes.Default,
-                SubmissionType = page.SubmissionType == Ann.SubmissionTypes.Single ? SubmissionTypes.Single : SubmissionTypes.Unsubmitted,
-                SubmissionTime = page.SubmissionTime,
-                Height = page.Height,
-                Width = page.Width,
-                InitialAspectRatio = page.InitialAspectRatio
-            };
+                          {
+                              ID = page.ID,
+                              Owner = newPerson,
+                              PageNumber = (int)page.PageNumber,
+                              DifferentiationLevel = page.DifferentiationLevel,
+                              VersionIndex = page.VersionIndex,
+                              LastVersionIndex = page.LastVersionIndex,
+                              CreationDate = page.CreationDate,
+                              PageType = page.PageType == Ann.PageTypes.Animation ? PageTypes.Animation : PageTypes.Default,
+                              SubmissionType = page.SubmissionType == Ann.SubmissionTypes.Single ? SubmissionTypes.Single : SubmissionTypes.Unsubmitted,
+                              SubmissionTime = page.SubmissionTime,
+                              Height = page.Height,
+                              Width = page.Width,
+                              InitialAspectRatio = page.InitialAspectRatio
+                          };
 
             // TODO: Convert History
             // TODO: Tags
