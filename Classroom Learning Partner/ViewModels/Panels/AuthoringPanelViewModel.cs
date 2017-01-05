@@ -204,13 +204,25 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMovePageUpCommandExecute()
         {
             var currentPageIndex = Notebook.Pages.IndexOf(CurrentPage);
+            if (currentPageIndex <= 0 ||
+                currentPageIndex >= Notebook.Pages.Count)
+            {
+                return;
+            }
+
             var previousPage = Notebook.Pages[currentPageIndex - 1];
+            //var previousPageNumber = previousPage.PageNumber;
+            //_dataService.MovePage(Notebook, CurrentPage, previousPageNumber);
+
+            /////
             CurrentPage.PageNumber--;
             previousPage.PageNumber++;
 
             // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemUp(CurrentPage);
             _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex - 1]);
+            /////
+
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
@@ -225,13 +237,27 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMovePageDownCommandExecute()
         {
             var currentPageIndex = Notebook.Pages.IndexOf(CurrentPage);
+            if (currentPageIndex < 0 ||
+                currentPageIndex >= Notebook.Pages.Count - 1)
+            {
+                return;
+            }
+
             var nextPage = Notebook.Pages[currentPageIndex + 1];
+            //var nextPageNumber = nextPage.PageNumber;
+            //_dataService.MovePage(Notebook, CurrentPage, nextPageNumber);
+
+            /////
             CurrentPage.PageNumber++;
             nextPage.PageNumber--;
 
             // TODO: Test if this messes up autosaving
             Notebook.Pages.MoveItemDown(CurrentPage);
             _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex + 1]);
+
+            /////
+
+
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
@@ -245,8 +271,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMovePageToCommandExecute()
         {
-            var currentPageIndex = Notebook.Pages.IndexOf(CurrentPage);
-
             var newPageNumberPrompt = new KeypadWindowView("What will this page's new page number be?", Notebook.Pages.Count + 1)
                                      {
                                          Owner = Application.Current.MainWindow,
@@ -263,37 +287,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var newPageNumber = Convert.ToInt32(newPageNumberPrompt.NumbersEntered.Text);
 
-            if (newPageNumber == currentPageIndex + 1 ||
-                newPageNumber == 0)
-            {
-                return;
-            }
-
-            if (newPageNumber > currentPageIndex + 1)
-            {
-                for (var i = currentPageIndex + 1; i < newPageNumber; i++)
-                {
-                    var page = Notebook.Pages[i];
-                    page.PageNumber--;
-                }
-
-                // TODO: Use DataService
-                CurrentPage.PageNumber = newPageNumber;
-                Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
-            }
-
-            if (newPageNumber < currentPageIndex + 1)
-            {
-                for (var i = newPageNumber - 1; i < currentPageIndex; i++)
-                {
-                    var page = Notebook.Pages[i];
-                    page.PageNumber++;
-                }
-
-                // TODO: Use DataService
-                CurrentPage.PageNumber = newPageNumber;
-                Notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
-            }
+            _dataService.MovePage(Notebook, CurrentPage, newPageNumber);
 
             RaisePropertyChanged(nameof(CurrentPage));
         }

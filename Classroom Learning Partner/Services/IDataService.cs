@@ -60,6 +60,7 @@ namespace Classroom_Learning_Partner.Services
         void InsertPageAt(Notebook notebook, CLPPage page, int index);
         void DeletePage(Notebook notebook, CLPPage page);
         void DeletePageAt(Notebook notebook, int index);
+        void MovePage(Notebook notebook, CLPPage page, int newPageNumber);
         void AutoSavePage(Notebook notebook, CLPPage page);
         
         //Obsolete

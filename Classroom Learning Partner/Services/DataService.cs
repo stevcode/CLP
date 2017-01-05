@@ -77,7 +77,6 @@ namespace Classroom_Learning_Partner.Services
             //AddAnnSessions();
 
             //ConvertEmilyCache();
-            //AddEmilySessions();
         }
 
         #endregion // Constructors
@@ -767,6 +766,40 @@ namespace Classroom_Learning_Partner.Services
             AddPageToCurrentDisplay(nextPage, false);
         }
 
+        public void MovePage(Notebook notebook, CLPPage pageToMove, int newPageNumber)
+        {
+            var currentPageIndex = notebook.Pages.IndexOf(pageToMove);
+            if (newPageNumber == pageToMove.PageNumber ||
+                newPageNumber <= 0)
+            {
+                return;
+            }
+
+            if (newPageNumber > pageToMove.PageNumber)
+            {
+                for (var i = currentPageIndex + 1; i < newPageNumber; i++)
+                {
+                    var page = notebook.Pages[i];
+                    page.PageNumber--;
+                }
+
+                pageToMove.PageNumber = newPageNumber;
+                notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
+            }
+
+            if (newPageNumber < pageToMove.PageNumber)
+            {
+                for (var i = newPageNumber - 1; i < currentPageIndex; i++)
+                {
+                    var page = notebook.Pages[i];
+                    page.PageNumber++;
+                }
+
+                pageToMove.PageNumber = newPageNumber;
+                notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
+            }
+        }
+
         public void AutoSavePage(Notebook notebook, CLPPage page)
         {
             if (!IsAutoSaveOn)
@@ -1246,8 +1279,6 @@ namespace Classroom_Learning_Partner.Services
 
             return pageIDs;
         }
-
-        // TODO: GetAllPageNumbersInNotebook?
 
         public static Dictionary<string, int> GetPageNumbersFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs)
         {
