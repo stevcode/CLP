@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
-        public static Notebook ConvertCacheAnnNotebook(string notebookFolder, bool isAuthorNotebook = false)
+        public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
             var newNotebook = ConvertNotebook(oldNotebook);
@@ -40,11 +40,6 @@ namespace Classroom_Learning_Partner
                 }
 
                 newNotebook.Pages.Add(newPage);
-
-                if (!isAuthorNotebook)
-                {
-                    continue;
-                }
 
                 if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
                 {
