@@ -1664,12 +1664,9 @@ namespace Classroom_Learning_Partner.Services
             var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, notebook);
             ConversionService.SaveAnnClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
             ConversionService.SaveAnnImagesToZip(ConversionService.AnnZipFilePath);
-        }
 
-        private void AddAnnSessions()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.AnnClassesFolder);
-            var sessions = dirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var classesDirInfo = new DirectoryInfo(ConversionService.AnnClassesFolder);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
             var i = 1;
             foreach (var session in sessions)
             {
@@ -1678,14 +1675,6 @@ namespace Classroom_Learning_Partner.Services
             }
 
             ConversionService.SaveAnnSessionsToZip(ConversionService.AnnZipFilePath, sessions);
-        }
-
-        private void UpdateZipFile(string zipContainerFilePath)
-        {
-            if (!File.Exists(zipContainerFilePath))
-            {
-                return;
-            }
         }
 
         #endregion // Tests

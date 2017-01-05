@@ -288,6 +288,7 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Conversion\ConversionService.AnnLarge.cs" />
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\Multi Converters\MultiplyAllMultiConverter.cs" />
@@ -326,7 +327,7 @@
     <Compile Include="Network\ProjectorService.cs" />
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
-    <Compile Include="Services\ConversionService.cs" />
+    <Compile Include="Conversion\ConversionService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\INetworkService.cs" />
