@@ -402,11 +402,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook.Pages.Remove(originalPage);
             Notebook.Pages.Insert(index, originalPage);
 
-            foreach (var stroke in originalPage.InkStrokes)
-            {
-                stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
-            }
-
             for (var i = 1; i < groups; i++)
             {
                 var differentiatedPage = originalPage.DuplicatePage();
@@ -414,10 +409,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
 
-                foreach (var stroke in differentiatedPage.InkStrokes)
-                {
-                    stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
-                }
                 Notebook.Pages.Insert(index + i, differentiatedPage);
                 _dataService.AutoSavePage(Notebook, differentiatedPage);
             }

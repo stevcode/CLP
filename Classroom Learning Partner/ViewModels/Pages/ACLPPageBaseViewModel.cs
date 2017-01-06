@@ -700,7 +700,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     var newStrokeID = Guid.NewGuid().ToCompactID();
                     stroke.SetStrokeID(newStrokeID);
                     stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
-                    stroke.SetStrokeVersionIndex(0);
 
                     //Ensures truly uniqueIDs
                     var strokeReference = stroke;
@@ -737,7 +736,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 var strokeID = Guid.NewGuid().ToCompactID();
                 stroke.SetStrokeID(strokeID);
                 stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
-                stroke.SetStrokeVersionIndex(0);
 
                 var addedStrokes = new List<Stroke>
                                    {
@@ -988,7 +986,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var newUniqueID = Guid.NewGuid().ToCompactID();
             stroke.SetStrokeID(newUniqueID);
             stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
-            stroke.SetStrokeVersionIndex(0);
             Page.InkStrokes.Remove(stroke);
 
             var pageObjectToCut =
@@ -1044,7 +1041,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var newUniqueId = Guid.NewGuid().ToCompactID();
             stroke.SetStrokeID(newUniqueId);
             stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
-            stroke.SetStrokeVersionIndex(0);
             Page.InkStrokes.Remove(stroke);
 
             var wasArrayDivided = PageObjects.OfType<CLPArray>()
