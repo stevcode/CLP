@@ -219,7 +219,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageUpCanExecute()
         {
-            return Notebook.Pages.CanMoveItemUp(CurrentPage);
+            var differentiationLevel = CurrentPage.DifferentiationLevel;
+            if (differentiationLevel == "0")
+            {
+                return Notebook.Pages.CanMoveItemUp(CurrentPage);
+            }
+
+            var orderedDifferentiationLevels = Notebook.Pages.Where(p => p.ID == CurrentPage.ID).Select(p => p.DifferentiationLevel).OrderBy(p => p).ToList();
+            return differentiationLevel == orderedDifferentiationLevels.FirstOrDefault() && Notebook.Pages.CanMoveItemUp(CurrentPage);
         }
 
         /// <summary>Moves the CurrentPage Down in the notebook.</summary>
@@ -243,7 +250,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageDownCanExecute()
         {
-            return Notebook.Pages.CanMoveItemDown(CurrentPage);
+            var differentiationLevel = CurrentPage.DifferentiationLevel;
+            if (differentiationLevel == "0")
+            {
+                return Notebook.Pages.CanMoveItemDown(CurrentPage);
+            }
+
+            var orderedDifferentiationLevels = Notebook.Pages.Where(p => p.ID == CurrentPage.ID).Select(p => p.DifferentiationLevel).OrderBy(p => p).ToList();
+            return differentiationLevel == orderedDifferentiationLevels.LastOrDefault() && Notebook.Pages.CanMoveItemDown(CurrentPage);
         }
 
         /// <summary>Moves page to a specific location.</summary>
@@ -274,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageToCanExecute()
         {
-            return Notebook.Pages.Count > 1;
+            return OnMovePageUpCanExecute() || OnMovePageDownCanExecute();
         }
 
         /// <summary>Add 200 pixels to the height of the current page.</summary>

@@ -988,7 +988,10 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var currentIndex = loadedNotebook.Pages.IndexOf(pageToMove);
                     loadedNotebook.Pages.Move(currentIndex, newIndex);
-                    newIndex++;
+                    if (!isIntervalPageNumbersDecreasing)
+                    {
+                        newIndex++;
+                    }
                 }
             }
 
