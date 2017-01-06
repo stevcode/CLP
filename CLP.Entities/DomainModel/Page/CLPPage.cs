@@ -739,6 +739,16 @@ namespace CLP.Entities
             }
         }
 
+        public bool IsEqualByCompositeIDIgnoringVersion(CLPPage otherPage)
+        {
+            return ID == otherPage.ID && PageNumber == otherPage.PageNumber && SubPageNumber == otherPage.SubPageNumber && DifferentiationLevel == otherPage.DifferentiationLevel;
+        }
+
+        public bool IsEqualByCompositeID(CLPPage otherPage)
+        {
+            return IsEqualByCompositeIDIgnoringVersion(otherPage) && VersionIndex == otherPage.VersionIndex;
+        }
+
         #endregion //Methods
 
         #region Overrides of ModelBase
