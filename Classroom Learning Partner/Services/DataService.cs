@@ -433,6 +433,7 @@ namespace Classroom_Learning_Partner.Services
             CurrentClassRoster.ListOfNotebookSets.Add(notebookSet);
             SaveClassRoster(CurrentClassRoster);
 
+            LoadedNotebooks.Add(notebook);
             SetCurrentNotebook(notebook);
             AddPage(notebook, new CLPPage(Person.Author));
         }
@@ -973,7 +974,15 @@ namespace Classroom_Learning_Partner.Services
             foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
             {
                 var pageBeforeNewPageNumber = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPageNumber);
-                var newIndex = pageBeforeNewPageNumber == null ? 0 : loadedNotebook.Pages.IndexOf(pageBeforeNewPageNumber) + 1;
+                var newIndex = 0;
+                if (pageBeforeNewPageNumber != null)
+                {
+                    newIndex = loadedNotebook.Pages.IndexOf(pageBeforeNewPageNumber);
+                    if (!isIntervalPageNumbersDecreasing)
+                    {
+                        newIndex++;
+                    }
+                }
                 var pagesToMove = loadedNotebook.Pages.Where(p => p.ID == page.ID).ToList();
                 foreach (var pageToMove in pagesToMove)
                 {
