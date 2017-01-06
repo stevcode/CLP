@@ -211,17 +211,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var previousPage = Notebook.Pages[currentPageIndex - 1];
-            //var previousPageNumber = previousPage.PageNumber;
-            //_dataService.MovePage(Notebook, CurrentPage, previousPageNumber);
-
-            /////
-            CurrentPage.PageNumber--;
-            previousPage.PageNumber++;
-
-            // TODO: Test if this messes up autosaving
-            Notebook.Pages.MoveItemUp(CurrentPage);
-            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex - 1]);
-            /////
+            var previousPageNumber = previousPage.PageNumber;
+            _dataService.MovePage(Notebook, CurrentPage, previousPageNumber);
 
             RaisePropertyChanged(nameof(CurrentPage));
         }
@@ -244,19 +235,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var nextPage = Notebook.Pages[currentPageIndex + 1];
-            //var nextPageNumber = nextPage.PageNumber;
-            //_dataService.MovePage(Notebook, CurrentPage, nextPageNumber);
-
-            /////
-            CurrentPage.PageNumber++;
-            nextPage.PageNumber--;
-
-            // TODO: Test if this messes up autosaving
-            Notebook.Pages.MoveItemDown(CurrentPage);
-            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex + 1]);
-
-            /////
-
+            var nextPageNumber = nextPage.PageNumber;
+            _dataService.MovePage(Notebook, CurrentPage, nextPageNumber);
 
             RaisePropertyChanged(nameof(CurrentPage));
         }

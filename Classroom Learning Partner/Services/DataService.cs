@@ -800,13 +800,176 @@ namespace Classroom_Learning_Partner.Services
                                                   ? Enumerable.Range(currentPageNumber + 1, newPageNumber - currentPageNumber)
                                                   : Enumerable.Range(newPageNumber, currentPageNumber - newPageNumber);
 
-            // Change interval numbers first
+            var zipContainerFilePath = notebook.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                // Change interval numbers first.
+                #region Interval Pages
 
+                foreach (var otherNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
+                {
+                    var pageEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookPagesDirectoryPath);
+                    var submissionEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookSubmissionsDirectoryPath);
 
-            // Then change currentPage's page number to new page number
+                    foreach (var pageEntry in pageEntries)
+                    {
+                        var entryName = pageEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
 
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            !intervalPageNumbersToChange.Contains(pageNameComposite.PageNumber))
+                        {
+                            continue;
+                        }
 
-            // Then find last page number that's > new page number and move current page to that page's index+1
+                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        if (isIntervalPageNumbersDecreasing)
+                        {
+                            pageNameComposite.PageNumber--;
+                            if (pageToReNumber != null)
+                            {
+                                pageToReNumber.PageNumber--;
+                            }
+                        }
+                        else
+                        {
+                            pageNameComposite.PageNumber++;
+                            if (pageToReNumber != null)
+                            {
+                                pageToReNumber.PageNumber++;
+                            }
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        pageEntry.FileName = newEntryFullPath;
+                    }
+
+                    foreach (var submissionEntry in submissionEntries)
+                    {
+                        var entryName = submissionEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
+
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            !intervalPageNumbersToChange.Contains(pageNameComposite.PageNumber))
+                        {
+                            continue;
+                        }
+
+                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        if (isIntervalPageNumbersDecreasing)
+                        {
+                            pageNameComposite.PageNumber--;
+                            if (pageToReNumber != null)
+                            {
+                                foreach (var submission in pageToReNumber.Submissions)
+                                {
+                                    submission.PageNumber--;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            pageNameComposite.PageNumber++;
+                            if (pageToReNumber != null)
+                            {
+                                foreach (var submission in pageToReNumber.Submissions)
+                                {
+                                    submission.PageNumber++;
+                                }
+                            }
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        submissionEntry.FileName = newEntryFullPath;
+                    }
+                }
+
+                #endregion // Interval Pages
+
+                // Then change currentPage's page number to new page number.
+                #region Moved Page
+
+                foreach (var otherNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
+                {
+                    var pageEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookPagesDirectoryPath);
+                    var submissionEntries = zip.GetEntriesInDirectory(otherNotebook.NotebookSubmissionsDirectoryPath);
+
+                    foreach (var pageEntry in pageEntries)
+                    {
+                        var entryName = pageEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
+
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            pageNameComposite.ID != page.ID ||
+                            pageNameComposite.PageNumber != currentPageNumber)
+                        {
+                            continue;
+                        }
+
+                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        pageNameComposite.PageNumber = newPageNumber;
+                        if (pageToReNumber != null)
+                        {
+                            pageToReNumber.PageNumber = newPageNumber;
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        pageEntry.FileName = newEntryFullPath;
+                    }
+
+                    foreach (var submissionEntry in submissionEntries)
+                    {
+                        var entryName = submissionEntry.GetEntryNameWithoutExtension();
+                        if (string.IsNullOrWhiteSpace(entryName))
+                        {
+                            continue;
+                        }
+
+                        var pageNameComposite = CLPPage.NameComposite.ParseFromString(entryName);
+                        if (pageNameComposite == null ||
+                            pageNameComposite.ID != page.ID ||
+                            pageNameComposite.PageNumber != currentPageNumber)
+                        {
+                            continue;
+                        }
+
+                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        pageNameComposite.PageNumber = newPageNumber;
+                        if (pageToReNumber != null)
+                        {
+                            foreach (var submission in pageToReNumber.Submissions)
+                            {
+                                submission.PageNumber++;
+                            }
+                        }
+
+                        var newEntryName = pageNameComposite.ToNameCompositeString();
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        submissionEntry.FileName = newEntryFullPath;
+                    }
+                }
+
+                #endregion // Moved Page
+
+                zip.Save();
+            }
+
+            // Place moved page in the correct index location of the loaded pages.
             foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
             {
                 var pageBeforeNewPageNumber = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPageNumber);
@@ -820,7 +983,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            // TODO: Set correct page to current display
+            AddPageToCurrentDisplay(page, false);
         }
 
         public void AutoSavePage(Notebook notebook, CLPPage page)
@@ -1392,6 +1555,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static void ChangePageNumbersAfterGivenPage(Notebook notebook, List<Notebook> otherNotebooks, int pageNumber, bool isIncreasing)
         {
+            // TODO: Does this handle the Author Notebook correctly?
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
