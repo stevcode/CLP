@@ -395,22 +395,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Differentiate(int groups)
         {
-            // TODO: Test how this interacts with autosave delete/move
             var originalPage = CurrentPage;
-            originalPage.DifferentiationLevel = "A";
             var index = Notebook.Pages.IndexOf(originalPage);
-            Notebook.Pages.Remove(originalPage);
-            Notebook.Pages.Insert(index, originalPage);
+            _dataService.DeletePage(Notebook, originalPage, false, false);
 
-            for (var i = 1; i < groups; i++)
+            for (var i = 0; i < groups; i++)
             {
                 var differentiatedPage = originalPage.DuplicatePage();
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
 
-                Notebook.Pages.Insert(index + i, differentiatedPage);
-                _dataService.AutoSavePage(Notebook, differentiatedPage);
+                _dataService.InsertPageAt(Notebook, differentiatedPage, index + 1, false, false);
             }
 
             var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);

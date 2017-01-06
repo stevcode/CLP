@@ -619,34 +619,41 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void AddPage(Notebook notebook, CLPPage page)
+        public void AddPage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
         {
             var pageIndex = notebook.Pages.Count;
-            InsertPageAt(notebook, page, pageIndex);
+            InsertPageAt(notebook, page, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay);
         }
 
-        public void InsertPageAt(Notebook notebook, CLPPage page, int index)
+        public void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
         {
-            if (index <= 0)
+            if (isChangingPageNumbers)
             {
-                index = 0;
-                page.PageNumber = 1;
-            }
-            else if (index >= notebook.Pages.Count)
-            {
-                index = notebook.Pages.Count;
-                page.PageNumber = notebook.Pages.Last().PageNumber + 1;
-            }
-            else
-            {
-                page.PageNumber = notebook.Pages[index].PageNumber;
-            }
+                if (index <= 0)
+                {
+                    index = 0;
+                    page.PageNumber = 1;
+                }
+                else if (index >= notebook.Pages.Count)
+                {
+                    index = notebook.Pages.Count;
+                    page.PageNumber = notebook.Pages.Last().PageNumber + 1;
+                }
+                else
+                {
+                    page.PageNumber = notebook.Pages[index].PageNumber;
+                }
 
-            ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), page.PageNumber - 1, true);
+                ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), page.PageNumber - 1, true);
+            }
+            
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
 
             notebook.Pages.Insert(index, page);
-            AddPageToCurrentDisplay(page);
+            if (isAddingNextPageToDisplay)
+            {
+                AddPageToCurrentDisplay(page);
+            }
             SavePage(notebook, page);
 
             var entryList = new List<ZipEntrySaver>();
@@ -680,13 +687,13 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void DeletePage(Notebook notebook, CLPPage page)
+        public void DeletePage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
         {
             var pageIndex = notebook.Pages.IndexOf(page);
-            DeletePageAt(notebook, pageIndex);
+            DeletePageAt(notebook, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay);
         }
 
-        public void DeletePageAt(Notebook notebook, int index)
+        public void DeletePageAt(Notebook notebook, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
         {
             if (notebook.Pages.Count <= index ||
                 index < 0)
@@ -695,7 +702,8 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var pageToDelete = notebook.Pages[index];
-            notebook.Pages.RemoveAt(index);
+            notebook.Pages.Remove(pageToDelete);
+            // TODO: Also delete submissions
 
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             using (var zip = ZipFile.Read(zipContainerFilePath))
@@ -704,15 +712,24 @@ namespace Classroom_Learning_Partner.Services
 
                 foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
                 {
-                    var otherPageToDelete = loadedNotebook.Pages[index];
-                    loadedNotebook.Pages.RemoveAt(index);
+                    var otherPageToDelete = loadedNotebook.Pages.FirstOrDefault(p => p.IsEqualByCompositeID(pageToDelete));
+                    if (otherPageToDelete == null)
+                    {
+                        continue;
+                    }
+
+                    loadedNotebook.Pages.Remove(otherPageToDelete);
                     zip.RemoveEntry(otherPageToDelete.GetZipEntryFullPath(loadedNotebook));
+                    // TODO: Also delete submissions
                 }
 
                 zip.Save();
             }
 
-            ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), index, false);
+            if (isChangingPageNumbers)
+            {
+                ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), index, false);
+            }
 
             if (!notebook.Pages.Any())
             {
@@ -753,6 +770,11 @@ namespace Classroom_Learning_Partner.Services
 
                     zip.Save();
                 }
+            }
+
+            if (!isAddingNextPageToDisplay)
+            {
+                return;
             }
 
             if (index >= notebook.Pages.Count)
