@@ -786,38 +786,41 @@ namespace Classroom_Learning_Partner.Services
             AddPageToCurrentDisplay(nextPage, false);
         }
 
-        public void MovePage(Notebook notebook, CLPPage pageToMove, int newPageNumber)
+        public void MovePage(Notebook notebook, CLPPage page, int newPageNumber)
         {
-            var currentPageIndex = notebook.Pages.IndexOf(pageToMove);
-            if (newPageNumber == pageToMove.PageNumber ||
+            var currentPageNumber = page.PageNumber;
+            if (newPageNumber == currentPageNumber ||
                 newPageNumber <= 0)
             {
                 return;
             }
 
-            if (newPageNumber > pageToMove.PageNumber)
-            {
-                for (var i = currentPageIndex + 1; i < newPageNumber; i++)
-                {
-                    var page = notebook.Pages[i];
-                    page.PageNumber--;
-                }
+            var isIntervalPageNumbersDecreasing = currentPageNumber < newPageNumber;
+            var intervalPageNumbersToChange = isIntervalPageNumbersDecreasing
+                                                  ? Enumerable.Range(currentPageNumber + 1, newPageNumber - currentPageNumber)
+                                                  : Enumerable.Range(newPageNumber, currentPageNumber - newPageNumber);
 
-                pageToMove.PageNumber = newPageNumber;
-                notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
+            // Change interval numbers first
+
+
+            // Then change currentPage's page number to new page number
+
+
+            // Then find last page number that's > new page number and move current page to that page's index+1
+            foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
+            {
+                var pageBeforeNewPageNumber = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPageNumber);
+                var newIndex = pageBeforeNewPageNumber == null ? 0 : loadedNotebook.Pages.IndexOf(pageBeforeNewPageNumber) + 1;
+                var pagesToMove = loadedNotebook.Pages.Where(p => p.ID == page.ID).ToList();
+                foreach (var pageToMove in pagesToMove)
+                {
+                    var currentIndex = loadedNotebook.Pages.IndexOf(pageToMove);
+                    loadedNotebook.Pages.Move(currentIndex, newIndex);
+                    newIndex++;
+                }
             }
 
-            if (newPageNumber < pageToMove.PageNumber)
-            {
-                for (var i = newPageNumber - 1; i < currentPageIndex; i++)
-                {
-                    var page = notebook.Pages[i];
-                    page.PageNumber++;
-                }
-
-                pageToMove.PageNumber = newPageNumber;
-                notebook.Pages.Move(currentPageIndex, newPageNumber - 1);
-            }
+            // TODO: Set correct page to current display
         }
 
         public void AutoSavePage(Notebook notebook, CLPPage page)
