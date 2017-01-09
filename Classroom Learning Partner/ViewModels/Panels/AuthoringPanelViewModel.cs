@@ -211,24 +211,22 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var previousPage = Notebook.Pages[currentPageIndex - 1];
-            //var previousPageNumber = previousPage.PageNumber;
-            //_dataService.MovePage(Notebook, CurrentPage, previousPageNumber);
-
-            /////
-            CurrentPage.PageNumber--;
-            previousPage.PageNumber++;
-
-            // TODO: Test if this messes up autosaving
-            Notebook.Pages.MoveItemUp(CurrentPage);
-            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex - 1]);
-            /////
+            var previousPageNumber = previousPage.PageNumber;
+            _dataService.MovePage(Notebook, CurrentPage, previousPageNumber);
 
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageUpCanExecute()
         {
-            return Notebook.Pages.CanMoveItemUp(CurrentPage);
+            var differentiationLevel = CurrentPage.DifferentiationLevel;
+            if (differentiationLevel == "0")
+            {
+                return Notebook.Pages.CanMoveItemUp(CurrentPage);
+            }
+
+            var orderedDifferentiationLevels = Notebook.Pages.Where(p => p.ID == CurrentPage.ID).Select(p => p.DifferentiationLevel).OrderBy(p => p).ToList();
+            return differentiationLevel == orderedDifferentiationLevels.FirstOrDefault() && Notebook.Pages.CanMoveItemUp(CurrentPage);
         }
 
         /// <summary>Moves the CurrentPage Down in the notebook.</summary>
@@ -244,26 +242,22 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var nextPage = Notebook.Pages[currentPageIndex + 1];
-            //var nextPageNumber = nextPage.PageNumber;
-            //_dataService.MovePage(Notebook, CurrentPage, nextPageNumber);
-
-            /////
-            CurrentPage.PageNumber++;
-            nextPage.PageNumber--;
-
-            // TODO: Test if this messes up autosaving
-            Notebook.Pages.MoveItemDown(CurrentPage);
-            _dataService.AddPageToCurrentDisplay(Notebook.Pages[currentPageIndex + 1]);
-
-            /////
-
+            var nextPageNumber = nextPage.PageNumber;
+            _dataService.MovePage(Notebook, CurrentPage, nextPageNumber);
 
             RaisePropertyChanged(nameof(CurrentPage));
         }
 
         private bool OnMovePageDownCanExecute()
         {
-            return Notebook.Pages.CanMoveItemDown(CurrentPage);
+            var differentiationLevel = CurrentPage.DifferentiationLevel;
+            if (differentiationLevel == "0")
+            {
+                return Notebook.Pages.CanMoveItemDown(CurrentPage);
+            }
+
+            var orderedDifferentiationLevels = Notebook.Pages.Where(p => p.ID == CurrentPage.ID).Select(p => p.DifferentiationLevel).OrderBy(p => p).ToList();
+            return differentiationLevel == orderedDifferentiationLevels.LastOrDefault() && Notebook.Pages.CanMoveItemDown(CurrentPage);
         }
 
         /// <summary>Moves page to a specific location.</summary>
@@ -294,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageToCanExecute()
         {
-            return Notebook.Pages.Count > 1;
+            return OnMovePageUpCanExecute() || OnMovePageDownCanExecute();
         }
 
         /// <summary>Add 200 pixels to the height of the current page.</summary>
@@ -395,31 +389,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Differentiate(int groups)
         {
-            // TODO: Test how this interacts with autosave delete/move
             var originalPage = CurrentPage;
-            originalPage.DifferentiationLevel = "A";
             var index = Notebook.Pages.IndexOf(originalPage);
-            Notebook.Pages.Remove(originalPage);
-            Notebook.Pages.Insert(index, originalPage);
+            _dataService.DeletePage(Notebook, originalPage, false, false);
 
-            foreach (var stroke in originalPage.InkStrokes)
-            {
-                stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
-            }
-
-            for (var i = 1; i < groups; i++)
+            for (var i = 0; i < groups; i++)
             {
                 var differentiatedPage = originalPage.DuplicatePage();
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
 
-                foreach (var stroke in differentiatedPage.InkStrokes)
-                {
-                    stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
-                }
-                Notebook.Pages.Insert(index + i, differentiatedPage);
-                _dataService.AutoSavePage(Notebook, differentiatedPage);
+                _dataService.InsertPageAt(Notebook, differentiatedPage, index + i, false, false);
             }
 
             var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);
