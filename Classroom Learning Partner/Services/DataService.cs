@@ -688,13 +688,13 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void DeletePage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
+        public void DeletePage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, bool isPreventingEmptyNotebook = true)
         {
             var pageIndex = notebook.Pages.IndexOf(page);
-            DeletePageAt(notebook, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay);
+            DeletePageAt(notebook, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay, isPreventingEmptyNotebook);
         }
 
-        public void DeletePageAt(Notebook notebook, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
+        public void DeletePageAt(Notebook notebook, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, bool isPreventingEmptyNotebook = true)
         {
             if (notebook.Pages.Count <= index ||
                 index < 0)
@@ -732,11 +732,13 @@ namespace Classroom_Learning_Partner.Services
                 ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), index, false);
             }
 
-            if (!notebook.Pages.Any())
+            if (!notebook.Pages.Any() &&
+                isPreventingEmptyNotebook)
             {
                 var newPage = new CLPPage(Person.Author)
                               {
-                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1
+                                  PageNumber = notebook.Pages.Any() ? notebook.Pages.First().PageNumber : 1,
+                                  ContainerZipFilePath = notebook.ContainerZipFilePath
                               };
 
                 notebook.Pages.Add(newPage);
@@ -752,25 +754,26 @@ namespace Classroom_Learning_Partner.Services
                     entryList.Add(new ZipEntrySaver(generatedNewPage, loadedNotebook));
                 }
 
-                if (!entryList.Any())
+                if (entryList.Any())
                 {
-                    return;
-                }
-
-                using (var zip = ZipFile.Read(notebook.ContainerZipFilePath))
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.UseZip64WhenSaving = Zip64Option.Always;
-                    zip.CaseSensitiveRetrieval = true;
-
-                    foreach (var zipEntrySaver in entryList)
+                    using (var zip = ZipFile.Read(notebook.ContainerZipFilePath))
                     {
-                        zipEntrySaver.UpdateEntry(zip);
-                    }
+                        zip.CompressionMethod = CompressionMethod.None;
+                        zip.CompressionLevel = CompressionLevel.None;
+                        zip.UseZip64WhenSaving = Zip64Option.Always;
+                        zip.CaseSensitiveRetrieval = true;
 
-                    zip.Save();
+                        foreach (var zipEntrySaver in entryList)
+                        {
+                            zipEntrySaver.UpdateEntry(zip);
+                        }
+
+                        zip.Save();
+                    }
                 }
+
+                AddPageToCurrentDisplay(newPage, false);
+                return;
             }
 
             if (!isAddingNextPageToDisplay)
@@ -1667,6 +1670,11 @@ namespace Classroom_Learning_Partner.Services
 
         public static void SavePage(Notebook notebook, CLPPage page)
         {
+            if (string.IsNullOrWhiteSpace(page.ContainerZipFilePath))
+            {
+                page.ContainerZipFilePath = notebook.ContainerZipFilePath;
+            }
+
             if (!File.Exists(page.ContainerZipFilePath))
             {
                 return;

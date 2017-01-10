@@ -117,7 +117,7 @@ namespace Classroom_Learning_Partner.ViewModels
             TrimPageCommand = new Command(OnTrimPageCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
             DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
-            DeletePageCommand = new Command(OnDeletePageCommandExecute);
+            DeletePageCommand = new Command(OnDeletePageCommandExecute, OnDeletePageCanExecute);
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
             AddMetaDataTagsCommand = new Command(OnAddMetaDataTagsCommandExecute);
@@ -357,6 +357,19 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDeletePageCommandExecute()
         {
             _dataService.DeletePage(Notebook, CurrentPage);
+            RaisePropertyChanged(nameof(CurrentPage));
+        }
+
+        private bool OnDeletePageCanExecute()
+        {
+            var differentiationLevel = CurrentPage.DifferentiationLevel;
+            if (differentiationLevel == "0")
+            {
+                return true;
+            }
+
+            var orderedDifferentiationLevels = Notebook.Pages.Where(p => p.ID == CurrentPage.ID).Select(p => p.DifferentiationLevel).OrderBy(p => p).ToList();
+            return differentiationLevel == orderedDifferentiationLevels.LastOrDefault();
         }
 
         public Command DifferentiatePageCommand { get; private set; }
@@ -391,7 +404,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var originalPage = CurrentPage;
             var index = Notebook.Pages.IndexOf(originalPage);
-            _dataService.DeletePage(Notebook, originalPage, false, false);
+            _dataService.DeletePage(Notebook, originalPage, false, false, false);
 
             for (var i = 0; i < groups; i++)
             {
