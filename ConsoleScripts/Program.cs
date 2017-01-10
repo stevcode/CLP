@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -19,7 +20,7 @@ namespace ConsoleScripts
             Debug.WriteLine("*****Finished*****");
             Console.ReadLine();
         }
-        /*
+
         private static void Convert()
         {
             var convertFromFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Convert");
@@ -1297,7 +1298,6 @@ namespace ConsoleScripts
             page.History.IsAnimating = false;
         }
 
-    */
         //Clear Authored Histories
         //var undoItemsToRemove = page.History.UndoActions.Where(historyAction => historyAction.OwnerID == Person.Author.ID).ToList();
         //            foreach(var historyAction in undoItemsToRemove)
