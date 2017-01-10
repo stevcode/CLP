@@ -36,8 +36,14 @@ namespace Classroom_Learning_Partner.Services
             private string InternalFilePath { get; set; }
             private string JsonString { get; set; }
 
-            public void UpdateEntry(ZipFile zip)
+            public void UpdateEntry(ZipFile zip, bool isOverwriting = true)
             {
+                if (zip.EntryFileNames.Contains(InternalFilePath) &&
+                    !isOverwriting)
+                {
+                    return;
+                }
+
                 zip.UpdateEntry(InternalFilePath, JsonString);
             }
         }
@@ -438,6 +444,99 @@ namespace Classroom_Learning_Partner.Services
             AddPage(notebook, new CLPPage(Person.Author));
         }
 
+        public void GenerateClassNotebooks(Notebook authorNotebook, ClassRoster classRoster)
+        {
+            var zipContainerFilePath = authorNotebook.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var entryList = new List<ZipEntrySaver>();
+
+                var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
+
+                // TODO: Parallel?
+                foreach (var teacher in classRoster.ListOfTeachers)
+                {
+                    var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
+                    if (notebookEntries.Select(e => e.FileName).Contains(notebook.GetZipEntryFullPath(notebook)))
+                    {
+                        continue;
+                    }
+
+                    notebook.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
+                    entryList.Add(new ZipEntrySaver(notebook, notebook));
+
+                    foreach (var authorPage in authorNotebook.Pages)
+                    {
+                        var page = CopyPageForNewOwner(authorPage, teacher);
+                        page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
+                        entryList.Add(new ZipEntrySaver(page, notebook));
+                        notebook.Pages.Add(page);
+                    }
+
+                    notebook.Pages = notebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ToList().ToObservableCollection();
+                    LoadedNotebooks.Add(notebook);
+                }
+
+                // TODO: Parallel?
+                foreach (var student in classRoster.ListOfStudents)
+                {
+                    var notebook = CopyNotebookForNewOwner(authorNotebook, student);
+                    if (notebookEntries.Select(e => e.FileName).Contains(notebook.GetZipEntryFullPath(notebook)))
+                    {
+                        continue;
+                    }
+
+                    notebook.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
+                    entryList.Add(new ZipEntrySaver(notebook, notebook));
+
+                    var differentiatedPageIDs = new List<string>();
+                    foreach (var authorPage in authorNotebook.Pages)
+                    {
+                        if (authorPage.DifferentiationLevel != "0")
+                        {
+                            differentiatedPageIDs.Add(authorPage.ID);
+                            continue;
+                        }
+
+                        var page = CopyPageForNewOwner(authorPage, student);
+                        page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
+                        entryList.Add(new ZipEntrySaver(page, notebook));
+                        notebook.Pages.Add(page);
+                    }
+
+                    foreach (var differentiatedPageID in differentiatedPageIDs.Distinct().ToList())
+                    {
+                        var differentiatedInstances = authorNotebook.Pages.Where(p => p.ID == differentiatedPageID).OrderBy(p => p.DifferentiationLevel).ToList();
+                        var authorPage = differentiatedInstances.FirstOrDefault(p => p.DifferentiationLevel == student.CurrentDifferentiationGroup) ?? differentiatedInstances.FirstOrDefault();
+                        if (authorPage == null)
+                        {
+                            continue;
+                        }
+
+                        var page = CopyPageForNewOwner(authorPage, student);
+                        page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
+                        entryList.Add(new ZipEntrySaver(page, notebook));
+                        notebook.Pages.Add(page);
+                    }
+
+                    notebook.Pages = notebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ToList().ToObservableCollection();
+                    LoadedNotebooks.Add(notebook);
+                }
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip, false);
+                }
+
+                zip.Save();
+            }
+        }
+
         public void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true, string overwrittenStartingPageID = "")
         {
             var owner = notebook.Owner;
@@ -663,7 +762,15 @@ namespace Classroom_Learning_Partner.Services
                 var newOwner = loadedNotebook.Owner;
                 var newPage = CopyPageForNewOwner(page, newOwner);
                 newPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
-                loadedNotebook.Pages.Insert(index, newPage);
+                var previousPage = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPage.PageNumber);
+                var insertionIndex = 0;
+                if (previousPage != null)
+                {
+                    var previousIndex = loadedNotebook.Pages.IndexOf(previousPage);
+                    insertionIndex = previousIndex + 1;
+                }
+
+                loadedNotebook.Pages.Insert(insertionIndex, newPage);
                 entryList.Add(new ZipEntrySaver(newPage, loadedNotebook));
             }
 
@@ -1293,57 +1400,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Session
 
         #region Notebook
-
-        public static void GenerateClassNotebooks(Notebook authorNotebook, ClassRoster classRoster)
-        {
-            var zipContainerFilePath = authorNotebook.ContainerZipFilePath;
-
-            var entryList = new List<ZipEntrySaver>();
-
-            // TODO: Parallel?
-            foreach (var teacher in classRoster.ListOfTeachers)
-            {
-                var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
-                entryList.Add(new ZipEntrySaver(notebook, notebook));
-                foreach (var authorPage in authorNotebook.Pages)
-                {
-                    var page = CopyPageForNewOwner(authorPage, teacher);
-                    entryList.Add(new ZipEntrySaver(page, notebook));
-                }
-            }
-
-            // TODO: Parallel?
-            foreach (var student in classRoster.ListOfStudents)
-            {
-                var notebook = CopyNotebookForNewOwner(authorNotebook, student);
-                entryList.Add(new ZipEntrySaver(notebook, notebook));
-                foreach (var authorPage in authorNotebook.Pages)
-                {
-                    if (authorPage.DifferentiationLevel != student.CurrentDifferentiationGroup &&
-                        authorPage.DifferentiationLevel != "0")
-                    {
-                        continue; // TODO: Release,  confirm only copy differentiated page
-                    }
-                    var page = CopyPageForNewOwner(authorPage, student);
-                    entryList.Add(new ZipEntrySaver(page, notebook));
-                }
-            }
-
-            using (var zip = ZipFile.Read(zipContainerFilePath))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save();
-            }
-        }
 
         public static Notebook CopyFullNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
         {

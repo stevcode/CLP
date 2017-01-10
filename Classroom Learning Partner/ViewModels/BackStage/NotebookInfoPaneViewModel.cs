@@ -114,7 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var authorNotebook = Notebook;
             var classRoster = _dataService.CurrentClassRoster;
-            DataService.GenerateClassNotebooks(authorNotebook, classRoster);
+            _dataService.GenerateClassNotebooks(authorNotebook, classRoster);
         }
 
         private bool OnGenerateClassNotebooksCanExecute()

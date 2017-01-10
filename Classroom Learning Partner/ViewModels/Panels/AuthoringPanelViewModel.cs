@@ -219,6 +219,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageUpCanExecute()
         {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+
             var differentiationLevel = CurrentPage.DifferentiationLevel;
             if (differentiationLevel == "0")
             {
@@ -250,6 +255,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageDownCanExecute()
         {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+
             var differentiationLevel = CurrentPage.DifferentiationLevel;
             if (differentiationLevel == "0")
             {
@@ -362,6 +372,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnDeletePageCanExecute()
         {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+
             var differentiationLevel = CurrentPage.DifferentiationLevel;
             if (differentiationLevel == "0")
             {
