@@ -942,16 +942,16 @@ namespace Classroom_Learning_Partner
 
             TypeSwitch.On(historyItem).Case<Ann.AnimationIndicator>(h =>
             {
-                newHistoryAction = ConvertAnimationIndicator(h, newPage);
+                newHistoryAction = ConvertAndUndoAnimationIndicator(h, newPage);
             }).Case<Ann.CLPArrayRotateHistoryItem>(h =>
             {
-                newHistoryAction = ConvertArrayRotate(h, newPage);
+                newHistoryAction = ConvertAndUndoArrayRotate(h, newPage);
             }).Case<Ann.CLPArrayGridToggleHistoryItem>(h =>
             {
-                newHistoryAction = ConvertArrayGridToggle(h, newPage);
-            }).Case<Ann.CLPArray>(h =>
+                newHistoryAction = ConvertAndUndoArrayGridToggle(h, newPage);
+            }).Case<Ann.CLPArraySnapHistoryItem>(h =>
             {
-                newHistoryAction = ConvertArray(h, newPage);
+                newHistoryAction = ConvertAndUndoArraySnap(h, newPage);
             }).Case<Ann.NumberLine>(h =>
             {
                 newHistoryAction = ConvertNumberLine(h, newPage);
@@ -976,7 +976,7 @@ namespace Classroom_Learning_Partner
 
         #region PageObject HistoryItems
 
-        public static AnimationIndicatorHistoryAction ConvertAnimationIndicator(Ann.AnimationIndicator historyItem, CLPPage newPage)
+        public static AnimationIndicatorHistoryAction ConvertAndUndoAnimationIndicator(Ann.AnimationIndicator historyItem, CLPPage newPage)
         {
             var newHistoryAction = new AnimationIndicatorHistoryAction
                                    {
@@ -1005,7 +1005,7 @@ namespace Classroom_Learning_Partner
 
         #region Array HistoryItems
 
-        public static CLPArrayRotateHistoryAction ConvertArrayRotate(Ann.CLPArrayRotateHistoryItem historyItem, CLPPage newPage)
+        public static CLPArrayRotateHistoryAction ConvertAndUndoArrayRotate(Ann.CLPArrayRotateHistoryItem historyItem, CLPPage newPage)
         {
             var newHistoryAction = new CLPArrayRotateHistoryAction
                                    {
@@ -1040,7 +1040,7 @@ namespace Classroom_Learning_Partner
             return newHistoryAction;
         }
 
-        public static CLPArrayGridToggleHistoryAction ConvertArrayGridToggle(Ann.CLPArrayGridToggleHistoryItem historyItem, CLPPage newPage)
+        public static CLPArrayGridToggleHistoryAction ConvertAndUndoArrayGridToggle(Ann.CLPArrayGridToggleHistoryItem historyItem, CLPPage newPage)
         {
             var newHistoryAction = new CLPArrayGridToggleHistoryAction
                                    {
@@ -1060,6 +1060,89 @@ namespace Classroom_Learning_Partner
             newHistoryAction.ArrayID = arrayID;
             newHistoryAction.IsToggledOn = array.IsGridOn;
             array.IsGridOn = !newHistoryAction.IsToggledOn;
+
+            return newHistoryAction;
+        }
+
+        public static CLPArraySnapHistoryAction ConvertAndUndoArraySnap(Ann.CLPArraySnapHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArraySnapHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PersistingArrayHorizontalDivisions =
+                historyItem.PersistingArrayHorizontalDivisions.Select(
+                                                                      d =>
+                                                                          new CLPArrayDivision(
+                                                                                               d.Orientation == Ann.ArrayDivisionOrientation.Horizontal
+                                                                                                   ? ArrayDivisionOrientation.Horizontal
+                                                                                                   : ArrayDivisionOrientation.Vertical,
+                                                                                               d.Position,
+                                                                                               d.Length,
+                                                                                               d.Value)).ToList();
+            newHistoryAction.PersistingArrayVerticalDivisions =
+                historyItem.PersistingArrayVerticalDivisions.Select(
+                                                                    d =>
+                                                                        new CLPArrayDivision(
+                                                                                             d.Orientation == Ann.ArrayDivisionOrientation.Horizontal
+                                                                                                 ? ArrayDivisionOrientation.Horizontal
+                                                                                                 : ArrayDivisionOrientation.Vertical,
+                                                                                             d.Position,
+                                                                                             d.Length,
+                                                                                             d.Value)).ToList();
+
+            var persistingArrayID = historyItem.PersistingArrayID;
+            var persistingArray = newPage.GetVerifiedPageObjectOnPageByID(persistingArrayID) as CLPArray;
+            if (persistingArray == null)
+            {
+                Debug.WriteLine($"[ERROR] Persisting Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var snappedArrayID = historyItem.SnappedArrayID;
+            var snappedArray = newPage.GetVerifiedPageObjectInTrashByID(snappedArrayID) as CLPArray;
+            if (snappedArray == null)
+            {
+                Debug.WriteLine($"[ERROR] Snapped Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.PersistingArrayID = persistingArrayID;
+            newHistoryAction.SnappedArrayID = snappedArrayID;
+            newHistoryAction.IsHorizontal = historyItem.IsHorizontal;
+            newHistoryAction.SnappedArraySquareSize = historyItem.SnappedArraySquareSize;
+            newHistoryAction.PersistingArrayDivisionBehavior = historyItem.PersistingArrayDivisionBehavior;
+            newHistoryAction.PersistingArrayRowsOrColumns = historyItem.PersistingArrayRowsOrColumns;
+            newHistoryAction.PersistingArrayXOrYPosition = historyItem.PersistingArrayXOrYPosition;
+
+            snappedArray.SizeArrayToGridLevel(newHistoryAction.SnappedArraySquareSize);
+            snappedArray.ParentPage = newPage;
+            newPage.PageObjects.Add(snappedArray);
+            newPage.History.TrashedPageObjects.Remove(snappedArray);
+
+            var persistingArrayGridSquareSize = persistingArray.GridSquareSize;
+
+            newHistoryAction.RestoreDivisions(persistingArray);
+            newHistoryAction.RestoreDimensionsAndPosition(persistingArray);
+
+            persistingArray.IsDivisionBehaviorOn = newHistoryAction.PersistingArrayDivisionBehavior;
+            persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
+
+            var oldPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray
+                                 };
+            var newPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray,
+                                     snappedArray
+                                 };
+
+            AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
+            APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
 
             return newHistoryAction;
         }

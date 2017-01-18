@@ -760,8 +760,7 @@ namespace ConsoleScripts
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryAction ||
                     historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
                     historyItemToUndo is DivisionTemplateArraySnappedInHistoryAction ||
-                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryAction ||
-                    historyItemToUndo is CLPArraySnapHistoryAction)
+                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryAction)
                 {
                     page.History.ConversionUndo();
                     continue;
