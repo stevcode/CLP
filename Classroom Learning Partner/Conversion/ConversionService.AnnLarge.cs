@@ -939,9 +939,9 @@ namespace Classroom_Learning_Partner
             TypeSwitch.On(historyItem).Case<Ann.AnimationIndicator>(h =>
             {
                 newHistoryAction = ConvertAnimationIndicator(h, newPage);
-            }).Case<Ann.CLPTextBox>(h =>
+            }).Case<Ann.CLPArrayRotateHistoryItem>(h =>
             {
-                newHistoryAction = ConvertTextBox(h, newPage);
+                newHistoryAction = ConvertArrayRotate(h, newPage);
             }).Case<Ann.CLPImage>(h =>
             {
                 newHistoryAction = ConvertImage(h, newPage);
@@ -998,6 +998,45 @@ namespace Classroom_Learning_Partner
         }
 
         #endregion // PageObject HistoryItems
+
+        #region Array HistoryItems
+
+        public static CLPArrayRotateHistoryAction ConvertArrayRotate(Ann.CLPArrayRotateHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayRotateHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var arrayID = historyItem.ArrayID;
+            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Rotate not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.ArrayID = arrayID;
+            newHistoryAction.NewXPosition = array.XPosition;
+            newHistoryAction.NewYPosition = array.YPosition;
+            newHistoryAction.NewWidth = array.Width;
+            newHistoryAction.NewHeight = array.Height;
+            array.RotateArray();
+            array.XPosition = historyItem.ArrayXCoord;
+            array.YPosition = historyItem.ArrayYCoord;
+            newHistoryAction.OldXPosition = historyItem.ArrayXCoord;
+            newHistoryAction.OldYPosition = historyItem.ArrayYCoord;
+            newHistoryAction.OldWidth = array.Width;
+            newHistoryAction.OldHeight = array.Height;
+            newHistoryAction.OldRows = array.Rows;
+            newHistoryAction.OldColumns = array.Columns;
+
+            return newHistoryAction;
+        }
+
+        #endregion // Array HistoryItems
 
         #region Number Line HistoryItems
 

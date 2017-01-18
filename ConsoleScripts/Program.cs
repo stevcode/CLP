@@ -757,7 +757,6 @@ namespace ConsoleScripts
                 #region WorksAsIs
 
                 if (historyItemToUndo is AnimationIndicatorHistoryAction ||
-                    historyItemToUndo is CLPArrayRotateHistoryAction ||
                     historyItemToUndo is CLPArrayGridToggleHistoryAction ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryAction ||
                     historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
