@@ -851,6 +851,10 @@ namespace Classroom_Learning_Partner
 
                 var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage);
                 undoItems.RemoveFirst();
+                if (newHistoryAction == null)
+                {
+                    continue;
+                }
                 newPageHistory.RedoActions.Insert(0, newHistoryAction);
             }
 
@@ -942,9 +946,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.CLPArrayRotateHistoryItem>(h =>
             {
                 newHistoryAction = ConvertArrayRotate(h, newPage);
-            }).Case<Ann.CLPImage>(h =>
+            }).Case<Ann.CLPArrayGridToggleHistoryItem>(h =>
             {
-                newHistoryAction = ConvertImage(h, newPage);
+                newHistoryAction = ConvertArrayGridToggle(h, newPage);
             }).Case<Ann.CLPArray>(h =>
             {
                 newHistoryAction = ConvertArray(h, newPage);
@@ -964,7 +968,7 @@ namespace Classroom_Learning_Partner
 
             if (newHistoryAction == null)
             {
-                Debug.WriteLine($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                Debug.WriteLine($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
             }
 
             return newHistoryAction;
@@ -1032,6 +1036,30 @@ namespace Classroom_Learning_Partner
             newHistoryAction.OldHeight = array.Height;
             newHistoryAction.OldRows = array.Rows;
             newHistoryAction.OldColumns = array.Columns;
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayGridToggleHistoryAction ConvertArrayGridToggle(Ann.CLPArrayGridToggleHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayGridToggleHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var arrayID = historyItem.ArrayID;
+            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Grid Toggle not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.ArrayID = arrayID;
+            newHistoryAction.IsToggledOn = array.IsGridOn;
+            array.IsGridOn = !newHistoryAction.IsToggledOn;
 
             return newHistoryAction;
         }
