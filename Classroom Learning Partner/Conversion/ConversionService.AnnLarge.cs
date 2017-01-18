@@ -812,6 +812,83 @@ namespace Classroom_Learning_Partner
 
         #endregion // PageObjects
 
+        #region HistoryActions
+
+        public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage)
+        {
+            IHistoryAction newHistoryAction = null;
+
+            TypeSwitch.On(historyItem).Case<Ann.AnimationIndicator>(h =>
+            {
+                newHistoryAction = ConvertAnimationIndicator(h, newPage);
+            }).Case<Ann.CLPTextBox>(h =>
+            {
+                newHistoryAction = ConvertTextBox(h, newPage);
+            }).Case<Ann.CLPImage>(h =>
+            {
+                newHistoryAction = ConvertImage(h, newPage);
+            }).Case<Ann.CLPArray>(h =>
+            {
+                newHistoryAction = ConvertArray(h, newPage);
+            }).Case<Ann.NumberLine>(h =>
+            {
+                newHistoryAction = ConvertNumberLine(h, newPage);
+            }).Case<Ann.StampedObject>(h =>
+            {
+                newHistoryAction = ConvertStampedObject(h, newPage);
+            }).Case<Ann.Stamp>(h =>
+            {
+                newHistoryAction = ConvertStamp(h, newPage);
+            }).Case<Ann.MultipleChoiceBox>(h =>
+            {
+                newHistoryAction = ConvertMultipleChoiceBox(h, newPage);
+            });
+
+            if (newHistoryAction == null)
+            {
+                Debug.WriteLine($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+            }
+
+            return newHistoryAction;
+        }
+
+        #region PageObject HistoryItems
+
+        public static AnimationIndicatorHistoryAction ConvertAnimationIndicator(Ann.AnimationIndicator historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new AnimationIndicatorHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            switch (historyItem.AnimationIndicatorType)
+            {
+                case Ann.AnimationIndicatorType.Record:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Record;
+                    break;
+                case Ann.AnimationIndicatorType.Stop:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Stop;
+                    break;
+                default:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Record;
+                    break;
+            }
+
+            return newHistoryAction;
+        }
+
+        #endregion // PageObject HistoryItems
+
+        #region Number Line HistoryItems
+
+        
+
+        #endregion // Number Line HistoryItems
+
+        #endregion // HistoryActions
+
         #endregion // Ann Conversions
     }
 }
