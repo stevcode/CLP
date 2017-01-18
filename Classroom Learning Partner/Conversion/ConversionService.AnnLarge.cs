@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Catel.Collections;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 using Ann = CLP.Entities.Ann;
@@ -812,6 +813,123 @@ namespace Classroom_Learning_Partner
 
         #endregion // PageObjects
 
+        #region History
+
+        public static PageHistory ConvertPageHistory(Ann.PageHistory pageHistory, CLPPage newPage)
+        {
+            var newPageHistory = new PageHistory();
+            newPage.History = newPageHistory;
+            foreach (var trashedPageObject in pageHistory.TrashedPageObjects)
+            {
+                var newTrashedPageObject = ConvertPageObject(trashedPageObject, newPage);
+                newPageHistory.TrashedPageObjects.Add(newTrashedPageObject);
+            }
+
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            {
+                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
+            }
+
+            if (pageHistory.RedoItems.Any())
+            {
+                Console.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                return newPageHistory;
+            }
+
+            newPageHistory.IsAnimating = true;
+
+            #region Undo
+
+            var undoItems = pageHistory.UndoItems.ToList();
+            while (undoItems.Any())
+            {
+                var historyItemToConvert = undoItems.FirstOrDefault();
+                if (historyItemToConvert == null)
+                {
+                    break;
+                }
+
+                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage);
+                undoItems.RemoveFirst();
+                newPageHistory.RedoActions.Insert(0, newHistoryAction);
+            }
+
+            #endregion // Undo
+
+            #region Redo
+
+            while (newPageHistory.RedoActions.Any())
+            {
+                // Multiple Choice Fill-In Status Updates
+                var multipleChoiceStatus = newPageHistory.RedoActions.FirstOrDefault() as MultipleChoiceBubbleStatusChangedHistoryAction;
+                if (multipleChoiceStatus != null)
+                {
+                    const int THRESHOLD = 80;
+                    var multipleChoice = newPage.GetPageObjectByID(multipleChoiceStatus.MultipleChoiceID) as MultipleChoice;
+                    var stroke = multipleChoiceStatus.StrokeIDsAdded.Any() ? multipleChoiceStatus.StrokesAdded.First() : multipleChoiceStatus.StrokesRemoved.First();
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(stroke);
+                    var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                    var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                    if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.FilledIn)
+                    {
+                        if (totalStrokeLength >= THRESHOLD)
+                        {
+                            multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.AdditionalFilledIn;
+                            choiceBubbleStrokeIsOver.IsFilledIn = true;
+                        }
+                        else
+                        {
+                            totalStrokeLength += stroke.StylusPoints.Count;
+                            if (totalStrokeLength >= THRESHOLD)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.FilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                            else
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.PartiallyFilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                        }
+                    }
+                    else if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.CompletelyErased)
+                    {
+                        var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != stroke.GetStrokeID()).ToList();
+                        var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                        if (totalStrokeLength < THRESHOLD)
+                        {
+                            multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                            choiceBubbleStrokeIsOver.IsFilledIn = false;
+                        }
+                        else
+                        {
+                            if (otherStrokesStrokeLength < THRESHOLD)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.CompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                            else
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.IncompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                        }
+                    }
+                }
+
+                newPageHistory.Redo();
+            }
+
+            #endregion // Redo
+
+            newPageHistory.IsAnimating = false;
+            newPageHistory.RefreshHistoryIndexes();
+            return newPageHistory;
+        }
+
+        #endregion // History
+
         #region HistoryActions
 
         public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage)
@@ -883,7 +1001,7 @@ namespace Classroom_Learning_Partner
 
         #region Number Line HistoryItems
 
-        
+
 
         #endregion // Number Line HistoryItems
 

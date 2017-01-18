@@ -623,8 +623,6 @@ namespace CLP.Entities
             }
             copy.SubmissionType = SubmissionTypes.Single;
             copy.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
-            copy.History.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
-            copy.History.LastVersionIndex = LastVersionIndex;
             foreach (var pageObject in copy.PageObjects.Where(x => x != null))
             {
                 pageObject.ParentPage = copy;

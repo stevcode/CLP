@@ -27,59 +27,19 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="PageHistory" /> from scratch.</summary>
         public PageHistory()
         {
-            ID = Guid.NewGuid().ToCompactID();
         }
-
-        /// <summary>Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.</summary>
-        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext" />.</param>
-        public PageHistory(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
         #region Properties
 
-        #region ID
-
-        /// <summary>Unique Identifier for the <see cref="PageHistory" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
-        public string ID
+        public bool IsHistoryEnabled
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get { return GetValue<bool>(IsHistoryEnabledProperty); }
+            set { SetValue(IsHistoryEnabledProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
-
-        /// <summary>Version Index of the <see cref="PageHistory" />.</summary>
-        /// <remarks>Composite Primary Key.</remarks>
-        public uint VersionIndex
-        {
-            get { return GetValue<uint>(VersionIndexProperty); }
-            set { SetValue(VersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
-
-        /// <summary>Version Index of the latest submission.</summary>
-        public uint? LastVersionIndex
-        {
-            get { return GetValue<uint?>(LastVersionIndexProperty); }
-            set { SetValue(LastVersionIndexProperty, value); }
-        }
-
-        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
-
-        #endregion //ID
-
-        public bool UseHistory
-        {
-            get { return GetValue<bool>(UseHistoryProperty); }
-            set { SetValue(UseHistoryProperty, value); }
-        }
-
-        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
+        public static readonly PropertyData IsHistoryEnabledProperty = RegisterProperty("IsHistoryEnabled", typeof(bool), true);
 
         #region HistoryActions
 
@@ -157,7 +117,7 @@ namespace CLP.Entities
             {
                 lock (_historyLock)
                 {
-                    return !_isUndoingOperation && UndoActions.Any() && UseHistory;
+                    return !_isUndoingOperation && UndoActions.Any() && IsHistoryEnabled;
                 }
             }
         }
@@ -168,7 +128,7 @@ namespace CLP.Entities
             {
                 lock (_historyLock)
                 {
-                    return !_isUndoingOperation && RedoActions.Any() && UseHistory;
+                    return !_isUndoingOperation && RedoActions.Any() && IsHistoryEnabled;
                 }
             }
         }
@@ -527,7 +487,7 @@ namespace CLP.Entities
         {
             EndBatch();
 
-            if (_isUndoingOperation || !UseHistory)
+            if (_isUndoingOperation || !IsHistoryEnabled)
             {
                 return false;
             }
@@ -554,7 +514,7 @@ namespace CLP.Entities
             EndBatch();
 
             if (_isUndoingOperation ||
-                !UseHistory ||
+                !IsHistoryEnabled ||
                 IsAnimation)
             {
                 return false;
