@@ -1017,15 +1017,17 @@ namespace Classroom_Learning_Partner
                                        ParentPage = newPage
                                    };
 
-            var arrayID = historyItem.ArrayID;
-            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
                 Debug.WriteLine($"[ERROR] Array for Rotate not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
-            newHistoryAction.ArrayID = arrayID;
             newHistoryAction.NewXPosition = array.XPosition;
             newHistoryAction.NewYPosition = array.YPosition;
             newHistoryAction.NewWidth = array.Width;
@@ -1040,6 +1042,8 @@ namespace Classroom_Learning_Partner
             newHistoryAction.OldRows = array.Rows;
             newHistoryAction.OldColumns = array.Columns;
 
+            #endregion // Conversion Undo
+
             return newHistoryAction;
         }
 
@@ -1052,17 +1056,21 @@ namespace Classroom_Learning_Partner
                                        ParentPage = newPage
                                    };
 
-            var arrayID = historyItem.ArrayID;
-            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
                 Debug.WriteLine($"[ERROR] Array for Grid Toggle not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
-            newHistoryAction.ArrayID = arrayID;
             newHistoryAction.IsToggledOn = array.IsGridOn;
             array.IsGridOn = !newHistoryAction.IsToggledOn;
+
+            #endregion // Conversion Undo
 
             return newHistoryAction;
         }
@@ -1075,6 +1083,14 @@ namespace Classroom_Learning_Partner
                                        OwnerID = historyItem.OwnerID,
                                        ParentPage = newPage
                                    };
+
+            newHistoryAction.PersistingArrayID = historyItem.PersistingArrayID;
+            newHistoryAction.SnappedArrayID = historyItem.SnappedArrayID;
+            newHistoryAction.IsHorizontal = historyItem.IsHorizontal;
+            newHistoryAction.SnappedArraySquareSize = historyItem.SnappedArraySquareSize;
+            newHistoryAction.PersistingArrayDivisionBehavior = historyItem.PersistingArrayDivisionBehavior;
+            newHistoryAction.PersistingArrayRowsOrColumns = historyItem.PersistingArrayRowsOrColumns;
+            newHistoryAction.PersistingArrayXOrYPosition = historyItem.PersistingArrayXOrYPosition;
 
             newHistoryAction.PersistingArrayHorizontalDivisions =
                 historyItem.PersistingArrayHorizontalDivisions.Select(
@@ -1097,29 +1113,21 @@ namespace Classroom_Learning_Partner
                                                                                              d.Length,
                                                                                              d.Value)).ToList();
 
-            var persistingArrayID = historyItem.PersistingArrayID;
-            var persistingArray = newPage.GetVerifiedPageObjectOnPageByID(persistingArrayID) as CLPArray;
+            #region Conversion Undo
+
+            var persistingArray = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
                 Debug.WriteLine($"[ERROR] Persisting Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
-            var snappedArrayID = historyItem.SnappedArrayID;
-            var snappedArray = newPage.GetVerifiedPageObjectInTrashByID(snappedArrayID) as CLPArray;
+            var snappedArray = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
                 Debug.WriteLine($"[ERROR] Snapped Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
-
-            newHistoryAction.PersistingArrayID = persistingArrayID;
-            newHistoryAction.SnappedArrayID = snappedArrayID;
-            newHistoryAction.IsHorizontal = historyItem.IsHorizontal;
-            newHistoryAction.SnappedArraySquareSize = historyItem.SnappedArraySquareSize;
-            newHistoryAction.PersistingArrayDivisionBehavior = historyItem.PersistingArrayDivisionBehavior;
-            newHistoryAction.PersistingArrayRowsOrColumns = historyItem.PersistingArrayRowsOrColumns;
-            newHistoryAction.PersistingArrayXOrYPosition = historyItem.PersistingArrayXOrYPosition;
 
             snappedArray.SizeArrayToGridLevel(newHistoryAction.SnappedArraySquareSize);
             snappedArray.ParentPage = newPage;
@@ -1147,6 +1155,8 @@ namespace Classroom_Learning_Partner
             AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
             APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
 
+            #endregion // Conversion Undo
+
             return newHistoryAction;
         }
 
@@ -1159,18 +1169,19 @@ namespace Classroom_Learning_Partner
                                        ParentPage = newPage
                                    };
 
-            var arrayID = historyItem.ArrayID;
-            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+            newHistoryAction.IsHorizontalDivision = historyItem.IsHorizontalDivision;
+            newHistoryAction.DivisionIndex = historyItem.DivisionIndex;
+            newHistoryAction.PreviousValue = historyItem.PreviousValue;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
                 Debug.WriteLine($"[ERROR] Array for Division Value Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
-
-            newHistoryAction.ArrayID = arrayID;
-            newHistoryAction.IsHorizontalDivision = historyItem.IsHorizontalDivision;
-            newHistoryAction.DivisionIndex = historyItem.DivisionIndex;
-            newHistoryAction.PreviousValue = historyItem.PreviousValue;
 
             try
             {
@@ -1184,6 +1195,8 @@ namespace Classroom_Learning_Partner
                 Debug.WriteLine($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
+
+            #endregion // Conversion Undo
 
             return newHistoryAction;
         }
@@ -1204,15 +1217,16 @@ namespace Classroom_Learning_Partner
                                        ParentPage = newPage
                                    };
 
-            var arrayID = historyItem.ArrayID;
-            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
                 Debug.WriteLine($"[ERROR] Array for Divisions Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
-
-            newHistoryAction.ArrayID = arrayID;
 
             if ((historyItem.AddedDivisions.Any() && historyItem.AddedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal) ||
                 (historyItem.RemovedDivisions.Any() && historyItem.RemovedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal))
@@ -1255,6 +1269,8 @@ namespace Classroom_Learning_Partner
 
                 newHistoryAction.OldRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             }
+
+            #endregion // Conversion Undo
 
             return newHistoryAction;
         }
@@ -1327,7 +1343,7 @@ namespace Classroom_Learning_Partner
                                                                                                 numberLine.YPosition,
                                                                                                 true);
 
-                    #region JumpsChangedHistoryAction Undo
+                    #region JumpsChangedHistoryAction Conversion Undo
 
                     foreach (var stroke in jumpsChangedHistoryAction.AddedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeOnPageByID))
                     {
@@ -1352,7 +1368,7 @@ namespace Classroom_Learning_Partner
                     numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
                     numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
 
-                    #endregion // JumpsChangedHistoryAction Undo
+                    #endregion // JumpsChangedHistoryAction Conversion Undo
 
                     return jumpsChangedHistoryAction;
                 }
@@ -1377,7 +1393,7 @@ namespace Classroom_Learning_Partner
                                                                                                                                 newHistoryAction.StrokesAdded,
                                                                                                                                 newHistoryAction.StrokesRemoved);
 
-                        #region MultipleChoiceBubbleStatusChangedHistoryAction Undo
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
 
                         var addedStrokesToMultipleChoice = new List<Stroke>();
                         foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
@@ -1419,7 +1435,7 @@ namespace Classroom_Learning_Partner
                                 break;
                         }
 
-                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Undo
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
 
                         return multipleChoiceBubbleStatusChangedHistoryAction;
                     }
@@ -1484,7 +1500,7 @@ namespace Classroom_Learning_Partner
                                                                                                 numberLine.YPosition,
                                                                                                 true);
 
-                    #region JumpsChangedHistoryAction Undo
+                    #region JumpsChangedHistoryAction Conversion Undo
 
                     foreach (var stroke in jumpsChangedHistoryAction.RemovedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeInHistoryByID))
                     {
@@ -1508,7 +1524,7 @@ namespace Classroom_Learning_Partner
                     numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
                     numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
 
-                    #endregion // JumpsChangedHistoryAction Undo
+                    #endregion // JumpsChangedHistoryAction Conversion Undo
 
                     return jumpsChangedHistoryAction;
                 }
@@ -1532,7 +1548,7 @@ namespace Classroom_Learning_Partner
                                                                                                                                 ChoiceBubbleStatuses.CompletelyErased,
                                                                                                                                 newHistoryAction.StrokesAdded,
                                                                                                                                 newHistoryAction.StrokesRemoved);
-                        #region MultipleChoiceBubbleStatusChangedHistoryAction Undo
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
 
                         var addedStrokesToMultipleChoice = new List<Stroke>();
                         foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
@@ -1574,7 +1590,7 @@ namespace Classroom_Learning_Partner
                                 break;
                         }
 
-                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Undo
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
 
                         return multipleChoiceBubbleStatusChangedHistoryAction;
                     }
@@ -1601,7 +1617,7 @@ namespace Classroom_Learning_Partner
                 return null;
             }
 
-            #region ObjectsOnPageChangedHistoryAction Undo
+            #region ObjectsOnPageChangedHistoryAction Conversion Undo
 
             var addedStrokes = new List<Stroke>();
             foreach (var stroke in newHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
@@ -1661,7 +1677,7 @@ namespace Classroom_Learning_Partner
                                                          new List<Stroke>());
             }
 
-            #endregion // ObjectsOnPageChangedHistoryAction Undo
+            #endregion // ObjectsOnPageChangedHistoryAction Conversion Undo
 
             return newHistoryAction;
         }
