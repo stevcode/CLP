@@ -756,8 +756,7 @@ namespace ConsoleScripts
 
                 #region WorksAsIs
 
-                if (historyItemToUndo is CLPArrayDivisionValueChangedHistoryAction ||
-                    historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
+                if (historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
                     historyItemToUndo is DivisionTemplateArraySnappedInHistoryAction)
                 {
                     page.History.ConversionUndo();

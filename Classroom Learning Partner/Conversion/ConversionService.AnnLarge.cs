@@ -952,9 +952,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.CLPArraySnapHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoArraySnap(h, newPage);
-            }).Case<Ann.NumberLine>(h =>
+            }).Case<Ann.CLPArrayDivisionValueChangedHistoryItem>(h =>
             {
-                newHistoryAction = ConvertNumberLine(h, newPage);
+                newHistoryAction = ConvertAndUndoArrayDivisionValueChanged(h, newPage);
             }).Case<Ann.StampedObject>(h =>
             {
                 newHistoryAction = ConvertStampedObject(h, newPage);
@@ -1143,6 +1143,44 @@ namespace Classroom_Learning_Partner
 
             AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
             APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayDivisionValueChangedHistoryAction ConvertAndUndoArrayDivisionValueChanged(Ann.CLPArrayDivisionValueChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayDivisionValueChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var arrayID = historyItem.ArrayID;
+            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Division Value Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.ArrayID = arrayID;
+            newHistoryAction.IsHorizontalDivision = historyItem.IsHorizontalDivision;
+            newHistoryAction.DivisionIndex = historyItem.DivisionIndex;
+            newHistoryAction.PreviousValue = historyItem.PreviousValue;
+
+            try
+            {
+                var division = newHistoryAction.IsHorizontalDivision ? array.HorizontalDivisions[newHistoryAction.DivisionIndex] : array.VerticalDivisions[newHistoryAction.DivisionIndex];
+
+                newHistoryAction.NewValue = division.Value;
+                division.Value = newHistoryAction.PreviousValue;
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
 
             return newHistoryAction;
         }
