@@ -765,24 +765,6 @@ namespace ConsoleScripts
 
                 #endregion //WorksAsIs
 
-                #region CLPArrayDivisionsChanged fix
-
-                if (historyItemToUndo is CLPArrayDivisionsChangedHistoryAction)
-                {
-                    var divisionsChanged = historyItemToUndo as CLPArrayDivisionsChangedHistoryAction;
-                    if (!divisionsChanged.AddedDivisions.Any() &&
-                        !divisionsChanged.RemovedDivisions.Any())
-                    {
-                        page.History.UndoActions.RemoveFirst();
-                        continue;
-                    }
-
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //CLPArrayDivisionsChanged fix
-
                 #region PageObjectResize fix for old Division Templates
 
                 if (historyItemToUndo is PageObjectResizeBatchHistoryAction)

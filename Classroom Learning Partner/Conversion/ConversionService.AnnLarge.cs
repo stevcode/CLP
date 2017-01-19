@@ -442,12 +442,12 @@ namespace Classroom_Learning_Partner
         public static CLPArrayDivision ConvertArrayDivision(Ann.CLPArrayDivision division)
         {
             var newDivision = new CLPArrayDivision
-            {
-                Position = division.Position,
-                Length = division.Length,
-                Value = division.Value,
-                Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
-            };
+                              {
+                                  Position = division.Position,
+                                  Length = division.Length,
+                                  Value = division.Value,
+                                  Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
+                              };
 
             return newDivision;
         }
@@ -456,19 +456,19 @@ namespace Classroom_Learning_Partner
         public static NumberLine ConvertNumberLine(Ann.NumberLine numberLine, CLPPage newPage)
         {
             var newNumberLine = new NumberLine
-            {
-                ID = numberLine.ID,
-                XPosition = numberLine.XPosition,
-                YPosition = numberLine.YPosition,
-                Height = numberLine.Height,
-                Width = numberLine.Width,
-                OwnerID = numberLine.OwnerID,
-                CreatorID = numberLine.CreatorID,
-                CreationDate = numberLine.CreationDate,
-                PageObjectFunctionalityVersion = "Ann12.19.2014",
-                IsManipulatableByNonCreator = numberLine.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                                {
+                                    ID = numberLine.ID,
+                                    XPosition = numberLine.XPosition,
+                                    YPosition = numberLine.YPosition,
+                                    Height = numberLine.Height,
+                                    Width = numberLine.Width,
+                                    OwnerID = numberLine.OwnerID,
+                                    CreatorID = numberLine.CreatorID,
+                                    CreationDate = numberLine.CreationDate,
+                                    PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                    IsManipulatableByNonCreator = numberLine.IsManipulatableByNonCreator,
+                                    ParentPage = newPage
+                                };
 
             newNumberLine.NumberLineType = NumberLineTypes.NumberLine;
             newNumberLine.NumberLineSize = numberLine.NumberLineSize;
@@ -955,9 +955,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.CLPArrayDivisionValueChangedHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoArrayDivisionValueChanged(h, newPage);
-            }).Case<Ann.StampedObject>(h =>
+            }).Case<Ann.CLPArrayDivisionsChangedHistoryItem>(h =>
             {
-                newHistoryAction = ConvertStampedObject(h, newPage);
+                newHistoryAction = ConvertAndUndoArrayDivisionsChanged(h, newPage);
             }).Case<Ann.Stamp>(h =>
             {
                 newHistoryAction = ConvertStamp(h, newPage);
@@ -1180,6 +1180,77 @@ namespace Classroom_Learning_Partner
             {
                 Debug.WriteLine($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
+            }
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayDivisionsChangedHistoryAction ConvertAndUndoArrayDivisionsChanged(Ann.CLPArrayDivisionsChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.AddedDivisions.Any() &&
+                !historyItem.RemovedDivisions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] Division Values Changed, empty divisions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new CLPArrayDivisionsChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var arrayID = historyItem.ArrayID;
+            var array = newPage.GetVerifiedPageObjectOnPageByID(arrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Divisions Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.ArrayID = arrayID;
+
+            if ((historyItem.AddedDivisions.Any() && historyItem.AddedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal) ||
+                (historyItem.RemovedDivisions.Any() && historyItem.RemovedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal))
+            {
+                newHistoryAction.NewRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+
+                foreach (var clpArrayDivision in historyItem.AddedDivisions)
+                {
+                    var matchingArrayDivision =
+                        array.HorizontalDivisions.FirstOrDefault(d => d.Length == clpArrayDivision.Length && d.Position == clpArrayDivision.Position && d.Value == clpArrayDivision.Value);
+
+                    array.HorizontalDivisions.Remove(matchingArrayDivision);
+                }
+                foreach (var clpArrayDivision in historyItem.RemovedDivisions)
+                {
+                    var newDivision = ConvertArrayDivision(clpArrayDivision);
+
+                    array.HorizontalDivisions.Add(newDivision);
+                }
+
+                newHistoryAction.OldRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            }
+            else
+            {
+                newHistoryAction.NewRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+
+                foreach (var clpArrayDivision in historyItem.AddedDivisions)
+                {
+                    var matchingArrayDivision =
+                        array.VerticalDivisions.FirstOrDefault(d => d.Length == clpArrayDivision.Length && d.Position == clpArrayDivision.Position && d.Value == clpArrayDivision.Value);
+
+                    array.VerticalDivisions.Remove(matchingArrayDivision);
+                }
+                foreach (var clpArrayDivision in historyItem.RemovedDivisions)
+                {
+                    var newDivision = ConvertArrayDivision(clpArrayDivision);
+
+                    array.VerticalDivisions.Add(newDivision);
+                }
+
+                newHistoryAction.OldRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             }
 
             return newHistoryAction;
