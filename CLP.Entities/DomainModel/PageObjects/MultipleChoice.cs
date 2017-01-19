@@ -171,15 +171,9 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override string FormattedName
-        {
-            get { return "Multiple Choice"; }
-        }
+        public override string FormattedName => "Multiple Choice";
 
-        public override string CodedName
-        {
-            get { return "ANS MC"; }
-        }
+        public override string CodedName => "ANS MC";
 
         public override string CodedID
         {
@@ -190,15 +184,9 @@ namespace CLP.Entities
             }
         }
 
-        public override int ZIndex
-        {
-            get { return 15; }
-        }
+        public override int ZIndex => 15;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override bool IsBackgroundInteractable => false;
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
@@ -223,10 +211,7 @@ namespace CLP.Entities
         }
 
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
-        public override int StrokeHitTestPercentage
-        {
-            get { return 30; }
-        }
+        public override int StrokeHitTestPercentage => 30;
 
         #endregion //AStrokeAccepter Overrides
 

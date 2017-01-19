@@ -16,8 +16,6 @@ namespace CLP.Entities
         public NumberLineJumpSizesChangedHistoryAction() { }
 
         /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public NumberLineJumpSizesChangedHistoryAction(CLPPage parentPage,
                                                        Person owner,
                                                        string numberLineID,
@@ -161,56 +159,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
-            if (numberLine == null)
-            {
-                Debug.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            foreach (var stroke in AddedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
-            {
-                if (stroke == null)
-                {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
-                    continue;
-                }
-                ParentPage.InkStrokes.Remove(stroke);
-                ParentPage.History.TrashedInkStrokes.Add(stroke);
-                var jumps = numberLine.RemoveJumpFromStroke(stroke);
-                JumpsAdded = jumps;
-                numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
-                                                 new List<Stroke>
-                                                 {
-                                                     stroke
-                                                 });
-            }
-
-            foreach (var stroke in RemovedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
-            {
-                if (stroke == null)
-                {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
-                    continue;
-                }
-                ParentPage.History.TrashedInkStrokes.Remove(stroke);
-                ParentPage.InkStrokes.Add(stroke);
-                var jumps = numberLine.AddJumpFromStroke(stroke);
-                JumpsRemoved = jumps;
-                numberLine.ChangeAcceptedStrokes(new List<Stroke>
-                                                 {
-                                                     stroke
-                                                 },
-                                                 new List<Stroke>());
-            }
-
-            NewYPosition = numberLine.YPosition;
-            NewHeight = numberLine.Height;
-            numberLine.YPosition = PreviousYPosition;
-            numberLine.Height = PreviousHeight;
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -231,7 +180,6 @@ namespace CLP.Entities
                 }
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
-                //numberLine.RemoveJumpFromStroke(stroke);              Should now be taken care of by JumpsAdded
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
                                                  new List<Stroke>
                                                  {
@@ -260,7 +208,6 @@ namespace CLP.Entities
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
-                //numberLine.AddJumpFromStroke(stroke);              Should now be taken care of by JumpsRemoved
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>
                                                  {
                                                      stroke
@@ -296,7 +243,6 @@ namespace CLP.Entities
                 }
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
-                //numberLine.RemoveJumpFromStroke(stroke);              Should now be taken care of by JumpsRemoved
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
                                                  new List<Stroke>
                                                  {
@@ -325,7 +271,6 @@ namespace CLP.Entities
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
-                //numberLine.AddJumpFromStroke(stroke);                 Should now be taken care of by JumpsAdded
                 numberLine.ChangeAcceptedStrokes(new List<Stroke>
                                                  {
                                                      stroke

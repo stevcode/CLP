@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Ink;
 using Catel.Collections;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -200,7 +201,6 @@ namespace Classroom_Learning_Partner
                               InitialAspectRatio = page.InitialAspectRatio
                           };
 
-            // TODO: Convert History
             // TODO: Tags
 
             foreach (var stroke in page.InkStrokes)
@@ -211,6 +211,7 @@ namespace Classroom_Learning_Partner
             foreach (var pageObject in page.PageObjects)
             {
                 // Ignores the TextBoxes that were part of the old Multiple Choice
+                // TODO: Ignore TextBoxes from Assessment Cache
                 if (pageObject is Ann.CLPTextBox &&
                     (pageObject.ID == "Qgvdw-4oTk2JmSUECrftNQ" ||     // page 385
                      pageObject.ID == "F66Db6O3a0uTF0SGRiUemw" ||     // page 384
@@ -231,6 +232,8 @@ namespace Classroom_Learning_Partner
                 //    newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
                 //}
             }
+
+            ConvertPageHistory(page.History, newPage);
 
             return newPage;
         }
@@ -656,6 +659,7 @@ namespace Classroom_Learning_Partner
             var segmentWidth = (multipleChoiceBox.Width - 35.0) / 3;
             newMultipleChoice.Width = segmentWidth * 4;
 
+            // TODO: Custom conversion for Assessment Cache
             switch (newPage.PageNumber)
             {
                 case 381:
@@ -815,7 +819,7 @@ namespace Classroom_Learning_Partner
 
         #region History
 
-        public static PageHistory ConvertPageHistory(Ann.PageHistory pageHistory, CLPPage newPage)
+        public static void ConvertPageHistory(Ann.PageHistory pageHistory, CLPPage newPage)
         {
             var newPageHistory = new PageHistory();
             newPage.History = newPageHistory;
@@ -833,7 +837,7 @@ namespace Classroom_Learning_Partner
             if (pageHistory.RedoItems.Any())
             {
                 Console.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
-                return newPageHistory;
+                return;
             }
 
             newPageHistory.IsAnimating = true;
@@ -929,7 +933,6 @@ namespace Classroom_Learning_Partner
 
             newPageHistory.IsAnimating = false;
             newPageHistory.RefreshHistoryIndexes();
-            return newPageHistory;
         }
 
         #endregion // History
@@ -958,9 +961,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.CLPArrayDivisionsChangedHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoArrayDivisionsChanged(h, newPage);
-            }).Case<Ann.Stamp>(h =>
+            }).Case<Ann.StrokesChangedHistoryItem>(h =>
             {
-                newHistoryAction = ConvertStamp(h, newPage);
+                newHistoryAction = ConvertAndUndoStrokesChanged(h, newPage);
             }).Case<Ann.MultipleChoiceBox>(h =>
             {
                 newHistoryAction = ConvertMultipleChoiceBox(h, newPage);
@@ -1263,6 +1266,407 @@ namespace Classroom_Learning_Partner
 
 
         #endregion // Number Line HistoryItems
+
+        #region Strokes HistoryItems
+
+        public static IHistoryAction ConvertAndUndoStrokesChanged(Ann.StrokesChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.StrokeIDsAdded.Any() &&
+                !historyItem.StrokeIDsRemoved.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.StrokeIDsAdded = historyItem.StrokeIDsAdded;
+            newHistoryAction.StrokeIDsRemoved = historyItem.StrokeIDsRemoved;
+
+            // Single Add
+            if (newHistoryAction.StrokeIDsAdded.Count == 1 &&
+                !newHistoryAction.StrokeIDsRemoved.Any())
+            {
+                var strokeID = newHistoryAction.StrokeIDsAdded.First();
+                var addedStroke = newPage.GetVerifiedStrokeOnPageByID(strokeID);
+
+                #region Check for Jump Added
+
+                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
+                {
+                    var tickR = numberLine.FindClosestTickToArcStroke(addedStroke, true);
+                    var tickL = numberLine.FindClosestTickToArcStroke(addedStroke, false);
+                    if (tickR == null ||
+                        tickL == null ||
+                        tickR == tickL)
+                    {
+                        continue;
+                    }
+
+                    var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
+                    var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
+
+                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<Stroke>
+                                                                                                {
+                                                                                                    addedStroke
+                                                                                                },
+                                                                                                new List<Stroke>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                oldHeight,
+                                                                                                oldYPosition,
+                                                                                                numberLine.Height,
+                                                                                                numberLine.YPosition,
+                                                                                                true);
+
+                    #region JumpsChangedHistoryAction Undo
+
+                    foreach (var stroke in jumpsChangedHistoryAction.AddedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeOnPageByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        newPage.InkStrokes.Remove(stroke);
+                        newPage.History.TrashedInkStrokes.Add(stroke);
+                        numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                         new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         });
+
+                        var jumps = numberLine.RemoveJumpFromStroke(stroke);
+                        jumpsChangedHistoryAction.JumpsAdded = jumps;
+                    }
+
+                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
+                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
+
+                    #endregion // JumpsChangedHistoryAction Undo
+
+                    return jumpsChangedHistoryAction;
+                }
+
+                #endregion // Check for Jump Added
+
+                #region Check for Multiple Choice Fill-In
+
+                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
+                    if (choiceBubbleStrokeIsOver != null)
+                    {
+                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
+                                                                                                                                newPage.Owner,
+                                                                                                                                multipleChoice,
+                                                                                                                                index,
+                                                                                                                                ChoiceBubbleStatuses.FilledIn,
+                                                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                                                newHistoryAction.StrokesRemoved);
+
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Undo
+
+                        var addedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            addedStrokesToMultipleChoice.Add(stroke);
+                            newPage.InkStrokes.Remove(stroke);
+                            newPage.History.TrashedInkStrokes.Add(stroke);
+                        }
+
+                        var removedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            removedStrokesToMultipleChoice.Add(stroke);
+                            newPage.History.TrashedInkStrokes.Remove(stroke);
+                            newPage.InkStrokes.Add(stroke);
+                        }
+
+                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
+
+                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
+                        {
+                            case ChoiceBubbleStatuses.CompletelyErased:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
+                                break;
+                            case ChoiceBubbleStatuses.FilledIn:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
+                                break;
+                        }
+
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Undo
+
+                        return multipleChoiceBubbleStatusChangedHistoryAction;
+                    }
+                }
+
+                #endregion // Check for Multiple Choice Fill-In
+            }
+            //Single Remove
+            else if (newHistoryAction.StrokeIDsRemoved.Count == 1 &&
+                     !newHistoryAction.StrokeIDsAdded.Any())
+            {
+                var strokeID = newHistoryAction.StrokeIDsRemoved.First();
+                var removedStroke = newPage.GetVerifiedStrokeInHistoryByID(strokeID);
+
+                #region Check for Jump Removed
+
+                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
+                {
+                    var tickR = numberLine.FindClosestTickToArcStroke(removedStroke, true);
+                    var tickL = numberLine.FindClosestTickToArcStroke(removedStroke, false);
+                    if (tickR == null ||
+                        tickL == null ||
+                        tickR == tickL)
+                    {
+                        continue;
+                    }
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (numberLine.JumpSizes.Count == 0)
+                    {
+                        var tallestPoint = removedStroke.GetBounds().Top;
+                        tallestPoint = tallestPoint - 40;
+
+                        if (tallestPoint < 0)
+                        {
+                            tallestPoint = 0;
+                        }
+
+                        if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
+                        {
+                            tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
+                        }
+
+                        oldHeight += (numberLine.YPosition - tallestPoint);
+                        oldYPosition = tallestPoint;
+                    }
+
+                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<Stroke>(),
+                                                                                                new List<Stroke>
+                                                                                                {
+                                                                                                    removedStroke
+                                                                                                },
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                oldHeight,
+                                                                                                oldYPosition,
+                                                                                                numberLine.Height,
+                                                                                                numberLine.YPosition,
+                                                                                                true);
+
+                    #region JumpsChangedHistoryAction Undo
+
+                    foreach (var stroke in jumpsChangedHistoryAction.RemovedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+                        newPage.History.TrashedInkStrokes.Remove(stroke);
+                        newPage.InkStrokes.Add(stroke);
+                        numberLine.ChangeAcceptedStrokes(new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         },
+                                                         new List<Stroke>());
+
+                        var jumps = numberLine.AddJumpFromStroke(stroke);
+                        jumpsChangedHistoryAction.JumpsRemoved = jumps;
+                    }
+
+                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
+                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
+
+                    #endregion // JumpsChangedHistoryAction Undo
+
+                    return jumpsChangedHistoryAction;
+                }
+
+                #endregion // Check for Jump Removed
+
+                #region Check for Multiple Choice Erase
+
+                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
+                    if (choiceBubbleStrokeIsOver != null)
+                    {
+                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
+                                                                                                                                newPage.Owner,
+                                                                                                                                multipleChoice,
+                                                                                                                                index,
+                                                                                                                                ChoiceBubbleStatuses.CompletelyErased,
+                                                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                                                newHistoryAction.StrokesRemoved);
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Undo
+
+                        var addedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            addedStrokesToMultipleChoice.Add(stroke);
+                            newPage.InkStrokes.Remove(stroke);
+                            newPage.History.TrashedInkStrokes.Add(stroke);
+                        }
+
+                        var removedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            removedStrokesToMultipleChoice.Add(stroke);
+                            newPage.History.TrashedInkStrokes.Remove(stroke);
+                            newPage.InkStrokes.Add(stroke);
+                        }
+
+                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
+
+                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
+                        {
+                            case ChoiceBubbleStatuses.CompletelyErased:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
+                                break;
+                            case ChoiceBubbleStatuses.FilledIn:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
+                                break;
+                        }
+
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Undo
+
+                        return multipleChoiceBubbleStatusChangedHistoryAction;
+                    }
+                }
+
+                #endregion // Check for Multiple Choice Erase
+            }
+            //Point Erase
+            else if (newHistoryAction.StrokesRemoved.Count == 1 &&
+                     newHistoryAction.StrokesAdded.Count == 2)
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, Point Erase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+            else
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, Not SingleAdd, SingleErase, or PointErase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!newHistoryAction.IsUsingStrokes)
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            #region ObjectsOnPageChangedHistoryAction Undo
+
+            var addedStrokes = new List<Stroke>();
+            foreach (var stroke in newHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+            {
+                if (stroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsAdded. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    continue;
+                }
+                addedStrokes.Add(stroke);
+                newPage.InkStrokes.Remove(stroke);
+                newPage.History.TrashedInkStrokes.Add(stroke);
+            }
+
+            var removedStrokes = new List<Stroke>();
+            foreach (var stroke in newHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+            {
+                if (stroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsRemoved. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    continue;
+                }
+                removedStrokes.Add(stroke);
+                newPage.History.TrashedInkStrokes.Remove(stroke);
+                newPage.InkStrokes.Add(stroke);
+            }
+
+            foreach (var pageObject in newPage.PageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), addedStrokes);
+            }
+
+            foreach (var stroke in removedStrokes)
+            {
+                var validStrokeAccepters =
+                    newPage.PageObjects.OfType<IStrokeAccepter>().Where(p => (p.CreatorID == newPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke)).ToList();
+
+                IStrokeAccepter closestPageObject = null;
+                foreach (var pageObject in validStrokeAccepters)
+                {
+                    if (closestPageObject == null)
+                    {
+                        closestPageObject = pageObject;
+                        continue;
+                    }
+
+                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
+                    {
+                        closestPageObject = pageObject;
+                    }
+                }
+
+                closestPageObject?.ChangeAcceptedStrokes(new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         },
+                                                         new List<Stroke>());
+            }
+
+            #endregion // ObjectsOnPageChangedHistoryAction Undo
+
+            return newHistoryAction;
+        }
+
+        #endregion // Strokes HistoryItems
 
         #endregion // HistoryActions
 
