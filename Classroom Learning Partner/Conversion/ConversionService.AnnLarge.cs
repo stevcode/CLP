@@ -967,6 +967,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectsAddedHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectAdded(h, newPage);
+            }).Case<Ann.PageObjectsRemovedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectRemoved(h, newPage);
             });
 
             if (newHistoryAction == null)
@@ -1033,6 +1036,42 @@ namespace Classroom_Learning_Partner
                 newPage.PageObjects.Remove(pageObject);
                 pageObject.OnDeleted(true);
                 newPage.History.TrashedPageObjects.Add(pageObject);
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsOnPageChangedHistoryAction ConvertAndUndoPageObjectRemoved(Ann.PageObjectsRemovedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Removed, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDsRemoved = historyItem.PageObjectIDs;
+
+            #region Conversion Undo
+
+            foreach (var pageObject in newHistoryAction.PageObjectIDsRemoved.Select(newPage.GetVerifiedPageObjectInTrashByID))
+            {
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Removed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+                newPage.History.TrashedPageObjects.Remove(pageObject);
+                newPage.PageObjects.Add(pageObject);
+                pageObject.OnAdded(true);
             }
 
             #endregion // Conversion Undo
