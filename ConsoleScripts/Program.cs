@@ -767,61 +767,45 @@ namespace ConsoleScripts
 
                 #region PageObjectCut fix
 
-                //if (historyItemToUndo is PageObjectCutHistoryAction)
-                //{
-                //    //BUG: Fix to allow strokes that don't cut any pageObjects.
-                //    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryAction;
-                //    if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
-                //    {
-                //        page.History.ConversionUndo();
-                //        continue;
-                //    }
-                //    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
-                //    if (!pageObjectCut.CutPageObjectIDs.Any() ||
-                //        cuttingStroke == null)
-                //    {
-                //        page.History.UndoActions.RemoveFirst();
-                //        continue;
-                //    }
-                //    if (pageObjectCut.CutPageObjectIDs.Count == 1)
-                //    {
-                //        pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
-                //        pageObjectCut.CutPageObjectIDs.Clear();
-                //        page.History.ConversionUndo();
-                //        continue;
-                //    }
+                if (historyItemToUndo is PageObjectCutHistoryAction)
+                {
+                    //BUG: Fix to allow strokes that don't cut any pageObjects.
+                    var pageObjectCut = historyItemToUndo as PageObjectCutHistoryAction;
 
-                //    var newHistoryItems = new List<PageObjectCutHistoryAction>();
-                //    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
-                //    {
-                //        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
-                //        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
-                //        {
-                //            continue;
-                //        }
-                //        var halvedPageObjectIDs = new List<string>
-                //                                  {
-                //                                      pageObjectCut.HalvedPageObjectIDs[0],
-                //                                      pageObjectCut.HalvedPageObjectIDs[1]
-                //                                  };
-                //        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
-                //        if (cutPageObject == null)
-                //        {
-                //            continue;
-                //        }
-                //        var newCutHistoryItem = new PageObjectCutHistoryAction(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
-                //        newHistoryItems.Add(newCutHistoryItem);
-                //    }
 
-                //    page.History.UndoActions.RemoveFirst();
+                    var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
 
-                //    foreach (var pageObjectCutHistoryItem in newHistoryItems)
-                //    {
-                //        page.History.UndoActions.Insert(0, pageObjectCutHistoryItem);
-                //    }
+                    var newHistoryItems = new List<PageObjectCutHistoryAction>();
+                    foreach (var cutPageObjectID in pageObjectCut.CutPageObjectIDs)
+                    {
+                        var cutPageObject = pageObjectCut.ParentPage.GetVerifiedPageObjectInTrashByID(cutPageObjectID) as ICuttable;
+                        if (pageObjectCut.HalvedPageObjectIDs.Count < 2)
+                        {
+                            continue;
+                        }
+                        var halvedPageObjectIDs = new List<string>
+                                                  {
+                                                      pageObjectCut.HalvedPageObjectIDs[0],
+                                                      pageObjectCut.HalvedPageObjectIDs[1]
+                                                  };
+                        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
+                        if (cutPageObject == null)
+                        {
+                            continue;
+                        }
+                        var newCutHistoryItem = new PageObjectCutHistoryAction(pageObjectCut.ParentPage, pageObjectCut.ParentPage.Owner, cuttingStroke, cutPageObject, halvedPageObjectIDs);
+                        newHistoryItems.Add(newCutHistoryItem);
+                    }
 
-                //    continue;
-                //}
+                    page.History.UndoActions.RemoveFirst();
+
+                    foreach (var pageObjectCutHistoryItem in newHistoryItems)
+                    {
+                        page.History.UndoActions.Insert(0, pageObjectCutHistoryItem);
+                    }
+
+                    continue;
+                }
 
                 #endregion //PageObjectCut fix
 

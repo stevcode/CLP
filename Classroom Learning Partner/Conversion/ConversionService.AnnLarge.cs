@@ -1261,6 +1261,113 @@ namespace Classroom_Learning_Partner
             return newHistoryAction;
         }
 
+        public static PageObjectCutHistoryAction ConvertAndUndoPageObjectCut(Ann.PageObjectCutHistoryItem historyItem, CLPPage newPage)
+        {
+            if (string.IsNullOrEmpty(historyItem.CuttingStrokeID))
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke ID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var cuttingStroke = newPage.GetVerifiedStrokeInHistoryByID(historyItem.CuttingStrokeID);
+            if (cuttingStroke == null)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            #region No Or One PageObject Cut
+
+            if (historyItem.CutPageObjectIDs.Count <= 1)
+            {
+                var newHistoryAction = new PageObjectCutHistoryAction
+                                       {
+                                           ID = historyItem.ID,
+                                           OwnerID = historyItem.OwnerID,
+                                           ParentPage = newPage
+                                       };
+
+                newHistoryAction.CuttingStrokeID = historyItem.CuttingStrokeID;
+
+                if (historyItem.CutPageObjectIDs.Any())
+                {
+                    newHistoryAction.CutPageObjectID = historyItem.CutPageObjectIDs.First();
+
+                    if (historyItem.HalvedPageObjectIDs.Count < 2)
+                    {
+                        newHistoryAction.CutPageObjectID = string.Empty;
+                        return newHistoryAction;
+                    }
+
+                    if (historyItem.HalvedPageObjectIDs.Count > 2)
+                    {
+                        Debug.WriteLine($"[ERROR] PageObject Cut has one Cut PageObject, but more than 2 Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+
+                    newHistoryAction.HalvedPageObjectIDs = historyItem.HalvedPageObjectIDs.ToList();
+                }
+
+                if (string.IsNullOrEmpty(newHistoryAction.CutPageObjectID) ||
+                    !newHistoryAction.HalvedPageObjectIDs.Any())
+                {
+                    return newHistoryAction;
+                }
+
+                #region Conversion Undo
+
+                var halvedPageObjects = newHistoryAction.HalvedPageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).ToList();
+                foreach (var halvedPageObject in halvedPageObjects)
+                {
+                    if (halvedPageObject == null)
+                    {
+                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+                    newPage.PageObjects.Remove(halvedPageObject);
+                    newPage.History.TrashedPageObjects.Add(halvedPageObject);
+                }
+
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.CutPageObjectID);
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                newPage.History.TrashedPageObjects.Remove(cutPageObject);
+                newPage.PageObjects.Add(cutPageObject);
+
+                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                     new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     });
+
+                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                             new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             });
+
+                #endregion // Conversion Undo
+
+                return newHistoryAction;
+            }
+
+            #endregion // No Or One PageObject Cut
+
+            #region Multiple PageObjects Cut
+
+            foreach (var historyItemCutPageObjectID in historyItem.CutPageObjectIDs)
+            {
+                
+            }
+
+            #endregion // Multiple PageObjects Cut
+
+        }
+
         #endregion // PageObject HistoryItems
 
         #region Array HistoryItems
