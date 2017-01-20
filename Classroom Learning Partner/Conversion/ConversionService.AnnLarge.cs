@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Collections;
 using Classroom_Learning_Partner.Services;
@@ -1117,6 +1118,73 @@ namespace Classroom_Learning_Partner
             pageObject.Height = newHistoryAction.OriginalHeight;
 
             pageObject.OnResized(initialWidth, initialHeight, true);
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsMovedBatchHistoryAction ConvertAndUndoPageObjectMove(Ann.PageObjectMoveBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            if (string.IsNullOrEmpty(historyItem.PageObjectID))
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has NULL PageObjectID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!historyItem.TravelledPositions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (historyItem.TravelledPositions.Count == 2 &&
+                Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
+                Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsMovedBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDs = new Dictionary<string, Point>
+                                             {
+                                                 { historyItem.PageObjectID, new Point(0.0, 0.0) }
+                                             };
+
+            newHistoryAction.TravelledPositions = historyItem.TravelledPositions.ToList();
+
+            #region Conversion Undo
+
+            foreach (var pageObjectID in newHistoryAction.PageObjectIDs)
+            {
+                var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
+
+                var originalPosition = newHistoryAction.TravelledPositions.First();
+
+                pageObject.XPosition = originalPosition.X + pageObjectID.Value.X;
+                pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
+
+                pageObject.OnMoved(initialX, initialY, true);
+            }
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
 
             #endregion // Conversion Undo
 

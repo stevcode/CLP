@@ -46,20 +46,20 @@ namespace CLP.Entities
         #region Converter
 
         ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryAction(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
+        public ObjectsMovedBatchHistoryAction(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            ParentPage = obsoleteHistoryItem.ParentPage;
 
-        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-        //    PageObjectIDs = new Dictionary<string, Point>
-        //                    {
-        //                        { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
-        //                    };
+            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
+            PageObjectIDs = new Dictionary<string, Point>
+                            {
+                                { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
+                            };
 
-        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        //}
+            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+        }
 
         ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
         //public ObjectsMovedBatchHistoryAction(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
@@ -134,10 +134,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

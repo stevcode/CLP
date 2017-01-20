@@ -765,35 +765,6 @@ namespace ConsoleScripts
 
                 #endregion //WorksAsIs
 
-                #region PageObjectMove to ObjectsMovedChanged
-
-                if (historyItemToUndo is PageObjectMoveBatchHistoryItem)
-                {
-                    var pageObjectMove = historyItemToUndo as PageObjectMoveBatchHistoryItem;
-                    page.History.UndoActions.RemoveFirst();
-                    var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectMove.PageObjectID);
-                    if (!pageObjectMove.TravelledPositions.Any() ||
-                        string.IsNullOrEmpty(pageObjectMove.PageObjectID) ||
-                        pageObject == null)
-                    {
-                        continue;
-                    }
-
-                    var objectsMoved = new ObjectsMovedBatchHistoryAction(pageObjectMove);
-                    if (objectsMoved.TravelledPositions.Count == 2 &&
-                        Math.Abs(objectsMoved.TravelledPositions.First().X - objectsMoved.TravelledPositions.Last().X) < 0.00001 &&
-                        Math.Abs(objectsMoved.TravelledPositions.First().Y - objectsMoved.TravelledPositions.Last().Y) < 0.00001)
-                    {
-                        continue;
-                    }
-
-                    page.History.UndoActions.Insert(0, objectsMoved);
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //PageObjectMove to ObjectsOnPageChanged
-
                 #region PageObjectsMove to ObjectsMovedChanged
 
                 if (historyItemToUndo is PageObjectsMoveBatchHistoryItem)
