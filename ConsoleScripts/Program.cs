@@ -765,30 +765,6 @@ namespace ConsoleScripts
 
                 #endregion //WorksAsIs
 
-                #region PageObjectResize fix for old Division Templates
-
-                if (historyItemToUndo is PageObjectResizeBatchHistoryAction)
-                {
-                    var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryAction;
-                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as DivisionTemplate;
-                    if (divisionTemplate != null)
-                    {
-                        FixOldDivisionTemplateSizing(divisionTemplate);
-                        var fixStretchedDimensions = (from point in pageObjectResized.StretchedDimensions
-                                                      let height = point.Y
-                                                      let gridSize = (height - (2 * divisionTemplate.LabelLength)) / divisionTemplate.Rows
-                                                      let newWidth = (gridSize * divisionTemplate.Columns) + divisionTemplate.LabelLength + divisionTemplate.LargeLabelLength
-                                                      select new Point(newWidth, point.Y)).ToList();
-
-                        pageObjectResized.StretchedDimensions = fixStretchedDimensions;
-                    }
-
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //PageObjectResize fix for old Division Templates
-
                 #region PageObjectMove to ObjectsMovedChanged
 
                 if (historyItemToUndo is PageObjectMoveBatchHistoryItem)

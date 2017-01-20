@@ -1079,6 +1079,47 @@ namespace Classroom_Learning_Partner
             return newHistoryAction;
         }
 
+        public static PageObjectResizeBatchHistoryAction ConvertAndUndoPageObjectResize(Ann.PageObjectResizeBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            // TODO: Revisit after NL end change to see if this causes any issues, also see about having only 1 stretched dimension point being ignored as well.
+            if (!historyItem.StretchedDimensions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Resize has no Streched Dimensions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new PageObjectResizeBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectID = historyItem.PageObjectID;
+            newHistoryAction.StretchedDimensions = historyItem.StretchedDimensions.ToList();
+
+            #region Conversion Undo
+
+            var pageObject = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PageObjectID);
+            if (pageObject == null)
+            {
+                Debug.WriteLine($"[ERROR] PageObject for PageObject Resize not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var initialWidth = pageObject.Width;
+            var initialHeight = pageObject.Height;
+
+            pageObject.Width = newHistoryAction.OriginalWidth;
+            pageObject.Height = newHistoryAction.OriginalHeight;
+
+            pageObject.OnResized(initialWidth, initialHeight, true);
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
         #endregion // PageObject HistoryItems
 
         #region Array HistoryItems
