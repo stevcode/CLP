@@ -25,8 +25,6 @@ namespace CLP.Entities
             : this(parentPage, owner, new List<IPageObject>(), new List<IPageObject>(), strokesAdded, strokesRemoved) { }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsOnPageChangedHistoryAction(CLPPage parentPage,
                                                  Person owner,
                                                  IEnumerable<IPageObject> pageObjectsAdded,

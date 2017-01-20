@@ -789,35 +789,6 @@ namespace ConsoleScripts
 
                 #endregion //PageObjectResize fix for old Division Templates
 
-                #region PageObjectsAdded to ObjectsOnPageChanged
-
-                if (historyItemToUndo is PageObjectsAddedHistoryItem)
-                {
-                    var pageObjectsAdded = historyItemToUndo as PageObjectsAddedHistoryItem;
-                    page.History.UndoActions.RemoveFirst();
-                    if (!pageObjectsAdded.PageObjectIDs.Any())
-                    {
-                        continue;
-                    }
-
-                    var objectsChanged = new ObjectsOnPageChangedHistoryAction(pageObjectsAdded);
-
-                    foreach (var id in objectsChanged.PageObjectIDsAdded)
-                    {
-                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as DivisionTemplate;
-                        if (divisionTemplate != null)
-                        {
-                            FixOldDivisionTemplateSizing(divisionTemplate);
-                        }
-                    }
-
-                    page.History.UndoActions.Insert(0, objectsChanged);
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //PageObjectsAdded to ObjectsOnPageChanged
-
                 #region PageObjectsRemoved to ObjectsOnPageChanged
 
                 if (historyItemToUndo is PageObjectsRemovedHistoryItem)

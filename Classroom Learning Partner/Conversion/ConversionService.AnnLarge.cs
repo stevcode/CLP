@@ -964,9 +964,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.StrokesChangedHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoStrokesChanged(h, newPage);
-            }).Case<Ann.MultipleChoiceBox>(h =>
+            }).Case<Ann.PageObjectsAddedHistoryItem>(h =>
             {
-                newHistoryAction = ConvertMultipleChoiceBox(h, newPage);
+                newHistoryAction = ConvertAndUndoPageObjectAdded(h, newPage);
             });
 
             if (newHistoryAction == null)
@@ -1000,6 +1000,42 @@ namespace Classroom_Learning_Partner
                     newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Record;
                     break;
             }
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsOnPageChangedHistoryAction ConvertAndUndoPageObjectAdded(Ann.PageObjectsAddedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Added, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDsAdded = historyItem.PageObjectIDs;
+
+            #region Conversion Undo
+
+            foreach (var pageObject in newHistoryAction.PageObjectIDsAdded.Select(newPage.GetVerifiedPageObjectOnPageByID))
+            {
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Added not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+                newPage.PageObjects.Remove(pageObject);
+                pageObject.OnDeleted(true);
+                newPage.History.TrashedPageObjects.Add(pageObject);
+            }
+
+            #endregion // Conversion Undo
 
             return newHistoryAction;
         }
