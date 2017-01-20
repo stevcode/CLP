@@ -970,6 +970,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectsRemovedHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectRemoved(h, newPage);
+            }).Case<Ann.PageObjectResizeBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectResize(h, newPage);
             });
 
             if (newHistoryAction == null)

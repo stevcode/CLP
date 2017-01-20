@@ -16,8 +16,6 @@ namespace CLP.Entities
         public ObjectsMovedBatchHistoryAction() { }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
             : base(parentPage, owner)
         {
@@ -32,8 +30,6 @@ namespace CLP.Entities
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, Dictionary<string, Point> pageObjectIDs, Dictionary<string, Point> strokeIDs, Point currentPosition)
             : base(parentPage, owner)
         {
