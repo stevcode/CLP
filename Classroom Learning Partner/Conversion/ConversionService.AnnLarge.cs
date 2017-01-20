@@ -1359,10 +1359,44 @@ namespace Classroom_Learning_Partner
 
             #region Multiple PageObjects Cut
 
+            if (historyItem.CutPageObjectIDs.Count * 2 != historyItem.HalvedPageObjectIDs.Count)
+            {
+                Debug.WriteLine($"[ERROR] PageObject Cut has mismatched number of Cut PageObjects and Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryItems = new List<PageObjectCutHistoryAction>();
             foreach (var historyItemCutPageObjectID in historyItem.CutPageObjectIDs)
             {
+                var newHistoryAction = new PageObjectCutHistoryAction
+                                       {
+                                           ID = historyItem.ID,
+                                           OwnerID = historyItem.OwnerID,
+                                           ParentPage = newPage
+                                       };
+
+                newHistoryAction.CuttingStrokeID = historyItem.CuttingStrokeID;
+
+                newHistoryAction.CutPageObjectID = historyItemCutPageObjectID;
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyItemCutPageObjectID) as ICuttable;
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject on PageObject Cut not found in history or on page. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var halvedPageObjectIDs = new List<string>
+                                          {
+                                              historyItem.HalvedPageObjectIDs[0],
+                                              historyItem.HalvedPageObjectIDs[1]
+                                          };
+                historyItem.HalvedPageObjectIDs.RemoveRange(0, 2);
+                newHistoryAction.HalvedPageObjectIDs = halvedPageObjectIDs;
                 
+                newHistoryItems.Add(newHistoryAction);
             }
+
+            // Undo all in correct order then add to redo items, saving last one as return value
 
             #endregion // Multiple PageObjects Cut
 
