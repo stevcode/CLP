@@ -974,6 +974,12 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectResizeBatchHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectResize(h, newPage);
+            }).Case<Ann.PageObjectMoveBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectMove(h, newPage);
+            }).Case<Ann.PageObjectsMoveBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectsMove(h, newPage);
             });
 
             if (newHistoryAction == null)
@@ -1170,6 +1176,70 @@ namespace Classroom_Learning_Partner
                 if (pageObject == null)
                 {
                     Debug.WriteLine($"[ERROR] PageObject for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
+
+                var originalPosition = newHistoryAction.TravelledPositions.First();
+
+                pageObject.XPosition = originalPosition.X + pageObjectID.Value.X;
+                pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
+
+                pageObject.OnMoved(initialX, initialY, true);
+            }
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsMovedBatchHistoryAction ConvertAndUndoPageObjectsMove(Ann.PageObjectsMoveBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no PageObjectIDs. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!historyItem.TravelledPositions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (historyItem.TravelledPositions.Count == 2 &&
+                Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
+                Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsMovedBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var pageObjects = historyItem.PageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).Where(p => p != null).ToList();
+            var referencePageObject = pageObjects.First();
+            var pageObjectIDs = pageObjects.ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
+            newHistoryAction.PageObjectIDs = pageObjectIDs;
+            newHistoryAction.TravelledPositions = historyItem.TravelledPositions.ToList();
+
+            #region Conversion Undo
+
+            foreach (var pageObjectID in newHistoryAction.PageObjectIDs)
+            {
+                var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObjects for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 

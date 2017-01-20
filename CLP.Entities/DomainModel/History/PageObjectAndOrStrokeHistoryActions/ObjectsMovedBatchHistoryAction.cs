@@ -43,42 +43,6 @@ namespace CLP.Entities
 
         #endregion // Constructors
 
-        #region Converter
-
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
-        public ObjectsMovedBatchHistoryAction(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
-        {
-            ID = obsoleteHistoryItem.ID;
-            OwnerID = obsoleteHistoryItem.OwnerID;
-            ParentPage = obsoleteHistoryItem.ParentPage;
-
-            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-            PageObjectIDs = new Dictionary<string, Point>
-                            {
-                                { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
-                            };
-
-            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        }
-
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryAction(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-        //    var pageObjects = obsoleteHistoryItem.PageObjectIDs.Select(id => obsoleteHistoryItem.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
-        //    pageObjects = pageObjects.Where(p => p != null).ToList();
-        //    var referencePageObject = pageObjects.First();
-        //    var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
-        //    PageObjectIDs = pageObjectIDs;
-        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        //}
-
-        #endregion // Converter
-
         #region Properties
 
         /// <summary>List of the <see cref="IPageObject" />'s IDs that were moved and their x/y offset from the TravelledPositions Point.</summary>
