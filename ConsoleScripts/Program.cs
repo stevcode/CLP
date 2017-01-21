@@ -702,22 +702,5 @@ namespace ConsoleScripts
             page.PageObjects.Add(pageObjectToAdd);
         }
 
-        //Clear Authored Histories
-        //var undoItemsToRemove = page.History.UndoActions.Where(historyAction => historyAction.OwnerID == Person.Author.ID).ToList();
-        //            foreach(var historyAction in undoItemsToRemove)
-        //            {
-        //                page.History.UndoActions.Remove(historyAction);
-        //            }
-
-        //            var redoItemsToRemove = page.History.RedoActions.Where(historyAction => historyAction.OwnerID == Person.Author.ID).ToList();
-        //            foreach(var historyAction in redoItemsToRemove)
-        //            {
-        //                page.History.RedoActions.Remove(historyAction);
-        //            }
-
-        //            page.History.OptimizeTrashedItems();
-
-        // Process a console command
-        // returns true iff the console should accept another command after this one
     }
 }

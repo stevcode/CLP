@@ -845,7 +845,7 @@ namespace Classroom_Learning_Partner
 
             #region Undo
 
-            var unconvertedUndoItems = pageHistory.UndoItems.ToList();
+            var unconvertedUndoItems = pageHistory.UndoItems.Where(h => h.OwnerID != Person.Author.ID).ToList();
             while (unconvertedUndoItems.Any())
             {
                 var historyItemToConvert = unconvertedUndoItems.FirstOrDefault();
