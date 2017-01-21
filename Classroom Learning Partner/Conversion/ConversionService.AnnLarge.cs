@@ -202,8 +202,6 @@ namespace Classroom_Learning_Partner
                               InitialAspectRatio = page.InitialAspectRatio
                           };
 
-            // TODO: Tags
-
             foreach (var stroke in page.InkStrokes)
             {
                 newPage.InkStrokes.Add(stroke);
@@ -239,7 +237,7 @@ namespace Classroom_Learning_Partner
 
             AddAssessmentInterpretationRegions(newPage);
             AddAssessmentRelationDefinitionTags(newPage);
-
+            // TODO: Tags
             ConvertPageHistory(page.History, newPage);
 
             return newPage;
@@ -871,214 +869,154 @@ namespace Classroom_Learning_Partner
             switch (newPage.ID)
             {
                 case "-zOauyypbEmgpo3f_dalNA": // Page 2
-                    {
-                        var multipleChoice = new MultipleChoice(newPage)
-                        {
-                            ID = "iXOZfN4o70GvbTVCIolBMg",
-                            XPosition = 94.202626641650909,
-                            YPosition = 244.38649155722328,
-                            Height = 35,
-                            Width = 736.17448405253276,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "4"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 184.04362101313319,
-                            Answer = "5",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 368.08724202626638,
-                            Answer = "7"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 552.13086303939963,
-                            Answer = "9"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "4"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "5",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "7"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "9"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
                 case "UvLXlXlpCEuLF1309g5zPA": // Page 3
-                    {
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "kXk-V-tqC0mitEx2e7N3YQ",
-                            XPosition = 91.395872420262549,
-                            YPosition = 231.75609756097555,
-                            Height = 35,
-                            Width = 900.36960600375278,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "9 + 7"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 225.09240150093819,
-                            Answer = "9 - 7"
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 450.18480300187639,
-                            Answer = "7 x 9",
-                            IsACorrectValue = true
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 675.27720450281458,
-                            Answer = "63 ÷ 9"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "9 + 7"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "9 - 7"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "7 x 9",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "63 ÷ 9"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
                 case "526u6U8sQUqjFkCXTJZYiA": // Page 4
-                    {
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "WW8W_qUUlky__piyTo9edQ",
-                            XPosition = 91.395872420262549,
-                            YPosition = 226.14258911819883,
-                            Height = 35,
-                            Width = 731.96435272045,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "2"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 182.99108818011251,
-                            Answer = "3",
-                            IsACorrectValue = true
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 365.982176360225,
-                            Answer = "5"
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 548.9732645403376,
-                            Answer = "8"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "2"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "3",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "5"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "8"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
                 case "y-wako1KCk6Aurwrn5QbVg": // Page 5
-                    {
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "me90TgnrPUKEN1CD6AzinQ",
-                            XPosition = 83.764739279027367,
-                            YPosition = 280.02783329603585,
-                            Height = 35,
-                            Width = 990.04844076613745,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "16",
-                            AnswerLabel = "years old"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 247.51211019153436,
-                            Answer = "24",
-                            AnswerLabel = "years old"
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 495.02422038306872,
-                            Answer = "64",
-                            AnswerLabel = "years old",
-                            IsACorrectValue = true
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 742.53633057460308,
-                            Answer = "80",
-                            AnswerLabel = "years old"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
-                    }
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "16",
+                                 AnswerLabel = "years old"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "24",
+                                 AnswerLabel = "years old"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "64",
+                                 AnswerLabel = "years old",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "80",
+                                 AnswerLabel = "years old"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
-                    {
-                        var multipleChoice = new MultipleChoice(page)
-                        {
-                            ID = "u0WfKRSe00mftRwyarge6A",
-                            XPosition = 98.412757973733619,
-                            YPosition = 264.0337711069418,
-                            Height = 35,
-                            Width = 778.27579737335884,
-                            CreatorID = Person.Author.ID,
-                            OwnerID = Person.Author.ID,
-                            Orientation = MultipleChoiceOrientations.Horizontal
-                        };
-                        var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 0,
-                            Answer = "$5"
-                        };
-                        var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 194.56894934333971,
-                            Answer = "$7"
-                        };
-                        var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 389.13789868667942,
-                            Answer = "$8",
-                            IsACorrectValue = true
-                        };
-                        var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
-                        {
-                            Offset = 583.70684803001916,
-                            Answer = "$55"
-                        };
-                        multipleChoice.ChoiceBubbles.Add(b1);
-                        multipleChoice.ChoiceBubbles.Add(b2);
-                        multipleChoice.ChoiceBubbles.Add(b3);
-                        multipleChoice.ChoiceBubbles.Add(b4);
-                        page.PageObjects.Insert(0, multipleChoice);
-                        break;
-                    }                
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "$5"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "$7"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "$8",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "$55"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
             }
 
             #endregion // Assessment Cache Conversion
@@ -1086,6 +1024,7 @@ namespace Classroom_Learning_Partner
             return newMultipleChoice;
         }
 
+        // 1/21
         public static void AddAssessmentInterpretationRegions(CLPPage newPage)
         {
             var interpretationRegion = new InterpretationRegion(newPage)
