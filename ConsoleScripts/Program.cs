@@ -48,7 +48,6 @@ namespace ConsoleScripts
                     _isConvertingEmilyCache = false;
                     _isConvertingAssessmentCache = true;
                     ReplaceMultipleChoiceBoxes(page);
-                    TheSlowRewind(page);
 
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
@@ -701,31 +700,6 @@ namespace ConsoleScripts
             }
 
             page.PageObjects.Add(pageObjectToAdd);
-        }
-
-        public static void TheSlowRewind(CLPPage page)
-        {
-            //Rewind entire page
-            page.History.IsAnimating = true;
-
-            page.History.RefreshHistoryIndexes();
-
-            while (page.History.UndoActions.Any())
-            {
-                var historyItemToUndo = page.History.UndoActions.FirstOrDefault();
-                if (historyItemToUndo == null)
-                {
-                    break;
-                }
-
-                Debug.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
-
-
-
-                page.History.ConversionUndo();
-            }
-
-            page.History.IsAnimating = false;
         }
 
         //Clear Authored Histories
