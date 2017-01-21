@@ -845,17 +845,17 @@ namespace Classroom_Learning_Partner
 
             #region Undo
 
-            var undoItems = pageHistory.UndoItems.ToList();
-            while (undoItems.Any())
+            var unconvertedUndoItems = pageHistory.UndoItems.ToList();
+            while (unconvertedUndoItems.Any())
             {
-                var historyItemToConvert = undoItems.FirstOrDefault();
+                var historyItemToConvert = unconvertedUndoItems.FirstOrDefault();
                 if (historyItemToConvert == null)
                 {
                     break;
                 }
 
-                undoItems.RemoveFirst();
-                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage);
+                unconvertedUndoItems.RemoveFirst();
+                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage, unconvertedUndoItems);
                 if (newHistoryAction == null)
                 {
                     continue;
@@ -940,7 +940,7 @@ namespace Classroom_Learning_Partner
 
         #region HistoryActions
 
-        public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage)
+        public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
         {
             IHistoryAction newHistoryAction = null;
 
@@ -983,6 +983,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectCutHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectCut(h, newPage);
+            }).Case<Ann.NumberLineEndPointsChangedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoNumberLineEndPointsChange(h, newPage, unconvertedUndoItems);
             });
 
             if (newHistoryAction == null)
@@ -1729,7 +1732,87 @@ namespace Classroom_Learning_Partner
 
         #region Number Line HistoryItems
 
+        public static NumberLineEndPointsChangedHistoryAction ConvertAndUndoNumberLineEndPointsChange(Ann.NumberLineEndPointsChangedHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
+        {
+            // BUG: Original code pulled resizeAction from RedoActions, doesn't seem like that would have been accurate.
+            var nextUnconvertedHistoryItem = unconvertedUndoItems.FirstOrDefault();
+            if (!(nextUnconvertedHistoryItem is Ann.NumberLineEndPointsChangedHistoryItem) && 
+                !(nextUnconvertedHistoryItem is Ann.PageObjectResizeBatchHistoryItem))
+            {
+                Debug.WriteLine($"[ERROR] Number Line End Point Change not followed by PageObject Resize or another Number Line End Point Change. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
 
+            var numberLine = newPage.GetVerifiedPageObjectOnPageByID(historyItem.NumberLineID) as NumberLine;
+            if (numberLine == null)
+            {
+                Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var resizeBatchHistoryItem = nextUnconvertedHistoryItem as Ann.PageObjectResizeBatchHistoryItem;
+            if (resizeBatchHistoryItem != null)
+            {
+                var potentialNumberLineMatch = newPage.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
+                if (potentialNumberLineMatch == null ||
+                    numberLine.ID != potentialNumberLineMatch.ID)
+                {
+                    Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change doesn't match next PageObject Resize Number Line. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                unconvertedUndoItems.RemoveFirst();
+            }
+           
+            var newHistoryAction = new NumberLineEndPointsChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.NumberLineID = historyItem.NumberLineID;
+            newHistoryAction.PreviousStartValue = historyItem.PreviousStartValue;
+            newHistoryAction.PreviousEndValue = historyItem.PreviousEndValue;
+            newHistoryAction.NewEndValue = numberLine.NumberLineSize;
+            newHistoryAction.NewStretchedWidth = numberLine.Width;
+
+            #region Conversion Undo
+
+            if (resizeBatchHistoryItem == null)
+            {
+                newHistoryAction.PreStretchedWidth = numberLine.Width;
+                numberLine.ChangeNumberLineSize(newHistoryAction.PreviousEndValue);
+            }
+            else
+            {
+                var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
+                var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
+                var previousTickLength = previousNumberLineWidth / newHistoryAction.PreviousEndValue;
+
+                var preStretchedWidth = previousWidth + (previousTickLength * (newHistoryAction.NewEndValue - newHistoryAction.PreviousEndValue));
+                if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
+                {
+                    preStretchedWidth = numberLine.Width;
+                }
+
+                newHistoryAction.PreStretchedWidth = preStretchedWidth;
+
+                if (Math.Abs(newHistoryAction.NewStretchedWidth - newHistoryAction.PreStretchedWidth) >= 0.0001)
+                {
+                    var oldWidth = numberLine.Width;
+                    var oldHeight = numberLine.Height;
+                    numberLine.Width = newHistoryAction.PreStretchedWidth;
+                    numberLine.OnResized(oldWidth, oldHeight, true);
+                }
+
+                numberLine.ChangeNumberLineSize(newHistoryAction.PreviousEndValue);
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
 
         #endregion // Number Line HistoryItems
 

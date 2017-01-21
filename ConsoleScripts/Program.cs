@@ -765,55 +765,6 @@ namespace ConsoleScripts
 
                 #endregion //WorksAsIs
 
-                #region PageObjectCut fix
-
-                #region EndPointChangedHistoryItem Adjustments
-
-                if (historyItemToUndo is NumberLineEndPointsChangedHistoryAction)
-                {
-                    var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryAction;
-                    var resizeBatchHistoryItem = page.History.RedoActions.FirstOrDefault() as PageObjectResizeBatchHistoryAction;
-
-                    if (resizeBatchHistoryItem != null)
-                    {
-                        var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID) as NumberLine;
-                        if (numberLine == null)
-                        {
-                            page.History.UndoActions.RemoveFirst();
-                            continue;
-                        }
-
-                        var potentialNumberLineMatch = page.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
-                        if (potentialNumberLineMatch == null)
-                        {
-                            page.History.ConversionUndo();
-                            continue;
-                        }
-
-                        if (numberLine.ID == potentialNumberLineMatch.ID)
-                        {
-                            var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
-                            var currentEndPoint = numberLine.NumberLineSize;
-                            var previousEndPoint = endPointsChangedHistoryItem.PreviousEndValue;
-
-                            var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
-                            var previousTickLength = previousNumberLineWidth / previousEndPoint;
-
-                            var preStretchedWidth = previousWidth + (previousTickLength * (currentEndPoint - previousEndPoint));
-                            if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
-                            {
-                                preStretchedWidth = numberLine.Width;
-                            }
-                            endPointsChangedHistoryItem.PreStretchedWidth = preStretchedWidth;
-                        }
-                    }
-
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //EndPointChangedHistoryItem Adjustments
-
                 page.History.ConversionUndo();
             }
 
