@@ -335,21 +335,65 @@ namespace Classroom_Learning_Partner
         public static CLPTextBox ConvertTextBox(Ann.CLPTextBox textBox, CLPPage newPage)
         {
             var newTextBox = new CLPTextBox
-            {
-                ID = textBox.ID,
-                XPosition = textBox.XPosition,
-                YPosition = textBox.YPosition,
-                Height = textBox.Height,
-                Width = textBox.Width,
-                OwnerID = textBox.OwnerID,
-                CreatorID = textBox.CreatorID,
-                CreationDate = textBox.CreationDate,
-                PageObjectFunctionalityVersion = "Ann12.19.2014",
-                IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                             {
+                                 ID = textBox.ID,
+                                 XPosition = textBox.XPosition,
+                                 YPosition = textBox.YPosition,
+                                 Height = textBox.Height,
+                                 Width = textBox.Width,
+                                 OwnerID = textBox.OwnerID,
+                                 CreatorID = textBox.CreatorID,
+                                 CreationDate = textBox.CreationDate,
+                                 PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                 IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
+                                 ParentPage = newPage
+                             };
 
             newTextBox.Text = textBox.Text;
+
+            #region Assessment Cache Adjustments
+
+            switch (newTextBox.ID)
+            {
+                case "lpIezx13R0-fHaXnVqgT6A":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 2
+                    break;
+                case "LZlupX4OskOkxC-VQv1pKg":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 3
+                    break;
+                case "DvQf2cvBkU-WFEFmLBEuoA":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 4
+                    break;
+                case "JsuHVsdb6k2zYQGS8HdeJA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 5
+                    break;
+                case "3A0ABSEEdUa487Mkvp9CcQ":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 6
+                    break;
+                case "bC1g8LJ6okmsezeVSRub4A":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 7
+                    break;
+                case "_0qgnvZ1EkyYgEU49l5dNw":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 8
+                    break;
+                case "DisblHoHakqYkPzMu9_bxQ":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 9
+                    break;
+                case "GBXW7G0YmEKXQ4Q_MMIn5g":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 10
+                    break;
+                case "MtZusuAFZEOqTr8KRlFlMA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 11
+                    break;
+                case "JleS1FBQiEGyoe4VseiPMA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 12
+                    break;
+                case "SNY1QJrMUUqUeK3hCIDDRA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 13
+                    break;
+            }
+
+            #endregion // Assessment Cache Adjustments
 
             return newTextBox;
         }
