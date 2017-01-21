@@ -854,8 +854,8 @@ namespace Classroom_Learning_Partner
                     break;
                 }
 
-                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage);
                 undoItems.RemoveFirst();
+                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage);
                 if (newHistoryAction == null)
                 {
                     continue;
@@ -980,6 +980,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectsMoveBatchHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectsMove(h, newPage);
+            }).Case<Ann.PageObjectCutHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectCut(h, newPage);
             });
 
             if (newHistoryAction == null)
@@ -1365,7 +1368,7 @@ namespace Classroom_Learning_Partner
                 return null;
             }
 
-            var newHistoryItems = new List<PageObjectCutHistoryAction>();
+            var newHistoryActions = new List<PageObjectCutHistoryAction>();
             foreach (var historyItemCutPageObjectID in historyItem.CutPageObjectIDs)
             {
                 var newHistoryAction = new PageObjectCutHistoryAction
@@ -1393,13 +1396,62 @@ namespace Classroom_Learning_Partner
                 historyItem.HalvedPageObjectIDs.RemoveRange(0, 2);
                 newHistoryAction.HalvedPageObjectIDs = halvedPageObjectIDs;
                 
-                newHistoryItems.Add(newHistoryAction);
+                newHistoryActions.Add(newHistoryAction);
             }
 
             // Undo all in correct order then add to redo items, saving last one as return value
 
-            #endregion // Multiple PageObjects Cut
+            #region Conversion Undo
 
+            var lastHistoryAction = newHistoryActions.Last();
+
+            foreach (var historyAction in newHistoryActions)
+            {
+                var halvedPageObjects = historyAction.HalvedPageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).ToList();
+                foreach (var halvedPageObject in halvedPageObjects)
+                {
+                    if (halvedPageObject == null)
+                    {
+                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+                    newPage.PageObjects.Remove(halvedPageObject);
+                    newPage.History.TrashedPageObjects.Add(halvedPageObject);
+                }
+
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyAction.CutPageObjectID);
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                newPage.History.TrashedPageObjects.Remove(cutPageObject);
+                newPage.PageObjects.Add(cutPageObject);
+
+                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                     new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     });
+
+                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                             new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             });
+
+                if (historyAction != lastHistoryAction)
+                {
+                    newPage.History.RedoActions.Insert(0, historyAction);
+                }
+            }
+
+            #endregion // Conversion Undo
+
+            return lastHistoryAction;
+
+            #endregion // Multiple PageObjects Cut
         }
 
         #endregion // PageObject HistoryItems
