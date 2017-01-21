@@ -48,7 +48,6 @@ namespace ConsoleScripts
                     _isConvertingEmilyCache = false;
                     _isConvertingAssessmentCache = true;
                     ReplaceMultipleChoiceBoxes(page);
-                    ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
                     //Finished doing stuff to page, it'll save below.
@@ -704,39 +703,6 @@ namespace ConsoleScripts
             page.PageObjects.Add(pageObjectToAdd);
         }
 
-        public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
-        {
-            foreach (var divisionTemplate in page.PageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
-            {
-                divisionTemplate.IsRemainderTilesVisible = true;
-            }
-
-            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<DivisionTemplate>().Where(d => d.RemainderTiles != null))
-            {
-                divisionTemplate.IsRemainderTilesVisible = true;
-            }
-        }
-
-        public static void FixOldDivisionTemplateSizing(DivisionTemplate divisionTemplate)
-        {
-            if (!_isConvertingEmilyCache)
-            {
-                return;
-            }
-
-            var gridSize = divisionTemplate.ArrayHeight / divisionTemplate.Rows;
-
-            divisionTemplate.SizeArrayToGridLevel(gridSize, false);
-
-            var position = 0.0;
-            foreach (var division in divisionTemplate.VerticalDivisions)
-            {
-                division.Position = position;
-                division.Length = divisionTemplate.GridSquareSize * division.Value;
-                position = division.Position + division.Length;
-            }
-        }
-
         public static void TheSlowRewind(CLPPage page)
         {
             //Rewind entire page
@@ -754,16 +720,7 @@ namespace ConsoleScripts
 
                 Debug.WriteLine("History Index: {0}", historyItemToUndo.HistoryActionIndex);
 
-                #region WorksAsIs
 
-                if (historyItemToUndo is DivisionTemplateArrayRemovedHistoryAction ||
-                    historyItemToUndo is DivisionTemplateArraySnappedInHistoryAction)
-                {
-                    page.History.ConversionUndo();
-                    continue;
-                }
-
-                #endregion //WorksAsIs
 
                 page.History.ConversionUndo();
             }
