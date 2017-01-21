@@ -238,6 +238,7 @@ namespace Classroom_Learning_Partner
             }
 
             AddAssessmentInterpretationRegions(newPage);
+            AddAssessmentRelationDefinitionTags(newPage);
 
             ConvertPageHistory(page.History, newPage);
 
@@ -867,8 +868,6 @@ namespace Classroom_Learning_Partner
 
             #region Assessment Cache Conversion
 
-            ITag relationDefinitionToAdd = null;
-
             switch (newPage.ID)
             {
                 case "-zOauyypbEmgpo3f_dalNA": // Page 2
@@ -996,38 +995,6 @@ namespace Classroom_Learning_Partner
                     }
                 case "y-wako1KCk6Aurwrn5QbVg": // Page 5
                     {
-                        relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "l-WC1c1mGkukYDgVm937KQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 64,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication
-                        };
-
-                        var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "8L-RIJBn_06lpKH4yBlOzg",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 8
-                        };
-
-                        var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "dk5lXzsvu0GHmpGgwoh-vA",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 8
-                        };
-
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
-
                         var multipleChoice = new MultipleChoice(page)
                         {
                             ID = "me90TgnrPUKEN1CD6AzinQ",
@@ -1073,20 +1040,6 @@ namespace Classroom_Learning_Partner
                     }
                 case "_024ibxTi0qlw4gzCD7QXA": // Page 6
                     {
- 
-                        relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "U18DjuOfc0WJ7OIDClEC3A",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Dividend = 56,
-                            Divisor = 7,
-                            Quotient = 8,
-                            Remainder = 0,
-                            RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
-                        };
-
                         var multipleChoice = new MultipleChoice(page)
                         {
                             ID = "u0WfKRSe00mftRwyarge6A",
@@ -1126,226 +1079,6 @@ namespace Classroom_Learning_Partner
                         page.PageObjects.Insert(0, multipleChoice);
                         break;
                     }                
-                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
-                    {
-                        relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "ZipMYNwixkq61bBN2_HD5g",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 28,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                        };
-
-                        var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "WK6bKs_ByUCH8BOWgWxgUA",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 4
-                        };
-
-                        var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "2Ra04Eclg06aMGDGKtZ6fQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 7
-                        };
-
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
-                        ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
-                        break;
-                    }
-                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
-                    {
-                        relationDefinitionToAdd = new DivisionRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "J8Sflc0rWEyodHSiD6BOoQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Dividend = 48,
-                            Divisor = 8,
-                            Quotient = 6,
-                            Remainder = 0,
-                            RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
-                        };
-                        break;
-                    }
-                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
-                    {
-                        relationDefinitionToAdd = new AdditionRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "TxyRU2oIuUek0hmqfV3wSQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Sum = 72,
-                            RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
-                        };
-
-                        var firstPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "jzGI6KOkTUCr1PEohXIAtQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 32,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                        };
-
-                        var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "pY-jWRet_UyIeMSD6rpfzw",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 4
-                        };
-
-                        var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "xppeMKzxQ06UVwgBg0sR8Q",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 8
-                        };
-
-                        firstPart.Factors.Clear();
-                        firstPart.Factors.Add(firstFactor);
-                        firstPart.Factors.Add(secondFactor);
-
-                        var secondPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "FoHyUvBjI0ONc8TF7vRmkw",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 40,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                        };
-
-                        firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "usHRHdsaiEao5KY8oxv-9g",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 5
-                        };
-
-                        secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "KMsWhQClX0KM0-vT_SvFOw",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 8
-                        };
-
-                        secondPart.Factors.Clear();
-                        secondPart.Factors.Add(firstFactor);
-                        secondPart.Factors.Add(secondFactor);
-
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
-                        break;
-                    }
-                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
-                    {
-                        relationDefinitionToAdd = new AdditionRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "qey_Bae27kmq42CLfvUg1Q",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Sum = 86,
-                            RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
-                        };
-
-                        var firstPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "grr6c_grIEWYK8dsuRqtvA",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 32,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                        };
-
-                        var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "ZNl4KqUKgkytz4c1m0ehYw",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 4
-                        };
-
-                        var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "9MPttARngE24S-vrhnnnHQ",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 8
-                        };
-
-                        firstPart.Factors.Clear();
-                        firstPart.Factors.Add(firstFactor);
-                        firstPart.Factors.Add(secondFactor);
-
-                        var secondPart = new MultiplicationRelationDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "ayeqY8cbIEyJ8h7_4VM70Q",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            Product = 54,
-                            RelationType = MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups
-                        };
-
-                        firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "BLEYzh9iekaPZAC-09sPyg",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 9
-                        };
-
-                        secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
-                        {
-                            ID = "sTEDno-Uk0uxt3TupBNiYA",
-                            OwnerID = Person.Author.ID,
-                            LastVersionIndex = page.LastVersionIndex,
-                            VersionIndex = page.VersionIndex,
-                            NumericValue = 6
-                        };
-
-                        secondPart.Factors.Clear();
-                        secondPart.Factors.Add(firstFactor);
-                        secondPart.Factors.Add(secondFactor);
-
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
-                        ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
-                        break;
-                    }
-                default:
-                    return;
-            }
-
-            if (relationDefinitionToAdd != null)
-            {
-                page.AddTag(relationDefinitionToAdd);
             }
 
             #endregion // Assessment Cache Conversion
@@ -2836,6 +2569,273 @@ namespace Classroom_Learning_Partner
         #endregion // Strokes HistoryItems
 
         #endregion // HistoryActions
+
+        #region Tags
+
+        public static void AddAssessmentRelationDefinitionTags(CLPPage newPage)
+        {
+            ITag relationDefinitionToAdd = null;
+
+            switch (newPage.ID)
+            {
+                case "y-wako1KCk6Aurwrn5QbVg": // Page 5
+                {
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "l-WC1c1mGkukYDgVm937KQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Product = 64,
+                                                  RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication
+                                              };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "8L-RIJBn_06lpKH4yBlOzg",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 8
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "dk5lXzsvu0GHmpGgwoh-vA",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
+                    break;
+                }
+                case "_024ibxTi0qlw4gzCD7QXA": // Page 6
+                {
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "U18DjuOfc0WJ7OIDClEC3A",
+                                                  OwnerID = Person.Author.ID,
+                                                  Quotient = 8,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
+
+                    var dividend = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "AL-RIJBn_06lpKH4yBlOzg",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 56
+                                   };
+
+                    var divisor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "Ak5lXzsvu0GHmpGgwoh-vA",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 7
+                                  };
+
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Dividend = dividend;
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Divisor = divisor;
+                    break;
+                }
+                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
+                {
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "ZipMYNwixkq61bBN2_HD5g",
+                                                  OwnerID = Person.Author.ID,
+                                                  Product = 28,
+                                                  RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                              };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "WK6bKs_ByUCH8BOWgWxgUA",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "2Ra04Eclg06aMGDGKtZ6fQ",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 7
+                                       };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
+                    break;
+                }
+                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
+                {
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "J8Sflc0rWEyodHSiD6BOoQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Quotient = 6,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
+
+                    var dividend = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "BL-RIJBn_06lpKH4yBlOzg",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 48
+                                   };
+
+                    var divisor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "Bk5lXzsvu0GHmpGgwoh-vA",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 8
+                                  };
+
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Dividend = dividend;
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Divisor = divisor;
+                    break;
+                }
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
+                {
+                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "TxyRU2oIuUek0hmqfV3wSQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Sum = 72,
+                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
+                                              };
+
+                    var firstPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                    {
+                                        ID = "jzGI6KOkTUCr1PEohXIAtQ",
+                                        OwnerID = Person.Author.ID,
+                                        Product = 32,
+                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "pY-jWRet_UyIeMSD6rpfzw",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "xppeMKzxQ06UVwgBg0sR8Q",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    firstPart.Factors.Clear();
+                    firstPart.Factors.Add(firstFactor);
+                    firstPart.Factors.Add(secondFactor);
+
+                    var secondPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                     {
+                                         ID = "FoHyUvBjI0ONc8TF7vRmkw",
+                                         OwnerID = Person.Author.ID,
+                                         Product = 40,
+                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                     };
+
+                    firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "usHRHdsaiEao5KY8oxv-9g",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 5
+                                  };
+
+                    secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "KMsWhQClX0KM0-vT_SvFOw",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 8
+                                   };
+
+                    secondPart.Factors.Clear();
+                    secondPart.Factors.Add(firstFactor);
+                    secondPart.Factors.Add(secondFactor);
+
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
+                    break;
+                }
+                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
+                {
+                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "qey_Bae27kmq42CLfvUg1Q",
+                                                  OwnerID = Person.Author.ID,
+                                                  Sum = 86,
+                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
+                                              };
+
+                    var firstPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                    {
+                                        ID = "grr6c_grIEWYK8dsuRqtvA",
+                                        OwnerID = Person.Author.ID,
+                                        Product = 32,
+                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "ZNl4KqUKgkytz4c1m0ehYw",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "9MPttARngE24S-vrhnnnHQ",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    firstPart.Factors.Clear();
+                    firstPart.Factors.Add(firstFactor);
+                    firstPart.Factors.Add(secondFactor);
+
+                    var secondPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                     {
+                                         ID = "ayeqY8cbIEyJ8h7_4VM70Q",
+                                         OwnerID = Person.Author.ID,
+                                         Product = 54,
+                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                     };
+
+                    firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "BLEYzh9iekaPZAC-09sPyg",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 9
+                                  };
+
+                    secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "sTEDno-Uk0uxt3TupBNiYA",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 6
+                                   };
+
+                    secondPart.Factors.Clear();
+                    secondPart.Factors.Add(firstFactor);
+                    secondPart.Factors.Add(secondFactor);
+
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
+                    break;
+                }
+                default:
+                    return;
+            }
+
+            newPage.AddTag(relationDefinitionToAdd);
+        }
+
+        #endregion // Tags
 
         #endregion // Ann Conversions
     }
