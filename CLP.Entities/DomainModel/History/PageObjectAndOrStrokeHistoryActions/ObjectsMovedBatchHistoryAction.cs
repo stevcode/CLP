@@ -16,8 +16,6 @@ namespace CLP.Entities
         public ObjectsMovedBatchHistoryAction() { }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
             : base(parentPage, owner)
         {
@@ -32,8 +30,6 @@ namespace CLP.Entities
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsMovedBatchHistoryAction(CLPPage parentPage, Person owner, Dictionary<string, Point> pageObjectIDs, Dictionary<string, Point> strokeIDs, Point currentPosition)
             : base(parentPage, owner)
         {
@@ -46,42 +42,6 @@ namespace CLP.Entities
         }
 
         #endregion // Constructors
-
-        #region Converter
-
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryAction(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-        //    PageObjectIDs = new Dictionary<string, Point>
-        //                    {
-        //                        { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
-        //                    };
-
-        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        //}
-
-        ///// <summary>Initializes <see cref="ObjectsMovedBatchHistoryAction" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
-        //public ObjectsMovedBatchHistoryAction(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
-        //{
-        //    ID = obsoleteHistoryItem.ID;
-        //    OwnerID = obsoleteHistoryItem.OwnerID;
-        //    ParentPage = obsoleteHistoryItem.ParentPage;
-
-        //    CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-        //    var pageObjects = obsoleteHistoryItem.PageObjectIDs.Select(id => obsoleteHistoryItem.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
-        //    pageObjects = pageObjects.Where(p => p != null).ToList();
-        //    var referencePageObject = pageObjects.First();
-        //    var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
-        //    PageObjectIDs = pageObjectIDs;
-        //    TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        //}
-
-        #endregion // Converter
 
         #region Properties
 
@@ -138,10 +98,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

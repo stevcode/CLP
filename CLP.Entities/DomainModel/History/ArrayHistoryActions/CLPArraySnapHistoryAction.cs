@@ -127,7 +127,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        private void RestoreDivisions(CLPArray persistingArray)
+        public void RestoreDivisions(CLPArray persistingArray)
         {
             var tempHorizontalDivisions = persistingArray.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             persistingArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayHorizontalDivisions);
@@ -141,7 +141,7 @@ namespace CLP.Entities
             persistingArray.IsTopLabelVisible = persistingArray.VerticalDivisions.All(d => !d.IsObscured);
         }
 
-        private void RestoreDimensionsAndPosition(CLPArray persistingArray)
+        public void RestoreDimensionsAndPosition(CLPArray persistingArray)
         {
             if (IsHorizontal)
             {
@@ -220,12 +220,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            PersistingArrayHorizontalDivisions = PersistingArrayHorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-            PersistingArrayVerticalDivisions = PersistingArrayVerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

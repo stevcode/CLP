@@ -633,28 +633,19 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Number Line from 0 to {0} with {1} jumps", NumberLineSize, JumpSizes.Count); }
+            get { return $"Number Line from 0 to {NumberLineSize} with {JumpSizes.Count} jumps"; }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_NUMBER_LINE; }
-        }
+        public override string CodedName => Codings.OBJECT_NUMBER_LINE;
 
         public override string CodedID
         {
             get { return NumberLineSize.ToString(); }
         }
 
-        public override int ZIndex
-        {
-            get { return 60; }
-        }
+        public override int ZIndex => 60;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
+        public override bool IsBackgroundInteractable => true;
 
         /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
         public override double MinimumHeight
@@ -663,17 +654,14 @@ namespace CLP.Entities
         }
 
         /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
-        public override double MinimumWidth
-        {
-            get { return 10; }
-        }
+        public override double MinimumWidth => 10;
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Width")
             {
-                RaisePropertyChanged("NumberLineLength");
-                RaisePropertyChanged("TickLength");
+                RaisePropertyChanged(nameof(NumberLineLength));
+                RaisePropertyChanged(nameof(TickLength));
             }
             base.OnPropertyChanged(e);
         }
@@ -684,18 +672,6 @@ namespace CLP.Entities
 
             if (!fromHistory)
             {
-                // HACK: Removed for demo
-                //var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-                //var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-
-                //foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-                //{
-                //    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
-
-                //    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
-                //    ParentPage.AddTag(tag);
-                //}
-
                 return;
             }
 
@@ -719,19 +695,6 @@ namespace CLP.Entities
         public override void OnDeleted(bool fromHistory = false)
         {
             base.OnDeleted(fromHistory);
-
-            // HACK: Removed for demo.
-            //if (!fromHistory)
-            //{
-            //    var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
-
-            //    var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
-            //    var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
-
-            //    var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            //    var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
-            //    ParentPage.AddTag(tag);
-            //}
 
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
@@ -801,10 +764,7 @@ namespace CLP.Entities
         #region AStrokeAccepter Overrides
 
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
-        public override int StrokeHitTestPercentage
-        {
-            get { return 5; }
-        }
+        public override int StrokeHitTestPercentage => 5;
 
         #endregion //AStrokeAccepter Overrides
 

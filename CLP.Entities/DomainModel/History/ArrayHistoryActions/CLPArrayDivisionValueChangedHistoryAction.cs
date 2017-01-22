@@ -114,27 +114,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array == null)
-            {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            try
-            {
-                var division = IsHorizontalDivision ? array.HorizontalDivisions[DivisionIndex] : array.VerticalDivisions[DivisionIndex];
-
-                NewValue = division.Value;
-                division.Value = PreviousValue;
-            }
-            catch (Exception)
-            {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryActionIndex);
-            }
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

@@ -39,26 +39,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string), string.Empty);
 
-        /// <summary>ArrayDivisions added to Array</summary>
-        [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
-        public List<CLPArrayDivision> AddedDivisions
-        {
-            get { return GetValue<List<CLPArrayDivision>>(AddedDivisionsProperty); }
-            set { SetValue(AddedDivisionsProperty, value); }
-        }
-
-        public static readonly PropertyData AddedDivisionsProperty = RegisterProperty("AddedDivisions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
-
-        /// <summary>ArrayDivisions removed from Array</summary>
-        [Obsolete("Too error prone. Now keeps track of all old and new Column or Row Regions.")]
-        public List<CLPArrayDivision> RemovedDivisions
-        {
-            get { return GetValue<List<CLPArrayDivision>>(RemovedDivisionsProperty); }
-            set { SetValue(RemovedDivisionsProperty, value); }
-        }
-
-        public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
-
         /// <summary>Old regions, either RowRegions or ColumnRegions; HorizontalDivisions and VerticalDivisions respectively.</summary>
         public List<CLPArrayDivision> OldRegions
         {
@@ -123,50 +103,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array == null)
-            {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            if ((AddedDivisions.Any() && AddedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal) ||
-                (RemovedDivisions.Any() && RemovedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal))
-            {
-                NewRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-
-                foreach (var clpArrayDivision in AddedDivisions)
-                {
-                    array.HorizontalDivisions.Remove(clpArrayDivision);
-                }
-                foreach (var clpArrayDivision in RemovedDivisions)
-                {
-                    array.HorizontalDivisions.Add(clpArrayDivision);
-                }
-
-                OldRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-            }
-            else
-            {
-                NewRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-
-                foreach (var clpArrayDivision in AddedDivisions)
-                {
-                    array.VerticalDivisions.Remove(clpArrayDivision);
-                }
-                foreach (var clpArrayDivision in RemovedDivisions)
-                {
-                    array.VerticalDivisions.Add(clpArrayDivision);
-                }
-
-                OldRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
-            }
-
-            AddedDivisions.Clear();
-            RemovedDivisions.Clear();
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

@@ -25,8 +25,6 @@ namespace CLP.Entities
             : this(parentPage, owner, new List<IPageObject>(), new List<IPageObject>(), strokesAdded, strokesRemoved) { }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public ObjectsOnPageChangedHistoryAction(CLPPage parentPage,
                                                  Person owner,
                                                  IEnumerable<IPageObject> pageObjectsAdded,
@@ -189,10 +187,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -279,16 +274,11 @@ namespace CLP.Entities
                     }
                 }
 
-                if (closestPageObject == null)
-                {
-                    continue;
-                }
-
-                closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
-                                                        {
-                                                            stroke
-                                                        },
-                                                        new List<Stroke>());
+                closestPageObject?.ChangeAcceptedStrokes(new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         },
+                                                         new List<Stroke>());
             }
         }
 

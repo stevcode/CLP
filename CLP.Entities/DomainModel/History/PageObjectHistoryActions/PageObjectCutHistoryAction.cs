@@ -25,8 +25,6 @@ namespace CLP.Entities
         public PageObjectCutHistoryAction() { }
 
         /// <summary>Initializes <see cref="PageObjectCutHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public PageObjectCutHistoryAction(CLPPage parentPage, Person owner, Stroke cuttingStroke, ICuttable cutPageObject, List<string> halvedPageObjectIDs)
             : base(parentPage, owner)
         {
@@ -111,20 +109,17 @@ namespace CLP.Entities
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(CutPageObjectID))
+                {
+                    return "Cut nothing.";
+                }
+
                 var cutPageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectID);
                 return cutPageObject == null ? "[ERROR] Cut PageObject not found on page or in history." : $"Cut {cutPageObject.FormattedName}.";
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            if (!HalvedPageObjectIDs.Any())
-            {
-                CutPageObjectID = string.Empty;
-            }
-
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -134,7 +129,12 @@ namespace CLP.Entities
                 CutPageObjectID = string.Empty;
             }
 
-            var cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
+            IPageObject cutPageObject = null;
+            if (!string.IsNullOrEmpty(CutPageObjectID))
+            {
+                cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
+            }
+            
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
 
@@ -194,7 +194,12 @@ namespace CLP.Entities
                 CutPageObjectID = string.Empty;
             }
 
-            var cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
+            IPageObject cutPageObject = null;
+            if (!string.IsNullOrEmpty(CutPageObjectID))
+            {
+                cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
+            }
+
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectInTrashByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
 

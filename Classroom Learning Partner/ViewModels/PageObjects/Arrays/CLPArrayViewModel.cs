@@ -875,6 +875,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                      array.YPosition,
                                                                                      oldWidth,
                                                                                      oldHeight,
+                                                                                     array.Width,
+                                                                                     array.Height,
                                                                                      array.Columns,
                                                                                      array.Rows));
 

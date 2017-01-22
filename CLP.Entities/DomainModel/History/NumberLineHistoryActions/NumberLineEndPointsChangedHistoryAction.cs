@@ -13,8 +13,6 @@ namespace CLP.Entities
         public NumberLineEndPointsChangedHistoryAction() { }
 
         /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
         public NumberLineEndPointsChangedHistoryAction(CLPPage parentPage,
                                                        Person owner,
                                                        string numberLineID,
@@ -136,23 +134,7 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction()
-        {
-            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
-            if (numberLine == null)
-            {
-                Debug.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
-                return;
-            }
-
-            NewStartValue = 0;
-
-            NewStretchedWidth = numberLine.Width;
-            StretchInk(numberLine, PreStretchedWidth);
-
-            NewEndValue = numberLine.NumberLineSize;
-            numberLine.ChangeNumberLineSize(PreviousEndValue);
-        }
+        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

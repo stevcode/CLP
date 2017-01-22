@@ -510,8 +510,8 @@ namespace CLP.Entities
 
             if (rotateHistoryIndex < moveHistoryIndex)
             {
-                var preRotateX = rotateHistoryAction.ArrayXCoord;
-                var preRotateY = rotateHistoryAction.ArrayYCoord;
+                var preRotateX = rotateHistoryAction.OldXPosition;
+                var preRotateY = rotateHistoryAction.OldYPosition;
                 return new Point(preRotateX, preRotateY);
             }
 

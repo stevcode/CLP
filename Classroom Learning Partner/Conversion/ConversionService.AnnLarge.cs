@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Ink;
+using Catel.Collections;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 using Ann = CLP.Entities.Ann;
@@ -21,21 +24,34 @@ namespace Classroom_Learning_Partner
         public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
         public static string AnnImageFolder => Path.Combine(DataService.DesktopFolderPath, "images");
 
+        public static string AssessmentCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Chapter6.Assessment");
+        public static string AssessmentNotebooksFolder => Path.Combine(AssessmentCacheFolder, "Notebooks");
+        public static string AssessmentClassesFolder => Path.Combine(AssessmentCacheFolder, "Classes");
+        public static string AssessmentZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Assessment 2014.clp");
+        public static string AssessmentImageFolder => Path.Combine(DataService.DesktopFolderPath, "assessment images");
+
         #endregion // Locations
 
         #region Conversion Loop
 
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
+            Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
             var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            Debug.WriteLine("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
+            Debug.WriteLine("Notebook Converted");
 
             foreach (var page in oldNotebook.Pages)
             {
+                Debug.WriteLine($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 var newPage = ConvertPage(page);
+                Debug.WriteLine($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 foreach (var submission in page.Submissions)
                 {
+                    Debug.WriteLine($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     var newSubmission = ConvertPage(submission);
+                    Debug.WriteLine($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     newPage.Submissions.Add(newSubmission);
                 }
 
@@ -57,16 +73,22 @@ namespace Classroom_Learning_Partner
 
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
         {
+            Debug.WriteLine($"Loading Subject To Convert: {filePath}");
             var classSubject = Ann.ClassSubject.OpenClassSubject(filePath);
+            Debug.WriteLine("Subject Loaded");
             var classRoster = ConvertAnnClassSubject(classSubject, notebook);
+            Debug.WriteLine("Subject Converted");
 
             return classRoster;
         }
 
         public static Session ConvertCacheAnnClassPeriod(string filePath)
         {
+            Debug.WriteLine($"Loading Class Period To Convert: {filePath}");
             var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
+            Debug.WriteLine("Class Period Loaded");
             var session = ConvertClassPeriod(classPeriod);
+            Debug.WriteLine("Class Period Converted");
 
             return session;
         }
@@ -199,9 +221,6 @@ namespace Classroom_Learning_Partner
                               InitialAspectRatio = page.InitialAspectRatio
                           };
 
-            // TODO: Convert History
-            // TODO: Tags
-
             foreach (var stroke in page.InkStrokes)
             {
                 newPage.InkStrokes.Add(stroke);
@@ -209,7 +228,7 @@ namespace Classroom_Learning_Partner
 
             foreach (var pageObject in page.PageObjects)
             {
-                // Ignores the TextBoxes that were part of the old Multiple Choice
+                // Ignores the TextBoxes that were part of the old Multiple Choice for Large Cache
                 if (pageObject is Ann.CLPTextBox &&
                     (pageObject.ID == "Qgvdw-4oTk2JmSUECrftNQ" ||     // page 385
                      pageObject.ID == "F66Db6O3a0uTF0SGRiUemw" ||     // page 384
@@ -220,16 +239,25 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
 
+                // Ignores the TextBoxes that were part of the old Multiple Choice for Assessment
+                if (pageObject is Ann.CLPTextBox &&
+                    (pageObject.ID == "hsHhMK1dM0mfY0Rl3GCGqw" ||     // page 2
+                     pageObject.ID == "1d_OeI1Kl0yJjXdvfrEeHA" ||     // page 3
+                     pageObject.ID == "HXP2fZiWS0-Nc_NxIBBxRg" ||     // page 4
+                     pageObject.ID == "rcBWT95ExEW9DuS8xkK2Xw" ||     // page 5
+                     pageObject.ID == "QPzA5GnIUkSE5opKl8nm8g"))      // page 6
+                {
+                    continue;
+                }
+
                 var newPageObject = ConvertPageObject(pageObject, newPage);
                 newPage.PageObjects.Add(newPageObject);
-                //var divisionTemplate = newPageObject as DivisionTemplate;
-                //if (divisionTemplate != null &&
-                //    divisionTemplate.RemainderTiles != null)
-                //{
-                //    // TODO: ?
-                //    newPage.PageObjects.Add(divisionTemplate.RemainderTiles);
-                //}
             }
+
+            AddAssessmentInterpretationRegions(newPage);
+            AddAssessmentRelationDefinitionTags(newPage);
+            // TODO: Large Cache Tags
+            ConvertPageHistory(page.History, newPage);
 
             return newPage;
         }
@@ -330,21 +358,65 @@ namespace Classroom_Learning_Partner
         public static CLPTextBox ConvertTextBox(Ann.CLPTextBox textBox, CLPPage newPage)
         {
             var newTextBox = new CLPTextBox
-            {
-                ID = textBox.ID,
-                XPosition = textBox.XPosition,
-                YPosition = textBox.YPosition,
-                Height = textBox.Height,
-                Width = textBox.Width,
-                OwnerID = textBox.OwnerID,
-                CreatorID = textBox.CreatorID,
-                CreationDate = textBox.CreationDate,
-                PageObjectFunctionalityVersion = "Ann12.19.2014",
-                IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                             {
+                                 ID = textBox.ID,
+                                 XPosition = textBox.XPosition,
+                                 YPosition = textBox.YPosition,
+                                 Height = textBox.Height,
+                                 Width = textBox.Width,
+                                 OwnerID = textBox.OwnerID,
+                                 CreatorID = textBox.CreatorID,
+                                 CreationDate = textBox.CreationDate,
+                                 PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                 IsManipulatableByNonCreator = textBox.IsManipulatableByNonCreator,
+                                 ParentPage = newPage
+                             };
 
             newTextBox.Text = textBox.Text;
+
+            #region Assessment Cache Adjustments
+
+            switch (newTextBox.ID)
+            {
+                case "lpIezx13R0-fHaXnVqgT6A":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 2
+                    break;
+                case "LZlupX4OskOkxC-VQv1pKg":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 3
+                    break;
+                case "DvQf2cvBkU-WFEFmLBEuoA":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 4
+                    break;
+                case "JsuHVsdb6k2zYQGS8HdeJA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 5
+                    break;
+                case "3A0ABSEEdUa487Mkvp9CcQ":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 6
+                    break;
+                case "bC1g8LJ6okmsezeVSRub4A":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 7
+                    break;
+                case "_0qgnvZ1EkyYgEU49l5dNw":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 8
+                    break;
+                case "DisblHoHakqYkPzMu9_bxQ":
+                    newTextBox.TextContext = TextContexts.NonWordProblem;   // Page 9
+                    break;
+                case "GBXW7G0YmEKXQ4Q_MMIn5g":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 10
+                    break;
+                case "MtZusuAFZEOqTr8KRlFlMA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 11
+                    break;
+                case "JleS1FBQiEGyoe4VseiPMA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 12
+                    break;
+                case "SNY1QJrMUUqUeK3hCIDDRA":
+                    newTextBox.TextContext = TextContexts.WordProblem;      // Page 13
+                    break;
+            }
+
+            #endregion // Assessment Cache Adjustments
 
             return newTextBox;
         }
@@ -441,12 +513,12 @@ namespace Classroom_Learning_Partner
         public static CLPArrayDivision ConvertArrayDivision(Ann.CLPArrayDivision division)
         {
             var newDivision = new CLPArrayDivision
-            {
-                Position = division.Position,
-                Length = division.Length,
-                Value = division.Value,
-                Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
-            };
+                              {
+                                  Position = division.Position,
+                                  Length = division.Length,
+                                  Value = division.Value,
+                                  Orientation = division.Orientation == Ann.ArrayDivisionOrientation.Horizontal ? ArrayDivisionOrientation.Horizontal : ArrayDivisionOrientation.Vertical
+                              };
 
             return newDivision;
         }
@@ -455,19 +527,19 @@ namespace Classroom_Learning_Partner
         public static NumberLine ConvertNumberLine(Ann.NumberLine numberLine, CLPPage newPage)
         {
             var newNumberLine = new NumberLine
-            {
-                ID = numberLine.ID,
-                XPosition = numberLine.XPosition,
-                YPosition = numberLine.YPosition,
-                Height = numberLine.Height,
-                Width = numberLine.Width,
-                OwnerID = numberLine.OwnerID,
-                CreatorID = numberLine.CreatorID,
-                CreationDate = numberLine.CreationDate,
-                PageObjectFunctionalityVersion = "Ann12.19.2014",
-                IsManipulatableByNonCreator = numberLine.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                                {
+                                    ID = numberLine.ID,
+                                    XPosition = numberLine.XPosition,
+                                    YPosition = numberLine.YPosition,
+                                    Height = numberLine.Height,
+                                    Width = numberLine.Width,
+                                    OwnerID = numberLine.OwnerID,
+                                    CreatorID = numberLine.CreatorID,
+                                    CreationDate = numberLine.CreationDate,
+                                    PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                    IsManipulatableByNonCreator = numberLine.IsManipulatableByNonCreator,
+                                    ParentPage = newPage
+                                };
 
             newNumberLine.NumberLineType = NumberLineTypes.NumberLine;
             newNumberLine.NumberLineSize = numberLine.NumberLineSize;
@@ -633,27 +705,29 @@ namespace Classroom_Learning_Partner
             return newStamp;
         }
 
-        // 12/12
+        // 1/21
         public static MultipleChoice ConvertMultipleChoiceBox(Ann.MultipleChoiceBox multipleChoiceBox, CLPPage newPage)
         {
             var newMultipleChoice = new MultipleChoice
-            {
-                ID = multipleChoiceBox.ID,
-                XPosition = multipleChoiceBox.XPosition,
-                YPosition = multipleChoiceBox.YPosition,
-                Height = 35,
-                Width = multipleChoiceBox.Width,
-                OwnerID = multipleChoiceBox.OwnerID,
-                CreatorID = multipleChoiceBox.CreatorID,
-                CreationDate = multipleChoiceBox.CreationDate,
-                PageObjectFunctionalityVersion = "Ann12.19.2014",
-                IsManipulatableByNonCreator = multipleChoiceBox.IsManipulatableByNonCreator,
-                ParentPage = newPage
-            };
+                                    {
+                                        ID = multipleChoiceBox.ID,
+                                        XPosition = multipleChoiceBox.XPosition,
+                                        YPosition = multipleChoiceBox.YPosition,
+                                        Height = 35,
+                                        Width = multipleChoiceBox.Width,
+                                        OwnerID = multipleChoiceBox.OwnerID,
+                                        CreatorID = multipleChoiceBox.CreatorID,
+                                        CreationDate = multipleChoiceBox.CreationDate,
+                                        PageObjectFunctionalityVersion = "Ann12.19.2014",
+                                        IsManipulatableByNonCreator = multipleChoiceBox.IsManipulatableByNonCreator,
+                                        ParentPage = newPage
+                                    };
 
             newMultipleChoice.Orientation = MultipleChoiceOrientations.Horizontal;
             var segmentWidth = (multipleChoiceBox.Width - 35.0) / 3;
             newMultipleChoice.Width = segmentWidth * 4;
+
+            #region Large Cache Conversion
 
             switch (newPage.PageNumber)
             {
@@ -802,15 +876,1928 @@ namespace Classroom_Learning_Partner
                         newMultipleChoice.ChoiceBubbles.Add(b4);
                     }
                     break;
-                default:
-                    newMultipleChoice = null;
+            }
+
+            #endregion // Large Cache Conversion
+
+            #region Assessment Cache Conversion
+
+            switch (newPage.ID)
+            {
+                case "-zOauyypbEmgpo3f_dalNA": // Page 2
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "4"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "5",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "7"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "9"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
                     break;
+                }
+                case "UvLXlXlpCEuLF1309g5zPA": // Page 3
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "9 + 7"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "9 - 7"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "7 x 9",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "63 ÷ 9"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
+                case "526u6U8sQUqjFkCXTJZYiA": // Page 4
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "2"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "3",
+                                 IsACorrectValue = true
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "5"
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "8"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
+                case "y-wako1KCk6Aurwrn5QbVg": // Page 5
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "16",
+                                 AnswerLabel = "years old"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "24",
+                                 AnswerLabel = "years old"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "64",
+                                 AnswerLabel = "years old",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "80",
+                                 AnswerLabel = "years old"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
+                case "_024ibxTi0qlw4gzCD7QXA": // Page 6
+                {
+                    var b1 = new ChoiceBubble(0, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = 0,
+                                 Answer = "$5"
+                             };
+                    var b2 = new ChoiceBubble(1, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth,
+                                 Answer = "$7"
+                             };
+                    var b3 = new ChoiceBubble(2, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 2,
+                                 Answer = "$8",
+                                 IsACorrectValue = true
+                             };
+                    var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
+                             {
+                                 Offset = segmentWidth * 3,
+                                 Answer = "$55"
+                             };
+                    newMultipleChoice.ChoiceBubbles.Add(b1);
+                    newMultipleChoice.ChoiceBubbles.Add(b2);
+                    newMultipleChoice.ChoiceBubbles.Add(b3);
+                    newMultipleChoice.ChoiceBubbles.Add(b4);
+                    break;
+                }
+            }
+
+            #endregion // Assessment Cache Conversion
+
+            if (!newMultipleChoice.ChoiceBubbles.Any())
+            {
+                Console.WriteLine($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+
+                newMultipleChoice = null;
             }
 
             return newMultipleChoice;
         }
 
+        // 1/21
+        public static void AddAssessmentInterpretationRegions(CLPPage newPage)
+        {
+            var interpretationRegion = new InterpretationRegion(newPage)
+                                       {
+                                           CreatorID = Person.AUTHOR_ID,
+                                           OwnerID = Person.AUTHOR_ID
+                                       };
+            interpretationRegion.Interpreters.Add(Interpreters.Handwriting);
+
+            switch (newPage.ID)
+            {
+                case "_ctKrAO-MEK-g9PtqpFzVQ": // Page 7
+                    {
+                        interpretationRegion.ID = "_ctKrAO-MEK-g9PtqpFmoo";
+                        interpretationRegion.XPosition = 235.3954;
+                        interpretationRegion.YPosition = 220.9490;
+                        interpretationRegion.Height = 80;
+                        interpretationRegion.Width = 80;
+                        break;
+                    }
+                case "gdruAzwX6kWe2k-etZ6gcQ": // Page 8
+                    {
+
+                        interpretationRegion.ID = "gdruAzwX6kWe2k-etZ6moo";
+                        interpretationRegion.XPosition = 253.1625;
+                        interpretationRegion.YPosition = 221.9357;
+                        interpretationRegion.Height = 80;
+                        interpretationRegion.Width = 80;
+                        break;
+                    }
+                case "yzvpdIROIEOFrndOASGjvA": // Page 9
+                    {
+                        interpretationRegion.ID = "yzvpdIROIEOFrndOASGmoo";
+                        interpretationRegion.XPosition = 106.74036;
+                        interpretationRegion.YPosition = 223.4880;
+                        interpretationRegion.Height = 80;
+                        interpretationRegion.Width = 80;
+                        break;
+                    }
+                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
+                    {
+                        interpretationRegion.ID = "gsQu4sdxVEKGZsgCD_zmoo";
+                        interpretationRegion.XPosition = 98.90192;
+                        interpretationRegion.YPosition = 205.11349;
+                        interpretationRegion.Height = 102.1971;
+                        interpretationRegion.Width = 171.0040;
+                        break;
+                    }
+                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
+                    {
+                        interpretationRegion.ID = "MtZusuAFZEOqTr8KRlFmoo";
+                        interpretationRegion.XPosition = 103.60754;
+                        interpretationRegion.YPosition = 243.3032;
+                        interpretationRegion.Height = 93.2830;
+                        interpretationRegion.Width = 146.4150;
+                        break;
+                    }
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
+                    {
+                        interpretationRegion.ID = "QHJ7pFHY3ECr8u6bSFRmoo";
+                        interpretationRegion.XPosition = 234.6666;
+                        interpretationRegion.YPosition = 668.9809;
+                        interpretationRegion.Height = 116.3069;
+                        interpretationRegion.Width = 108.3371;
+                        break;
+                    }
+                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
+                    {
+                        interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
+                        interpretationRegion.XPosition = 240.3143;
+                        interpretationRegion.YPosition = 661.8379;
+                        interpretationRegion.Height = 131.1860;
+                        interpretationRegion.Width = 103.4241;
+                        break;
+                    }
+                default:
+                    return;
+            }
+
+            newPage.PageObjects.Add(interpretationRegion);
+        }
+
         #endregion // PageObjects
+
+        #region History
+
+        public static void ConvertPageHistory(Ann.PageHistory pageHistory, CLPPage newPage)
+        {
+            var newPageHistory = new PageHistory();
+            newPage.History = newPageHistory;
+            foreach (var trashedPageObject in pageHistory.TrashedPageObjects)
+            {
+                var newTrashedPageObject = ConvertPageObject(trashedPageObject, newPage);
+                newPageHistory.TrashedPageObjects.Add(newTrashedPageObject);
+            }
+
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            {
+                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
+            }
+
+            if (pageHistory.RedoItems.Any())
+            {
+                Console.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                return;
+            }
+
+            newPageHistory.IsAnimating = true;
+
+            #region Undo
+
+            var unconvertedUndoItems = pageHistory.UndoItems.Where(h => h.OwnerID != Person.Author.ID).ToList();
+            while (unconvertedUndoItems.Any())
+            {
+                var historyItemToConvert = unconvertedUndoItems.FirstOrDefault();
+                if (historyItemToConvert == null)
+                {
+                    break;
+                }
+
+                unconvertedUndoItems.RemoveFirst();
+                var newHistoryAction = ConvertHistoryAction(historyItemToConvert, newPage, unconvertedUndoItems);
+                if (newHistoryAction == null)
+                {
+                    continue;
+                }
+                newPageHistory.RedoActions.Insert(0, newHistoryAction);
+            }
+
+            #endregion // Undo
+
+            #region Redo
+
+            while (newPageHistory.RedoActions.Any())
+            {
+                // Multiple Choice Fill-In Status Updates
+                var multipleChoiceStatus = newPageHistory.RedoActions.FirstOrDefault() as MultipleChoiceBubbleStatusChangedHistoryAction;
+                if (multipleChoiceStatus != null)
+                {
+                    const int THRESHOLD = 80;
+                    var multipleChoice = newPage.GetPageObjectByID(multipleChoiceStatus.MultipleChoiceID) as MultipleChoice;
+                    var stroke = multipleChoiceStatus.StrokeIDsAdded.Any() ? multipleChoiceStatus.StrokesAdded.First() : multipleChoiceStatus.StrokesRemoved.First();
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(stroke);
+                    var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+                    var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                    if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.FilledIn)
+                    {
+                        if (totalStrokeLength >= THRESHOLD)
+                        {
+                            multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.AdditionalFilledIn;
+                            choiceBubbleStrokeIsOver.IsFilledIn = true;
+                        }
+                        else
+                        {
+                            totalStrokeLength += stroke.StylusPoints.Count;
+                            if (totalStrokeLength >= THRESHOLD)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.FilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                            else
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.PartiallyFilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                        }
+                    }
+                    else if (multipleChoiceStatus.ChoiceBubbleStatus == ChoiceBubbleStatuses.CompletelyErased)
+                    {
+                        var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != stroke.GetStrokeID()).ToList();
+                        var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                        if (totalStrokeLength < THRESHOLD)
+                        {
+                            multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                            choiceBubbleStrokeIsOver.IsFilledIn = false;
+                        }
+                        else
+                        {
+                            if (otherStrokesStrokeLength < THRESHOLD)
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.CompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                            else
+                            {
+                                multipleChoiceStatus.ChoiceBubbleStatus = ChoiceBubbleStatuses.IncompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                        }
+                    }
+                }
+
+                newPageHistory.Redo();
+            }
+
+            #endregion // Redo
+
+            newPageHistory.IsAnimating = false;
+            newPageHistory.RefreshHistoryIndexes();
+        }
+
+        #endregion // History
+
+        #region HistoryActions
+
+        public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
+        {
+            IHistoryAction newHistoryAction = null;
+
+            TypeSwitch.On(historyItem).Case<Ann.AnimationIndicator>(h =>
+            {
+                newHistoryAction = ConvertAndUndoAnimationIndicator(h, newPage);
+            }).Case<Ann.CLPArrayRotateHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoArrayRotate(h, newPage);
+            }).Case<Ann.CLPArrayGridToggleHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoArrayGridToggle(h, newPage);
+            }).Case<Ann.CLPArraySnapHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoArraySnap(h, newPage);
+            }).Case<Ann.CLPArrayDivisionValueChangedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoArrayDivisionValueChanged(h, newPage);
+            }).Case<Ann.CLPArrayDivisionsChangedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoArrayDivisionsChanged(h, newPage);
+            }).Case<Ann.StrokesChangedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoStrokesChanged(h, newPage);
+            }).Case<Ann.PageObjectsAddedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectAdded(h, newPage);
+            }).Case<Ann.PageObjectsRemovedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectRemoved(h, newPage);
+            }).Case<Ann.PageObjectResizeBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectResize(h, newPage);
+            }).Case<Ann.PageObjectMoveBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectMove(h, newPage);
+            }).Case<Ann.PageObjectsMoveBatchHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectsMove(h, newPage);
+            }).Case<Ann.PageObjectCutHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoPageObjectCut(h, newPage);
+            }).Case<Ann.NumberLineEndPointsChangedHistoryItem>(h =>
+            {
+                newHistoryAction = ConvertAndUndoNumberLineEndPointsChange(h, newPage, unconvertedUndoItems);
+            });
+
+            if (newHistoryAction == null)
+            {
+                Debug.WriteLine($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+            }
+
+            return newHistoryAction;
+        }
+
+        #region PageObject HistoryItems
+
+        public static AnimationIndicatorHistoryAction ConvertAndUndoAnimationIndicator(Ann.AnimationIndicator historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new AnimationIndicatorHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            switch (historyItem.AnimationIndicatorType)
+            {
+                case Ann.AnimationIndicatorType.Record:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Record;
+                    break;
+                case Ann.AnimationIndicatorType.Stop:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Stop;
+                    break;
+                default:
+                    newHistoryAction.AnimationIndicatorType = AnimationIndicatorType.Record;
+                    break;
+            }
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsOnPageChangedHistoryAction ConvertAndUndoPageObjectAdded(Ann.PageObjectsAddedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Added, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDsAdded = historyItem.PageObjectIDs;
+
+            #region Conversion Undo
+
+            foreach (var pageObject in newHistoryAction.PageObjectIDsAdded.Select(newPage.GetVerifiedPageObjectOnPageByID))
+            {
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Added not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+                newPage.PageObjects.Remove(pageObject);
+                pageObject.OnDeleted(true);
+                newPage.History.TrashedPageObjects.Add(pageObject);
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsOnPageChangedHistoryAction ConvertAndUndoPageObjectRemoved(Ann.PageObjectsRemovedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Removed, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDsRemoved = historyItem.PageObjectIDs;
+
+            #region Conversion Undo
+
+            foreach (var pageObject in newHistoryAction.PageObjectIDsRemoved.Select(newPage.GetVerifiedPageObjectInTrashByID))
+            {
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Removed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+                newPage.History.TrashedPageObjects.Remove(pageObject);
+                newPage.PageObjects.Add(pageObject);
+                pageObject.OnAdded(true);
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static PageObjectResizeBatchHistoryAction ConvertAndUndoPageObjectResize(Ann.PageObjectResizeBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            if (historyItem.StretchedDimensions.Count < 2)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Resize has no Streched Dimensions (or 1). Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new PageObjectResizeBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectID = historyItem.PageObjectID;
+            newHistoryAction.StretchedDimensions = historyItem.StretchedDimensions.ToList();
+
+            #region Conversion Undo
+
+            var pageObject = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PageObjectID);
+            if (pageObject == null)
+            {
+                Debug.WriteLine($"[ERROR] PageObject for PageObject Resize not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var initialWidth = pageObject.Width;
+            var initialHeight = pageObject.Height;
+
+            pageObject.Width = newHistoryAction.OriginalWidth;
+            pageObject.Height = newHistoryAction.OriginalHeight;
+
+            pageObject.OnResized(initialWidth, initialHeight, true);
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsMovedBatchHistoryAction ConvertAndUndoPageObjectMove(Ann.PageObjectMoveBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            if (string.IsNullOrEmpty(historyItem.PageObjectID))
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has NULL PageObjectID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!historyItem.TravelledPositions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (historyItem.TravelledPositions.Count == 2 &&
+                Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
+                Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsMovedBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PageObjectIDs = new Dictionary<string, Point>
+                                             {
+                                                 { historyItem.PageObjectID, new Point(0.0, 0.0) }
+                                             };
+
+            newHistoryAction.TravelledPositions = historyItem.TravelledPositions.ToList();
+
+            #region Conversion Undo
+
+            foreach (var pageObjectID in newHistoryAction.PageObjectIDs)
+            {
+                var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObject for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
+
+                var originalPosition = newHistoryAction.TravelledPositions.First();
+
+                pageObject.XPosition = originalPosition.X + pageObjectID.Value.X;
+                pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
+
+                pageObject.OnMoved(initialX, initialY, true);
+            }
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static ObjectsMovedBatchHistoryAction ConvertAndUndoPageObjectsMove(Ann.PageObjectsMoveBatchHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.PageObjectIDs.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no PageObjectIDs. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!historyItem.TravelledPositions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (historyItem.TravelledPositions.Count == 2 &&
+                Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
+                Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObjects Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsMovedBatchHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            var pageObjects = historyItem.PageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).Where(p => p != null).ToList();
+            var referencePageObject = pageObjects.First();
+            var pageObjectIDs = pageObjects.ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
+            newHistoryAction.PageObjectIDs = pageObjectIDs;
+            newHistoryAction.TravelledPositions = historyItem.TravelledPositions.ToList();
+
+            #region Conversion Undo
+
+            foreach (var pageObjectID in newHistoryAction.PageObjectIDs)
+            {
+                var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
+                if (pageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] PageObjects for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
+
+                var originalPosition = newHistoryAction.TravelledPositions.First();
+
+                pageObject.XPosition = originalPosition.X + pageObjectID.Value.X;
+                pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
+
+                pageObject.OnMoved(initialX, initialY, true);
+            }
+
+            newHistoryAction.CurrentBatchTickIndex = -1;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static PageObjectCutHistoryAction ConvertAndUndoPageObjectCut(Ann.PageObjectCutHistoryItem historyItem, CLPPage newPage)
+        {
+            if (string.IsNullOrEmpty(historyItem.CuttingStrokeID))
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke ID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var cuttingStroke = newPage.GetVerifiedStrokeInHistoryByID(historyItem.CuttingStrokeID);
+            if (cuttingStroke == null)
+            {
+                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            #region No Or One PageObject Cut
+
+            if (historyItem.CutPageObjectIDs.Count <= 1)
+            {
+                var newHistoryAction = new PageObjectCutHistoryAction
+                                       {
+                                           ID = historyItem.ID,
+                                           OwnerID = historyItem.OwnerID,
+                                           ParentPage = newPage
+                                       };
+
+                newHistoryAction.CuttingStrokeID = historyItem.CuttingStrokeID;
+
+                if (historyItem.CutPageObjectIDs.Any())
+                {
+                    newHistoryAction.CutPageObjectID = historyItem.CutPageObjectIDs.First();
+
+                    if (historyItem.HalvedPageObjectIDs.Count < 2)
+                    {
+                        newHistoryAction.CutPageObjectID = string.Empty;
+                        return newHistoryAction;
+                    }
+
+                    if (historyItem.HalvedPageObjectIDs.Count > 2)
+                    {
+                        Debug.WriteLine($"[ERROR] PageObject Cut has one Cut PageObject, but more than 2 Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+
+                    newHistoryAction.HalvedPageObjectIDs = historyItem.HalvedPageObjectIDs.ToList();
+                }
+
+                if (string.IsNullOrEmpty(newHistoryAction.CutPageObjectID) ||
+                    !newHistoryAction.HalvedPageObjectIDs.Any())
+                {
+                    return newHistoryAction;
+                }
+
+                #region Conversion Undo
+
+                var halvedPageObjects = newHistoryAction.HalvedPageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).ToList();
+                foreach (var halvedPageObject in halvedPageObjects)
+                {
+                    if (halvedPageObject == null)
+                    {
+                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+                    newPage.PageObjects.Remove(halvedPageObject);
+                    newPage.History.TrashedPageObjects.Add(halvedPageObject);
+                }
+
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.CutPageObjectID);
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                newPage.History.TrashedPageObjects.Remove(cutPageObject);
+                newPage.PageObjects.Add(cutPageObject);
+
+                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                     new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     });
+
+                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                             new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             });
+
+                #endregion // Conversion Undo
+
+                return newHistoryAction;
+            }
+
+            #endregion // No Or One PageObject Cut
+
+            #region Multiple PageObjects Cut
+
+            if (historyItem.CutPageObjectIDs.Count * 2 != historyItem.HalvedPageObjectIDs.Count)
+            {
+                Debug.WriteLine($"[ERROR] PageObject Cut has mismatched number of Cut PageObjects and Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryActions = new List<PageObjectCutHistoryAction>();
+            foreach (var historyItemCutPageObjectID in historyItem.CutPageObjectIDs)
+            {
+                var newHistoryAction = new PageObjectCutHistoryAction
+                                       {
+                                           ID = historyItem.ID,
+                                           OwnerID = historyItem.OwnerID,
+                                           ParentPage = newPage
+                                       };
+
+                newHistoryAction.CuttingStrokeID = historyItem.CuttingStrokeID;
+
+                newHistoryAction.CutPageObjectID = historyItemCutPageObjectID;
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyItemCutPageObjectID) as ICuttable;
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject on PageObject Cut not found in history or on page. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                var halvedPageObjectIDs = new List<string>
+                                          {
+                                              historyItem.HalvedPageObjectIDs[0],
+                                              historyItem.HalvedPageObjectIDs[1]
+                                          };
+                historyItem.HalvedPageObjectIDs.RemoveRange(0, 2);
+                newHistoryAction.HalvedPageObjectIDs = halvedPageObjectIDs;
+                
+                newHistoryActions.Add(newHistoryAction);
+            }
+
+            // Undo all in correct order then add to redo items, saving last one as return value
+
+            #region Conversion Undo
+
+            var lastHistoryAction = newHistoryActions.Last();
+
+            foreach (var historyAction in newHistoryActions)
+            {
+                var halvedPageObjects = historyAction.HalvedPageObjectIDs.Select(newPage.GetVerifiedPageObjectOnPageByID).ToList();
+                foreach (var halvedPageObject in halvedPageObjects)
+                {
+                    if (halvedPageObject == null)
+                    {
+                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        return null;
+                    }
+                    newPage.PageObjects.Remove(halvedPageObject);
+                    newPage.History.TrashedPageObjects.Add(halvedPageObject);
+                }
+
+                var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyAction.CutPageObjectID);
+                if (cutPageObject == null)
+                {
+                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                newPage.History.TrashedPageObjects.Remove(cutPageObject);
+                newPage.PageObjects.Add(cutPageObject);
+
+                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                     new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     });
+
+                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                             new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             });
+
+                if (historyAction != lastHistoryAction)
+                {
+                    newPage.History.RedoActions.Insert(0, historyAction);
+                }
+            }
+
+            #endregion // Conversion Undo
+
+            return lastHistoryAction;
+
+            #endregion // Multiple PageObjects Cut
+        }
+
+        #endregion // PageObject HistoryItems
+
+        #region Array HistoryItems
+
+        public static CLPArrayRotateHistoryAction ConvertAndUndoArrayRotate(Ann.CLPArrayRotateHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayRotateHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Rotate not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.NewXPosition = array.XPosition;
+            newHistoryAction.NewYPosition = array.YPosition;
+            newHistoryAction.NewWidth = array.Width;
+            newHistoryAction.NewHeight = array.Height;
+            array.RotateArray();
+            array.XPosition = historyItem.ArrayXCoord;
+            array.YPosition = historyItem.ArrayYCoord;
+            newHistoryAction.OldXPosition = historyItem.ArrayXCoord;
+            newHistoryAction.OldYPosition = historyItem.ArrayYCoord;
+            newHistoryAction.OldWidth = array.Width;
+            newHistoryAction.OldHeight = array.Height;
+            newHistoryAction.OldRows = array.Rows;
+            newHistoryAction.OldColumns = array.Columns;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayGridToggleHistoryAction ConvertAndUndoArrayGridToggle(Ann.CLPArrayGridToggleHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayGridToggleHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Grid Toggle not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            newHistoryAction.IsToggledOn = array.IsGridOn;
+            array.IsGridOn = !newHistoryAction.IsToggledOn;
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static CLPArraySnapHistoryAction ConvertAndUndoArraySnap(Ann.CLPArraySnapHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArraySnapHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.PersistingArrayID = historyItem.PersistingArrayID;
+            newHistoryAction.SnappedArrayID = historyItem.SnappedArrayID;
+            newHistoryAction.IsHorizontal = historyItem.IsHorizontal;
+            newHistoryAction.SnappedArraySquareSize = historyItem.SnappedArraySquareSize;
+            newHistoryAction.PersistingArrayDivisionBehavior = historyItem.PersistingArrayDivisionBehavior;
+            newHistoryAction.PersistingArrayRowsOrColumns = historyItem.PersistingArrayRowsOrColumns;
+            newHistoryAction.PersistingArrayXOrYPosition = historyItem.PersistingArrayXOrYPosition;
+
+            newHistoryAction.PersistingArrayHorizontalDivisions =
+                historyItem.PersistingArrayHorizontalDivisions.Select(
+                                                                      d =>
+                                                                          new CLPArrayDivision(
+                                                                                               d.Orientation == Ann.ArrayDivisionOrientation.Horizontal
+                                                                                                   ? ArrayDivisionOrientation.Horizontal
+                                                                                                   : ArrayDivisionOrientation.Vertical,
+                                                                                               d.Position,
+                                                                                               d.Length,
+                                                                                               d.Value)).ToList();
+            newHistoryAction.PersistingArrayVerticalDivisions =
+                historyItem.PersistingArrayVerticalDivisions.Select(
+                                                                    d =>
+                                                                        new CLPArrayDivision(
+                                                                                             d.Orientation == Ann.ArrayDivisionOrientation.Horizontal
+                                                                                                 ? ArrayDivisionOrientation.Horizontal
+                                                                                                 : ArrayDivisionOrientation.Vertical,
+                                                                                             d.Position,
+                                                                                             d.Length,
+                                                                                             d.Value)).ToList();
+
+            #region Conversion Undo
+
+            var persistingArray = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PersistingArrayID) as CLPArray;
+            if (persistingArray == null)
+            {
+                Debug.WriteLine($"[ERROR] Persisting Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var snappedArray = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.SnappedArrayID) as CLPArray;
+            if (snappedArray == null)
+            {
+                Debug.WriteLine($"[ERROR] Snapped Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            snappedArray.SizeArrayToGridLevel(newHistoryAction.SnappedArraySquareSize);
+            snappedArray.ParentPage = newPage;
+            newPage.PageObjects.Add(snappedArray);
+            newPage.History.TrashedPageObjects.Remove(snappedArray);
+
+            var persistingArrayGridSquareSize = persistingArray.GridSquareSize;
+
+            newHistoryAction.RestoreDivisions(persistingArray);
+            newHistoryAction.RestoreDimensionsAndPosition(persistingArray);
+
+            persistingArray.IsDivisionBehaviorOn = newHistoryAction.PersistingArrayDivisionBehavior;
+            persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
+
+            var oldPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray
+                                 };
+            var newPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray,
+                                     snappedArray
+                                 };
+
+            AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
+            APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayDivisionValueChangedHistoryAction ConvertAndUndoArrayDivisionValueChanged(Ann.CLPArrayDivisionValueChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            var newHistoryAction = new CLPArrayDivisionValueChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+            newHistoryAction.IsHorizontalDivision = historyItem.IsHorizontalDivision;
+            newHistoryAction.DivisionIndex = historyItem.DivisionIndex;
+            newHistoryAction.PreviousValue = historyItem.PreviousValue;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Division Value Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            try
+            {
+                var division = newHistoryAction.IsHorizontalDivision ? array.HorizontalDivisions[newHistoryAction.DivisionIndex] : array.VerticalDivisions[newHistoryAction.DivisionIndex];
+
+                newHistoryAction.NewValue = division.Value;
+                division.Value = newHistoryAction.PreviousValue;
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        public static CLPArrayDivisionsChangedHistoryAction ConvertAndUndoArrayDivisionsChanged(Ann.CLPArrayDivisionsChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.AddedDivisions.Any() &&
+                !historyItem.RemovedDivisions.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] Division Values Changed, empty divisions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new CLPArrayDivisionsChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.ArrayID = historyItem.ArrayID;
+
+            #region Conversion Undo
+
+            var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Debug.WriteLine($"[ERROR] Array for Divisions Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if ((historyItem.AddedDivisions.Any() && historyItem.AddedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal) ||
+                (historyItem.RemovedDivisions.Any() && historyItem.RemovedDivisions[0].Orientation == Ann.ArrayDivisionOrientation.Horizontal))
+            {
+                newHistoryAction.NewRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+
+                foreach (var clpArrayDivision in historyItem.AddedDivisions)
+                {
+                    var matchingArrayDivision =
+                        array.HorizontalDivisions.FirstOrDefault(d => d.Length == clpArrayDivision.Length && d.Position == clpArrayDivision.Position && d.Value == clpArrayDivision.Value);
+
+                    array.HorizontalDivisions.Remove(matchingArrayDivision);
+                }
+                foreach (var clpArrayDivision in historyItem.RemovedDivisions)
+                {
+                    var newDivision = ConvertArrayDivision(clpArrayDivision);
+
+                    array.HorizontalDivisions.Add(newDivision);
+                }
+
+                newHistoryAction.OldRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            }
+            else
+            {
+                newHistoryAction.NewRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+
+                foreach (var clpArrayDivision in historyItem.AddedDivisions)
+                {
+                    var matchingArrayDivision =
+                        array.VerticalDivisions.FirstOrDefault(d => d.Length == clpArrayDivision.Length && d.Position == clpArrayDivision.Position && d.Value == clpArrayDivision.Value);
+
+                    array.VerticalDivisions.Remove(matchingArrayDivision);
+                }
+                foreach (var clpArrayDivision in historyItem.RemovedDivisions)
+                {
+                    var newDivision = ConvertArrayDivision(clpArrayDivision);
+
+                    array.VerticalDivisions.Add(newDivision);
+                }
+
+                newHistoryAction.OldRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        #endregion // Array HistoryItems
+
+        #region Number Line HistoryItems
+
+        public static NumberLineEndPointsChangedHistoryAction ConvertAndUndoNumberLineEndPointsChange(Ann.NumberLineEndPointsChangedHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
+        {
+            // BUG: Original code pulled resizeAction from RedoActions, doesn't seem like that would have been accurate.
+            var nextUnconvertedHistoryItem = unconvertedUndoItems.FirstOrDefault();
+            if (!(nextUnconvertedHistoryItem is Ann.NumberLineEndPointsChangedHistoryItem) && 
+                !(nextUnconvertedHistoryItem is Ann.PageObjectResizeBatchHistoryItem))
+            {
+                Debug.WriteLine($"[ERROR] Number Line End Point Change not followed by PageObject Resize or another Number Line End Point Change. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var numberLine = newPage.GetVerifiedPageObjectOnPageByID(historyItem.NumberLineID) as NumberLine;
+            if (numberLine == null)
+            {
+                Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var resizeBatchHistoryItem = nextUnconvertedHistoryItem as Ann.PageObjectResizeBatchHistoryItem;
+            if (!ReferenceEquals(null, resizeBatchHistoryItem))
+            {
+                var potentialNumberLineMatch = newPage.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
+                if (potentialNumberLineMatch == null ||
+                    numberLine.ID != potentialNumberLineMatch.ID)
+                {
+                    Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change doesn't match next PageObject Resize Number Line. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
+                unconvertedUndoItems.RemoveFirst();
+            }
+           
+            var newHistoryAction = new NumberLineEndPointsChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.NumberLineID = historyItem.NumberLineID;
+            newHistoryAction.PreviousStartValue = historyItem.PreviousStartValue;
+            newHistoryAction.PreviousEndValue = historyItem.PreviousEndValue;
+            newHistoryAction.NewEndValue = numberLine.NumberLineSize;
+            newHistoryAction.NewStretchedWidth = numberLine.Width;
+
+            #region Conversion Undo
+
+            if (ReferenceEquals(null, resizeBatchHistoryItem))
+            {
+                newHistoryAction.PreStretchedWidth = numberLine.Width;
+                numberLine.ChangeNumberLineSize(newHistoryAction.PreviousEndValue);
+            }
+            else
+            {
+                var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
+                var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
+                var previousTickLength = previousNumberLineWidth / newHistoryAction.PreviousEndValue;
+
+                var preStretchedWidth = previousWidth + (previousTickLength * (newHistoryAction.NewEndValue - newHistoryAction.PreviousEndValue));
+                if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
+                {
+                    preStretchedWidth = numberLine.Width;
+                }
+
+                newHistoryAction.PreStretchedWidth = preStretchedWidth;
+
+                if (Math.Abs(newHistoryAction.NewStretchedWidth - newHistoryAction.PreStretchedWidth) >= 0.0001)
+                {
+                    var oldWidth = numberLine.Width;
+                    var oldHeight = numberLine.Height;
+                    numberLine.Width = newHistoryAction.PreStretchedWidth;
+                    numberLine.OnResized(oldWidth, oldHeight, true);
+                }
+
+                numberLine.ChangeNumberLineSize(newHistoryAction.PreviousEndValue);
+            }
+
+            #endregion // Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        #endregion // Number Line HistoryItems
+
+        #region Strokes HistoryItems
+
+        public static IHistoryAction ConvertAndUndoStrokesChanged(Ann.StrokesChangedHistoryItem historyItem, CLPPage newPage)
+        {
+            if (!historyItem.StrokeIDsAdded.Any() &&
+                !historyItem.StrokeIDsRemoved.Any())
+            {
+                Debug.WriteLine($"[NON-ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            var newHistoryAction = new ObjectsOnPageChangedHistoryAction
+                                   {
+                                       ID = historyItem.ID,
+                                       OwnerID = historyItem.OwnerID,
+                                       ParentPage = newPage
+                                   };
+
+            newHistoryAction.StrokeIDsAdded = historyItem.StrokeIDsAdded;
+            newHistoryAction.StrokeIDsRemoved = historyItem.StrokeIDsRemoved;
+
+            // Single Add
+            if (newHistoryAction.StrokeIDsAdded.Count == 1 &&
+                !newHistoryAction.StrokeIDsRemoved.Any())
+            {
+                var strokeID = newHistoryAction.StrokeIDsAdded.First();
+                var addedStroke = newPage.GetVerifiedStrokeOnPageByID(strokeID);
+
+                #region Check for Jump Added
+
+                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
+                {
+                    var tickR = numberLine.FindClosestTickToArcStroke(addedStroke, true);
+                    var tickL = numberLine.FindClosestTickToArcStroke(addedStroke, false);
+                    if (tickR == null ||
+                        tickL == null ||
+                        tickR == tickL)
+                    {
+                        continue;
+                    }
+
+                    var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
+                    var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
+
+                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<Stroke>
+                                                                                                {
+                                                                                                    addedStroke
+                                                                                                },
+                                                                                                new List<Stroke>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                oldHeight,
+                                                                                                oldYPosition,
+                                                                                                numberLine.Height,
+                                                                                                numberLine.YPosition,
+                                                                                                true);
+
+                    #region JumpsChangedHistoryAction Conversion Undo
+
+                    foreach (var stroke in jumpsChangedHistoryAction.AddedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeOnPageByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        newPage.InkStrokes.Remove(stroke);
+                        newPage.History.TrashedInkStrokes.Add(stroke);
+                        numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                         new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         });
+
+                        var jumps = numberLine.RemoveJumpFromStroke(stroke);
+                        jumpsChangedHistoryAction.JumpsAdded = jumps;
+                    }
+
+                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
+                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
+
+                    #endregion // JumpsChangedHistoryAction Conversion Undo
+
+                    return jumpsChangedHistoryAction;
+                }
+
+                #endregion // Check for Jump Added
+
+                #region Check for Multiple Choice Fill-In
+
+                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
+                    if (choiceBubbleStrokeIsOver != null)
+                    {
+                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
+                                                                                                                                newPage.Owner,
+                                                                                                                                multipleChoice,
+                                                                                                                                index,
+                                                                                                                                ChoiceBubbleStatuses.FilledIn,
+                                                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                                                newHistoryAction.StrokesRemoved);
+
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        var addedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            addedStrokesToMultipleChoice.Add(stroke);
+                            newPage.InkStrokes.Remove(stroke);
+                            newPage.History.TrashedInkStrokes.Add(stroke);
+                        }
+
+                        var removedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            removedStrokesToMultipleChoice.Add(stroke);
+                            newPage.History.TrashedInkStrokes.Remove(stroke);
+                            newPage.InkStrokes.Add(stroke);
+                        }
+
+                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
+
+                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
+                        {
+                            case ChoiceBubbleStatuses.CompletelyErased:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
+                                break;
+                            case ChoiceBubbleStatuses.FilledIn:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
+                                break;
+                        }
+
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        return multipleChoiceBubbleStatusChangedHistoryAction;
+                    }
+                }
+
+                #endregion // Check for Multiple Choice Fill-In
+            }
+            //Single Remove
+            else if (newHistoryAction.StrokeIDsRemoved.Count == 1 &&
+                     !newHistoryAction.StrokeIDsAdded.Any())
+            {
+                var strokeID = newHistoryAction.StrokeIDsRemoved.First();
+                var removedStroke = newPage.GetVerifiedStrokeInHistoryByID(strokeID);
+
+                #region Check for Jump Removed
+
+                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
+                {
+                    var tickR = numberLine.FindClosestTickToArcStroke(removedStroke, true);
+                    var tickL = numberLine.FindClosestTickToArcStroke(removedStroke, false);
+                    if (tickR == null ||
+                        tickL == null ||
+                        tickR == tickL)
+                    {
+                        continue;
+                    }
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (numberLine.JumpSizes.Count == 0)
+                    {
+                        var tallestPoint = removedStroke.GetBounds().Top;
+                        tallestPoint = tallestPoint - 40;
+
+                        if (tallestPoint < 0)
+                        {
+                            tallestPoint = 0;
+                        }
+
+                        if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
+                        {
+                            tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
+                        }
+
+                        oldHeight += (numberLine.YPosition - tallestPoint);
+                        oldYPosition = tallestPoint;
+                    }
+
+                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<Stroke>(),
+                                                                                                new List<Stroke>
+                                                                                                {
+                                                                                                    removedStroke
+                                                                                                },
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                oldHeight,
+                                                                                                oldYPosition,
+                                                                                                numberLine.Height,
+                                                                                                numberLine.YPosition,
+                                                                                                true);
+
+                    #region JumpsChangedHistoryAction Conversion Undo
+
+                    foreach (var stroke in jumpsChangedHistoryAction.RemovedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+                        newPage.History.TrashedInkStrokes.Remove(stroke);
+                        newPage.InkStrokes.Add(stroke);
+                        numberLine.ChangeAcceptedStrokes(new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         },
+                                                         new List<Stroke>());
+
+                        var jumps = numberLine.AddJumpFromStroke(stroke);
+                        jumpsChangedHistoryAction.JumpsRemoved = jumps;
+                    }
+
+                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
+                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
+
+                    #endregion // JumpsChangedHistoryAction Conversion Undo
+
+                    return jumpsChangedHistoryAction;
+                }
+
+                #endregion // Check for Jump Removed
+
+                #region Check for Multiple Choice Erase
+
+                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
+                    if (choiceBubbleStrokeIsOver != null)
+                    {
+                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
+                                                                                                                                newPage.Owner,
+                                                                                                                                multipleChoice,
+                                                                                                                                index,
+                                                                                                                                ChoiceBubbleStatuses.CompletelyErased,
+                                                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                                                newHistoryAction.StrokesRemoved);
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        var addedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            addedStrokesToMultipleChoice.Add(stroke);
+                            newPage.InkStrokes.Remove(stroke);
+                            newPage.History.TrashedInkStrokes.Add(stroke);
+                        }
+
+                        var removedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            removedStrokesToMultipleChoice.Add(stroke);
+                            newPage.History.TrashedInkStrokes.Remove(stroke);
+                            newPage.InkStrokes.Add(stroke);
+                        }
+
+                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
+
+                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
+                        {
+                            case ChoiceBubbleStatuses.CompletelyErased:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
+                                break;
+                            case ChoiceBubbleStatuses.FilledIn:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
+                                break;
+                        }
+
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        return multipleChoiceBubbleStatusChangedHistoryAction;
+                    }
+                }
+
+                #endregion // Check for Multiple Choice Erase
+            }
+            //Point Erase
+            else if (newHistoryAction.StrokesRemoved.Count == 1 &&
+                     newHistoryAction.StrokesAdded.Count == 2)
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, Point Erase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+            else
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, Not SingleAdd, SingleErase, or PointErase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            if (!newHistoryAction.IsUsingStrokes)
+            {
+                Debug.WriteLine($"[ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                return null;
+            }
+
+            #region ObjectsOnPageChangedHistoryAction Conversion Undo
+
+            var addedStrokes = new List<Stroke>();
+            foreach (var stroke in newHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+            {
+                if (stroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsAdded. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    continue;
+                }
+                addedStrokes.Add(stroke);
+                newPage.InkStrokes.Remove(stroke);
+                newPage.History.TrashedInkStrokes.Add(stroke);
+            }
+
+            var removedStrokes = new List<Stroke>();
+            foreach (var stroke in newHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+            {
+                if (stroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsRemoved. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    continue;
+                }
+                removedStrokes.Add(stroke);
+                newPage.History.TrashedInkStrokes.Remove(stroke);
+                newPage.InkStrokes.Add(stroke);
+            }
+
+            foreach (var pageObject in newPage.PageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), addedStrokes);
+            }
+
+            foreach (var stroke in removedStrokes)
+            {
+                var validStrokeAccepters =
+                    newPage.PageObjects.OfType<IStrokeAccepter>().Where(p => (p.CreatorID == newPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke)).ToList();
+
+                IStrokeAccepter closestPageObject = null;
+                foreach (var pageObject in validStrokeAccepters)
+                {
+                    if (closestPageObject == null)
+                    {
+                        closestPageObject = pageObject;
+                        continue;
+                    }
+
+                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
+                    {
+                        closestPageObject = pageObject;
+                    }
+                }
+
+                closestPageObject?.ChangeAcceptedStrokes(new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         },
+                                                         new List<Stroke>());
+            }
+
+            #endregion // ObjectsOnPageChangedHistoryAction Conversion Undo
+
+            return newHistoryAction;
+        }
+
+        #endregion // Strokes HistoryItems
+
+        #endregion // HistoryActions
+
+        #region Tags
+
+        public static void AddAssessmentRelationDefinitionTags(CLPPage newPage)
+        {
+            ITag relationDefinitionToAdd = null;
+
+            switch (newPage.ID)
+            {
+                case "y-wako1KCk6Aurwrn5QbVg": // Page 5
+                {
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "l-WC1c1mGkukYDgVm937KQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Product = 64,
+                                                  RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication
+                                              };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "8L-RIJBn_06lpKH4yBlOzg",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 8
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "dk5lXzsvu0GHmpGgwoh-vA",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
+                    break;
+                }
+                case "_024ibxTi0qlw4gzCD7QXA": // Page 6
+                {
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "U18DjuOfc0WJ7OIDClEC3A",
+                                                  OwnerID = Person.Author.ID,
+                                                  Quotient = 8,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
+
+                    var dividend = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "AL-RIJBn_06lpKH4yBlOzg",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 56
+                                   };
+
+                    var divisor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "Ak5lXzsvu0GHmpGgwoh-vA",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 7
+                                  };
+
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Dividend = dividend;
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Divisor = divisor;
+                    break;
+                }
+                case "gsQu4sdxVEKGZsgCD_zfWQ": // Page 10
+                {
+                    relationDefinitionToAdd = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "ZipMYNwixkq61bBN2_HD5g",
+                                                  OwnerID = Person.Author.ID,
+                                                  Product = 28,
+                                                  RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                              };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "WK6bKs_ByUCH8BOWgWxgUA",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "2Ra04Eclg06aMGDGKtZ6fQ",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 7
+                                       };
+
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(firstFactor);
+                    ((MultiplicationRelationDefinitionTag)relationDefinitionToAdd).Factors.Add(secondFactor);
+                    break;
+                }
+                case "MtZusuAFZEOqTr8KRlFlMA": // Page 11
+                {
+                    relationDefinitionToAdd = new DivisionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "J8Sflc0rWEyodHSiD6BOoQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Quotient = 6,
+                                                  Remainder = 0,
+                                                  RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision
+                                              };
+
+                    var dividend = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "BL-RIJBn_06lpKH4yBlOzg",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 48
+                                   };
+
+                    var divisor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "Bk5lXzsvu0GHmpGgwoh-vA",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 8
+                                  };
+
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Dividend = dividend;
+                    ((DivisionRelationDefinitionTag)relationDefinitionToAdd).Divisor = divisor;
+                    break;
+                }
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12
+                {
+                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "TxyRU2oIuUek0hmqfV3wSQ",
+                                                  OwnerID = Person.Author.ID,
+                                                  Sum = 72,
+                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
+                                              };
+
+                    var firstPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                    {
+                                        ID = "jzGI6KOkTUCr1PEohXIAtQ",
+                                        OwnerID = Person.Author.ID,
+                                        Product = 32,
+                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "pY-jWRet_UyIeMSD6rpfzw",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "xppeMKzxQ06UVwgBg0sR8Q",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    firstPart.Factors.Clear();
+                    firstPart.Factors.Add(firstFactor);
+                    firstPart.Factors.Add(secondFactor);
+
+                    var secondPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                     {
+                                         ID = "FoHyUvBjI0ONc8TF7vRmkw",
+                                         OwnerID = Person.Author.ID,
+                                         Product = 40,
+                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                     };
+
+                    firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "usHRHdsaiEao5KY8oxv-9g",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 5
+                                  };
+
+                    secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "KMsWhQClX0KM0-vT_SvFOw",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 8
+                                   };
+
+                    secondPart.Factors.Clear();
+                    secondPart.Factors.Add(firstFactor);
+                    secondPart.Factors.Add(secondFactor);
+
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
+                    break;
+                }
+                case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
+                {
+                    relationDefinitionToAdd = new AdditionRelationDefinitionTag(newPage, Origin.Author)
+                                              {
+                                                  ID = "qey_Bae27kmq42CLfvUg1Q",
+                                                  OwnerID = Person.Author.ID,
+                                                  Sum = 86,
+                                                  RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition
+                                              };
+
+                    var firstPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                    {
+                                        ID = "grr6c_grIEWYK8dsuRqtvA",
+                                        OwnerID = Person.Author.ID,
+                                        Product = 32,
+                                        RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                    };
+
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          ID = "ZNl4KqUKgkytz4c1m0ehYw",
+                                          OwnerID = Person.Author.ID,
+                                          NumericValue = 4
+                                      };
+
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           ID = "9MPttARngE24S-vrhnnnHQ",
+                                           OwnerID = Person.Author.ID,
+                                           NumericValue = 8
+                                       };
+
+                    firstPart.Factors.Clear();
+                    firstPart.Factors.Add(firstFactor);
+                    firstPart.Factors.Add(secondFactor);
+
+                    var secondPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                     {
+                                         ID = "ayeqY8cbIEyJ8h7_4VM70Q",
+                                         OwnerID = Person.Author.ID,
+                                         Product = 54,
+                                         RelationType = MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                     };
+
+                    firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      ID = "BLEYzh9iekaPZAC-09sPyg",
+                                      OwnerID = Person.Author.ID,
+                                      NumericValue = 9
+                                  };
+
+                    secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                   {
+                                       ID = "sTEDno-Uk0uxt3TupBNiYA",
+                                       OwnerID = Person.Author.ID,
+                                       NumericValue = 6
+                                   };
+
+                    secondPart.Factors.Clear();
+                    secondPart.Factors.Add(firstFactor);
+                    secondPart.Factors.Add(secondFactor);
+
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Clear();
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(firstPart);
+                    ((AdditionRelationDefinitionTag)relationDefinitionToAdd).Addends.Add(secondPart);
+                    break;
+                }
+                default:
+                    return;
+            }
+
+            newPage.AddTag(relationDefinitionToAdd);
+        }
+
+        #endregion // Tags
 
         #endregion // Ann Conversions
     }
