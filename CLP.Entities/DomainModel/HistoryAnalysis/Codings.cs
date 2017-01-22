@@ -7,6 +7,7 @@ namespace CLP.Entities
     {
         #region Coded Objects
 
+        public const string OBJECT_NOTHING = "NOTHING";
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_SHAPE = "SHAPE";

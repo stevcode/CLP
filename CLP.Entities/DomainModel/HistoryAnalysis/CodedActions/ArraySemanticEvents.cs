@@ -58,6 +58,12 @@ namespace CLP.Entities
             }
 
             var cutArrayID = cutHistoryAction.CutPageObjectID;
+            if (string.IsNullOrWhiteSpace(cutArrayID))
+            {
+                // TODO: Handle stroke cuts that didn't cut anything
+                return null;
+            }
+
             var cutArray = page.GetPageObjectByIDOnPageOrInHistory(cutArrayID) as CLPArray;
             if (cutArray == null)
             {
