@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
-            ConversionService.ConvertAnnCache();
+            //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
         }
 
