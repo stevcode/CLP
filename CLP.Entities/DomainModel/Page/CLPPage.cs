@@ -810,6 +810,14 @@ namespace CLP.Entities
             {
                 pageObject.ParentPage = this;
             }
+            foreach (var historyAction in History.UndoActions)
+            {
+                historyAction.ParentPage = this;
+            }
+            foreach (var historyAction in History.RedoActions)
+            {
+                historyAction.ParentPage = this;
+            }
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())
             {
                 pageObject.LoadAcceptedStrokes();
