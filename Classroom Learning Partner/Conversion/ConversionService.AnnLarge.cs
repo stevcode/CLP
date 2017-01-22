@@ -2064,7 +2064,7 @@ namespace Classroom_Learning_Partner
             }
 
             var resizeBatchHistoryItem = nextUnconvertedHistoryItem as Ann.PageObjectResizeBatchHistoryItem;
-            if (resizeBatchHistoryItem != null)
+            if (!ReferenceEquals(null, resizeBatchHistoryItem))
             {
                 var potentialNumberLineMatch = newPage.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
                 if (potentialNumberLineMatch == null ||
@@ -2092,7 +2092,7 @@ namespace Classroom_Learning_Partner
 
             #region Conversion Undo
 
-            if (resizeBatchHistoryItem == null)
+            if (ReferenceEquals(null, resizeBatchHistoryItem))
             {
                 newHistoryAction.PreStretchedWidth = numberLine.Width;
                 numberLine.ChangeNumberLineSize(newHistoryAction.PreviousEndValue);
