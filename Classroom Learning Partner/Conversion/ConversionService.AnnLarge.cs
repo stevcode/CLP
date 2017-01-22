@@ -857,9 +857,6 @@ namespace Classroom_Learning_Partner
                         newMultipleChoice.ChoiceBubbles.Add(b4);
                     }
                     break;
-                default:
-                    newMultipleChoice = null;
-                    break;
             }
 
             #endregion // Large Cache Conversion
@@ -1020,6 +1017,13 @@ namespace Classroom_Learning_Partner
             }
 
             #endregion // Assessment Cache Conversion
+
+            if (!newMultipleChoice.ChoiceBubbles.Any())
+            {
+                Console.WriteLine($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+
+                newMultipleChoice = null;
+            }
 
             return newMultipleChoice;
         }
