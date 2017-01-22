@@ -109,6 +109,11 @@ namespace CLP.Entities
         {
             get
             {
+                if (string.IsNullOrWhiteSpace(CutPageObjectID))
+                {
+                    return "Cut nothing.";
+                }
+
                 var cutPageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectID);
                 return cutPageObject == null ? "[ERROR] Cut PageObject not found on page or in history." : $"Cut {cutPageObject.FormattedName}.";
             }
