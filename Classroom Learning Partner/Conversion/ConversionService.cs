@@ -16,6 +16,61 @@ namespace Classroom_Learning_Partner
     {
         public ConversionService() { }
 
+        #region Loop
+
+        public static void ConvertAnnCache()
+        {
+            var isLargeCache = false;
+
+            var cacheType = isLargeCache ? "Large" : "Assessment";
+            Debug.WriteLine($"Beginning Conversion of Ann's {cacheType} Cache.");
+
+            var zipPath = isLargeCache ? AnnZipFilePath : AssessmentZipFilePath;
+            var notebooksFolderPath = isLargeCache ? AnnNotebooksFolder : AssessmentNotebooksFolder;
+            var classesFolderPath = isLargeCache ? AnnClassesFolder : AssessmentClassesFolder;
+            var imagesFolderPath = isLargeCache ? AnnImageFolder : AssessmentImageFolder;
+            const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
+
+            var notebooks = new List<Notebook>();
+            Notebook authorNotebook = null;
+
+            var dirInfo = new DirectoryInfo(notebooksFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+                var notebook = ConvertCacheAnnNotebook(notebookFolder);
+                notebooks.Add(notebook);
+
+                if (notebook.OwnerID == Person.AUTHOR_ID)
+                {
+                    authorNotebook = notebook;
+                }
+            }
+
+            SaveNotebooksToZip(zipPath, notebooks);
+
+            var subjectFilePath = Path.Combine(classesFolderPath, SUBJECT_FILE_NAME);
+            var classRoster = ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
+            SaveClassRosterToZip(zipPath, classRoster);
+
+            SaveImagesToZip(zipPath, imagesFolderPath);
+
+            var classesDirInfo = new DirectoryInfo(classesFolderPath);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            SaveSessionsToZip(zipPath, sessions, authorNotebook);
+
+            Debug.WriteLine($"Finished Conversion of Ann's {cacheType} Cache.");
+        }
+
+        #endregion // Loop
+
         #region All
 
         public static void SaveNotebookToZip(string zipFilePath, Notebook notebook, bool isIncludingSubmissions = true)
@@ -58,6 +113,8 @@ namespace Classroom_Learning_Partner
 
         public static void SaveNotebooksToZip(string zipFilePath, List<Notebook> notebooks)
         {
+            Debug.WriteLine("Saving Notebooks To Zip.");
+
             if (File.Exists(zipFilePath))
             {
                 File.Delete(zipFilePath);
@@ -96,12 +153,17 @@ namespace Classroom_Learning_Partner
 
                 zip.Save(zipFilePath);
             }
+
+            Debug.WriteLine("Finished Saving Notebooks To Zip.");
         }
 
         public static void SaveClassRosterToZip(string zipFilePath, ClassRoster classRoster)
         {
+            Debug.WriteLine("Saving Roster To Zip.");
+
             if (!File.Exists(zipFilePath))
             {
+                Debug.WriteLine("[ERROR] Failed Saving Roster To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -124,12 +186,17 @@ namespace Classroom_Learning_Partner
 
                 zip.Save();
             }
+
+            Debug.WriteLine("Finished Saving Roster To Zip.");
         }
 
         public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions, Notebook authorNotebook)
         {
+            Debug.WriteLine("Saving Sessions To Zip.");
+
             if (!File.Exists(zipFilePath))
             {
+                Debug.WriteLine("[ERROR] Failed Saving Sessions To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -176,12 +243,17 @@ namespace Classroom_Learning_Partner
 
                 zip.Save();
             }
+
+            Debug.WriteLine("Finished Saving Sessions To Zip.");
         }
 
         public static void SaveImagesToZip(string zipFilePath, string imageDirectoryPath)
         {
+            Debug.WriteLine("Saving Images To Zip.");
+
             if (!File.Exists(zipFilePath))
             {
+                Debug.WriteLine("[ERROR] Failed Saving Images To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -210,6 +282,8 @@ namespace Classroom_Learning_Partner
 
                 zip.Save();
             }
+
+            Debug.WriteLine("Finished Saving Images To Zip.");
         }
 
         #endregion // All

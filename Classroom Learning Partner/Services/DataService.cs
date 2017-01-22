@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
-            //ConvertAnnCache();
+            ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
         }
 
@@ -1904,54 +1904,6 @@ namespace Classroom_Learning_Partner.Services
             }
 
             ConversionService.SaveSessionsToZip(ConversionService.EmilyZipFilePath, sessions, authorNotebook);
-        }
-
-        private void ConvertAnnCache()
-        {
-            var dirInfo = new DirectoryInfo(ConversionService.AnnNotebooksFolder);
-            var notebooks = new List<Notebook>();
-            Notebook authorNotebook = null;
-            var students = new List<Person>();
-            Person teacher = null;
-            foreach (var directory in dirInfo.EnumerateDirectories())
-            {
-                var notebookFolder = directory.FullName;
-                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
-                var notebook = ConversionService.ConvertCacheAnnNotebook(notebookFolder);
-                notebooks.Add(notebook);
-
-                if (notebook.OwnerID == Person.AUTHOR_ID)
-                {
-                    authorNotebook = notebook;
-                }
-
-                if (notebook.Owner.IsStudent)
-                {
-                    students.Add(notebook.Owner);
-                }
-                else
-                {
-                    teacher = notebook.Owner;
-                }
-            }
-
-            ConversionService.SaveNotebooksToZip(ConversionService.AnnZipFilePath, notebooks);
-
-            var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
-            var classRoster = ConversionService.ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
-            ConversionService.SaveClassRosterToZip(ConversionService.AnnZipFilePath, classRoster);
-            ConversionService.SaveImagesToZip(ConversionService.AnnZipFilePath, ConversionService.AnnImageFolder);
-
-            var classesDirInfo = new DirectoryInfo(ConversionService.AnnClassesFolder);
-            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
-            var i = 1;
-            foreach (var session in sessions)
-            {
-                session.SessionTitle = $"Class {i}";
-                i++;
-            }
-
-            ConversionService.SaveSessionsToZip(ConversionService.AnnZipFilePath, sessions, authorNotebook);
         }
 
         #endregion // Tests

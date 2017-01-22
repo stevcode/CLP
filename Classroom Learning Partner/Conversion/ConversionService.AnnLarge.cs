@@ -24,21 +24,34 @@ namespace Classroom_Learning_Partner
         public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
         public static string AnnImageFolder => Path.Combine(DataService.DesktopFolderPath, "images");
 
+        public static string AssessmentCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Chapter6.Assessment");
+        public static string AssessmentNotebooksFolder => Path.Combine(AssessmentCacheFolder, "Notebooks");
+        public static string AssessmentClassesFolder => Path.Combine(AssessmentCacheFolder, "Classes");
+        public static string AssessmentZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Assessment 2014.clp");
+        public static string AssessmentImageFolder => Path.Combine(DataService.DesktopFolderPath, "assessment images");
+
         #endregion // Locations
 
         #region Conversion Loop
 
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
+            Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
             var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            Debug.WriteLine("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
+            Debug.WriteLine("Notebook Converted");
 
             foreach (var page in oldNotebook.Pages)
             {
+                Debug.WriteLine($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 var newPage = ConvertPage(page);
+                Debug.WriteLine($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 foreach (var submission in page.Submissions)
                 {
+                    Debug.WriteLine($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     var newSubmission = ConvertPage(submission);
+                    Debug.WriteLine($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     newPage.Submissions.Add(newSubmission);
                 }
 
@@ -60,16 +73,22 @@ namespace Classroom_Learning_Partner
 
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
         {
+            Debug.WriteLine($"Loading Subject To Convert: {filePath}");
             var classSubject = Ann.ClassSubject.OpenClassSubject(filePath);
+            Debug.WriteLine("Subject Loaded");
             var classRoster = ConvertAnnClassSubject(classSubject, notebook);
+            Debug.WriteLine("Subject Converted");
 
             return classRoster;
         }
 
         public static Session ConvertCacheAnnClassPeriod(string filePath)
         {
+            Debug.WriteLine($"Loading Class Period To Convert: {filePath}");
             var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
+            Debug.WriteLine("Class Period Loaded");
             var session = ConvertClassPeriod(classPeriod);
+            Debug.WriteLine("Class Period Converted");
 
             return session;
         }
@@ -237,7 +256,7 @@ namespace Classroom_Learning_Partner
 
             AddAssessmentInterpretationRegions(newPage);
             AddAssessmentRelationDefinitionTags(newPage);
-            // TODO: Tags
+            // TODO: Large Cache Tags
             ConvertPageHistory(page.History, newPage);
 
             return newPage;
