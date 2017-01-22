@@ -124,7 +124,12 @@ namespace CLP.Entities
                 CutPageObjectID = string.Empty;
             }
 
-            var cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
+            IPageObject cutPageObject = null;
+            if (!string.IsNullOrEmpty(CutPageObjectID))
+            {
+                cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
+            }
+            
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
 
@@ -184,7 +189,12 @@ namespace CLP.Entities
                 CutPageObjectID = string.Empty;
             }
 
-            var cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
+            IPageObject cutPageObject = null;
+            if (!string.IsNullOrEmpty(CutPageObjectID))
+            {
+                cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
+            }
+
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectInTrashByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
 
