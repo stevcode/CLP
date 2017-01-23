@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         RepresentationType,
         RepresentationCorrectness,
         AnswerCorrectness,
+        OverallCorrectness,
         AnswerBeforeRepresentation,
         AnswerChangeAfterRepresentation,
         //TroubleWithFactorPairs,        //Hack: For Demo
@@ -41,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StarredGroup = new PropertyGroupDescription("IsStarred");
         private static readonly PropertyGroupDescription HadHelpGroup = new PropertyGroupDescription("HadHelp");
-        private static readonly PropertyGroupDescription CorrectnessGroup = new PropertyGroupDescription("Correctness");
+        private static readonly PropertyGroupDescription OverallCorrectnessGroup = new PropertyGroupDescription("Correctness");
         private static readonly PropertyGroupDescription TroubleWithFactorPairsGroup = new PropertyGroupDescription("TroubleWithFactorPairs");
         private static readonly PropertyGroupDescription TroubleWithRemaindersGroup = new PropertyGroupDescription("TroubleWithRemainders");
         private static readonly PropertyGroupDescription TroubleWithDivisionGroup = new PropertyGroupDescription("TroubleWithDivision");
@@ -64,8 +65,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription StarredDescendingSort = new SortDescription("IsStarred", ListSortDirection.Descending);
         private static readonly SortDescription HadHelpAscendingSort = new SortDescription("HadHelp", ListSortDirection.Ascending);
         private static readonly SortDescription HadHelpDescendingSort = new SortDescription("HadHelp", ListSortDirection.Descending);
-        private static readonly SortDescription CorrectnessAscendingSort = new SortDescription("Correctness", ListSortDirection.Ascending);
-        private static readonly SortDescription CorrectnessDescendingSort = new SortDescription("Correctness", ListSortDirection.Descending);
+        private static readonly SortDescription OverallCorrectnessAscendingSort = new SortDescription("Correctness", ListSortDirection.Ascending);
+        private static readonly SortDescription OverallCorrectnessDescendingSort = new SortDescription("Correctness", ListSortDirection.Descending);
         private static readonly SortDescription TroubleWithFactorPairsAscendingSort = new SortDescription("TroubleWithFactorPairs", ListSortDirection.Ascending);
         private static readonly SortDescription TroubleWithFactorPairsDescendingSort = new SortDescription("TroubleWithFactorPairs", ListSortDirection.Descending);
         private static readonly SortDescription TroubleWithRemaindersAscendingSort = new SortDescription("TroubleWithRemainders", ListSortDirection.Ascending);
@@ -439,9 +440,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.HadHelp:
                     ApplySortAndGroupByHadHelp();
                     break;
-                //case SortAndGroupTypes.Correctness:
-                //    ApplySortAndGroupByCorrectness();
-                //    break;
+                case SortAndGroupTypes.OverallCorrectness:
+                    ApplySortAndGroupByOverallCorrectness();
+                    break;
                 //case SortAndGroupTypes.TroubleWithFactorPairs:    //Hack: For Demo
                 //    ApplySortAndGroupByTroubleWithFactorPairs();
                 //    break;
@@ -539,13 +540,13 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
-        public void ApplySortAndGroupByCorrectness()
+        public void ApplySortAndGroupByOverallCorrectness()
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
             SortedAndGroupedPages.SortDescriptions.Clear();
 
-            SortedAndGroupedPages.GroupDescriptions.Add(CorrectnessGroup);
-            SortedAndGroupedPages.SortDescriptions.Add(CorrectnessAscendingSort);
+            SortedAndGroupedPages.GroupDescriptions.Add(OverallCorrectnessGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(OverallCorrectnessAscendingSort);
 
             //HACK: for demo video
             //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);

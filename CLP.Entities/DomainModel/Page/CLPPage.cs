@@ -382,12 +382,29 @@ namespace CLP.Entities
             }
         }
 
-        public Correctness Correctness
+        public string Correctness
         {
             get
             {
                 var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-                return correctnessTag != null ? correctnessTag.Correctness : Correctness.Unknown;
+                if (correctnessTag == null)
+                {
+                    return "Unknown";
+                }
+
+                switch (correctnessTag.Correctness)
+                {
+                    case Entities.Correctness.Correct:
+                        return "COR";
+                    case Entities.Correctness.PartiallyCorrect:
+                        return "PAR";
+                    case Entities.Correctness.Incorrect:
+                        return "INC";
+                    case Entities.Correctness.Unknown:
+                        return "Unknown";
+                }
+
+                return "Unknown";
             }
         }
 
