@@ -428,7 +428,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
 
-                _dataService.InsertPageAt(Notebook, differentiatedPage, index + i, false, false);
+                _dataService.InsertPageAt(Notebook, differentiatedPage, index + i, false, false, groups);
             }
 
             var lastDifferentiatedPage = Notebook.Pages.LastOrDefault(p => p.ID == originalPage.ID);

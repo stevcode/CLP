@@ -725,7 +725,7 @@ namespace Classroom_Learning_Partner.Services
             InsertPageAt(notebook, page, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay);
         }
 
-        public void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true)
+        public void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, int numberOfDifferentiatedPages = -1)
         {
             if (isChangingPageNumbers)
             {
@@ -760,6 +760,26 @@ namespace Classroom_Learning_Partner.Services
             foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
             {
                 var newOwner = loadedNotebook.Owner;
+
+                // Dealing with differentiated pages and a student
+                if (numberOfDifferentiatedPages != -1 &&
+                    newOwner.IsStudent)
+                {
+                    // Dealing with a student without a group or a student who's group is larger than the number of differentiated pages
+                    if (string.IsNullOrWhiteSpace(newOwner.CurrentDifferentiationGroup) ||
+                        string.Compare(newOwner.CurrentDifferentiationGroup, numberOfDifferentiatedPages.ToLetter().ToUpper()) > 0)
+                    {
+                        if (page.DifferentiationLevel != "A")
+                        {
+                            continue;
+                        }
+                    }
+                    else if (newOwner.CurrentDifferentiationGroup != page.DifferentiationLevel)
+                    {
+                        continue;
+                    }
+                }
+
                 var newPage = CopyPageForNewOwner(page, newOwner);
                 newPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
                 var previousPage = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPage.PageNumber);
