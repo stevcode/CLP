@@ -58,7 +58,7 @@ namespace Classroom_Learning_Partner.Services
         // Page
         void SetCurrentPage(CLPPage page, bool isSavingOldPage = true);
         void AddPage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true);
-        void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true);
+        void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, int numberOfDifferentiatedPages = -1);
         void DeletePage(Notebook notebook, CLPPage page, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, bool isPreventingEmptyNotebook = true);
         void DeletePageAt(Notebook notebook, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, bool isPreventingEmptyNotebook = true);
         void MovePage(Notebook notebook, CLPPage page, int newPageNumber);

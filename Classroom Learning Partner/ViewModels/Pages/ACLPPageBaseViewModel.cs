@@ -291,11 +291,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, value, false));
-                SetValue(CorrectnessProperty, value);
+                RaisePropertyChanged(nameof(Correctness));
             }
         }
-
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof (Correctness), Correctness.Unknown);
 
         /// <summary>Whether the page has submissions or not.</summary>
         public bool HasSubmissions
