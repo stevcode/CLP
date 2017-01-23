@@ -317,6 +317,19 @@ namespace CLP.Entities
             }
         }
 
+        public void RefreshCachedFormattedValues()
+        {
+            foreach (var historyAction in UndoActions)
+            {
+                historyAction.CachedFormattedValue = historyAction.FormattedValue;
+            }
+
+            foreach (var historyAction in RedoActions)
+            {
+                historyAction.CachedFormattedValue = historyAction.FormattedValue;
+            }
+        }
+
         public void OptimizeTrashedItems()
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes

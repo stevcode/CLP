@@ -1248,6 +1248,7 @@ namespace Classroom_Learning_Partner
 
             newPageHistory.IsAnimating = false;
             newPageHistory.RefreshHistoryIndexes();
+            newPageHistory.RefreshCachedFormattedValues();
         }
 
         #endregion // History
