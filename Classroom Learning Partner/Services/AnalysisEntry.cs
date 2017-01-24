@@ -15,6 +15,8 @@ namespace Classroom_Learning_Partner.Services
         public const string YES = "Y";
         public const string NO = "N";
         public const string UNSUBMITTED = "UNSUBMITTED";
+        public const string NONE = "None";
+        public const string NA = "N/A";
 
         public const string PROBLEM_TYPE_1_PART = "1P";
         public const string PROBLEM_TYPE_2_PART = "2P";
@@ -38,6 +40,12 @@ namespace Classroom_Learning_Partner.Services
         public const string DIFFICULTY_LEVEL_EASY = "E";
         public const string DIFFICULTY_LEVEL_MEDIUM = "M";
         public const string DIFFICULTY_LEVEL_HARD = "H";
+
+        public const string SPECIAL_INTEREST_GROUP_CE = "CE";
+        public const string SPECIAL_INTEREST_GROUP_ZERO = "Zero";
+        public const string SPECIAL_INTEREST_GROUP_SCAF = "SCAF";
+        public const string SPECIAL_INTEREST_GROUP_2PSF = "2PSF";
+        public const string SPECIAL_INTEREST_GROUP_2PSS = "2PSS";
 
         #endregion // Constants
 
@@ -73,7 +81,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int), 0);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Time the page was most recently submitted. Marked UNSUBMITTED if never submitted.</summary>
         public string SubmissionTime
         {
             get { return GetValue<string>(SubmissionTimeProperty); }
@@ -86,7 +94,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Problem Characteristics
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Signifies the type of problem given in the page definition.</summary>
         public string ProblemType
         {
             get { return GetValue<string>(ProblemTypeProperty); }
@@ -95,7 +103,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData ProblemTypeProperty = RegisterProperty("ProblemType", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Signifies the problem on the page was either a Word Problem or Non-Word Problem.</summary>
         public string WordType
         {
             get { return GetValue<string>(WordTypeProperty); }
@@ -131,7 +139,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData DivisionTypeProperty = RegisterProperty("DivisionType", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Signifies the page uses a Multiple Choice box for the final answer.</summary>
         public string IsMultipleChoiceBoxOnPage
         {
             get { return GetValue<string>(IsMultipleChoiceBoxOnPageProperty); }
@@ -140,7 +148,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData IsMultipleChoiceBoxOnPageProperty = RegisterProperty("IsMultipleChoiceBoxOnPage", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Signifies the difficulty level of the page, if such a difficulty level was applied.</summary>
         public string DifficultyLevel
         {
             get { return GetValue<string>(DifficultyLevelProperty); }
@@ -167,16 +175,16 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData IsMultiplicationProblemUsingGroupsProperty = RegisterProperty("IsMultiplicationProblemUsingGroups", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public List<string> RequiredRepresentations
+        /// <summary>Lists representations required by the text of the problem, otherwise None.</summary>
+        public string RequiredRepresentations
         {
-            get { return GetValue<List<string>>(RequiredRepresentationsProperty); }
+            get { return GetValue<string>(RequiredRepresentationsProperty); }
             set { SetValue(RequiredRepresentationsProperty, value); }
         }
 
-        public static readonly PropertyData RequiredRepresentationsProperty = RegisterProperty("RequiredRepresentations", typeof(List<string>), () => new List<string>());
-
-        /// <summary>SUMMARY</summary>
+        public static readonly PropertyData RequiredRepresentationsProperty = RegisterProperty("RequiredRepresentations", typeof(string), string.Empty);
+        
+        /// <summary>Reaseracher specified list of types of special interest groups the page may be part of.</summary>
         public List<string> SpecialInterestGroups
         {
             get { return GetValue<List<string>>(SpecialInterestGroupsProperty); }
@@ -299,7 +307,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(DifficultyLevel);
             cellContents.Add(PageDefinitionEquation);
             cellContents.Add(IsMultiplicationProblemUsingGroups);
-            cellContents.Add(string.Join(", ", RequiredRepresentations));
+            cellContents.Add(RequiredRepresentations);
             cellContents.Add(string.Join(", ", SpecialInterestGroups));
 
             // Whole Page Characteristics
