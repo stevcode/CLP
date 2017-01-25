@@ -27,6 +27,10 @@ namespace Classroom_Learning_Partner.Services
             if (pageDefinition == null)
             {
                 entry.ProblemType = AnalysisEntry.NONE;
+                entry.LeftSideOperation = AnalysisEntry.NA;
+                entry.RightSideOperation = AnalysisEntry.NA;
+                entry.DivisionType = AnalysisEntry.NA;
+                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is AdditionRelationDefinitionTag)
             {
@@ -60,6 +64,9 @@ namespace Classroom_Learning_Partner.Services
                 {
                     entry.RightSideOperation = AnalysisEntry.NA;
                 }
+
+                entry.DivisionType = AnalysisEntry.NA;
+                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is EquivalenceRelationDefinitionTag)
             {
@@ -146,24 +153,56 @@ namespace Classroom_Learning_Partner.Services
                 {
                     entry.RightSideOperation = AnalysisEntry.NA;
                 }
+
+                entry.DivisionType = AnalysisEntry.NA;
+                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is MultiplicationRelationDefinitionTag)
             {
                 entry.ProblemType = AnalysisEntry.PROBLEM_TYPE_1_PART;
                 entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
                 entry.RightSideOperation = AnalysisEntry.NA;
+                entry.DivisionType = AnalysisEntry.NA;
+
+                var multiplicationDefinition = pageDefinition as MultiplicationRelationDefinitionTag;
+                if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
+                {
+                    entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
+                }
+                else
+                {
+                    entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
+                }
             }
             else if (pageDefinition is DivisionRelationDefinitionTag)
             {
                 entry.ProblemType = AnalysisEntry.PROBLEM_TYPE_1_PART;
                 entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_DIVISION_MISSING_NONE;
                 entry.RightSideOperation = AnalysisEntry.NA;
+
+                var divisionDefinition = pageDefinition as DivisionRelationDefinitionTag;
+                if (divisionDefinition.RelationType == DivisionRelationDefinitionTag.RelationTypes.Partitive)
+                {
+                    entry.DivisionType = AnalysisEntry.DIVISION_TYPE_PARTATIVE;
+                }
+                else if (divisionDefinition.RelationType == DivisionRelationDefinitionTag.RelationTypes.Quotative)
+                {
+                    entry.DivisionType = AnalysisEntry.DIVISION_TYPE_QUOTATIVE;
+                }
+                else
+                {
+                    entry.DivisionType = AnalysisEntry.DIVISION_TYPE_GENERAL;
+                }
+
+                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else
             {
                 entry.ProblemType = AnalysisEntry.NONE;
                 entry.LeftSideOperation = AnalysisEntry.NA;
                 entry.RightSideOperation = AnalysisEntry.NA;
+                entry.DivisionType = AnalysisEntry.NA;
+                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
 
 
