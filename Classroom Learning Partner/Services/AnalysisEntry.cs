@@ -18,6 +18,11 @@ namespace Classroom_Learning_Partner.Services
         public const string NONE = "None";
         public const string NA = "N/A";
 
+        public const string CORRECTNESS_UNKNOWN = "U";
+        public const string CORRECTNESS_CORRECT = "C";
+        public const string CORRECTNESS_INCORRECT = "I";
+        public const string CORRECTNESS_PARTIAL = "P";
+
         public const string PROBLEM_TYPE_1_PART = "1P";
         public const string PROBLEM_TYPE_2_PART = "2P";
         public const string PROBLEM_TYPE_EQUIVALENCE = "E";
@@ -112,7 +117,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData WordTypeProperty = RegisterProperty("WordType", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Designates left side's (or only side's, if no right side) multiplication/division operation type.</summary>
         public string LeftSideOperation
         {
             get { return GetValue<string>(LeftSideOperationProperty); }
@@ -121,7 +126,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData LeftSideOperationProperty = RegisterProperty("LeftSideOperation", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Designates right side's multiplication/division operation type.</summary>
         public string RightSideOperation
         {
             get { return GetValue<string>(RightSideOperationProperty); }
@@ -130,7 +135,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData RightSideOperationProperty = RegisterProperty("RightSideOperation", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Type of division if 1-Part division problem.</summary>
         public string DivisionType
         {
             get { return GetValue<string>(DivisionTypeProperty); }
@@ -157,7 +162,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData DifficultyLevelProperty = RegisterProperty("DifficultyLevel", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Equation designated by the page definition.</summary>
         public string PageDefinitionEquation
         {
             get { return GetValue<string>(PageDefinitionEquationProperty); }
@@ -166,7 +171,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData PageDefinitionEquationProperty = RegisterProperty("PageDefinitionEquation", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>If 1-Part problem is a multiplication problem that uses groups.</summary>
         public string IsMultiplicationProblemUsingGroups
         {
             get { return GetValue<string>(IsMultiplicationProblemUsingGroupsProperty); }
@@ -238,7 +243,23 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData IsMR2STEPProperty = RegisterProperty("IsMR2STEP", typeof(string), string.Empty);
 
+        /// <summary>Correctness of the Fill-In/Multiple Choice answer.</summary>
+        public string FinalAnswerCorrectness
+        {
+            get { return GetValue<string>(FinalAnswerCorrectnessProperty); }
+            set { SetValue(FinalAnswerCorrectnessProperty, value); }
+        }
 
+        public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
+
+        /// <summary>Overall correctness summary of the page.</summary>
+        public string CorrectnessSummary
+        {
+            get { return GetValue<string>(CorrectnessSummaryProperty); }
+            set { SetValue(CorrectnessSummaryProperty, value); }
+        }
+
+        public static readonly PropertyData CorrectnessSummaryProperty = RegisterProperty("CorrectnessSummary", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
         public string IsABR
@@ -260,7 +281,7 @@ namespace Classroom_Learning_Partner.Services
 
 
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Total number of the distinct ink colors used on the page.</summary>
         public int InkColorsUsedCount
         {
             get { return GetValue<int>(InkColorsUsedCountProperty); }
@@ -317,7 +338,8 @@ namespace Classroom_Learning_Partner.Services
 
             // Whole Page Analysis
             cellContents.Add(IsMR2STEP);
-            cellContents.Add("Final ANS");
+            cellContents.Add(FinalAnswerCorrectness);
+            cellContents.Add(CorrectnessSummary);
             cellContents.Add(IsABR);
             cellContents.Add(IsRAA);
             cellContents.Add("ANS Changed");
@@ -381,6 +403,7 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Analysis
             cellContents.Add("MR2STEP");
             cellContents.Add("Final ANS");
+            cellContents.Add("Correctness Summary");
             cellContents.Add("ABR");
             cellContents.Add("RAA");
             cellContents.Add("ANS Changed");

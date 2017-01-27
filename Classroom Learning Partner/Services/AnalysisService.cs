@@ -21,6 +21,14 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Page Identification
 
+            #region Set up variables
+
+            var pass3Event = page.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
+            var pass3Index = page.History.SemanticEvents.IndexOf(pass3Event);
+            var pass3 = page.History.SemanticEvents.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
+
+            #endregion // Set up variables
+
             #region Problem Characteristics
 
             var pageDefinition = page.Tags.FirstOrDefault(t => t.Category == Category.Definition);
@@ -319,6 +327,30 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
+            var correctnessSummaryTag = page.Tags.OfType<CorrectnessTag>().FirstOrDefault();
+            if (correctnessSummaryTag == null)
+            {
+                entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_UNKNOWN;
+            }
+            else
+            {
+                switch (correctnessSummaryTag.Correctness)
+                {
+                    case Correctness.Correct:
+                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_CORRECT;
+                        break;
+                    case Correctness.Incorrect:
+                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_INCORRECT;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_PARTIAL;
+                        break;
+                    default:
+                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_UNKNOWN;
+                        break;
+                }
+            }
+
             var studentInkStrokes = page.InkStrokes.Concat(page.History.TrashedInkStrokes).Where(s => s.GetStrokeOwnerID() == page.Owner.ID).ToList();
             var colorsUsed = studentInkStrokes.Select(s => s.DrawingAttributes.Color).Distinct();
             entry.InkColorsUsedCount = colorsUsed.Count();
@@ -326,10 +358,7 @@ namespace Classroom_Learning_Partner.Services
             #endregion // Whole Page Analysis
 
             #region Total History
-
-            var pass3Event = page.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
-            var pass3Index = page.History.SemanticEvents.IndexOf(pass3Event);
-            var pass3 = page.History.SemanticEvents.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
+            
             entry.FinalSemanticEvents = pass3;
 
             #endregion // Total History
