@@ -219,15 +219,60 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData IsBlankProperty = RegisterProperty("IsBlank", typeof(string), string.Empty);
-
+        
         /// <summary>SUMMARY</summary>
-        public int RepresentationsDeletedCount
+        public int ArrayDeletedCount
         {
-            get { return GetValue<int>(RepresentationsDeletedCountProperty); }
-            set { SetValue(RepresentationsDeletedCountProperty, value); }
+            get { return GetValue<int>(ArrayDeletedCountProperty); }
+            set { SetValue(ArrayDeletedCountProperty, value); }
         }
 
-        public static readonly PropertyData RepresentationsDeletedCountProperty = RegisterProperty("RepresentationsDeletedCount", typeof(int), 0);
+        public static readonly PropertyData ArrayDeletedCountProperty = RegisterProperty("ArrayDeletedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int NumberLineCreatedCount
+        {
+            get { return GetValue<int>(NumberLineCreatedCountProperty); }
+            set { SetValue(NumberLineCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData NumberLineCreatedCountProperty = RegisterProperty("NumberLineCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int NumberLineDeletedCount
+        {
+            get { return GetValue<int>(NumberLineDeletedCountProperty); }
+            set { SetValue(NumberLineDeletedCountProperty, value); }
+        }
+
+        public static readonly PropertyData NumberLineDeletedCountProperty = RegisterProperty("NumberLineDeletedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int StampDeletedCount
+        {
+            get { return GetValue<int>(StampDeletedCountProperty); }
+            set { SetValue(StampDeletedCountProperty, value); }
+        }
+
+        public static readonly PropertyData StampDeletedCountProperty = RegisterProperty("StampDeletedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int IndividualStampImageDeletedCount
+        {
+            get { return GetValue<int>(IndividualStampImageDeletedCountProperty); }
+            set { SetValue(IndividualStampImageDeletedCountProperty, value); }
+        }
+
+        public static readonly PropertyData IndividualStampImageDeletedCountProperty = RegisterProperty("IndividualStampImageDeletedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int StampImageRepresentationDeletedCount
+        {
+            get { return GetValue<int>(StampImageRepresentationDeletedCountProperty); }
+            set { SetValue(StampImageRepresentationDeletedCountProperty, value); }
+        }
+
+        public static readonly PropertyData StampImageRepresentationDeletedCountProperty = RegisterProperty("StampImageRepresentationDeletedCount", typeof(int), 0);
 
         #endregion // Whole Page Characteristics
 
@@ -334,7 +379,12 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Characteristics
             cellContents.Add(IsInkOnly);
             cellContents.Add(IsBlank);
-            cellContents.Add(RepresentationsDeletedCount.ToString());
+            cellContents.Add(ArrayDeletedCount.ToString());
+            cellContents.Add(NumberLineCreatedCount.ToString());
+            cellContents.Add(NumberLineDeletedCount.ToString());
+            cellContents.Add(StampDeletedCount.ToString());
+            cellContents.Add(IndividualStampImageDeletedCount.ToString());
+            cellContents.Add(StampImageRepresentationDeletedCount.ToString());
 
             // Whole Page Analysis
             cellContents.Add(IsMR2STEP);
@@ -380,7 +430,12 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Characteristics
             cellContents.Add("INK Only");
             cellContents.Add("Blank");
-            cellContents.Add("Reps Deleted");
+            cellContents.Add("ARR Deleted");
+            cellContents.Add("NL Created");
+            cellContents.Add("NL Deleted");
+            cellContents.Add("STA Deleted");
+            cellContents.Add("STA IMAGES Deleted");
+            cellContents.Add("ALL STA IMAGES on page Deleted");
 
             // Left Side
             cellContents.Add("Left ARR Created");

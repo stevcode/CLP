@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.Services
 
             var pass3Event = page.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "3");
             var pass3Index = page.History.SemanticEvents.IndexOf(pass3Event);
-            var pass3 = page.History.SemanticEvents.Skip(pass3Index + 1).Select(h => h.CodedValue).ToList();
+            var pass3 = page.History.SemanticEvents.Skip(pass3Index + 1).ToList();
 
             #endregion // Set up variables
 
@@ -320,7 +320,10 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Characteristics
 
-
+            entry.NumberLineCreatedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_ADD);
+            entry.NumberLineDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_DELETE);
+            entry.StampDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMP && e.EventType == Codings.EVENT_OBJECT_DELETE);
+            entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECTS && e.EventType == Codings.EVENT_OBJECT_DELETE);
 
             #endregion // Whole Page Characteristics
 
@@ -358,8 +361,9 @@ namespace Classroom_Learning_Partner.Services
             #endregion // Whole Page Analysis
 
             #region Total History
-            
-            entry.FinalSemanticEvents = pass3;
+
+            var pass3CodedValues = pass3.Select(h => h.CodedValue).ToList();
+            entry.FinalSemanticEvents = pass3CodedValues;
 
             #endregion // Total History
         }
