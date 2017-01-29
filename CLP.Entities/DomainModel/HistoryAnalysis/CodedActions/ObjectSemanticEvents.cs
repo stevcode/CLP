@@ -128,48 +128,60 @@ namespace CLP.Entities
 
         public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryActions)
         {
-            if (page == null ||
-                objectsMovedHistoryActions == null ||
-                !objectsMovedHistoryActions.Any())
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(objectsMovedHistoryActions), objectsMovedHistoryActions);
+
+            if (!objectsMovedHistoryActions.Any())
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_EMPTY_LIST, "Move, No Actions");
             }
 
             var movedPageObjects = GetMovedPageObjects(page, objectsMovedHistoryActions);
             var movedStrokes = GetMovedStrokes(page, objectsMovedHistoryActions);
 
-            if (movedPageObjects.Count > 1 ||
-                movedStrokes.Any()) // Lasso move
+            if (!movedPageObjects.Any())
+            {
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Move, No PageObject Moved");
+            }
+
+            if (movedPageObjects.Count > 1) // Lasso move
             {
                 // TODO
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_MIXED_LIST, "Move, PageObjects Moved By Lasso");
             }
 
-            if (movedPageObjects.Count != 1)
+            if (movedStrokes.Any()) // Strokes moved by Lasso
             {
-                return null;
+                // TODO
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_MIXED_LIST, "Move, Strokes Moved By Lasso");
             }
-
-            var historyIndex = objectsMovedHistoryActions.First().HistoryActionIndex;
+            
             var pageObject = movedPageObjects.First();
             var codedObject = pageObject.CodedName;
+            var eventType = Codings.EVENT_OBJECT_MOVE;
+            var historyIndex = objectsMovedHistoryActions.First().HistoryActionIndex;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+
+            // TODO: make eventInfo to describe distance travelled during move.
+            var startX = Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().X);
+            var startY = Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().Y);
+            var endX = Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().X);
+            var endY = Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().Y);
+            var eventInfo = $"({startX}, {startY}) to ({endX}, {endY})";
+            if (objectsMovedHistoryActions.Count > 1)
+            {
+                eventInfo += ", multiple";
+            }
+
             var semanticEvent = new SemanticEvent(page, objectsMovedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_OBJECT_MOVE,
+                                    EventType = eventType,
                                     CodedObjectID = codedObjectID,
-                                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
-                                    EventInformation =
-                                        string.Format("({0}, {1}) to ({2}, {3})",
-                                                      Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().X),
-                                                      Math.Round(objectsMovedHistoryActions.First().TravelledPositions.First().Y),
-                                                      Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().X),
-                                                      Math.Round(objectsMovedHistoryActions.Last().TravelledPositions.Last().Y)),
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = eventInfo,
                                     ReferencePageObjectID = pageObject.ID
-                                    // TODO: make eventInfo to describe distance travelled during move.
-                                    // note that there may be more than one objectsMovedHistoryAction in a row where
-                                    // a student moved the same pageObject several consecutive times.
                                 };
 
             return semanticEvent;
@@ -177,35 +189,40 @@ namespace CLP.Entities
 
         public static ISemanticEvent Resize(CLPPage page, List<PageObjectResizeBatchHistoryAction> objectsResizedHistoryActions)
         {
-            if (page == null ||
-                objectsResizedHistoryActions == null ||
-                !objectsResizedHistoryActions.Any())
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(objectsResizedHistoryActions), objectsResizedHistoryActions);
+
+            if (!objectsResizedHistoryActions.Any())
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsResizedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_EMPTY_LIST, "Resize, No Actions");
             }
 
             var pageObjectID = objectsResizedHistoryActions.First().PageObjectID;
             var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectID);
             if (pageObject == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsResizedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Resize, PageObject NULL");
             }
 
-            var historyIndex = objectsResizedHistoryActions.First().HistoryActionIndex;
             var codedObject = pageObject.CodedName;
+            var eventType = Codings.EVENT_OBJECT_RESIZE;
+            var historyIndex = objectsResizedHistoryActions.First().HistoryActionIndex;
             var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+
+            var startWidth = Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().X);
+            var startHeight = Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().Y);
+            var endWidth = Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().X);
+            var endHeight = Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().Y);
+            var eventInfo = $"({startWidth}, {startHeight}) to ({endWidth}, {endHeight})";
+
             var semanticEvent = new SemanticEvent(page, objectsResizedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_OBJECT_RESIZE,
+                                    EventType = eventType,
                                     CodedObjectID = codedObjectID,
-                                    CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
-                                    EventInformation =
-                                        string.Format("({0}, {1}) to ({2}, {3})",
-                                                      Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().X),
-                                                      Math.Round(objectsResizedHistoryActions.First().StretchedDimensions.First().Y),
-                                                      Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().X),
-                                                      Math.Round(objectsResizedHistoryActions.Last().StretchedDimensions.Last().Y)),
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = eventInfo,
                                     ReferencePageObjectID = pageObjectID
                                 };
 
@@ -227,7 +244,7 @@ namespace CLP.Entities
 
         public static string GetCurrentIncrementIDForPageObject(string pageObjectID, string codedObject, string codedID)
         {
-            var compoundID = string.Format("{0};{1};{2}", pageObjectID, codedObject, codedID);
+            var compoundID = $"{pageObjectID};{codedObject};{codedID}";
 
             if (!CurrentIncrementIDForPageObject.ContainsKey(compoundID))
             {
@@ -239,8 +256,8 @@ namespace CLP.Entities
 
         public static string SetCurrentIncrementIDForPageObject(string pageObjectID, string codedObject, string codedID, bool isEraseEvent = false)
         {
-            var objectAndID = string.Format("{0};{1}", codedObject, codedID);
-            var compoundID = string.Format("{0};{1};{2}", pageObjectID, codedObject, codedID);
+            var objectAndID = $"{codedObject};{codedID}";
+            var compoundID = $"{pageObjectID};{codedObject};{codedID}";
             if (!CurrentHighestIncrementIDsForCodedObjectAndID.ContainsKey(objectAndID))
             {
                 CurrentHighestIncrementIDsForCodedObjectAndID.Add(objectAndID, 0);
@@ -257,15 +274,15 @@ namespace CLP.Entities
 
         public static string GetCurrentIncrementIDForPageObject_Sub(string pageObjectID, string codedObject, string codedID, int subPosition, string subID)
         {
-            var compoundID = string.Format("{0};{1};{2};{3};{4}", pageObjectID, codedObject, codedID, subPosition, subID);
+            var compoundID = $"{pageObjectID};{codedObject};{codedID};{subPosition};{subID}";
 
             return CurrentIncrementIDForPageObject[compoundID].ToLetter();
         }
 
         public static string SetCurrentIncrementIDForPageObject_Sub(string pageObjectID, string codedObject, string codedID, int subPosition, string subID, bool isEraseEvent = false)
         {
-            var objectAndID = string.Format("{0};{1}", codedObject, subID);
-            var compoundID = string.Format("{0};{1};{2};{3};{4}", pageObjectID, codedObject, codedID, subPosition, subID);
+            var objectAndID = $"{codedObject};{subID}";
+            var compoundID = $"{pageObjectID};{codedObject};{codedID};{subPosition};{subID}";
             if (!CurrentHighestIncrementIDsForCodedObjectAndID.ContainsKey(objectAndID))
             {
                 CurrentHighestIncrementIDsForCodedObjectAndID.Add(objectAndID, 0);

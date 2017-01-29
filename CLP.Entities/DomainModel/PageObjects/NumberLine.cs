@@ -776,7 +776,7 @@ namespace CLP.Entities
             var groupedJumps = new List<List<NumberLineJumpSize>>();
 
             var buffer = new List<NumberLineJumpSize>();
-            for (int i = 0; i < jumps.Count; i++)
+            for (var i = 0; i < jumps.Count; i++)
             {
                 var currentJump = jumps[i];
                 buffer.Add(currentJump);
@@ -795,7 +795,7 @@ namespace CLP.Entities
             foreach (var jumpGroup in groupedJumps.Where(jg => jg.Any()))
             {
                 var firstJump = jumpGroup.First();
-                var jumpSegment = string.Format("{0}, {1}-{2}", firstJump.JumpSize, firstJump.StartingTickIndex, firstJump.StartingTickIndex + (firstJump.JumpSize * jumpGroup.Count));
+                var jumpSegment = $"{firstJump.JumpSize}, {firstJump.StartingTickIndex}-{firstJump.StartingTickIndex + (firstJump.JumpSize * jumpGroup.Count)}";
                 jumpSegments.Add(jumpSegment);
             }
 

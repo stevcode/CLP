@@ -11,6 +11,8 @@ namespace CLP.Entities
 
         public const string ERROR_TYPE_NULL_PAGE_OBJECT = "null pageObject";
         public const string ERROR_TYPE_NULL_STROKE = "null stroke";
+        public const string ERROR_TYPE_EMPTY_LIST = "empty list";
+        public const string ERROR_TYPE_MIXED_LIST = "mixed list";
         public const string ERROR_TYPE_MULTIPLE_CHOICE_STATUS_INCONSISTANCY = "inconsistant multiple choice status";
         public const string ERROR_TYPE_EMPTY_BUFFER = "empty buffer";
         public const string ERROR_TYPE_MIXED_BUFFER = "mixed buffer";

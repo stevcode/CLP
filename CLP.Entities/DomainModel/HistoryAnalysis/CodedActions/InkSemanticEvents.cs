@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
+using Catel;
 using CLP.InkInterpretation;
 using CLP.MachineAnalysis;
 
@@ -50,18 +51,26 @@ namespace CLP.Entities
 
         public static ISemanticEvent ChangeOrIgnore(CLPPage page, List<ObjectsOnPageChangedHistoryAction> objectsOnPageChangedHistoryActions, bool isChange = true)
         {
-            if (page == null ||
-                objectsOnPageChangedHistoryActions == null ||
-                !objectsOnPageChangedHistoryActions.Any() ||
-                !objectsOnPageChangedHistoryActions.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(objectsOnPageChangedHistoryActions), objectsOnPageChangedHistoryActions);
+
+            if (!objectsOnPageChangedHistoryActions.Any())
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_EMPTY_LIST, "ChangeOrIgnore, No Actions");
             }
+
+            if (!objectsOnPageChangedHistoryActions.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
+            {
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryActions.Cast<IHistoryAction>().ToList(), Codings.ERROR_TYPE_MIXED_LIST, "ChangeOrIgnore, No Stroke Only Actions");
+            }
+
+            var codedObject = Codings.OBJECT_INK;
+            var eventType = isChange ? Codings.EVENT_INK_CHANGE : Codings.EVENT_INK_IGNORE;
 
             var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryActions.Cast<IHistoryAction>().ToList())
                                 {
-                                    CodedObject = Codings.OBJECT_INK,
-                                    EventType = isChange ? Codings.EVENT_INK_CHANGE : Codings.EVENT_INK_IGNORE
+                                    CodedObject = codedObject,
+                                    EventType = eventType
                                 };
 
             return semanticEvent;

@@ -197,6 +197,8 @@ namespace CLP.Entities
 
             // TODO: GridToggle, DT Remainder Tiles Toggled
 
+            #region INK Change
+
             if (historyActions.All(h => h is ObjectsOnPageChangedHistoryAction))
             {
                 var objectsChangedHistoryActions = historyActions.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
@@ -215,6 +217,10 @@ namespace CLP.Entities
                     return semanticEvent;
                 }
             }
+
+            #endregion // INK Change
+
+            #region PageObject Move
 
             if (historyActions.All(h => h is ObjectsMovedBatchHistoryAction))
             {
@@ -235,6 +241,10 @@ namespace CLP.Entities
                 }
             }
 
+            #endregion // PageObject Move
+
+            #region PageObject Resize
+
             if (historyActions.All(h => h is PageObjectResizeBatchHistoryAction))
             {
                 var objectsResizedHistoryActions = historyActions.Cast<PageObjectResizeBatchHistoryAction>().ToList();
@@ -254,6 +264,10 @@ namespace CLP.Entities
                 }
             }
 
+            #endregion // PageObject Resize
+
+            #region Number Line End Points Changed
+
             if (historyActions.All(h => h is NumberLineEndPointsChangedHistoryAction))
             {
                 var endPointsChangedHistoryActions = historyActions.Cast<NumberLineEndPointsChangedHistoryAction>().ToList();
@@ -272,6 +286,10 @@ namespace CLP.Entities
                     return semanticEvent;
                 }
             }
+
+            #endregion // Number Line End Points Changed
+
+            #region Number Line Jumps Add/Remove
 
             if (historyActions.All(h => h is NumberLineJumpSizesChangedHistoryAction))
             {
@@ -293,6 +311,10 @@ namespace CLP.Entities
                     return semanticEvent;
                 }
             }
+
+            #endregion // Number Line Jumps Add/Remove
+
+            #region Multiple Choice Bubble Status Changed
 
             if (historyActions.All(h => h is MultipleChoiceBubbleStatusChangedHistoryAction))
             {
@@ -329,7 +351,7 @@ namespace CLP.Entities
                         _currentCompressedStatus = compressedStatus;
                         return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
-                    
+
                     var codedObject = Codings.OBJECT_MULTIPLE_CHOICE;
                     var eventType = string.Empty;
                     switch (_currentCompressedStatus)
@@ -373,6 +395,8 @@ namespace CLP.Entities
                     return semanticEvent;
                 }
             }
+
+            #endregion // Multiple Choice Bubble Status Changed
 
             return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MIXED_BUFFER, "Compound Action Attempt");
         }
