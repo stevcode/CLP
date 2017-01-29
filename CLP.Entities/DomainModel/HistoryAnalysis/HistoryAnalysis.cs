@@ -16,6 +16,8 @@ namespace CLP.Entities
             ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();
 
+            // TODO: Pass 0 to "update" certain ink strokes over a Fill-In Ans to appropriate historyAction?
+
             // First Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
@@ -151,6 +153,8 @@ namespace CLP.Entities
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(historyAction), historyAction);
 
+            // TODO: Division Values Changed, DT Array Snapped/Removed, Animation Stop/Start
+
             ISemanticEvent semanticEvent = null;
             TypeSwitch.On(historyAction)
                       .Case<ObjectsOnPageChangedHistoryAction>(h =>
@@ -191,11 +195,11 @@ namespace CLP.Entities
                 return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_EMPTY_BUFFER, "Compound Action Attempt");
             }
 
+            // TODO: GridToggle, DT Remainder Tiles Toggled
+
             if (historyActions.All(h => h is ObjectsOnPageChangedHistoryAction))
             {
                 var objectsChangedHistoryActions = historyActions.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
-                // TODO: Edge case that recognizes multiple bins added at once.
-
                 if (objectsChangedHistoryActions.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryAction = nextHistoryAction as ObjectsOnPageChangedHistoryAction;
