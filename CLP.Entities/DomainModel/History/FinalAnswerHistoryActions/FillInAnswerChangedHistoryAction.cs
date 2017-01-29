@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
@@ -10,39 +9,18 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public enum ChoiceBubbleStatuses
-    {
-        PartiallyFilledIn,
-        FilledIn,
-        AdditionalFilledIn,
-        ErasedPartiallyFilledIn,
-        IncompletelyErased,
-        CompletelyErased
-    }
-
-    [Serializable]
-    public class MultipleChoiceBubbleStatusChangedHistoryAction : AHistoryActionBase
+    public class FillInAnswerChangedHistoryAction : AHistoryActionBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> from scratch.</summary>
-        public MultipleChoiceBubbleStatusChangedHistoryAction() { }
+        /// <summary>Initializes <see cref="FillInAnswerChangedHistoryAction" /> from scratch.</summary>
+        public FillInAnswerChangedHistoryAction() { }
 
-        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryAction" /> is part of.</param>
-        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryAction" />.</param>
-        public MultipleChoiceBubbleStatusChangedHistoryAction(CLPPage parentPage,
-                                                              Person owner,
-                                                              MultipleChoice multipleChoice,
-                                                              int choiceBubbleIndex,
-                                                              ChoiceBubbleStatuses status,
-                                                              IEnumerable<Stroke> strokesAdded,
-                                                              IEnumerable<Stroke> strokesRemoved)
+        /// <summary>Initializes <see cref="FillInAnswerChangedHistoryAction" /> with a parent <see cref="CLPPage" />.</summary>
+        public FillInAnswerChangedHistoryAction(CLPPage parentPage, Person owner, InterpretationRegion interpretationRegion, IEnumerable<Stroke> strokesAdded, IEnumerable<Stroke> strokesRemoved)
             : base(parentPage, owner)
         {
-            MultipleChoiceID = multipleChoice.ID;
-            ChoiceBubbleIndex = choiceBubbleIndex;
-            ChoiceBubbleStatus = status;
+            InterpretationRegionID = interpretationRegion.ID;
 
             StrokeIDsAdded = strokesAdded.Select(s => s.GetStrokeID()).ToList();
             foreach (var stroke in strokesRemoved)
@@ -59,32 +37,14 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>ID of the affected Multiple Choice.</summary>
-        public string MultipleChoiceID
+        /// <summary>ID of the affected Interpretation Region</summary>
+        public string InterpretationRegionID
         {
-            get { return GetValue<string>(MultipleChoiceIDProperty); }
-            set { SetValue(MultipleChoiceIDProperty, value); }
+            get { return GetValue<string>(InterpretationRegionIDProperty); }
+            set { SetValue(InterpretationRegionIDProperty, value); }
         }
 
-        public static readonly PropertyData MultipleChoiceIDProperty = RegisterProperty("MultipleChoiceID", typeof(string), string.Empty);
-
-        /// <summary>Index of the affected choice bubble.</summary>
-        public int ChoiceBubbleIndex
-        {
-            get { return GetValue<int>(ChoiceBubbleIndexProperty); }
-            set { SetValue(ChoiceBubbleIndexProperty, value); }
-        }
-
-        public static readonly PropertyData ChoiceBubbleIndexProperty = RegisterProperty("ChoiceBubbleIndex", typeof(int), -1);
-
-        /// <summary>Status of the choice bubble after ink change occurs.</summary>
-        public ChoiceBubbleStatuses ChoiceBubbleStatus
-        {
-            get { return GetValue<ChoiceBubbleStatuses>(ChoiceBubbleStatusProperty); }
-            set { SetValue(ChoiceBubbleStatusProperty, value); }
-        }
-
-        public static readonly PropertyData ChoiceBubbleStatusProperty = RegisterProperty("ChoiceBubbleStatus", typeof(ChoiceBubbleStatuses), ChoiceBubbleStatuses.PartiallyFilledIn);
+        public static readonly PropertyData InterpretationRegionIDProperty = RegisterProperty("InterpretationRegionID", typeof(string), string.Empty);
 
         /// <summary>Unique IDs of the strokes added.</summary>
         public List<string> StrokeIDsAdded
@@ -118,9 +78,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public MultipleChoice PageObject => ParentPage.GetPageObjectByIDOnPageOrInHistory(MultipleChoiceID) as MultipleChoice;
-
-        public ChoiceBubble Bubble => PageObject.ChoiceBubbles[ChoiceBubbleIndex];
+        public InterpretationRegion PageObject => ParentPage.GetPageObjectByIDOnPageOrInHistory(InterpretationRegionID) as InterpretationRegion;
 
         public List<Stroke> StrokesAdded
         {
@@ -138,15 +96,14 @@ namespace CLP.Entities
 
         #region AHistoryActionBase Overrides
 
-        public override int AnimationDelay => 200;
+        public override int AnimationDelay => 100;
 
         protected override string FormattedReport
         {
             get
             {
-                var bubble = Bubble;
-                var formattedBubble = $"{bubble.BubbleContent} \"{bubble.Answer} {bubble.AnswerLabel}\", {(bubble.IsACorrectValue ? "Correct" : "Incorrect")}";
-                return $"{ChoiceBubbleStatus} Bubble {formattedBubble}";
+                var changeType = StrokeIDsRemoved.Any() ? "erasing" : "adding";
+                return $"Changed Fill-In Answer by {changeType} a stroke.";
             }
         }
 
@@ -160,7 +117,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -173,7 +130,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -182,16 +139,6 @@ namespace CLP.Entities
             }
 
             PageObject.ChangeAcceptedStrokes(removedStrokes, addedStrokes);
-
-            switch (ChoiceBubbleStatus)
-            {
-                case ChoiceBubbleStatuses.CompletelyErased:
-                    Bubble.IsFilledIn = true;
-                    break;
-                case ChoiceBubbleStatuses.FilledIn:
-                    Bubble.IsFilledIn = false;
-                    break;
-            }
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -202,7 +149,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -215,7 +162,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction.", HistoryActionIndex);
+                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -224,16 +171,6 @@ namespace CLP.Entities
             }
 
             PageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
-
-            switch (ChoiceBubbleStatus)
-            {
-                case ChoiceBubbleStatuses.CompletelyErased:
-                    Bubble.IsFilledIn = false;
-                    break;
-                case ChoiceBubbleStatuses.FilledIn:
-                    Bubble.IsFilledIn = true;
-                    break;
-            }
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryAction" /> so that it can call Redo() when sent to another machine.</summary>
@@ -258,7 +195,7 @@ namespace CLP.Entities
 
         public override bool IsUsingTrashedPageObject(string id)
         {
-            return MultipleChoiceID == id;
+            return InterpretationRegionID == id;
         }
 
         public override bool IsUsingTrashedInkStroke(string id)

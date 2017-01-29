@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
-using CLP.InkInterpretation;
 
 namespace CLP.Entities
 {
@@ -20,7 +22,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class InterpretationRegion : APageObjectBase
+    public class InterpretationRegion : AStrokeAccepter
     {
         #region Constructors
 
@@ -62,10 +64,7 @@ namespace CLP.Entities
 
         public override string CodedName => Codings.OBJECT_FILL_IN;
 
-        public override string CodedID
-        {
-            get { return string.Empty; } // TODO: Make this work with IncrementID
-        }
+        public override string CodedID => string.Empty; // TODO: Make this work with IncrementID
 
         public override int ZIndex => 30;
 
@@ -73,13 +72,10 @@ namespace CLP.Entities
 
         #endregion // APageObjectBase Overrides
 
-        #region Static Methods
+        #region AStrokeAccepter Overrides
 
-        public static string InterpretHandwriting(InterpretationRegion region, StrokeCollection strokes)
-        {
-            return InkInterpreter.StrokesToBestGuessText(strokes);
-        }
+        public override int StrokeHitTestPercentage => 95;
 
-        #endregion // Static Methods
+        #endregion //AStrokeAccepter Overrides
     }
 }

@@ -2289,6 +2289,12 @@ namespace Classroom_Learning_Partner
                 }
 
                 #endregion // Check for Multiple Choice Fill-In
+
+                #region Check for Interpretation Region Fill-In
+
+                // TODO:
+
+                #endregion // Check for Interpretation Region Fill-In
             }
             //Single Remove
             else if (newHistoryAction.StrokeIDsRemoved.Count == 1 &&
@@ -2444,6 +2450,12 @@ namespace Classroom_Learning_Partner
                 }
 
                 #endregion // Check for Multiple Choice Erase
+
+                #region Check for Interpretation Region Erase
+
+                // TODO:
+
+                #endregion // Check for Interpretation Region Erase
             }
             //Point Erase
             else if (newHistoryAction.StrokesRemoved.Count == 1 &&
