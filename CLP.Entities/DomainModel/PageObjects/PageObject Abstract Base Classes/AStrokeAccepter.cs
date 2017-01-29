@@ -25,10 +25,7 @@ namespace CLP.Entities
         /// <summary>Stroke must be at least this percent contained by StrokeAcceptanceBoundingBox.</summary>
         public virtual int StrokeHitTestPercentage => 95;
 
-        public virtual Rect StrokeAcceptanceBoundingBox
-        {
-            get { return new Rect(XPosition, YPosition, Width, Height); }
-        }
+        public virtual Rect StrokeAcceptanceBoundingBox => new Rect(XPosition, YPosition, Width, Height);
 
         /// <summary>Determines whether the <see cref="IStrokeAccepter" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes

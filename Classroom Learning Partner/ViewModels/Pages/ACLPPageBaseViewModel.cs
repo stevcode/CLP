@@ -1064,20 +1064,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
             bool didInteract;
 
-            var array = pageObject as CLPArray;
-            if (array != null)
+            var multipleChoice = pageObject as MultipleChoice;
+            if (multipleChoice != null)
             {
-                didInteract = CLPArrayViewModel.InteractWithAcceptedStrokes(array, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoice, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;
                 }
             }
 
-            var multipleChoice = pageObject as MultipleChoice;
-            if (multipleChoice != null)
+            var interpretationRegion = pageObject as InterpretationRegion;
+            if (interpretationRegion != null)
             {
-                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoice, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = InterpretationRegionViewModel.InteractWithAcceptedStrokes(interpretationRegion, addedStrokesList, removedStrokesList, canInteract);
+                if (didInteract)
+                {
+                    return true;
+                }
+            }
+
+            var array = pageObject as CLPArray;
+            if (array != null)
+            {
+                didInteract = CLPArrayViewModel.InteractWithAcceptedStrokes(array, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;

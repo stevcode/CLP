@@ -135,6 +135,7 @@
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
+    <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />
@@ -158,7 +159,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayRotateHistoryAction.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArraySnapHistoryAction.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\RemainderTilesVisibilityToggledHistoryAction.cs" />
-    <Compile Include="DomainModel\History\MultipleChoiceHistoryActions\MultipleChoiceBubbleStatusChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\FinalAnswerHistoryActions\MultipleChoiceBubbleStatusChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineEndPointsChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineJumpSizesChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryActions\ObjectsMovedBatchHistoryAction.cs" />
