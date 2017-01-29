@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Ink;
+using Catel;
 using CLP.InkInterpretation;
 
 namespace CLP.Entities
@@ -13,22 +14,21 @@ namespace CLP.Entities
 
         public static ISemanticEvent Rotate(CLPPage page, CLPArrayRotateHistoryAction rotateHistoryAction)
         {
-            if (page == null ||
-                rotateHistoryAction == null)
-            {
-                return null;
-            }
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(rotateHistoryAction), rotateHistoryAction);
 
             var arrayID = rotateHistoryAction.ArrayID;
             var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
             if (array == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, rotateHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Rotate, Array NULL");
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
+            var eventType = Codings.EVENT_ARRAY_ROTATE;
             var codedID = $"{rotateHistoryAction.OldRows}x{rotateHistoryAction.OldColumns}";
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
+
             var eventInfo = $"{rotateHistoryAction.OldColumns}x{rotateHistoryAction.OldRows}";
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(array.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
@@ -39,7 +39,7 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, rotateHistoryAction)
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_ARRAY_ROTATE,
+                                    EventType = eventType,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
                                     EventInformation = eventInfo,
@@ -51,35 +51,40 @@ namespace CLP.Entities
 
         public static ISemanticEvent Cut(CLPPage page, PageObjectCutHistoryAction cutHistoryAction)
         {
-            if (page == null ||
-                cutHistoryAction == null)
+            // TODO: Refactor and handle cases when something other than Array is cut.
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(cutHistoryAction), cutHistoryAction);
+
+            var cutPageObjectID = cutHistoryAction.CutPageObjectID;
+            if (string.IsNullOrWhiteSpace(cutPageObjectID))
             {
-                return null;
+                var nothingCutSemanticEvent = new SemanticEvent(page, cutHistoryAction)
+                                              {
+                                                  CodedObject = Codings.OBJECT_NOTHING,
+                                                  EventType = Codings.EVENT_CUT
+                                              };
+
+                return nothingCutSemanticEvent;
             }
 
-            var cutArrayID = cutHistoryAction.CutPageObjectID;
-            if (string.IsNullOrWhiteSpace(cutArrayID))
-            {
-                // TODO: Handle stroke cuts that didn't cut anything
-                return null;
-            }
-
-            var cutArray = page.GetPageObjectByIDOnPageOrInHistory(cutArrayID) as CLPArray;
+            var cutArray = page.GetPageObjectByIDOnPageOrInHistory(cutPageObjectID) as CLPArray;
             if (cutArray == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, cutHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Cut, Cut Array NULL");
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
+            var eventType = Codings.EVENT_CUT;
             var codedID = cutArray.GetCodedIDAtHistoryIndex(cutHistoryAction.HistoryActionIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(cutArray.ID, codedObject, codedID);
+
             var eventInfoSegments = new List<string>();
             foreach (var halvedPageObjectID in cutHistoryAction.HalvedPageObjectIDs)
             {
                 var array = page.GetPageObjectByIDOnPageOrInHistory(halvedPageObjectID) as CLPArray;
                 if (array == null)
                 {
-                    return null;
+                    return SemanticEvent.GetErrorSemanticEvent(page, cutHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Cut, Halved Array NULL");
                 }
 
                 var arrayCodedID = array.GetCodedIDAtHistoryIndex(cutHistoryAction.HistoryActionIndex + 1);
@@ -91,15 +96,10 @@ namespace CLP.Entities
             var cuttingStroke = page.GetStrokeByIDOnPageOrInHistory(cutHistoryAction.CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, cutHistoryAction, Codings.ERROR_TYPE_NULL_STROKE, "Cut, Cutting Stroke NULL");
             }
 
-            var strokeTop = cuttingStroke.GetBounds().Top;
-            var strokeBottom = cuttingStroke.GetBounds().Bottom;
-            var strokeLeft = cuttingStroke.GetBounds().Left;
-            var strokeRight = cuttingStroke.GetBounds().Right;
-
-            var isVerticalStrokeCut = Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
+            var isVerticalStrokeCut = cuttingStroke.IsVerticalStroke();
             if (isVerticalStrokeCut)
             {
                 eventInfoSegments.Add(Codings.EVENT_INFO_ARRAY_CUT_VERTICAL);
@@ -110,32 +110,35 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, cutHistoryAction)
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_ARRAY_CUT,
+                                    EventType = eventType,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
                                     EventInformation = eventInfo,
-                                    ReferencePageObjectID = cutArrayID
-                                };
+                                    ReferencePageObjectID = cutPageObjectID
+            };
 
             return semanticEvent;
         }
 
         public static ISemanticEvent Snap(CLPPage page, CLPArraySnapHistoryAction snapHistoryAction)
         {
-            if (page == null ||
-                snapHistoryAction == null)
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(snapHistoryAction), snapHistoryAction);
+
+            var persistingArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.PersistingArrayID) as CLPArray;
+            if (persistingArray == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, snapHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Snap, Persisting Array NULL");
+            }
+
+            var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.SnappedArrayID) as CLPArray;
+            if (snappedArray == null)
+            {
+                return SemanticEvent.GetErrorSemanticEvent(page, snapHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Snap, Snapped Array NULL");
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var persistingArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.PersistingArrayID) as CLPArray;
-            var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryAction.SnappedArrayID) as CLPArray;
-            if (persistingArray == null ||
-                snappedArray == null)
-            {
-                return null;
-            }
+            var eventType = Codings.EVENT_ARRAY_SNAP;
 
             // For consistency's sake, the persistingArray is always the CodedID.
             // It is the array that remains on the page, therefore it is the one
@@ -145,17 +148,18 @@ namespace CLP.Entities
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, codedID);
             var codedSubID = snappedArray.GetCodedIDAtHistoryIndex(snapHistoryAction.HistoryActionIndex);
             var incrementSubID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(snappedArray.ID, codedObject, codedSubID);
+
             var eventInfo = persistingArray.GetCodedIDAtHistoryIndex(snapHistoryAction.HistoryActionIndex + 1);
             var eventInfoIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject(persistingArray.ID, codedObject, eventInfo);
             if (!string.IsNullOrWhiteSpace(eventInfoIncrementID))
             {
                 eventInfo += " " + eventInfoIncrementID;
             }
-            // TODO: Consider changing from ARR snap [5x4, 2x4] 7x4 to ARR snap [5x4] 2x4 to 7x4?
+
             var semanticEvent = new SemanticEvent(page, snapHistoryAction)
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_ARRAY_SNAP,
+                                    EventType = eventType,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
                                     CodedObjectSubID = codedSubID,
@@ -168,27 +172,29 @@ namespace CLP.Entities
 
         public static ISemanticEvent Divide(CLPPage page, CLPArrayDivisionsChangedHistoryAction divideHistoryAction)
         {
-            if (page == null ||
-                divideHistoryAction == null)
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(divideHistoryAction), divideHistoryAction);
+            
+            var dividedArrayID = divideHistoryAction.ArrayID;
+            var dividedArray = page.GetPageObjectByIDOnPageOrInHistory(dividedArrayID) as CLPArray;
+            if (dividedArray == null)
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, divideHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Divide, Divided Array NULL");
+            }
+
+            if (divideHistoryAction.IsColumnRegionsChange == null)
+            {
+                return SemanticEvent.GetErrorSemanticEvent(page, divideHistoryAction, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "Divide, Action Missing Old and New Regions");
             }
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var dividedArrayID = divideHistoryAction.ArrayID;
-            var dividedArray = page.GetPageObjectByIDOnPageOrInHistory(dividedArrayID) as CLPArray;
-            if (dividedArray == null ||
-                divideHistoryAction.IsColumnRegionsChange == null)
-            {
-                return null;
-            }
-
+            var eventType = Codings.EVENT_ARRAY_DIVIDE;
             var codedID = dividedArray.GetCodedIDAtHistoryIndex(divideHistoryAction.HistoryActionIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(dividedArray.ID, codedObject, codedID);
-            var eventInfoSegments = new List<string>();
-
-            // QUESTION: Right now, listing all regions after divide. Alternatively, can list just new regions and have SubID for the replaced region
+            
+            // TODO: Right now, listing all regions after divide. Alternatively, can list just new regions and have SubID for the replaced region
             var index = 0;
+            var eventInfoSegments = new List<string>();
             foreach (var region in divideHistoryAction.NewRegions.OrderBy(r => r.Position))
             {
                 int regionRow;
@@ -204,7 +210,7 @@ namespace CLP.Entities
                     regionRow = (int)dividedArray.GetColumnsAndRowsAtHistoryIndex(divideHistoryAction.HistoryActionIndex).Y;
                 }
 
-                var segmentID = string.Format("{0}x{1}", regionColumn, regionRow);
+                var segmentID = $"{regionColumn}x{regionRow}";
                 var segmentIncrementID = ObjectSemanticEvents.SetCurrentIncrementIDForPageObject_Sub(dividedArray.ID, codedObject, codedID, index, segmentID);
                 if (!string.IsNullOrWhiteSpace(segmentIncrementID))
                 {
@@ -225,7 +231,7 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, divideHistoryAction)
                                 {
                                     CodedObject = codedObject,
-                                    EventType = Codings.EVENT_ARRAY_DIVIDE,
+                                    EventType = eventType,
                                     CodedObjectID = codedID,
                                     CodedObjectIDIncrement = incrementID,
                                     EventInformation = eventInfo,

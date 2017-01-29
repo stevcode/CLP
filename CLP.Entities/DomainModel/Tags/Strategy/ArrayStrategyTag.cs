@@ -108,7 +108,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_CUT)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_CUT)
                     {
                         for (int j = i + 1; j < semanticEvents.Count; j++)
                         {

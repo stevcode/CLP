@@ -5,6 +5,17 @@ namespace CLP.Entities
 {
     public static class Codings
     {
+        #region Errors
+
+        public const string OBJECT_ERROR = "ERROR";
+
+        public const string ERROR_TYPE_NULL_PAGE_OBJECT = "null pageObject";
+        public const string ERROR_TYPE_NULL_STROKE = "null stroke";
+        public const string ERROR_TYPE_EMPTY_BUFFER = "empty buffer";
+        public const string ERROR_TYPE_MIXED_BUFFER = "mixed buffer";
+
+        #endregion // Errors
+
         #region Coded Objects
 
         public const string OBJECT_NOTHING = "NOTHING";
@@ -70,7 +81,6 @@ namespace CLP.Entities
 
         #region Array Event Types
 
-        public const string EVENT_ARRAY_CUT = "cut";
         public const string EVENT_ARRAY_DIVIDE = "divide";
         public const string EVENT_ARRAY_DIVIDE_DELETE = "divide delete";
         public const string EVENT_ARRAY_DIVIDE_INK = "divide ink";
@@ -105,6 +115,18 @@ namespace CLP.Entities
         public const string EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE = "erase incomplete";
 
         #endregion // Answer Event Types
+
+        #region IParts Event Types
+
+        public const string EVENT_PARTS_VALUE_CHANGED = "parts changed";
+
+        #endregion // IParts Event Types
+
+        #region ICuttable Event Types
+
+        public const string EVENT_CUT = "cut";
+
+        #endregion // ICuttable Event Types
 
         #endregion // Event Types
 

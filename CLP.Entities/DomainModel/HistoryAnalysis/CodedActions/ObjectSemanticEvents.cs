@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Ink;
+using Catel;
 
 namespace CLP.Entities
 {
@@ -11,9 +12,10 @@ namespace CLP.Entities
 
         public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
-            if (page == null ||
-                objectsOnPageChangedHistoryAction == null ||
-                !objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
+
+            if (!objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
                 objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
@@ -24,16 +26,20 @@ namespace CLP.Entities
 
             if (addedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = addedPageObjects.First();
+
                 var codedObject = pageObject.CodedName;
+                var eventType = Codings.EVENT_OBJECT_ADD;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                var incrementID = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
-                                        EventType = Codings.EVENT_OBJECT_ADD,
+                                        EventType = eventType,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
+                                        CodedObjectIDIncrement = incrementID,
                                         ReferencePageObjectID = pageObject.ID
                                     };
 
@@ -41,10 +47,11 @@ namespace CLP.Entities
             }
             else
             {
-                // HACK
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
+                // HACK - To fix, create multiple SemEvents, eventType = "multi add", then in a later pass, combine all multi-adds into a single multi-add Event
+                // that is composed of these sequential multi-adds. This keeps ReferencePageObjectIDs intact.
                 var pageObject = addedPageObjects.First();
                 var codedObject = pageObject.CodedName;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
@@ -64,9 +71,10 @@ namespace CLP.Entities
 
         public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
-            if (page == null ||
-                objectsOnPageChangedHistoryAction == null ||
-                !objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
+
+            if (!objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
                 objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
@@ -76,16 +84,20 @@ namespace CLP.Entities
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
             if (removedPageObjects.Count == 1)
             {
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var pageObject = removedPageObjects.First();
+
                 var codedObject = pageObject.CodedName;
+                var eventType = Codings.EVENT_OBJECT_DELETE;
+                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
                 var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
+                var incrementID = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
                                         CodedObject = codedObject,
-                                        EventType = Codings.EVENT_OBJECT_DELETE,
+                                        EventType = eventType,
                                         CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID),
+                                        CodedObjectIDIncrement = incrementID,
                                         ReferencePageObjectID = pageObject.ID
                                     };
 

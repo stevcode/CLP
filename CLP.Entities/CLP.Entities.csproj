@@ -134,6 +134,7 @@
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />

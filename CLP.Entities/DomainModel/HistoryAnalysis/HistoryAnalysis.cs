@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Catel;
 using Catel.Collections;
 
 namespace CLP.Entities
@@ -10,8 +11,51 @@ namespace CLP.Entities
     {
         public static void GenerateSemanticEvents(CLPPage page)
         {
+            Argument.IsNotNull(nameof(page), page);
+
             ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();
+
+            // First Pass
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "1"
+                                            });
+
+            var initialSemanticEvents = GenerateInitialSemanticEvents(page);
+            page.History.SemanticEvents.AddRange(initialSemanticEvents);
+
+            // Second Pass
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "2"
+                                            });
+
+            var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
+            page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
+
+            // Third Pass
+            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
+                                            {
+                                                CodedObject = "PASS",
+                                                CodedObjectID = "3"
+                                            });
+
+            var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
+            page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
+
+            // Last Pass
+            GenerateTags(page, interpretedInkSemanticEvents);
+
+            #region Logging
+
+            var isPrintingLogs = false;
+            if (!isPrintingLogs)
+            {
+                return;
+            }
 
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var fileDirectory = Path.Combine(desktopDirectory, "SemanticEvents");
@@ -26,77 +70,51 @@ namespace CLP.Entities
                 File.Delete(filePath);
             }
             File.WriteAllText(filePath, "");
-            File.AppendAllText(filePath, "*****Semantic Events/Steps*****" + "\n\n");
+            File.AppendAllText(filePath, "*****Semantic Events/Steps*****\n\n");
 
-            // First Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "PASS",
-                                                CodedObjectID = "1"
-                                            });
-            var initialSemanticEvents = GenerateInitialSemanticEvents(page);
-            page.History.SemanticEvents.AddRange(initialSemanticEvents);
-
-            File.AppendAllText(filePath, "PASS [1]" + "\n");
+            File.AppendAllText(filePath, "PASS [1]\n");
             foreach (var semanticEvent in initialSemanticEvents)
             {
                 var semi = semanticEvent == initialSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
-            // Second Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "PASS",
-                                                CodedObjectID = "2"
-                                            });
-            var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
-            page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
-
-            File.AppendAllText(filePath, "\nPASS [2]" + "\n");
+            File.AppendAllText(filePath, "\nPASS [2]\n");
             foreach (var semanticEvent in clusteredInkSemanticEvents)
             {
                 var semi = semanticEvent == clusteredInkSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
-            // Third Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "PASS",
-                                                CodedObjectID = "3"
-                                            });
-            var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
-            page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
-
-            File.AppendAllText(filePath, "\nPASS [3]" + "\n");
+            File.AppendAllText(filePath, "\nPASS [3]\n");
             foreach (var semanticEvent in interpretedInkSemanticEvents)
             {
                 var semi = semanticEvent == interpretedInkSemanticEvents.Last() ? string.Empty : "; ";
                 File.AppendAllText(filePath, semanticEvent.CodedValue + semi);
             }
 
-            // Last Pass
-            GenerateTags(page, interpretedInkSemanticEvents);
-
-            File.AppendAllText(filePath, "\n\n\n*****Tags*****" + "\n\n");
+            File.AppendAllText(filePath, "\n\n\n*****Tags*****\n\n");
             foreach (var tag in page.Tags)
             {
-                File.AppendAllText(filePath, "*" + tag.FormattedName + "*\n");
-                File.AppendAllText(filePath, tag.FormattedValue + "\n\n");
+                File.AppendAllText(filePath, $"*{tag.FormattedName}*\n");
+                File.AppendAllText(filePath, $"{tag.FormattedValue}\n\n");
             }
 
-            File.AppendAllText(filePath, "\n*****History Actions*****" + "\n\n");
+            File.AppendAllText(filePath, "\n*****History Actions*****\n\n");
             foreach (var historyAction in page.History.CompleteOrderedHistoryActions)
             {
-                File.AppendAllText(filePath, historyAction.FormattedValue + "\n");
+                File.AppendAllText(filePath, $"{historyAction.FormattedValue}\n");
             }
+
+            #endregion // Logging
         }
 
         #region First Pass: Initialization
 
         public static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
         {
+            Argument.IsNotNull(nameof(page), page);
+
             var historyActionBuffer = new List<IHistoryAction>();
             var initialSemanticEvents = new List<ISemanticEvent>();
             var historyActions = page.History.CompleteOrderedHistoryActions;
@@ -130,52 +148,47 @@ namespace CLP.Entities
 
         public static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
         {
-            if (historyAction == null)
-            {
-                return null;
-            }
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(historyAction), historyAction);
 
             ISemanticEvent semanticEvent = null;
-            TypeSwitch.On(historyAction).Case<ObjectsOnPageChangedHistoryAction>(h =>
-                                                                                 {
-                                                                                     semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
-                                                                                 }).Case<PartsValueChangedHistoryAction>(h =>
-                                                                                                                         {
-                                                                                                                             semanticEvent = new SemanticEvent(page, h)
-                                                                                                                                             {
-                                                                                                                                                 CodedObject = Codings.OBJECT_STAMP,
-                                                                                                                                                 EventType = "parts",
-                                                                                                                                                 CodedObjectID = "CHANGED"
-                                                                                                                                             };
-                                                                                                                         }).Case<CLPArrayRotateHistoryAction>(h =>
-                                                                                                                                                              {
-                                                                                                                                                                  semanticEvent =
-                                                                                                                                                                      ArraySemanticEvents.Rotate(page, h);
-                                                                                                                                                              }).Case<PageObjectCutHistoryAction>(h =>
-                                                                                                                                                                                                  {
-                                                                                                                                                                                                      semanticEvent
-                                                                                                                                                                                                          =
-                                                                                                                                                                                                          ArraySemanticEvents
-                                                                                                                                                                                                              .Cut
-                                                                                                                                                                                                              (page,
-                                                                                                                                                                                                               h);
-                                                                                                                                                                                                  })
+            TypeSwitch.On(historyAction)
+                      .Case<ObjectsOnPageChangedHistoryAction>(h =>
+                                                               {
+                                                                   semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                               })
+                      .Case<PartsValueChangedHistoryAction>(h =>
+                                                                {
+                                                                    semanticEvent = StampSemanticEvents.PartsValueChanged(page, h);
+                                                                })
+                      .Case<CLPArrayRotateHistoryAction>(h =>
+                                                         {
+                                                             semanticEvent = ArraySemanticEvents.Rotate(page, h);
+                                                         })
+                      .Case<PageObjectCutHistoryAction>(h =>
+                                                        {
+                                                            semanticEvent = ArraySemanticEvents.Cut(page, h);
+                                                        })
                       .Case<CLPArraySnapHistoryAction>(h =>
                                                        {
                                                            semanticEvent = ArraySemanticEvents.Snap(page, h);
-                                                       }).Case<CLPArrayDivisionsChangedHistoryAction>(h =>
-                                                                                                      {
-                                                                                                          semanticEvent = ArraySemanticEvents.Divide(page, h);
-                                                                                                      });
+                                                       })
+                      .Case<CLPArrayDivisionsChangedHistoryAction>(h =>
+                                                                   {
+                                                                       semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                   });
 
             return semanticEvent;
         }
 
         public static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(historyActions), historyActions);
+
             if (!historyActions.Any())
             {
-                return null;
+                return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_EMPTY_BUFFER, "Compound Action Attempt");
             }
 
             if (historyActions.All(h => h is ObjectsOnPageChangedHistoryAction))
@@ -352,13 +365,13 @@ namespace CLP.Entities
                                             CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
                                             EventType = eventType,
                                             CodedObjectID = multipleChoice.CodedID,
-                                            EventInformation = string.Format("{0}, {1}", bubble.BubbleCodedID, correctness)
+                                            EventInformation = $"{bubble.BubbleCodedID}, {correctness}"
                                         };
                     return semanticEvent;
                 }
             }
 
-            return null;
+            return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MIXED_BUFFER, "Compound Action Attempt");
         }
 
         private static ChoiceBubbleStatuses? _currentCompressedStatus;
