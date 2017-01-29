@@ -207,12 +207,7 @@ namespace CLP.Entities
                         nextObjectsChangedHistoryAction.IsUsingStrokes &&
                         !nextObjectsChangedHistoryAction.IsUsingPageObjects)
                     {
-                        // HACK: Another temp hack to recognize multiple choice box answers. Normally just return null.
-                        var h = VerifyAndGenerateSingleActionEvent(page, nextHistoryAction);
-                        if (h == null)
-                        {
-                            return null;
-                        }
+                        return null;
                     }
 
                     var semanticEvent = InkSemanticEvents.ChangeOrIgnore(page, objectsChangedHistoryActions);
