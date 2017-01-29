@@ -22,6 +22,7 @@ namespace CLP.Entities
         #region Coded Objects
 
         public const string OBJECT_NOTHING = "NOTHING";
+        public const string OBJECT_PAGE_OBJECTS = "OBJECTS";
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_SHAPE = "SHAPE";
@@ -76,7 +77,9 @@ namespace CLP.Entities
         #region General PageObject Event Types
 
         public const string EVENT_OBJECT_ADD = "add";
+        public const string EVENT_OBJECT_MULTIPLE_ADD = "add multiple";
         public const string EVENT_OBJECT_DELETE = "delete";
+        public const string EVENT_OBJECT_MULTIPLE_DELETE = "delete multiple";
         public const string EVENT_OBJECT_MOVE = "move";
         public const string EVENT_OBJECT_RESIZE = "resize";
 

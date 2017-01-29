@@ -23,16 +23,21 @@ namespace CLP.Entities
             }
 
             var addedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsAdded;
-
-            if (addedPageObjects.Count == 1)
+            if (!addedPageObjects.Any())
             {
-                var pageObject = addedPageObjects.First();
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Add, No PageObjects");
+            }
 
-                var codedObject = pageObject.CodedName;
-                var eventType = Codings.EVENT_OBJECT_ADD;
+            var isMultiAdd = addedPageObjects.Count > 1;
+            var eventType = isMultiAdd ? Codings.EVENT_OBJECT_MULTIPLE_ADD : Codings.EVENT_OBJECT_ADD;
+
+            var semanticEvents = new List<ISemanticEvent>();
+            foreach (var addedPageObject in addedPageObjects)
+            {
+                var codedObject = addedPageObject.CodedName;
                 var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var incrementID = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+                var codedObjectID = addedPageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
+                var incrementID = SetCurrentIncrementIDForPageObject(addedPageObject.ID, codedObject, codedObjectID);
 
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
@@ -40,33 +45,28 @@ namespace CLP.Entities
                                         EventType = eventType,
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = incrementID,
-                                        ReferencePageObjectID = pageObject.ID
+                                        ReferencePageObjectID = addedPageObject.ID
                                     };
 
-                return semanticEvent;
+                semanticEvents.Add(semanticEvent);
             }
-            else
+
+            if (addedPageObjects.Count == 1)
             {
-                // HACK - To fix, create multiple SemEvents, eventType = "multi add", then in a later pass, combine all multi-adds into a single multi-add Event
-                // that is composed of these sequential multi-adds. This keeps ReferencePageObjectIDs intact.
-                var pageObject = addedPageObjects.First();
-                var codedObject = pageObject.CodedName;
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex + 1);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
-                                    {
-                                        CodedObject = codedObject,
-                                        EventType = Codings.EVENT_OBJECT_ADD,
-                                        CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = SetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
-                                    };
-
-                return semanticEvent;
+                return semanticEvents.First();
             }
 
-            // TODO: deal with multiple pageObjects added at once (create multiple arrays at the same time)
-            // special case for Bins
-            //return null;
+            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+
+            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+                                        {
+                                            CodedObject = compoundCodedObject,
+                                            EventType = eventType,
+                                            CodedObjectID = compoundCodedObjectID
+                                        };
+
+            return compoundSemanticEvent;
         }
 
         public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
@@ -82,15 +82,21 @@ namespace CLP.Entities
             }
 
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
-            if (removedPageObjects.Count == 1)
+            if (!removedPageObjects.Any())
             {
-                var pageObject = removedPageObjects.First();
+                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Delete, No PageObjects");
+            }
 
-                var codedObject = pageObject.CodedName;
-                var eventType = Codings.EVENT_OBJECT_DELETE;
+            var isMultiDelete = removedPageObjects.Count > 1;
+            var eventType = isMultiDelete ? Codings.EVENT_OBJECT_MULTIPLE_DELETE : Codings.EVENT_OBJECT_DELETE;
+
+            var semanticEvents = new List<ISemanticEvent>();
+            foreach (var removedPageObject in removedPageObjects)
+            {
+                var codedObject = removedPageObject.CodedName;
                 var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var incrementID = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID);
+                var codedObjectID = removedPageObject.GetCodedIDAtHistoryIndex(historyIndex);
+                var incrementID = SetCurrentIncrementIDForPageObject(removedPageObject.ID, codedObject, codedObjectID);
 
                 var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
                                     {
@@ -98,32 +104,28 @@ namespace CLP.Entities
                                         EventType = eventType,
                                         CodedObjectID = codedObjectID,
                                         CodedObjectIDIncrement = incrementID,
-                                        ReferencePageObjectID = pageObject.ID
+                                        ReferencePageObjectID = removedPageObject.ID
                                     };
 
-                return semanticEvent;
+                semanticEvents.Add(semanticEvent);
             }
-            else
+
+            if (removedPageObjects.Count == 1)
             {
-                // HACK
-                var historyIndex = objectsOnPageChangedHistoryAction.HistoryActionIndex;
-                var pageObject = removedPageObjects.First();
-                var codedObject = pageObject.CodedName;
-                var codedObjectID = pageObject.GetCodedIDAtHistoryIndex(historyIndex);
-                var semanticEvent = new SemanticEvent(page, objectsOnPageChangedHistoryAction)
-                                    {
-                                        CodedObject = codedObject,
-                                        EventType = Codings.EVENT_OBJECT_DELETE,
-                                        CodedObjectID = codedObjectID,
-                                        CodedObjectIDIncrement = GetCurrentIncrementIDForPageObject(pageObject.ID, codedObject, codedObjectID)
-                                    };
-
-                return semanticEvent;
+                return semanticEvents.First();
             }
 
-            // TODO: deal with multiple pageObjects deleted at once (lasso?)
-            // special case for Bins
-            //return null;
+            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+
+            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+                                        {
+                                            CodedObject = compoundCodedObject,
+                                            EventType = eventType,
+                                            CodedObjectID = compoundCodedObjectID
+                                        };
+
+            return compoundSemanticEvent;
         }
 
         public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryActions)
