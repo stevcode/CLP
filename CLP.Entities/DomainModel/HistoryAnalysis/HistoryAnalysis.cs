@@ -200,6 +200,7 @@ namespace CLP.Entities
             if (historyActions.All(h => h is ObjectsOnPageChangedHistoryAction))
             {
                 var objectsChangedHistoryActions = historyActions.Cast<ObjectsOnPageChangedHistoryAction>().ToList();
+
                 if (objectsChangedHistoryActions.All(h => h.IsUsingStrokes && !h.IsUsingPageObjects))
                 {
                     var nextObjectsChangedHistoryAction = nextHistoryAction as ObjectsOnPageChangedHistoryAction;
@@ -207,7 +208,7 @@ namespace CLP.Entities
                         nextObjectsChangedHistoryAction.IsUsingStrokes &&
                         !nextObjectsChangedHistoryAction.IsUsingPageObjects)
                     {
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
 
                     var semanticEvent = InkSemanticEvents.ChangeOrIgnore(page, objectsChangedHistoryActions);
@@ -226,7 +227,7 @@ namespace CLP.Entities
                     if (nextMovedHistoryAction != null &&
                         firstIDSequence.SequenceEqual(nextMovedHistoryAction.PageObjectIDs.Keys.Distinct().OrderBy(id => id).ToList()))
                     {
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
 
                     var semanticEvent = ObjectSemanticEvents.Move(page, objectsMovedHistoryActions);
@@ -245,7 +246,7 @@ namespace CLP.Entities
                     if (nextResizedHistoryAction != null &&
                         firstID == nextResizedHistoryAction.PageObjectID)
                     {
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
 
                     var semanticEvent = ObjectSemanticEvents.Resize(page, objectsResizedHistoryActions);
@@ -264,7 +265,7 @@ namespace CLP.Entities
                     if (nextEndPointsChangedHistoryAction != null &&
                         nextEndPointsChangedHistoryAction.NumberLineID == firstNumberLineID)
                     {
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
 
                     var semanticEvent = NumberLineSemanticEvents.EndPointsChange(page, endPointsChangedHistoryActions);
@@ -285,7 +286,7 @@ namespace CLP.Entities
                         nextJumpsChangedHistoryAction.NumberLineID == firstNumberLineID &&
                         isAdding == (nextJumpsChangedHistoryAction.JumpsAdded.Any() && !nextJumpsChangedHistoryAction.JumpsRemoved.Any()))
                     {
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
 
                     var semanticEvent = NumberLineSemanticEvents.JumpSizesChange(page, jumpSizesChangedHistoryActions);
@@ -296,17 +297,23 @@ namespace CLP.Entities
             if (historyActions.All(h => h is MultipleChoiceBubbleStatusChangedHistoryAction))
             {
                 var statusChangedHistoryActions = historyActions.Cast<MultipleChoiceBubbleStatusChangedHistoryAction>().ToList();
-                var currentMultipleChoiceID = statusChangedHistoryActions.First().MultipleChoiceID;
-                var currentBubbleIndex = statusChangedHistoryActions.First().ChoiceBubbleIndex;
 
+                var currentMultipleChoiceID = statusChangedHistoryActions.First().MultipleChoiceID;
+                var multipleChoice = page.GetPageObjectByIDOnPageOrInHistory(currentMultipleChoiceID);
+                if (multipleChoice == null)
+                {
+                    return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "MultipleChoiceBubbleStatusChanged, Multiple Choice NULL");
+                }
+
+                var currentBubbleIndex = statusChangedHistoryActions.First().ChoiceBubbleIndex;
                 if (statusChangedHistoryActions.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
                 {
-                    var nextStatusChangedHistoryActions = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
-
                     if (_currentCompressedStatus == null)
                     {
                         _currentCompressedStatus = statusChangedHistoryActions.First().ChoiceBubbleStatus;
                     }
+
+                    var nextStatusChangedHistoryActions = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
 
                     ChoiceBubbleStatuses? compressedStatus = null;
                     if (nextStatusChangedHistoryActions != null)
@@ -320,17 +327,10 @@ namespace CLP.Entities
                         compressedStatus != null)
                     {
                         _currentCompressedStatus = compressedStatus;
-                        return null;
+                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                     }
-
-                    var multipleChoice = page.GetPageObjectByIDOnPageOrInHistory(currentMultipleChoiceID);
-                    if (multipleChoice == null)
-                    {
-                        return null;
-                    }
-                    var bubble = statusChangedHistoryActions.First().Bubble;
-                    var correctness = bubble.IsACorrectValue ? "COR" : "INC";
-
+                    
+                    var codedObject = Codings.OBJECT_MULTIPLE_CHOICE;
                     var eventType = string.Empty;
                     switch (_currentCompressedStatus)
                     {
@@ -352,20 +352,24 @@ namespace CLP.Entities
                         case ChoiceBubbleStatuses.CompletelyErased:
                             eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE;
                             break;
-                        case null:
-                            return null;
                         default:
-                            return null;
+                            return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MULTIPLE_CHOICE_STATUS_INCONSISTANCY, "MultipleChoiceBubbleStatusChanged, _currentCompressedStatus NULL");
                     }
+                    var codedID = multipleChoice.CodedID;
+
+                    var bubble = statusChangedHistoryActions.First().Bubble;
+                    var correctness = bubble.IsACorrectValue ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
+                    var eventInfo = $"{bubble.BubbleCodedID}, {correctness}";
 
                     _currentCompressedStatus = null;
                     var semanticEvent = new SemanticEvent(page, historyActions)
                                         {
-                                            CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                            CodedObject = codedObject,
                                             EventType = eventType,
-                                            CodedObjectID = multipleChoice.CodedID,
-                                            EventInformation = $"{bubble.BubbleCodedID}, {correctness}"
+                                            CodedObjectID = codedID,
+                                            EventInformation = eventInfo
                                         };
+
                     return semanticEvent;
                 }
             }
