@@ -269,8 +269,10 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> RefineInkDivideClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var allRefinedEvents = new List<ISemanticEvent>();
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
 
+            var allRefinedEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in semanticEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&

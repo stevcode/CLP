@@ -552,6 +552,7 @@ namespace CLP.Entities
         public static List<ISemanticEvent> ClusterInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             InkSemanticEvents.InkClusters.Clear();
+
             var refinedInkEvents = InkSemanticEvents.RefineInkDivideClusters(page, semanticEvents);
             // HACK: This should be taken care of at the historyAction level, assessment cache needs another conversion to handle that.
             refinedInkEvents = InkSemanticEvents.RefineANS_FIClusters(page, refinedInkEvents);

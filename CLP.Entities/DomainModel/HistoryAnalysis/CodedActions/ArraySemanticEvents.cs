@@ -243,10 +243,8 @@ namespace CLP.Entities
 
         public static ISemanticEvent InkDivide(CLPPage page, IHistoryAction historyAction)
         {
-            if (page == null)
-            {
-                return null;
-            }
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(historyAction), historyAction);
 
             var objectsChangedHistoryAction = historyAction as ObjectsOnPageChangedHistoryAction;
             if (objectsChangedHistoryAction == null ||
@@ -266,7 +264,6 @@ namespace CLP.Entities
 
             if (strokes.Count != 1)
             {
-                // TODO: Throw error?
                 return null;
             }
 
@@ -351,7 +348,7 @@ namespace CLP.Entities
                                                                                                      position,
                                                                                                      verticalDivision,
                                                                                                      !isAddedStroke);
-                    var subIDWithIncrementID = string.Format("{0}{1}", verticalDivision, !string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty);
+                    var subIDWithIncrementID = $"{verticalDivision}{(!string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty)}";
                     subIDsWithIncrementIDs.Add(subIDWithIncrementID);
                     position++;
                 }
@@ -380,7 +377,7 @@ namespace CLP.Entities
                 horizontalDividers.Add(dividerValue);
                 horizontalDividers.Add(array.Rows);
                 horizontalDividers = horizontalDividers.Distinct().OrderBy(x => x).ToList();
-                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => string.Format("{0}x{1}", x, arrayColumnsAndRows.X));
+                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).Select(x => $"{x}x{arrayColumnsAndRows.X}");
 
                 var position = 0;
                 var subIDsWithIncrementIDs = new List<string>();
@@ -392,7 +389,7 @@ namespace CLP.Entities
                                                                                                      position,
                                                                                                      horizontalDivision,
                                                                                                      !isAddedStroke);
-                    var subIDWithIncrementID = string.Format("{0}{1}", horizontalDivision, !string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty);
+                    var subIDWithIncrementID = $"{horizontalDivision}{(!string.IsNullOrEmpty(subIncrementID) ? " " + subIncrementID : string.Empty)}";
                     subIDsWithIncrementIDs.Add(subIDWithIncrementID);
                     position++;
                 }
@@ -423,14 +420,14 @@ namespace CLP.Entities
             InkSemanticEvents.MoveStrokeToDifferentCluster(divideCluster, stroke);
 
             var codedObject = Codings.OBJECT_ARRAY;
-            var codedDescription = isAddedStroke ? Codings.EVENT_ARRAY_DIVIDE_INK : Codings.EVENT_ARRAY_DIVIDE_INK_ERASE;
+            var eventType = isAddedStroke ? Codings.EVENT_ARRAY_DIVIDE_INK : Codings.EVENT_ARRAY_DIVIDE_INK_ERASE;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
             var inkDivideEvent = new SemanticEvent(page, historyAction)
                                  {
                                      CodedObject = codedObject,
-                                     EventType = codedDescription,
+                                     EventType = eventType,
                                      CodedObjectID = codedID,
                                      CodedObjectIDIncrement = incrementID,
                                      EventInformation = eventInfo,
