@@ -328,75 +328,123 @@ namespace CLP.Entities
                 }
 
                 var currentBubbleIndex = statusChangedHistoryActions.First().ChoiceBubbleIndex;
-                if (statusChangedHistoryActions.All(h => h.MultipleChoiceID == currentMultipleChoiceID))
+                if (statusChangedHistoryActions.Any(h => h.MultipleChoiceID != currentMultipleChoiceID))
                 {
-                    if (_currentCompressedStatus == null)
-                    {
-                        _currentCompressedStatus = statusChangedHistoryActions.First().ChoiceBubbleStatus;
-                    }
-
-                    var nextStatusChangedHistoryActions = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
-
-                    ChoiceBubbleStatuses? compressedStatus = null;
-                    if (nextStatusChangedHistoryActions != null)
-                    {
-                        compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryActions.ChoiceBubbleStatus);
-                    }
-
-                    if (nextStatusChangedHistoryActions != null &&
-                        nextStatusChangedHistoryActions.MultipleChoiceID == currentMultipleChoiceID &&
-                        nextStatusChangedHistoryActions.ChoiceBubbleIndex == currentBubbleIndex &&
-                        compressedStatus != null)
-                    {
-                        _currentCompressedStatus = compressedStatus;
-                        return null; // Confirmed nextHistoryAction belongs in this Semantic Event
-                    }
-
-                    var codedObject = Codings.OBJECT_MULTIPLE_CHOICE;
-                    var eventType = string.Empty;
-                    switch (_currentCompressedStatus)
-                    {
-                        case ChoiceBubbleStatuses.PartiallyFilledIn:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL;
-                            break;
-                        case ChoiceBubbleStatuses.FilledIn:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD;
-                            break;
-                        case ChoiceBubbleStatuses.AdditionalFilledIn:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL;
-                            break;
-                        case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL;
-                            break;
-                        case ChoiceBubbleStatuses.IncompletelyErased:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
-                            break;
-                        case ChoiceBubbleStatuses.CompletelyErased:
-                            eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE;
-                            break;
-                        default:
-                            return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MULTIPLE_CHOICE_STATUS_INCONSISTANCY, "MultipleChoiceBubbleStatusChanged, _currentCompressedStatus NULL");
-                    }
-                    var codedID = multipleChoice.CodedID;
-
-                    var bubble = statusChangedHistoryActions.First().Bubble;
-                    var correctness = bubble.IsACorrectValue ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
-                    var eventInfo = $"{bubble.BubbleCodedID}, {correctness}";
-
-                    _currentCompressedStatus = null;
-                    var semanticEvent = new SemanticEvent(page, historyActions)
-                                        {
-                                            CodedObject = codedObject,
-                                            EventType = eventType,
-                                            CodedObjectID = codedID,
-                                            EventInformation = eventInfo
-                                        };
-
-                    return semanticEvent;
+                    return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MIXED_LIST, "MultipleChoiceBubbleStatusChanged, Mixed Multiple Choice IDs");
                 }
+
+                if (_currentCompressedStatus == null)
+                {
+                    _currentCompressedStatus = statusChangedHistoryActions.First().ChoiceBubbleStatus;
+                }
+
+                var nextStatusChangedHistoryAction = nextHistoryAction as MultipleChoiceBubbleStatusChangedHistoryAction;
+
+                ChoiceBubbleStatuses? compressedStatus = null;
+                if (nextStatusChangedHistoryAction != null)
+                {
+                    compressedStatus = CompressMultipleChoiceStatuses(_currentCompressedStatus, nextStatusChangedHistoryAction.ChoiceBubbleStatus);
+                }
+
+                if (nextStatusChangedHistoryAction != null &&
+                    nextStatusChangedHistoryAction.MultipleChoiceID == currentMultipleChoiceID &&
+                    nextStatusChangedHistoryAction.ChoiceBubbleIndex == currentBubbleIndex &&
+                    compressedStatus != null)
+                {
+                    _currentCompressedStatus = compressedStatus;
+                    return null; // Confirmed nextHistoryAction belongs in this Semantic Event
+                }
+
+                var codedObject = Codings.OBJECT_MULTIPLE_CHOICE;
+                var eventType = string.Empty;
+                switch (_currentCompressedStatus)
+                {
+                    case ChoiceBubbleStatuses.PartiallyFilledIn:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL;
+                        break;
+                    case ChoiceBubbleStatuses.FilledIn:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD;
+                        break;
+                    case ChoiceBubbleStatuses.AdditionalFilledIn:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL;
+                        break;
+                    case ChoiceBubbleStatuses.ErasedPartiallyFilledIn:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL;
+                        break;
+                    case ChoiceBubbleStatuses.IncompletelyErased:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
+                        break;
+                    case ChoiceBubbleStatuses.CompletelyErased:
+                        eventType = Codings.EVENT_MULTIPLE_CHOICE_ERASE;
+                        break;
+                    default:
+                        return SemanticEvent.GetErrorSemanticEvent(page,
+                                                                   historyActions,
+                                                                   Codings.ERROR_TYPE_MULTIPLE_CHOICE_STATUS_INCONSISTANCY,
+                                                                   "MultipleChoiceBubbleStatusChanged, _currentCompressedStatus NULL");
+                }
+                var codedID = multipleChoice.CodedID;
+
+                var bubble = statusChangedHistoryActions.First().Bubble;
+                var correctness = bubble.IsACorrectValue ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
+                var eventInfo = $"{bubble.BubbleCodedID}, {correctness}";
+
+                _currentCompressedStatus = null;
+                var semanticEvent = new SemanticEvent(page, historyActions)
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = eventType,
+                                        CodedObjectID = codedID,
+                                        EventInformation = eventInfo
+                                    };
+
+                return semanticEvent;
             }
 
             #endregion // Multiple Choice Bubble Status Changed
+
+            #region Fill-In Status Changed
+
+            if (historyActions.All(h => h is FillInAnswerChangedHistoryAction))
+            {
+                var statusChangedHistoryActions = historyActions.Cast<FillInAnswerChangedHistoryAction>().ToList();
+
+                var currentInterpretationID = statusChangedHistoryActions.First().InterpretationRegionID;
+                var interpretationRegion = page.GetPageObjectByIDOnPageOrInHistory(currentInterpretationID);
+                if (interpretationRegion == null)
+                {
+                    return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_NULL_PAGE_OBJECT, "FillInAnswerChangedHistoryAction, Interpretation Region NULL");
+                }
+
+                if (statusChangedHistoryActions.Any(h => h.InterpretationRegionID != currentInterpretationID))
+                {
+                    return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MIXED_LIST, "FillInAnswerChangedHistoryAction, Mixed Interpretation Region IDs");
+                }
+
+                var nextStatusChangedHistoryAction = nextHistoryAction as FillInAnswerChangedHistoryAction;
+                if (nextStatusChangedHistoryAction != null &&
+                    nextStatusChangedHistoryAction.InterpretationRegionID == currentInterpretationID)
+                {
+                    return null; // Confirmed nextHistoryAction belongs in this Semantic Event
+                }
+
+                // TODO: This is incomplete, re-work when finished digging through ink clustering.
+
+                var codedObject = Codings.OBJECT_FILL_IN;
+                var eventType = string.Empty;
+                var codedID = interpretationRegion.CodedID;
+
+                var semanticEvent = new SemanticEvent(page, historyActions)
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = eventType,
+                                        CodedObjectID = codedID
+                                    };
+
+                return semanticEvent;
+            }
+
+            #endregion // Fill-In Status Changed
 
             return SemanticEvent.GetErrorSemanticEvent(page, historyActions, Codings.ERROR_TYPE_MIXED_BUFFER, "Compound Action Attempt");
         }
