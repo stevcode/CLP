@@ -433,9 +433,10 @@ namespace CLP.Entities
 
         public static ISemanticEvent SkipCounting(CLPPage page, ISemanticEvent inkEvent)
         {
-            if (page == null ||
-                inkEvent == null ||
-                inkEvent.CodedObject != Codings.OBJECT_INK ||
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(inkEvent), inkEvent);
+
+            if (inkEvent.CodedObject != Codings.OBJECT_INK ||
                 !(inkEvent.EventType == Codings.EVENT_INK_ADD || inkEvent.EventType == Codings.EVENT_INK_ERASE))
             {
                 return null;
@@ -446,6 +447,7 @@ namespace CLP.Entities
             {
                 return null;
             }
+
             var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
             if (array == null)
             {
@@ -475,9 +477,10 @@ namespace CLP.Entities
             var formattedSkips = FormatInterpretedSkipCountGroups(interpretedRowValues);
             var formattedSkipsOnPage = FormatInterpretedSkipCountGroups(interpretedRowValuesOnPage);
 
-            var formattedInterpretation = $"{formattedSkips};\n\t{formattedSkipsOnPage}";
+            var formattedInterpretation = $"{formattedSkips}; {formattedSkipsOnPage}";
 
             var codedObject = Codings.OBJECT_ARRAY;
+            var eventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE;
             var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
             var location = inkEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP) ? "right" : "left";
@@ -487,7 +490,7 @@ namespace CLP.Entities
             var semanticEvent = new SemanticEvent(page, inkEvent)
             {
                 CodedObject = codedObject,
-                EventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE,
+                EventType = eventType,
                 CodedObjectID = codedID,
                 CodedObjectIDIncrement = incrementID,
                 EventInformation = eventInfo,
