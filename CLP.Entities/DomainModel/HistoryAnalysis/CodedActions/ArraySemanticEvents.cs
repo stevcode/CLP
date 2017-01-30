@@ -1247,7 +1247,7 @@ namespace CLP.Entities
 
         public static string FormatInterpretedSkipCountGroups(List<string> interpretedRowValues)
         {
-            var formattedSkips = string.Format("\"{0}\"", string.Join("\" \"", interpretedRowValues));
+            var formattedSkips = $"\"{string.Join("\" \"", interpretedRowValues)}\"";
             return formattedSkips;
         }
 

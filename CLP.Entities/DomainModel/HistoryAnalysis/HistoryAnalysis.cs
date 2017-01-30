@@ -556,12 +556,13 @@ namespace CLP.Entities
             InkSemanticEvents.DefineMultipleChoiceClusters(page, preProcessedSemanticEvents);
             InkSemanticEvents.DefineFillInClusters(page, preProcessedSemanticEvents);
             InkSemanticEvents.DefineArrayInkDivideClusters(page, preProcessedSemanticEvents);
+            InkSemanticEvents.DefineSkipCountClusters(page, preProcessedSemanticEvents);
 
             // Pass 2.1: OPTICS Clustering
             InkSemanticEvents.GenerateInitialInkClusters(preProcessedSemanticEvents);
 
-
-            InkSemanticEvents.RefineSkipCountClusters(page, preProcessedSemanticEvents);
+            // Pass 2.3: 
+            
 
             
             // TODO: Rename/fix - Refine Temporal Clusters

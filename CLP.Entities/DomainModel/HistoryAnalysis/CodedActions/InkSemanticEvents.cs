@@ -234,6 +234,14 @@ namespace CLP.Entities
 
         public static void DefineMultipleChoiceClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
+            if (!semanticEvents.Any())
+            {
+                return;
+            }
+
             var multipleChoiceSemanticEvents = semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE).ToList();
             var eventsGroupedByMultipleChoicePageObject = multipleChoiceSemanticEvents.GroupBy(e => e.ReferencePageObjectID).ToList();
             foreach (var group in eventsGroupedByMultipleChoicePageObject)
@@ -260,6 +268,14 @@ namespace CLP.Entities
 
         public static void DefineFillInClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
+            if (!semanticEvents.Any())
+            {
+                return;
+            }
+
             var fillInSemanticEvents = semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_FILL_IN).ToList();
             var eventsGroupedByInterpretationRegionPageObject = fillInSemanticEvents.GroupBy(e => e.ReferencePageObjectID).ToList();
             foreach (var group in eventsGroupedByInterpretationRegionPageObject)
@@ -286,6 +302,14 @@ namespace CLP.Entities
 
         public static void DefineArrayInkDivideClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
+            if (!semanticEvents.Any())
+            {
+                return;
+            }
+
             var inkDivideSemanticEvents =
                 semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_ARRAY && (e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)).ToList();
             var eventsGroupedByArrayPageObject = inkDivideSemanticEvents.GroupBy(e => e.ReferencePageObjectID).ToList();
@@ -311,12 +335,185 @@ namespace CLP.Entities
             }
         }
 
+        public static void DefineSkipCountClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
+        {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
+            if (!semanticEvents.Any())
+            {
+                return;
+            }
+
+            // This code looks for any of the following patterns for each array, where all other Event types are ignored:
+            // ARR add, INK change, ARR delete/ARR move/End
+            // ARR move, INK change, ARR delete/ARR move/End
+            // When one of the above patterns is recognized, the start and end historyIndex and associated arrayID are stored in a list
+            // of patternEndPoints. Every identified patternEndPoint will be analyzed at that point in history for skip counting
+            // and any skip count strokes found at that point will be isolated in their own clusters.
+            var patternStartPoints = new Dictionary<string, string>();
+            var patternEndPoints = new List<dynamic>();
+
+            #region Recognized Pattern End Points
+
+            foreach (var currentSemanticEvent in semanticEvents)
+            {
+                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARRAY)
+                {
+                    var arrayID = currentSemanticEvent.ReferencePageObjectID;
+
+                    if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                    {
+                        if (!patternStartPoints.Keys.Contains(arrayID))
+                        {
+                            var startPattern = $"{Codings.EVENT_OBJECT_ADD};{currentSemanticEvent.HistoryActions.First().HistoryActionIndex}";
+                            patternStartPoints.Add(arrayID, startPattern);
+                        }
+                    }
+                    else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
+                    {
+                        var startPattern = $"{Codings.EVENT_OBJECT_MOVE};{currentSemanticEvent.HistoryActions.First().HistoryActionIndex}";
+                        if (patternStartPoints.Keys.Contains(arrayID))
+                        {
+                            if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
+                            {
+                                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                                var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
+                                patternEndPoints.Add(new
+                                {
+                                    ArrayID = arrayID,
+                                    StartHistoryIndex = startHistoryIndex,
+                                    EndHistoryIndex = endHistoryIndex
+                                });
+                            }
+
+                            patternStartPoints[arrayID] = startPattern;
+                        }
+                        else
+                        {
+                            patternStartPoints.Add(arrayID, startPattern);
+                        }
+                    }
+                    else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
+                    {
+                        if (!patternStartPoints.Keys.Contains(arrayID))
+                        {
+                            continue;
+                        }
+
+                        if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
+                        {
+                            var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                            var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
+                            patternEndPoints.Add(new
+                            {
+                                ArrayID = arrayID,
+                                StartHistoryIndex = startHistoryIndex,
+                                EndHistoryIndex = endHistoryIndex
+                            });
+                        }
+
+                        patternStartPoints.Remove(arrayID);
+                    }
+                }
+                else if (currentSemanticEvent.EventType == Codings.EVENT_INK_CHANGE)
+                {
+                    var arrayIDs = patternStartPoints.Keys.ToList();
+                    foreach (var arrayID in arrayIDs)
+                    {
+                        var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                        var startPattern = $"{Codings.EVENT_INK_CHANGE};{startHistoryIndex}";
+                        patternStartPoints[arrayID] = startPattern;
+                    }
+                }
+            }
+
+            foreach (var arrayID in patternStartPoints.Keys)
+            {
+                if (!patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
+                {
+                    continue;
+                }
+
+                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
+                var endHistoryIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
+                patternEndPoints.Add(new
+                {
+                    ArrayID = arrayID,
+                    StartHistoryIndex = startHistoryIndex,
+                    EndHistoryIndex = endHistoryIndex
+                });
+            }
+
+            #endregion // Recognized Pattern End Points
+
+            #region Test for Skip Counting at Pattern End Points
+
+            // Test for skip counting at each patternEndPoint. If it exists at the given point in history, move all skip 
+            // count strokes from their current clusters into a new cluster for that historyIndex and tag as ARRskip cluster type.
+            foreach (var patternEndPoint in patternEndPoints)
+            {
+                var arrayID = (string)patternEndPoint.ArrayID;
+                var startHistoryIndex = int.Parse((string)patternEndPoint.StartHistoryIndex);
+                var endHistoryIndex = (int)patternEndPoint.EndHistoryIndex;
+
+                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
+                if (array == null)
+                {
+                    continue;
+                }
+
+                var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes(startHistoryIndex, endHistoryIndex);
+                var strokeGroupPerRowHistory = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesAddedToPage, endHistoryIndex);
+                var interpretedRowValuesHistory = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowHistory, endHistoryIndex);
+                var isSkipCountingHistory = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesHistory);
+
+                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(endHistoryIndex);
+                var strokeGroupPerRowOnPage = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
+                var interpretedRowValuesOnPage = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
+                var isSkipCountingOnPage = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesOnPage);
+
+                if (isSkipCountingHistory || isSkipCountingOnPage)
+                {
+                    var skipCluster = new InkCluster
+                    {
+                        ClusterType = InkCluster.ClusterTypes.ARRskip,
+                        PageObjectReferenceID = arrayID,
+                        LocationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP
+                    };
+                    var skipStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                    var skipStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
+                    var skipStrokes = skipStrokesHistory.Concat(skipStrokesOnPage).Distinct().ToList();
+                    foreach (var stroke in skipStrokes)
+                    {
+                        var currentCluster = GetContainingCluster(stroke);
+                        if (currentCluster.ClusterType != InkCluster.ClusterTypes.InkDivide)
+                        {
+                            MoveStrokeToDifferentCluster(skipCluster, stroke);
+                        }
+                    }
+                    InkClusters.Add(skipCluster);
+                }
+
+                // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ARReqn.
+            }
+
+            #endregion // Test for Skip Counting at Pattern End Points
+        }
+
         #endregion // Pre-Clustering
 
         #region OPTICS Clustering
 
         public static void GenerateInitialInkClusters(List<ISemanticEvent> semanticEvents)
         {
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
+            if (!semanticEvents.Any())
+            {
+                return;
+            }
+
             var inkEvents = semanticEvents.Where(h => h.CodedObject == Codings.OBJECT_INK && h.EventType == Codings.EVENT_INK_CHANGE).ToList();
             var historyActions = inkEvents.SelectMany(h => h.HistoryActions).OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokesAdded = historyActions.SelectMany(i => i.StrokesAdded).ToList();
@@ -407,186 +604,7 @@ namespace CLP.Entities
 
 
 
-        public static void RefineSkipCountClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
-        {
-            if (!semanticEvents.Any())
-            {
-                return;
-            }
-
-            // This code looks for any of the following patterns for each array, where all other Event types are ignored:
-            // ARR add, INK change, ARR delete/ARR move/End
-            // ARR move, INK change, ARR delete/ARR move/End
-            // When one of the above patterns is recognized, the start and end historyIndex and associated arrayID are stored in a list
-            // of patternEndPoints. Every identified patternEndPoint will be analyzed at that point in history for skip counting
-            // and any skip count strokes found at that point will be isolated in their own clusters.
-            var patternStartPoints = new Dictionary<string, string>();
-            var patternEndPoints = new List<dynamic>();
-
-            foreach (var currentSemanticEvent in semanticEvents)
-            {
-                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARRAY)
-                {
-                    var arrayID = currentSemanticEvent.ReferencePageObjectID;
-
-                    if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
-                    {
-                        if (!patternStartPoints.Keys.Contains(arrayID))
-                        {
-                            var startPattern = string.Format("{0};{1}", Codings.EVENT_OBJECT_ADD, currentSemanticEvent.HistoryActions.First().HistoryActionIndex);
-                            patternStartPoints.Add(arrayID, startPattern);
-                        }
-                    }
-                    else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
-                    {
-                        var startPattern = string.Format("{0};{1}", Codings.EVENT_OBJECT_MOVE, currentSemanticEvent.HistoryActions.First().HistoryActionIndex);
-                        if (patternStartPoints.Keys.Contains(arrayID))
-                        {
-                            if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
-                            {
-                                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                                var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
-                                patternEndPoints.Add(new
-                                                     {
-                                                         ArrayID = arrayID,
-                                                         StartHistoryIndex = startHistoryIndex,
-                                                         EndHistoryIndex = endHistoryIndex
-                                                     });
-                            }
-
-                            patternStartPoints[arrayID] = startPattern;
-                        }
-                        else
-                        {
-                            patternStartPoints.Add(arrayID, startPattern);
-                        }
-                    }
-                    else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                    {
-                        if (!patternStartPoints.Keys.Contains(arrayID))
-                        {
-                            continue;
-                        }
-
-                        if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
-                        {
-                            var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                            var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
-                            patternEndPoints.Add(new
-                                                 {
-                                                     ArrayID = arrayID,
-                                                     StartHistoryIndex = startHistoryIndex,
-                                                     EndHistoryIndex = endHistoryIndex
-                                                 });
-                        }
-
-                        patternStartPoints.Remove(arrayID);
-                    }
-                }
-                else if (currentSemanticEvent.EventType == Codings.EVENT_INK_CHANGE)
-                {
-                    var arrayIDs = patternStartPoints.Keys.ToList();
-                    foreach (var arrayID in arrayIDs)
-                    {
-                        var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                        var startPattern = string.Format("{0};{1}", Codings.EVENT_INK_CHANGE, startHistoryIndex);
-                        patternStartPoints[arrayID] = startPattern;
-                    }
-                }
-            }
-
-            foreach (var arrayID in patternStartPoints.Keys)
-            {
-                if (!patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
-                {
-                    continue;
-                }
-
-                var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                var endHistoryIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
-                patternEndPoints.Add(new
-                                     {
-                                         ArrayID = arrayID,
-                                         StartHistoryIndex = startHistoryIndex,
-                                         EndHistoryIndex = endHistoryIndex
-                                     });
-            }
-
-            // Test for skip counting at each patternEndPoint. If it exists at the given point in history, move all skip 
-            // count strokes from their current clusters into a new cluster for that historyIndex and tag as ARRskip cluster type.
-            foreach (var patternEndPoint in patternEndPoints)
-            {
-                var arrayID = (string)patternEndPoint.ArrayID;
-                var startHistoryIndex = int.Parse((string)patternEndPoint.StartHistoryIndex);
-                var endHistoryIndex = (int)patternEndPoint.EndHistoryIndex;
-
-                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
-                if (array == null)
-                {
-                    continue;
-                }
-
-                var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes(startHistoryIndex, endHistoryIndex);
-                var strokeGroupPerRowHistory = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesAddedToPage, endHistoryIndex);
-                var interpretedRowValuesHistory = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowHistory, endHistoryIndex);
-                var isSkipCountingHistory = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesHistory);
-
-                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(endHistoryIndex);
-                var strokeGroupPerRowOnPage = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
-                var interpretedRowValuesOnPage = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
-                var isSkipCountingOnPage = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesOnPage);
-
-                if (!isSkipCountingHistory &&
-                    !isSkipCountingOnPage)
-                {
-                    continue;
-                }
-
-                var skipCluster = new InkCluster(new StrokeCollection())
-                                  {
-                                      ClusterType = InkCluster.ClusterTypes.ARRskip,
-                                      PageObjectReferenceID = arrayID,
-                                      LocationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP
-                                  };
-                InkClusters.Add(skipCluster);
-
-                var skipStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
-                var skipStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
-                var skipStrokes = skipStrokesHistory.Concat(skipStrokesOnPage).Distinct().ToList();
-                foreach (var stroke in skipStrokes)
-                {
-                    MoveStrokeToDifferentCluster(skipCluster, stroke);
-                }
-
-                // TODO: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ARReqn.
-
-                var arrEqnCluster = new InkCluster(new StrokeCollection())
-                                    {
-                                        ClusterType = InkCluster.ClusterTypes.PossibleARReqn,
-                                        PageObjectReferenceID = arrayID,
-                                        LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER
-                                    };
-                InkClusters.Add(arrEqnCluster);
-
-                var rejectedStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key == -1).SelectMany(kv => kv.Value).Distinct().ToList();
-                var rejectedStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key == -1).SelectMany(kv => kv.Value).Distinct().ToList();
-                var rejectedStrokes = rejectedStrokesHistory.Concat(rejectedStrokesOnPage).Distinct().Where(s => !skipStrokes.Contains(s)).ToList();
-                var bounds = array.GetBoundsAtHistoryIndex(endHistoryIndex);
-                foreach (var stroke in rejectedStrokes)
-                {
-                    var strokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, endHistoryIndex);
-                    var isStrokeOverArray = strokeCopy.HitTest(bounds, 90);
-                    if (isStrokeOverArray)
-                    {
-                        var currentCluster = GetContainingCluster(stroke);
-                        if (currentCluster.ClusterType != InkCluster.ClusterTypes.InkDivide)
-                        {
-                            MoveStrokeToDifferentCluster(arrEqnCluster, stroke);
-                        }
-                    }
-                }
-            }
-        }
+        
 
         #endregion // Clustering
 
