@@ -318,6 +318,7 @@ namespace CLP.Entities
             var inkEvents = semanticEvents.Where(h => h.CodedObject == Codings.OBJECT_INK && h.EventType == Codings.EVENT_INK_CHANGE).ToList();
             var historyActions = inkEvents.SelectMany(h => h.HistoryActions).OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokesAdded = historyActions.SelectMany(i => i.StrokesAdded).ToList();
+
             var unclusteredStrokes = new StrokeCollection();
             var smallStrokes = strokesAdded.Where(s => s.IsInvisiblySmall()).ToList();
             foreach (var smallStroke in smallStrokes)
@@ -325,14 +326,17 @@ namespace CLP.Entities
                 strokesAdded.Remove(smallStroke);
                 unclusteredStrokes.Add(smallStroke);
             }
+
             var strokeClusters = new List<StrokeCollection>();
 
             if (strokesAdded.Count > 1)
             {
-                var maxEpsilon = 1000;
-                var minimumStrokesInCluster = 1;
+                const int MAX_EPSILON = 1000;
+                const int MINIMUM_STROKES_IN_CLUSTER = 1;
+
                 Func<Stroke, Stroke, double> distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
-                var optics = new OPTICS<Stroke>(maxEpsilon, minimumStrokesInCluster, strokesAdded, distanceEquation);
+
+                var optics = new OPTICS<Stroke>(MAX_EPSILON, MINIMUM_STROKES_IN_CLUSTER, strokesAdded, distanceEquation);
                 optics.BuildReachability();
                 var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
@@ -435,17 +439,6 @@ namespace CLP.Entities
             {
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
-
-            //Debug.WriteLine("Num of Clusters: {0}", InkClusters.Count);
-            //Debug.WriteLine("Num of Strokes in IGNORED: {0}", ignoredCluster.Strokes.Count);
-
-            // HACK: INK ignore testing
-            //foreach (var stroke in ignoredCluster.Strokes)
-            //{
-            //    stroke.DrawingAttributes.Width = 12;
-            //    stroke.DrawingAttributes.Height = 12;
-            //    stroke.DrawingAttributes.Color = Colors.DarkCyan;
-            //}
         }
 
         public static void RefineSkipCountClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
