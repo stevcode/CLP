@@ -8,7 +8,7 @@ namespace CLP.Entities
 {
     public static class ObjectSemanticEvents
     {
-        #region Verify And Generate Methods
+        #region Initialization
 
         public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
@@ -231,9 +231,9 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        #endregion // Verify And Generate Methods
+        #endregion // Initialization
 
-        #region Utility Methods
+        #region Utility
 
         private static readonly Dictionary<string, int> CurrentHighestIncrementIDsForCodedObjectAndID = new Dictionary<string, int>();
         private static readonly Dictionary<string, int> CurrentIncrementIDForPageObject = new Dictionary<string, int>();
@@ -314,6 +314,6 @@ namespace CLP.Entities
             return historyActions.OfType<PageObjectResizeBatchHistoryAction>().Select(h => page.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
         }
 
-        #endregion // Utility Methods
+        #endregion // Utility
     }
 }

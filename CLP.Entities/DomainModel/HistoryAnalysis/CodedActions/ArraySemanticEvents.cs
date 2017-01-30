@@ -10,7 +10,7 @@ namespace CLP.Entities
 {
     public static class ArraySemanticEvents
     {
-        #region Static Methods
+        #region Initialization
 
         public static ISemanticEvent Rotate(CLPPage page, CLPArrayRotateHistoryAction rotateHistoryAction)
         {
@@ -37,14 +37,14 @@ namespace CLP.Entities
             }
 
             var semanticEvent = new SemanticEvent(page, rotateHistoryAction)
-                                {
-                                    CodedObject = codedObject,
-                                    EventType = eventType,
-                                    CodedObjectID = codedID,
-                                    CodedObjectIDIncrement = incrementID,
-                                    EventInformation = eventInfo,
-                                    ReferencePageObjectID = arrayID
-                                };
+            {
+                CodedObject = codedObject,
+                EventType = eventType,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                EventInformation = eventInfo,
+                ReferencePageObjectID = arrayID
+            };
 
             return semanticEvent;
         }
@@ -59,10 +59,10 @@ namespace CLP.Entities
             if (string.IsNullOrWhiteSpace(cutPageObjectID))
             {
                 var nothingCutSemanticEvent = new SemanticEvent(page, cutHistoryAction)
-                                              {
-                                                  CodedObject = Codings.OBJECT_NOTHING,
-                                                  EventType = Codings.EVENT_CUT
-                                              };
+                {
+                    CodedObject = Codings.OBJECT_NOTHING,
+                    EventType = Codings.EVENT_CUT
+                };
 
                 return nothingCutSemanticEvent;
             }
@@ -108,13 +108,13 @@ namespace CLP.Entities
             var eventInfo = string.Join(", ", eventInfoSegments);
 
             var semanticEvent = new SemanticEvent(page, cutHistoryAction)
-                                {
-                                    CodedObject = codedObject,
-                                    EventType = eventType,
-                                    CodedObjectID = codedID,
-                                    CodedObjectIDIncrement = incrementID,
-                                    EventInformation = eventInfo,
-                                    ReferencePageObjectID = cutPageObjectID
+            {
+                CodedObject = codedObject,
+                EventType = eventType,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                EventInformation = eventInfo,
+                ReferencePageObjectID = cutPageObjectID
             };
 
             return semanticEvent;
@@ -157,15 +157,15 @@ namespace CLP.Entities
             }
 
             var semanticEvent = new SemanticEvent(page, snapHistoryAction)
-                                {
-                                    CodedObject = codedObject,
-                                    EventType = eventType,
-                                    CodedObjectID = codedID,
-                                    CodedObjectIDIncrement = incrementID,
-                                    CodedObjectSubID = codedSubID,
-                                    CodedObjectSubIDIncrement = incrementSubID,
-                                    EventInformation = eventInfo
-                                };
+            {
+                CodedObject = codedObject,
+                EventType = eventType,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                CodedObjectSubID = codedSubID,
+                CodedObjectSubIDIncrement = incrementSubID,
+                EventInformation = eventInfo
+            };
 
             return semanticEvent;
         }
@@ -174,7 +174,7 @@ namespace CLP.Entities
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(divideHistoryAction), divideHistoryAction);
-            
+
             var dividedArrayID = divideHistoryAction.ArrayID;
             var dividedArray = page.GetPageObjectByIDOnPageOrInHistory(dividedArrayID) as CLPArray;
             if (dividedArray == null)
@@ -191,7 +191,7 @@ namespace CLP.Entities
             var eventType = Codings.EVENT_ARRAY_DIVIDE;
             var codedID = dividedArray.GetCodedIDAtHistoryIndex(divideHistoryAction.HistoryActionIndex);
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(dividedArray.ID, codedObject, codedID);
-            
+
             // TODO: Right now, listing all regions after divide. Alternatively, can list just new regions and have SubID for the replaced region
             var index = 0;
             var eventInfoSegments = new List<string>();
@@ -229,17 +229,21 @@ namespace CLP.Entities
             var eventInfo = string.Join(", ", eventInfoSegments);
 
             var semanticEvent = new SemanticEvent(page, divideHistoryAction)
-                                {
-                                    CodedObject = codedObject,
-                                    EventType = eventType,
-                                    CodedObjectID = codedID,
-                                    CodedObjectIDIncrement = incrementID,
-                                    EventInformation = eventInfo,
-                                    ReferencePageObjectID = dividedArrayID
-                                };
+            {
+                CodedObject = codedObject,
+                EventType = eventType,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                EventInformation = eventInfo,
+                ReferencePageObjectID = dividedArrayID
+            };
 
             return semanticEvent;
         }
+
+        #endregion // Initialization
+
+        #region Clustering
 
         public static ISemanticEvent InkDivide(CLPPage page, IHistoryAction historyAction)
         {
@@ -411,17 +415,21 @@ namespace CLP.Entities
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
             var inkDivideEvent = new SemanticEvent(page, historyAction)
-                                 {
-                                     CodedObject = codedObject,
-                                     EventType = eventType,
-                                     CodedObjectID = codedID,
-                                     CodedObjectIDIncrement = incrementID,
-                                     EventInformation = eventInfo,
-                                     ReferencePageObjectID = array.ID
-                                 };
+            {
+                CodedObject = codedObject,
+                EventType = eventType,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                EventInformation = eventInfo,
+                ReferencePageObjectID = array.ID
+            };
 
             return inkDivideEvent;
         }
+
+        #endregion // Clustering
+
+        #region Interpretation
 
         public static ISemanticEvent SkipCounting(CLPPage page, ISemanticEvent inkEvent)
         {
@@ -477,14 +485,14 @@ namespace CLP.Entities
             var eventInfo = $"{formattedInterpretation}, {location}";
 
             var semanticEvent = new SemanticEvent(page, inkEvent)
-                                {
-                                    CodedObject = codedObject,
-                                    EventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE,
-                                    CodedObjectID = codedID,
-                                    CodedObjectIDIncrement = incrementID,
-                                    EventInformation = eventInfo,
-                                    ReferencePageObjectID = referenceArrayID
-                                };
+            {
+                CodedObject = codedObject,
+                EventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE,
+                CodedObjectID = codedID,
+                CodedObjectIDIncrement = incrementID,
+                EventInformation = eventInfo,
+                ReferencePageObjectID = referenceArrayID
+            };
 
             return semanticEvent;
         }
@@ -531,13 +539,13 @@ namespace CLP.Entities
                 cluster.ClusterType = InkCluster.ClusterTypes.ArrayEquation;
 
                 var semanticEvent = new SemanticEvent(page, inkEvent)
-                                    {
-                                        CodedObject = Codings.OBJECT_ARRAY,
-                                        EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
-                                        CodedObjectID = objectID,
-                                        EventInformation = string.Format("\"{0}\"", interpretation),
-                                        ReferencePageObjectID = referenceArrayID
-                                    };
+                {
+                    CodedObject = Codings.OBJECT_ARRAY,
+                    EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
+                    CodedObjectID = objectID,
+                    EventInformation = string.Format("\"{0}\"", interpretation),
+                    ReferencePageObjectID = referenceArrayID
+                };
 
                 return semanticEvent;
             }
@@ -564,13 +572,13 @@ namespace CLP.Entities
                 var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
 
                 var semanticEvent = new SemanticEvent(page, inkEvent)
-                                    {
-                                        CodedObject = Codings.OBJECT_ARRAY,
-                                        EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
-                                        CodedObjectID = objectID,
-                                        EventInformation = formattedInterpretation,
-                                        ReferencePageObjectID = referenceArrayID
-                                    };
+                {
+                    CodedObject = Codings.OBJECT_ARRAY,
+                    EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
+                    CodedObjectID = objectID,
+                    EventInformation = formattedInterpretation,
+                    ReferencePageObjectID = referenceArrayID
+                };
 
                 return semanticEvent;
             }
@@ -578,27 +586,9 @@ namespace CLP.Entities
             return null;
         }
 
-        #endregion // Static Methods
+        #endregion // Interpretation
 
-        #region Utility Methods
-
-        public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
-        {
-            var historyIndex = 0;
-            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
-            if (lastHistoryAction != null)
-            {
-                historyIndex = lastHistoryAction.HistoryActionIndex;
-            }
-
-            var strokes = page.InkStrokes.ToList();
-
-            var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex, isDebugging);
-            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
-            var isSkipCounting = IsSkipCounting(interpretedRowValues);
-
-            return isSkipCounting ? FormatInterpretedSkipCountGroups(interpretedRowValues) : string.Empty;
-        }
+        #region Utility
 
         // Dictionary key "-1" contains all rejected strokes.
         public static Dictionary<int, StrokeCollection> GroupPossibleSkipCountStrokes(CLPPage page, CLPArray array, List<Stroke> strokes, int historyIndex, bool isDebugging = false)
@@ -1384,81 +1374,6 @@ namespace CLP.Entities
             //return true;
         }
 
-        public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
-        {
-            var historyIndex = 0;
-            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
-            if (lastHistoryAction != null)
-            {
-                historyIndex = lastHistoryAction.HistoryActionIndex;
-            }
-
-            var strokes = page.InkStrokes.ToList();
-
-            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 45.0;
-            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 51.5;
-
-            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
-            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
-            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
-            var arrayVisualBottom = arrayPosition.Y + arrayDimensions.Y - array.LabelLength;
-            var arrayVisualLeft = arrayPosition.X + array.LabelLength;
-            var halfGridSquareSize = array.GridSquareSize * 0.5;
-
-            var skipCountStrokes = new List<Stroke>();
-            var acceptedBoundary = new Rect(arrayVisualLeft - halfGridSquareSize,
-                                            arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD,
-                                            array.GridSquareSize * (arrayColumnsAndRows.X + 1),
-                                            BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
-
-            foreach (var stroke in strokes)
-            {
-                // Rule 1: Rejected for being invisibly small.
-                if (stroke.IsInvisiblySmall())
-                {
-                    continue;
-                }
-
-                var strokeBounds = stroke.GetBounds();
-
-                // Rule 3: Rejected for being outside the accepted skip counting bounds
-                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
-                if (intersect.IsEmpty)
-                {
-                    continue;
-                }
-
-                var intersectPercentage = intersect.Area() / strokeBounds.Area();
-                if (intersectPercentage <= 0.50)
-                {
-                    continue;
-                }
-
-                if (intersectPercentage <= 0.90)
-                {
-                    var weightedCenterY = stroke.WeightedCenter().Y;
-                    if (weightedCenterY < arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD ||
-                        weightedCenterY > arrayVisualBottom + BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD)
-                    {
-                        continue;
-                    }
-                }
-
-                skipCountStrokes.Add(stroke);
-            }
-
-            // No strokes at all inside acceptable boundary
-            if (!skipCountStrokes.Any())
-            {
-                return string.Empty;
-            }
-
-            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipCountStrokes));
-            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
-
-            return guess;
-        }
-
         private class HeuristicValue
         {
             public enum HeuristicDesignation
@@ -1891,7 +1806,104 @@ namespace CLP.Entities
             return result;
         }
 
-        #endregion // Utility Methods
+        #endregion // Utility
+
+        #region Static Analysis
+
+        public static string StaticSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            var historyIndex = 0;
+            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
+            {
+                historyIndex = lastHistoryAction.HistoryActionIndex;
+            }
+
+            var strokes = page.InkStrokes.ToList();
+
+            var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex, isDebugging);
+            var interpretedRowValues = InterpretSkipCountGroups(page, array, strokeGroupPerRow, historyIndex);
+            var isSkipCounting = IsSkipCounting(interpretedRowValues);
+
+            return isSkipCounting ? FormatInterpretedSkipCountGroups(interpretedRowValues) : string.Empty;
+        }
+
+        public static string StaticBottomSkipCountAnalysis(CLPPage page, CLPArray array, bool isDebugging = false)
+        {
+            var historyIndex = 0;
+            var lastHistoryAction = page.History.CompleteOrderedHistoryActions.LastOrDefault();
+            if (lastHistoryAction != null)
+            {
+                historyIndex = lastHistoryAction.HistoryActionIndex;
+            }
+
+            var strokes = page.InkStrokes.ToList();
+
+            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 45.0;
+            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 51.5;
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var arrayVisualBottom = arrayPosition.Y + arrayDimensions.Y - array.LabelLength;
+            var arrayVisualLeft = arrayPosition.X + array.LabelLength;
+            var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+            var skipCountStrokes = new List<Stroke>();
+            var acceptedBoundary = new Rect(arrayVisualLeft - halfGridSquareSize,
+                                            arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD,
+                                            array.GridSquareSize * (arrayColumnsAndRows.X + 1),
+                                            BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
+
+            foreach (var stroke in strokes)
+            {
+                // Rule 1: Rejected for being invisibly small.
+                if (stroke.IsInvisiblySmall())
+                {
+                    continue;
+                }
+
+                var strokeBounds = stroke.GetBounds();
+
+                // Rule 3: Rejected for being outside the accepted skip counting bounds
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.50)
+                {
+                    continue;
+                }
+
+                if (intersectPercentage <= 0.90)
+                {
+                    var weightedCenterY = stroke.WeightedCenter().Y;
+                    if (weightedCenterY < arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD ||
+                        weightedCenterY > arrayVisualBottom + BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD)
+                    {
+                        continue;
+                    }
+                }
+
+                skipCountStrokes.Add(stroke);
+            }
+
+            // No strokes at all inside acceptable boundary
+            if (!skipCountStrokes.Any())
+            {
+                return string.Empty;
+            }
+
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(skipCountStrokes));
+            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+
+            return guess;
+        }
+
+        #endregion // Static Analysis
 
         #region Logging
 

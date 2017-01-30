@@ -6,7 +6,7 @@ namespace CLP.Entities
 {
     public static class NumberLineSemanticEvents
     {
-        #region Static Methods
+        #region Initialization
 
         public static ISemanticEvent EndPointsChange(CLPPage page, List<NumberLineEndPointsChangedHistoryAction> endPointsChangedHistoryActions)
         {
@@ -110,6 +110,6 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        #endregion // Static Methods
+        #endregion // Initialization
     }
 }

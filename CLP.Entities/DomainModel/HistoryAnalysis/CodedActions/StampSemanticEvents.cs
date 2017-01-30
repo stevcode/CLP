@@ -4,7 +4,7 @@ namespace CLP.Entities
 {
     public static class StampSemanticEvents
     {
-        #region Static Methods
+        #region Initialization
 
         public static ISemanticEvent PartsValueChanged(CLPPage page, PartsValueChangedHistoryAction partsValueChangedHistoryAction)
         {
@@ -38,6 +38,6 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        #endregion // Static Methods
+        #endregion // Initialization
     }
 }

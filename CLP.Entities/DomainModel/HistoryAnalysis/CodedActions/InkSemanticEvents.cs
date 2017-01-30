@@ -1083,7 +1083,7 @@ namespace CLP.Entities
 
         #endregion // Interpretation
 
-        #region Utility Static Methods
+        #region Utility
 
         public static List<Stroke> GetOrderStrokesWereAddedToPage(CLPPage page, List<Stroke> strokes)
         {
@@ -1372,6 +1372,6 @@ namespace CLP.Entities
             return Codings.EVENT_INFO_INK_LOCATION_NONE;
         }
 
-        #endregion // Utility Static Methods
+        #endregion // Utility
     }
 }
