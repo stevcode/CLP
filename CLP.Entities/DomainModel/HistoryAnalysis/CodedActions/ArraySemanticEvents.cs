@@ -437,7 +437,8 @@ namespace CLP.Entities
             Argument.IsNotNull(nameof(inkEvent), inkEvent);
 
             if (inkEvent.CodedObject != Codings.OBJECT_INK ||
-                !(inkEvent.EventType == Codings.EVENT_INK_ADD || inkEvent.EventType == Codings.EVENT_INK_ERASE))
+                !(inkEvent.EventType == Codings.EVENT_INK_ADD || 
+                  inkEvent.EventType == Codings.EVENT_INK_ERASE))
             {
                 return null;
             }
@@ -502,10 +503,12 @@ namespace CLP.Entities
 
         public static ISemanticEvent ArrayEquation(CLPPage page, ISemanticEvent inkEvent)
         {
-            if (page == null ||
-                inkEvent == null ||
-                inkEvent.CodedObject != Codings.OBJECT_INK ||
-                !(inkEvent.EventType == Codings.EVENT_INK_ADD || inkEvent.EventType == Codings.EVENT_INK_ERASE))
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(inkEvent), inkEvent);
+
+            if (inkEvent.CodedObject != Codings.OBJECT_INK ||
+                !(inkEvent.EventType == Codings.EVENT_INK_ADD || 
+                  inkEvent.EventType == Codings.EVENT_INK_ERASE))
             {
                 return null;
             }
@@ -515,13 +518,14 @@ namespace CLP.Entities
             {
                 return null;
             }
+
             var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
             if (array == null)
             {
                 return null;
             }
 
-            var objectID = array.GetCodedIDAtHistoryIndex(inkEvent.HistoryActions.First().HistoryActionIndex);
+            var codedID = array.GetCodedIDAtHistoryIndex(inkEvent.HistoryActions.First().HistoryActionIndex);
             var isEqnAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
 
             var strokes = isEqnAdd
@@ -530,60 +534,60 @@ namespace CLP.Entities
 
             var firstStroke = strokes.First();
             var cluster = InkSemanticEvents.GetContainingCluster(firstStroke);
-            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARReqn)
+            switch (cluster.ClusterType)
             {
-                var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
-                if (interpretation == null ||
-                    !isEqnAdd)
+                case InkCluster.ClusterTypes.Unknown:
                 {
-                    return null;
+                    if (!isEqnAdd)
+                    {
+                        return null;
+                    }
+
+                    var orderedStrokes = InkSemanticEvents.GetOrderStrokesWereAddedToPage(page, strokes);
+                    var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(orderedStrokes));
+                    if (interpretation == null)
+                    {
+                        return null;
+                    }
+
+                    cluster.ClusterType = InkCluster.ClusterTypes.ArrayEquation;
+
+                    var semanticEvent = new SemanticEvent(page, inkEvent)
+                                        {
+                                            CodedObject = Codings.OBJECT_ARRAY,
+                                            EventType = Codings.EVENT_ARRAY_EQN,
+                                            CodedObjectID = codedID,
+                                            EventInformation = $"\"{interpretation}\"",
+                                            ReferencePageObjectID = referenceArrayID
+                                        };
+
+                    return semanticEvent;
                 }
-
-                cluster.ClusterType = InkCluster.ClusterTypes.ArrayEquation;
-
-                var semanticEvent = new SemanticEvent(page, inkEvent)
-                {
-                    CodedObject = Codings.OBJECT_ARRAY,
-                    EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
-                    CodedObjectID = objectID,
-                    EventInformation = string.Format("\"{0}\"", interpretation),
-                    ReferencePageObjectID = referenceArrayID
-                };
-
-                return semanticEvent;
-            }
-
-            if (cluster.ClusterType == InkCluster.ClusterTypes.ArrayEquation)
-            {
-                List<string> interpretations;
-                if (!isEqnAdd)
+                case InkCluster.ClusterTypes.ArrayEquation:
                 {
                     var orderedStrokes = InkSemanticEvents.GetOrderStrokesWereAddedToPage(page, strokes);
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                    var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                    var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    var changedInterpretation = $"\"{interpretation}\"";
+
+                    var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, inkEvent.HistoryActions.Last().HistoryActionIndex);
+                    var orderedStrokesOnPage = InkSemanticEvents.GetOrderStrokesWereAddedToPage(page, strokesOnPage);
+                    var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(orderedStrokesOnPage)) ?? string.Empty;
+                    onPageInterpretation = $"\"{onPageInterpretation}\"";
+
+                    var formattedInterpretation = $"{changedInterpretation}; {onPageInterpretation}";
+
+                    var semanticEvent = new SemanticEvent(page, inkEvent)
+                                        {
+                                            CodedObject = Codings.OBJECT_ARRAY,
+                                            EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
+                                            CodedObjectID = codedID,
+                                            EventInformation = formattedInterpretation,
+                                            ReferencePageObjectID = referenceArrayID
+                                        };
+
+                    return semanticEvent;
                 }
-                else
-                {
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
-                }
-
-                var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
-                var changedInterpretation = string.Format("\"{0}\"", interpretation);
-
-                var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, inkEvent.HistoryActions.Last().HistoryActionIndex);
-                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokesOnPage)) ?? string.Empty;
-                onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
-                var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
-
-                var semanticEvent = new SemanticEvent(page, inkEvent)
-                {
-                    CodedObject = Codings.OBJECT_ARRAY,
-                    EventType = isEqnAdd ? Codings.EVENT_ARRAY_EQN : Codings.EVENT_ARRAY_EQN_ERASE,
-                    CodedObjectID = objectID,
-                    EventInformation = formattedInterpretation,
-                    ReferencePageObjectID = referenceArrayID
-                };
-
-                return semanticEvent;
             }
 
             return null;
