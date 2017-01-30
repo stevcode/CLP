@@ -608,8 +608,8 @@ namespace CLP.Entities
                 else if (semanticEvent.CodedObject == Codings.OBJECT_FILL_IN &&
                          semanticEvent.EventType == Codings.EVENT_FILL_IN_CHANGE)
                 {
-                    // TODO: Include below like INK change processing
-                    //preProcessedSemanticEvents = InkSemanticEvents.RefineANS_FIClusters(page, preProcessedSemanticEvents);
+                    var interpretedSemanticEvents = InkSemanticEvents.ProcessFinalAnswerFillInChangeSemanticEvent(page, semanticEvent);
+                    allInterpretedSemanticEvents.AddRange(interpretedSemanticEvents);
                 }
                 else
                 {

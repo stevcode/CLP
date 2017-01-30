@@ -662,11 +662,11 @@ namespace CLP.Entities
             if (historyActionBuffer.Any())
             {
                 var processedInkEvent = ProcessINKChangeHistoryActionBuffer(page,
-                                                                                previousClusterReference,
-                                                                                historyActionBuffer,
-                                                                                isPreviousInkAdd,
-                                                                                historyActions.Last().HistoryActionIndex + 1,
-                                                                                previousStroke);
+                                                                            previousClusterReference,
+                                                                            historyActionBuffer,
+                                                                            isPreviousInkAdd,
+                                                                            historyActions.Last().HistoryActionIndex + 1,
+                                                                            previousStroke);
 
                 processedInkEvents.Add(processedInkEvent);
             }
@@ -834,6 +834,32 @@ namespace CLP.Entities
             }
 
             return null;
+        }
+
+        public static List<ISemanticEvent> ProcessFinalAnswerFillInChangeSemanticEvent(CLPPage page, ISemanticEvent semanticEvent)
+        {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvent), semanticEvent);
+
+            if (semanticEvent.CodedObject != Codings.OBJECT_FILL_IN ||
+                semanticEvent.EventType != Codings.EVENT_FILL_IN_CHANGE)
+            {
+                return null;
+            }
+
+            var interpretationRegion = page.GetPageObjectByIDOnPageOrInHistory(semanticEvent.ReferencePageObjectID) as InterpretationRegion;
+            if (interpretationRegion == null)
+            {
+                return null;
+            }
+
+            var processedEvents = new List<ISemanticEvent>();
+
+            var historyActions = semanticEvent.HistoryActions.Cast<FillInAnswerChangedHistoryAction>().OrderBy(h => h.HistoryActionIndex).ToList();
+
+
+
+            return processedEvents;
         }
 
         public static List<ISemanticEvent> RefineANS_FIClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
