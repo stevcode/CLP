@@ -18,26 +18,17 @@ namespace CLP.Entities
             FinalAnswerFillIn,
             FinalAnswerMultipleChoice,
             InkDivide,
+            ArraySkipCounting,
             PossibleARITH,
             ARITH,
             PossibleARReqn,
-            ARReqn,
-            ARRskip
+            ARReqn
         }
 
         public const string IGNORE_NAME = "IGNORE";
         public const string ANS_MC_NAME = "ANS MC";
         public const string ANS_FI_NAME = "ANS FI";
         public const string INK_DIVIDE_NAME = "INK DIVIDE";
-
-        public InkCluster(StrokeCollection strokes)
-        {
-            Strokes = strokes;
-            ClusterName = string.Empty;
-            ClusterType = ClusterTypes.Unknown;
-            PageObjectReferenceID = string.Empty;
-            LocationReference = Codings.EVENT_INFO_INK_LOCATION_NONE;
-        }
 
         public InkCluster()
         {
@@ -52,7 +43,7 @@ namespace CLP.Entities
         public ClusterTypes ClusterType { get; set; }
         public string PageObjectReferenceID { get; set; }
         public string LocationReference { get; set; }
-        public StrokeCollection Strokes { get; set; }
+        public StrokeCollection Strokes { get; }
 
         public List<Stroke> GetClusterStrokesOnPageAtHistoryIndex(CLPPage page, int historyIndex)
         {
@@ -110,10 +101,10 @@ namespace CLP.Entities
             var ignoreCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.Ignore);
             if (ignoreCluster == null)
             {
-                cluster = new InkCluster(new StrokeCollection())
-                {
-                    ClusterType = InkCluster.ClusterTypes.Ignore
-                };
+                cluster = new InkCluster
+                          {
+                              ClusterType = InkCluster.ClusterTypes.Ignore
+                          };
                 InkClusters.Add(cluster);
             }
             else
@@ -127,11 +118,11 @@ namespace CLP.Entities
 
         public static string GetNextAvailableClusterName()
         {
-            var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName) ||
-                                                               c.ClusterName != InkCluster.IGNORE_NAME ||
-                                                               c.ClusterName != InkCluster.ANS_MC_NAME ||
-                                                               c.ClusterName != InkCluster.ANS_FI_NAME ||
-                                                               c.ClusterName != InkCluster.INK_DIVIDE_NAME);
+            var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName) &&
+                                                               (c.ClusterName != InkCluster.IGNORE_NAME ||
+                                                                c.ClusterName != InkCluster.ANS_MC_NAME ||
+                                                                c.ClusterName != InkCluster.ANS_FI_NAME ||
+                                                                c.ClusterName != InkCluster.INK_DIVIDE_NAME));
             numberOfNamedClusters++;
             return numberOfNamedClusters.ToLetter().ToUpper();
         }
@@ -450,7 +441,7 @@ namespace CLP.Entities
             #region Test for Skip Counting at Pattern End Points
 
             // Test for skip counting at each patternEndPoint. If it exists at the given point in history, move all skip 
-            // count strokes from their current clusters into a new cluster for that historyIndex and tag as ARRskip cluster type.
+            // count strokes from their current clusters into a new cluster for that historyIndex and tag as ArraySkipCounting cluster type.
             foreach (var patternEndPoint in patternEndPoints)
             {
                 var arrayID = (string)patternEndPoint.ArrayID;
@@ -476,11 +467,11 @@ namespace CLP.Entities
                 if (isSkipCountingHistory || isSkipCountingOnPage)
                 {
                     var skipCluster = new InkCluster
-                    {
-                        ClusterType = InkCluster.ClusterTypes.ARRskip,
-                        PageObjectReferenceID = arrayID,
-                        LocationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP
-                    };
+                                      {
+                                          ClusterType = InkCluster.ClusterTypes.ArraySkipCounting,
+                                          PageObjectReferenceID = arrayID,
+                                          LocationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP
+                                      };
                     var skipStrokesHistory = strokeGroupPerRowHistory.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                     var skipStrokesOnPage = strokeGroupPerRowOnPage.Where(kv => kv.Key != 0 && kv.Key != -1).SelectMany(kv => kv.Value).Distinct().ToList();
                     var skipStrokes = skipStrokesHistory.Concat(skipStrokesOnPage).Distinct().ToList();
@@ -596,30 +587,25 @@ namespace CLP.Entities
             {
                 var inkCluster = new InkCluster();
                 MoveStrokesToDifferentCluster(inkCluster, strokeCluster.ToList());
-                InkClusters.Add(new InkCluster(strokeCluster));
+                InkClusters.Add(inkCluster);
             }
         }
 
         #endregion // OPTICS Clustering
 
+        #region Refine OPTICS Clusters
 
-
-        
-
-        #endregion // Clustering
-
-        /// <summary>Processes "INK change" event into "INK strokes (erase) [ID: location RefObject [RefObjectID]]" events</summary>
-        /// <param name="page">Parent page the semanticEvent belongs to.</param>
-        /// <param name="semanticEvent">"INK change" semanticEvent to process</param>
+        /// <summary>Processes "INK change" event into "INK strokes (erase) [ID] location RefObject [RefObjectID]" events</summary>
         public static List<ISemanticEvent> ProcessInkChangeSemanticEvent(CLPPage page, ISemanticEvent semanticEvent)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvent), semanticEvent);
+
             var processedInkEvents = new List<ISemanticEvent>();
 
             var historyActions = semanticEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().OrderBy(h => h.HistoryActionIndex).ToList();
-            var historyActionBuffer = new List<IHistoryAction>();
 
             var firstHistoryAction = historyActions.First();
-            historyActionBuffer.Add(firstHistoryAction);
             var previousStrokes = firstHistoryAction.StrokesAdded;
             var isPreviousInkAdd = true;
             if (!previousStrokes.Any())
@@ -630,6 +616,11 @@ namespace CLP.Entities
 
             var previousStroke = previousStrokes.First();
             var previousClusterReference = GetContainingCluster(previousStroke);
+
+            var historyActionBuffer = new List<IHistoryAction>
+                                      {
+                                          firstHistoryAction
+                                      };
 
             for (var i = 1; i < historyActions.Count; i++)
             {
@@ -646,93 +637,16 @@ namespace CLP.Entities
                 var currentClusterReference = GetContainingCluster(currentStroke);
 
                 var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd || previousClusterReference != currentClusterReference;
-
                 if (isBreakCondition)
                 {
-                    if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.Ignore)
-                    {
-                        var inkIgnoreEvent = new SemanticEvent(page, historyActionBuffer)
-                                             {
-                                                 CodedObject = Codings.OBJECT_INK,
-                                                 EventType = Codings.EVENT_INK_IGNORE
-                                             };
-                        processedInkEvents.Add(inkIgnoreEvent);
-                    }
-                    else
-                    {
-                        var processedInkEvent = new SemanticEvent(page, historyActionBuffer)
-                                                {
-                                                    CodedObject = Codings.OBJECT_INK,
-                                                    EventType = isPreviousInkAdd ? Codings.EVENT_INK_ADD : Codings.EVENT_INK_ERASE
-                                                };
+                    var processedInkEvent = ProcessINKChangeHistoryActionBuffer(page,
+                                                                                previousClusterReference,
+                                                                                historyActionBuffer,
+                                                                                isPreviousInkAdd,
+                                                                                currentHistoryAction.HistoryActionIndex,
+                                                                                previousStroke);
 
-                        if (string.IsNullOrEmpty(previousClusterReference.ClusterName))
-                        {
-                            var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName));
-                            previousClusterReference.ClusterName = numberOfNamedClusters.ToLetter().ToUpper();
-                        }
-                        processedInkEvent.CodedObjectID = previousClusterReference.ClusterName;
-
-                        var previousHistoryIndex = currentHistoryAction.HistoryActionIndex - 1;
-                        if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.ARRskip)
-                        {
-                            var arrayID = previousClusterReference.PageObjectReferenceID;
-                            var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
-                            if (array != null)
-                            {
-                                var locationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP;
-                                var codedObject = Codings.OBJECT_ARRAY;
-                                var codedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
-
-                                processedInkEvent.EventInformation = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
-                                processedInkEvent.ReferencePageObjectID = arrayID;
-                            }
-                        }
-                        else if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.PossibleARReqn)
-                        {
-                            var arrayID = previousClusterReference.PageObjectReferenceID;
-                            var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
-                            if (array != null)
-                            {
-                                var locationReference = Codings.EVENT_INFO_INK_LOCATION_OVER;
-                                var codedObject = Codings.OBJECT_ARRAY;
-                                var codedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
-
-                                processedInkEvent.EventInformation = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
-                                processedInkEvent.ReferencePageObjectID = arrayID;
-                            }
-                        }
-                        else
-                        {
-                            var pageObjectsOnPage = page.GetPageObjectsOnPageAtHistoryIndex(previousHistoryIndex);
-                            var pageObjectReference = FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, previousStroke, previousHistoryIndex);
-                            var locationReference = Codings.EVENT_INFO_INK_LOCATION_NONE;
-                            if (pageObjectReference != null)
-                            {
-                                locationReference = Codings.EVENT_INFO_INK_LOCATION_OVER;
-                            }
-                            else
-                            {
-                                var clusterCentroid = previousClusterReference.Strokes.WeightedCentroid();
-
-                                pageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, clusterCentroid, previousHistoryIndex);
-                                if (pageObjectReference != null)
-                                {
-                                    locationReference = FindLocationReferenceAtHistoryLocation(page, pageObjectReference, clusterCentroid, previousHistoryIndex);
-                                }
-                            }
-
-                            if (pageObjectReference != null)
-                            {
-                                var codedObject = pageObjectReference.CodedName;
-                                var codedID = pageObjectReference.GetCodedIDAtHistoryIndex(previousHistoryIndex);
-                                processedInkEvent.EventInformation = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
-                                processedInkEvent.ReferencePageObjectID = pageObjectReference.ID;
-                            }
-                        }
-
-                        processedInkEvents.Add(processedInkEvent);
-                    }
+                    processedInkEvents.Add(processedInkEvent);
 
                     historyActionBuffer.Clear();
                 }
@@ -745,80 +659,102 @@ namespace CLP.Entities
 
             if (historyActionBuffer.Any())
             {
-                if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.Ignore)
-                {
-                    var inkIgnoreEvent = new SemanticEvent(page, historyActionBuffer)
-                                         {
-                                             CodedObject = Codings.OBJECT_INK,
-                                             EventType = Codings.EVENT_INK_IGNORE
-                                         };
-                    processedInkEvents.Add(inkIgnoreEvent);
-                }
-                else
-                {
-                    var processedInkEvent = new SemanticEvent(page, historyActionBuffer)
-                                            {
-                                                CodedObject = Codings.OBJECT_INK,
-                                                EventType = isPreviousInkAdd ? Codings.EVENT_INK_ADD : Codings.EVENT_INK_ERASE
-                                            };
+                var processedInkEvent = ProcessINKChangeHistoryActionBuffer(page,
+                                                                                previousClusterReference,
+                                                                                historyActionBuffer,
+                                                                                isPreviousInkAdd,
+                                                                                historyActions.Last().HistoryActionIndex + 1,
+                                                                                previousStroke);
 
-                    if (string.IsNullOrEmpty(previousClusterReference.ClusterName))
-                    {
-                        var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName));
-                        previousClusterReference.ClusterName = numberOfNamedClusters.ToLetter().ToUpper();
-                    }
-                    processedInkEvent.CodedObjectID = previousClusterReference.ClusterName;
-
-                    var previousHistoryIndex = historyActions.Last().HistoryActionIndex;
-                    if (previousClusterReference.ClusterType == InkCluster.ClusterTypes.ARRskip)
-                    {
-                        var arrayID = previousClusterReference.PageObjectReferenceID;
-                        var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
-                        if (array != null)
-                        {
-                            var locationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP;
-                            var codedObject = Codings.OBJECT_ARRAY;
-                            var codedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
-
-                            processedInkEvent.EventInformation = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
-                            processedInkEvent.ReferencePageObjectID = arrayID;
-                        }
-                    }
-                    else
-                    {
-                        var pageObjectsOnPage = page.GetPageObjectsOnPageAtHistoryIndex(previousHistoryIndex);
-                        var pageObjectReference = FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, previousStroke, previousHistoryIndex);
-                        var locationReference = Codings.EVENT_INFO_INK_LOCATION_NONE;
-                        if (pageObjectReference != null)
-                        {
-                            locationReference = Codings.EVENT_INFO_INK_LOCATION_OVER;
-                        }
-                        else
-                        {
-                            var clusterCentroid = previousClusterReference.Strokes.WeightedCentroid();
-
-                            pageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, clusterCentroid, previousHistoryIndex);
-                            if (pageObjectReference != null)
-                            {
-                                locationReference = FindLocationReferenceAtHistoryLocation(page, pageObjectReference, clusterCentroid, previousHistoryIndex);
-                            }
-                        }
-
-                        if (pageObjectReference != null)
-                        {
-                            var codedObject = pageObjectReference.CodedName;
-                            var codedID = pageObjectReference.GetCodedIDAtHistoryIndex(previousHistoryIndex);
-                            processedInkEvent.EventInformation = string.Format("{0} {1} [{2}]", locationReference, codedObject, codedID);
-                            processedInkEvent.ReferencePageObjectID = pageObjectReference.ID;
-                        }
-                    }
-
-                    processedInkEvents.Add(processedInkEvent);
-                }
+                processedInkEvents.Add(processedInkEvent);
             }
 
             return processedInkEvents;
         }
+
+        public static ISemanticEvent ProcessINKChangeHistoryActionBuffer(CLPPage page, InkCluster cluster, List<IHistoryAction> historyActionBuffer, bool isPreviousInkAdd, int currentHistoryActionIndex, Stroke previousStroke)
+        {
+            if (cluster.ClusterType == InkCluster.ClusterTypes.Ignore)
+            {
+                var inkIgnoreEvent = new SemanticEvent(page, historyActionBuffer)
+                                     {
+                                         CodedObject = Codings.OBJECT_INK,
+                                         EventType = Codings.EVENT_INK_IGNORE
+                                     };
+
+                return inkIgnoreEvent;
+            }
+
+            var codedObject = Codings.OBJECT_INK;
+            var eventType = isPreviousInkAdd ? Codings.EVENT_INK_ADD : Codings.EVENT_INK_ERASE;
+            if (string.IsNullOrEmpty(cluster.ClusterName))
+            {
+                cluster.ClusterName = GetNextAvailableClusterName();
+            }
+            var codedID = cluster.ClusterName;
+            var eventInfo = string.Empty;
+            var referencePageObjectID = string.Empty;
+
+            var previousHistoryIndex = currentHistoryActionIndex - 1;
+            if (cluster.ClusterType == InkCluster.ClusterTypes.ArraySkipCounting)
+            {
+                var arrayID = cluster.PageObjectReferenceID;
+                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
+                if (array != null)
+                {
+                    var locationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP;
+                    var referenceCodedObject = Codings.OBJECT_ARRAY;
+                    var referenceCodedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
+
+                    eventInfo = $"{locationReference} {referenceCodedObject} [{referenceCodedID}]";
+                    referencePageObjectID = arrayID;
+                }
+            }
+            else
+            {
+                var pageObjectsOnPage = page.GetPageObjectsOnPageAtHistoryIndex(previousHistoryIndex);
+                var pageObjectReference = FindMostOverlappedPageObjectAtHistoryIndex(page, pageObjectsOnPage, previousStroke, previousHistoryIndex);
+                var locationReference = Codings.EVENT_INFO_INK_LOCATION_NONE;
+                if (pageObjectReference != null)
+                {
+                    locationReference = Codings.EVENT_INFO_INK_LOCATION_OVER;
+                }
+                else
+                {
+                    var clusterCentroid = cluster.Strokes.WeightedCentroid();
+
+                    pageObjectReference = FindClosestPageObjectByPointAtHistoryIndex(page, pageObjectsOnPage, clusterCentroid, previousHistoryIndex);
+                    if (pageObjectReference != null)
+                    {
+                        locationReference = FindLocationReferenceAtHistoryLocation(page, pageObjectReference, clusterCentroid, previousHistoryIndex);
+                    }
+                }
+
+                if (pageObjectReference != null)
+                {
+                    var referenceCodedObject = pageObjectReference.CodedName;
+                    var referenceCodedID = pageObjectReference.GetCodedIDAtHistoryIndex(previousHistoryIndex);
+
+                    eventInfo = $"{locationReference} {referenceCodedObject} [{referenceCodedID}]";
+                    referencePageObjectID = pageObjectReference.ID;
+                }
+            }
+
+            var processedInkEvent = new SemanticEvent(page, historyActionBuffer)
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = eventType,
+                                        CodedObjectID = codedID,
+                                        EventInformation = eventInfo,
+                                        ReferencePageObjectID = referencePageObjectID
+                                    };
+
+            return processedInkEvent;
+        }
+
+        #endregion // Refine OPTICS Clusters
+
+        #endregion // Clustering
 
         public static List<ISemanticEvent> RefineANS_FIClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
@@ -831,7 +767,7 @@ namespace CLP.Entities
             var ansCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.FinalAnswerFillIn);
             if (ansCluster == null)
             {
-                ansCluster = new InkCluster(new StrokeCollection())
+                ansCluster = new InkCluster
                 {
                     ClusterType = InkCluster.ClusterTypes.FinalAnswerFillIn,
                     LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER,

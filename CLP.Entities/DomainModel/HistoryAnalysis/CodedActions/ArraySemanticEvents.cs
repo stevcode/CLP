@@ -452,7 +452,7 @@ namespace CLP.Entities
 
             var firstStroke = strokes.First();
             var cluster = InkSemanticEvents.GetContainingCluster(firstStroke);
-            if (cluster.ClusterType != InkCluster.ClusterTypes.ARRskip)
+            if (cluster.ClusterType != InkCluster.ClusterTypes.ArraySkipCounting)
             {
                 return null;
             }

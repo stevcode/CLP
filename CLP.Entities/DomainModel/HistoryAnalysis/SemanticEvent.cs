@@ -174,6 +174,11 @@ namespace CLP.Entities
             get { return MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null; }
             set
             {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+
                 if (!MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID))
                 {
                     MetaData.Add(META_REFERENCE_PAGE_OBJECT_ID, value);

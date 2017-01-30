@@ -561,10 +561,7 @@ namespace CLP.Entities
             // Pass 2.1: OPTICS Clustering
             InkSemanticEvents.GenerateInitialInkClusters(preProcessedSemanticEvents);
 
-            // Pass 2.3: 
-            
-
-            
+            // Pass 2.2: Refine OPTICS Clusters 
             // TODO: Rename/fix - Refine Temporal Clusters
             var processedEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in preProcessedSemanticEvents)
