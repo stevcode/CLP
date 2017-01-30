@@ -429,17 +429,13 @@ namespace CLP.Entities
                     return null; // Confirmed nextHistoryAction belongs in this Semantic Event
                 }
 
-                // TODO: This is incomplete, re-work when finished digging through ink clustering.
-
                 var codedObject = Codings.OBJECT_FILL_IN;
-                var eventType = string.Empty;
-                var codedID = interpretationRegion.CodedID;
+                var eventType = Codings.EVENT_FILL_IN_CHANGE;
 
                 var semanticEvent = new SemanticEvent(page, historyActions)
                                     {
                                         CodedObject = codedObject,
                                         EventType = eventType,
-                                        CodedObjectID = codedID,
                                         ReferencePageObjectID = interpretationRegion.ID
                                     };
 
@@ -555,18 +551,19 @@ namespace CLP.Entities
         {
             InkSemanticEvents.InkClusters.Clear();
 
-            // Pre-Cluster
+            // Pass 2.0: Pre-Cluster
             var preProcessedSemanticEvents = InkSemanticEvents.GenerateArrayInkDivideSemanticEvents(page, semanticEvents);
             InkSemanticEvents.DefineMultipleChoiceClusters(page, preProcessedSemanticEvents);
             InkSemanticEvents.DefineFillInClusters(page, preProcessedSemanticEvents);
             InkSemanticEvents.DefineArrayInkDivideClusters(page, preProcessedSemanticEvents);
 
-            // HACK: This should be taken care of at the historyAction level, assessment cache needs another conversion to handle that.
-            preProcessedSemanticEvents = InkSemanticEvents.RefineANS_FIClusters(page, preProcessedSemanticEvents);
-
+            // Pass 2.1: OPTICS Clustering
             InkSemanticEvents.GenerateInitialInkClusters(page, preProcessedSemanticEvents);
+
+
             InkSemanticEvents.RefineSkipCountClusters(page, preProcessedSemanticEvents);
 
+            
             // TODO: Rename/fix - Refine Temporal Clusters
             var processedEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in preProcessedSemanticEvents)
@@ -600,6 +597,12 @@ namespace CLP.Entities
                 {
                     var interpretedSemanticEvents = AttemptSemanticEventInterpretation(page, semanticEvent);
                     allInterpretedSemanticEvents.AddRange(interpretedSemanticEvents);
+                }
+                else if (semanticEvent.CodedObject == Codings.OBJECT_FILL_IN &&
+                         semanticEvent.EventType == Codings.EVENT_FILL_IN_CHANGE)
+                {
+                    // TODO: Include below like INK change processing
+                    //preProcessedSemanticEvents = InkSemanticEvents.RefineANS_FIClusters(page, preProcessedSemanticEvents);
                 }
                 else
                 {

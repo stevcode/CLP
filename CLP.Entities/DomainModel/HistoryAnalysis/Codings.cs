@@ -39,6 +39,8 @@ namespace CLP.Entities
 
         public static readonly Dictionary<string, string> FriendlyObjects = new Dictionary<string, string>
                                                                             {
+                                                                                { OBJECT_NOTHING, "Nothing" },
+                                                                                { OBJECT_PAGE_OBJECTS, "PageObjects" },
                                                                                 { OBJECT_INK, "Ink" },
                                                                                 { OBJECT_ARITH, "Arithmetic" },
                                                                                 { OBJECT_SHAPE, "Shape" },
@@ -49,8 +51,8 @@ namespace CLP.Entities
                                                                                 { OBJECT_STAMP, "Stamp" },
                                                                                 { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
                                                                                 { OBJECT_BINS, "Bins" },
-                                                                                { OBJECT_FILL_IN, "Filled In Answer" },
-                                                                                { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" },
+                                                                                { OBJECT_FILL_IN, "Final Answer Fill In" },
+                                                                                { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
                                                                                 { OBJECT_TEXT, "Text" },
                                                                             };
 
@@ -113,6 +115,8 @@ namespace CLP.Entities
 
         public const string EVENT_FILL_IN_ADD = "add";
         public const string EVENT_FILL_IN_ERASE = "erase";
+        public const string EVENT_FILL_IN_CHANGE = "change";
+
         public const string EVENT_MULTIPLE_CHOICE_ADD_PARTIAL = "partial fill in";
         public const string EVENT_MULTIPLE_CHOICE_ADD = "fill in";
         public const string EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL = "additional fill in";
@@ -207,6 +211,7 @@ namespace CLP.Entities
         public const string CORRECTNESS_CORRECT = "COR";
         public const string CORRECTNESS_PARTIAL = "PAR";
         public const string CORRECTNESS_INCORRECT = "INC";
+        public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
         #endregion // Correctness
 
