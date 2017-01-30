@@ -300,12 +300,12 @@ namespace CLP.Entities
                 var strokes = strokeIDs.Select(page.GetStrokeByIDOnPageOrInHistory).ToList();
 
                 var fillInCluster = new InkCluster
-                {
-                    ClusterName = InkCluster.INK_DIVIDE_NAME,
-                    ClusterType = InkCluster.ClusterTypes.FinalAnswerFillIn,
-                    PageObjectReferenceID = arrayID,
-                    LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER
-                };
+                                    {
+                                        ClusterName = InkCluster.INK_DIVIDE_NAME,
+                                        ClusterType = InkCluster.ClusterTypes.FinalAnswerFillIn,
+                                        PageObjectReferenceID = arrayID,
+                                        LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER
+                                    };
                 MoveStrokesToDifferentCluster(fillInCluster, strokes);
                 InkClusters.Add(fillInCluster);
             }
@@ -313,7 +313,9 @@ namespace CLP.Entities
 
         #endregion // Pre-Clustering
 
-        public static void GenerateInitialInkClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
+        #region OPTICS Clustering
+
+        public static void GenerateInitialInkClusters(List<ISemanticEvent> semanticEvents)
         {
             var inkEvents = semanticEvents.Where(h => h.CodedObject == Codings.OBJECT_INK && h.EventType == Codings.EVENT_INK_CHANGE).ToList();
             var historyActions = inkEvents.SelectMany(h => h.HistoryActions).OfType<ObjectsOnPageChangedHistoryAction>().ToList();
@@ -329,7 +331,11 @@ namespace CLP.Entities
 
             var strokeClusters = new List<StrokeCollection>();
 
-            if (strokesAdded.Count > 1)
+            if (strokesAdded.Count == 1)
+            {
+                strokeClusters.Add(new StrokeCollection(strokesAdded));
+            }
+            else if (strokesAdded.Count > 1)
             {
                 const int MAX_EPSILON = 1000;
                 const int MINIMUM_STROKES_IN_CLUSTER = 1;
@@ -380,24 +386,26 @@ namespace CLP.Entities
                     unclusteredStrokes.Add(stroke);
                 }
             }
-            else if (strokesAdded.Count == 1)
+
+            var ignoredCluster = new InkCluster
             {
-                strokeClusters.Add(new StrokeCollection(strokesAdded));
-            }
-
-            var ignoredCluster = new InkCluster(unclusteredStrokes)
-                                 {
-                                     ClusterName = "IGNORED",
-                                     ClusterType = InkCluster.ClusterTypes.Ignore
-                                 };
-
+                ClusterName = InkCluster.IGNORE_NAME,
+                ClusterType = InkCluster.ClusterTypes.Ignore
+            };
+            MoveStrokesToDifferentCluster(ignoredCluster, unclusteredStrokes.ToList());
             InkClusters.Add(ignoredCluster);
 
             foreach (var strokeCluster in strokeClusters)
             {
+                var inkCluster = new InkCluster();
+                MoveStrokesToDifferentCluster(inkCluster, strokeCluster.ToList());
                 InkClusters.Add(new InkCluster(strokeCluster));
             }
         }
+
+        #endregion // OPTICS Clustering
+
+
 
         public static void RefineSkipCountClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {

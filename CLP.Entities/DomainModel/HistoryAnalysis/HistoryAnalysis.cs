@@ -558,7 +558,7 @@ namespace CLP.Entities
             InkSemanticEvents.DefineArrayInkDivideClusters(page, preProcessedSemanticEvents);
 
             // Pass 2.1: OPTICS Clustering
-            InkSemanticEvents.GenerateInitialInkClusters(page, preProcessedSemanticEvents);
+            InkSemanticEvents.GenerateInitialInkClusters(preProcessedSemanticEvents);
 
 
             InkSemanticEvents.RefineSkipCountClusters(page, preProcessedSemanticEvents);
