@@ -22,7 +22,8 @@ namespace CLP.Entities
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
-                                                CodedObjectID = "1"
+                                                CodedObjectID = "1",
+                                                EventInformation = "Initialization"
                                             });
 
             var initialSemanticEvents = GenerateInitialSemanticEvents(page);
@@ -32,7 +33,8 @@ namespace CLP.Entities
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
-                                                CodedObjectID = "2"
+                                                CodedObjectID = "2",
+                                                EventInformation = "Ink Clustering"
                                             });
 
             var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
@@ -42,7 +44,8 @@ namespace CLP.Entities
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
                                                 CodedObject = "PASS",
-                                                CodedObjectID = "3"
+                                                CodedObjectID = "3",
+                                                EventInformation = "Ink Interpretation"
                                             });
 
             var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
@@ -113,7 +116,7 @@ namespace CLP.Entities
 
         #region First Pass: Initialization
 
-        public static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
+        private static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
         {
             Argument.IsNotNull(nameof(page), page);
 
@@ -148,7 +151,7 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        public static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
+        private static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(historyAction), historyAction);
@@ -185,7 +188,7 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
-        public static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
+        private static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(historyActions), historyActions);
@@ -547,8 +550,11 @@ namespace CLP.Entities
 
         #region Second Pass: Ink Clustering
 
-        public static List<ISemanticEvent> ClusterInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
+        private static List<ISemanticEvent> ClusterInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
+
             InkSemanticEvents.InkClusters.Clear();
 
             // Pass 2.0: Pre-Cluster
@@ -562,7 +568,6 @@ namespace CLP.Entities
             InkSemanticEvents.GenerateInitialInkClusters(preProcessedSemanticEvents);
 
             // Pass 2.2: Refine OPTICS Clusters 
-            // TODO: Rename/fix - Refine Temporal Clusters
             var processedEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in preProcessedSemanticEvents)
             {
@@ -578,6 +583,8 @@ namespace CLP.Entities
                 }
             }
 
+            // TODO: Pass 2.3: Refine Temporal Clusters?
+
             return processedEvents;
         }
 
@@ -585,10 +592,12 @@ namespace CLP.Entities
 
         #region Third Pass: Ink Interpretation
 
-        public static List<ISemanticEvent> InterpretInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
+        private static List<ISemanticEvent> InterpretInkSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var allInterpretedSemanticEvents = new List<ISemanticEvent>();
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvents), semanticEvents);
 
+            var allInterpretedSemanticEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in semanticEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK)
@@ -611,8 +620,11 @@ namespace CLP.Entities
             return allInterpretedSemanticEvents;
         }
 
-        public static List<ISemanticEvent> AttemptSemanticEventInterpretation(CLPPage page, ISemanticEvent semanticEvent)
+        private static List<ISemanticEvent> AttemptSemanticEventInterpretation(CLPPage page, ISemanticEvent semanticEvent)
         {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(semanticEvent), semanticEvent);
+
             var allInterpretedEvents = new List<ISemanticEvent>();
 
             if (semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP) &&

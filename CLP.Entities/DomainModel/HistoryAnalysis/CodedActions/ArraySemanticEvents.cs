@@ -528,7 +528,7 @@ namespace CLP.Entities
                     return null;
                 }
 
-                cluster.ClusterType = InkCluster.ClusterTypes.ARReqn;
+                cluster.ClusterType = InkCluster.ClusterTypes.ArrayEquation;
 
                 var semanticEvent = new SemanticEvent(page, inkEvent)
                                     {
@@ -542,7 +542,7 @@ namespace CLP.Entities
                 return semanticEvent;
             }
 
-            if (cluster.ClusterType == InkCluster.ClusterTypes.ARReqn)
+            if (cluster.ClusterType == InkCluster.ClusterTypes.ArrayEquation)
             {
                 List<string> interpretations;
                 if (!isEqnAdd)

@@ -19,10 +19,9 @@ namespace CLP.Entities
             FinalAnswerMultipleChoice,
             InkDivide,
             ArraySkipCounting,
-            PossibleARITH,
+            ArrayEquation,
             ARITH,
-            PossibleARReqn,
-            ARReqn
+            PossibleARReqn
         }
 
         public const string IGNORE_NAME = "IGNORE";
@@ -486,7 +485,7 @@ namespace CLP.Entities
                     InkClusters.Add(skipCluster);
                 }
 
-                // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ARReqn.
+                // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ArrayEquation.
             }
 
             #endregion // Test for Skip Counting at Pattern End Points
@@ -756,6 +755,84 @@ namespace CLP.Entities
 
         #endregion // Clustering
 
+        #region Interpretation
+
+        public static ISemanticEvent Arithmetic(CLPPage page, ISemanticEvent inkEvent)
+        {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(inkEvent), inkEvent);
+
+            if (inkEvent.CodedObject != Codings.OBJECT_INK ||
+                !(inkEvent.EventType == Codings.EVENT_INK_ADD || 
+                  inkEvent.EventType == Codings.EVENT_INK_ERASE))
+            {
+                return null;
+            }
+
+            var isArithAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
+            var strokes = isArithAdd
+                              ? inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
+
+            var firstStroke = strokes.First();
+            var cluster = GetContainingCluster(firstStroke);
+            switch (cluster.ClusterType)
+            {
+                case InkCluster.ClusterTypes.Unknown:
+                {
+                    if (!isArithAdd)
+                    {
+                        return null;
+                    }
+
+                    var orderedStrokes = GetOrderStrokesWereAddedToPage(page, strokes);
+                    var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(orderedStrokes));
+                    if (interpretation == null)
+                    {
+                        return null;
+                    }
+
+                    cluster.ClusterType = InkCluster.ClusterTypes.ARITH;
+
+                    var semanticEvent = new SemanticEvent(page, inkEvent)
+                                        {
+                                            CodedObject = Codings.OBJECT_ARITH,
+                                            EventType = Codings.EVENT_ARITH_ADD,
+                                            CodedObjectID = inkEvent.CodedObjectID,
+                                            EventInformation = $"\"{interpretation}\""
+                                        };
+
+                    return semanticEvent;
+                }
+                case InkCluster.ClusterTypes.ARITH:
+                {
+                    var orderedStrokes = GetOrderStrokesWereAddedToPage(page, strokes);
+                    var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+                    var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    var changedInterpretation = $"\"{interpretation}\"";
+
+                    var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, inkEvent.HistoryActions.Last().HistoryActionIndex);
+                    var orderedStrokesOnPage = GetOrderStrokesWereAddedToPage(page, strokesOnPage);
+                    var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(orderedStrokesOnPage)) ?? string.Empty;
+                    onPageInterpretation = $"\"{onPageInterpretation}\"";
+
+                    var formattedInterpretation = $"{changedInterpretation}; {onPageInterpretation}";
+
+                    var semanticEvent = new SemanticEvent(page, inkEvent)
+                                        {
+                                            CodedObject = Codings.OBJECT_ARITH,
+                                            EventType = isArithAdd ? Codings.EVENT_ARITH_ADD : Codings.EVENT_ARITH_ERASE,
+                                            CodedObjectID = inkEvent.CodedObjectID,
+                                            EventInformation = formattedInterpretation
+                                        };
+
+                    return semanticEvent;
+                }
+            }
+
+            return null;
+        }
+
         public static List<ISemanticEvent> RefineANS_FIClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var interpretationRegion = page.PageObjects.FirstOrDefault(p => p is InterpretationRegion) as InterpretationRegion;
@@ -1004,81 +1081,7 @@ namespace CLP.Entities
             return allRefinedEvents;
         }
 
-        public static ISemanticEvent Arithmetic(CLPPage page, ISemanticEvent inkEvent)
-        {
-            if (page == null ||
-                inkEvent == null ||
-                inkEvent.CodedObject != Codings.OBJECT_INK ||
-                !(inkEvent.EventType == Codings.EVENT_INK_ADD || inkEvent.EventType == Codings.EVENT_INK_ERASE))
-            {
-                return null;
-            }
-
-            var isArithAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
-
-            var strokes = isArithAdd
-                              ? inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
-                              : inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
-
-            var firstStroke = strokes.First();
-            var cluster = GetContainingCluster(firstStroke);
-            if (cluster.ClusterType == InkCluster.ClusterTypes.PossibleARITH ||
-                cluster.ClusterType == InkCluster.ClusterTypes.Unknown)
-            {
-                var interpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokes));
-                if (interpretation == null ||
-                    !isArithAdd)
-                {
-                    return null;
-                }
-
-                cluster.ClusterType = InkCluster.ClusterTypes.ARITH;
-
-                var semanticEvent = new SemanticEvent(page, inkEvent)
-                                    {
-                                        CodedObject = Codings.OBJECT_ARITH,
-                                        EventType = isArithAdd ? Codings.EVENT_ARITH_ADD : Codings.EVENT_ARITH_ERASE,
-                                        CodedObjectID = inkEvent.CodedObjectID,
-                                        EventInformation = string.Format("\"{0}\"", interpretation)
-                                    };
-
-                return semanticEvent;
-            }
-
-            if (cluster.ClusterType == InkCluster.ClusterTypes.ARITH)
-            {
-                List<string> interpretations;
-                if (!isArithAdd)
-                {
-                    var orderedStrokes = GetOrderStrokesWereAddedToPage(page, strokes);
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
-                }
-                else
-                {
-                    interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
-                }
-
-                var interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
-                var changedInterpretation = string.Format("\"{0}\"", interpretation);
-
-                var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, inkEvent.HistoryActions.Last().HistoryActionIndex);
-                var onPageInterpretation = InkInterpreter.StrokesToArithmetic(new StrokeCollection(strokesOnPage)) ?? string.Empty;
-                onPageInterpretation = string.Format("\"{0}\"", onPageInterpretation);
-                var formattedInterpretation = string.Format("{0}; {1}", changedInterpretation, onPageInterpretation);
-
-                var semanticEvent = new SemanticEvent(page, inkEvent)
-                                    {
-                                        CodedObject = Codings.OBJECT_ARITH,
-                                        EventType = isArithAdd ? Codings.EVENT_ARITH_ADD : Codings.EVENT_ARITH_ERASE,
-                                        CodedObjectID = inkEvent.CodedObjectID,
-                                        EventInformation = formattedInterpretation
-                                    };
-
-                return semanticEvent;
-            }
-
-            return null;
-        }
+        #endregion // Interpretation
 
         #region Utility Static Methods
 
