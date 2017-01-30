@@ -395,8 +395,9 @@ namespace CLP.Entities
                                         CodedObject = codedObject,
                                         EventType = eventType,
                                         CodedObjectID = codedID,
-                                        EventInformation = eventInfo
-                                    };
+                                        EventInformation = eventInfo,
+                                        ReferencePageObjectID = multipleChoice.ID
+                };
 
                 return semanticEvent;
             }
@@ -438,7 +439,8 @@ namespace CLP.Entities
                                     {
                                         CodedObject = codedObject,
                                         EventType = eventType,
-                                        CodedObjectID = codedID
+                                        CodedObjectID = codedID,
+                                        ReferencePageObjectID = interpretationRegion.ID
                                     };
 
                 return semanticEvent;
@@ -553,16 +555,21 @@ namespace CLP.Entities
         {
             InkSemanticEvents.InkClusters.Clear();
 
-            var refinedInkEvents = InkSemanticEvents.RefineInkDivideClusters(page, semanticEvents);
-            // HACK: This should be taken care of at the historyAction level, assessment cache needs another conversion to handle that.
-            refinedInkEvents = InkSemanticEvents.RefineANS_FIClusters(page, refinedInkEvents);
+            // Pre-Cluster
+            var preProcessedSemanticEvents = InkSemanticEvents.GenerateArrayInkDivideSemanticEvents(page, semanticEvents);
+            InkSemanticEvents.DefineMultipleChoiceClusters(page, preProcessedSemanticEvents);
+            InkSemanticEvents.DefineFillInClusters(page, preProcessedSemanticEvents);
+            InkSemanticEvents.DefineArrayInkDivideClusters(page, preProcessedSemanticEvents);
 
-            InkSemanticEvents.GenerateInitialInkClusters(page, refinedInkEvents);
-            InkSemanticEvents.RefineSkipCountClusters(page, refinedInkEvents);
+            // HACK: This should be taken care of at the historyAction level, assessment cache needs another conversion to handle that.
+            preProcessedSemanticEvents = InkSemanticEvents.RefineANS_FIClusters(page, preProcessedSemanticEvents);
+
+            InkSemanticEvents.GenerateInitialInkClusters(page, preProcessedSemanticEvents);
+            InkSemanticEvents.RefineSkipCountClusters(page, preProcessedSemanticEvents);
 
             // TODO: Rename/fix - Refine Temporal Clusters
             var processedEvents = new List<ISemanticEvent>();
-            foreach (var semanticEvent in refinedInkEvents)
+            foreach (var semanticEvent in preProcessedSemanticEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
                     semanticEvent.EventType == Codings.EVENT_INK_CHANGE)
