@@ -486,6 +486,9 @@ namespace CLP.Entities
                 }
 
                 // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ArrayEquation.
+                // BUG: Right now, ARR eqn relies on OPTICS to create an Unknown cluster completely over the array, See "Update to Pre-Clustering, Line 545
+                // Will need to create a temp cluster of possible arr eqn, then after optics runs, any cluster  that contains strokes from these temp clusters will
+                // be split into just a cluster containing the strokes from temp cluster and a cluster containing the rest from the optics cluster
             }
 
             #endregion // Test for Skip Counting at Pattern End Points

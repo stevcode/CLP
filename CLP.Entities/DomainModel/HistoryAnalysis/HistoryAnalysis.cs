@@ -647,6 +647,7 @@ namespace CLP.Entities
                     allInterpretedEvents.Add(interpretedEvent);
                     return allInterpretedEvents;
                 }
+                // TODO: Attempt Dots/Lines interpretation
             }
 
             if (!semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER))
