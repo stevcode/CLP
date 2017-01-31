@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -12,7 +13,6 @@ namespace CLP.Entities
         public EquivalenceRelationDefinitionTag() { }
 
         /// <summary>Initializes <see cref="EquivalenceRelationDefinitionTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="EquivalenceRelationDefinitionTag" /> belongs to.</param>
         public EquivalenceRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
@@ -49,5 +49,71 @@ namespace CLP.Entities
         public override string FormattedValue => $"{LeftRelationPart.FormattedRelation} = {RightRelationPart.FormattedRelation}";
 
         #endregion //ATagBase Overrides
+
+        #region IRelationPartImplementation
+
+        public double Answer
+        {
+            get
+            {
+                var answer = GetHiddenValueOfRelation(LeftRelationPart) ?? GetHiddenValueOfRelation(RightRelationPart);
+                return answer.Value;
+            }
+        }
+
+        public double? GetHiddenValueOfRelation(IRelationPart relationPart)
+        {
+            var multiplicationDefinition = relationPart as MultiplicationRelationDefinitionTag;
+            if (multiplicationDefinition != null)
+            {
+                var firstFactor = multiplicationDefinition.Factors.First() as NumericValueDefinitionTag;
+                if (firstFactor.IsNotGiven)
+                {
+                    return firstFactor.Answer;
+                }
+
+                var secondFactor = multiplicationDefinition.Factors.Last() as NumericValueDefinitionTag;
+                if (secondFactor.IsNotGiven)
+                {
+                    return secondFactor.Answer;
+                }
+            }
+
+            var additionDefinition = relationPart as AdditionRelationDefinitionTag;
+            if (additionDefinition != null)
+            {
+                var firstAddend = additionDefinition.Addends.First() as NumericValueDefinitionTag;
+                if (firstAddend.IsNotGiven)
+                {
+                    return firstAddend.Answer;
+                }
+
+                var secondAddend = additionDefinition.Addends.Last() as NumericValueDefinitionTag;
+                if (secondAddend.IsNotGiven)
+                {
+                    return secondAddend.Answer;
+                }
+            }
+
+            var divisionDefinition = relationPart as DivisionRelationDefinitionTag;
+            if (divisionDefinition != null)
+            {
+                var dividend = divisionDefinition.Dividend as NumericValueDefinitionTag;
+                if (dividend.IsNotGiven)
+                {
+                    return dividend.Answer;
+                }
+
+                var divisor = divisionDefinition.Divisor as NumericValueDefinitionTag;
+                if (divisor.IsNotGiven)
+                {
+                    return divisor.Answer;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion //IRelationPartImplementation
     }
 }

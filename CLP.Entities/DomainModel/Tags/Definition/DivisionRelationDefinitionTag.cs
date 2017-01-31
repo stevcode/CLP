@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -96,5 +95,11 @@ namespace CLP.Entities
         public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
 
         #endregion // IRelationPartImplementation
+
+        #region IRelationPartImplementation
+
+        public double Answer => RelationPartAnswerValue;
+
+        #endregion //IRelationPartImplementation
     }
 }

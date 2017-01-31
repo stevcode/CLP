@@ -4,7 +4,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class NumericValueDefinitionTag : ATagBase, IRelationPart
+    public class NumericValueDefinitionTag : ATagBase, IRelationPart, IDefinition
     {
         #region Constructors
 
@@ -59,6 +59,12 @@ namespace CLP.Entities
         public string FormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
         public string ExpandedFormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
+
+        #endregion //IRelationPartImplementation
+
+        #region IRelationPartImplementation
+
+        public double Answer => RelationPartAnswerValue;
 
         #endregion //IRelationPartImplementation
     }

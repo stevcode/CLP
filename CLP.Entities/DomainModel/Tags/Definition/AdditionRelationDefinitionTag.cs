@@ -155,5 +155,11 @@ namespace CLP.Entities
         #endregion // Support
 
         #endregion //IRelationPartImplementation
+
+        #region IRelationPartImplementation
+
+        public double Answer => RelationPartAnswerValue;
+
+        #endregion //IRelationPartImplementation
     }
 }

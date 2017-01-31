@@ -102,6 +102,7 @@ namespace CLP.Entities
             {
                 cluster = new InkCluster
                           {
+                              ClusterName = InkCluster.IGNORE_NAME,
                               ClusterType = InkCluster.ClusterTypes.Ignore
                           };
                 InkClusters.Add(cluster);
@@ -313,15 +314,15 @@ namespace CLP.Entities
                 var strokeIDs = strokeIDsAdded.Concat(strokeIDsRemoved).Distinct().ToList();
                 var strokes = strokeIDs.Select(page.GetStrokeByIDOnPageOrInHistory).ToList();
 
-                var fillInCluster = new InkCluster
+                var divideCluster = new InkCluster
                                     {
                                         ClusterName = InkCluster.INK_DIVIDE_NAME,
-                                        ClusterType = InkCluster.ClusterTypes.FinalAnswerFillIn,
+                                        ClusterType = InkCluster.ClusterTypes.InkDivide,
                                         PageObjectReferenceID = arrayID,
                                         LocationReference = Codings.EVENT_INFO_INK_LOCATION_OVER
                                     };
-                MoveStrokesToDifferentCluster(fillInCluster, strokes);
-                InkClusters.Add(fillInCluster);
+                MoveStrokesToDifferentCluster(divideCluster, strokes);
+                InkClusters.Add(divideCluster);
             }
         }
 
@@ -578,10 +579,10 @@ namespace CLP.Entities
             }
 
             var ignoredCluster = new InkCluster
-            {
-                ClusterName = InkCluster.IGNORE_NAME,
-                ClusterType = InkCluster.ClusterTypes.Ignore
-            };
+                                 {
+                                     ClusterName = InkCluster.IGNORE_NAME,
+                                     ClusterType = InkCluster.ClusterTypes.Ignore
+                                 };
             MoveStrokesToDifferentCluster(ignoredCluster, unclusteredStrokes.ToList());
             InkClusters.Add(ignoredCluster);
 
@@ -857,10 +858,171 @@ namespace CLP.Entities
 
             var historyActions = semanticEvent.HistoryActions.Cast<FillInAnswerChangedHistoryAction>().OrderBy(h => h.HistoryActionIndex).ToList();
 
+            var firstHistoryAction = historyActions.First();
+            var previousStrokes = firstHistoryAction.StrokesAdded;
+            var isPreviousInkAdd = true;
+            if (!previousStrokes.Any())
+            {
+                previousStrokes = firstHistoryAction.StrokesRemoved;
+                isPreviousInkAdd = false;
+            }
 
+            var previousStroke = previousStrokes.First();
+            var isPreviousStrokeInvisiblySmall = previousStroke.IsInvisiblySmall();
+
+            var historyActionBuffer = new List<IHistoryAction>
+                                      {
+                                          firstHistoryAction
+                                      };
+
+            for (var i = 1; i < historyActions.Count; i++)
+            {
+                var currentHistoryAction = historyActions[i];
+                var currentStrokes = currentHistoryAction.StrokesAdded;
+                var isCurrentInkAdd = true;
+                if (!currentStrokes.Any())
+                {
+                    currentStrokes = currentHistoryAction.StrokesRemoved;
+                    isCurrentInkAdd = false;
+                }
+
+                var currentStroke = currentStrokes.First();
+                var isCurrentStrokeInvisiblySmall = currentStroke.IsInvisiblySmall();
+
+                var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd || isPreviousStrokeInvisiblySmall != isCurrentStrokeInvisiblySmall;
+                if (isBreakCondition)
+                {
+                    var processedInkEvent = ProcessANSFIChangeHistoryActionBuffer(page,
+                                                                                  historyActionBuffer,
+                                                                                  isPreviousInkAdd,
+                                                                                  isPreviousStrokeInvisiblySmall,
+                                                                                  currentHistoryAction.HistoryActionIndex,
+                                                                                  previousStroke,
+                                                                                  interpretationRegion.ID);
+
+                    processedEvents.Add(processedInkEvent);
+
+                    historyActionBuffer.Clear();
+                }
+
+                historyActionBuffer.Add(currentHistoryAction);
+                isPreviousInkAdd = isCurrentInkAdd;
+                previousStroke = currentStroke;
+            }
+
+            if (historyActionBuffer.Any())
+            {
+                var processedInkEvent = ProcessANSFIChangeHistoryActionBuffer(page,
+                                                                              historyActionBuffer,
+                                                                              isPreviousInkAdd,
+                                                                              isPreviousStrokeInvisiblySmall,
+                                                                              historyActions.Last().HistoryActionIndex + 1,
+                                                                              previousStroke,
+                                                                              interpretationRegion.ID);
+
+                processedEvents.Add(processedInkEvent);
+            }
 
             return processedEvents;
         }
+
+        public static ISemanticEvent ProcessANSFIChangeHistoryActionBuffer(CLPPage page, List<IHistoryAction> historyActionBuffer, bool isPreviousInkAdd, bool isPreviousStrokeInvisiblySmall, int currentHistoryActionIndex, Stroke previousStroke, string interpretationID)
+        {
+            var strokesInBuffer = isPreviousInkAdd
+                                      ? historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                                      : historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
+
+            if (isPreviousStrokeInvisiblySmall)
+            {
+                var ignoreCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.Ignore);
+                if (ignoreCluster == null)
+                {
+                    ignoreCluster = new InkCluster
+                                    {
+                                        ClusterName = InkCluster.IGNORE_NAME,
+                                        ClusterType = InkCluster.ClusterTypes.Ignore
+                                    };
+                    InkClusters.Add(ignoreCluster);
+                }
+                MoveStrokesToDifferentCluster(ignoreCluster, strokesInBuffer);
+
+                var inkIgnoreEvent = new SemanticEvent(page, historyActionBuffer)
+                                     {
+                                         CodedObject = Codings.OBJECT_INK,
+                                         EventType = Codings.EVENT_INK_IGNORE
+                                     };
+
+                return inkIgnoreEvent;
+            }
+
+            var codedObject = Codings.OBJECT_FILL_IN;
+            var eventType = isPreviousInkAdd ? Codings.EVENT_FILL_IN_ADD : Codings.EVENT_FILL_IN_ERASE;
+
+            var answer = Codings.ANSWER_UNDEFINED;
+            var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
+            if (relationDefinitionTag != null)
+            {
+                var definitionAnswer = relationDefinitionTag.Answer;
+                var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
+                answer = truncatedAnswer.ToString();
+            }
+            var codedID = answer;
+
+            var previousHistoryIndex = currentHistoryActionIndex - 1;
+            var fillInCluster = GetContainingCluster(previousStroke);
+
+            var orderedStrokes = GetOrderStrokesWereAddedToPage(page, strokesInBuffer);
+            var orderedStrokesOnPage = GetOrderStrokesWereAddedToPage(page, fillInCluster.GetClusterStrokesOnPageAtHistoryIndex(page, previousHistoryIndex));
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokes));
+            var interpretationsOnPage = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(orderedStrokesOnPage));
+            string interpretation;
+            string interpretationOnPage;
+
+            if (answer == Codings.ANSWER_UNDEFINED)
+            {
+                interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                interpretationOnPage = InkInterpreter.InterpretationClosestToANumber(interpretationsOnPage);
+            }
+            else
+            {
+                int expectedValue;
+                if (int.TryParse(answer, out expectedValue))
+                {
+                    interpretation = InkInterpreter.MatchInterpretationToExpectedInt(interpretations, expectedValue);
+                    interpretationOnPage = InkInterpreter.MatchInterpretationToExpectedInt(interpretationsOnPage, expectedValue);
+                    if (string.IsNullOrEmpty(interpretation))
+                    {
+                        interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    }
+                    if (string.IsNullOrEmpty(interpretationOnPage))
+                    {
+                        interpretationOnPage = InkInterpreter.InterpretationClosestToANumber(interpretationsOnPage);
+                    }
+                }
+                else
+                {
+                    interpretation = InkInterpreter.InterpretationClosestToANumber(interpretations);
+                    interpretationOnPage = InkInterpreter.InterpretationClosestToANumber(interpretationsOnPage);
+                }
+            }
+
+            var correctness = answer == Codings.ANSWER_UNDEFINED ? Codings.CORRECTNESS_UNKNOWN : answer == interpretationOnPage ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
+
+            var eventInfo = $"\"{interpretation}\"; \"{interpretationOnPage}\", {correctness}";
+            var referencePageObjectID = interpretationID;
+
+            var processedInkEvent = new SemanticEvent(page, historyActionBuffer)
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = eventType,
+                                        CodedObjectID = codedID,
+                                        EventInformation = eventInfo,
+                                        ReferencePageObjectID = referencePageObjectID
+                                    };
+
+            return processedInkEvent;
+        }
+
 
         public static List<ISemanticEvent> RefineANS_FIClusters(CLPPage page, List<ISemanticEvent> semanticEvents)
         {

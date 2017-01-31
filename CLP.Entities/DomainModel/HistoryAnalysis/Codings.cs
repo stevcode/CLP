@@ -213,6 +213,8 @@ namespace CLP.Entities
         public const string CORRECTNESS_INCORRECT = "INC";
         public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
+        public const string ANSWER_UNDEFINED = "UNDEFINED";
+
         #endregion // Correctness
 
         #region Methods
