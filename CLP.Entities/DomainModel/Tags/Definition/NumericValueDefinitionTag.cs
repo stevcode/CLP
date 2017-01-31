@@ -50,7 +50,7 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IRelationPart Implementation
 
         public double RelationPartAnswerValue => NumericValue;
 
@@ -60,12 +60,12 @@ namespace CLP.Entities
 
         public string ExpandedFormattedRelation => IsNotGiven ? $"?({RelationPartAnswerValue})" : RelationPartAnswerValue.ToString();
 
-        #endregion //IRelationPartImplementation
+        #endregion // IRelationPart Implementation
 
-        #region IRelationPartImplementation
+        #region IDefinition Implementation
 
         public double Answer => RelationPartAnswerValue;
 
-        #endregion //IRelationPartImplementation
+        #endregion // IDefinition Implementation
     }
 }

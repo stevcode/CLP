@@ -1029,8 +1029,13 @@ namespace CLP.Entities
 
         public static List<Stroke> GetOrderStrokesWereAddedToPage(CLPPage page, List<Stroke> strokes)
         {
-            var historyActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.StrokesAdded.Any()).ToList();
-            var strokesAdded = historyActions.SelectMany(h => h.StrokesAdded).ToList();
+            var normalInkActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.StrokesAdded.Any()).ToList();
+            var normalStrokesAdded = normalInkActions.SelectMany(h => h.StrokesAdded).ToList();
+
+            var fillInActions = page.History.CompleteOrderedHistoryActions.OfType<FillInAnswerChangedHistoryAction>().Where(h => h.StrokesAdded.Any()).ToList();
+            var fillInStrokesAdded = fillInActions.SelectMany(h => h.StrokesAdded).ToList();
+
+            var strokesAdded = normalStrokesAdded.Concat(fillInStrokesAdded).ToList();
             var orderedStrokes = strokesAdded.Where(strokes.Contains).ToList();
 
             return orderedStrokes;

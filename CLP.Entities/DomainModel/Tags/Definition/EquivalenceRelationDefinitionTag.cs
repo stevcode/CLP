@@ -5,7 +5,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class EquivalenceRelationDefinitionTag : ATagBase
+    public class EquivalenceRelationDefinitionTag : ATagBase, IDefinition
     {
         #region Constructors
 
@@ -50,7 +50,7 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IDefinition Implementation
 
         public double Answer
         {
@@ -114,6 +114,6 @@ namespace CLP.Entities
             return null;
         }
 
-        #endregion //IRelationPartImplementation
+        #endregion // IDefinition Implementation
     }
 }

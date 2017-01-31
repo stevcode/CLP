@@ -4,7 +4,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart
+    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart, IDefinition
     {
         public enum RelationTypes
         {
@@ -84,7 +84,7 @@ namespace CLP.Entities
 
         #endregion // ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IRelationPart Implementation
 
         public double RelationPartAnswerValue => Math.Abs(Remainder) < 0.0001 ? Quotient : Quotient + (Dividend.RelationPartAnswerValue / Remainder);
 
@@ -94,12 +94,12 @@ namespace CLP.Entities
 
         public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
 
-        #endregion // IRelationPartImplementation
+        #endregion // IRelationPart Implementation
 
-        #region IRelationPartImplementation
+        #region IDefinition Implementation
 
         public double Answer => RelationPartAnswerValue;
 
-        #endregion //IRelationPartImplementation
+        #endregion // IDefinition Implementation
     }
 }
