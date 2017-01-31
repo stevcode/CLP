@@ -178,6 +178,7 @@
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryGrid.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />
+    <Compile Include="DomainModel\Tags\AAnalysisTagBase.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\AdditionRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\DivisionRelationAnalysis.cs" />
@@ -189,7 +190,7 @@
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerBeforeRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
-    <Compile Include="DomainModel\Tags\Answer\AnswerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\FinalAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArrayRemovedHistoryAction.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArraySnappedInHistoryAction.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\IAnalysis.cs" />
     <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />

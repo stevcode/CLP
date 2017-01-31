@@ -672,7 +672,7 @@ namespace CLP.Entities
 
         #endregion // Third Pass: Ink Interpretation
 
-        #region Fourth Pass: Refinement
+        #region Fourth Pass: Consolidation
 
         public static List<ISemanticEvent> RefineSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
@@ -695,7 +695,7 @@ namespace CLP.Entities
             return allRefinedSemanticEvents;
         }
 
-        #endregion // Fourth Pass: Refinement
+        #endregion // Fourth Pass: Consolidation
 
         #region Last Pass: Tag Generation
 
@@ -704,7 +704,7 @@ namespace CLP.Entities
             ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
             AttemptAnswerBeforeRepresentationTag(page, semanticEvents);
             AttemptAnswerChangedAfterRepresentationTag(page, semanticEvents);
-            AttemptAnswerTag(page, semanticEvents);
+            FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             AttemptRepresentationCorrectness(page, semanticEvents);
         }
@@ -1156,13 +1156,13 @@ namespace CLP.Entities
 
         public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerEvents = semanticEvents.Where(Codings.IsAnswerObject).ToList();
+            var answerEvents = semanticEvents.Where(Codings.IsFinalAnswerEvent).ToList();
             if (answerEvents.Count < 1)
             {
                 return;
             }
 
-            var firstAnswer = semanticEvents.First(Codings.IsAnswerObject);
+            var firstAnswer = semanticEvents.First(Codings.IsFinalAnswerEvent);
             var firstIndex = semanticEvents.IndexOf(firstAnswer);
 
             var beforeEvents = semanticEvents.Take(firstIndex + 1).ToList();
@@ -1188,15 +1188,15 @@ namespace CLP.Entities
 
         public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var answerEvents = semanticEvents.Where(Codings.IsAnswerObject).ToList();
+            var answerEvents = semanticEvents.Where(Codings.IsFinalAnswerEvent).ToList();
             if (answerEvents.Count < 2)
             {
                 return;
             }
 
-            var firstAnswer = semanticEvents.First(Codings.IsAnswerObject);
+            var firstAnswer = semanticEvents.First(Codings.IsFinalAnswerEvent);
             var firstIndex = semanticEvents.IndexOf(firstAnswer);
-            var lastAnswer = semanticEvents.Last(Codings.IsAnswerObject);
+            var lastAnswer = semanticEvents.Last(Codings.IsFinalAnswerEvent);
             var lastIndex = semanticEvents.IndexOf(lastAnswer);
 
             var possibleTagEvents = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
@@ -1208,28 +1208,6 @@ namespace CLP.Entities
             }
 
             var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagEvents);
-            page.AddTag(tag);
-        }
-
-        public static void AttemptAnswerTag(CLPPage page, List<ISemanticEvent> semanticEvents)
-        {
-            // BUG: will miss instances where mc incorrect, mc correct, mc erase incorrect
-            var lastAnswerEvent = semanticEvents.LastOrDefault(Codings.IsAnswerObject);
-            if (lastAnswerEvent == null ||
-                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE ||
-                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE ||
-                lastAnswerEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
-                lastAnswerEvent.EventType == Codings.EVENT_FILL_IN_ERASE)
-            {
-                return;
-            }
-
-            var tag = new AnswerCorrectnessTag(page,
-                                               Origin.StudentPageGenerated,
-                                               new List<ISemanticEvent>
-                                               {
-                                                   lastAnswerEvent
-                                               });
             page.AddTag(tag);
         }
 

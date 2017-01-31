@@ -43,7 +43,7 @@ namespace CLP.Entities
 
         public ISemanticEvent Answer
         {
-            get { return SemanticEvents.FirstOrDefault(Codings.IsAnswerObject); }
+            get { return SemanticEvents.FirstOrDefault(Codings.IsFinalAnswerEvent); }
         }
 
         #endregion // Calculated Properties
@@ -56,8 +56,8 @@ namespace CLP.Entities
         {
             get
             {
-                var isAnswerCorrect = Codings.GetAnswerObjectCorrectness(Answer) == "COR";
-                var answerContent = Codings.GetAnswerObjectContent(Answer);
+                var isAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(Answer) == "COR";
+                var answerContent = Codings.GetFinalAnswerEventContent(Answer);
                 var analysisObjectCode = isAnswerCorrect ? Codings.ANALYSIS_COR_BEFORE_REP : Codings.ANALYSIS_INC_BEFORE_REP;
                 return string.Format("{0} [{1}]", analysisObjectCode, answerContent);
             }
@@ -76,10 +76,10 @@ namespace CLP.Entities
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }
 
-                var isAnswerCorrect = Codings.GetAnswerObjectCorrectness(Answer) == "COR";
+                var isAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(Answer) == "COR";
                 var analysisObjectCode = isAnswerCorrect ? Codings.ANALYSIS_COR_BEFORE_REP : Codings.ANALYSIS_INC_BEFORE_REP;
 
-                var answerContents = Codings.GetAnswerObjectContent(Answer);
+                var answerContents = Codings.GetFinalAnswerEventContent(Answer);
 
                 var answerSet = string.Format("{0} {1} ({2})", Codings.FriendlyObjects[Answer.CodedObject], answerContents, isAnswerCorrect ? "correct" : "incorrect");
 

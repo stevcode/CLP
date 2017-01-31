@@ -53,8 +53,16 @@ namespace CLP.Entities
                                                                                 { OBJECT_BINS, "Bins" },
                                                                                 { OBJECT_FILL_IN, "Final Answer Fill In" },
                                                                                 { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
-                                                                                { OBJECT_TEXT, "Text" },
+                                                                                { OBJECT_TEXT, "Text" }
                                                                             };
+
+        public static readonly Dictionary<string, string> FriendlyCorrectness = new Dictionary<string, string>
+                                                                                {
+                                                                                    { CORRECTNESS_CORRECT, "Correct" },
+                                                                                    { CORRECTNESS_INCORRECT, "Incorrect" },
+                                                                                    { CORRECTNESS_PARTIAL, "Partially Correct" },
+                                                                                    { CORRECTNESS_UNKNOWN, "Unknown" }
+                                                                                };
 
         #endregion // Coded Objects
 
@@ -219,16 +227,16 @@ namespace CLP.Entities
 
         #region Methods
 
-        public static bool IsAnswerObject(ISemanticEvent semanticEvent)
+        public static bool IsFinalAnswerEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
-        public static string GetAnswerObjectContent(ISemanticEvent semanticEvent)
+        public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(semanticEvent))
+            if (!IsFinalAnswerEvent(semanticEvent))
             {
-                return "[ERROR]: Not Answer Object.";
+                return "[ERROR]: Not Final Answer Event.";
             }
 
             var eventInfo = semanticEvent.EventInformation;
@@ -237,11 +245,11 @@ namespace CLP.Entities
             return content;
         }
 
-        public static string GetAnswerObjectCorrectness(ISemanticEvent semanticEvent)
+        public static string GetFinalAnswerEventCorrectness(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(semanticEvent))
+            if (!IsFinalAnswerEvent(semanticEvent))
             {
-                return "[ERROR]: Not Answer Object.";
+                return "[ERROR]: Not Final Answer Event.";
             }
 
             var eventInfo = semanticEvent.EventInformation;

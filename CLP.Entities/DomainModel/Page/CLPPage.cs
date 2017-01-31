@@ -504,19 +504,20 @@ namespace CLP.Entities
             }
         }
 
+        // TODO: Rename to FinalAnswerCorrectness
         public string AnswerCorrectness
         {
             get
             {
                 try
                 {
-                    var answerCorrectnessTag = Tags.FirstOrDefault(x => x is AnswerCorrectnessTag) as AnswerCorrectnessTag;
+                    var answerCorrectnessTag = Tags.FirstOrDefault(x => x is FinalAnswerCorrectnessTag) as FinalAnswerCorrectnessTag;
                     if (answerCorrectnessTag == null)
                     {
                         return "None";
                     }
 
-                    var code = answerCorrectnessTag.AnalysisCode;
+                    var code = answerCorrectnessTag.FinalAnswerCorrectness;
                     if (code.Contains("COR"))
                     {
                         return "Correct";

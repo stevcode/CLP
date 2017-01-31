@@ -43,12 +43,12 @@ namespace CLP.Entities
 
         public ISemanticEvent FirstAnswer
         {
-            get { return SemanticEvents.FirstOrDefault(Codings.IsAnswerObject); }
+            get { return SemanticEvents.FirstOrDefault(Codings.IsFinalAnswerEvent); }
         }
 
         public ISemanticEvent LastAnswer
         {
-            get { return SemanticEvents.LastOrDefault(Codings.IsAnswerObject); }
+            get { return SemanticEvents.LastOrDefault(Codings.IsFinalAnswerEvent); }
         }
 
         #endregion // Calculated Properties
@@ -68,8 +68,8 @@ namespace CLP.Entities
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }
 
-                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "COR";
-                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "COR";
+                var isFirstAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(firstAnswer) == "COR";
+                var isLastAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(lastAnswer) == "COR";
                 var analysisObjectCode = string.Empty;
                 if (isFirstAnswerCorrect)
                 {
@@ -80,8 +80,8 @@ namespace CLP.Entities
                     analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_INC_TO_COR_AFTER_REP : Codings.ANALYSIS_INC_TO_INC_AFTER_REP;
                 }
 
-                var firstAnswerContents = Codings.GetAnswerObjectContent(firstAnswer);
-                var lastAnswerContents = Codings.GetAnswerObjectContent(lastAnswer);
+                var firstAnswerContents = Codings.GetFinalAnswerEventContent(firstAnswer);
+                var lastAnswerContents = Codings.GetFinalAnswerEventContent(lastAnswer);
 
                 var analysisCode = string.IsNullOrWhiteSpace(analysisObjectCode) ? string.Empty : string.Format("{0} [{1}, {2}]", analysisObjectCode, firstAnswerContents, lastAnswerContents);
 
@@ -106,8 +106,8 @@ namespace CLP.Entities
                     return "[ERROR]: Tag generated with incorrect variables.";
                 }
 
-                var isFirstAnswerCorrect = Codings.GetAnswerObjectCorrectness(firstAnswer) == "COR";
-                var isLastAnswerCorrect = Codings.GetAnswerObjectCorrectness(lastAnswer) == "COR";
+                var isFirstAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(firstAnswer) == "COR";
+                var isLastAnswerCorrect = Codings.GetFinalAnswerEventCorrectness(lastAnswer) == "COR";
                 var analysisObjectCode = string.Empty;
                 if (isFirstAnswerCorrect)
                 {
@@ -118,8 +118,8 @@ namespace CLP.Entities
                     analysisObjectCode = isLastAnswerCorrect ? Codings.ANALYSIS_INC_TO_COR_AFTER_REP : Codings.ANALYSIS_INC_TO_INC_AFTER_REP;
                 }
 
-                var firstAnswerContents = Codings.GetAnswerObjectContent(firstAnswer);
-                var lastAnswerContents = Codings.GetAnswerObjectContent(lastAnswer);
+                var firstAnswerContents = Codings.GetFinalAnswerEventContent(firstAnswer);
+                var lastAnswerContents = Codings.GetFinalAnswerEventContent(lastAnswer);
 
                 var answerChanged = string.Format("{0} {1} ({2}) changed to {3} ({4})",
                                                   Codings.FriendlyObjects[firstAnswer.CodedObject],

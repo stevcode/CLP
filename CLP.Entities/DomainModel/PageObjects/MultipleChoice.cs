@@ -180,7 +180,7 @@ namespace CLP.Entities
             get
             {
                 var idParts = ChoiceBubbles.Where(b => b.IsACorrectValue).Select(b => b.BubbleCodedID).ToList();
-                return string.Join(", ", idParts);
+                return !idParts.Any() ? Codings.ANSWER_UNDEFINED : string.Join(", ", idParts);
             }
         }
 
