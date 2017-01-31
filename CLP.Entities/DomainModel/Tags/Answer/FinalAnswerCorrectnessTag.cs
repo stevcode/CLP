@@ -175,12 +175,13 @@ namespace CLP.Entities
                 }
             }
 
-            var tag = new FinalAnswerCorrectnessTag(page,
-                                                    Origin.StudentPageGenerated,
-                                                    new List<ISemanticEvent>
-                                                    {
-                                                        lastFinalAnswerEvent
-                                                    });
+            var finalAnswerEvents = new List<ISemanticEvent>();
+            if (lastFinalAnswerEvent != null)
+            {
+                finalAnswerEvents.Add(lastFinalAnswerEvent);
+            }
+
+            var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated, finalAnswerEvents);
             page.AddTag(tag);
         }
 
