@@ -242,6 +242,11 @@ namespace CLP.Entities
             var eventInfo = semanticEvent.EventInformation;
             var delimiterIndex = eventInfo.LastIndexOf(',');
             var content = new string(eventInfo.Take(delimiterIndex).ToArray());
+            if (semanticEvent.CodedObject == OBJECT_FILL_IN)
+            {
+                content = content.Split(';').Last().Trim();
+            }
+
             return content;
         }
 
