@@ -331,6 +331,30 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
+            var finalAnswerCorrectnessTag = page.Tags.OfType<FinalAnswerCorrectnessTag>().FirstOrDefault();
+            if (finalAnswerCorrectnessTag == null)
+            {
+                entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
+            }
+            else
+            {
+                switch (finalAnswerCorrectnessTag.FinalAnswerCorrectness)
+                {
+                    case Codings.CORRECTNESS_CORRECT:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_CORRECT;
+                        break;
+                    case Codings.CORRECTNESS_INCORRECT:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_INCORRECT;
+                        break;
+                    case Codings.CORRECTNESS_PARTIAL:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_PARTIAL;
+                        break;
+                    default:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
+                        break;
+                }
+            }
+
             var correctnessSummaryTag = page.Tags.OfType<CorrectnessTag>().FirstOrDefault();
             if (correctnessSummaryTag == null)
             {
