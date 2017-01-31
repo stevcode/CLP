@@ -119,10 +119,10 @@ namespace CLP.Entities
         public static string GetNextAvailableClusterName()
         {
             var numberOfNamedClusters = InkClusters.Count(c => !string.IsNullOrEmpty(c.ClusterName) &&
-                                                               (c.ClusterName != InkCluster.IGNORE_NAME ||
-                                                                c.ClusterName != InkCluster.ANS_MC_NAME ||
-                                                                c.ClusterName != InkCluster.ANS_FI_NAME ||
-                                                                c.ClusterName != InkCluster.INK_DIVIDE_NAME));
+                                                               c.ClusterName != InkCluster.IGNORE_NAME &&
+                                                               c.ClusterName != InkCluster.ANS_MC_NAME &&
+                                                               c.ClusterName != InkCluster.ANS_FI_NAME &&
+                                                               c.ClusterName != InkCluster.INK_DIVIDE_NAME);
             numberOfNamedClusters++;
             return numberOfNamedClusters.ToLetter().ToUpper();
         }
