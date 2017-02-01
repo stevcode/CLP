@@ -812,7 +812,7 @@ namespace CLP.Entities
                     {
                         var parts = stampedObject.Parts;
                         var parentStampID = stampedObject.ParentStampID;
-                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        var groupID = $"{parts} {parentStampID}";
                         if (stampedObjectGroups.ContainsKey(groupID))
                         {
                             stampedObjectGroups[groupID]++;
@@ -935,7 +935,7 @@ namespace CLP.Entities
                             break;
                     }
 
-                    var analysisCode = string.Format("{0} [{1}: {2}]{3}", codedObject, codedID, codedCorrectness, isFinal ? ", final" : string.Empty);
+                    var analysisCode = $"{codedObject} [{codedID}: {codedCorrectness}]{(isFinal ? ", final" : string.Empty)}";
                     analysisCodes.Add(analysisCode);
                 }
 
@@ -1004,7 +1004,7 @@ namespace CLP.Entities
 
                     var codedObject = Codings.OBJECT_BINS;
                     var codedID = numberOfGroups;
-                    var analysisCode = string.Format("{0} [{1}: {2}], final", codedObject, codedID, codedCorrectness);
+                    var analysisCode = $"{codedObject} [{codedID}: {codedCorrectness}], final";
                     analysisCodes.Add(analysisCode);
                 }
 
@@ -1077,7 +1077,7 @@ namespace CLP.Entities
                                 break;
                         }
 
-                        var analysisCode = string.Format("{0} [{1}, {2} images: {3}], final", codedObject, codedID, numberOfGroups, codedCorrectness);
+                        var analysisCode = $"{codedObject} [{codedID}, {numberOfGroups} images: {codedCorrectness}], final";
                         analysisCodes.Add(analysisCode);
                     }
                 }

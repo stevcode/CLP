@@ -8,30 +8,22 @@ namespace CLP.Entities
     [Serializable]
     public class FinalAnswerCorrectnessTag : AAnalysisTagBase
     {
+        #region Constants
+
+        public const string BLANK_STUDENT_ANSWER = "BLANK";
+
+        #endregion // Constants
+
         #region Constructors
 
         public FinalAnswerCorrectnessTag() { }
 
-        public FinalAnswerCorrectnessTag(CLPPage parentPage, Origin origin, List<ISemanticEvent> semanticEvents)
-            : base(parentPage, origin)
-        {
-            SemanticEventIDs = semanticEvents.Select(h => h.ID).ToList();
-
-            Initialize();
-        }
+        public FinalAnswerCorrectnessTag(CLPPage parentPage, Origin origin)
+            : base(parentPage, origin) { }
 
         #endregion // Constructors
 
         #region Properties
-
-        /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>
-        public List<string> SemanticEventIDs
-        {
-            get { return GetValue<List<string>>(SemanticEventIDsProperty); }
-            set { SetValue(SemanticEventIDsProperty, value); }
-        }
-
-        public static readonly PropertyData SemanticEventIDsProperty = RegisterProperty("SemanticEventIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>Classifies Final Answer as MC or Fill In.</summary>
         public string FinalAnswerPageObjectType
@@ -69,66 +61,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
 
-        #region Calculated Properties
-
-        public List<ISemanticEvent> SemanticEvents
-        {
-            get { return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticEventIndex).Distinct().ToList(); }
-        }
-
-        public ISemanticEvent Answer => SemanticEvents.FirstOrDefault(Codings.IsFinalAnswerEvent);
-
-        #endregion // Calculated Properties
-
         #endregion // Properties
-
-        #region Methods
-
-        public void Initialize()
-        {
-            if (Answer == null)
-            {
-                var finalAnswerPageObject = ParentPage.PageObjects.FirstOrDefault(p => p is MultipleChoice || p is InterpretationRegion);
-                if (finalAnswerPageObject == null)
-                {
-                    return;
-                }
-
-                var multipleChoice = finalAnswerPageObject as MultipleChoice;
-                if (multipleChoice != null)
-                {
-                    FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_MULTIPLE_CHOICE];
-                    CorrectAnswer = multipleChoice.CodedID;
-                }
-
-                var interpretationRegion = finalAnswerPageObject as InterpretationRegion;
-                if (interpretationRegion != null)
-                {
-                    FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_FILL_IN];
-                    var relationDefinitionTag = ParentPage.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
-                    if (relationDefinitionTag != null)
-                    {
-                        var definitionAnswer = relationDefinitionTag.Answer;
-                        var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
-                        CorrectAnswer = truncatedAnswer.ToString();
-                    }
-                }
-
-                StudentAnswer = "BLANK";
-                FinalAnswerCorrectness = Codings.CORRECTNESS_INCORRECT;
-            }
-            else
-            {
-                FinalAnswerPageObjectType = Codings.FriendlyObjects[Answer.CodedObject];
-                CorrectAnswer = Answer.CodedObjectID;
-                StudentAnswer = Codings.GetFinalAnswerEventContent(Answer);
-                FinalAnswerCorrectness = Codings.GetFinalAnswerEventCorrectness(Answer);
-
-                AnalysisCodes.Add(Answer.CodedValue);
-            }
-        }
-
-        #endregion // Methods
 
         #region ATagBase Overrides
 
@@ -146,7 +79,7 @@ namespace CLP.Entities
                 }
 
                 var correctAnswerDescription = $"{FinalAnswerPageObjectType}: Correct answer is {CorrectAnswer}";
-                var studentAnswerDescription = StudentAnswer == "BLANK" ? "Student left final answer blank" : $"Student answered {StudentAnswer}";
+                var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left final answer blank" : $"Student answered {StudentAnswer}";
                 var finalAnswerFriendlyCorrectness = Codings.FriendlyCorrectness[FinalAnswerCorrectness];
                 var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes: {AnalysisCodesReport}" : string.Empty;
 
@@ -162,26 +95,55 @@ namespace CLP.Entities
         public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var lastFinalAnswerEvent =
-                semanticEvents.LastOrDefault(e => Codings.IsFinalAnswerEvent(e) && 
-                                                  e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
-                                                  e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL &&
-                                                  e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE);
+                semanticEvents.LastOrDefault(
+                                             e =>
+                                                 Codings.IsFinalAnswerEvent(e) && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
+                                                 e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE);
+
+            var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
             if (lastFinalAnswerEvent == null)
             {
-                var isFinalAnswerOnPage = page.PageObjects.Any(p => p is InterpretationRegion || p is MultipleChoice);
-                if (!isFinalAnswerOnPage)
+                var finalAnswerPageObject = page.PageObjects.FirstOrDefault(p => p is MultipleChoice || p is InterpretationRegion);
+                if (finalAnswerPageObject == null)
                 {
                     return;
                 }
-            }
 
-            var finalAnswerEvents = new List<ISemanticEvent>();
-            if (lastFinalAnswerEvent != null)
+                var multipleChoice = finalAnswerPageObject as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_MULTIPLE_CHOICE];
+                    tag.CorrectAnswer = multipleChoice.CodedID;
+                }
+
+                var interpretationRegion = finalAnswerPageObject as InterpretationRegion;
+                if (interpretationRegion != null)
+                {
+                    tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_FILL_IN];
+                    var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
+                    if (relationDefinitionTag != null)
+                    {
+                        var definitionAnswer = relationDefinitionTag.Answer;
+                        var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
+                        tag.CorrectAnswer = truncatedAnswer.ToString();
+                    }
+                }
+
+                tag.StudentAnswer = BLANK_STUDENT_ANSWER;
+                tag.FinalAnswerCorrectness = Codings.CORRECTNESS_INCORRECT;
+            }
+            else
             {
-                finalAnswerEvents.Add(lastFinalAnswerEvent);
+                tag.SemanticEventIDs.Add(lastFinalAnswerEvent.ID);
+
+                tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[lastFinalAnswerEvent.CodedObject];
+                tag.CorrectAnswer = lastFinalAnswerEvent.CodedObjectID;
+                tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastFinalAnswerEvent);
+                tag.FinalAnswerCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
+
+                tag.AnalysisCodes.Add(lastFinalAnswerEvent.CodedValue);
             }
 
-            var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated, finalAnswerEvents);
             page.AddTag(tag);
         }
 

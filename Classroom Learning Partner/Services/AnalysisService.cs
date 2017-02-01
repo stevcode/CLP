@@ -331,6 +331,35 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
+            var representationsUsedTag = page.Tags.OfType<RepresentationsUsedTag>().FirstOrDefault();
+            if (representationsUsedTag == null)
+            {
+                entry.IsInkOnly = AnalysisEntry.UNKOWN_ERROR;
+                entry.IsBlank = AnalysisEntry.UNKOWN_ERROR;
+            }
+            else
+            {
+                switch (representationsUsedTag.RepresentationsUsedType)
+                {
+                    case RepresentationsUsedTypes.BlankPage:
+                        entry.IsInkOnly = AnalysisEntry.NO;
+                        entry.IsBlank = AnalysisEntry.YES;
+                        break;
+                    case RepresentationsUsedTypes.InkOnly:
+                        entry.IsInkOnly = AnalysisEntry.YES;
+                        entry.IsBlank = AnalysisEntry.NO;
+                        break;
+                    case RepresentationsUsedTypes.RepresentationsUsed:
+                        entry.IsInkOnly = AnalysisEntry.NO;
+                        entry.IsBlank = AnalysisEntry.NO;
+                        break;
+                    default:
+                        entry.IsInkOnly = AnalysisEntry.UNKOWN_ERROR;
+                        entry.IsBlank = AnalysisEntry.UNKOWN_ERROR;
+                        break;
+                }
+            }
+
             var finalAnswerCorrectnessTag = page.Tags.OfType<FinalAnswerCorrectnessTag>().FirstOrDefault();
             if (finalAnswerCorrectnessTag == null)
             {

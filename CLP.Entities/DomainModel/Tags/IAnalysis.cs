@@ -6,5 +6,7 @@ namespace CLP.Entities
     {
         List<string> AnalysisCodes { get; set; }
         string AnalysisCodesReport { get; }
+        List<string> SemanticEventIDs { get; set; }
+        List<ISemanticEvent> SemanticEvents { get; }
     }
 }

@@ -9,10 +9,8 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="EquivalenceRelationDefinitionTag" /> from scratch.</summary>
         public EquivalenceRelationDefinitionTag() { }
 
-        /// <summary>Initializes <see cref="EquivalenceRelationDefinitionTag" />.</summary>
         public EquivalenceRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 

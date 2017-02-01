@@ -15,11 +15,8 @@ namespace CLP.Entities
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionRelationDefinitionTag" /> from scratch.</summary>
         public DivisionRelationDefinitionTag() { }
 
-        /// <summary>Initializes <see cref="DivisionRelationDefinitionTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionRelationDefinitionTag" /> belongs to.</param>
         public DivisionRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 

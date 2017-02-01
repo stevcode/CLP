@@ -5,18 +5,20 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum RepresentationsUsedTypes
+    {
+        BlankPage,
+        InkOnly,
+        RepresentationsUsed
+    }
+
     [Serializable]
-    public class RepresentationsUsedTag : ATagBase
+    public class RepresentationsUsedTag : AAnalysisTagBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="RepresentationsUsedTag" /> from scratch.</summary>
         public RepresentationsUsedTag() { }
 
-        /// <summary>Initializes <see cref="RepresentationsUsedTag" /> from values.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesOnPageTag" /> belongs to.</param>
-        /// <param name="origin"></param>
-        /// <param name="currentUserID"></param>
         public RepresentationsUsedTag(CLPPage parentPage, Origin origin, List<string> allRepresentations, List<string> deletedCodedRepresentations, List<string> finalCodedRepresentations)
             : base(parentPage, origin)
         {
@@ -28,6 +30,19 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>Identifies 3 possible usages scenarios: Ink Only, Blank Page, or Representations Used.</summary>
+        public RepresentationsUsedTypes RepresentationsUsedType
+        {
+            get { return GetValue<RepresentationsUsedTypes>(RepresentationsUsedTypeProperty); }
+            set { SetValue(RepresentationsUsedTypeProperty, value); }
+        }
+
+        public static readonly PropertyData RepresentationsUsedTypeProperty = RegisterProperty("RepresentationsUsedType", typeof(RepresentationsUsedTypes), RepresentationsUsedTypes.BlankPage);
+        
+
+
+
 
         /// <summary>Distinct list of all representations used through the history of the page.</summary>
         public List<string> AllRepresentations
@@ -70,19 +85,28 @@ namespace CLP.Entities
         {
             get
             {
+                switch (RepresentationsUsedType)
+                {
+                    case RepresentationsUsedTypes.BlankPage:
+                        return "Blank Page";
+                    case RepresentationsUsedTypes.InkOnly:
+                        return "Ink Only";
+                }
+
+
                 if (!AllRepresentations.Any())
                 {
                     var isStrokesUsed = ParentPage.InkStrokes.Any() || ParentPage.History.TrashedInkStrokes.Any();
                     return isStrokesUsed ? "Ink Only" : "Blank Page";
                 }
 
-                var deletedSection = !DeletedCodedRepresentations.Any() ? string.Empty : string.Format("Deleted Representation(s):\n{0}", string.Join("\n", DeletedCodedRepresentations));
+                var deletedSection = !DeletedCodedRepresentations.Any() ? string.Empty : $"Deleted Representation(s):\n{string.Join("\n", DeletedCodedRepresentations)}";
                 var finalSectionDelimiter = DeletedCodedRepresentations.Any() && FinalCodedRepresentations.Any() ? "\n" : string.Empty;
                 var finalSection = !FinalCodedRepresentations.Any()
                                        ? string.Empty
-                                       : string.Format("{0}Final Representation(s):\n{1}", finalSectionDelimiter, string.Join("\n", FinalCodedRepresentations));
-                var codeSection = AllRepresentations.Count > 1 ? string.Format("\nCode: {0}", AnalysisCode) : string.Empty;
-                return string.Format("{0}{1}{2}", deletedSection, finalSection, codeSection);
+                                       : $"{finalSectionDelimiter}Final Representation(s):\n{string.Join("\n", FinalCodedRepresentations)}";
+                var codeSection = AllRepresentations.Count > 1 ? $"\nCode: {AnalysisCode}" : string.Empty;
+                return $"{deletedSection}{finalSection}{codeSection}";
             }
         }
 
@@ -125,7 +149,7 @@ namespace CLP.Entities
 
                         var parts = stampedObject.Parts;
                         var parentStampID = stampedObject.ParentStampID;
-                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        var groupID = $"{parts} {parentStampID}";
                         if (stampedObjectGroups.ContainsKey(groupID))
                         {
                             stampedObjectGroups[groupID]++;
@@ -155,7 +179,7 @@ namespace CLP.Entities
 
                         var parts = stampedObject.Parts;
                         var parentStampID = stampedObject.ParentStampID;
-                        var groupID = string.Format("{0} {1}", parts, parentStampID);
+                        var groupID = $"{parts} {parentStampID}";
                         stampedObjectGroups[groupID]--;
                         if (stampedObjectGroups[groupID] <= 0)
                         {
@@ -173,8 +197,8 @@ namespace CLP.Entities
                                 var stampParts = groupIDSections[0];
                                 var obj = Codings.OBJECT_STAMP;
                                 var id = stampParts;
-                                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
-                                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
+                                var componentSection = $": {stampedObjectGroups[key]} images";
+                                var codedValue = $"{obj} [{id}{componentSection}]";
                                 deletedCodedRepresentations.Add(codedValue);
                                 allRepresentations.Add(obj);
                             }
@@ -289,7 +313,7 @@ namespace CLP.Entities
                                     var stop = int.Parse(jumpRange[1]);
                                     var numberOfJumps = (stop - start) / jumpSize;
                                     var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
-                                    var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
+                                    var jumpInEnglish = $"{numberOfJumps} {jumpString} of {jumpSize}";
                                     jumpsInEnglish.Add(jumpInEnglish);
                                 }
                                 catch (Exception)
@@ -307,7 +331,7 @@ namespace CLP.Entities
                         {
                             englishValue = " (no interaction)";
                         }
-                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
+                        var codedValue = $"{obj} [{id}{componentSection}]{englishValue}";
                         deletedCodedRepresentations.Add(codedValue);
                         if (!string.IsNullOrEmpty(componentSection))
                         {
@@ -324,7 +348,7 @@ namespace CLP.Entities
                 {
                     if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
                     {
-                        var historyAction = semanticEvent.HistoryActions.First();
+                        var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
                         var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -346,7 +370,7 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
                     {
-                        var historyAction = semanticEvent.HistoryActions.First();
+                        var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
                         var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
@@ -374,14 +398,14 @@ namespace CLP.Entities
 
                     if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                     {
-                        var historyAction = semanticEvent.HistoryActions.First();
+                        var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
                         var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                         if (objectsChanged == null)
                         {
                             continue;
                         }
 
-                        var array = objectsChanged.PageObjectsRemoved.First() as CLPArray;
+                        var array = objectsChanged.PageObjectsRemoved.FirstOrDefault() as CLPArray;
                         if (array == null)
                         {
                             continue;
@@ -398,9 +422,9 @@ namespace CLP.Entities
                                                    h.EventType == Codings.EVENT_ARRAY_SKIP ||
                                                    (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
 
-                        var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+                        var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : $": {string.Join(", ", subArrayGroups[array.ID])}";
 
-                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
+                        var codedValue = $"{obj} [{id}{componentSection}]{(isInteractedWith ? string.Empty : " (no ink)")}";
                         deletedCodedRepresentations.Add(codedValue);
                         allRepresentations.Add(obj);
                     }
@@ -427,9 +451,9 @@ namespace CLP.Entities
                                                h.EventType == Codings.EVENT_ARRAY_SKIP ||
                                                (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
 
-                    var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+                    var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : $": {string.Join(", ", subArrayGroups[array.ID])}";
 
-                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
+                    var codedValue = $"{obj} [{id}{componentSection}]{(isInteractedWith ? string.Empty : " (no ink)")}";
 
                     var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
                     if (!string.IsNullOrEmpty(formattedSkips))
@@ -481,8 +505,8 @@ namespace CLP.Entities
                             wrongDimensionText = ", wrong dimension";
                         }
 
-                        var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
-                        codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
+                        var skipCodedValue = $"\n  - skip [{formattedSkips}]{wrongDimensionText}";
+                        codedValue = $"{codedValue}{skipCodedValue}";
                     }
 
                     finalCodedRepresentations.Add(codedValue);
@@ -495,7 +519,7 @@ namespace CLP.Entities
                     var obj = numberLine.CodedName;
                     var id = numberLine.CodedID;
                     var components = NumberLine.ConsolidateJumps(numberLine.JumpSizes.ToList());
-                    var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
+                    var componentSection = string.IsNullOrEmpty(components) ? string.Empty : $": {components}";
                     var englishValue = string.Empty;
                     if (!string.IsNullOrEmpty(components))
                     {
@@ -511,7 +535,7 @@ namespace CLP.Entities
                                 var stop = int.Parse(jumpRange[1]);
                                 var numberOfJumps = (stop - start) / jumpSize;
                                 var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
-                                var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
+                                var jumpInEnglish = $"{numberOfJumps} {jumpString} of {jumpSize}";
                                 jumpsInEnglish.Add(jumpInEnglish);
                             }
                             catch (Exception)
@@ -529,7 +553,7 @@ namespace CLP.Entities
                     {
                         englishValue = " (no interaction)";
                     }
-                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
+                    var codedValue = $"{obj} [{id}{componentSection}]{englishValue}";
                     finalCodedRepresentations.Add(codedValue);
                     allRepresentations.Add(obj);
                 }
@@ -539,7 +563,7 @@ namespace CLP.Entities
                 {
                     var parts = stampedObject.Parts;
                     var parentStampID = stampedObject.ParentStampID;
-                    var groupID = string.Format("{0} {1}", parts, parentStampID);
+                    var groupID = $"{parts} {parentStampID}";
                     if (stampedObjectGroups.ContainsKey(groupID))
                     {
                         stampedObjectGroups[groupID]++;
@@ -570,10 +594,10 @@ namespace CLP.Entities
                 var parts = groupIDSections[0];
                 var obj = Codings.OBJECT_STAMP;
                 var id = parts;
-                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
+                var componentSection = $": {stampedObjectGroups[key]} images";
                 var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
-                var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
-                var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
+                var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
+                var codedValue = $"{obj} [{id}{componentSection}]\n  - {englishValue}";
                 finalCodedRepresentations.Add(codedValue);
                 allRepresentations.Add(obj);
             }
@@ -589,12 +613,12 @@ namespace CLP.Entities
                     var count = binGroups[key];
                     id += count;
                     var binString = count == 1 ? "bin" : "bins";
-                    var englishValue = string.Format("{0} {1} of {2}", count, binString, parts);
+                    var englishValue = $"{count} {binString} of {parts}";
                     englishValues.Add(englishValue);
                 }
 
                 var formattedEnglishValue = string.Join("\n  - ", englishValues);
-                var codedValue = string.Format("{0} [{1}]\n  - {2}", obj, id, formattedEnglishValue);
+                var codedValue = $"{obj} [{id}]\n  - {formattedEnglishValue}";
                 finalCodedRepresentations.Add(codedValue);
                 allRepresentations.Add(obj);
             }

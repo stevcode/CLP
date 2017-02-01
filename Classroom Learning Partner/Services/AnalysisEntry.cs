@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.Services
 
         public const string YES = "Y";
         public const string NO = "N";
+        public const string UNKOWN_ERROR = "UE";
         public const string UNSUBMITTED = "UNSUBMITTED";
         public const string NONE = "None";
         public const string NA = "N/A";
