@@ -41,6 +41,8 @@ namespace CLP.Entities
 
         #region Static Methods
 
+        #region Page Answer Definition Relation Generation
+
         public SimplifiedRelation GenerateLeftRelationFromPageAnswerDefinition(CLPPage page)
         {
             var relationDefinitionTag = page.Tags.OfType<IDefinition>().FirstOrDefault();
@@ -78,7 +80,7 @@ namespace CLP.Entities
                         break;
                 }
 
-                
+
                 simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
                 simplifiedRelation.IsProductImportant = true;
 
@@ -244,22 +246,22 @@ namespace CLP.Entities
             }
 
             var leftSimplifiedRelation = new SimplifiedRelation
-                                         {
-                                             GroupSize = partOneDefinition.Factors.Last().RelationPartAnswerValue,
-                                             NumberOfGroups = partOneDefinition.Factors.First().RelationPartAnswerValue,
-                                             Product = partOneDefinition.Product,
-                                             IsOrderedGroup = partOneDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups,
-                                             IsProductImportant = true
-                                         };
+            {
+                GroupSize = partOneDefinition.Factors.Last().RelationPartAnswerValue,
+                NumberOfGroups = partOneDefinition.Factors.First().RelationPartAnswerValue,
+                Product = partOneDefinition.Product,
+                IsOrderedGroup = partOneDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups,
+                IsProductImportant = true
+            };
 
             var rightSimplifiedRelation = new SimplifiedRelation
-                                          {
-                                              GroupSize = partTwoDefinition.Factors.Last().RelationPartAnswerValue,
-                                              NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue,
-                                              Product = partTwoDefinition.Product,
-                                              IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups,
-                                              IsProductImportant = true
-                                          };
+            {
+                GroupSize = partTwoDefinition.Factors.Last().RelationPartAnswerValue,
+                NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue,
+                Product = partTwoDefinition.Product,
+                IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups,
+                IsProductImportant = true
+            };
 
             if (!(Math.Abs(leftSimplifiedRelation.GroupSize - rightSimplifiedRelation.GroupSize) < 0.0001))
             {
@@ -267,17 +269,118 @@ namespace CLP.Entities
             }
 
             var simplifiedRelation = new SimplifiedRelation
-                                     {
-                                         GroupSize = leftSimplifiedRelation.GroupSize,
-                                         NumberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.NumberOfGroups,
-                                         IsOrderedGroup = true,
-                                         IsProductImportant = true
-                                     };
+            {
+                GroupSize = leftSimplifiedRelation.GroupSize,
+                NumberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.NumberOfGroups,
+                IsOrderedGroup = true,
+                IsProductImportant = true
+            };
 
             simplifiedRelation.Product = simplifiedRelation.GroupSize * simplifiedRelation.NumberOfGroups;
 
             return simplifiedRelation;
         }
+
+        #endregion // Page Answer Definition Relation Generation
+
+        #region PageObject Relation Generation
+
+        public static SimplifiedRelation GenerateArrayRelation(CLPArray array, int historyIndex)
+        {
+            if (array == null)
+            {
+                return null;
+            }
+
+            var colsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var simplifiedRelation = new SimplifiedRelation
+                                     {
+                                         GroupSize = colsAndRows.X,
+                                         NumberOfGroups = colsAndRows.Y,
+                                         Product = colsAndRows.X * colsAndRows.Y,
+                                         IsOrderedGroup = false,
+                                         IsProductImportant = false
+                                     };
+
+            return simplifiedRelation;
+        }
+
+        public static SimplifiedRelation GenerateNumberLineRelation(NumberLine numberLine, int historyIndex)
+        {
+            // TODO: Get jumpsizes at historyIndex
+            // TODO: Have bias towards majority of jump sizes being the same and modify SimplifiedRelation to have COR biased to PAR in that scenario.
+
+            var firstGroupSize = -1;
+            var firstJump = numberLine.JumpSizes.FirstOrDefault();
+            if (firstJump != null)
+            {
+                firstGroupSize = firstJump.JumpSize;
+            }
+            var isEqualGroups = numberLine.JumpSizes.All(j => j.JumpSize == firstGroupSize);
+
+            var product = -1;
+            var lastJump = numberLine.JumpSizes.LastOrDefault();
+            if (lastJump != null)
+            {
+                product = lastJump.StartingTickIndex + lastJump.JumpSize;
+            }
+
+            var jumpSizesIgnoringOverlaps = numberLine.JumpSizes.GroupBy(j => j.StartingTickIndex).Select(g => g.First()).ToList();
+
+            var simplifiedRelation = new SimplifiedRelation
+                                     {
+                                         GroupSize = isEqualGroups ? firstGroupSize : -1,
+                                         NumberOfGroups = jumpSizesIgnoringOverlaps.Count,
+                                         Product = product,
+                                         IsOrderedGroup = true,
+                                         IsProductImportant = true
+                                     };
+
+            return simplifiedRelation;
+        }
+
+        // numberOfStampedObjects = number of stamped objects that share the same parts values and parentStampIDs (though, is the parentStampID necessary?)
+        public static SimplifiedRelation GenerateStampedObjectsRelation(int parentStampParts, int numberOfStampedObjects)
+        {
+            var simplifiedRelation = new SimplifiedRelation
+                                     {
+                                         GroupSize = parentStampParts,
+                                         NumberOfGroups = numberOfStampedObjects,
+                                         Product = numberOfStampedObjects * parentStampParts,
+                                         IsOrderedGroup = parentStampParts != 1,
+                                         IsProductImportant = true
+                                     };
+
+            return simplifiedRelation;
+        }
+
+        public static SimplifiedRelation GenerateBinsRelation(CLPPage page, int historyIndex)
+        {
+            // TODO: Modify to use historyIndex, modelled after StampsRelation method above.
+            var binsOnPage = page.PageObjects.OfType<Bin>().Where(b => b.Parts > 0).ToList();
+            if (!binsOnPage.Any())
+            {
+                return null;
+            }
+
+            var numberOfGroups = binsOnPage.Count();
+            var product = binsOnPage.Select(b => b.Parts).Sum();
+            var firstGroupSize = binsOnPage.First().Parts;
+            var isEqualGroups = binsOnPage.All(b => b.Parts == firstGroupSize);
+
+            var simplifiedRelation = new SimplifiedRelation
+                                     {
+                                         GroupSize = isEqualGroups ? firstGroupSize : -1,
+                                         NumberOfGroups = numberOfGroups,
+                                         Product = product,
+                                         IsOrderedGroup = true,
+                                         IsProductImportant = true
+                                     };
+
+            return simplifiedRelation;
+        }
+
+        #endregion // PageObject Relation Generation
 
         #endregion // Static Methods
     }
