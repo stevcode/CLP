@@ -12,6 +12,7 @@ namespace CLP.Entities
         public double Product;
         public bool IsOrderedGroup;
         public IDefinition PageDefinition;
+        public bool IsSwapped;
     }
 
     [Serializable]
@@ -423,6 +424,13 @@ namespace CLP.Entities
                     representationRelation.NumberOfGroups == definitionRelation.NumberOfGroups)
                 {
                     return representationRelation.Product == definitionRelation.Product ? Correctness.Correct : Correctness.PartiallyCorrect;
+                }
+
+                if (representationRelation.GroupSize == definitionRelation.NumberOfGroups &&
+                    representationRelation.NumberOfGroups == definitionRelation.GroupSize)
+                {
+                    representationRelation.IsSwapped = true;
+                    return Correctness.PartiallyCorrect;
                 }
 
                 if (representationRelation.GroupSize == definitionRelation.GroupSize ||

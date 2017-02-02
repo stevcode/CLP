@@ -277,6 +277,53 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Whole Page Characteristics
 
+        #region Left Side
+
+        #region Number Line
+
+        /// <summary>SUMMARY</summary>
+        public int LeftNumberLineUsedCount
+        {
+            get { return GetValue<int>(LeftNumberLineUsedCountProperty); }
+            set { SetValue(LeftNumberLineUsedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineUsedCountProperty = RegisterProperty("LeftNumberLineUsedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public string LeftNLJE
+        {
+            get { return GetValue<string>(LeftNLJEProperty); }
+            set { SetValue(LeftNLJEProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNLJEProperty = RegisterProperty("LeftNLJE", typeof(string), string.Empty);
+
+        /// <summary>SUMMARY</summary>
+        public string LeftNumberLineSwitched
+        {
+            get { return GetValue<string>(LeftNumberLineSwitchedProperty); }
+            set { SetValue(LeftNumberLineSwitchedProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineSwitchedProperty = RegisterProperty("LeftNumberLineSwitched", typeof(string), string.Empty);
+
+        /// <summary>SUMMARY</summary>
+        public string LeftNumberLineBlank
+        {
+            get { return GetValue<string>(LeftNumberLineBlankProperty); }
+            set { SetValue(LeftNumberLineBlankProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineBlankProperty = RegisterProperty("LeftNumberLineBlank", typeof(string), string.Empty);
+
+        #endregion // Number Line
+
+
+
+
+        #endregion // Left Side
+
 
         #region Whole Page Analysis
 
@@ -386,6 +433,12 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(StampDeletedCount.ToString());
             cellContents.Add(IndividualStampImageDeletedCount.ToString());
             cellContents.Add(StampImageRepresentationDeletedCount.ToString());
+
+            // Left Side
+            cellContents.Add(LeftNumberLineUsedCount.ToString());
+            cellContents.Add(LeftNLJE);
+            cellContents.Add(LeftNumberLineSwitched);
+            cellContents.Add(LeftNumberLineBlank);
 
             // Whole Page Analysis
             cellContents.Add(IsMR2STEP);

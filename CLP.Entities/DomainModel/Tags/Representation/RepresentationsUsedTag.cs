@@ -59,6 +59,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
 
+        /// <summary>If applicable, lists a reason for Correctness set to Partial or Incorrect.</summary>
+        public string CorrectnessReason
+        {
+            get { return GetValue<string>(CorrectnessReasonProperty); }
+            set { SetValue(CorrectnessReasonProperty, value); }
+        }
+
+        public static readonly PropertyData CorrectnessReasonProperty = RegisterProperty("CorrectnessReason", typeof(string), Codings.PARTIAL_REASON_UNKNOWN);
+
         /// <summary>The part/side of the page definition the Representation matchec correctness against.</summary>
         public string MatchedRelationSide
         {
@@ -467,6 +476,10 @@ namespace CLP.Entities
 
                 usedRepresentation.Correctness = representationCorrectness;
                 usedRepresentation.MatchedRelationSide = matchedRelationSide;
+                if (representationRelation.IsSwapped)
+                {
+                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
+                }
 
                 #endregion // Representation Correctness
 

@@ -357,6 +357,35 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Whole Page Characteristics
 
+            #region Left Side
+
+            #region Number Lines
+
+            var usedNumberLines =
+                representationsUsedTag.RepresentationsUsed.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.IsUsed && r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).ToList();
+
+            entry.LeftNumberLineUsedCount = usedNumberLines.Count;
+
+            if (entry.LeftNumberLineUsedCount == 0)
+            {
+                entry.LeftNLJE = AnalysisEntry.NA;
+            }
+            else
+            {
+                var isNLJEUsed = usedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+                entry.LeftNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
+            entry.LeftNumberLineSwitched = usedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            entry.LeftNumberLineBlank = usedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Number Lines
+
+
+
+
+            #endregion // Left Side
 
             #region Whole Page Analysis
 
