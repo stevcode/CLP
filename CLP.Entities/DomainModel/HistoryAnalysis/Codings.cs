@@ -220,6 +220,9 @@ namespace CLP.Entities
         public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_RIGHT = "NLBP right";
         public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_ALTERNATIVE = "NLBP alternative";
 
+        public const string REPRESENTATIONS_MR = "MR";
+        public const string REPRESENTATIONS_MR2STEP = "MR2STEP";
+
         #endregion // Misc
 
         #endregion // Analysis Codes

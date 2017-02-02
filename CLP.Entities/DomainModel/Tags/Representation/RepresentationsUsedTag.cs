@@ -166,11 +166,8 @@ namespace CLP.Entities
 
         public RepresentationsUsedTag() { }
 
-        public RepresentationsUsedTag(CLPPage parentPage, Origin origin, List<UsedRepresentation> representationsUsed)
-            : base(parentPage, origin)
-        {
-            RepresentationsUsed = representationsUsed;
-        }
+        public RepresentationsUsedTag(CLPPage parentPage, Origin origin)
+            : base(parentPage, origin) { }
 
         #endregion //Constructors
 
@@ -261,9 +258,23 @@ namespace CLP.Entities
 
         public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated);
 
-            //var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representationsUsed);
-            //page.AddTag(tag);
+            var leftRelation = RepresentationCorrectnessTag.GenerateLeftRelationFromPageAnswerDefinition(page);
+            var rightRelation = RepresentationCorrectnessTag.GenerateRightRelationFromPageAnswerDefinition(page);
+            var alternativeRelation = RepresentationCorrectnessTag.GenerateAlternativeRelationFromPageAnswerDefinition(page);
+
+            GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+
+            var isMR2STEP = IsMR2STEP(tag);
+            if (isMR2STEP)
+            {
+                tag.AnalysisCodes.Add(Codings.REPRESENTATIONS_MR2STEP);
+            }
+
+            page.AddTag(tag);
         }
 
         public static void GenerateArraysUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
@@ -889,6 +900,39 @@ namespace CLP.Entities
 
                 tag.RepresentationsUsed.Add(usedRepresentation);
             }
+        }
+
+        public static bool IsMR2STEP(RepresentationsUsedTag tag)
+        {
+            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+
+            var unmatchedRepresentations =
+                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE && r.Correctness == Correctness.Incorrect).Select(r => r.CodedObject).Distinct().ToList();
+
+            // TODO: Doesn't handle altReps
+
+            if (!leftSideRepresentations.Any() ||
+                !rightSideRepresentations.Any())
+            {
+                return false;
+            }
+
+            foreach (var leftSideRepresentation in leftSideRepresentations)
+            {
+                if (!rightSideRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+
+                if (!unmatchedRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion // Static Methods

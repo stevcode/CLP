@@ -449,6 +449,9 @@ namespace CLP.Entities
                 return null;
             }
 
+            // BUG: Potential bug, if the array was deleted, but all the ink of the skip count wasn't deleted when the array was deleted
+            // because it wasn't fully captured, this inkEvent shouldn't continue quite the way it does here. Something like the following:
+            // INK strokes erase [A] formerly skip strokes for ARR [8x8]
             var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
             if (array == null)
             {
@@ -489,14 +492,14 @@ namespace CLP.Entities
             var eventInfo = $"{formattedInterpretation}, {location}";
 
             var semanticEvent = new SemanticEvent(page, inkEvent)
-            {
-                CodedObject = codedObject,
-                EventType = eventType,
-                CodedObjectID = codedID,
-                CodedObjectIDIncrement = incrementID,
-                EventInformation = eventInfo,
-                ReferencePageObjectID = referenceArrayID
-            };
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = eventType,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = eventInfo,
+                                    ReferencePageObjectID = referenceArrayID
+                                };
 
             return semanticEvent;
         }

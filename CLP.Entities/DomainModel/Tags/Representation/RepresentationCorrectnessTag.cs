@@ -43,7 +43,7 @@ namespace CLP.Entities
 
         #region Page Answer Definition Relation Generation
 
-        public SimplifiedRelation GenerateLeftRelationFromPageAnswerDefinition(CLPPage page)
+        public static SimplifiedRelation GenerateLeftRelationFromPageAnswerDefinition(CLPPage page)
         {
             var relationDefinitionTag = page.Tags.OfType<IDefinition>().FirstOrDefault();
             if (relationDefinitionTag == null)
@@ -150,7 +150,7 @@ namespace CLP.Entities
             return null;
         }
 
-        public SimplifiedRelation GenerateRightRelationFromPageAnswerDefinition(CLPPage page)
+        public static SimplifiedRelation GenerateRightRelationFromPageAnswerDefinition(CLPPage page)
         {
             var relationDefinitionTag = page.Tags.OfType<IDefinition>().FirstOrDefault();
             if (relationDefinitionTag == null)
@@ -223,7 +223,7 @@ namespace CLP.Entities
             return null;
         }
 
-        public SimplifiedRelation GenerateAlternativeRelationFromPageAnswerDefinition(CLPPage page)
+        public static SimplifiedRelation GenerateAlternativeRelationFromPageAnswerDefinition(CLPPage page)
         {
             var relationDefinitionTag = page.Tags.OfType<IDefinition>().FirstOrDefault();
             if (relationDefinitionTag == null)

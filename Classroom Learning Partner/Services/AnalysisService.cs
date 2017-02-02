@@ -360,6 +360,15 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
+            entry.IsMR2STEP = AnalysisEntry.NA;
+            if (representationsUsedTag != null &&
+                representationsUsedTag.RepresentationsUsedType == RepresentationsUsedTypes.RepresentationsUsed &&
+                entry.ProblemType != AnalysisEntry.PROBLEM_TYPE_1_PART)
+            {
+                var isMR2STEP = representationsUsedTag.AnalysisCodes.Contains(Codings.REPRESENTATIONS_MR2STEP);
+                entry.IsMR2STEP = isMR2STEP ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
             var finalAnswerCorrectnessTag = page.Tags.OfType<FinalAnswerCorrectnessTag>().FirstOrDefault();
             if (finalAnswerCorrectnessTag == null)
             {
