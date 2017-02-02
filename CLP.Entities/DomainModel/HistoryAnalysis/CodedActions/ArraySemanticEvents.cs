@@ -415,14 +415,14 @@ namespace CLP.Entities
             var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
 
             var inkDivideEvent = new SemanticEvent(page, historyAction)
-            {
-                CodedObject = codedObject,
-                EventType = eventType,
-                CodedObjectID = codedID,
-                CodedObjectIDIncrement = incrementID,
-                EventInformation = eventInfo,
-                ReferencePageObjectID = array.ID
-            };
+                                 {
+                                     CodedObject = codedObject,
+                                     EventType = eventType,
+                                     CodedObjectID = codedID,
+                                     CodedObjectIDIncrement = incrementID,
+                                     EventInformation = eventInfo,
+                                     ReferencePageObjectID = array.ID
+                                 };
 
             return inkDivideEvent;
         }

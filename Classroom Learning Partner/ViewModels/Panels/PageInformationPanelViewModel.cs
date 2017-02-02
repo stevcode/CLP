@@ -988,7 +988,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                var unformattedSkips = formattedSkips.TrimAll().Split(new[] { "\"\"" }, StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+                var unformattedSkips = formattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
                 var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, array.Rows, array.Columns);
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)

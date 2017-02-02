@@ -737,10 +737,6 @@ namespace CLP.Entities
 
         public static void AttemptRepresentationCorrectness(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            //if (!semanticEvents.Any())
-            //{
-            //    return;
-            //}
 
             #region Answer Definition Relation
 
