@@ -49,10 +49,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsCorrectnessAutomaticallySetProperty = RegisterProperty("IsCorrectnessAutomaticallySet", typeof(bool), false);
 
-        public bool IsCorrectnessManuallySet
-        {
-            get { return Origin == Origin.Teacher; }
-        }
+        public bool IsCorrectnessManuallySet => Origin == Origin.Teacher;
 
         #region ATagBase Overrides
 
@@ -62,13 +59,19 @@ namespace CLP.Entities
 
         public override string FormattedName => "Correctness";
 
-        public override string FormattedValue
-        {
-            get { return string.Format("{0}, {1}", Correctness, IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : "Default"); }
-        }
+        public override string FormattedValue => $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : "Default")}";
 
         #endregion //ATagBase Overrides
 
         #endregion //Properties
+
+        #region Static Methods
+
+        public static void AttemptTagGeneration(RepresentationCorrectnessTag representationCorrectnessTag, FinalAnswerCorrectnessTag finalAnswerCorrectnessTag)
+        {
+            
+        }
+
+        #endregion // Static Methods
     }
 }
