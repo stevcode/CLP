@@ -11,6 +11,7 @@ namespace CLP.Entities
         public double NumberOfGroups;
         public double Product;
         public bool IsOrderedGroup;
+        public IDefinition PageDefinition;
     }
 
     [Serializable]
@@ -81,6 +82,7 @@ namespace CLP.Entities
 
 
                 simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
+                simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                 return simplifiedRelation;
             }
@@ -92,6 +94,7 @@ namespace CLP.Entities
                 simplifiedRelation.GroupSize = multiplicationDefinition.Factors.Last().RelationPartAnswerValue;
                 simplifiedRelation.Product = multiplicationDefinition.Product;
                 simplifiedRelation.IsOrderedGroup = multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;
+                simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                 return simplifiedRelation;
             }
@@ -109,6 +112,7 @@ namespace CLP.Entities
                 simplifiedRelation.NumberOfGroups = partOneDefinition.Factors.First().RelationPartAnswerValue;
                 simplifiedRelation.Product = partOneDefinition.Product;
                 simplifiedRelation.IsOrderedGroup = partOneDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;
+                simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                 return simplifiedRelation;
             }
@@ -125,6 +129,7 @@ namespace CLP.Entities
                     simplifiedRelation.GroupSize = leftMultiplicationDefinition.Factors.Last().RelationPartAnswerValue;
                     simplifiedRelation.Product = leftMultiplicationDefinition.Product;
                     simplifiedRelation.IsOrderedGroup = leftMultiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;
+                    simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                     return simplifiedRelation;
                 }
@@ -136,6 +141,7 @@ namespace CLP.Entities
                     simplifiedRelation.NumberOfGroups = divisionDefinition.Divisor.RelationPartAnswerValue;
                     simplifiedRelation.IsOrderedGroup = false;
                     simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
+                    simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                     return simplifiedRelation;
                 }
@@ -179,6 +185,7 @@ namespace CLP.Entities
                 simplifiedRelation.NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue;
                 simplifiedRelation.Product = partTwoDefinition.Product;
                 simplifiedRelation.IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;
+                simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                 return simplifiedRelation;
             }
@@ -195,6 +202,7 @@ namespace CLP.Entities
                     simplifiedRelation.GroupSize = rightMultiplicationDefinition.Factors.Last().RelationPartAnswerValue;
                     simplifiedRelation.Product = rightMultiplicationDefinition.Product;
                     simplifiedRelation.IsOrderedGroup = rightMultiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups;
+                    simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                     return simplifiedRelation;
                 }
@@ -206,6 +214,7 @@ namespace CLP.Entities
                     simplifiedRelation.NumberOfGroups = divisionDefinition.Divisor.RelationPartAnswerValue;
                     simplifiedRelation.IsOrderedGroup = false;
                     simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
+                    simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                     return simplifiedRelation;
                 }
@@ -265,6 +274,7 @@ namespace CLP.Entities
             };
 
             simplifiedRelation.Product = simplifiedRelation.GroupSize * simplifiedRelation.NumberOfGroups;
+            simplifiedRelation.PageDefinition = relationDefinitionTag;
 
             return simplifiedRelation;
         }
@@ -325,6 +335,36 @@ namespace CLP.Entities
             return simplifiedRelation;
         }
 
+        public static SimplifiedRelation GenerateNumberLineRelation(List<NumberLineJumpSize> jumpSizes)
+        {
+            var firstGroupSize = -1;
+            var firstJump = jumpSizes.FirstOrDefault();
+            if (firstJump != null)
+            {
+                firstGroupSize = firstJump.JumpSize;
+            }
+            var isEqualGroups = jumpSizes.All(j => j.JumpSize == firstGroupSize);
+
+            var product = -1;
+            var lastJump = jumpSizes.LastOrDefault();
+            if (lastJump != null)
+            {
+                product = lastJump.StartingTickIndex + lastJump.JumpSize;
+            }
+
+            var jumpSizesIgnoringOverlaps = jumpSizes.GroupBy(j => j.StartingTickIndex).Select(g => g.First()).ToList();
+
+            var simplifiedRelation = new SimplifiedRelation
+                                     {
+                                         GroupSize = isEqualGroups ? firstGroupSize : -1,
+                                         NumberOfGroups = jumpSizesIgnoringOverlaps.Count,
+                                         Product = product,
+                                         IsOrderedGroup = true
+                                     };
+
+            return simplifiedRelation;
+        }
+
         // numberOfStampedObjects = number of stamped objects that share the same parts values and parentStampIDs (though, is the parentStampID necessary?)
         public static SimplifiedRelation GenerateStampedObjectsRelation(int parentStampParts, int numberOfStampedObjects)
         {
@@ -368,8 +408,14 @@ namespace CLP.Entities
 
         #region Relation Comparison
 
-        private static Correctness CompareSimplifiedRelations(SimplifiedRelation representationRelation, SimplifiedRelation definitionRelation)
+        public static Correctness CompareSimplifiedRelations(SimplifiedRelation representationRelation, SimplifiedRelation definitionRelation)
         {
+            if (representationRelation == null ||
+                definitionRelation == null)
+            {
+                return Correctness.Unknown;
+            }
+
             if (representationRelation.IsOrderedGroup &&
                 definitionRelation.IsOrderedGroup)
             {

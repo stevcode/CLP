@@ -212,6 +212,16 @@ namespace CLP.Entities
 
         #endregion // Strategy Specifics
 
+        #region Misc
+
+        public const string NUMBER_LINE_NLJE = "NLJE";
+
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT = "NLBP left";
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_RIGHT = "NLBP right";
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_ALTERNATIVE = "NLBP alternative";
+
+        #endregion // Misc
+
         #endregion // Analysis Codes
 
         #region Correctness
@@ -222,6 +232,11 @@ namespace CLP.Entities
         public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";
+
+        public const string MATCHED_RELATION_LEFT = "LS";
+        public const string MATCHED_RELATION_RIGHT = "RS";
+        public const string MATCHED_RELATION_ALTERNATIVE = "ALT";
+        public const string MATCHED_RELATION_NONE = "NONE";
 
         #endregion // Correctness
 
