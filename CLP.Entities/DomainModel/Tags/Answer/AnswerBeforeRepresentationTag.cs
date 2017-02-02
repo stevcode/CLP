@@ -38,7 +38,7 @@ namespace CLP.Entities
 
         public List<ISemanticEvent> SemanticEvents
         {
-            get { return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticEventIndex).Distinct().ToList(); }
+            get { return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticPassNumber).ThenBy(h => h.SemanticEventIndex).ToList(); }
         }
 
         public ISemanticEvent Answer

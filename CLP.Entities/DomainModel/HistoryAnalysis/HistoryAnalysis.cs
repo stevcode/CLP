@@ -27,6 +27,14 @@ namespace CLP.Entities
                                             });
 
             var initialSemanticEvents = GenerateInitialSemanticEvents(page);
+            var eventIndex = 0;
+            foreach (var initialSemanticEvent in initialSemanticEvents)
+            {
+                initialSemanticEvent.SemanticPassNumber = 1;
+                initialSemanticEvent.SemanticEventIndex = eventIndex;
+                eventIndex++;
+            }
+
             page.History.SemanticEvents.AddRange(initialSemanticEvents);
 
             // Second Pass
@@ -38,6 +46,14 @@ namespace CLP.Entities
                                             });
 
             var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
+            eventIndex = 0;
+            foreach (var initialSemanticEvent in clusteredInkSemanticEvents)
+            {
+                initialSemanticEvent.SemanticPassNumber = 2;
+                initialSemanticEvent.SemanticEventIndex = eventIndex;
+                eventIndex++;
+            }
+
             page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
 
             // Third Pass
@@ -49,6 +65,14 @@ namespace CLP.Entities
                                             });
 
             var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
+            eventIndex = 0;
+            foreach (var initialSemanticEvent in interpretedInkSemanticEvents)
+            {
+                initialSemanticEvent.SemanticPassNumber = 3;
+                initialSemanticEvent.SemanticEventIndex = eventIndex;
+                eventIndex++;
+            }
+
             page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
 
             // Last Pass

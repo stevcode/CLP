@@ -70,6 +70,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
+        /// <summary>The pass the semantic event is part of.</summary>
+        public int SemanticPassNumber
+        {
+            get { return GetValue<int>(SemanticPassNumberProperty); }
+            set { SetValue(SemanticPassNumberProperty, value); }
+        }
+
+        public static readonly PropertyData SemanticPassNumberProperty = RegisterProperty("SemanticPassNumber", typeof(int), -1);
+
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex
         {
@@ -310,7 +319,7 @@ namespace CLP.Entities
         {
             var codedObject = Codings.OBJECT_ERROR;
             var codedID = "Event";
-            var incrementID = string.Join(", ", semanticEvents.Select(h => h.SemanticEventIndex));
+            var incrementID = string.Join(", ", semanticEvents.Select(h => $"{h.SemanticPassNumber}.{h.SemanticEventIndex}"));
 
             var semanticEvent = new SemanticEvent(page, semanticEvents)
                                 {
