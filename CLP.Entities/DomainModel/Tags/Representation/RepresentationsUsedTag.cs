@@ -781,7 +781,7 @@ namespace CLP.Entities
                         if (double.TryParse(codedID, out numberLineEndPoint) &&
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
-                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT);
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
                         }
                     }
 
@@ -792,7 +792,7 @@ namespace CLP.Entities
                         if (double.TryParse(codedID, out numberLineEndPoint) &&
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
-                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT);
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
                         }
                     }
 
@@ -803,7 +803,7 @@ namespace CLP.Entities
                         if (double.TryParse(codedID, out numberLineEndPoint) &&
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
-                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT);
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
                         }
                     }
                 }
@@ -819,7 +819,8 @@ namespace CLP.Entities
 
         public static void GenerateStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
         {
-            var stampedObjectGroups = new Dictionary<int, int>();  // <Parts,Number of StampedObjects with Parts Value>
+            var stampedObjectGroups = new Dictionary<int,int>();  // <Parts,Number of StampedObjects with Parts Value>
+            var parentStampIDsOfParts = new Dictionary<int,List<string>>();
             foreach (var stampedObject in page.PageObjects.OfType<StampedObject>())
             {
                 var parts = stampedObject.Parts;
@@ -830,6 +831,19 @@ namespace CLP.Entities
                 else
                 {
                     stampedObjectGroups.Add(parts, 1);
+                }
+
+                if (parentStampIDsOfParts.ContainsKey(parts))
+                {
+                    parentStampIDsOfParts[parts].Add(stampedObject.ParentStampID);
+                }
+                else
+                {
+                    var parentStampIDs = new List<string>
+                                         {
+                                             stampedObject.ParentStampID
+                                         };
+                    parentStampIDsOfParts.Add(parts, parentStampIDs);
                 }
             }
 
@@ -853,6 +867,10 @@ namespace CLP.Entities
                 var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
                 var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
                 usedRepresentation.AdditionalInformation.Add(englishValue);
+
+                var parentStampsCount = parentStampIDsOfParts[key].Distinct().Count();
+                var parentStampInfo = $"From {parentStampsCount} Stamps";
+                usedRepresentation.AdditionalInformation.Add(parentStampInfo);
 
                 #endregion // Basic Representation Info
 

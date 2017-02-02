@@ -64,6 +64,21 @@ namespace CLP.Entities
                                                                                     { CORRECTNESS_UNKNOWN, "Unknown" }
                                                                                 };
 
+        public static string CorrectnessToCoding(Correctness correctness)
+        {
+            switch (correctness)
+            {
+                case Correctness.Correct:
+                    return Codings.CORRECTNESS_CORRECT;
+                case Correctness.PartiallyCorrect:
+                    return Codings.CORRECTNESS_PARTIAL;
+                case Correctness.Incorrect:
+                    return Codings.CORRECTNESS_INCORRECT;
+                default:
+                    return Codings.CORRECTNESS_UNKNOWN;
+            }
+        }
+
         #endregion // Coded Objects
 
         #region Event Types                                                
@@ -216,9 +231,7 @@ namespace CLP.Entities
 
         public const string NUMBER_LINE_NLJE = "NLJE";
 
-        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT = "NLBP left";
-        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_RIGHT = "NLBP right";
-        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH_ALTERNATIVE = "NLBP alternative";
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH = "NLBP";
 
         public const string REPRESENTATIONS_MR = "MR";
         public const string REPRESENTATIONS_MR2STEP = "MR2STEP";

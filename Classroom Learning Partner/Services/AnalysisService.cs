@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -359,12 +355,14 @@ namespace Classroom_Learning_Partner.Services
 
             #region Left Side
 
+            var leftRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).ToList();
+
             #region Number Lines
 
-            var usedNumberLines =
-                representationsUsedTag.RepresentationsUsed.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.IsUsed && r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).ToList();
+            var leftNumberLines = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
+            var leftUsedNumberLines = leftNumberLines.Where(r => r.IsUsed).ToList();
 
-            entry.LeftNumberLineUsedCount = usedNumberLines.Count;
+            entry.LeftNumberLineUsedCount = leftUsedNumberLines.Count;
 
             if (entry.LeftNumberLineUsedCount == 0)
             {
@@ -372,20 +370,224 @@ namespace Classroom_Learning_Partner.Services
             }
             else
             {
-                var isNLJEUsed = usedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+                var isNLJEUsed = leftUsedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
                 entry.LeftNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
-            entry.LeftNumberLineSwitched = usedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+            entry.LeftNumberLineSwitched = leftUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
-            entry.LeftNumberLineBlank = usedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+            entry.LeftNumberLineBlank = leftNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             #endregion // Number Lines
 
+            #region Stamps
 
+            var leftStampImages = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_STAMP).ToList();
 
+            foreach (var usedRepresentation in leftStampImages)
+            {
+                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("From"));
+                var parentStampParts = parentStampAdditionalInfo.Split(' ');
+                if (parentStampParts.Length == 3)
+                {
+                    var parentStampCount = (int)parentStampParts[1].ToInt();
+                    entry.LeftStampCreatedCount += parentStampCount;
+                }
+
+                var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
+                if (representationInfoParts.Length == 2)
+                {
+                    var stampImageCount = (int)representationInfoParts[0].ToInt();
+                    entry.LeftStampImagesCreatedCount += stampImageCount;
+                }
+            }
+
+            entry.LeftStampImagesSwitched = leftStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Stamps
+
+            entry.LeftRepresentationsAndCorrectness = leftRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {Codings.CorrectnessToCoding(r.Correctness)}").ToList();
+
+            entry.IsLeftMR = leftRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             #endregion // Left Side
+
+            #region Right Side
+
+            var rightRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT).ToList();
+
+            #region Number Lines
+
+            var rightNumberLines = rightRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
+            var rightUsedNumberLines = rightNumberLines.Where(r => r.IsUsed).ToList();
+
+            entry.RightNumberLineUsedCount = rightUsedNumberLines.Count;
+
+            if (entry.RightNumberLineUsedCount == 0)
+            {
+                entry.RightNLJE = AnalysisEntry.NA;
+            }
+            else
+            {
+                var isNLJEUsed = rightUsedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+                entry.RightNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
+            entry.RightNumberLineSwitched = rightUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            entry.RightNumberLineBlank = rightNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Number Lines
+
+            #region Stamps
+
+            var rightStampImages = rightRepresentations.Where(r => r.CodedObject == Codings.OBJECT_STAMP).ToList();
+
+            foreach (var usedRepresentation in rightStampImages)
+            {
+                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("From"));
+                var parentStampParts = parentStampAdditionalInfo.Split(' ');
+                if (parentStampParts.Length == 3)
+                {
+                    var parentStampCount = (int)parentStampParts[1].ToInt();
+                    entry.RightStampCreatedCount += parentStampCount;
+                }
+
+                var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
+                if (representationInfoParts.Length == 2)
+                {
+                    var stampImageCount = (int)representationInfoParts[0].ToInt();
+                    entry.RightStampImagesCreatedCount += stampImageCount;
+                }
+            }
+
+            entry.RightStampImagesSwitched = rightStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Stamps
+
+            entry.RightRepresentationsAndCorrectness = rightRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {Codings.CorrectnessToCoding(r.Correctness)}").ToList();
+
+            entry.IsRightMR = rightRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Right Side
+
+            #region Alternative Side
+
+            var alternativeRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE).ToList();
+
+            #region Number Lines
+
+            var alternativeNumberLines = alternativeRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
+            var alternativeUsedNumberLines = alternativeNumberLines.Where(r => r.IsUsed).ToList();
+
+            entry.AlternativeNumberLineUsedCount = alternativeUsedNumberLines.Count;
+
+            if (entry.AlternativeNumberLineUsedCount == 0)
+            {
+                entry.AlternativeNLJE = AnalysisEntry.NA;
+            }
+            else
+            {
+                var isNLJEUsed = alternativeUsedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+                entry.AlternativeNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
+            entry.AlternativeNumberLineSwitched = alternativeUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            entry.AlternativeNumberLineBlank = alternativeNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Number Lines
+
+            #region Stamps
+
+            var alternativeStampImages = alternativeRepresentations.Where(r => r.CodedObject == Codings.OBJECT_STAMP).ToList();
+
+            foreach (var usedRepresentation in alternativeStampImages)
+            {
+                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("From"));
+                var parentStampParts = parentStampAdditionalInfo.Split(' ');
+                if (parentStampParts.Length == 3)
+                {
+                    var parentStampCount = (int)parentStampParts[1].ToInt();
+                    entry.AlternativeStampCreatedCount += parentStampCount;
+                }
+
+                var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
+                if (representationInfoParts.Length == 2)
+                {
+                    var stampImageCount = (int)representationInfoParts[0].ToInt();
+                    entry.AlternativeStampImagesCreatedCount += stampImageCount;
+                }
+            }
+
+            entry.AlternativeStampImagesSwitched = alternativeStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Stamps
+
+            entry.AlternativeRepresentationsAndCorrectness = alternativeRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {Codings.CorrectnessToCoding(r.Correctness)}").ToList();
+
+            entry.IsAlternativeMR = alternativeRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Alternative Side
+
+            #region Unmatched
+
+            var unmatchedRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).ToList();
+
+            #region Number Lines
+
+            var unmatchedNumberLines = unmatchedRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
+            var unmatchedUsedNumberLines = unmatchedNumberLines.Where(r => r.IsUsed).ToList();
+
+            entry.UnmatchedNumberLineUsedCount = unmatchedUsedNumberLines.Count;
+
+            if (entry.UnmatchedNumberLineUsedCount == 0)
+            {
+                entry.UnmatchedNLJE = AnalysisEntry.NA;
+            }
+            else
+            {
+                var isNLJEUsed = unmatchedUsedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+                entry.UnmatchedNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
+            entry.UnmatchedNumberLineSwitched = unmatchedUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            entry.UnmatchedNumberLineBlank = unmatchedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Number Lines
+
+            #region Stamps
+
+            var unmatchedStampImages = unmatchedRepresentations.Where(r => r.CodedObject == Codings.OBJECT_STAMP).ToList();
+
+            foreach (var usedRepresentation in unmatchedStampImages)
+            {
+                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("From"));
+                var parentStampParts = parentStampAdditionalInfo.Split(' ');
+                if (parentStampParts.Length == 3)
+                {
+                    var parentStampCount = (int)parentStampParts[1].ToInt();
+                    entry.UnmatchedStampCreatedCount += parentStampCount;
+                }
+
+                var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
+                if (representationInfoParts.Length == 2)
+                {
+                    var stampImageCount = (int)representationInfoParts[0].ToInt();
+                    entry.UnmatchedStampImagesCreatedCount += stampImageCount;
+                }
+            }
+
+            entry.UnmatchedStampImagesSwitched = unmatchedStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Stamps
+
+            entry.UnmatchedRepresentationsAndCorrectness = unmatchedRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {Codings.CorrectnessToCoding(r.Correctness)}").ToList();
+
+            entry.IsUnmatchedMR = unmatchedRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+            #endregion // Unmatched
 
             #region Whole Page Analysis
 
