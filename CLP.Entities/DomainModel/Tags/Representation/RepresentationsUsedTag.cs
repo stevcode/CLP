@@ -261,130 +261,6 @@ namespace CLP.Entities
 
         public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var allRepresentations = new List<string>();
-            var deletedCodedRepresentations = new List<string>();
-
-            var stampedObjectGroups = new Dictionary<string, int>();
-            var maxStampedObjectGroups = new Dictionary<string, int>();
-            foreach (var semanticEvent in semanticEvents)
-            {
-                #region Stamps
-
-                if (semanticEvent.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)
-                {
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var stampedObject = objectsChanged.PageObjectsAdded.First() as StampedObject;
-                        if (stampedObject == null)
-                        {
-                            continue;
-                        }
-
-                        var parts = stampedObject.Parts;
-                        var parentStampID = stampedObject.ParentStampID;
-                        var groupID = $"{parts} {parentStampID}";
-                        if (stampedObjectGroups.ContainsKey(groupID))
-                        {
-                            stampedObjectGroups[groupID]++;
-                        }
-                        else
-                        {
-                            stampedObjectGroups.Add(groupID, 1);
-                        }
-
-                        maxStampedObjectGroups = stampedObjectGroups;
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var stampedObject = objectsChanged.PageObjectsRemoved.First() as StampedObject;
-                        if (stampedObject == null)
-                        {
-                            continue;
-                        }
-
-                        var parts = stampedObject.Parts;
-                        var parentStampID = stampedObject.ParentStampID;
-                        var groupID = $"{parts} {parentStampID}";
-                        stampedObjectGroups[groupID]--;
-                        if (stampedObjectGroups[groupID] <= 0)
-                        {
-                            stampedObjectGroups.Remove(groupID);
-                        }
-
-                        if (stampedObjectGroups.Keys.Count == 0)
-                        {
-                            // TODO: Ideally, build entirely off info inside semanticEvent.
-                            // Also just use this after the top level for-loop as an end case
-                            // test to generate the final reps used.
-                            foreach (var key in maxStampedObjectGroups.Keys)
-                            {
-                                var groupIDSections = key.Split(' ');
-                                var stampParts = groupIDSections[0];
-                                var obj = Codings.OBJECT_STAMP;
-                                var id = stampParts;
-                                var componentSection = $": {stampedObjectGroups[key]} images";
-                                var codedValue = $"{obj} [{id}{componentSection}]";
-                                deletedCodedRepresentations.Add(codedValue);
-                                allRepresentations.Add(obj);
-                            }
-                        }
-                    }
-                }
-
-                #endregion // Stamps
-            }
-
-            var finalCodedRepresentations = new List<string>();
-            stampedObjectGroups.Clear();
-            foreach (var pageObject in page.PageObjects)
-            {
-                var stampedObject = pageObject as StampedObject;
-                if (stampedObject != null)
-                {
-                    var parts = stampedObject.Parts;
-                    var parentStampID = stampedObject.ParentStampID;
-                    var groupID = $"{parts} {parentStampID}";
-                    if (stampedObjectGroups.ContainsKey(groupID))
-                    {
-                        stampedObjectGroups[groupID]++;
-                    }
-                    else
-                    {
-                        stampedObjectGroups.Add(groupID, 1);
-                    }
-                }
-
-            }
-
-            foreach (var key in stampedObjectGroups.Keys)
-            {
-                var groupIDSections = key.Split(' ');
-                var parts = groupIDSections[0];
-                var obj = Codings.OBJECT_STAMP;
-                var id = parts;
-                var componentSection = $": {stampedObjectGroups[key]} images";
-                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
-                var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
-                var codedValue = $"{obj} [{id}{componentSection}]\n  - {englishValue}";
-                finalCodedRepresentations.Add(codedValue);
-                allRepresentations.Add(obj);
-            }
-
 
             //var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, representationsUsed);
             //page.AddTag(tag);
@@ -505,28 +381,26 @@ namespace CLP.Entities
 
                 #region Basic Representation Info
 
-                var isFinalRepresentation = false;
                 if (patternPoint.EndHistoryActionIndex == -1)
                 {
                     patternPoint.EndHistoryActionIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
                     patternPoint.EndSemanticEventIndex = semanticEvents.Last().SemanticEventIndex;
-                    isFinalRepresentation = true;
+                    usedRepresentation.IsFinalRepresentation = true;
                 }
 
-                var codedObject = Codings.OBJECT_ARRAY;
-                var codedID = array.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
-                var isInteractedWith =
+                usedRepresentation.CodedObject = Codings.OBJECT_ARRAY;
+                usedRepresentation.CodedID = array.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
+                usedRepresentation.IsInteractedWith =
                     semanticEvents.Where(e => e.ReferencePageObjectID == arrayID)
                                   .Any(
                                        e =>
                                            e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || e.EventType == Codings.EVENT_ARRAY_EQN ||
                                            (e.EventType == Codings.EVENT_INK_ADD && e.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
-                var isUsed = true;
+                usedRepresentation.IsUsed = true;
 
-                var representationInfo = string.Empty;
                 if (subArrayGroups.ContainsKey(arrayID))
                 {
-                    representationInfo = string.Join(", ", subArrayGroups[arrayID]);
+                    usedRepresentation.RepresentationInformation = string.Join(", ", subArrayGroups[arrayID]);
                 }
 
                 #endregion // Basic Representation Info
@@ -579,6 +453,9 @@ namespace CLP.Entities
                 {
                     representationCorrectness = Correctness.Incorrect;
                 }
+
+                usedRepresentation.Correctness = representationCorrectness;
+                usedRepresentation.MatchedRelationSide = matchedRelationSide;
 
                 #endregion // Representation Correctness
 
@@ -718,7 +595,7 @@ namespace CLP.Entities
 
                     if (!jumpEraseCount.ContainsKey(numberLineID))
                     {
-                        jumpEraseCount.Add(numberLineID, 0);
+                        jumpEraseCount.Add(numberLineID, 1);
                     }
                     jumpEraseCount[numberLineID] += jumpsToRemove.Count;
 
@@ -904,6 +781,104 @@ namespace CLP.Entities
                         {
                             usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH_LEFT);
                         }
+                    }
+                }
+
+                usedRepresentation.Correctness = representationCorrectness;
+                usedRepresentation.MatchedRelationSide = matchedRelationSide;
+
+                #endregion // Representation Correctness
+
+                tag.RepresentationsUsed.Add(usedRepresentation);
+            }
+        }
+
+        public static void GenerateStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        {
+            var stampedObjectGroups = new Dictionary<int, int>();  // <Parts,Number of StampedObjects with Parts Value>
+            foreach (var stampedObject in page.PageObjects.OfType<StampedObject>())
+            {
+                var parts = stampedObject.Parts;
+                if (stampedObjectGroups.ContainsKey(parts))
+                {
+                    stampedObjectGroups[parts]++;
+                }
+                else
+                {
+                    stampedObjectGroups.Add(parts, 1);
+                }
+            }
+
+            foreach (var key in stampedObjectGroups.Keys)
+            {
+                var parts = key;
+                var numberOfStampedObjects = stampedObjectGroups[key];
+
+                var usedRepresentation = new UsedRepresentation();
+
+                #region Basic Representation Info
+
+                usedRepresentation.IsFinalRepresentation = true;
+
+                usedRepresentation.CodedObject = Codings.OBJECT_STAMP;
+                usedRepresentation.CodedID = parts.ToString();
+                usedRepresentation.IsInteractedWith = true;
+                usedRepresentation.IsUsed = true;
+                usedRepresentation.RepresentationInformation = $"{numberOfStampedObjects} image(s)";
+
+                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
+                usedRepresentation.AdditionalInformation.Add(englishValue);
+
+                #endregion // Basic Representation Info
+
+                #region Representation Correctness
+
+                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+                var representationCorrectness = Correctness.Unknown;
+                if (usedRepresentation.IsUsed)
+                {
+                    var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
+
+                    var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                    var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                    var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+
+                    if (leftCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (rightCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (alternativeCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (leftCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (rightCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (alternativeCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (leftCorrectness == Correctness.Incorrect ||
+                             rightCorrectness == Correctness.Incorrect ||
+                             alternativeCorrectness == Correctness.Incorrect)
+                    {
+                        representationCorrectness = Correctness.Incorrect;
                     }
                 }
 

@@ -365,15 +365,15 @@ namespace CLP.Entities
             return simplifiedRelation;
         }
 
-        // numberOfStampedObjects = number of stamped objects that share the same parts values and parentStampIDs (though, is the parentStampID necessary?)
-        public static SimplifiedRelation GenerateStampedObjectsRelation(int parentStampParts, int numberOfStampedObjects)
+        // numberOfStampedObjects = number of stamped objects that share the same parts values
+        public static SimplifiedRelation GenerateStampedObjectsRelation(int parts, int numberOfStampedObjects)
         {
             var simplifiedRelation = new SimplifiedRelation
                                      {
-                                         GroupSize = parentStampParts,
+                                         GroupSize = parts,
                                          NumberOfGroups = numberOfStampedObjects,
-                                         Product = numberOfStampedObjects * parentStampParts,
-                                         IsOrderedGroup = parentStampParts != 1
+                                         Product = numberOfStampedObjects * parts,
+                                         IsOrderedGroup = parts != 1
                                      };
 
             return simplifiedRelation;
