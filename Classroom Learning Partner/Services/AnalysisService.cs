@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -6,7 +8,41 @@ namespace Classroom_Learning_Partner.Services
 {
     public class AnalysisService
     {
-        public static void GenerateAnalysisEntryForPage(CLPPage page)
+        public static void RunAnalysis(Notebook notebook)
+        {
+            var analysisRows = new List<string>();
+            foreach (var page in notebook.Pages)
+            {
+                HistoryAnalysis.GenerateSemanticEvents(page);
+                var analysisEntry = GenerateAnalysisEntryForPage(page);
+                var analysisRow = analysisEntry.BuildEntryLine();
+                analysisRows.Add(analysisRow);
+            }
+
+            var desktopDirectory = DataService.DesktopFolderPath;
+            var fileDirectory = Path.Combine(desktopDirectory, "LargeCacheAnalysis");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, "BatchAnalysis.tsv");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+
+            var headerRow = AnalysisEntry.BuildHeaderEntryLine();
+            File.AppendAllText(filePath, headerRow);
+
+            foreach (var analysisRow in analysisRows)
+            {
+                File.AppendAllText(filePath, analysisRow);
+            }
+        }
+
+        public static AnalysisEntry GenerateAnalysisEntryForPage(CLPPage page)
         {
             #region Page Identification
 
@@ -790,6 +826,8 @@ namespace Classroom_Learning_Partner.Services
             entry.FinalSemanticEvents = pass3CodedValues;
 
             #endregion // Total History
+
+            return entry;
         }
     }
 }

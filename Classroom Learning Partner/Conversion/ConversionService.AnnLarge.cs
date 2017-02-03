@@ -3063,7 +3063,64 @@ namespace Classroom_Learning_Partner
 
             foreach (var authorPageTag in authorPage.Tags)
             {
+                RecursiveParentPageTagSet(authorPageTag, newPage);
+
                 newPage.AddTag(authorPageTag);
+            }
+        }
+
+        public static void RecursiveParentPageTagSet(ITag tag, CLPPage page)
+        {
+            if (tag == null)
+            {
+                return;
+            }
+
+            tag.ParentPage = page;
+
+            if (tag is NumericValueDefinitionTag)
+            {
+                return;
+            }
+
+            var divisionTag = tag as DivisionRelationDefinitionTag;
+            if (divisionTag != null)
+            {
+                var dividend = divisionTag.Dividend as ITag;
+                RecursiveParentPageTagSet(dividend, page);
+
+                var divisor = divisionTag.Divisor as ITag;
+                RecursiveParentPageTagSet(divisor, page);
+            }
+
+            var additionTag = tag as AdditionRelationDefinitionTag;
+            if (additionTag != null)
+            {
+                foreach (var addend in additionTag.Addends)
+                {
+                    var addendTag = addend as ITag;
+                    RecursiveParentPageTagSet(addendTag, page);
+                }
+            }
+
+            var multiplicationTag = tag as MultiplicationRelationDefinitionTag;
+            if (multiplicationTag != null)
+            {
+                foreach (var factor in multiplicationTag.Factors)
+                {
+                    var factorTag = factor as ITag;
+                    RecursiveParentPageTagSet(factorTag, page);
+                }
+            }
+
+            var equivalenceTag = tag as EquivalenceRelationDefinitionTag;
+            if (equivalenceTag != null)
+            {
+                var leftRelation = equivalenceTag.LeftRelationPart as ITag;
+                RecursiveParentPageTagSet(leftRelation, page);
+
+                var rightRelation = equivalenceTag.RightRelationPart as ITag;
+                RecursiveParentPageTagSet(rightRelation, page);
             }
         }
 

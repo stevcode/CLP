@@ -237,6 +237,34 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
+        public IHistoryAction FirstHistoryAction
+        {
+            get
+            {
+                if (HistoryActions.Any())
+                {
+                    return HistoryActions.First();
+                }
+
+                var firstSemanticEvent = SemanticEvents.FirstOrDefault();
+                return firstSemanticEvent?.FirstHistoryAction;
+            }
+        }
+
+        public IHistoryAction LastHistoryAction
+        {
+            get
+            {
+                if (HistoryActions.Any())
+                {
+                    return HistoryActions.Last();
+                }
+
+                var lastSemanticEvent = SemanticEvents.LastOrDefault();
+                return lastSemanticEvent?.LastHistoryAction;
+            }
+        }
+
         /// <summary>List of the HistoryActions that make up this SemanticEvent.</summary>
         public List<IHistoryAction> HistoryActions
         {

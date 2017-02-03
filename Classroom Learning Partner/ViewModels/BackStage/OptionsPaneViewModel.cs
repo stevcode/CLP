@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -16,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
+            RunAnalysisCommand = new Command(OnRunAnalysisCommandExecute);
         }
 
         #endregion //Constructor
@@ -23,10 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
-        {
-            get { return "Options"; }
-        }
+        public override string PaneTitleText => "Options";
 
         #endregion //Bindings
 
@@ -42,6 +41,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var randomColorName = names[randomGen.Next(names.Length)];
             var color = Color.FromKnownColor(randomColorName);
             MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command RunAnalysisCommand { get; private set; }
+
+        private void OnRunAnalysisCommandExecute()
+        {
+            AnalysisService.RunAnalysis(_dataService.CurrentNotebook);
         }
 
         #endregion //Commands

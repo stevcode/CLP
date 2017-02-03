@@ -725,12 +725,12 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
-            AttemptAnswerBeforeRepresentationTag(page, semanticEvents);
-            AttemptAnswerChangedAfterRepresentationTag(page, semanticEvents);
+            //ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+            //AttemptAnswerBeforeRepresentationTag(page, semanticEvents);
+            //AttemptAnswerChangedAfterRepresentationTag(page, semanticEvents);
             FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
-            AttemptRepresentationCorrectness(page, semanticEvents);
+            //AttemptRepresentationCorrectness(page, semanticEvents);
         }
 
         // TODO: Move each Attempt method to the Tag's class

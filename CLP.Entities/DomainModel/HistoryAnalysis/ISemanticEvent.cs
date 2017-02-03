@@ -29,6 +29,8 @@ namespace CLP.Entities
         CLPPage ParentPage { get; set; }
 
         // Calculated
+        IHistoryAction FirstHistoryAction { get; }
+        IHistoryAction LastHistoryAction { get; }
         List<IHistoryAction> HistoryActions { get; }
         string CodedValue { get; }
     }

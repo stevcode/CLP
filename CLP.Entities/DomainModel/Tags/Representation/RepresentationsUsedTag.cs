@@ -300,7 +300,7 @@ namespace CLP.Entities
 
                 if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -318,7 +318,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_CUT)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var pageObjectsCut = historyAction as PageObjectCutHistoryAction;
                     if (pageObjectsCut == null)
                     {
@@ -349,7 +349,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_ARRAY_SNAP)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var arraySnap = historyAction as CLPArraySnapHistoryAction;
                     if (arraySnap == null)
                     {
@@ -389,7 +389,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -409,7 +409,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -439,7 +439,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -464,7 +464,7 @@ namespace CLP.Entities
 
             foreach (var patternPoint in patternPoints)
             {
-                patternPoint.EndHistoryActionIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
+                patternPoint.EndHistoryActionIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
                 patternPoint.EndSemanticEventIndex = semanticEvents.Last().SemanticEventIndex;
                 completedPatternPoints.Add(patternPoint);
             }
@@ -675,7 +675,7 @@ namespace CLP.Entities
 
                 if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -750,7 +750,7 @@ namespace CLP.Entities
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
                 {
-                    var historyAction = semanticEvent.HistoryActions.FirstOrDefault();
+                    var historyAction = semanticEvent.FirstHistoryAction;
                     var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
                     if (objectsChanged == null)
                     {
@@ -787,7 +787,7 @@ namespace CLP.Entities
                 usedRepresentation.IsFinalRepresentation = false;
                 if (patternPoint.EndHistoryActionIndex == -1)
                 {
-                    patternPoint.EndHistoryActionIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
+                    patternPoint.EndHistoryActionIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
                     patternPoint.EndSemanticEventIndex = semanticEvents.Last().SemanticEventIndex;
                     usedRepresentation.IsFinalRepresentation = true;
                 }

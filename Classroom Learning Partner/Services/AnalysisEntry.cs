@@ -1073,7 +1073,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Static Methods
 
-        public string BuildHeaderEntryLine()
+        public static string BuildHeaderEntryLine()
         {
             var cellContents = new List<string>();
 
