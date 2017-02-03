@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,8 @@ using System.Windows.Ink;
 using Catel.Collections;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using Ionic.Zip;
+using Ionic.Zlib;
 using Ann = CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner
@@ -23,6 +26,11 @@ namespace Classroom_Learning_Partner
         public static string AnnClassesFolder => Path.Combine(AnnCacheFolder, "Classes");
         public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
         public static string AnnImageFolder => Path.Combine(DataService.DesktopFolderPath, "images");
+        public static string AnnAuthorTagsFolder => Path.Combine(DataService.DesktopFolderPath, "Large Cache Tags");
+        public static string AnnAuthorTagsEric => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - Eric.clp");
+        public static string AnnAuthorTagsAndee => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - Andee.clp");
+        public static string AnnAuthorTagsLily2 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK2.clp");
+        public static string AnnAuthorTagsLily1 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK.clp");
 
         public static string AssessmentCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Chapter6.Assessment");
         public static string AssessmentNotebooksFolder => Path.Combine(AssessmentCacheFolder, "Notebooks");
@@ -37,7 +45,18 @@ namespace Classroom_Learning_Partner
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
-            var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            Ann.Notebook oldNotebook;
+
+            if (IS_LARGE_CACHE)
+            {
+                oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
+                //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            else
+            {
+                oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            
             Debug.WriteLine("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
             Debug.WriteLine("Notebook Converted");
@@ -69,6 +88,63 @@ namespace Classroom_Learning_Partner
             }
 
             return newNotebook;
+        }
+
+        public static Ann.Notebook AnnCustomPartialNotebookLoading(string notebookFolderPath)
+        {
+            var notebook = Ann.Notebook.LoadLocalNotebook(notebookFolderPath);
+            if (notebook == null)
+            {
+                return null;
+            }
+
+            #region Constraints
+
+            var pageNumbersToLoad = new List<int> { 209, 218, 222, 235, 253, 258, 259, 262, 275, 276, 278, 281, 295, 299, 300, 307, 323, 328, 346, 360, 368, 370, 382, 383, 384, 385 };
+
+            #endregion // Constraints
+
+            #region Load Pages
+
+            var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+            var loadedPages = new List<Ann.CLPPage>();
+
+            foreach (var pageFilePath in pageFilePaths)
+            {
+                var pageNameComposite = Ann.PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                if (pageNameComposite == null)
+                {
+                    continue;
+                }
+
+                if (pageNameComposite.VersionIndex != "0")
+                {
+                    continue;
+                }
+
+                var isPageToBeLoaded = pageNumbersToLoad.Any(n => n.ToString() == pageNameComposite.PageNumber);
+                if (!isPageToBeLoaded)
+                {
+                    continue;
+                }
+
+                var page = Ann.CLPPage.LoadLocalPage(pageFilePath);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                loadedPages.Add(page);
+            }
+
+            #endregion // Load Pages
+
+            var notebookPages = loadedPages.Where(p => p.VersionIndex == 0).OrderBy(p => p.PageNumber).ToList();
+            notebook.Pages = new ObservableCollection<Ann.CLPPage>(notebookPages);
+            notebook.CurrentPage = notebook.Pages.FirstOrDefault();
+
+            return notebook;
         }
 
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
@@ -254,9 +330,16 @@ namespace Classroom_Learning_Partner
                 newPage.PageObjects.Add(newPageObject);
             }
 
-            AddAssessmentInterpretationRegions(newPage);
-            AddAssessmentRelationDefinitionTags(newPage);
-            // TODO: Large Cache Tags
+            if (IS_LARGE_CACHE)
+            {
+                AddLargeCacheTags(newPage);
+            }
+            else
+            {
+                AddAssessmentInterpretationRegions(newPage);
+                AddAssessmentRelationDefinitionTags(newPage);
+            }
+            
             ConvertPageHistory(page.History, newPage);
 
             return newPage;
@@ -2909,6 +2992,75 @@ namespace Classroom_Learning_Partner
             }
 
             newPage.AddTag(relationDefinitionToAdd);
+        }
+
+        public static void AddLargeCacheTags(CLPPage newPage)
+        {
+            #region Constraints
+
+            var ericPageNumbers = new List<int> { 31, 44, 49, 51, 91, 103, 104, 105, 106, 107, 108, 109, 119, 120, 121, 122, 123, 134, 125, 126, 127, 128, 140, 141, 142, 143, 144, 145, 146, 147, 152, 153, 154, 155, 156, 157, 158, 159, 160, 164, 165, 166, 167, 168, 169, 170, 171, 172, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 227, 228, 229, 230, 231, 242, 243, 244, 245, 246, 249, 278, 280, 287, 289, 295, 296, 298, 308, 310, 321, 362, 363, 364, 365, 366, 367, 369, 376 };
+            var andeePageNumbers = new List<int> { 12, 14, 15, 16, 17, 18, 19, 20, 66, 300, 302, 306, 312, 318, 3320, 322, 323, 324, 325, 337, 338, 339, 342, 344, 354, 355, 356, 357, 377, 378 };
+            // 1 and 2 should both look in LK2 .clp file as it contains everything from LK .clp file
+            var lily1PageNumbers = new List<int> { 11, 43, 56, 59, 61, 62, 65, 86, 148, 149, 150, 151, 161, 162, 163, 173, 174, 175, 198, 199, 200, 213, 214, 215, 217, 218, 219, 221, 225, 226, 232, 233, 234, 236, 240, 241, 248, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 285, 286, 288, 290, 291, 293, 297, 299, 301, 303, 304, 307, 309, 311, 313, 314, 315, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 368, 379, 380, 381, 382, 383, 384, 385 };
+            var lily2PageNumbers = new List<int> { 10, 21, 22, 28, 29, 30, 32, 45, 50, 67, 68, 110, 111, 112, 118, 129, 130, 131, 201, 216, 220, 222, 223, 224, 235, 237, 238, 239, 256, 257, 266, 267, 283, 292, 305, 316, 317 };
+
+            var noMetaDataTagsPageNumbers = new List<int> { 93, 94, 113, 114, 132, 133, 134, 135, 136, 137, 138, 176, 177, 178, 179, 180, 181, 182, 247, 358, 359, 360, 370, 371, 372, 373, 374, 375 };
+
+            var neverAnalyzePageNumbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 23, 24, 25, 26, 27, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 46, 47, 48, 52, 53, 54, 55, 56, 57, 60, 63, 64, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 87, 88, 89, 90, 92, 95, 96, 97, 98, 99, 100, 101, 102, 115, 116, 117, 139, 183, 184, 250, 274, 294, 319, 340, 361, 386 };
+
+            #endregion // Constraints
+
+            var pageNumber = newPage.PageNumber;
+
+            var authorTagCachePath = string.Empty;
+            if (lily2PageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsLily2;
+            }
+            else if (andeePageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsAndee;
+            }
+            else if (ericPageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsEric;
+            }
+
+            if (string.IsNullOrWhiteSpace(authorTagCachePath))
+            {
+                return;
+            }
+
+            #region Load Author Page
+
+            var zipContainerFilePath = authorTagCachePath;
+
+            var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var internalPagesDirectory = "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
+                var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+                var pageEntries = (from pageEntry in allPageEntries
+                                   let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
+                                   where nameComposite.ID == newPage.ID
+                                   select pageEntry).ToList();
+
+                pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries);
+            }
+
+            var authorPage = DataService.GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).FirstOrDefault();
+
+            #endregion // Load Author Page
+
+            foreach (var authorPageTag in authorPage.Tags)
+            {
+                newPage.AddTag(authorPageTag);
+            }
         }
 
         #endregion // Tags

@@ -4,8 +4,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
-    
-
     public class AnalysisService
     {
         public static void GenerateAnalysisEntryForPage(CLPPage page)

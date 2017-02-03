@@ -14,21 +14,21 @@ namespace Classroom_Learning_Partner
 {
     public partial class ConversionService
     {
+        public const bool IS_LARGE_CACHE = true;
+
         public ConversionService() { }
 
         #region Loop
 
         public static void ConvertAnnCache()
         {
-            var isLargeCache = false;
-
-            var cacheType = isLargeCache ? "Large" : "Assessment";
+            var cacheType = IS_LARGE_CACHE ? "Large" : "Assessment";
             Debug.WriteLine($"Beginning Conversion of Ann's {cacheType} Cache.");
 
-            var zipPath = isLargeCache ? AnnZipFilePath : AssessmentZipFilePath;
-            var notebooksFolderPath = isLargeCache ? AnnNotebooksFolder : AssessmentNotebooksFolder;
-            var classesFolderPath = isLargeCache ? AnnClassesFolder : AssessmentClassesFolder;
-            var imagesFolderPath = isLargeCache ? AnnImageFolder : AssessmentImageFolder;
+            var zipPath = IS_LARGE_CACHE ? AnnZipFilePath : AssessmentZipFilePath;
+            var notebooksFolderPath = IS_LARGE_CACHE ? AnnNotebooksFolder : AssessmentNotebooksFolder;
+            var classesFolderPath = IS_LARGE_CACHE ? AnnClassesFolder : AssessmentClassesFolder;
+            var imagesFolderPath = IS_LARGE_CACHE ? AnnImageFolder : AssessmentImageFolder;
             const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
 
             var notebooks = new List<Notebook>();
