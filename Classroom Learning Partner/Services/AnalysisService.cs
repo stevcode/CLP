@@ -357,6 +357,39 @@ namespace Classroom_Learning_Partner.Services
 
             var leftRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).ToList();
 
+            #region Arrays
+
+            var leftArrays = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_ARRAY).ToList();
+            var leftUsedArrays = leftArrays.Where(r => r.IsUsed).ToList();
+
+            entry.LeftArrayCreatedCount = leftUsedArrays.Count;
+
+            entry.LeftArrayCutCount = leftUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Deleted by Cut")));
+
+            entry.LeftArraySnapCount = leftUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
+
+            entry.LeftArrayDivideCount = leftUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+
+            var leftArraysWithSkips = leftUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
+
+            entry.LeftArraySkipCount = leftArraysWithSkips.Count;
+
+            foreach (var usedRepresentation in leftArraysWithSkips)
+            {
+                var codedObject = Codings.OBJECT_ARRAY;
+                var codedID = usedRepresentation.CodedID;
+                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
+                var skipCorrectness = "C";
+                if (skipInformation.Contains("wrong dimension"))
+                {
+                    skipCorrectness = "WD";
+                }
+
+                entry.LeftArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+            }
+
+            #endregion // Arrays
+
             #region Number Lines
 
             var leftNumberLines = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
@@ -415,6 +448,39 @@ namespace Classroom_Learning_Partner.Services
             #region Right Side
 
             var rightRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT).ToList();
+
+            #region Arrays
+
+            var rightArrays = rightRepresentations.Where(r => r.CodedObject == Codings.OBJECT_ARRAY).ToList();
+            var rightUsedArrays = rightArrays.Where(r => r.IsUsed).ToList();
+
+            entry.RightArrayCreatedCount = rightUsedArrays.Count;
+
+            entry.RightArrayCutCount = rightUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Deleted by Cut")));
+
+            entry.RightArraySnapCount = rightUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
+
+            entry.RightArrayDivideCount = rightUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+
+            var rightArraysWithSkips = rightUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
+
+            entry.RightArraySkipCount = rightArraysWithSkips.Count;
+
+            foreach (var usedRepresentation in rightArraysWithSkips)
+            {
+                var codedObject = Codings.OBJECT_ARRAY;
+                var codedID = usedRepresentation.CodedID;
+                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
+                var skipCorrectness = "C";
+                if (skipInformation.Contains("wrong dimension"))
+                {
+                    skipCorrectness = "WD";
+                }
+
+                entry.RightArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+            }
+
+            #endregion // Arrays
 
             #region Number Lines
 
@@ -475,6 +541,39 @@ namespace Classroom_Learning_Partner.Services
 
             var alternativeRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE).ToList();
 
+            #region Arrays
+
+            var alternativeArrays = alternativeRepresentations.Where(r => r.CodedObject == Codings.OBJECT_ARRAY).ToList();
+            var alternativeUsedArrays = alternativeArrays.Where(r => r.IsUsed).ToList();
+
+            entry.AlternativeArrayCreatedCount = alternativeUsedArrays.Count;
+
+            entry.AlternativeArrayCutCount = alternativeUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Deleted by Cut")));
+
+            entry.AlternativeArraySnapCount = alternativeUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
+
+            entry.AlternativeArrayDivideCount = alternativeUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+
+            var alternativeArraysWithSkips = alternativeUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
+
+            entry.AlternativeArraySkipCount = alternativeArraysWithSkips.Count;
+
+            foreach (var usedRepresentation in alternativeArraysWithSkips)
+            {
+                var codedObject = Codings.OBJECT_ARRAY;
+                var codedID = usedRepresentation.CodedID;
+                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
+                var skipCorrectness = "C";
+                if (skipInformation.Contains("wrong dimension"))
+                {
+                    skipCorrectness = "WD";
+                }
+
+                entry.AlternativeArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+            }
+
+            #endregion // Arrays
+
             #region Number Lines
 
             var alternativeNumberLines = alternativeRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
@@ -533,6 +632,39 @@ namespace Classroom_Learning_Partner.Services
             #region Unmatched
 
             var unmatchedRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).ToList();
+
+            #region Arrays
+
+            var unmatchedArrays = unmatchedRepresentations.Where(r => r.CodedObject == Codings.OBJECT_ARRAY).ToList();
+            var unmatchedUsedArrays = unmatchedArrays.Where(r => r.IsUsed).ToList();
+
+            entry.UnmatchedArrayCreatedCount = unmatchedUsedArrays.Count;
+
+            entry.UnmatchedArrayCutCount = unmatchedUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Deleted by Cut")));
+
+            entry.UnmatchedArraySnapCount = unmatchedUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
+
+            entry.UnmatchedArrayDivideCount = unmatchedUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+
+            var unmatchedArraysWithSkips = unmatchedUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
+
+            entry.UnmatchedArraySkipCount = unmatchedArraysWithSkips.Count;
+
+            foreach (var usedRepresentation in unmatchedArraysWithSkips)
+            {
+                var codedObject = Codings.OBJECT_ARRAY;
+                var codedID = usedRepresentation.CodedID;
+                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
+                var skipCorrectness = "C";
+                if (skipInformation.Contains("wrong dimension"))
+                {
+                    skipCorrectness = "WD";
+                }
+
+                entry.UnmatchedArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+            }
+
+            #endregion // Arrays
 
             #region Number Lines
 
