@@ -528,64 +528,67 @@ namespace CLP.Entities
                                                      e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
                                                      (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE));
 
-                var eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
-                if (eventInfoParts.Length == 2)
+                if (mostRecentSkipEvent != null)
                 {
-                    var formattedInterpretationParts = eventInfoParts[0].Split("; ");
-                    if (formattedInterpretationParts.Length == 2)
+                    var eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
+                    if (eventInfoParts.Length == 2)
                     {
-                        var formattedSkips = formattedInterpretationParts[1];
-                        if (!string.IsNullOrEmpty(formattedSkips))
+                        var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+                        if (formattedInterpretationParts.Length == 2)
                         {
-                            // HACK: temporary print out of Wrong Dimension analysis
-                            var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-                            var skips = new List<int>();
-                            foreach (var skip in skipStrings)
+                            var formattedSkips = formattedInterpretationParts[1];
+                            if (!string.IsNullOrEmpty(formattedSkips))
                             {
-                                if (string.IsNullOrEmpty(skip))
+                                // HACK: temporary print out of Wrong Dimension analysis
+                                var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                                var skips = new List<int>();
+                                foreach (var skip in skipStrings)
                                 {
+                                    if (string.IsNullOrEmpty(skip))
+                                    {
+                                        skips.Add(-1);
+                                        continue;
+                                    }
+
+                                    int number;
+                                    var isNumber = int.TryParse(skip, out number);
+                                    if (isNumber)
+                                    {
+                                        skips.Add(number);
+                                        continue;
+                                    }
+
                                     skips.Add(-1);
-                                    continue;
                                 }
 
-                                int number;
-                                var isNumber = int.TryParse(skip, out number);
-                                if (isNumber)
+                                var wrongDimensionMatches = 0;
+                                for (int i = 0; i < skips.Count - 1; i++)
                                 {
-                                    skips.Add(number);
-                                    continue;
+                                    var currentValue = skips[i];
+                                    var nextValue = skips[i + 1];
+                                    if (currentValue == -1 ||
+                                        nextValue == -1)
+                                    {
+                                        continue;
+                                    }
+                                    var difference = nextValue - currentValue;
+                                    if (difference == array.Rows &&
+                                        array.Rows != array.Columns)
+                                    {
+                                        wrongDimensionMatches++;
+                                    }
                                 }
 
-                                skips.Add(-1);
-                            }
-
-                            var wrongDimensionMatches = 0;
-                            for (int i = 0; i < skips.Count - 1; i++)
-                            {
-                                var currentValue = skips[i];
-                                var nextValue = skips[i + 1];
-                                if (currentValue == -1 ||
-                                    nextValue == -1)
+                                var wrongDimensionText = string.Empty;
+                                var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                                if (percentMatchWrongDimensions >= 0.80)
                                 {
-                                    continue;
+                                    wrongDimensionText = ", wrong dimension";
                                 }
-                                var difference = nextValue - currentValue;
-                                if (difference == array.Rows &&
-                                    array.Rows != array.Columns)
-                                {
-                                    wrongDimensionMatches++;
-                                }
-                            }
 
-                            var wrongDimensionText = string.Empty;
-                            var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
-                            if (percentMatchWrongDimensions >= 0.80)
-                            {
-                                wrongDimensionText = ", wrong dimension";
+                                var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
+                                usedRepresentation.AdditionalInformation.Add(skipCodedValue);
                             }
-
-                            var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
-                            usedRepresentation.AdditionalInformation.Add(skipCodedValue);
                         }
                     }
                 }
@@ -741,6 +744,11 @@ namespace CLP.Entities
 
                     foreach (var jump in jumpsToRemove)
                     {
+                        if (!jumpGroups.ContainsKey(numberLineID))
+                        {
+                            continue;
+                        }
+
                         jumpGroups[numberLineID].Remove(jump);
                         if (!jumpGroups[numberLineID].Any())
                         {

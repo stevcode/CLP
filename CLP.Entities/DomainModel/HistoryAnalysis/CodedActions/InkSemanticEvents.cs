@@ -357,19 +357,19 @@ namespace CLP.Entities
                     {
                         if (!patternStartPoints.Keys.Contains(arrayID))
                         {
-                            var startPattern = $"{Codings.EVENT_OBJECT_ADD};{currentSemanticEvent.HistoryActions.First().HistoryActionIndex}";
+                            var startPattern = $"{Codings.EVENT_OBJECT_ADD};{currentSemanticEvent.FirstHistoryAction.HistoryActionIndex}";
                             patternStartPoints.Add(arrayID, startPattern);
                         }
                     }
                     else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
                     {
-                        var startPattern = $"{Codings.EVENT_OBJECT_MOVE};{currentSemanticEvent.HistoryActions.First().HistoryActionIndex}";
+                        var startPattern = $"{Codings.EVENT_OBJECT_MOVE};{currentSemanticEvent.FirstHistoryAction.HistoryActionIndex}";
                         if (patternStartPoints.Keys.Contains(arrayID))
                         {
                             if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
                             {
                                 var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                                var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
+                                var endHistoryIndex = currentSemanticEvent.LastHistoryAction.HistoryActionIndex;
                                 patternEndPoints.Add(new
                                 {
                                     ArrayID = arrayID,
@@ -395,7 +395,7 @@ namespace CLP.Entities
                         if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
                         {
                             var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                            var endHistoryIndex = currentSemanticEvent.HistoryActions.Last().HistoryActionIndex;
+                            var endHistoryIndex = currentSemanticEvent.LastHistoryAction.HistoryActionIndex;
                             patternEndPoints.Add(new
                             {
                                 ArrayID = arrayID,
@@ -427,7 +427,7 @@ namespace CLP.Entities
                 }
 
                 var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
-                var endHistoryIndex = semanticEvents.Last().HistoryActions.Last().HistoryActionIndex;
+                var endHistoryIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
                 patternEndPoints.Add(new
                 {
                     ArrayID = arrayID,

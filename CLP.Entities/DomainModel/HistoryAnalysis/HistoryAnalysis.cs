@@ -808,7 +808,7 @@ namespace CLP.Entities
 
             var keyIndexes =
                 semanticEvents.Where(h => h.EventType == Codings.EVENT_OBJECT_DELETE && (h.CodedObject == Codings.OBJECT_ARRAY || h.CodedObject == Codings.OBJECT_NUMBER_LINE))
-                              .Select(h => h.HistoryActions.First().HistoryActionIndex - 1)
+                              .Select(h => h.FirstHistoryAction.HistoryActionIndex - 1)
                               .ToList();
             if (!page.History.CompleteOrderedHistoryActions.Any())
             {

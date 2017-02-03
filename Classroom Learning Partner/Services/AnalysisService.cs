@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Classroom_Learning_Partner.ViewModels;
@@ -20,25 +21,18 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var desktopDirectory = DataService.DesktopFolderPath;
-            var fileDirectory = Path.Combine(desktopDirectory, "LargeCacheAnalysis");
-            if (!Directory.Exists(fileDirectory))
+            var filePath = Path.Combine(desktopDirectory, "BatchAnalysis.tsv");
+            if (!File.Exists(filePath))
             {
-                Directory.CreateDirectory(fileDirectory);
-            }
+                File.WriteAllText(filePath, "");
 
-            var filePath = Path.Combine(fileDirectory, "BatchAnalysis.tsv");
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
+                var headerRow = AnalysisEntry.BuildHeaderEntryLine();
+                File.AppendAllText(filePath, headerRow);
             }
-            File.WriteAllText(filePath, "");
-
-            var headerRow = AnalysisEntry.BuildHeaderEntryLine();
-            File.AppendAllText(filePath, headerRow);
 
             foreach (var analysisRow in analysisRows)
             {
-                File.AppendAllText(filePath, analysisRow);
+                File.AppendAllText(filePath, Environment.NewLine + analysisRow);
             }
         }
 

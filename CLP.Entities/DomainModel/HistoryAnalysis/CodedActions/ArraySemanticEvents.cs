@@ -471,7 +471,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var historyIndex = inkEvent.HistoryActions.Last().HistoryActionIndex;
+            var historyIndex = inkEvent.LastHistoryAction.HistoryActionIndex;
             var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, historyIndex);
 
             var strokeGroupPerRow = GroupPossibleSkipCountStrokes(page, array, strokes, historyIndex);
