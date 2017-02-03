@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Catel.Data;
 using CLP.Entities;
 
@@ -279,6 +275,64 @@ namespace Classroom_Learning_Partner.Services
 
         #region Left Side
 
+        #region Array
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArrayCreatedCount
+        {
+            get { return GetValue<int>(LeftArrayCreatedCountProperty); }
+            set { SetValue(LeftArrayCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArrayCreatedCountProperty = RegisterProperty("LeftArrayCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArrayCutCount
+        {
+            get { return GetValue<int>(LeftArrayCutCountProperty); }
+            set { SetValue(LeftArrayCutCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArrayCutCountProperty = RegisterProperty("LeftArrayCutCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArraySnapCount
+        {
+            get { return GetValue<int>(LeftArraySnapCountProperty); }
+            set { SetValue(LeftArraySnapCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArraySnapCountProperty = RegisterProperty("LeftArraySnapCount", typeof(int), 0);
+
+        /// <summary>Ink Divide count.</summary>
+        public int LeftArrayDivideCount
+        {
+            get { return GetValue<int>(LeftArrayDivideCountProperty); }
+            set { SetValue(LeftArrayDivideCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArrayDivideCountProperty = RegisterProperty("LeftArrayDivideCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArraySkipCount
+        {
+            get { return GetValue<int>(LeftArraySkipCountProperty); }
+            set { SetValue(LeftArraySkipCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArraySkipCountProperty = RegisterProperty("LeftArraySkipCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public List<string> LeftArraySkipCountingCorretness
+        {
+            get { return GetValue<List<string>>(LeftArraySkipCountingCorretnessProperty); }
+            set { SetValue(LeftArraySkipCountingCorretnessProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArraySkipCountingCorretnessProperty = RegisterProperty("LeftArraySkipCountingCorretness", typeof(List<string>), () => new List<string>());
+        
+        #endregion // Array
+
         #region Number Line
 
         /// <summary>SUMMARY</summary>
@@ -371,6 +425,64 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Left Side
 
         #region Right Side
+
+        #region Array
+
+        /// <summary>SUMMARY</summary>
+        public int RightArrayCreatedCount
+        {
+            get { return GetValue<int>(RightArrayCreatedCountProperty); }
+            set { SetValue(RightArrayCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArrayCreatedCountProperty = RegisterProperty("RightArrayCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightArrayCutCount
+        {
+            get { return GetValue<int>(RightArrayCutCountProperty); }
+            set { SetValue(RightArrayCutCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArrayCutCountProperty = RegisterProperty("RightArrayCutCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightArraySnapCount
+        {
+            get { return GetValue<int>(RightArraySnapCountProperty); }
+            set { SetValue(RightArraySnapCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArraySnapCountProperty = RegisterProperty("RightArraySnapCount", typeof(int), 0);
+
+        /// <summary>Ink Divide count.</summary>
+        public int RightArrayDivideCount
+        {
+            get { return GetValue<int>(RightArrayDivideCountProperty); }
+            set { SetValue(RightArrayDivideCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArrayDivideCountProperty = RegisterProperty("RightArrayDivideCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightArraySkipCount
+        {
+            get { return GetValue<int>(RightArraySkipCountProperty); }
+            set { SetValue(RightArraySkipCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArraySkipCountProperty = RegisterProperty("RightArraySkipCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public List<string> RightArraySkipCountingCorretness
+        {
+            get { return GetValue<List<string>>(RightArraySkipCountingCorretnessProperty); }
+            set { SetValue(RightArraySkipCountingCorretnessProperty, value); }
+        }
+
+        public static readonly PropertyData RightArraySkipCountingCorretnessProperty = RegisterProperty("RightArraySkipCountingCorretness", typeof(List<string>), () => new List<string>());
+
+        #endregion // Array
 
         #region Number Line
 
@@ -465,6 +577,64 @@ namespace Classroom_Learning_Partner.Services
 
         #region Alternative Side
 
+        #region Array
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArrayCreatedCount
+        {
+            get { return GetValue<int>(AlternativeArrayCreatedCountProperty); }
+            set { SetValue(AlternativeArrayCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArrayCreatedCountProperty = RegisterProperty("AlternativeArrayCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArrayCutCount
+        {
+            get { return GetValue<int>(AlternativeArrayCutCountProperty); }
+            set { SetValue(AlternativeArrayCutCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArrayCutCountProperty = RegisterProperty("AlternativeArrayCutCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArraySnapCount
+        {
+            get { return GetValue<int>(AlternativeArraySnapCountProperty); }
+            set { SetValue(AlternativeArraySnapCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArraySnapCountProperty = RegisterProperty("AlternativeArraySnapCount", typeof(int), 0);
+
+        /// <summary>Ink Divide count.</summary>
+        public int AlternativeArrayDivideCount
+        {
+            get { return GetValue<int>(AlternativeArrayDivideCountProperty); }
+            set { SetValue(AlternativeArrayDivideCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArrayDivideCountProperty = RegisterProperty("AlternativeArrayDivideCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArraySkipCount
+        {
+            get { return GetValue<int>(AlternativeArraySkipCountProperty); }
+            set { SetValue(AlternativeArraySkipCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArraySkipCountProperty = RegisterProperty("AlternativeArraySkipCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public List<string> AlternativeArraySkipCountingCorretness
+        {
+            get { return GetValue<List<string>>(AlternativeArraySkipCountingCorretnessProperty); }
+            set { SetValue(AlternativeArraySkipCountingCorretnessProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArraySkipCountingCorretnessProperty = RegisterProperty("AlternativeArraySkipCountingCorretness", typeof(List<string>), () => new List<string>());
+
+        #endregion // Array
+
         #region Number Line
 
         /// <summary>SUMMARY</summary>
@@ -557,6 +727,64 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Alternative Side
 
         #region Unmatched Side
+
+        #region Array
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedArrayCreatedCount
+        {
+            get { return GetValue<int>(UnmatchedArrayCreatedCountProperty); }
+            set { SetValue(UnmatchedArrayCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArrayCreatedCountProperty = RegisterProperty("UnmatchedArrayCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedArrayCutCount
+        {
+            get { return GetValue<int>(UnmatchedArrayCutCountProperty); }
+            set { SetValue(UnmatchedArrayCutCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArrayCutCountProperty = RegisterProperty("UnmatchedArrayCutCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedArraySnapCount
+        {
+            get { return GetValue<int>(UnmatchedArraySnapCountProperty); }
+            set { SetValue(UnmatchedArraySnapCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArraySnapCountProperty = RegisterProperty("UnmatchedArraySnapCount", typeof(int), 0);
+
+        /// <summary>Ink Divide count.</summary>
+        public int UnmatchedArrayDivideCount
+        {
+            get { return GetValue<int>(UnmatchedArrayDivideCountProperty); }
+            set { SetValue(UnmatchedArrayDivideCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArrayDivideCountProperty = RegisterProperty("UnmatchedArrayDivideCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedArraySkipCount
+        {
+            get { return GetValue<int>(UnmatchedArraySkipCountProperty); }
+            set { SetValue(UnmatchedArraySkipCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArraySkipCountProperty = RegisterProperty("UnmatchedArraySkipCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public List<string> UnmatchedArraySkipCountingCorretness
+        {
+            get { return GetValue<List<string>>(UnmatchedArraySkipCountingCorretnessProperty); }
+            set { SetValue(UnmatchedArraySkipCountingCorretnessProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArraySkipCountingCorretnessProperty = RegisterProperty("UnmatchedArraySkipCountingCorretness", typeof(List<string>), () => new List<string>());
+
+        #endregion // Array
 
         #region Number Line
 
@@ -759,6 +987,12 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(StampImageRepresentationDeletedCount.ToString());
 
             // Left Side
+            cellContents.Add(LeftArrayCreatedCount.ToString());
+            cellContents.Add(LeftArrayCutCount.ToString());
+            cellContents.Add(LeftArraySnapCount.ToString());
+            cellContents.Add(LeftArrayDivideCount.ToString());
+            cellContents.Add(LeftArraySkipCount.ToString());
+            cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
             cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNLJE);
             cellContents.Add(LeftNumberLineSwitched);
@@ -770,6 +1004,12 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsLeftMR);
 
             // Right Side
+            cellContents.Add(RightArrayCreatedCount.ToString());
+            cellContents.Add(RightArrayCutCount.ToString());
+            cellContents.Add(RightArraySnapCount.ToString());
+            cellContents.Add(RightArrayDivideCount.ToString());
+            cellContents.Add(RightArraySkipCount.ToString());
+            cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
             cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNLJE);
             cellContents.Add(RightNumberLineSwitched);
@@ -781,6 +1021,12 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsRightMR);
 
             // Alternative Side
+            cellContents.Add(AlternativeArrayCreatedCount.ToString());
+            cellContents.Add(AlternativeArrayCutCount.ToString());
+            cellContents.Add(AlternativeArraySnapCount.ToString());
+            cellContents.Add(AlternativeArrayDivideCount.ToString());
+            cellContents.Add(AlternativeArraySkipCount.ToString());
+            cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
             cellContents.Add(AlternativeNLJE);
             cellContents.Add(AlternativeNumberLineSwitched);
@@ -792,6 +1038,12 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsAlternativeMR);
 
             // Unmatched Side
+            cellContents.Add(UnmatchedArrayCreatedCount.ToString());
+            cellContents.Add(UnmatchedArrayCutCount.ToString());
+            cellContents.Add(UnmatchedArraySnapCount.ToString());
+            cellContents.Add(UnmatchedArrayDivideCount.ToString());
+            cellContents.Add(UnmatchedArraySkipCount.ToString());
+            cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
             cellContents.Add(UnmatchedNLJE);
             cellContents.Add(UnmatchedNumberLineSwitched);
@@ -854,7 +1106,72 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("ALL STA IMAGES on page Deleted");
 
             // Left Side
+            cellContents.Add("Left ARR created");
+            cellContents.Add("Left ARR cut");
+            cellContents.Add("Left ARR snap");
+            cellContents.Add("Left ARR divide");
+            cellContents.Add("Left ARR skip");
+            cellContents.Add("Left ARR skip tags");
+            cellContents.Add("Left NL used");
+            cellContents.Add("Left NLJE");
+            cellContents.Add("Left NL switched");
+            cellContents.Add("Left NL blank");
+            cellContents.Add("Left STA created");
+            cellContents.Add("Left STA IMAGES");
+            cellContents.Add("Left STA switched");
+            cellContents.Add("Left REP Correctness");
+            cellContents.Add("Left MR");
 
+            // Right Side
+            cellContents.Add("Right ARR created");
+            cellContents.Add("Right ARR cut");
+            cellContents.Add("Right ARR snap");
+            cellContents.Add("Right ARR divide");
+            cellContents.Add("Right ARR skip");
+            cellContents.Add("Right ARR skip tags");
+            cellContents.Add("Right NL used");
+            cellContents.Add("Right NLJE");
+            cellContents.Add("Right NL switched");
+            cellContents.Add("Right NL blank");
+            cellContents.Add("Right STA created");
+            cellContents.Add("Right STA IMAGES");
+            cellContents.Add("Right STA switched");
+            cellContents.Add("Right REP Correctness");
+            cellContents.Add("Right MR");
+
+            // Alternative Side
+            cellContents.Add("Alternative ARR created");
+            cellContents.Add("Alternative ARR cut");
+            cellContents.Add("Alternative ARR snap");
+            cellContents.Add("Alternative ARR divide");
+            cellContents.Add("Alternative ARR skip");
+            cellContents.Add("Alternative ARR skip tags");
+            cellContents.Add("Alternative NL used");
+            cellContents.Add("Alternative NLJE");
+            cellContents.Add("Alternative NL switched");
+            cellContents.Add("Alternative NL blank");
+            cellContents.Add("Alternative STA created");
+            cellContents.Add("Alternative STA IMAGES");
+            cellContents.Add("Alternative STA switched");
+            cellContents.Add("Alternative REP Correctness");
+            cellContents.Add("Alternative MR");
+
+            // Unmatched Side
+            cellContents.Add("Unmatched ARR created");
+            cellContents.Add("Unmatched ARR cut");
+            cellContents.Add("Unmatched ARR snap");
+            cellContents.Add("Unmatched ARR divide");
+            cellContents.Add("Unmatched ARR skip");
+            cellContents.Add("Unmatched ARR skip tags");
+            cellContents.Add("Unmatched NL used");
+            cellContents.Add("Unmatched NLJE");
+            cellContents.Add("Unmatched NL switched");
+            cellContents.Add("Unmatched NL blank");
+            cellContents.Add("Unmatched STA created");
+            cellContents.Add("Unmatched STA IMAGES");
+            cellContents.Add("Unmatched STA switched");
+            cellContents.Add("Unmatched REP Correctness");
+            cellContents.Add("Unmatched MR");
 
             // Whole Page Analysis
             cellContents.Add("MR2STEP");
