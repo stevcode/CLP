@@ -108,14 +108,14 @@ namespace CLP.Entities
             var eventInfo = string.Join(", ", eventInfoSegments);
 
             var semanticEvent = new SemanticEvent(page, cutHistoryAction)
-            {
-                CodedObject = codedObject,
-                EventType = eventType,
-                CodedObjectID = codedID,
-                CodedObjectIDIncrement = incrementID,
-                EventInformation = eventInfo,
-                ReferencePageObjectID = cutPageObjectID
-            };
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = eventType,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = eventInfo,
+                                    ReferencePageObjectID = cutPageObjectID
+                                };
 
             return semanticEvent;
         }
