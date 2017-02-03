@@ -120,6 +120,20 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
+            if (double.IsPositiveInfinity(scaleX) ||
+                double.IsNegativeInfinity(scaleX) ||
+                double.IsNaN(scaleX))
+            {
+                scaleX = 1;
+            }
+
+            if (double.IsPositiveInfinity(scaleY) ||
+                double.IsNegativeInfinity(scaleY) ||
+                double.IsNaN(scaleY))
+            {
+                scaleY = 1;
+            }
+
             var transform = new Matrix();
             transform.ScaleAt(scaleX, scaleY, centerX, centerY);
             stroke.Transform(transform, false);

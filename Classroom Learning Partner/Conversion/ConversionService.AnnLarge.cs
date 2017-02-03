@@ -93,7 +93,7 @@ namespace Classroom_Learning_Partner
         public static Ann.Notebook AnnCustomPartialNotebookLoading(string notebookFolderPath)
         {
             var notebook = Ann.Notebook.LoadLocalNotebook(notebookFolderPath);
-            if (notebook == null)
+            if (ReferenceEquals(null, notebook))
             {
                 return null;
             }
@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner
             foreach (var pageFilePath in pageFilePaths)
             {
                 var pageNameComposite = Ann.PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
-                if (pageNameComposite == null)
+                if (ReferenceEquals(null, pageNameComposite))
                 {
                     continue;
                 }
@@ -130,7 +130,7 @@ namespace Classroom_Learning_Partner
                 }
 
                 var page = Ann.CLPPage.LoadLocalPage(pageFilePath);
-                if (page == null)
+                if (ReferenceEquals(null, page))
                 {
                     continue;
                 }
@@ -238,19 +238,23 @@ namespace Classroom_Learning_Partner
                 StartingPageID = classPeriod.StartPageID
             };
 
-            var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
-            newSession.StartingPageNumber = startPageNumber.ToString();
-
-            var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages).ToList();
-            var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
-            if (!pageIDs.Contains(classPeriod.TitlePageID))
+            if (PageIDToNumberMap.ContainsKey(classPeriod.StartPageID))
             {
-                pageIDs.Insert(0, classPeriod.TitlePageID);
-                pageNumberRange.Insert(0, PageIDToNumberMap[classPeriod.TitlePageID]);
-            }
+                var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
+                newSession.StartingPageNumber = startPageNumber.ToString();
 
-            newSession.PageIDs = pageIDs;
-            newSession.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumberRange, false, true);
+                var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages).ToList();
+                var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
+                if (!pageIDs.Contains(classPeriod.TitlePageID))
+                {
+                    pageIDs.Insert(0, classPeriod.TitlePageID);
+                    pageNumberRange.Insert(0, PageIDToNumberMap[classPeriod.TitlePageID]);
+                }
+
+                newSession.PageIDs = pageIDs;
+                newSession.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumberRange, false, true);
+            }
+            
             newSession.NotebookIDs.Add(classPeriod.NotebookID);
 
             return newSession;

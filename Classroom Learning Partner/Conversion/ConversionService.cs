@@ -216,15 +216,23 @@ namespace Classroom_Learning_Partner
             foreach (var session in sessions)
             {
                 session.ContainerZipFilePath = zipFilePath;
-                session.StartingPageNumber = mappedIDs[session.StartingPageID].ToString();
-                var pageNumbers = new List<int>();
-                foreach (var pageID in session.PageIDs)
-                {
-                    var pageNumber = mappedIDs[pageID];
-                    pageNumbers.Add((int)pageNumber.ToInt());
-                }
 
-                session.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, false, true);
+                if (mappedIDs.ContainsKey(session.StartingPageID))
+                {
+                    session.StartingPageNumber = mappedIDs[session.StartingPageID].ToString();
+                    var pageNumbers = new List<int>();
+                    foreach (var pageID in session.PageIDs)
+                    {
+                        if (!mappedIDs.ContainsKey(pageID))
+                        {
+                            continue;
+                        }
+                        var pageNumber = mappedIDs[pageID];
+                        pageNumbers.Add((int)pageNumber.ToInt());
+                    }
+
+                    session.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumbers, false, true);
+                }
 
                 entryList.Add(new DataService.ZipEntrySaver(session));
             }
