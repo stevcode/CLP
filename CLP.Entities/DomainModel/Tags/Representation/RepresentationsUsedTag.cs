@@ -522,7 +522,73 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.Add("Created by Snap");
                 }
 
+                var mostRecentSkipEvent =
+                    semanticEvents.LastOrDefault(
+                                                 e =>
+                                                     e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE));
 
+                var eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
+                if (eventInfoParts.Length == 2)
+                {
+                    var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+                    if (formattedInterpretationParts.Length == 2)
+                    {
+                        var formattedSkips = formattedInterpretationParts[1];
+                        if (!string.IsNullOrEmpty(formattedSkips))
+                        {
+                            // HACK: temporary print out of Wrong Dimension analysis
+                            var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                            var skips = new List<int>();
+                            foreach (var skip in skipStrings)
+                            {
+                                if (string.IsNullOrEmpty(skip))
+                                {
+                                    skips.Add(-1);
+                                    continue;
+                                }
+
+                                int number;
+                                var isNumber = int.TryParse(skip, out number);
+                                if (isNumber)
+                                {
+                                    skips.Add(number);
+                                    continue;
+                                }
+
+                                skips.Add(-1);
+                            }
+
+                            var wrongDimensionMatches = 0;
+                            for (int i = 0; i < skips.Count - 1; i++)
+                            {
+                                var currentValue = skips[i];
+                                var nextValue = skips[i + 1];
+                                if (currentValue == -1 ||
+                                    nextValue == -1)
+                                {
+                                    continue;
+                                }
+                                var difference = nextValue - currentValue;
+                                if (difference == array.Rows &&
+                                    array.Rows != array.Columns)
+                                {
+                                    wrongDimensionMatches++;
+                                }
+                            }
+
+                            var wrongDimensionText = string.Empty;
+                            var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                            if (percentMatchWrongDimensions >= 0.80)
+                            {
+                                wrongDimensionText = ", wrong dimension";
+                            }
+
+                            var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
+                            usedRepresentation.AdditionalInformation.Add(skipCodedValue);
+                        }
+                    }
+                }
 
                 #endregion // Basic Representation Info
 
@@ -590,58 +656,7 @@ namespace CLP.Entities
             #region Static Skips
 
             //var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
-            //if (!string.IsNullOrEmpty(formattedSkips))
-            //{
-            //    // HACK: temporary print out of Wrong Dimension analysis
-            //    var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-            //    var skips = new List<int>();
-            //    foreach (var skip in skipStrings)
-            //    {
-            //        if (string.IsNullOrEmpty(skip))
-            //        {
-            //            skips.Add(-1);
-            //            continue;
-            //        }
 
-            //        int number;
-            //        var isNumber = int.TryParse(skip, out number);
-            //        if (isNumber)
-            //        {
-            //            skips.Add(number);
-            //            continue;
-            //        }
-
-            //        skips.Add(-1);
-            //    }
-
-            //    var wrongDimensionMatches = 0;
-            //    for (int i = 0; i < skips.Count - 1; i++)
-            //    {
-            //        var currentValue = skips[i];
-            //        var nextValue = skips[i + 1];
-            //        if (currentValue == -1 ||
-            //            nextValue == -1)
-            //        {
-            //            continue;
-            //        }
-            //        var difference = nextValue - currentValue;
-            //        if (difference == array.Rows &&
-            //            array.Rows != array.Columns)
-            //        {
-            //            wrongDimensionMatches++;
-            //        }
-            //    }
-
-            //    var wrongDimensionText = string.Empty;
-            //    var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
-            //    if (percentMatchWrongDimensions >= 0.80)
-            //    {
-            //        wrongDimensionText = ", wrong dimension";
-            //    }
-
-            //    var skipCodedValue = $"\n  - skip [{formattedSkips}]{wrongDimensionText}";
-            //    codedValue = $"{codedValue}{skipCodedValue}";
-            //}
 
             #endregion // Static Skips
         }
