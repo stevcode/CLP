@@ -64,18 +64,41 @@ namespace CLP.Entities
                                                                                     { CORRECTNESS_UNKNOWN, "Unknown" }
                                                                                 };
 
-        public static string CorrectnessToCoding(Correctness correctness)
+        public static string CorrectnessToCodedCorrectness(Correctness correctness)
         {
             switch (correctness)
             {
                 case Correctness.Correct:
-                    return Codings.CORRECTNESS_CORRECT;
+                    return CORRECTNESS_CORRECT;
                 case Correctness.PartiallyCorrect:
-                    return Codings.CORRECTNESS_PARTIAL;
+                    return CORRECTNESS_PARTIAL;
                 case Correctness.Incorrect:
-                    return Codings.CORRECTNESS_INCORRECT;
+                    return CORRECTNESS_INCORRECT;
                 default:
-                    return Codings.CORRECTNESS_UNKNOWN;
+                    return CORRECTNESS_UNKNOWN;
+            }
+        }
+
+        public static string CorrectnessToFriendlyCorrectness(Correctness correctness)
+        {
+            var codedCorrectness = CorrectnessToCodedCorrectness(correctness);
+            var friendlyCorrectness = FriendlyCorrectness[codedCorrectness];
+
+            return friendlyCorrectness;
+        }
+
+        public static Correctness CodedCorrectnessToCorrectness(string codedCorrectness)
+        {
+            switch (codedCorrectness)
+            {
+                case CORRECTNESS_CORRECT:
+                    return Correctness.Correct;
+                case CORRECTNESS_PARTIAL:
+                    return Correctness.PartiallyCorrect;
+                case CORRECTNESS_INCORRECT:
+                    return Correctness.Incorrect;
+                default:
+                    return Correctness.Unknown;
             }
         }
 

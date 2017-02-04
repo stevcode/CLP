@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 
@@ -48,7 +49,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRunAnalysisCommandExecute()
         {
-            AnalysisService.RunAnalysis(_dataService.CurrentNotebook);
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent && n.Owner.ID != "d7tlNq2ryUqW53USnrea-A"))
+            {
+                AnalysisService.RunAnalysis(notebook);
+            }
         }
 
         #endregion //Commands

@@ -517,12 +517,12 @@ namespace CLP.Entities
                         return "None";
                     }
 
-                    var code = answerCorrectnessTag.FinalAnswerCorrectness;
-                    if (code.Contains("COR"))
+                    var codedCorrectness = Codings.CorrectnessToCodedCorrectness(answerCorrectnessTag.FinalAnswerCorrectness);
+                    if (codedCorrectness.Contains("COR"))
                     {
                         return "Correct";
                     }
-                    if (code.Contains("INC"))
+                    if (codedCorrectness.Contains("INC"))
                     {
                         return "Incorrect";
                     }

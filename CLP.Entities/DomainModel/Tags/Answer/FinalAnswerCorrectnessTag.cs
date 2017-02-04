@@ -53,13 +53,13 @@ namespace CLP.Entities
         public static readonly PropertyData StudentAnswerProperty = RegisterProperty("StudentAnswer", typeof(string), string.Empty);
 
         /// <summary>Correctness of student's answer.</summary>
-        public string FinalAnswerCorrectness
+        public Correctness FinalAnswerCorrectness
         {
-            get { return GetValue<string>(FinalAnswerCorrectnessProperty); }
+            get { return GetValue<Correctness>(FinalAnswerCorrectnessProperty); }
             set { SetValue(FinalAnswerCorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
+        public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(Correctness), Correctness.Unknown);
 
         #endregion // Properties
 
@@ -80,7 +80,7 @@ namespace CLP.Entities
 
                 var correctAnswerDescription = $"{FinalAnswerPageObjectType}: Correct answer is {CorrectAnswer}";
                 var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left final answer blank" : $"Student answered {StudentAnswer}";
-                var finalAnswerFriendlyCorrectness = Codings.FriendlyCorrectness[FinalAnswerCorrectness];
+                var finalAnswerFriendlyCorrectness = Codings.CorrectnessToFriendlyCorrectness(FinalAnswerCorrectness);
                 var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes: {AnalysisCodesReport}" : string.Empty;
 
                 var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){analysisCodesDescription}";
@@ -130,7 +130,7 @@ namespace CLP.Entities
                 }
 
                 tag.StudentAnswer = BLANK_STUDENT_ANSWER;
-                tag.FinalAnswerCorrectness = Codings.CORRECTNESS_INCORRECT;
+                tag.FinalAnswerCorrectness = Correctness.Incorrect;
             }
             else
             {
@@ -139,7 +139,8 @@ namespace CLP.Entities
                 tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[lastFinalAnswerEvent.CodedObject];
                 tag.CorrectAnswer = lastFinalAnswerEvent.CodedObjectID;
                 tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastFinalAnswerEvent);
-                tag.FinalAnswerCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
+                var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
+                tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
 
                 tag.AnalysisCodes.Add(lastFinalAnswerEvent.CodedValue);
             }

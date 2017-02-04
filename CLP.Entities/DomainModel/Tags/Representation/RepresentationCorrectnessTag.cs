@@ -138,10 +138,10 @@ namespace CLP.Entities
                 var leftDivisionDefinition = leftDefinition as DivisionRelationDefinitionTag;
                 if (leftDivisionDefinition != null)
                 {
-                    simplifiedRelation.GroupSize = divisionDefinition.Quotient;
-                    simplifiedRelation.NumberOfGroups = divisionDefinition.Divisor.RelationPartAnswerValue;
+                    simplifiedRelation.GroupSize = leftDivisionDefinition.Quotient;
+                    simplifiedRelation.NumberOfGroups = leftDivisionDefinition.Divisor.RelationPartAnswerValue;
                     simplifiedRelation.IsOrderedGroup = false;
-                    simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
+                    simplifiedRelation.Product = leftDivisionDefinition.Dividend.RelationPartAnswerValue;
                     simplifiedRelation.PageDefinition = relationDefinitionTag;
 
                     return simplifiedRelation;
