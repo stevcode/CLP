@@ -386,7 +386,7 @@ namespace CLP.Entities
         {
             get
             {
-                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
                 if (correctnessTag == null)
                 {
                     return "Unknown";

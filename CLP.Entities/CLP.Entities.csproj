@@ -239,7 +239,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
     <Compile Include="DomainModel\Tags\IAnalysis.cs" />
     <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />

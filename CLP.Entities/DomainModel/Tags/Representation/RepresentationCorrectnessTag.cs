@@ -42,7 +42,16 @@ namespace CLP.Entities
 
         public override string FormattedName => "Representation Correctness";
 
-        public override string FormattedValue => string.Join("\n", AnalysisCodes);
+        public override string FormattedValue
+        {
+            get
+            {
+                var overallCorrectness = Codings.CorrectnessToFriendlyCorrectness(RepresentationCorrectness);
+                var analysisCodes = string.Join("  - ", AnalysisCodes);
+                var representations = AnalysisCodes.Any() ? $"Representations:\n  - {analysisCodes}" : "No Representations";
+                return $"Overall Correctness: {overallCorrectness}\n{representations}";
+            }
+        }
 
         #endregion //ATagBase Overrides
 

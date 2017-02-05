@@ -285,12 +285,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
                 return correctnessTag == null ? Correctness.Unknown : correctnessTag.Correctness;
             }
             set
             {
-                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, value, false));
+                Page.AddTag(new CorrectnessSummaryTag(Page, Origin.Teacher, value, false));
                 RaisePropertyChanged(nameof(Correctness));
             }
         }

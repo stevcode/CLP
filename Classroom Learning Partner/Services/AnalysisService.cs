@@ -784,7 +784,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            var correctnessSummaryTag = page.Tags.OfType<CorrectnessTag>().FirstOrDefault();
+            var correctnessSummaryTag = page.Tags.OfType<CorrectnessSummaryTag>().FirstOrDefault();
             if (correctnessSummaryTag == null)
             {
                 entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_UNKNOWN;
