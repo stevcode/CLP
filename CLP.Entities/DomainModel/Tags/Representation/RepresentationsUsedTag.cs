@@ -265,7 +265,7 @@ namespace CLP.Entities
 
         #endregion // Nested Class
 
-        public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
+        public static RepresentationsUsedTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated);
 
@@ -284,6 +284,7 @@ namespace CLP.Entities
             }
 
             page.AddTag(tag);
+            return tag;
         }
 
         public static void GenerateArraysUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)

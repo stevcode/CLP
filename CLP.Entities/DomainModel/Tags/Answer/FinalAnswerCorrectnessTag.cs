@@ -92,7 +92,7 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
+        public static FinalAnswerCorrectnessTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var lastFinalAnswerEvent =
                 semanticEvents.LastOrDefault(
@@ -106,7 +106,7 @@ namespace CLP.Entities
                 var finalAnswerPageObject = page.PageObjects.FirstOrDefault(p => p is MultipleChoice || p is InterpretationRegion);
                 if (finalAnswerPageObject == null)
                 {
-                    return;
+                    return null;
                 }
 
                 var multipleChoice = finalAnswerPageObject as MultipleChoice;
@@ -146,6 +146,8 @@ namespace CLP.Entities
             }
 
             page.AddTag(tag);
+
+            return tag;
         }
 
         #endregion // Static Methods

@@ -22,13 +22,19 @@ namespace CLP.Entities
 
         public RepresentationCorrectnessTag() { }
 
-        public RepresentationCorrectnessTag(CLPPage parentPage, Origin origin, List<string> analysisCodes)
-            : base(parentPage, origin)
-        {
-            AnalysisCodes = analysisCodes;
-        }
+        public RepresentationCorrectnessTag(CLPPage parentPage, Origin origin)
+            : base(parentPage, origin) { }
 
         #endregion //Constructors
+
+        /// <summary>Overall correctness of the final Representations on the page.</summary>
+        public Correctness RepresentationCorrectness
+        {
+            get { return GetValue<Correctness>(RepresentationCorrectnessProperty); }
+            set { SetValue(RepresentationCorrectnessProperty, value); }
+        }
+
+        public static readonly PropertyData RepresentationCorrectnessProperty = RegisterProperty("RepresentationCorrectness", typeof(Correctness), Correctness.Unknown);
 
         #region ATagBase Overrides
 
@@ -41,6 +47,37 @@ namespace CLP.Entities
         #endregion //ATagBase Overrides
 
         #region Static Methods
+
+        public static RepresentationCorrectnessTag AttemptTagGeneration(CLPPage page, RepresentationsUsedTag representationsUsedTag)
+        {
+            var isAnswerDefinitionOnPage = page.Tags.OfType<IDefinition>().Any();
+            if (!isAnswerDefinitionOnPage)
+            {
+                return null;
+            }
+
+            var tag = new RepresentationCorrectnessTag(page, Origin.StudentPageGenerated);
+
+            var finalRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
+            if (finalRepresentations.All(r => r.Correctness == Correctness.Correct))
+            {
+                tag.RepresentationCorrectness = Correctness.Correct;
+            }
+            else if (finalRepresentations.All(r => r.Correctness == Correctness.Incorrect))
+            {
+                tag.RepresentationCorrectness = Correctness.Incorrect;
+            }
+            else if (finalRepresentations.Any(r => r.Correctness == Correctness.PartiallyCorrect) ||
+                     finalRepresentations.Any(r => r.Correctness == Correctness.Correct))
+            {
+                tag.RepresentationCorrectness = Correctness.PartiallyCorrect;
+            }
+
+            tag.AnalysisCodes =
+                finalRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.RepresentationCorrectness)}").ToList();
+
+            return tag;
+        }
 
         #region Page Answer Definition Relation Generation
 
