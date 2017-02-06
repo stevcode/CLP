@@ -277,6 +277,19 @@ namespace CLP.Entities
             GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
 
+            if (!tag.RepresentationsUsed.Any())
+            {
+                if (!page.InkStrokes.Any() &&
+                    !page.History.TrashedInkStrokes.Any())
+                {
+                    tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
+                }
+                else
+                {
+                    tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
+                }
+            }
+
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
