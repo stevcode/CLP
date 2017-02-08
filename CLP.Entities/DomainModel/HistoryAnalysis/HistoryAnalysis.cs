@@ -732,7 +732,7 @@ namespace CLP.Entities
             var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             var representationCorrectness = RepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
-            AnswerRepresentationSequence.AttemptTagGeneration(page, semanticEvents);
+            AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
         }
 
         // TODO: Move each Attempt method to the Tag's class

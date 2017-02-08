@@ -924,7 +924,14 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData IsRAAProperty = RegisterProperty("IsRAA", typeof(string), string.Empty);
 
+        /// <summary>SUMMARY</summary>
+        public List<string> AnswersChangedAfterRepresentation
+        {
+            get { return GetValue<List<string>>(AnswersChangedAfterRepresentationProperty); }
+            set { SetValue(AnswersChangedAfterRepresentationProperty, value); }
+        }
 
+        public static readonly PropertyData AnswersChangedAfterRepresentationProperty = RegisterProperty("AnswersChangedAfterRepresentation", typeof(List<string>), () => new List<string>());
 
         /// <summary>Total number of the distinct ink colors used on the page.</summary>
         public int InkColorsUsedCount
@@ -1060,7 +1067,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(CorrectnessSummary);
             cellContents.Add(IsABR);
             cellContents.Add(IsRAA);
-            cellContents.Add("ANS Changed");
+            cellContents.Add(string.Join(", ", AnswersChangedAfterRepresentation));
             cellContents.Add(InkColorsUsedCount.ToString());
 
             // Total History

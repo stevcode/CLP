@@ -223,6 +223,7 @@ namespace CLP.Entities
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+        public const string ANALYSIS_REP_AFTER_ANSWER = "RAA";
 
         #endregion // Representation Sequence
 

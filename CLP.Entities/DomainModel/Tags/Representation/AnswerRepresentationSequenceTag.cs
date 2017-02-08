@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class AnswerRepresentationSequence : AAnalysisTagBase
+    public class AnswerRepresentationSequenceTag : AAnalysisTagBase
     {
         #region Constructors
 
-        public AnswerRepresentationSequence() { }
+        public AnswerRepresentationSequenceTag() { }
 
-        public AnswerRepresentationSequence(CLPPage parentPage, Origin origin)
+        public AnswerRepresentationSequenceTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
         #endregion //Constructors
@@ -93,10 +93,47 @@ namespace CLP.Entities
                 }
             }
 
-            var tag = new AnswerRepresentationSequence(page, Origin.StudentPageGenerated)
-                      {
-                          Sequence = sequence
-                      };
+            if (!sequence.Any())
+            {
+                return;
+            }
+
+            var tag = new AnswerRepresentationSequenceTag(page, Origin.StudentPageGenerated)
+            {
+                Sequence = sequence
+            };
+
+            // ABR
+            var firstRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
+            if (firstRepresentationIndex > 0)
+            {
+                var previousSequenceItem = sequence[firstRepresentationIndex - 1];
+                if (previousSequenceItem.Contains(Codings.CORRECTNESS_CORRECT))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_BEFORE_REP);
+                }
+                else if (previousSequenceItem.Contains(Codings.CORRECTNESS_INCORRECT))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_BEFORE_REP);
+                }
+            }
+
+            // RAA
+            var lastRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
+            if (lastRepresentationIndex >= 0 &&
+                lastRepresentationIndex < sequence.Count - 1)
+            {
+                var previousSequenceItem = sequence[firstRepresentationIndex - 1];
+                if (previousSequenceItem.Contains(Codings.CORRECTNESS_CORRECT))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_BEFORE_REP);
+                }
+                else if (previousSequenceItem.Contains(Codings.CORRECTNESS_INCORRECT))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_BEFORE_REP);
+                }
+            }
+
             page.AddTag(tag);
         }
 

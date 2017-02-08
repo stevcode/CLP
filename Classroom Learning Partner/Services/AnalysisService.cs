@@ -808,6 +808,45 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
+            var answerRepresentationSequenceTag = page.Tags.OfType<AnswerRepresentationSequenceTag>().FirstOrDefault();
+            if (answerRepresentationSequenceTag == null)
+            {
+                entry.IsABR = AnalysisEntry.NO;
+                entry.IsRAA = AnalysisEntry.NO;
+                entry.AnswersChangedAfterRepresentation.Add(AnalysisEntry.NO);
+            }
+            else
+            {
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_COR_BEFORE_REP) ||
+                    answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INC_BEFORE_REP))
+                {
+                    entry.IsABR = AnalysisEntry.YES;
+                }
+                else
+                {
+                    entry.IsABR = AnalysisEntry.NO;
+                }
+
+                entry.IsRAA = answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_REP_AFTER_ANSWER) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
+                foreach (var analysisCode in answerRepresentationSequenceTag.AnalysisCodes)
+                {
+                    if (analysisCode == Codings.ANALYSIS_COR_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_INC_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_REP_AFTER_ANSWER)
+                    {
+                        continue;
+                    }
+
+                    entry.AnswersChangedAfterRepresentation.Add(analysisCode);
+                }
+
+                if (!entry.AnswersChangedAfterRepresentation.Any())
+                {
+                    entry.AnswersChangedAfterRepresentation.Add(AnalysisEntry.NO);
+                }
+            }
+
             var studentInkStrokes = page.InkStrokes.Concat(page.History.TrashedInkStrokes).Where(s => s.GetStrokeOwnerID() == page.Owner.ID).ToList();
             var colorsUsed = studentInkStrokes.Select(s => s.DrawingAttributes.Color).Distinct();
             entry.InkColorsUsedCount = colorsUsed.Count();
