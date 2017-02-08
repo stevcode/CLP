@@ -16,10 +16,8 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="CorrectnessSummaryTag" /> from scratch.</summary>
         public CorrectnessSummaryTag() { }
 
-        /// <summary>Initializes <see cref="CorrectnessSummaryTag" />.</summary>
         public CorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness, bool isAutomaticallySet)
             : base(parentPage, origin)
         {
@@ -55,7 +53,7 @@ namespace CLP.Entities
 
         public override bool IsSingleValueTag => true;
 
-        public override Category Category => Category.OtherPageInformation;
+        public override Category Category => Category.Answer;
 
         public override string FormattedName => "Correctness";
 

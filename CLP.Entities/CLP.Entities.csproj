@@ -239,14 +239,15 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
     <Compile Include="DomainModel\Tags\IAnalysis.cs" />
     <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessSummaryTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\CorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\HighlightedObjectTypesOnPageTag.cs" />
-    <Compile Include="DomainModel\Tags\Representation\RepresentationCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Representation\AnswerRepresentationSequence.cs" />
+    <Compile Include="DomainModel\Tags\Answer\RepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Representation\RepresentationsUsedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />

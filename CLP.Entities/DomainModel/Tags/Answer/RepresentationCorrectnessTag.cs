@@ -38,7 +38,7 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category => Category.Representation;
+        public override Category Category => Category.Answer;
 
         public override string FormattedName => "Representation Correctness";
 

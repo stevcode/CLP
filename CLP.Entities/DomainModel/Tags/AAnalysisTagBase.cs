@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public abstract class AAnalysisTagBase : ATagBase, IAnalysis
     {
         #region Constructors
