@@ -542,13 +542,13 @@ namespace CLP.Entities
             {
                 try
                 {
-                    var abrTag = Tags.FirstOrDefault(x => x is AnswerBeforeRepresentationTag) as AnswerBeforeRepresentationTag;
+                    var abrTag = Tags.FirstOrDefault(x => x is AnswerRepresentationSequenceTag) as AnswerRepresentationSequenceTag;
                     if (abrTag == null)
                     {
                         return "None";
                     }
 
-                    var code = abrTag.AnalysisCode;
+                    var code = abrTag.AnalysisCodes;
                     if (code.Contains("ABR-I"))
                     {
                         return "ABR-I";

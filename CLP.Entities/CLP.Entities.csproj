@@ -188,7 +188,6 @@
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
-    <Compile Include="DomainModel\Tags\Answer\AnswerBeforeRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
     <Compile Include="DomainModel\Tags\Answer\FinalAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArrayRemovedHistoryAction.cs" />

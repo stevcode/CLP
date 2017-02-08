@@ -737,38 +737,6 @@ namespace CLP.Entities
 
         // TODO: Move each Attempt method to the Tag's class
 
-        public static void AttemptAnswerBeforeRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
-        {
-            var answerEvents = semanticEvents.Where(Codings.IsFinalAnswerEvent).ToList();
-            if (answerEvents.Count < 1)
-            {
-                return;
-            }
-
-            var firstAnswer = semanticEvents.First(Codings.IsFinalAnswerEvent);
-            var firstIndex = semanticEvents.IndexOf(firstAnswer);
-
-            var beforeEvents = semanticEvents.Take(firstIndex + 1).ToList();
-            var isUsingRepresentationsBefore = beforeEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
-
-            if (isUsingRepresentationsBefore)
-            {
-                return;
-            }
-
-            var afterEvents = semanticEvents.Skip(firstIndex).ToList();
-            var isUsingRepresentationsAfter = afterEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
-
-            if (!isUsingRepresentationsAfter)
-            {
-                return;
-            }
-
-            // TODO: Derive this entire Analysis Code from ARA Tag and don't use this Tag
-            var tag = new AnswerBeforeRepresentationTag(page, Origin.StudentPageGenerated, afterEvents);
-            page.AddTag(tag);
-        }
-
         public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             var answerEvents = semanticEvents.Where(Codings.IsFinalAnswerEvent).ToList();
