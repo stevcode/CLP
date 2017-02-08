@@ -119,19 +119,13 @@ namespace CLP.Entities
             }
 
             // RAA
-            var lastRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
-            if (lastRepresentationIndex >= 0 &&
-                lastRepresentationIndex < sequence.Count - 1)
+            var lastCorrectAnswerIndex = sequence.LastIndexOf("A-COR");
+            var lastIncorrectAnswerIndex = sequence.LastIndexOf("A-INC");
+            var lastAnswerIndex = Math.Max(lastCorrectAnswerIndex, lastIncorrectAnswerIndex);
+            if (lastAnswerIndex >= 0 &&
+                lastAnswerIndex < sequence.Count - 1)
             {
-                var previousSequenceItem = sequence[firstRepresentationIndex - 1];
-                if (previousSequenceItem.Contains(Codings.CORRECTNESS_CORRECT))
-                {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_BEFORE_REP);
-                }
-                else if (previousSequenceItem.Contains(Codings.CORRECTNESS_INCORRECT))
-                {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_BEFORE_REP);
-                }
+                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_ANSWER);
             }
 
             page.AddTag(tag);
