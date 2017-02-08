@@ -563,27 +563,6 @@ namespace CLP.Entities
             }
         }
 
-        public string ARIC
-        {
-            get
-            {
-                try
-                {
-                    var aricTag = Tags.FirstOrDefault(x => x is AnswerChangedAfterRepresentationTag) as AnswerChangedAfterRepresentationTag;
-                    if (aricTag == null)
-                    {
-                        return "None";
-                    }
-
-                    return aricTag.AnalysisCode.Substring(0, 4);
-                }
-                catch (Exception)
-                {
-                    return "None";
-                }
-            }
-        }
-
         #endregion //Calculated Sort Properties
 
         #endregion //Properties

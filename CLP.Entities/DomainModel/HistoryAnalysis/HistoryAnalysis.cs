@@ -735,33 +735,6 @@ namespace CLP.Entities
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
         }
 
-        // TODO: Move each Attempt method to the Tag's class
-
-        public static void AttemptAnswerChangedAfterRepresentationTag(CLPPage page, List<ISemanticEvent> semanticEvents)
-        {
-            var answerEvents = semanticEvents.Where(Codings.IsFinalAnswerEvent).ToList();
-            if (answerEvents.Count < 2)
-            {
-                return;
-            }
-
-            var firstAnswer = semanticEvents.First(Codings.IsFinalAnswerEvent);
-            var firstIndex = semanticEvents.IndexOf(firstAnswer);
-            var lastAnswer = semanticEvents.Last(Codings.IsFinalAnswerEvent);
-            var lastIndex = semanticEvents.IndexOf(lastAnswer);
-
-            var possibleTagEvents = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
-            var isUsingRepresentations = possibleTagEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
-
-            if (!isUsingRepresentations)
-            {
-                return;
-            }
-
-            var tag = new AnswerChangedAfterRepresentationTag(page, Origin.StudentPageGenerated, possibleTagEvents);
-            page.AddTag(tag);
-        }
-
         #endregion // Last Pass: Tag Generation
     }
 }
