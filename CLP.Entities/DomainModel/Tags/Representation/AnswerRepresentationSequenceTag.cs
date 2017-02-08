@@ -128,6 +128,43 @@ namespace CLP.Entities
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_ANSWER);
             }
 
+            // ARA
+            var startItem = string.Empty;
+            foreach (var item in sequence)
+            {
+                var isItemAnswer = item == "A-COR" || item == "A-INC";
+                if (string.IsNullOrWhiteSpace(startItem))
+                {
+                    startItem = item;
+                    continue;
+                }
+
+                if (!isItemAnswer)
+                {
+                    continue;
+                }
+
+                var isStartCOR = startItem == "A-COR";
+                var isCurrentCOR = item == "A-COR";
+
+                if (isStartCOR && isCurrentCOR)
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_COR_AFTER_REP);
+                }
+                else if (!isStartCOR && !isCurrentCOR)
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_INC_AFTER_REP);
+                }
+                else if (isStartCOR && !isCurrentCOR)
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_INC_AFTER_REP);
+                }
+                else if (!isStartCOR && isCurrentCOR)
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_COR_AFTER_REP);
+                }
+            }
+
             page.AddTag(tag);
         }
 
