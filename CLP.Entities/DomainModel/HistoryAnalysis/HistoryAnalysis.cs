@@ -732,6 +732,7 @@ namespace CLP.Entities
             var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             var representationCorrectness = RepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
+            AnswerRepresentationSequence.AttemptTagGeneration(page, semanticEvents);
         }
 
         // TODO: Move each Attempt method to the Tag's class
@@ -748,7 +749,7 @@ namespace CLP.Entities
             var firstIndex = semanticEvents.IndexOf(firstAnswer);
 
             var beforeEvents = semanticEvents.Take(firstIndex + 1).ToList();
-            var isUsingRepresentationsBefore = beforeEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var isUsingRepresentationsBefore = beforeEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (isUsingRepresentationsBefore)
             {
@@ -756,7 +757,7 @@ namespace CLP.Entities
             }
 
             var afterEvents = semanticEvents.Skip(firstIndex).ToList();
-            var isUsingRepresentationsAfter = afterEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var isUsingRepresentationsAfter = afterEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (!isUsingRepresentationsAfter)
             {
@@ -782,7 +783,7 @@ namespace CLP.Entities
             var lastIndex = semanticEvents.IndexOf(lastAnswer);
 
             var possibleTagEvents = semanticEvents.Skip(firstIndex).Take(lastIndex - firstIndex + 1).ToList();
-            var isUsingRepresentations = possibleTagEvents.Any(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
+            var isUsingRepresentations = possibleTagEvents.Any(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD);
 
             if (!isUsingRepresentations)
             {

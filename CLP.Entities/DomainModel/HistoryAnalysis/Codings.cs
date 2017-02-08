@@ -320,7 +320,7 @@ namespace CLP.Entities
             return correctness;
         }
 
-        public static bool IsRepresentationObject(ISemanticEvent semanticEvent)
+        public static bool IsRepresentationEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
                    semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;

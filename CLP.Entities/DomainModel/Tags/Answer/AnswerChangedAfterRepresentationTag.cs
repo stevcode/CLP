@@ -131,7 +131,7 @@ namespace CLP.Entities
                 var analysisCode = string.IsNullOrWhiteSpace(analysisObjectCode) ? string.Empty : string.Format("{0} [{1}, {2}]", analysisObjectCode, firstAnswerContents, lastAnswerContents);
 
                 var representationsAdded =
-                    SemanticEvents.Where(h => Codings.IsRepresentationObject(h) && h.EventType == Codings.EVENT_OBJECT_ADD && Codings.FriendlyObjects.ContainsKey(h.CodedObject))
+                    SemanticEvents.Where(h => Codings.IsRepresentationEvent(h) && h.EventType == Codings.EVENT_OBJECT_ADD && Codings.FriendlyObjects.ContainsKey(h.CodedObject))
                                   .Select(h => string.Format("{0} [{1}]", h.CodedObject, h.CodedObjectID));
 
                 return string.Format("{0}\nRepresentations: {1}{2}",

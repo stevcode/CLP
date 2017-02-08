@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -54,14 +52,51 @@ namespace CLP.Entities
 
         public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            const string REPRESENTATION_SEQUENCE_IDENTIFIER = "R";
+            const string ANSWER_SEQUENCE_IDENTIFIER = "A";
+
+            var sequence = new List<string>();
+            ISemanticEvent mostRecentSequenceItem = null;
 
             foreach (var semanticEvent in semanticEvents)
             {
-                
+                if (Codings.IsFinalAnswerEvent(semanticEvent))
+                {
+                    if (mostRecentSequenceItem == null ||
+                        Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
+                    {
+                        sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
 
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                }
+                else if (Codings.IsRepresentationEvent(semanticEvent) && 
+                         semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                {
+                    if (mostRecentSequenceItem == null ||
+                        Codings.IsRepresentationEvent(mostRecentSequenceItem))
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
+                    {
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
+
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                }
             }
 
-            var tag = new AnswerRepresentationSequence(page, Origin.StudentPageGenerated);
+            var tag = new AnswerRepresentationSequence(page, Origin.StudentPageGenerated)
+                      {
+                          Sequence = sequence
+                      };
             page.AddTag(tag);
         }
 
