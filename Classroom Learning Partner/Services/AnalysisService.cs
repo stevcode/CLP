@@ -78,6 +78,15 @@ namespace Classroom_Learning_Partner.Services
                 else if (leftSide is MultiplicationRelationDefinitionTag)
                 {
                     entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
+                    var multiplicationDefinition = leftSide as MultiplicationRelationDefinitionTag;
+                    if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
+                    {
+                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
+                    }
+                    else
+                    {
+                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
+                    }
                 }
                 else
                 {
@@ -91,6 +100,15 @@ namespace Classroom_Learning_Partner.Services
                 else if (rightSide is MultiplicationRelationDefinitionTag)
                 {
                     entry.RightSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
+                    var multiplicationDefinition = rightSide as MultiplicationRelationDefinitionTag;
+                    if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
+                    {
+                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
+                    }
+                    else if (entry.IsMultiplicationProblemUsingGroups != AnalysisEntry.YES)
+                    {
+                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
+                    }
                 }
                 else
                 {
@@ -241,7 +259,7 @@ namespace Classroom_Learning_Partner.Services
             var metaDataViewModel = new MetaDataTagsViewModel(page);
             entry.WordType = metaDataViewModel.IsWordProblem ? AnalysisEntry.WORD_TYPE_WORD : AnalysisEntry.WORD_TYPE_NON_WORD;
 
-
+            entry.IsMultipleChoiceBoxOnPage = page.PageObjects.OfType<MultipleChoice>().Any() ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             switch (metaDataViewModel.DifficultyLevel)
             {
@@ -286,9 +304,6 @@ namespace Classroom_Learning_Partner.Services
                     }
                 }
             }
-
-
-            entry.IsMultipleChoiceBoxOnPage = page.PageObjects.OfType<MultipleChoice>().Any() ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             if (metaDataViewModel.IsArrayRequired)
             {
