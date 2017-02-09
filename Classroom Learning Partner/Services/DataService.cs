@@ -1756,9 +1756,6 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            // HACK: get rid of this after history-rewrite.
-            page.History.ClearHistory();
-
             var entires = new List<ZipEntrySaver>
                           {
                               new ZipEntrySaver(page, notebook),
