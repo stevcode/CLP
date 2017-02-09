@@ -289,6 +289,10 @@ namespace CLP.Entities
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
                 }
             }
+            else
+            {
+                tag.RepresentationsUsedType = RepresentationsUsedTypes.RepresentationsUsed;
+            }
 
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
