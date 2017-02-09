@@ -279,8 +279,8 @@ namespace CLP.Entities
 
             if (!tag.RepresentationsUsed.Any())
             {
-                if (!page.InkStrokes.Any() &&
-                    !page.History.TrashedInkStrokes.Any())
+                if (page.InkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID) &&
+                    page.History.TrashedInkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID))
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
                 }
