@@ -77,7 +77,6 @@ namespace Classroom_Learning_Partner.Services
                 else if (leftSide is MultiplicationRelationDefinitionTag)
                 {
                     entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
-                    var multiplicationDefinition = leftSide as MultiplicationRelationDefinitionTag;
                 }
                 else
                 {
@@ -91,7 +90,6 @@ namespace Classroom_Learning_Partner.Services
                 else if (rightSide is MultiplicationRelationDefinitionTag)
                 {
                     entry.RightSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
-                    var multiplicationDefinition = rightSide as MultiplicationRelationDefinitionTag;
                 }
                 else
                 {
@@ -194,8 +192,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
                 entry.RightSideOperation = AnalysisEntry.NA;
                 entry.DivisionType = AnalysisEntry.NA;
-
-                var multiplicationDefinition = pageDefinition as MultiplicationRelationDefinitionTag;
             }
             else if (pageDefinition is DivisionRelationDefinitionTag)
             {
