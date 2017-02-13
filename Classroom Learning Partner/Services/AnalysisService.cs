@@ -62,7 +62,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.LeftSideOperation = AnalysisEntry.NA;
                 entry.RightSideOperation = AnalysisEntry.NA;
                 entry.DivisionType = AnalysisEntry.NA;
-                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is AdditionRelationDefinitionTag)
             {
@@ -79,14 +78,6 @@ namespace Classroom_Learning_Partner.Services
                 {
                     entry.LeftSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
                     var multiplicationDefinition = leftSide as MultiplicationRelationDefinitionTag;
-                    if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
-                    {
-                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
-                    }
-                    else
-                    {
-                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
-                    }
                 }
                 else
                 {
@@ -101,14 +92,6 @@ namespace Classroom_Learning_Partner.Services
                 {
                     entry.RightSideOperation = AnalysisEntry.OPERATION_TYPE_MULTIPLICATION_MISSING_NONE;
                     var multiplicationDefinition = rightSide as MultiplicationRelationDefinitionTag;
-                    if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
-                    {
-                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
-                    }
-                    else if (entry.IsMultiplicationProblemUsingGroups != AnalysisEntry.YES)
-                    {
-                        entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
-                    }
                 }
                 else
                 {
@@ -116,7 +99,6 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 entry.DivisionType = AnalysisEntry.NA;
-                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is EquivalenceRelationDefinitionTag)
             {
@@ -205,7 +187,6 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 entry.DivisionType = AnalysisEntry.NA;
-                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else if (pageDefinition is MultiplicationRelationDefinitionTag)
             {
@@ -215,14 +196,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.DivisionType = AnalysisEntry.NA;
 
                 var multiplicationDefinition = pageDefinition as MultiplicationRelationDefinitionTag;
-                if (multiplicationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
-                {
-                    entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.YES;
-                }
-                else
-                {
-                    entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NO;
-                }
             }
             else if (pageDefinition is DivisionRelationDefinitionTag)
             {
@@ -243,8 +216,6 @@ namespace Classroom_Learning_Partner.Services
                 {
                     entry.DivisionType = AnalysisEntry.DIVISION_TYPE_GENERAL;
                 }
-
-                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
             else
             {
@@ -252,7 +223,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.LeftSideOperation = AnalysisEntry.NA;
                 entry.RightSideOperation = AnalysisEntry.NA;
                 entry.DivisionType = AnalysisEntry.NA;
-                entry.IsMultiplicationProblemUsingGroups = AnalysisEntry.NA;
             }
 
 

@@ -168,15 +168,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData PageDefinitionEquationProperty = RegisterProperty("PageDefinitionEquation", typeof(string), string.Empty);
 
-        /// <summary>If 1-Part problem is a multiplication problem that uses groups.</summary>
-        public string IsMultiplicationProblemUsingGroups
-        {
-            get { return GetValue<string>(IsMultiplicationProblemUsingGroupsProperty); }
-            set { SetValue(IsMultiplicationProblemUsingGroupsProperty, value); }
-        }
-
-        public static readonly PropertyData IsMultiplicationProblemUsingGroupsProperty = RegisterProperty("IsMultiplicationProblemUsingGroups", typeof(string), string.Empty);
-
         /// <summary>Lists representations required by the text of the problem, otherwise None.</summary>
         public string RequiredRepresentations
         {
@@ -979,7 +970,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsMultipleChoiceBoxOnPage);
             cellContents.Add(DifficultyLevel);
             cellContents.Add(PageDefinitionEquation);
-            cellContents.Add(IsMultiplicationProblemUsingGroups);
             cellContents.Add(RequiredRepresentations);
             cellContents.Add(string.Join(", ", SpecialInterestGroups));
 
@@ -1098,7 +1088,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("MC");
             cellContents.Add("Level");
             cellContents.Add("Equation");
-            cellContents.Add("Groups");
             cellContents.Add("Required Rep");
             cellContents.Add("SIG");
 
