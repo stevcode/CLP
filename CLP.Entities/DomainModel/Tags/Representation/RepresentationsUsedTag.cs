@@ -1099,7 +1099,8 @@ namespace CLP.Entities
                     return true;
                 }
 
-                if (!unmatchedRepresentations.Contains(leftSideRepresentation))
+                if (unmatchedRepresentations.Any() &&
+                    !unmatchedRepresentations.Contains(leftSideRepresentation))
                 {
                     return true;
                 }
