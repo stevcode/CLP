@@ -67,7 +67,6 @@ namespace CLP.Entities
 
         public static void AttemptTagGeneration(CLPPage page, RepresentationCorrectnessTag representationCorrectnessTag, FinalAnswerCorrectnessTag finalAnswerCorrectnessTag)
         {
-            
             if (representationCorrectnessTag == null &&
                 finalAnswerCorrectnessTag == null)
             {

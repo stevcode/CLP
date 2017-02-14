@@ -68,11 +68,13 @@ namespace CLP.Entities
             var tag = new RepresentationCorrectnessTag(page, Origin.StudentPageGenerated);
 
             var finalRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
-            if (finalRepresentations.All(r => r.Correctness == Correctness.Correct))
+            if (finalRepresentations.Any() &&
+                finalRepresentations.All(r => r.Correctness == Correctness.Correct))
             {
                 tag.RepresentationCorrectness = Correctness.Correct;
             }
-            else if (finalRepresentations.All(r => r.Correctness == Correctness.Incorrect))
+            else if (finalRepresentations.Any() &&
+                     finalRepresentations.All(r => r.Correctness == Correctness.Incorrect))
             {
                 tag.RepresentationCorrectness = Correctness.Incorrect;
             }
