@@ -42,6 +42,96 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
+        public static void Stitch()
+        {
+            #region Constraints
+
+            var ericPageNumbers = new List<int> { 31, 44, 49, 51, 91, 103, 104, 105, 106, 107, 108, 109, 119, 120, 121, 122, 123, 134, 125, 126, 127, 128, 140, 141, 142, 143, 144, 145, 146, 147, 152, 153, 154, 155, 156, 157, 158, 159, 160, 164, 165, 166, 167, 168, 169, 170, 171, 172, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 227, 228, 229, 230, 231, 242, 243, 244, 245, 246, 249, 278, 280, 287, 289, 295, 296, 298, 308, 310, 321, 362, 363, 364, 365, 366, 367, 369, 376 };
+            var andeePageNumbers = new List<int> { 12, 14, 15, 16, 17, 18, 19, 20, 66, 300, 302, 306, 312, 318, 332, 322, 323, 324, 325, 337, 338, 339, 342, 344, 354, 355, 356, 357, 377, 378 };
+            // 1 and 2 should both look in LK2 .clp file as it contains everything from LK .clp file
+            var lily1PageNumbers = new List<int> { 11, 43, 56, 59, 61, 62, 65, 86, 148, 149, 150, 151, 161, 162, 163, 173, 174, 175, 198, 199, 200, 213, 214, 215, 217, 218, 219, 221, 225, 226, 232, 233, 234, 236, 240, 241, 248, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 285, 286, 288, 290, 291, 293, 297, 299, 301, 303, 304, 307, 309, 311, 313, 314, 315, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 368, 379, 380, 381, 382, 383, 384, 385 };
+            var lily2PageNumbers = new List<int> { 275, 276, 281, 10, 21, 22, 28, 29, 30, 32, 45, 50, 67, 68, 110, 111, 112, 118, 129, 130, 131, 201, 216, 220, 222, 223, 224, 235, 237, 238, 239, 256, 257, 266, 267, 283, 292, 305, 316, 317 };
+
+            #endregion // Constraints
+
+            // 386
+
+            var pageNumbers = Enumerable.Range(1, 386);
+
+            var authorPages = new List<CLPPage>();
+
+            foreach (var pageNumber in pageNumbers)
+            {
+                var authorTagCachePath = string.Empty;
+                if (lily1PageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily1;
+                }
+                if (lily2PageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily2;
+                }
+                else if (andeePageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsAndee;
+                }
+                else if (ericPageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsEric;
+                }
+
+                if (string.IsNullOrWhiteSpace(authorTagCachePath))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily1;
+                }
+
+                #region Load Author Page
+
+                var zipContainerFilePath = authorTagCachePath;
+
+                var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    var internalPagesDirectory = "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
+                    var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+                    var pageEntries = (from pageEntry in allPageEntries
+                                       let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
+                                       where nameComposite.PageNumber == pageNumber
+                                       select pageEntry).ToList();
+
+                    pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries);
+                }
+
+                var authorPage = DataService.GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).FirstOrDefault();
+                authorPages.Add(authorPage);
+
+                #endregion // Load Author Page
+            }
+
+            var zipPath = Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014 - Stitched.clp");
+            var notebooks = new List<Notebook>();
+
+            using (var zip = ZipFile.Read(AnnAuthorTagsLily1))
+            {
+                var notebookEntry = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json").First();
+                var notebookString = notebookEntry.ExtractJsonString();
+                var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
+                notebook.ContainerZipFilePath = zipPath;
+
+                notebook.Pages = authorPages.OrderBy(p => p.PageNumber).ToObservableCollection();
+                notebook.CurrentPage = notebook.Pages.FirstOrDefault();
+
+                notebooks.Add(notebook);
+            }
+            
+            SaveNotebooksToZip(zipPath, notebooks);
+        }
+
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
