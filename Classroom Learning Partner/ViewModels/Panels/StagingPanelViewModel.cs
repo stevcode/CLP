@@ -26,7 +26,6 @@ namespace Classroom_Learning_Partner.ViewModels
         AnswerCorrectness,
         OverallCorrectness,
         AnswerBeforeRepresentation,
-        AnswerChangeAfterRepresentation,
         //TroubleWithFactorPairs,        //Hack: For Demo
         //TroubleWithRemainders,
         //TroubleWithDivision,
@@ -53,7 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription RepresentationCorrectnessGroup = new PropertyGroupDescription("RepresentationCorrectness");
         private static readonly PropertyGroupDescription AnswerCorrectnessGroup = new PropertyGroupDescription("AnswerCorrectness");
         private static readonly PropertyGroupDescription ABRGroup = new PropertyGroupDescription("ABR");
-        private static readonly PropertyGroupDescription ARICGroup = new PropertyGroupDescription("ARIC");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Descending);
@@ -467,9 +465,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.AnswerBeforeRepresentation:
                     ApplySortAndGroupByABR();
                     break;
-                case SortAndGroupTypes.AnswerChangeAfterRepresentation:
-                    ApplySortAndGroupByARIC();
-                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -675,22 +670,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(ABRGroup);
             SortedAndGroupedPages.SortDescriptions.Add(ABRAscendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
-            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
-            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
-        }
-
-        public void ApplySortAndGroupByARIC()
-        {
-            SortedAndGroupedPages.GroupDescriptions.Clear();
-            SortedAndGroupedPages.SortDescriptions.Clear();
-
-            SortedAndGroupedPages.GroupDescriptions.Add(ARICGroup);
-            SortedAndGroupedPages.SortDescriptions.Add(ARICAscendingSort);
 
             //HACK: for demo video
             //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);

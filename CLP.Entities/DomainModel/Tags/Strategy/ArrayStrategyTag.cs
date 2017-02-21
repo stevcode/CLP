@@ -108,7 +108,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_CUT)
+                    if (currentSemanticEvent.EventType == Codings.EVENT_CUT)
                     {
                         for (int j = i + 1; j < semanticEvents.Count; j++)
                         {
@@ -145,13 +145,11 @@ namespace CLP.Entities
                     if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_SNAP)
                     {
                         relevantSemanticEvents.Add(currentSemanticEvent);
-                        var codedIDLeft = string.Format("{0}{1}",
-                                                        currentSemanticEvent.CodedObjectID,
-                                                        !string.IsNullOrEmpty(currentSemanticEvent.CodedObjectIDIncrement) ? " " + currentSemanticEvent.CodedObjectIDIncrement : string.Empty);
-                        var codedIDRight = string.Format("{0}{1}",
-                                                         currentSemanticEvent.CodedObjectSubID,
-                                                         !string.IsNullOrEmpty(currentSemanticEvent.CodedObjectSubIDIncrement) ? " " + currentSemanticEvent.CodedObjectSubIDIncrement : string.Empty);
-                        var fullCodedID = string.Format("{0}, {1}", codedIDLeft, codedIDRight);
+                        var codedIDLeft =
+                            $"{currentSemanticEvent.CodedObjectID}{(!string.IsNullOrEmpty(currentSemanticEvent.CodedObjectIDIncrement) ? " " + currentSemanticEvent.CodedObjectIDIncrement : string.Empty)}";
+                        var codedIDRight =
+                            $"{currentSemanticEvent.CodedObjectSubID}{(!string.IsNullOrEmpty(currentSemanticEvent.CodedObjectSubIDIncrement) ? " " + currentSemanticEvent.CodedObjectSubIDIncrement : string.Empty)}";
+                        var fullCodedID = $"{codedIDLeft}, {codedIDRight}";
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, fullCodedID)
                                             {
                                                 CodedResultantID = currentSemanticEvent.EventInformation,
@@ -177,7 +175,7 @@ namespace CLP.Entities
 
                 if (count > 0)
                 {
-                    codedStrategy.StrategySpecifics = string.Format("{0} ({1})", Codings.STRATEGY_SPECIFICS_ARRAY_ARITH, count);
+                    codedStrategy.StrategySpecifics = $"{Codings.STRATEGY_SPECIFICS_ARRAY_ARITH} ({count})";
                 }
 
                 codedStrategies.Add(codedStrategy);

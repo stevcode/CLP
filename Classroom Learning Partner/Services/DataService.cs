@@ -79,6 +79,7 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
+            //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
         }
@@ -148,7 +149,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public bool IsAutoSaveOn { get; set; } = true;
+        public bool IsAutoSaveOn { get; set; } = false;
 
         #endregion // Cache Properties
 
@@ -1755,9 +1756,6 @@ namespace Classroom_Learning_Partner.Services
             {
                 return;
             }
-
-            // HACK: get rid of this after history-rewrite.
-            page.History.ClearHistory();
 
             var entires = new List<ZipEntrySaver>
                           {

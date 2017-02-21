@@ -6,6 +6,7 @@ namespace CLP.Entities
     {
         // ID
         string ID { get; set; }
+        int SemanticPassNumber { get; set; }
         int SemanticEventIndex { get; set; }
         string CachedCodedValue { get; set; }
 
@@ -28,6 +29,8 @@ namespace CLP.Entities
         CLPPage ParentPage { get; set; }
 
         // Calculated
+        IHistoryAction FirstHistoryAction { get; }
+        IHistoryAction LastHistoryAction { get; }
         List<IHistoryAction> HistoryActions { get; }
         string CodedValue { get; }
     }

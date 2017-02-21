@@ -76,7 +76,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var isNum = int.TryParse(NumberLineEndPoint, out partNum);
             if (NumberLineEndPoint.Length > 0 &&
                 isNum &&
-                partNum <= NumberLine.NUMBER_LINE_MAX_SIZE)
+                partNum <= NumberLine.NUMBER_LINE_MAX_SIZE &&
+                partNum > 0)
             {
                 await CloseViewModelAsync(true);
             }

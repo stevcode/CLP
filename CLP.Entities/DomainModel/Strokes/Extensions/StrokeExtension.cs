@@ -15,8 +15,6 @@ namespace CLP.Entities
     {
         private static readonly Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         private static readonly Guid StrokeOwnerIDKey = new Guid("00000000-0000-0000-0000-000000000002");
-        private static readonly Guid StrokeVersionIndexKey = new Guid("00000000-0000-0000-0000-000000000003");
-        private static readonly Guid StrokeDifferentiationGroupKey = new Guid("00000000-0000-0000-0000-000000000004");
 
         public static StrokeDTO ToStrokeDTO(this Stroke stroke)
         {
@@ -98,44 +96,6 @@ namespace CLP.Entities
             stroke.AddPropertyData(StrokeOwnerIDKey, uniqueID);
         }
 
-        public static string GetStrokeDifferentiationGroup(this Stroke stroke)
-        {
-            Argument.IsNotNull("stroke", stroke);
-
-            if (stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
-            {
-                return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
-            }
-
-            return "noStrokeDifferentiationGroup";
-        }
-
-        public static void SetStrokeDifferentiationGroup(this Stroke stroke, string group)
-        {
-            Argument.IsNotNull("stroke", stroke);
-
-            stroke.AddPropertyData(StrokeDifferentiationGroupKey, group);
-        }
-
-        public static string GetStrokeVersionIndex(this Stroke stroke)
-        {
-            Argument.IsNotNull("stroke", stroke);
-
-            if (stroke.ContainsPropertyData(StrokeVersionIndexKey))
-            {
-                return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
-            }
-
-            return "noStrokeVersionIndex";
-        }
-
-        public static void SetStrokeVersionIndex(this Stroke stroke, int index)
-        {
-            Argument.IsNotNull("stroke", stroke);
-
-            stroke.AddPropertyData(StrokeVersionIndexKey, index);
-        }
-
         #endregion //ExtendedProperties
 
         #region Equality
@@ -159,6 +119,20 @@ namespace CLP.Entities
         public static void Stretch(this Stroke stroke, double scaleX, double scaleY, double centerX, double centerY)
         {
             Argument.IsNotNull("stroke", stroke);
+
+            if (double.IsPositiveInfinity(scaleX) ||
+                double.IsNegativeInfinity(scaleX) ||
+                double.IsNaN(scaleX))
+            {
+                scaleX = 1;
+            }
+
+            if (double.IsPositiveInfinity(scaleY) ||
+                double.IsNegativeInfinity(scaleY) ||
+                double.IsNaN(scaleY))
+            {
+                scaleY = 1;
+            }
 
             var transform = new Matrix();
             transform.ScaleAt(scaleX, scaleY, centerX, centerY);
@@ -603,9 +577,9 @@ namespace CLP.Entities
             return DetectCycle(occupiedCells, cellWidth, cellHeight);
         }
 
-        private static int roundToNearestCell(double pos, int CELL_SIZE)
+        private static int RoundToNearestCell(double pos, int cellSize)
         {
-            return (int)(pos / CELL_SIZE) * CELL_SIZE;
+            return (int)(pos / cellSize) * cellSize;
         }
 
         /*
@@ -696,39 +670,39 @@ namespace CLP.Entities
             return (maxX - minX >= widthThreshold && maxY - minY >= heightThreshold);
         }
 
-        private static List<Point> GetNeighbors(Point thisPoint, int CELL_WIDTH, int CELL_HEIGHT)
+        private static List<Point> GetNeighbors(Point thisPoint, int cellWidth, int cellHeight)
         {
             var neighbors = new List<Point>();
-            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + CELL_HEIGHT));
-            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - CELL_HEIGHT));
-            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y));
-            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y));
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y + cellHeight));
+            neighbors.Add(new Point(thisPoint.X, thisPoint.Y - cellHeight));
+            neighbors.Add(new Point(thisPoint.X + cellWidth, thisPoint.Y));
+            neighbors.Add(new Point(thisPoint.X - cellWidth, thisPoint.Y));
 
-            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y + CELL_HEIGHT));
-            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y + CELL_HEIGHT));
-            neighbors.Add(new Point(thisPoint.X + CELL_WIDTH, thisPoint.Y - CELL_HEIGHT));
-            neighbors.Add(new Point(thisPoint.X - CELL_WIDTH, thisPoint.Y - CELL_HEIGHT));
+            neighbors.Add(new Point(thisPoint.X - cellWidth, thisPoint.Y + cellHeight));
+            neighbors.Add(new Point(thisPoint.X + cellWidth, thisPoint.Y + cellHeight));
+            neighbors.Add(new Point(thisPoint.X + cellWidth, thisPoint.Y - cellHeight));
+            neighbors.Add(new Point(thisPoint.X - cellWidth, thisPoint.Y - cellHeight));
 
             // neighbors.Remove(immediateAncestor); // Make sure this works with object equality
             return neighbors;
         }
 
-        public static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int CELL_WIDTH, int CELL_HEIGHT, int xOffset, int yOffset)
+        public static List<Point> FindCellsOccupiedByStroke(Stroke stroke, int cellWidth, int cellHeight, int xOffset, int yOffset)
         {
             var occupiedCells = new List<Point>();
             int i = 1;
             var stylusPoints = stroke.StylusPoints;
             var thisPoint = stylusPoints[0].ToPoint();
-            thisPoint.X = roundToNearestCell(thisPoint.X, CELL_WIDTH) - xOffset;
-            thisPoint.Y = roundToNearestCell(thisPoint.Y, CELL_HEIGHT) - yOffset;
+            thisPoint.X = RoundToNearestCell(thisPoint.X, cellWidth) - xOffset;
+            thisPoint.Y = RoundToNearestCell(thisPoint.Y, cellHeight) - yOffset;
             var nextPoint = new Point();
             while (i < stylusPoints.Count)
             {
                 nextPoint = stylusPoints[i].ToPoint();
                 // Debug.WriteLine("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
                 // Debug.WriteLine("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
-                nextPoint.X = roundToNearestCell(nextPoint.X, CELL_WIDTH) - xOffset;
-                nextPoint.Y = roundToNearestCell(nextPoint.Y, CELL_HEIGHT) - yOffset;
+                nextPoint.X = RoundToNearestCell(nextPoint.X, cellWidth) - xOffset;
+                nextPoint.Y = RoundToNearestCell(nextPoint.Y, cellHeight) - yOffset;
 
                 // TODO the following is a complete guess about the shape of the curve
                 // We can do better by using the bezzier curve, but this might not be easily exposed
@@ -739,7 +713,7 @@ namespace CLP.Entities
                     {
                         var occupiedCell = new Point((int)thisPoint.X, j);
                         occupiedCells.Add(occupiedCell);
-                        j += CELL_HEIGHT;
+                        j += cellHeight;
                     }
                 }
                 else
@@ -749,7 +723,7 @@ namespace CLP.Entities
                     {
                         var occupiedCell = new Point((int)thisPoint.X, j);
                         occupiedCells.Add(occupiedCell);
-                        j += CELL_HEIGHT;
+                        j += cellHeight;
                     }
                 }
 
@@ -760,7 +734,7 @@ namespace CLP.Entities
                     {
                         var occupiedCell = new Point(k, (int)thisPoint.Y);
                         occupiedCells.Add(occupiedCell);
-                        k += CELL_WIDTH;
+                        k += cellWidth;
                     }
                 }
                 else
@@ -770,7 +744,7 @@ namespace CLP.Entities
                     {
                         var occupiedCell = new Point(k, (int)nextPoint.Y);
                         occupiedCells.Add(occupiedCell);
-                        k += CELL_WIDTH;
+                        k += cellWidth;
                     }
                 }
 
@@ -853,7 +827,7 @@ namespace CLP.Entities
             const double AVG_SLOPE_THRESHOLD_DEGREES = 15;
             const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
-            var slopes = getSlopesBetweenPoints(stroke);
+            var slopes = GetSlopesBetweenPoints(stroke);
 
             //DEBUG
             int i = 0;
@@ -886,7 +860,7 @@ namespace CLP.Entities
             return ret;
         }
 
-        private static List<double> getSlopesBetweenPoints(Stroke stroke)
+        private static List<double> GetSlopesBetweenPoints(Stroke stroke)
         {
             var slopes = new List<double>();
             var stylusPoints = stroke.StylusPoints;
@@ -917,7 +891,7 @@ namespace CLP.Entities
             //TODO somehow make this variation less? Might require modifying getSlopesBetweenPoints
             const double VARIATION_THRESHOLD_DEGREES = 40; // this is high because there are many -90, 0, and 90 degree slopes
 
-            var slopes = getSlopesBetweenPoints(stroke);
+            var slopes = GetSlopesBetweenPoints(stroke);
 
             //reformat for vertical slopes, so 0 is now facing upward
             int i = 0;
@@ -965,6 +939,18 @@ namespace CLP.Entities
             Argument.IsNotNull("stroke", stroke);
 
             return false;
+        }
+
+        public static bool IsVerticalStroke(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeTop = stroke.GetBounds().Top;
+            var strokeBottom = stroke.GetBounds().Bottom;
+            var strokeLeft = stroke.GetBounds().Left;
+            var strokeRight = stroke.GetBounds().Right;
+
+            return Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
         }
 
         #endregion // Shape Detection

@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class AdditionRelationDefinitionTag : ATagBase, IRelationPart
+    public class AdditionRelationDefinitionTag : ATagBase, IRelationPart, IDefinition
     {
         public enum RelationTypes
         {
@@ -76,7 +76,7 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IRelationPart Implementation
 
         public double RelationPartAnswerValue => Sum;
 
@@ -154,6 +154,12 @@ namespace CLP.Entities
 
         #endregion // Support
 
-        #endregion //IRelationPartImplementation
+        #endregion // IRelationPart Implementation
+
+        #region IDefinition Implementation
+
+        public double Answer => RelationPartAnswerValue;
+
+        #endregion // IDefinition Implementation
     }
 }

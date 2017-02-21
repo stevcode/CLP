@@ -5,8 +5,24 @@ namespace CLP.Entities
 {
     public static class Codings
     {
+        #region Errors
+
+        public const string OBJECT_ERROR = "ERROR";
+
+        public const string ERROR_TYPE_NULL_PAGE_OBJECT = "null pageObject";
+        public const string ERROR_TYPE_NULL_STROKE = "null stroke";
+        public const string ERROR_TYPE_EMPTY_LIST = "empty list";
+        public const string ERROR_TYPE_MIXED_LIST = "mixed list";
+        public const string ERROR_TYPE_MULTIPLE_CHOICE_STATUS_INCONSISTANCY = "inconsistant multiple choice status";
+        public const string ERROR_TYPE_EMPTY_BUFFER = "empty buffer";
+        public const string ERROR_TYPE_MIXED_BUFFER = "mixed buffer";
+
+        #endregion // Errors
+
         #region Coded Objects
 
+        public const string OBJECT_NOTHING = "NOTHING";
+        public const string OBJECT_PAGE_OBJECTS = "OBJECTS";
         public const string OBJECT_INK = "INK";
         public const string OBJECT_ARITH = "ARITH";
         public const string OBJECT_SHAPE = "SHAPE";
@@ -23,6 +39,8 @@ namespace CLP.Entities
 
         public static readonly Dictionary<string, string> FriendlyObjects = new Dictionary<string, string>
                                                                             {
+                                                                                { OBJECT_NOTHING, "Nothing" },
+                                                                                { OBJECT_PAGE_OBJECTS, "PageObjects" },
                                                                                 { OBJECT_INK, "Ink" },
                                                                                 { OBJECT_ARITH, "Arithmetic" },
                                                                                 { OBJECT_SHAPE, "Shape" },
@@ -33,10 +51,56 @@ namespace CLP.Entities
                                                                                 { OBJECT_STAMP, "Stamp" },
                                                                                 { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
                                                                                 { OBJECT_BINS, "Bins" },
-                                                                                { OBJECT_FILL_IN, "Filled In Answer" },
-                                                                                { OBJECT_MULTIPLE_CHOICE, "Multiple Choice" },
-                                                                                { OBJECT_TEXT, "Text" },
+                                                                                { OBJECT_FILL_IN, "Final Answer Fill In" },
+                                                                                { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
+                                                                                { OBJECT_TEXT, "Text" }
                                                                             };
+
+        public static readonly Dictionary<string, string> FriendlyCorrectness = new Dictionary<string, string>
+                                                                                {
+                                                                                    { CORRECTNESS_CORRECT, "Correct" },
+                                                                                    { CORRECTNESS_INCORRECT, "Incorrect" },
+                                                                                    { CORRECTNESS_PARTIAL, "Partially Correct" },
+                                                                                    { CORRECTNESS_UNKNOWN, "Unknown" }
+                                                                                };
+
+        public static string CorrectnessToCodedCorrectness(Correctness correctness)
+        {
+            switch (correctness)
+            {
+                case Correctness.Correct:
+                    return CORRECTNESS_CORRECT;
+                case Correctness.PartiallyCorrect:
+                    return CORRECTNESS_PARTIAL;
+                case Correctness.Incorrect:
+                    return CORRECTNESS_INCORRECT;
+                default:
+                    return CORRECTNESS_UNKNOWN;
+            }
+        }
+
+        public static string CorrectnessToFriendlyCorrectness(Correctness correctness)
+        {
+            var codedCorrectness = CorrectnessToCodedCorrectness(correctness);
+            var friendlyCorrectness = FriendlyCorrectness[codedCorrectness];
+
+            return friendlyCorrectness;
+        }
+
+        public static Correctness CodedCorrectnessToCorrectness(string codedCorrectness)
+        {
+            switch (codedCorrectness)
+            {
+                case CORRECTNESS_CORRECT:
+                    return Correctness.Correct;
+                case CORRECTNESS_PARTIAL:
+                    return Correctness.PartiallyCorrect;
+                case CORRECTNESS_INCORRECT:
+                    return Correctness.Incorrect;
+                default:
+                    return Correctness.Unknown;
+            }
+        }
 
         #endregion // Coded Objects
 
@@ -61,7 +125,9 @@ namespace CLP.Entities
         #region General PageObject Event Types
 
         public const string EVENT_OBJECT_ADD = "add";
+        public const string EVENT_OBJECT_MULTIPLE_ADD = "add multiple";
         public const string EVENT_OBJECT_DELETE = "delete";
+        public const string EVENT_OBJECT_MULTIPLE_DELETE = "delete multiple";
         public const string EVENT_OBJECT_MOVE = "move";
         public const string EVENT_OBJECT_RESIZE = "resize";
 
@@ -69,7 +135,6 @@ namespace CLP.Entities
 
         #region Array Event Types
 
-        public const string EVENT_ARRAY_CUT = "cut";
         public const string EVENT_ARRAY_DIVIDE = "divide";
         public const string EVENT_ARRAY_DIVIDE_DELETE = "divide delete";
         public const string EVENT_ARRAY_DIVIDE_INK = "divide ink";
@@ -96,6 +161,8 @@ namespace CLP.Entities
 
         public const string EVENT_FILL_IN_ADD = "add";
         public const string EVENT_FILL_IN_ERASE = "erase";
+        public const string EVENT_FILL_IN_CHANGE = "change";
+
         public const string EVENT_MULTIPLE_CHOICE_ADD_PARTIAL = "partial fill in";
         public const string EVENT_MULTIPLE_CHOICE_ADD = "fill in";
         public const string EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL = "additional fill in";
@@ -104,6 +171,18 @@ namespace CLP.Entities
         public const string EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE = "erase incomplete";
 
         #endregion // Answer Event Types
+
+        #region IParts Event Types
+
+        public const string EVENT_PARTS_VALUE_CHANGED = "parts changed";
+
+        #endregion // IParts Event Types
+
+        #region ICuttable Event Types
+
+        public const string EVENT_CUT = "cut";
+
+        #endregion // ICuttable Event Types
 
         #endregion // Event Types
 
@@ -144,6 +223,7 @@ namespace CLP.Entities
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+        public const string ANALYSIS_REP_AFTER_ANSWER = "RAA";
 
         #endregion // Representation Sequence
 
@@ -171,6 +251,17 @@ namespace CLP.Entities
 
         #endregion // Strategy Specifics
 
+        #region Misc
+
+        public const string NUMBER_LINE_NLJE = "NLJE";
+
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH = "NLBP";
+
+        public const string REPRESENTATIONS_MR = "MR";
+        public const string REPRESENTATIONS_MR2STEP = "MR2STEP";
+
+        #endregion // Misc
+
         #endregion // Analysis Codes
 
         #region Correctness
@@ -178,34 +269,50 @@ namespace CLP.Entities
         public const string CORRECTNESS_CORRECT = "COR";
         public const string CORRECTNESS_PARTIAL = "PAR";
         public const string CORRECTNESS_INCORRECT = "INC";
+        public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
+
+        public const string ANSWER_UNDEFINED = "UNDEFINED";
+
+        public const string MATCHED_RELATION_LEFT = "LS";
+        public const string MATCHED_RELATION_RIGHT = "RS";
+        public const string MATCHED_RELATION_ALTERNATIVE = "ALT";
+        public const string MATCHED_RELATION_NONE = "NONE";
+
+        public const string PARTIAL_REASON_UNKNOWN = "UNKNOWN";
+        public const string PARTIAL_REASON_SWAPPED = "SWAPPED";
 
         #endregion // Correctness
 
         #region Methods
 
-        public static bool IsAnswerObject(ISemanticEvent semanticEvent)
+        public static bool IsFinalAnswerEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
-        public static string GetAnswerObjectContent(ISemanticEvent semanticEvent)
+        public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(semanticEvent))
+            if (!IsFinalAnswerEvent(semanticEvent))
             {
-                return "[ERROR]: Not Answer Object.";
+                return "[ERROR]: Not Final Answer Event.";
             }
 
             var eventInfo = semanticEvent.EventInformation;
             var delimiterIndex = eventInfo.LastIndexOf(',');
             var content = new string(eventInfo.Take(delimiterIndex).ToArray());
+            if (semanticEvent.CodedObject == OBJECT_FILL_IN)
+            {
+                content = content.Split(';').Last().Trim();
+            }
+
             return content;
         }
 
-        public static string GetAnswerObjectCorrectness(ISemanticEvent semanticEvent)
+        public static string GetFinalAnswerEventCorrectness(ISemanticEvent semanticEvent)
         {
-            if (!IsAnswerObject(semanticEvent))
+            if (!IsFinalAnswerEvent(semanticEvent))
             {
-                return "[ERROR]: Not Answer Object.";
+                return "[ERROR]: Not Final Answer Event.";
             }
 
             var eventInfo = semanticEvent.EventInformation;
@@ -214,7 +321,7 @@ namespace CLP.Entities
             return correctness;
         }
 
-        public static bool IsRepresentationObject(ISemanticEvent semanticEvent)
+        public static bool IsRepresentationEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
                    semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;

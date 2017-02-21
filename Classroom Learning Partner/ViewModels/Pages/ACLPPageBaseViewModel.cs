@@ -285,12 +285,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
                 return correctnessTag == null ? Correctness.Unknown : correctnessTag.Correctness;
             }
             set
             {
-                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, value, false));
+                Page.AddTag(new CorrectnessSummaryTag(Page, Origin.Teacher, value, false));
                 RaisePropertyChanged(nameof(Correctness));
             }
         }
@@ -1064,20 +1064,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
             bool didInteract;
 
-            var array = pageObject as CLPArray;
-            if (array != null)
+            var multipleChoice = pageObject as MultipleChoice;
+            if (multipleChoice != null)
             {
-                didInteract = CLPArrayViewModel.InteractWithAcceptedStrokes(array, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoice, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;
                 }
             }
 
-            var multipleChoice = pageObject as MultipleChoice;
-            if (multipleChoice != null)
+            var interpretationRegion = pageObject as InterpretationRegion;
+            if (interpretationRegion != null)
             {
-                didInteract = MultipleChoiceViewModel.InteractWithAcceptedStrokes(multipleChoice, addedStrokesList, removedStrokesList, canInteract);
+                didInteract = InterpretationRegionViewModel.InteractWithAcceptedStrokes(interpretationRegion, addedStrokesList, removedStrokesList, canInteract);
+                if (didInteract)
+                {
+                    return true;
+                }
+            }
+
+            var array = pageObject as CLPArray;
+            if (array != null)
+            {
+                didInteract = CLPArrayViewModel.InteractWithAcceptedStrokes(array, addedStrokesList, removedStrokesList, canInteract);
                 if (didInteract)
                 {
                     return true;

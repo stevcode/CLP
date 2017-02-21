@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class MultiplicationRelationDefinitionTag : ATagBase, IRelationPart
+    public class MultiplicationRelationDefinitionTag : ATagBase, IRelationPart, IDefinition
     {
         public enum RelationTypes
         {
@@ -79,7 +79,7 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IRelationPart Implementation
 
         public double RelationPartAnswerValue => Product;
 
@@ -118,6 +118,12 @@ namespace CLP.Entities
             get { return !Factors.All(r => r is NumericValueDefinitionTag); }
         }
 
-        #endregion //IRelationPartImplementation
+        #endregion // IRelationPart Implementation
+
+        #region IDefinition Implementation
+
+        public double Answer => RelationPartAnswerValue;
+
+        #endregion // IDefinition Implementation
     }
 }

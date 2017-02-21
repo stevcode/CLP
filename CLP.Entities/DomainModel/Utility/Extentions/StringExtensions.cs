@@ -39,6 +39,16 @@ namespace CLP.Entities
             return s.Replace(" ", string.Empty);
         }
 
+        public static string[] Split(this string s, string delimiter)
+        {
+            return s.Split(new[] { delimiter }, StringSplitOptions.None);
+        }
+
+        public static string[] Split(this string s, string delimiter, StringSplitOptions options)
+        {
+            return s.Split(new[] { delimiter }, options);
+        }
+
         public static string CompressWithGZip(this string text)
         {
             Argument.IsNotNull("text", text);

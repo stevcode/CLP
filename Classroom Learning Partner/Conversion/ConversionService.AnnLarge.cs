@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,8 @@ using System.Windows.Ink;
 using Catel.Collections;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using Ionic.Zip;
+using Ionic.Zlib;
 using Ann = CLP.Entities.Ann;
 
 namespace Classroom_Learning_Partner
@@ -23,6 +26,11 @@ namespace Classroom_Learning_Partner
         public static string AnnClassesFolder => Path.Combine(AnnCacheFolder, "Classes");
         public static string AnnZipFilePath => Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014.clp");
         public static string AnnImageFolder => Path.Combine(DataService.DesktopFolderPath, "images");
+        public static string AnnAuthorTagsFolder => Path.Combine(DataService.DesktopFolderPath, "Large Cache Tags");
+        public static string AnnAuthorTagsEric => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - Eric.clp");
+        public static string AnnAuthorTagsAndee => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - Andee.clp");
+        public static string AnnAuthorTagsLily2 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK2.clp");
+        public static string AnnAuthorTagsLily1 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK.clp");
 
         public static string AssessmentCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Chapter6.Assessment");
         public static string AssessmentNotebooksFolder => Path.Combine(AssessmentCacheFolder, "Notebooks");
@@ -34,10 +42,111 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
+        public static void Stitch()
+        {
+            #region Constraints
+
+            var ericPageNumbers = new List<int> { 31, 44, 49, 51, 91, 103, 104, 105, 106, 107, 108, 109, 119, 120, 121, 122, 123, 134, 125, 126, 127, 128, 140, 141, 142, 143, 144, 145, 146, 147, 152, 153, 154, 155, 156, 157, 158, 159, 160, 164, 165, 166, 167, 168, 169, 170, 171, 172, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 227, 228, 229, 230, 231, 242, 243, 244, 245, 246, 249, 278, 280, 287, 289, 295, 296, 298, 308, 310, 321, 362, 363, 364, 365, 366, 367, 369, 376 };
+            var andeePageNumbers = new List<int> { 12, 14, 15, 16, 17, 18, 19, 20, 66, 300, 302, 306, 312, 318, 332, 322, 323, 324, 325, 337, 338, 339, 342, 344, 354, 355, 356, 357, 377, 378 };
+            // 1 and 2 should both look in LK2 .clp file as it contains everything from LK .clp file
+            var lily1PageNumbers = new List<int> { 11, 43, 56, 59, 61, 62, 65, 86, 148, 149, 150, 151, 161, 162, 163, 173, 174, 175, 198, 199, 200, 213, 214, 215, 217, 218, 219, 221, 225, 226, 232, 233, 234, 236, 240, 241, 248, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 285, 286, 288, 290, 291, 293, 297, 299, 301, 303, 304, 307, 309, 311, 313, 314, 315, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 368, 379, 380, 381, 382, 383, 384, 385 };
+            var lily2PageNumbers = new List<int> { 275, 276, 281, 10, 21, 22, 28, 29, 30, 32, 45, 50, 67, 68, 110, 111, 112, 118, 129, 130, 131, 201, 216, 220, 222, 223, 224, 235, 237, 238, 239, 256, 257, 266, 267, 283, 292, 305, 316, 317 };
+
+            #endregion // Constraints
+
+            // 386
+
+            var pageNumbers = Enumerable.Range(1, 386);
+
+            var authorPages = new List<CLPPage>();
+
+            foreach (var pageNumber in pageNumbers)
+            {
+                var authorTagCachePath = string.Empty;
+                if (lily1PageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily1;
+                }
+                if (lily2PageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily2;
+                }
+                else if (andeePageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsAndee;
+                }
+                else if (ericPageNumbers.Contains(pageNumber))
+                {
+                    authorTagCachePath = AnnAuthorTagsEric;
+                }
+
+                if (string.IsNullOrWhiteSpace(authorTagCachePath))
+                {
+                    authorTagCachePath = AnnAuthorTagsLily1;
+                }
+
+                #region Load Author Page
+
+                var zipContainerFilePath = authorTagCachePath;
+
+                var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
+                using (var zip = ZipFile.Read(zipContainerFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    var internalPagesDirectory = "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
+                    var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+                    var pageEntries = (from pageEntry in allPageEntries
+                                       let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
+                                       where nameComposite.PageNumber == pageNumber
+                                       select pageEntry).ToList();
+
+                    pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries);
+                }
+
+                var authorPage = DataService.GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).FirstOrDefault();
+                authorPages.Add(authorPage);
+
+                #endregion // Load Author Page
+            }
+
+            var zipPath = Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014 - Stitched.clp");
+            var notebooks = new List<Notebook>();
+
+            using (var zip = ZipFile.Read(AnnAuthorTagsLily1))
+            {
+                var notebookEntry = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json").First();
+                var notebookString = notebookEntry.ExtractJsonString();
+                var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
+                notebook.ContainerZipFilePath = zipPath;
+
+                notebook.Pages = authorPages.OrderBy(p => p.PageNumber).ToObservableCollection();
+                notebook.CurrentPage = notebook.Pages.FirstOrDefault();
+
+                notebooks.Add(notebook);
+            }
+            
+            SaveNotebooksToZip(zipPath, notebooks);
+        }
+
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
-            var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            Ann.Notebook oldNotebook;
+
+            if (IS_LARGE_CACHE)
+            {
+                oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
+                //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            else
+            {
+                oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            
             Debug.WriteLine("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
             Debug.WriteLine("Notebook Converted");
@@ -69,6 +178,63 @@ namespace Classroom_Learning_Partner
             }
 
             return newNotebook;
+        }
+
+        public static Ann.Notebook AnnCustomPartialNotebookLoading(string notebookFolderPath)
+        {
+            var notebook = Ann.Notebook.LoadLocalNotebook(notebookFolderPath);
+            if (ReferenceEquals(null, notebook))
+            {
+                return null;
+            }
+
+            #region Constraints
+
+            var pageNumbersToLoad = new List<int> { 209, 218, 222, 235, 253, 258, 259, 262, 275, 276, 278, 281, 295, 299, 300, 307, 323, 328, 346, 360, 368, 370, 382, 383, 384, 385 };
+
+            #endregion // Constraints
+
+            #region Load Pages
+
+            var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+            var loadedPages = new List<Ann.CLPPage>();
+
+            foreach (var pageFilePath in pageFilePaths)
+            {
+                var pageNameComposite = Ann.PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                if (ReferenceEquals(null, pageNameComposite))
+                {
+                    continue;
+                }
+
+                if (pageNameComposite.VersionIndex != "0")
+                {
+                    continue;
+                }
+
+                var isPageToBeLoaded = pageNumbersToLoad.Any(n => n.ToString() == pageNameComposite.PageNumber);
+                if (!isPageToBeLoaded)
+                {
+                    continue;
+                }
+
+                var page = Ann.CLPPage.LoadLocalPage(pageFilePath);
+                if (ReferenceEquals(null, page))
+                {
+                    continue;
+                }
+
+                loadedPages.Add(page);
+            }
+
+            #endregion // Load Pages
+
+            var notebookPages = loadedPages.Where(p => p.VersionIndex == 0).OrderBy(p => p.PageNumber).ToList();
+            notebook.Pages = new ObservableCollection<Ann.CLPPage>(notebookPages);
+            notebook.CurrentPage = notebook.Pages.FirstOrDefault();
+
+            return notebook;
         }
 
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
@@ -162,19 +328,23 @@ namespace Classroom_Learning_Partner
                 StartingPageID = classPeriod.StartPageID
             };
 
-            var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
-            newSession.StartingPageNumber = startPageNumber.ToString();
-
-            var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages).ToList();
-            var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
-            if (!pageIDs.Contains(classPeriod.TitlePageID))
+            if (PageIDToNumberMap.ContainsKey(classPeriod.StartPageID))
             {
-                pageIDs.Insert(0, classPeriod.TitlePageID);
-                pageNumberRange.Insert(0, PageIDToNumberMap[classPeriod.TitlePageID]);
-            }
+                var startPageNumber = PageIDToNumberMap[classPeriod.StartPageID];
+                newSession.StartingPageNumber = startPageNumber.ToString();
 
-            newSession.PageIDs = pageIDs;
-            newSession.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumberRange, false, true);
+                var pageNumberRange = Enumerable.Range(startPageNumber, (int)classPeriod.NumberOfPages).ToList();
+                var pageIDs = pageNumberRange.Select(i => PageNumberToIDMap[i]).ToList();
+                if (!pageIDs.Contains(classPeriod.TitlePageID))
+                {
+                    pageIDs.Insert(0, classPeriod.TitlePageID);
+                    pageNumberRange.Insert(0, PageIDToNumberMap[classPeriod.TitlePageID]);
+                }
+
+                newSession.PageIDs = pageIDs;
+                newSession.PageNumbers = RangeHelper.ParseIntNumbersToString(pageNumberRange, false, true);
+            }
+            
             newSession.NotebookIDs.Add(classPeriod.NotebookID);
 
             return newSession;
@@ -254,9 +424,16 @@ namespace Classroom_Learning_Partner
                 newPage.PageObjects.Add(newPageObject);
             }
 
-            AddAssessmentInterpretationRegions(newPage);
-            AddAssessmentRelationDefinitionTags(newPage);
-            // TODO: Large Cache Tags
+            if (IS_LARGE_CACHE)
+            {
+                AddLargeCacheTags(newPage);
+            }
+            else
+            {
+                AddAssessmentInterpretationRegions(newPage);
+                AddAssessmentRelationDefinitionTags(newPage);
+            }
+            
             ConvertPageHistory(page.History, newPage);
 
             return newPage;
@@ -1248,6 +1425,7 @@ namespace Classroom_Learning_Partner
 
             newPageHistory.IsAnimating = false;
             newPageHistory.RefreshHistoryIndexes();
+            newPageHistory.RefreshCachedFormattedValues();
         }
 
         #endregion // History
@@ -2157,72 +2335,9 @@ namespace Classroom_Learning_Partner
                 var strokeID = newHistoryAction.StrokeIDsAdded.First();
                 var addedStroke = newPage.GetVerifiedStrokeOnPageByID(strokeID);
 
-                #region Check for Jump Added
-
-                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
-                {
-                    var tickR = numberLine.FindClosestTickToArcStroke(addedStroke, true);
-                    var tickL = numberLine.FindClosestTickToArcStroke(addedStroke, false);
-                    if (tickR == null ||
-                        tickL == null ||
-                        tickR == tickL)
-                    {
-                        continue;
-                    }
-
-                    var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
-                    var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
-
-                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
-                                                                                                newPage.Owner,
-                                                                                                numberLine.ID,
-                                                                                                new List<Stroke>
-                                                                                                {
-                                                                                                    addedStroke
-                                                                                                },
-                                                                                                new List<Stroke>(),
-                                                                                                new List<NumberLineJumpSize>(),
-                                                                                                new List<NumberLineJumpSize>(),
-                                                                                                oldHeight,
-                                                                                                oldYPosition,
-                                                                                                numberLine.Height,
-                                                                                                numberLine.YPosition,
-                                                                                                true);
-
-                    #region JumpsChangedHistoryAction Conversion Undo
-
-                    foreach (var stroke in jumpsChangedHistoryAction.AddedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeOnPageByID))
-                    {
-                        if (stroke == null)
-                        {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
-                            continue;
-                        }
-
-                        newPage.InkStrokes.Remove(stroke);
-                        newPage.History.TrashedInkStrokes.Add(stroke);
-                        numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
-                                                         new List<Stroke>
-                                                         {
-                                                             stroke
-                                                         });
-
-                        var jumps = numberLine.RemoveJumpFromStroke(stroke);
-                        jumpsChangedHistoryAction.JumpsAdded = jumps;
-                    }
-
-                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
-                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
-
-                    #endregion // JumpsChangedHistoryAction Conversion Undo
-
-                    return jumpsChangedHistoryAction;
-                }
-
-                #endregion // Check for Jump Added
-
                 #region Check for Multiple Choice Fill-In
 
+                // TODO: Necessary to handle all MC on page?
                 var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
                 if (multipleChoice != null)
                 {
@@ -2288,6 +2403,126 @@ namespace Classroom_Learning_Partner
                 }
 
                 #endregion // Check for Multiple Choice Fill-In
+
+                #region Check for Interpretation Region Fill-In
+
+                foreach (var interpretationRegion in newPage.PageObjects.OfType<InterpretationRegion>())
+                {
+                    var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(addedStroke);
+                    if (!isStrokeOver)
+                    {
+                        continue;
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                    var fillInAnswerChangedHistoryAction = new FillInAnswerChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                interpretationRegion,
+                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                newHistoryAction.StrokesRemoved);
+
+                    #region FillInAnswerChangedHistoryAction Conversion Undo
+
+                    var addedStrokesToFillInRegion = new List<Stroke>();
+                    foreach (var stroke in fillInAnswerChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        addedStrokesToFillInRegion.Add(stroke);
+                        newPage.InkStrokes.Remove(stroke);
+                        newPage.History.TrashedInkStrokes.Add(stroke);
+                    }
+
+                    var removedStrokesToFillInRegion = new List<Stroke>();
+                    foreach (var stroke in fillInAnswerChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        removedStrokesToFillInRegion.Add(stroke);
+                        newPage.History.TrashedInkStrokes.Remove(stroke);
+                        newPage.InkStrokes.Add(stroke);
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(removedStrokesToFillInRegion, addedStrokesToFillInRegion);
+
+                    #endregion // FillInAnswerChangedHistoryAction Conversion Undo
+
+                    return fillInAnswerChangedHistoryAction;
+                }
+
+                #endregion // Check for Interpretation Region Fill-In
+
+                #region Check for Jump Added
+
+                foreach (var numberLine in newPage.PageObjects.OfType<NumberLine>())
+                {
+                    var tickR = numberLine.FindClosestTickToArcStroke(addedStroke, true);
+                    var tickL = numberLine.FindClosestTickToArcStroke(addedStroke, false);
+                    if (tickR == null ||
+                        tickL == null ||
+                        tickR == tickL)
+                    {
+                        continue;
+                    }
+
+                    var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
+                    var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
+
+                    var jumpsChangedHistoryAction = new NumberLineJumpSizesChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<Stroke>
+                                                                                                {
+                                                                                                    addedStroke
+                                                                                                },
+                                                                                                new List<Stroke>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                oldHeight,
+                                                                                                oldYPosition,
+                                                                                                numberLine.Height,
+                                                                                                numberLine.YPosition,
+                                                                                                true);
+
+                    #region JumpsChangedHistoryAction Conversion Undo
+
+                    foreach (var stroke in jumpsChangedHistoryAction.AddedJumpStrokeIDs.Select(newPage.GetVerifiedStrokeOnPageByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        newPage.InkStrokes.Remove(stroke);
+                        newPage.History.TrashedInkStrokes.Add(stroke);
+                        numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                         new List<Stroke>
+                                                         {
+                                                             stroke
+                                                         });
+
+                        var jumps = numberLine.RemoveJumpFromStroke(stroke);
+                        jumpsChangedHistoryAction.JumpsAdded = jumps;
+                    }
+
+                    numberLine.YPosition = jumpsChangedHistoryAction.PreviousYPosition;
+                    numberLine.Height = jumpsChangedHistoryAction.PreviousHeight;
+
+                    #endregion // JumpsChangedHistoryAction Conversion Undo
+
+                    return jumpsChangedHistoryAction;
+                }
+
+                #endregion // Check for Jump Added
             }
             //Single Remove
             else if (newHistoryAction.StrokeIDsRemoved.Count == 1 &&
@@ -2295,6 +2530,129 @@ namespace Classroom_Learning_Partner
             {
                 var strokeID = newHistoryAction.StrokeIDsRemoved.First();
                 var removedStroke = newPage.GetVerifiedStrokeInHistoryByID(strokeID);
+
+                #region Check for Multiple Choice Erase
+
+                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
+                if (multipleChoice != null)
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
+                    if (choiceBubbleStrokeIsOver != null)
+                    {
+                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
+                                                                                                                                newPage.Owner,
+                                                                                                                                multipleChoice,
+                                                                                                                                index,
+                                                                                                                                ChoiceBubbleStatuses.CompletelyErased,
+                                                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                                                newHistoryAction.StrokesRemoved);
+                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        var addedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            addedStrokesToMultipleChoice.Add(stroke);
+                            newPage.InkStrokes.Remove(stroke);
+                            newPage.History.TrashedInkStrokes.Add(stroke);
+                        }
+
+                        var removedStrokesToMultipleChoice = new List<Stroke>();
+                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                        {
+                            if (stroke == null)
+                            {
+                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                continue;
+                            }
+
+                            removedStrokesToMultipleChoice.Add(stroke);
+                            newPage.History.TrashedInkStrokes.Remove(stroke);
+                            newPage.InkStrokes.Add(stroke);
+                        }
+
+                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
+
+                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
+                        {
+                            case ChoiceBubbleStatuses.CompletelyErased:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
+                                break;
+                            case ChoiceBubbleStatuses.FilledIn:
+                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
+                                break;
+                        }
+
+                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
+
+                        return multipleChoiceBubbleStatusChangedHistoryAction;
+                    }
+                }
+
+                #endregion // Check for Multiple Choice Erase
+
+                #region Check for Interpretation Region Erase
+
+                foreach (var interpretationRegion in newPage.PageObjects.OfType<InterpretationRegion>())
+                {
+                    var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(removedStroke);
+                    if (!isStrokeOver)
+                    {
+                        continue;
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
+                    var fillInAnswerChangedHistoryAction = new FillInAnswerChangedHistoryAction(newPage,
+                                                                                                newPage.Owner,
+                                                                                                interpretationRegion,
+                                                                                                newHistoryAction.StrokesAdded,
+                                                                                                newHistoryAction.StrokesRemoved);
+
+                    #region FillInAnswerChangedHistoryAction Conversion Undo
+
+                    var addedStrokesToFillInRegion = new List<Stroke>();
+                    foreach (var stroke in fillInAnswerChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        addedStrokesToFillInRegion.Add(stroke);
+                        newPage.InkStrokes.Remove(stroke);
+                        newPage.History.TrashedInkStrokes.Add(stroke);
+                    }
+
+                    var removedStrokesToFillInRegion = new List<Stroke>();
+                    foreach (var stroke in fillInAnswerChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
+                    {
+                        if (stroke == null)
+                        {
+                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            continue;
+                        }
+
+                        removedStrokesToFillInRegion.Add(stroke);
+                        newPage.History.TrashedInkStrokes.Remove(stroke);
+                        newPage.InkStrokes.Add(stroke);
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(removedStrokesToFillInRegion, addedStrokesToFillInRegion);
+
+                    #endregion // FillInAnswerChangedHistoryAction Conversion Undo
+
+                    return fillInAnswerChangedHistoryAction;
+                }
+
+                #endregion // Check for Interpretation Region Erase
 
                 #region Check for Jump Removed
 
@@ -2376,73 +2734,6 @@ namespace Classroom_Learning_Partner
                 }
 
                 #endregion // Check for Jump Removed
-
-                #region Check for Multiple Choice Erase
-
-                var multipleChoice = newPage.PageObjects.FirstOrDefault(p => p is MultipleChoice) as MultipleChoice;
-                if (multipleChoice != null)
-                {
-                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
-                    if (choiceBubbleStrokeIsOver != null)
-                    {
-                        var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
-                        multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
-                        var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
-                                                                                                                                newPage.Owner,
-                                                                                                                                multipleChoice,
-                                                                                                                                index,
-                                                                                                                                ChoiceBubbleStatuses.CompletelyErased,
-                                                                                                                                newHistoryAction.StrokesAdded,
-                                                                                                                                newHistoryAction.StrokesRemoved);
-                        #region MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
-
-                        var addedStrokesToMultipleChoice = new List<Stroke>();
-                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsAdded.Select(newPage.GetVerifiedStrokeOnPageByID))
-                        {
-                            if (stroke == null)
-                            {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
-                                continue;
-                            }
-
-                            addedStrokesToMultipleChoice.Add(stroke);
-                            newPage.InkStrokes.Remove(stroke);
-                            newPage.History.TrashedInkStrokes.Add(stroke);
-                        }
-
-                        var removedStrokesToMultipleChoice = new List<Stroke>();
-                        foreach (var stroke in multipleChoiceBubbleStatusChangedHistoryAction.StrokeIDsRemoved.Select(newPage.GetVerifiedStrokeInHistoryByID))
-                        {
-                            if (stroke == null)
-                            {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
-                                continue;
-                            }
-
-                            removedStrokesToMultipleChoice.Add(stroke);
-                            newPage.History.TrashedInkStrokes.Remove(stroke);
-                            newPage.InkStrokes.Add(stroke);
-                        }
-
-                        multipleChoice.ChangeAcceptedStrokes(removedStrokesToMultipleChoice, addedStrokesToMultipleChoice);
-
-                        switch (multipleChoiceBubbleStatusChangedHistoryAction.ChoiceBubbleStatus)
-                        {
-                            case ChoiceBubbleStatuses.CompletelyErased:
-                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = true;
-                                break;
-                            case ChoiceBubbleStatuses.FilledIn:
-                                multipleChoiceBubbleStatusChangedHistoryAction.Bubble.IsFilledIn = false;
-                                break;
-                        }
-
-                        #endregion // MultipleChoiceBubbleStatusChangedHistoryAction Conversion Undo
-
-                        return multipleChoiceBubbleStatusChangedHistoryAction;
-                    }
-                }
-
-                #endregion // Check for Multiple Choice Erase
             }
             //Point Erase
             else if (newHistoryAction.StrokesRemoved.Count == 1 &&
@@ -2795,6 +3086,136 @@ namespace Classroom_Learning_Partner
             }
 
             newPage.AddTag(relationDefinitionToAdd);
+        }
+
+        public static void AddLargeCacheTags(CLPPage newPage)
+        {
+            #region Constraints
+
+            var ericPageNumbers = new List<int> { 31, 44, 49, 51, 91, 103, 104, 105, 106, 107, 108, 109, 119, 120, 121, 122, 123, 134, 125, 126, 127, 128, 140, 141, 142, 143, 144, 145, 146, 147, 152, 153, 154, 155, 156, 157, 158, 159, 160, 164, 165, 166, 167, 168, 169, 170, 171, 172, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 227, 228, 229, 230, 231, 242, 243, 244, 245, 246, 249, 278, 280, 287, 289, 295, 296, 298, 308, 310, 321, 362, 363, 364, 365, 366, 367, 369, 376 };
+            var andeePageNumbers = new List<int> { 12, 14, 15, 16, 17, 18, 19, 20, 66, 300, 302, 306, 312, 318, 332, 322, 323, 324, 325, 337, 338, 339, 342, 344, 354, 355, 356, 357, 377, 378 };
+            // 1 and 2 should both look in LK2 .clp file as it contains everything from LK .clp file
+            var lily1PageNumbers = new List<int> { 11, 43, 56, 59, 61, 62, 65, 86, 148, 149, 150, 151, 161, 162, 163, 173, 174, 175, 198, 199, 200, 213, 214, 215, 217, 218, 219, 221, 225, 226, 232, 233, 234, 236, 240, 241, 248, 251, 252, 253, 254, 255, 258, 259, 260, 261, 262, 263, 264, 285, 286, 288, 290, 291, 293, 297, 299, 301, 303, 304, 307, 309, 311, 313, 314, 315, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 341, 343, 345, 346, 347, 348, 349, 350, 351, 352, 353, 368, 379, 380, 381, 382, 383, 384, 385 };
+            var lily2PageNumbers = new List<int> { 275, 276, 281, 10, 21, 22, 28, 29, 30, 32, 45, 50, 67, 68, 110, 111, 112, 118, 129, 130, 131, 201, 216, 220, 222, 223, 224, 235, 237, 238, 239, 256, 257, 266, 267, 283, 292, 305, 316, 317 };
+
+            var noMetaDataTagsPageNumbers = new List<int> { 93, 94, 113, 114, 132, 133, 134, 135, 136, 137, 138, 176, 177, 178, 179, 180, 181, 182, 247, 358, 359, 360, 370, 371, 372, 373, 374, 375 };
+
+            var neverAnalyzePageNumbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 23, 24, 25, 26, 27, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 46, 47, 48, 52, 53, 54, 55, 56, 57, 60, 63, 64, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 87, 88, 89, 90, 92, 95, 96, 97, 98, 99, 100, 101, 102, 115, 116, 117, 139, 183, 184, 250, 274, 294, 319, 340, 361, 386 };
+
+            #endregion // Constraints
+
+            var pageNumber = newPage.PageNumber;
+
+            var authorTagCachePath = string.Empty;
+            if (lily1PageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsLily1;
+            }
+            if (lily2PageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsLily2;
+            }
+            else if (andeePageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsAndee;
+            }
+            else if (ericPageNumbers.Contains(pageNumber))
+            {
+                authorTagCachePath = AnnAuthorTagsEric;
+            }
+
+            if (string.IsNullOrWhiteSpace(authorTagCachePath))
+            {
+                return;
+            }
+
+            #region Load Author Page
+
+            var zipContainerFilePath = authorTagCachePath;
+
+            var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var internalPagesDirectory = "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
+                var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
+                var pageEntries = (from pageEntry in allPageEntries
+                                   let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
+                                   where nameComposite.ID == newPage.ID
+                                   select pageEntry).ToList();
+
+                pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries);
+            }
+
+            var authorPage = DataService.GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).FirstOrDefault();
+
+            #endregion // Load Author Page
+
+            foreach (var authorPageTag in authorPage.Tags)
+            {
+                RecursiveParentPageTagSet(authorPageTag, newPage);
+
+                newPage.AddTag(authorPageTag);
+            }
+        }
+
+        public static void RecursiveParentPageTagSet(ITag tag, CLPPage page)
+        {
+            if (tag == null)
+            {
+                return;
+            }
+
+            tag.ParentPage = page;
+
+            if (tag is NumericValueDefinitionTag)
+            {
+                return;
+            }
+
+            var divisionTag = tag as DivisionRelationDefinitionTag;
+            if (divisionTag != null)
+            {
+                var dividend = divisionTag.Dividend as ITag;
+                RecursiveParentPageTagSet(dividend, page);
+
+                var divisor = divisionTag.Divisor as ITag;
+                RecursiveParentPageTagSet(divisor, page);
+            }
+
+            var additionTag = tag as AdditionRelationDefinitionTag;
+            if (additionTag != null)
+            {
+                foreach (var addend in additionTag.Addends)
+                {
+                    var addendTag = addend as ITag;
+                    RecursiveParentPageTagSet(addendTag, page);
+                }
+            }
+
+            var multiplicationTag = tag as MultiplicationRelationDefinitionTag;
+            if (multiplicationTag != null)
+            {
+                foreach (var factor in multiplicationTag.Factors)
+                {
+                    var factorTag = factor as ITag;
+                    RecursiveParentPageTagSet(factorTag, page);
+                }
+            }
+
+            var equivalenceTag = tag as EquivalenceRelationDefinitionTag;
+            if (equivalenceTag != null)
+            {
+                var leftRelation = equivalenceTag.LeftRelationPart as ITag;
+                RecursiveParentPageTagSet(leftRelation, page);
+
+                var rightRelation = equivalenceTag.RightRelationPart as ITag;
+                RecursiveParentPageTagSet(rightRelation, page);
+            }
         }
 
         #endregion // Tags

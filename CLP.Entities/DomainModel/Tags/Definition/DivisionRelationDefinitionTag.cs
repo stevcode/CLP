@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart
+    public class DivisionRelationDefinitionTag : ATagBase, IRelationPart, IDefinition
     {
         public enum RelationTypes
         {
@@ -16,11 +15,8 @@ namespace CLP.Entities
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionRelationDefinitionTag" /> from scratch.</summary>
         public DivisionRelationDefinitionTag() { }
 
-        /// <summary>Initializes <see cref="DivisionRelationDefinitionTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionRelationDefinitionTag" /> belongs to.</param>
         public DivisionRelationDefinitionTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
@@ -85,7 +81,7 @@ namespace CLP.Entities
 
         #endregion // ATagBase Overrides
 
-        #region IRelationPartImplementation
+        #region IRelationPart Implementation
 
         public double RelationPartAnswerValue => Math.Abs(Remainder) < 0.0001 ? Quotient : Quotient + (Dividend.RelationPartAnswerValue / Remainder);
 
@@ -95,6 +91,12 @@ namespace CLP.Entities
 
         public string ExpandedFormattedRelation => $"{Dividend.ExpandedFormattedRelation} / {Divisor.ExpandedFormattedRelation}";
 
-        #endregion // IRelationPartImplementation
+        #endregion // IRelationPart Implementation
+
+        #region IDefinition Implementation
+
+        public double Answer => RelationPartAnswerValue;
+
+        #endregion // IDefinition Implementation
     }
 }

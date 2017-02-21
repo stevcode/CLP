@@ -386,7 +386,7 @@ namespace CLP.Entities
         {
             get
             {
-                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
                 if (correctnessTag == null)
                 {
                     return "Unknown";
@@ -504,24 +504,25 @@ namespace CLP.Entities
             }
         }
 
+        // TODO: Rename to FinalAnswerCorrectness
         public string AnswerCorrectness
         {
             get
             {
                 try
                 {
-                    var answerCorrectnessTag = Tags.FirstOrDefault(x => x is AnswerCorrectnessTag) as AnswerCorrectnessTag;
+                    var answerCorrectnessTag = Tags.FirstOrDefault(x => x is FinalAnswerCorrectnessTag) as FinalAnswerCorrectnessTag;
                     if (answerCorrectnessTag == null)
                     {
                         return "None";
                     }
 
-                    var code = answerCorrectnessTag.AnalysisCode;
-                    if (code.Contains("COR"))
+                    var codedCorrectness = Codings.CorrectnessToCodedCorrectness(answerCorrectnessTag.FinalAnswerCorrectness);
+                    if (codedCorrectness.Contains("COR"))
                     {
                         return "Correct";
                     }
-                    if (code.Contains("INC"))
+                    if (codedCorrectness.Contains("INC"))
                     {
                         return "Incorrect";
                     }
@@ -541,40 +542,19 @@ namespace CLP.Entities
             {
                 try
                 {
-                    var abrTag = Tags.FirstOrDefault(x => x is AnswerBeforeRepresentationTag) as AnswerBeforeRepresentationTag;
+                    var abrTag = Tags.FirstOrDefault(x => x is AnswerRepresentationSequenceTag) as AnswerRepresentationSequenceTag;
                     if (abrTag == null)
                     {
                         return "None";
                     }
 
-                    var code = abrTag.AnalysisCode;
+                    var code = abrTag.AnalysisCodes;
                     if (code.Contains("ABR-I"))
                     {
                         return "ABR-I";
                     }
 
                     return "ABR-C";
-                }
-                catch (Exception)
-                {
-                    return "None";
-                }
-            }
-        }
-
-        public string ARIC
-        {
-            get
-            {
-                try
-                {
-                    var aricTag = Tags.FirstOrDefault(x => x is AnswerChangedAfterRepresentationTag) as AnswerChangedAfterRepresentationTag;
-                    if (aricTag == null)
-                    {
-                        return "None";
-                    }
-
-                    return aricTag.AnalysisCode.Substring(0, 4);
                 }
                 catch (Exception)
                 {
@@ -809,6 +789,14 @@ namespace CLP.Entities
             foreach (var pageObject in History.TrashedPageObjects)
             {
                 pageObject.ParentPage = this;
+            }
+            foreach (var historyAction in History.UndoActions)
+            {
+                historyAction.ParentPage = this;
+            }
+            foreach (var historyAction in History.RedoActions)
+            {
+                historyAction.ParentPage = this;
             }
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())
             {

@@ -988,7 +988,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                var unformattedSkips = formattedSkips.TrimAll().Split(new[] { "\"\"" }, StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+                var unformattedSkips = formattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
                 var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, array.Rows, array.Columns);
 
                 var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
@@ -1358,7 +1358,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ApplyInterpretedCorrectness(CLPPage page)
         {
-            //var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+            //var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
             //if (correctnessTag != null &&
             //    correctnessTag.IsCorrectnessManuallySet)
             //{
@@ -1367,11 +1367,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //var correctnessTags =
             //    page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-            //        .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+            //        .Select(divisionTemplateCorrectnessTag => new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
             //        .ToList();
             //correctnessTags.AddRange(
             //                         page.Tags.OfType<ArrayCorrectnessSummaryTag>()
-            //                             .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
+            //                             .Select(arrayCorrectnessTag => new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
 
             //if (!correctnessTags.Any())
             //{
@@ -1407,7 +1407,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
             //}
 
-            //page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
+            //page.AddTag(new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum, true));
         }
 
         /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
@@ -1415,7 +1415,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAnalyzePageHistoryCommandExecute()
         {
-            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessSummaryTag).ToList();
             CurrentPage.Tags = null;
             CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
             //     SortedTags.Source = CurrentPage.Tags;
@@ -1430,7 +1430,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var submission in CurrentPage.Submissions)
             {
-                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessSummaryTag).ToList();
                 submission.Tags = null;
                 submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
 

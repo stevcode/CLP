@@ -57,30 +57,15 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override string FormattedName
-        {
-            get { return "Text Box"; }
-        }
+        public override string FormattedName => "Text Box";
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_TEXT; }
-        }
+        public override string CodedName => Codings.OBJECT_TEXT;
 
-        public override string CodedID
-        {
-            get { return "A"; } // TODO: Make this work with IncrementID
-        }
+        public override string CodedID => "A"; // TODO: Make this work with IncrementID
 
-        public override int ZIndex
-        {
-            get { return 20; }
-        }
+        public override int ZIndex => 20;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override bool IsBackgroundInteractable => false;
 
         #endregion //APageObjectBase Overrides
     }

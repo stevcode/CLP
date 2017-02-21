@@ -70,6 +70,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
 
+        /// <summary>The pass the semantic event is part of.</summary>
+        public int SemanticPassNumber
+        {
+            get { return GetValue<int>(SemanticPassNumberProperty); }
+            set { SetValue(SemanticPassNumberProperty, value); }
+        }
+
+        public static readonly PropertyData SemanticPassNumberProperty = RegisterProperty("SemanticPassNumber", typeof(int), -1);
+
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex
         {
@@ -174,6 +183,11 @@ namespace CLP.Entities
             get { return MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null; }
             set
             {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    return;
+                }
+
                 if (!MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID))
                 {
                     MetaData.Add(META_REFERENCE_PAGE_OBJECT_ID, value);
@@ -223,6 +237,34 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
+        public IHistoryAction FirstHistoryAction
+        {
+            get
+            {
+                if (HistoryActions.Any())
+                {
+                    return HistoryActions.First();
+                }
+
+                var firstSemanticEvent = SemanticEvents.FirstOrDefault();
+                return firstSemanticEvent?.FirstHistoryAction;
+            }
+        }
+
+        public IHistoryAction LastHistoryAction
+        {
+            get
+            {
+                if (HistoryActions.Any())
+                {
+                    return HistoryActions.Last();
+                }
+
+                var lastSemanticEvent = SemanticEvents.LastOrDefault();
+                return lastSemanticEvent?.LastHistoryAction;
+            }
+        }
+
         /// <summary>List of the HistoryActions that make up this SemanticEvent.</summary>
         public List<IHistoryAction> HistoryActions
         {
@@ -238,10 +280,14 @@ namespace CLP.Entities
                 var subID = string.IsNullOrWhiteSpace(CodedObjectSubID) ? string.Empty : ", " + CodedObjectSubID;
                 var subIDIncrement = string.IsNullOrWhiteSpace(CodedObjectSubIDIncrement) ? string.Empty : " " + CodedObjectSubIDIncrement;
                 var compositeCodedObjectID = $"{CodedObjectID}{idIncrement}{subID}{subIDIncrement}";
+                if (!string.IsNullOrWhiteSpace(compositeCodedObjectID))
+                {
+                    compositeCodedObjectID = $" [{compositeCodedObjectID}]";
+                }
 
                 var eventInfo = string.IsNullOrWhiteSpace(EventInformation) ? string.Empty : " " + EventInformation;
 
-                var codedEvent = $"{CodedObject} {EventType} [{compositeCodedObjectID}]{eventInfo}";
+                var codedEvent = $"{CodedObject} {EventType}{compositeCodedObjectID}{eventInfo}";
                 if (!codedEvent.Equals(CachedCodedValue))
                 {
                     CachedCodedValue = codedEvent;
@@ -254,5 +300,67 @@ namespace CLP.Entities
         #endregion //Calculated Properties
 
         #endregion //Properties
+
+        #region Static Methods
+
+        public static SemanticEvent GetErrorSemanticEvent(CLPPage page, IHistoryAction historyAction, string errorType, string errorMessage)
+        {
+            return GetErrorSemanticEvent(page,
+                                         new List<IHistoryAction>
+                                         {
+                                             historyAction
+                                         },
+                                         errorType,
+                                         errorMessage);
+        }
+
+        public static SemanticEvent GetErrorSemanticEvent(CLPPage page, List<IHistoryAction> historyActions, string errorType, string errorMessage)
+        {
+            var codedObject = Codings.OBJECT_ERROR;
+            var codedID = "Action";
+            var incrementID = string.Join(", ", historyActions.Select(h => h.HistoryActionIndex));
+
+            var semanticEvent = new SemanticEvent(page, historyActions)
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = errorType,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = errorMessage
+                                };
+
+            return semanticEvent;
+        }
+
+        public static SemanticEvent GetErrorSemanticEvent(CLPPage page, ISemanticEvent semanticEvent, string errorType, string errorMessage)
+        {
+            return GetErrorSemanticEvent(page,
+                                         new List<ISemanticEvent>
+                                         {
+                                             semanticEvent
+                                         },
+                                         errorType,
+                                         errorMessage);
+        }
+
+        public static SemanticEvent GetErrorSemanticEvent(CLPPage page, List<ISemanticEvent> semanticEvents, string errorType, string errorMessage)
+        {
+            var codedObject = Codings.OBJECT_ERROR;
+            var codedID = "Event";
+            var incrementID = string.Join(", ", semanticEvents.Select(h => $"{h.SemanticPassNumber}.{h.SemanticEventIndex}"));
+
+            var semanticEvent = new SemanticEvent(page, semanticEvents)
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = errorType,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = errorMessage
+                                };
+
+            return semanticEvent;
+        }
+
+        #endregion // Static Methods
     }
 }

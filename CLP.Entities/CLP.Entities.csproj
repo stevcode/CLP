@@ -134,6 +134,8 @@
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
+    <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />
@@ -157,7 +159,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArrayRotateHistoryAction.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryActions\CLPArraySnapHistoryAction.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\RemainderTilesVisibilityToggledHistoryAction.cs" />
-    <Compile Include="DomainModel\History\MultipleChoiceHistoryActions\MultipleChoiceBubbleStatusChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\FinalAnswerHistoryActions\MultipleChoiceBubbleStatusChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineEndPointsChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryActions\NumberLineJumpSizesChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryActions\ObjectsMovedBatchHistoryAction.cs" />
@@ -176,6 +178,7 @@
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryGrid.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />
+    <Compile Include="DomainModel\Tags\AAnalysisTagBase.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\AdditionRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\DivisionRelationAnalysis.cs" />
@@ -185,9 +188,7 @@
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
-    <Compile Include="DomainModel\Tags\Answer\AnswerBeforeRepresentationTag.cs" />
-    <Compile Include="DomainModel\Tags\Answer\AnswerChangedAfterRepresentationTag.cs" />
-    <Compile Include="DomainModel\Tags\Answer\AnswerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\FinalAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArrayRemovedHistoryAction.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArraySnappedInHistoryAction.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
@@ -222,7 +223,8 @@
     <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\FactorsOfProductDefinitionTag.cs" />
-    <Compile Include="DomainModel\Tags\Definition\IRelationPart.cs" />
+    <Compile Include="DomainModel\Tags\Definition\Interfaces\IDefinition.cs" />
+    <Compile Include="DomainModel\Tags\Definition\Interfaces\IRelationPart.cs" />
     <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
@@ -233,15 +235,17 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\IAnalysis.cs" />
     <Compile Include="DomainModel\Tags\MetaDataTag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\CorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\HighlightedObjectTypesOnPageTag.cs" />
-    <Compile Include="DomainModel\Tags\Representation\RepresentationCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Representation\AnswerRepresentationSequenceTag.cs" />
+    <Compile Include="DomainModel\Tags\Answer\RepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Representation\RepresentationsUsedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />

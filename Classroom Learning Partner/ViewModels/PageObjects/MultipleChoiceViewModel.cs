@@ -8,7 +8,6 @@ using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
-using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
 
@@ -116,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //TODO: Write completely different interaction for point erase situation.
             
-            const int threshold = 80;
+            const int THRESHOLD = 80;
             var status = ChoiceBubbleStatuses.PartiallyFilledIn;
             var index = -1;
             var isStatusSet = false;
@@ -132,14 +131,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                 var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
                 var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                if (totalStrokeLength >= threshold)
+                if (totalStrokeLength >= THRESHOLD)
                 {
                     status = ChoiceBubbleStatuses.AdditionalFilledIn;
                 }
                 else
                 {
                     totalStrokeLength += addedStroke.StylusPoints.Count;
-                    if (totalStrokeLength >= threshold)
+                    if (totalStrokeLength >= THRESHOLD)
                     {
                         status = ChoiceBubbleStatuses.FilledIn;
                         choiceBubbleStrokeIsOver.IsFilledIn = true;
@@ -173,13 +172,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
                 var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
 
-                if (totalStrokeLength < threshold)
+                if (totalStrokeLength < THRESHOLD)
                 {
                     status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
                 }
                 else
                 {
-                    if (otherStrokesStrokeLength < threshold)
+                    if (otherStrokesStrokeLength < THRESHOLD)
                     {
                         status = ChoiceBubbleStatuses.CompletelyErased;
                         choiceBubbleStrokeIsOver.IsFilledIn = false;

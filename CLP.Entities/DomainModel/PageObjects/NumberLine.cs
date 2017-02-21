@@ -631,27 +631,18 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
-        public override string FormattedName
-        {
-            get { return $"Number Line from 0 to {NumberLineSize} with {JumpSizes.Count} jumps"; }
-        }
+        public override string FormattedName => $"Number Line from 0 to {NumberLineSize} with {JumpSizes.Count} jumps";
 
         public override string CodedName => Codings.OBJECT_NUMBER_LINE;
 
-        public override string CodedID
-        {
-            get { return NumberLineSize.ToString(); }
-        }
+        public override string CodedID => NumberLineSize.ToString();
 
         public override int ZIndex => 60;
 
         public override bool IsBackgroundInteractable => true;
 
         /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
-        public override double MinimumHeight
-        {
-            get { return NumberLineHeight; }
-        }
+        public override double MinimumHeight => NumberLineHeight;
 
         /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
         public override double MinimumWidth => 10;
@@ -776,7 +767,7 @@ namespace CLP.Entities
             var groupedJumps = new List<List<NumberLineJumpSize>>();
 
             var buffer = new List<NumberLineJumpSize>();
-            for (int i = 0; i < jumps.Count; i++)
+            for (var i = 0; i < jumps.Count; i++)
             {
                 var currentJump = jumps[i];
                 buffer.Add(currentJump);
@@ -795,7 +786,7 @@ namespace CLP.Entities
             foreach (var jumpGroup in groupedJumps.Where(jg => jg.Any()))
             {
                 var firstJump = jumpGroup.First();
-                var jumpSegment = string.Format("{0}, {1}-{2}", firstJump.JumpSize, firstJump.StartingTickIndex, firstJump.StartingTickIndex + (firstJump.JumpSize * jumpGroup.Count));
+                var jumpSegment = $"{firstJump.JumpSize}, {firstJump.StartingTickIndex}-{firstJump.StartingTickIndex + (firstJump.JumpSize * jumpGroup.Count)}";
                 jumpSegments.Add(jumpSegment);
             }
 

@@ -5,62 +5,206 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum RepresentationsUsedTypes
+    {
+        BlankPage,
+        InkOnly,
+        RepresentationsUsed
+    }
+
     [Serializable]
-    public class RepresentationsUsedTag : ATagBase
+    public class UsedRepresentation : AEntityBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="RepresentationsUsedTag" /> from scratch.</summary>
+        public UsedRepresentation() { }
+
+        #endregion // Constructors
+
+        #region Properties
+
+        /// <summary>Coded value of the Representation.</summary>
+        public string CodedObject
+        {
+            get { return GetValue<string>(CodedObjectProperty); }
+            set { SetValue(CodedObjectProperty, value); }
+        }
+
+        public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
+
+        /// <summary>Coded ID of the Representation.</summary>
+        public string CodedID
+        {
+            get { return GetValue<string>(CodedIDProperty); }
+            set { SetValue(CodedIDProperty, value); }
+        }
+
+        public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof(string), string.Empty);
+
+        /// <summary>Information considered part of the make-up of the Representation.</summary>
+        public string RepresentationInformation
+        {
+            get { return GetValue<string>(RepresentationInformationProperty); }
+            set { SetValue(RepresentationInformationProperty, value); }
+        }
+
+        public static readonly PropertyData RepresentationInformationProperty = RegisterProperty("RepresentationInformation", typeof(string), string.Empty);
+
+        /// <summary>Representational Correctness of this particular Representation.</summary>
+        public Correctness Correctness
+        {
+            get { return GetValue<Correctness>(CorrectnessProperty); }
+            set { SetValue(CorrectnessProperty, value); }
+        }
+
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
+
+        /// <summary>If applicable, lists a reason for Correctness set to Partial or Incorrect.</summary>
+        public string CorrectnessReason
+        {
+            get { return GetValue<string>(CorrectnessReasonProperty); }
+            set { SetValue(CorrectnessReasonProperty, value); }
+        }
+
+        public static readonly PropertyData CorrectnessReasonProperty = RegisterProperty("CorrectnessReason", typeof(string), Codings.PARTIAL_REASON_UNKNOWN);
+
+        /// <summary>The part/side of the page definition the Representation matchec correctness against.</summary>
+        public string MatchedRelationSide
+        {
+            get { return GetValue<string>(MatchedRelationSideProperty); }
+            set { SetValue(MatchedRelationSideProperty, value); }
+        }
+
+        public static readonly PropertyData MatchedRelationSideProperty = RegisterProperty("MatchedRelationSide", typeof(string), string.Empty);
+        
+        /// <summary>Signifies the Representation is still on the page at the time of submission.</summary>
+        public bool IsFinalRepresentation
+        {
+            get { return GetValue<bool>(IsFinalRepresentationProperty); }
+            set { SetValue(IsFinalRepresentationProperty, value); }
+        }
+
+        public static readonly PropertyData IsFinalRepresentationProperty = RegisterProperty("IsFinalRepresentation", typeof(bool), false);
+
+        /// <summary>Signifies the Representation was used, as determined by the specific Representation type.</summary>
+        public bool IsUsed
+        {
+            get { return GetValue<bool>(IsUsedProperty); }
+            set { SetValue(IsUsedProperty, value); }
+        }
+
+        public static readonly PropertyData IsUsedProperty = RegisterProperty("IsUsed", typeof(bool), false);
+
+        /// <summary>Signifies the Representation was interacted with, as determined by the specific Representation type.</summary>
+        public bool IsInteractedWith
+        {
+            get { return GetValue<bool>(IsInteractedWithProperty); }
+            set { SetValue(IsInteractedWithProperty, value); }
+        }
+
+        public static readonly PropertyData IsInteractedWithProperty = RegisterProperty("IsInteractedWith", typeof(bool), false);
+
+        /// <summary>Any extra information relevant to the compiled Representation information.</summary>
+        public List<string> AdditionalInformation
+        {
+            get { return GetValue<List<string>>(AdditionalInformationProperty); }
+            set { SetValue(AdditionalInformationProperty, value); }
+        }
+
+        public static readonly PropertyData AdditionalInformationProperty = RegisterProperty("AdditionalInformation", typeof(List<string>), () => new List<string>());
+
+        /// <summary>List of any Analysis Codes generated by the Representation.</summary>
+        public List<string> AnalysisCodes
+        {
+            get { return GetValue<List<string>>(AnalysisCodesProperty); }
+            set { SetValue(AnalysisCodesProperty, value); }
+        }
+
+        public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
+
+        public string FormattedValue
+        {
+            get
+            {
+                // OJBJECT [ID] RepresentationInfo
+                //      - Unused/No Interaction
+                //      - Correct, LS
+                //      - additional info
+                //      - additional info
+                //      - Analysis Codes:
+
+                var header = $"{CodedObject} [{CodedID}] {RepresentationInformation}";
+                var sections = new List<string>();
+
+                var usage = IsUsed ? string.Empty : "Unused";
+                if (string.IsNullOrWhiteSpace(usage))
+                {
+                    usage = IsInteractedWith ? string.Empty : "No Interaction";
+                }
+                if (!string.IsNullOrWhiteSpace(usage))
+                {
+                    sections.Add(usage);
+                }
+
+                if (Correctness != Correctness.Unknown)
+                {
+                    var correctnessSection = $"{Correctness}, {MatchedRelationSide}";
+                    sections.Add(correctnessSection);
+                }
+
+                sections.AddRange(AdditionalInformation);
+
+                var formattedAnalysisCodes = string.Join(", ", AnalysisCodes);
+                var formattedAnalysisCodeSection = $"Analysis Codes: {formattedAnalysisCodes}";
+                sections.Add(formattedAnalysisCodeSection);
+
+                var formattedSections = string.Join("\n  - ", sections);
+                var formattedValue = $"{header}\n{formattedSections}";
+
+                return formattedValue;
+            }
+        }
+
+        #endregion // Properties
+    }
+
+    [Serializable]
+    public class RepresentationsUsedTag : AAnalysisTagBase
+    {
+        #region Constructors
+
         public RepresentationsUsedTag() { }
 
-        /// <summary>Initializes <see cref="RepresentationsUsedTag" /> from values.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesOnPageTag" /> belongs to.</param>
-        /// <param name="origin"></param>
-        /// <param name="currentUserID"></param>
-        public RepresentationsUsedTag(CLPPage parentPage, Origin origin, List<string> allRepresentations, List<string> deletedCodedRepresentations, List<string> finalCodedRepresentations)
-            : base(parentPage, origin)
-        {
-            AllRepresentations = allRepresentations;
-            DeletedCodedRepresentations = deletedCodedRepresentations;
-            FinalCodedRepresentations = finalCodedRepresentations;
-        }
+        public RepresentationsUsedTag(CLPPage parentPage, Origin origin)
+            : base(parentPage, origin) { }
 
         #endregion //Constructors
 
         #region Properties
 
-        /// <summary>Distinct list of all representations used through the history of the page.</summary>
-        public List<string> AllRepresentations
+        /// <summary>Identifies 3 possible usages scenarios: Ink Only, Blank Page, or Representations Used.</summary>
+        public RepresentationsUsedTypes RepresentationsUsedType
         {
-            get { return GetValue<List<string>>(AllRepresentationsProperty); }
-            set { SetValue(AllRepresentationsProperty, value); }
+            get { return GetValue<RepresentationsUsedTypes>(RepresentationsUsedTypeProperty); }
+            set { SetValue(RepresentationsUsedTypeProperty, value); }
         }
 
-        public static readonly PropertyData AllRepresentationsProperty = RegisterProperty("AllRepresentations", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData RepresentationsUsedTypeProperty = RegisterProperty("RepresentationsUsedType", typeof(RepresentationsUsedTypes), RepresentationsUsedTypes.BlankPage);
 
-        /// <summary>Coded values for all deleted representations.</summary>
-        public List<string> DeletedCodedRepresentations
+        /// <summary>List of all Representations used on the page.</summary>
+        /// <remarks>The IsUsed property can still be set to false, this is a list of all Representations added to the page, 
+        /// the IsUsed property determines if the Representation was also used on the page in a significant fashion.</remarks>
+        public List<UsedRepresentation> RepresentationsUsed
         {
-            get { return GetValue<List<string>>(DeletedCodedRepresentationsProperty); }
-            set { SetValue(DeletedCodedRepresentationsProperty, value); }
+            get { return GetValue<List<UsedRepresentation>>(RepresentationsUsedProperty); }
+            set { SetValue(RepresentationsUsedProperty, value); }
         }
 
-        public static readonly PropertyData DeletedCodedRepresentationsProperty = RegisterProperty("DeletedCodedRepresentations", typeof(List<string>), () => new List<string>());
-
-        /// <summary>Coded values for all final representations.</summary>
-        public List<string> FinalCodedRepresentations
-        {
-            get { return GetValue<List<string>>(FinalCodedRepresentationsProperty); }
-            set { SetValue(FinalCodedRepresentationsProperty, value); }
-        }
-
-        public static readonly PropertyData FinalCodedRepresentationsProperty = RegisterProperty("FinalCodedRepresentations", typeof(List<string>), () => new List<string>());
-
+        public static readonly PropertyData RepresentationsUsedProperty = RegisterProperty("RepresentationsUsed", typeof(List<UsedRepresentation>), () => new List<UsedRepresentation>());
+        
         #region ATagBase Overrides
 
         public override bool IsSingleValueTag => true;
-
-        public string AnalysisCode => $"MR [{string.Join(", ", AllRepresentations)}]";
 
         public override Category Category => Category.Representation;
 
@@ -70,19 +214,24 @@ namespace CLP.Entities
         {
             get
             {
-                if (!AllRepresentations.Any())
+                switch (RepresentationsUsedType)
                 {
-                    var isStrokesUsed = ParentPage.InkStrokes.Any() || ParentPage.History.TrashedInkStrokes.Any();
-                    return isStrokesUsed ? "Ink Only" : "Blank Page";
+                    case RepresentationsUsedTypes.BlankPage:
+                        return "Blank Page";
+                    case RepresentationsUsedTypes.InkOnly:
+                        return "Ink Only";
                 }
 
-                var deletedSection = !DeletedCodedRepresentations.Any() ? string.Empty : string.Format("Deleted Representation(s):\n{0}", string.Join("\n", DeletedCodedRepresentations));
-                var finalSectionDelimiter = DeletedCodedRepresentations.Any() && FinalCodedRepresentations.Any() ? "\n" : string.Empty;
-                var finalSection = !FinalCodedRepresentations.Any()
-                                       ? string.Empty
-                                       : string.Format("{0}Final Representation(s):\n{1}", finalSectionDelimiter, string.Join("\n", FinalCodedRepresentations));
-                var codeSection = AllRepresentations.Count > 1 ? string.Format("\nCode: {0}", AnalysisCode) : string.Empty;
-                return string.Format("{0}{1}{2}", deletedSection, finalSection, codeSection);
+                var deletedRepresentations = RepresentationsUsed.Where(r => !r.IsFinalRepresentation).ToList();
+                var deletedSection = !deletedRepresentations.Any() ? string.Empty : $"Deleted Representation(s):\n{string.Join("\n", deletedRepresentations.Select(r => r.FormattedValue).ToList())}";
+
+                var finalRepresentations = RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
+                var finalSection = !finalRepresentations.Any() ? string.Empty : $"Final Representation(s):\n{string.Join("\n", finalRepresentations.Select(r => r.FormattedValue).ToList())}";
+
+                var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
+
+                var codeSection = AnalysisCodes.Any() ? $"\n\nCodes: {string.Join(", ", AnalysisCodes)}" : string.Empty;
+                return $"{deletedSection}{finalSectionDelimiter}{finalSection}{codeSection}";
             }
         }
 
@@ -92,516 +241,872 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
+        #region Nested Class
+
+        private class PatternPoint
         {
-            var allRepresentations = new List<string>();
-            var deletedCodedRepresentations = new List<string>();
-
-            var stampedObjectGroups = new Dictionary<string, int>();
-            var binGroups = new Dictionary<int, int>();
-            var maxStampedObjectGroups = new Dictionary<string, int>();
-            var jumpGroups = new Dictionary<string, List<NumberLineJumpSize>>();
-            var subArrayGroups = new Dictionary<string, List<string>>();
-            foreach (var semanticEvent in semanticEvents)
+            public PatternPoint()
             {
-                #region Stamps
-
-                if (semanticEvent.CodedObject == Codings.OBJECT_STAMPED_OBJECTS)
-                {
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var stampedObject = objectsChanged.PageObjectsAdded.First() as StampedObject;
-                        if (stampedObject == null)
-                        {
-                            continue;
-                        }
-
-                        var parts = stampedObject.Parts;
-                        var parentStampID = stampedObject.ParentStampID;
-                        var groupID = string.Format("{0} {1}", parts, parentStampID);
-                        if (stampedObjectGroups.ContainsKey(groupID))
-                        {
-                            stampedObjectGroups[groupID]++;
-                        }
-                        else
-                        {
-                            stampedObjectGroups.Add(groupID, 1);
-                        }
-
-                        maxStampedObjectGroups = stampedObjectGroups;
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var stampedObject = objectsChanged.PageObjectsRemoved.First() as StampedObject;
-                        if (stampedObject == null)
-                        {
-                            continue;
-                        }
-
-                        var parts = stampedObject.Parts;
-                        var parentStampID = stampedObject.ParentStampID;
-                        var groupID = string.Format("{0} {1}", parts, parentStampID);
-                        stampedObjectGroups[groupID]--;
-                        if (stampedObjectGroups[groupID] <= 0)
-                        {
-                            stampedObjectGroups.Remove(groupID);
-                        }
-
-                        if (stampedObjectGroups.Keys.Count == 0)
-                        {
-                            // TODO: Ideally, build entirely off info inside semanticEvent.
-                            // Also just use this after the top level for-loop as an end case
-                            // test to generate the final reps used.
-                            foreach (var key in maxStampedObjectGroups.Keys)
-                            {
-                                var groupIDSections = key.Split(' ');
-                                var stampParts = groupIDSections[0];
-                                var obj = Codings.OBJECT_STAMP;
-                                var id = stampParts;
-                                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
-                                var codedValue = string.Format("{0} [{1}{2}]", obj, id, componentSection);
-                                deletedCodedRepresentations.Add(codedValue);
-                                allRepresentations.Add(obj);
-                            }
-                        }
-                    }
-                }
-
-                #endregion // Stamps
-
-                #region Number Line
-
-                if (semanticEvent.CodedObject == Codings.OBJECT_NUMBER_LINE)
-                {
-                    if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP)
-                    {
-                        var jumpSizesChangedHistoryActions = semanticEvent.HistoryActions.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
-                        if (jumpSizesChangedHistoryActions == null ||
-                            !jumpSizesChangedHistoryActions.Any())
-                        {
-                            continue;
-                        }
-
-                        var numberLineID = jumpSizesChangedHistoryActions.First().NumberLineID;
-
-                        var allJumps = new List<NumberLineJumpSize>();
-                        foreach (var historyAction in jumpSizesChangedHistoryActions)
-                        {
-                            allJumps.AddRange(historyAction.JumpsAdded);
-                        }
-
-                        if (!jumpGroups.ContainsKey(numberLineID))
-                        {
-                            jumpGroups.Add(numberLineID, allJumps);
-                        }
-                        else
-                        {
-                            jumpGroups[numberLineID].AddRange(allJumps);
-                        }
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP_ERASE)
-                    {
-                        var jumpSizesChangedHistoryActions = semanticEvent.HistoryActions.Where(h => h is NumberLineJumpSizesChangedHistoryAction).Cast<NumberLineJumpSizesChangedHistoryAction>().ToList();
-                        if (jumpSizesChangedHistoryActions == null ||
-                            !jumpSizesChangedHistoryActions.Any())
-                        {
-                            continue;
-                        }
-
-                        var numberLineID = jumpSizesChangedHistoryActions.First().NumberLineID;
-
-                        var allJumps = new List<NumberLineJumpSize>();
-                        foreach (var historyAction in jumpSizesChangedHistoryActions)
-                        {
-                            allJumps.AddRange(historyAction.JumpsRemoved);
-                        }
-
-                        var jumpsToRemove = (from jump in allJumps
-                                             from currentJump in jumpGroups[numberLineID]
-                                             where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
-                                             select currentJump).ToList();
-
-                        foreach (var jump in jumpsToRemove)
-                        {
-                            // BUG: Natalie page 12 has errors here if you don't check ContainsKey, shouldn't happen.
-                            if (jumpGroups.ContainsKey(numberLineID))
-                            {
-                                jumpGroups[numberLineID].Remove(jump);
-
-                                if (!jumpGroups[numberLineID].Any())
-                                {
-                                    jumpGroups.Remove(numberLineID);
-                                }
-                            }
-                        }
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var numberLine = objectsChanged.PageObjectsRemoved.First() as NumberLine;
-                        if (numberLine == null)
-                        {
-                            continue;
-                        }
-
-                        // TODO: Just like Stamps, use this as end-case to generate final reps
-                        var numberLineID = numberLine.ID;
-
-                        var obj = numberLine.CodedName;
-                        var id = semanticEvent.CodedObjectID;
-                        var components = jumpGroups.ContainsKey(numberLineID) ? NumberLine.ConsolidateJumps(jumpGroups[numberLineID].ToList()) : string.Empty;
-                        var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
-                        var englishValue = string.Empty;
-                        if (!string.IsNullOrEmpty(components))
-                        {
-                            var jumpsInEnglish = new List<string>();
-                            foreach (var codedJump in components.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
-                            {
-                                try
-                                {
-                                    var jumpSegments = codedJump.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-                                    var jumpSize = int.Parse(jumpSegments[0]);
-                                    var jumpRange = jumpSegments[1].Split('-');
-                                    var start = int.Parse(jumpRange[0]);
-                                    var stop = int.Parse(jumpRange[1]);
-                                    var numberOfJumps = (stop - start) / jumpSize;
-                                    var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
-                                    var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
-                                    jumpsInEnglish.Add(jumpInEnglish);
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                            }
-                            englishValue = string.Join("\n  - ", jumpsInEnglish);
-                            if (!string.IsNullOrEmpty(englishValue))
-                            {
-                                englishValue = "\n  - " + englishValue;
-                            }
-                        }
-                        else
-                        {
-                            englishValue = " (no interaction)";
-                        }
-                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
-                        deletedCodedRepresentations.Add(codedValue);
-                        if (!string.IsNullOrEmpty(componentSection))
-                        {
-                            allRepresentations.Add(obj);
-                        }
-                    }
-                }
-
-                #endregion // Number Line
-
-                #region Array
-
-                if (semanticEvent.CodedObject == Codings.OBJECT_ARRAY)
-                {
-                    if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var eventInfo = semanticEvent.EventInformation;
-                        var subArrays = eventInfo.Split(new[] { ", " }, StringSplitOptions.None).ToList();
-                        if (!subArrayGroups.ContainsKey(referenceArrayID))
-                        {
-                            subArrayGroups.Add(referenceArrayID, subArrays);
-                        }
-                        else
-                        {
-                            subArrayGroups[referenceArrayID].AddRange(subArrays);
-                        }
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var eventInfo = semanticEvent.EventInformation;
-                        var subArrays = eventInfo.Split(new[] { ", " }, StringSplitOptions.None).ToList();
-                        foreach (var subArray in subArrays)
-                        {
-                            if (subArrayGroups.ContainsKey(referenceArrayID))
-                            {
-                                if (subArrayGroups[referenceArrayID].Contains(subArray))
-                                {
-                                    subArrayGroups[referenceArrayID].Remove(subArray);
-                                    if (!subArrayGroups[referenceArrayID].Any())
-                                    {
-                                        subArrayGroups.Remove(referenceArrayID);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                    {
-                        var historyAction = semanticEvent.HistoryActions.First();
-                        var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                        if (objectsChanged == null)
-                        {
-                            continue;
-                        }
-
-                        var array = objectsChanged.PageObjectsRemoved.First() as CLPArray;
-                        if (array == null)
-                        {
-                            continue;
-                        }
-
-                        var obj = array.CodedName;
-                        var id = semanticEvent.CodedObjectID;
-                        var referenceArrayID = semanticEvent.ReferencePageObjectID;
-                        var isInteractedWith =
-                            semanticEvents.Where(h => h.ReferencePageObjectID == referenceArrayID)
-                                          .Any(
-                                               h =>
-                                                   h.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || h.EventType == Codings.EVENT_ARRAY_EQN ||
-                                                   h.EventType == Codings.EVENT_ARRAY_SKIP ||
-                                                   (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
-
-                        var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
-
-                        var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
-                        deletedCodedRepresentations.Add(codedValue);
-                        allRepresentations.Add(obj);
-                    }
-                }
-
-                #endregion // Array
+                StartHistoryActionIndex = -1;
+                StartSemanticEventIndex = -1;
+                EndHistoryActionIndex = -1;
+                EndSemanticEventIndex = -1;
             }
 
-            var finalCodedRepresentations = new List<string>();
-            stampedObjectGroups.Clear();
-            foreach (var pageObject in page.PageObjects)
+            public string PageObjectID { get; set; }
+
+            public int StartHistoryActionIndex { get; set; }
+            public int StartSemanticEventIndex { get; set; }
+            public int EndHistoryActionIndex { get; set; }
+            public int EndSemanticEventIndex { get; set; }
+            public string StartEventType { get; set; }
+            public string EndEventType { get; set; }
+        }
+
+        #endregion // Nested Class
+
+        public static RepresentationsUsedTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
+        {
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated);
+
+            var leftRelation = RepresentationCorrectnessTag.GenerateLeftRelationFromPageAnswerDefinition(page);
+            var rightRelation = RepresentationCorrectnessTag.GenerateRightRelationFromPageAnswerDefinition(page);
+            var alternativeRelation = RepresentationCorrectnessTag.GenerateAlternativeRelationFromPageAnswerDefinition(page);
+
+            GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+
+            if (!tag.RepresentationsUsed.Any())
             {
-                var array = pageObject as CLPArray;
-                if (array != null)
+                if (page.InkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID) &&
+                    page.History.TrashedInkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID))
                 {
-                    var obj = array.CodedName;
-                    var id = array.CodedID;
-                    var referenceArrayID = array.ID;
-                    var isInteractedWith =
-                        semanticEvents.Where(h => h.ReferencePageObjectID == referenceArrayID)
-                                      .Any(
-                                           h =>
-                                               h.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || h.EventType == Codings.EVENT_ARRAY_EQN ||
-                                               h.EventType == Codings.EVENT_ARRAY_SKIP ||
-                                               (h.EventType == Codings.EVENT_INK_ADD && h.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
+                    tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
+                }
+                else
+                {
+                    tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
+                }
+            }
+            else
+            {
+                tag.RepresentationsUsedType = RepresentationsUsedTypes.RepresentationsUsed;
+            }
 
-                    var componentSection = !subArrayGroups.ContainsKey(array.ID) ? string.Empty : string.Format(": {0}", string.Join(", ", subArrayGroups[array.ID]));
+            var isMR2STEP = IsMR2STEP(tag);
+            if (isMR2STEP)
+            {
+                tag.AnalysisCodes.Add(Codings.REPRESENTATIONS_MR2STEP);
+            }
 
-                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, isInteractedWith ? string.Empty : " (no ink)");
+            page.AddTag(tag);
+            return tag;
+        }
 
-                    var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
-                    if (!string.IsNullOrEmpty(formattedSkips))
+        public static void GenerateArraysUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        {
+            var patternPoints = new List<PatternPoint>();
+            var completedPatternPoints = new List<PatternPoint>();
+            var subArrayGroups = new Dictionary<string, List<string>>();
+
+            #region Find Pattern Points
+
+            foreach (var semanticEvent in semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_ARRAY))
+            {
+                var arrayID = semanticEvent.ReferencePageObjectID;
+
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
                     {
-                        // HACK: temporary print out of Wrong Dimension analysis
-                        var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-                        var skips = new List<int>();
-                        foreach (var skip in skipStrings)
-                        {
-                            if (string.IsNullOrEmpty(skip))
-                            {
-                                skips.Add(-1);
-                                continue;
-                            }
-
-                            int number;
-                            var isNumber = int.TryParse(skip, out number);
-                            if (isNumber)
-                            {
-                                skips.Add(number);
-                                continue;
-                            }
-
-                            skips.Add(-1);
-                        }
-
-                        var wrongDimensionMatches = 0;
-                        for (int i = 0; i < skips.Count - 1; i++)
-                        {
-                            var currentValue = skips[i];
-                            var nextValue = skips[i + 1];
-                            if (currentValue == -1 ||
-                                nextValue == -1)
-                            {
-                                continue;
-                            }
-                            var difference = nextValue - currentValue;
-                            if (difference == array.Rows &&
-                                array.Rows != array.Columns)
-                            {
-                                wrongDimensionMatches++;
-                            }
-                        }
-
-                        var wrongDimensionText = string.Empty;
-                        var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
-                        if (percentMatchWrongDimensions >= 0.80)
-                        {
-                            wrongDimensionText = ", wrong dimension";
-                        }
-
-                        var skipCodedValue = string.Format("\n  - skip [{0}]{1}", formattedSkips, wrongDimensionText);
-                        codedValue = string.Format("{0}{1}", codedValue, skipCodedValue);
+                        continue;
                     }
 
-                    finalCodedRepresentations.Add(codedValue);
-                    allRepresentations.Add(obj);
+                    var patternPoint = new PatternPoint
+                                       {
+                                           PageObjectID = arrayID,
+                                           StartHistoryActionIndex = objectsChanged.HistoryActionIndex,
+                                           StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                           StartEventType = semanticEvent.EventType
+                                       };
+                    patternPoints.Add(patternPoint);
                 }
-
-                var numberLine = pageObject as NumberLine;
-                if (numberLine != null)
+                else if (semanticEvent.EventType == Codings.EVENT_CUT)
                 {
-                    var obj = numberLine.CodedName;
-                    var id = numberLine.CodedID;
-                    var components = NumberLine.ConsolidateJumps(numberLine.JumpSizes.ToList());
-                    var componentSection = string.IsNullOrEmpty(components) ? string.Empty : string.Format(": {0}", components);
-                    var englishValue = string.Empty;
-                    if (!string.IsNullOrEmpty(components))
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var pageObjectsCut = historyAction as PageObjectCutHistoryAction;
+                    if (pageObjectsCut == null)
                     {
-                        var jumpsInEnglish = new List<string>();
-                        foreach (var codedJump in components.Split(new[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            try
-                            {
-                                var jumpSegments = codedJump.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-                                var jumpSize = int.Parse(jumpSegments[0]);
-                                var jumpRange = jumpSegments[1].Split('-');
-                                var start = int.Parse(jumpRange[0]);
-                                var stop = int.Parse(jumpRange[1]);
-                                var numberOfJumps = (stop - start) / jumpSize;
-                                var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
-                                var jumpInEnglish = string.Format("{0} {1} of {2}", numberOfJumps, jumpString, jumpSize);
-                                jumpsInEnglish.Add(jumpInEnglish);
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-                        englishValue = string.Join("\n  - ", jumpsInEnglish);
-                        if (!string.IsNullOrEmpty(englishValue))
-                        {
-                            englishValue = "\n  - " + englishValue;
-                        }
+                        continue;
+                    }
+
+                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
+                    if (patternPoint != null)
+                    {
+                        patternPoint.EndHistoryActionIndex = pageObjectsCut.HistoryActionIndex;
+                        patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                        patternPoint.EndEventType = semanticEvent.EventType;
+                        patternPoints.Remove(patternPoint);
+                        completedPatternPoints.Add(patternPoint);
+                    }
+
+                    foreach (var halvedArrayID in pageObjectsCut.HalvedPageObjectIDs)
+                    {
+                        var patternPointForArrayHalf = new PatternPoint
+                                                       {
+                                                           PageObjectID = halvedArrayID,
+                                                           StartHistoryActionIndex = pageObjectsCut.HistoryActionIndex,
+                                                           StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                                           StartEventType = semanticEvent.EventType
+                                                       };
+                        patternPoints.Add(patternPointForArrayHalf);
+                    }
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_SNAP)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var arraySnap = historyAction as CLPArraySnapHistoryAction;
+                    if (arraySnap == null)
+                    {
+                        continue;
+                    }
+
+                    var persistingArrayID = arraySnap.PersistingArrayID;
+                    var patternPointForPersistingArray = patternPoints.FirstOrDefault(p => p.PageObjectID == persistingArrayID);
+                    if (patternPointForPersistingArray != null)
+                    {
+                        patternPointForPersistingArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
+                        patternPointForPersistingArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                        patternPointForPersistingArray.EndEventType = semanticEvent.EventType;
+                        patternPoints.Remove(patternPointForPersistingArray);
+                        completedPatternPoints.Add(patternPointForPersistingArray);
+                    }
+
+                    var snappedArrayID = arraySnap.SnappedArrayID;
+                    var patternPointForSnappedArray = patternPoints.FirstOrDefault(p => p.PageObjectID == snappedArrayID);
+                    if (patternPointForSnappedArray != null)
+                    {
+                        patternPointForSnappedArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
+                        patternPointForSnappedArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                        patternPointForSnappedArray.EndEventType = semanticEvent.EventType;
+                        patternPoints.Remove(patternPointForSnappedArray);
+                        completedPatternPoints.Add(patternPointForSnappedArray);
+                    }
+
+                    var patternPointForNewArray = new PatternPoint
+                                                  {
+                                                      PageObjectID = persistingArrayID,
+                                                      StartHistoryActionIndex = arraySnap.HistoryActionIndex,
+                                                      StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                                      StartEventType = semanticEvent.EventType
+                                                  };
+                    patternPoints.Add(patternPointForNewArray);
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
+                    {
+                        continue;
+                    }
+
+                    var eventInfo = semanticEvent.EventInformation;
+                    var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
+                    if (!subArrayGroups.ContainsKey(arrayID))
+                    {
+                        subArrayGroups.Add(arrayID, subArrays);
                     }
                     else
                     {
-                        englishValue = " (no interaction)";
+                        subArrayGroups[arrayID].AddRange(subArrays);
                     }
-                    var codedValue = string.Format("{0} [{1}{2}]{3}", obj, id, componentSection, englishValue);
-                    finalCodedRepresentations.Add(codedValue);
-                    allRepresentations.Add(obj);
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
+                    {
+                        continue;
+                    }
+
+                    var eventInfo = semanticEvent.EventInformation;
+                    var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
+                    foreach (var subArray in subArrays)
+                    {
+                        if (!subArrayGroups.ContainsKey(arrayID))
+                        {
+                            continue;
+                        }
+
+                        if (!subArrayGroups[arrayID].Contains(subArray))
+                        {
+                            continue;
+                        }
+
+                        subArrayGroups[arrayID].Remove(subArray);
+                        if (!subArrayGroups[arrayID].Any())
+                        {
+                            subArrayGroups.Remove(arrayID);
+                        }
+                    }
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
+                    {
+                        continue;
+                    }
+
+                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
+                    if (patternPoint == null)
+                    {
+                        continue;
+                    }
+
+                    patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
+                    patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                    patternPoint.EndEventType = semanticEvent.EventType;
+                    patternPoints.Remove(patternPoint);
+                    completedPatternPoints.Add(patternPoint);
+                }
+            }
+
+            #endregion // Find Pattern Points
+
+            foreach (var patternPoint in patternPoints)
+            {
+                patternPoint.EndHistoryActionIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
+                patternPoint.EndSemanticEventIndex = semanticEvents.Last().SemanticEventIndex;
+                completedPatternPoints.Add(patternPoint);
+            }
+
+            foreach (var patternPoint in completedPatternPoints)
+            {
+                var arrayID = patternPoint.PageObjectID;
+                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
+                if (array == null)
+                {
+                    continue;
                 }
 
-                var stampedObject = pageObject as StampedObject;
-                if (stampedObject != null)
+                var usedRepresentation = new UsedRepresentation();
+
+                #region Basic Representation Info
+
+                if (string.IsNullOrWhiteSpace(patternPoint.EndEventType))
                 {
-                    var parts = stampedObject.Parts;
-                    var parentStampID = stampedObject.ParentStampID;
-                    var groupID = string.Format("{0} {1}", parts, parentStampID);
-                    if (stampedObjectGroups.ContainsKey(groupID))
+                    usedRepresentation.IsFinalRepresentation = true;
+                }
+
+                usedRepresentation.CodedObject = Codings.OBJECT_ARRAY;
+                usedRepresentation.CodedID = array.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
+                usedRepresentation.IsInteractedWith =
+                    semanticEvents.Where(e => e.ReferencePageObjectID == arrayID)
+                                  .Any(
+                                       e =>
+                                           e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || e.EventType == Codings.EVENT_ARRAY_EQN ||
+                                           (e.EventType == Codings.EVENT_INK_ADD && e.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
+                usedRepresentation.IsUsed = true;
+
+                if (subArrayGroups.ContainsKey(arrayID))
+                {
+                    usedRepresentation.RepresentationInformation = string.Join(", ", subArrayGroups[arrayID]);
+                }
+
+                if (patternPoint.EndEventType == Codings.EVENT_CUT)
+                {
+                    usedRepresentation.AdditionalInformation.Add("Deleted by Cut");
+                }
+
+                if (patternPoint.EndEventType == Codings.EVENT_ARRAY_SNAP)
+                {
+                    usedRepresentation.AdditionalInformation.Add("Deleted by Snap");
+                }
+
+                if (patternPoint.StartEventType == Codings.EVENT_CUT)
+                {
+                    usedRepresentation.AdditionalInformation.Add("Created by Cut");
+                }
+
+                if (patternPoint.StartEventType == Codings.EVENT_ARRAY_SNAP)
+                {
+                    usedRepresentation.AdditionalInformation.Add("Created by Snap");
+                }
+
+                var mostRecentSkipEvent =
+                    semanticEvents.LastOrDefault(
+                                                 e =>
+                                                     e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE));
+
+                if (mostRecentSkipEvent != null)
+                {
+                    var eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
+                    if (eventInfoParts.Length == 2)
                     {
-                        stampedObjectGroups[groupID]++;
+                        var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+                        if (formattedInterpretationParts.Length == 2)
+                        {
+                            var formattedSkips = formattedInterpretationParts[1];
+                            if (!string.IsNullOrEmpty(formattedSkips))
+                            {
+                                // HACK: temporary print out of Wrong Dimension analysis
+                                var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                                var skips = new List<int>();
+                                foreach (var skip in skipStrings)
+                                {
+                                    if (string.IsNullOrEmpty(skip))
+                                    {
+                                        skips.Add(-1);
+                                        continue;
+                                    }
+
+                                    int number;
+                                    var isNumber = int.TryParse(skip, out number);
+                                    if (isNumber)
+                                    {
+                                        skips.Add(number);
+                                        continue;
+                                    }
+
+                                    skips.Add(-1);
+                                }
+
+                                var wrongDimensionMatches = 0;
+                                for (int i = 0; i < skips.Count - 1; i++)
+                                {
+                                    var currentValue = skips[i];
+                                    var nextValue = skips[i + 1];
+                                    if (currentValue == -1 ||
+                                        nextValue == -1)
+                                    {
+                                        continue;
+                                    }
+                                    var difference = nextValue - currentValue;
+                                    if (difference == array.Rows &&
+                                        array.Rows != array.Columns)
+                                    {
+                                        wrongDimensionMatches++;
+                                    }
+                                }
+
+                                var wrongDimensionText = string.Empty;
+                                var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                                if (percentMatchWrongDimensions >= 0.80)
+                                {
+                                    wrongDimensionText = ", wrong dimension";
+                                }
+
+                                var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
+                                usedRepresentation.AdditionalInformation.Add(skipCodedValue);
+                            }
+                        }
+                    }
+                }
+
+                #endregion // Basic Representation Info
+
+                #region Representation Correctness
+
+                // TODO: One-to-one comparison of each array at pattern points. Could take pattern point created by cut and consider those cut arrays as one?
+
+                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+                var representationCorrectness = Correctness.Unknown;
+                var representationRelation = RepresentationCorrectnessTag.GenerateArrayRelation(array, patternPoint.EndHistoryActionIndex);
+
+                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+
+                if (leftCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (rightCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (alternativeCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (leftCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (rightCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (leftCorrectness == Correctness.Incorrect ||
+                         rightCorrectness == Correctness.Incorrect ||
+                         alternativeCorrectness == Correctness.Incorrect)
+                {
+                    representationCorrectness = Correctness.Incorrect;
+                }
+
+                usedRepresentation.Correctness = representationCorrectness;
+                usedRepresentation.MatchedRelationSide = matchedRelationSide;
+                if (representationRelation.IsSwapped)
+                {
+                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
+                }
+
+                #endregion // Representation Correctness
+
+                tag.RepresentationsUsed.Add(usedRepresentation);
+            }
+
+            #region Static Skips
+
+            //var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
+
+
+            #endregion // Static Skips
+        }
+
+        public static void GenerateNumberLinesUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        {
+            var patternPoints = new List<PatternPoint>();
+            var jumpGroups = new Dictionary<string, List<NumberLineJumpSize>>();
+            var jumpEraseCount = new Dictionary<string, int>();
+
+            #region Find Pattern Points
+
+            foreach (var semanticEvent in semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE))
+            {
+                var numberLineID = semanticEvent.ReferencePageObjectID;
+
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
+                    {
+                        continue;
+                    }
+
+                    var patternPoint = new PatternPoint
+                                       {
+                                           PageObjectID = numberLineID,
+                                           StartHistoryActionIndex = objectsChanged.HistoryActionIndex,
+                                           StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                           StartEventType = semanticEvent.EventType
+                                       };
+                    patternPoints.Add(patternPoint);
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP)
+                {
+                    var jumpSizesChangedHistoryActions = semanticEvent.HistoryActions.OfType<NumberLineJumpSizesChangedHistoryAction>().ToList();
+                    if (!jumpSizesChangedHistoryActions.Any())
+                    {
+                        continue;
+                    }
+
+                    var allJumps = new List<NumberLineJumpSize>();
+                    foreach (var historyAction in jumpSizesChangedHistoryActions)
+                    {
+                        allJumps.AddRange(historyAction.JumpsAdded);
+                    }
+
+                    if (!jumpGroups.ContainsKey(numberLineID))
+                    {
+                        jumpGroups.Add(numberLineID, allJumps);
                     }
                     else
                     {
-                        stampedObjectGroups.Add(groupID, 1);
+                        jumpGroups[numberLineID].AddRange(allJumps);
+                    }
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP_ERASE)
+                {
+                    var jumpSizesChangedHistoryActions = semanticEvent.HistoryActions.OfType<NumberLineJumpSizesChangedHistoryAction>().ToList();
+                    if (!jumpSizesChangedHistoryActions.Any())
+                    {
+                        continue;
+                    }
+
+                    var allJumps = new List<NumberLineJumpSize>();
+                    foreach (var historyAction in jumpSizesChangedHistoryActions)
+                    {
+                        allJumps.AddRange(historyAction.JumpsRemoved);
+                    }
+
+                    var jumpsToRemove = (from jump in allJumps
+                                         from currentJump in jumpGroups[numberLineID]
+                                         where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
+                                         select currentJump).ToList();
+
+                    if (!jumpEraseCount.ContainsKey(numberLineID))
+                    {
+                        jumpEraseCount.Add(numberLineID, 1);
+                    }
+                    jumpEraseCount[numberLineID] += jumpsToRemove.Count;
+
+                    foreach (var jump in jumpsToRemove)
+                    {
+                        if (!jumpGroups.ContainsKey(numberLineID))
+                        {
+                            continue;
+                        }
+
+                        jumpGroups[numberLineID].Remove(jump);
+                        if (!jumpGroups[numberLineID].Any())
+                        {
+                            jumpGroups.Remove(numberLineID);
+                        }
+                    }
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
+                {
+                    var historyAction = semanticEvent.FirstHistoryAction;
+                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
+                    if (objectsChanged == null)
+                    {
+                        continue;
+                    }
+
+                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == numberLineID);
+                    if (patternPoint == null)
+                    {
+                        continue;
+                    }
+
+                    patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
+                    patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                    patternPoint.EndEventType = semanticEvent.EventType;
+                }
+            }
+
+            #endregion // Find Pattern Points
+
+            foreach (var patternPoint in patternPoints)
+            {
+                var numberLineID = patternPoint.PageObjectID;
+                var numberLine = page.GetPageObjectByIDOnPageOrInHistory(numberLineID) as NumberLine;
+                if (numberLine == null)
+                {
+                    continue;
+                }
+
+                var usedRepresentation = new UsedRepresentation();
+
+                #region Basic Representation Info
+
+                usedRepresentation.IsFinalRepresentation = false;
+                if (patternPoint.EndHistoryActionIndex == -1)
+                {
+                    patternPoint.EndHistoryActionIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
+                    patternPoint.EndSemanticEventIndex = semanticEvents.Last().SemanticEventIndex;
+                    usedRepresentation.IsFinalRepresentation = true;
+                }
+
+                usedRepresentation.CodedObject = Codings.OBJECT_NUMBER_LINE;
+                usedRepresentation.CodedID = numberLine.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
+                usedRepresentation.IsInteractedWith =
+                    semanticEvents.Where(e => e.ReferencePageObjectID == numberLineID).Any(e => e.EventType == Codings.EVENT_NUMBER_LINE_JUMP || e.EventType == Codings.EVENT_NUMBER_LINE_CHANGE);
+                usedRepresentation.IsUsed = jumpGroups.ContainsKey(numberLineID);
+                if (usedRepresentation.IsUsed)
+                {
+                    usedRepresentation.RepresentationInformation = NumberLine.ConsolidateJumps(jumpGroups[numberLineID].ToList());
+                }
+
+                if (!string.IsNullOrEmpty(usedRepresentation.RepresentationInformation))
+                {
+                    var jumpsInEnglish = new List<string>();
+                    foreach (var codedJump in usedRepresentation.RepresentationInformation.Split("; ", StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        try
+                        {
+                            var jumpSegments = codedJump.Split(", ", StringSplitOptions.RemoveEmptyEntries);
+                            var jumpSize = int.Parse(jumpSegments[0]);
+                            var jumpRange = jumpSegments[1].Split('-');
+                            var start = int.Parse(jumpRange[0]);
+                            var stop = int.Parse(jumpRange[1]);
+                            var numberOfJumps = (stop - start) / jumpSize;
+                            var jumpString = numberOfJumps == 1 ? "jump" : "jumps";
+                            var jumpInEnglish = $"{numberOfJumps} {jumpString} of {jumpSize}";
+                            jumpsInEnglish.Add(jumpInEnglish);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    usedRepresentation.AdditionalInformation.AddRange(jumpsInEnglish);
+                }
+
+                if (jumpEraseCount.ContainsKey(numberLineID) &&
+                    jumpEraseCount[numberLineID] > 1)
+                {
+                    usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_NLJE);
+                }
+
+                #endregion // Basic Representation Info
+
+                #region Representation Correctness
+
+                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+                var representationCorrectness = Correctness.Unknown;
+                if (usedRepresentation.IsUsed)
+                {
+                    var jumpSizes = jumpGroups[numberLineID];
+                    var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
+
+                    var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                    var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                    var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+
+                    if (leftCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (rightCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (alternativeCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (leftCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (rightCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (alternativeCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (leftCorrectness == Correctness.Incorrect ||
+                             rightCorrectness == Correctness.Incorrect ||
+                             alternativeCorrectness == Correctness.Incorrect)
+                    {
+                        representationCorrectness = Correctness.Incorrect;
+                    }
+                }
+                else
+                {
+                    var codedID = usedRepresentation.CodedID;
+
+                    if (leftRelation?.PageDefinition is DivisionRelationDefinitionTag)
+                    {
+                        var product = leftRelation.Product;
+                        double numberLineEndPoint;
+                        if (double.TryParse(codedID, out numberLineEndPoint) &&
+                            Math.Abs(product - numberLineEndPoint) < 0.0001)
+                        {
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                        }
+                    }
+
+                    if (rightRelation?.PageDefinition is DivisionRelationDefinitionTag)
+                    {
+                        var product = rightRelation.Product;
+                        double numberLineEndPoint;
+                        if (double.TryParse(codedID, out numberLineEndPoint) &&
+                            Math.Abs(product - numberLineEndPoint) < 0.0001)
+                        {
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                        }
+                    }
+
+                    if (alternativeRelation?.PageDefinition is DivisionRelationDefinitionTag)
+                    {
+                        var product = alternativeRelation.Product;
+                        double numberLineEndPoint;
+                        if (double.TryParse(codedID, out numberLineEndPoint) &&
+                            Math.Abs(product - numberLineEndPoint) < 0.0001)
+                        {
+                            usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                        }
                     }
                 }
 
-                var bin = pageObject as Bin;
-                if (bin != null)
+                usedRepresentation.Correctness = representationCorrectness;
+                usedRepresentation.MatchedRelationSide = matchedRelationSide;
+
+                #endregion // Representation Correctness
+
+                tag.RepresentationsUsed.Add(usedRepresentation);
+            }
+        }
+
+        public static void GenerateStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        {
+            var stampedObjectGroups = new Dictionary<int,int>();  // <Parts,Number of StampedObjects with Parts Value>
+            var parentStampIDsOfParts = new Dictionary<int,List<string>>();
+            foreach (var stampedObject in page.PageObjects.OfType<StampedObject>())
+            {
+                var parts = stampedObject.Parts;
+                if (stampedObjectGroups.ContainsKey(parts))
                 {
-                    if (binGroups.ContainsKey(bin.Parts))
-                    {
-                        binGroups[bin.Parts]++;
-                    }
-                    else
-                    {
-                        binGroups.Add(bin.Parts, 1);
-                    }
+                    stampedObjectGroups[parts]++;
+                }
+                else
+                {
+                    stampedObjectGroups.Add(parts, 1);
+                }
+
+                if (parentStampIDsOfParts.ContainsKey(parts))
+                {
+                    parentStampIDsOfParts[parts].Add(stampedObject.ParentStampID);
+                }
+                else
+                {
+                    var parentStampIDs = new List<string>
+                                         {
+                                             stampedObject.ParentStampID
+                                         };
+                    parentStampIDsOfParts.Add(parts, parentStampIDs);
                 }
             }
 
             foreach (var key in stampedObjectGroups.Keys)
             {
-                var groupIDSections = key.Split(' ');
-                var parts = groupIDSections[0];
-                var obj = Codings.OBJECT_STAMP;
-                var id = parts;
-                var componentSection = string.Format(": {0} images", stampedObjectGroups[key]);
-                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
-                var englishValue = string.Format("{0} {1} of {2}", stampedObjectGroups[key], groupString, parts);
-                var codedValue = string.Format("{0} [{1}{2}]\n  - {3}", obj, id, componentSection, englishValue);
-                finalCodedRepresentations.Add(codedValue);
-                allRepresentations.Add(obj);
-            }
+                var parts = key;
+                var numberOfStampedObjects = stampedObjectGroups[key];
 
-            if (binGroups.Keys.Any())
-            {
-                var id = 0;
-                var obj = Codings.OBJECT_BINS;
-                var englishValues = new List<string>();
-                foreach (var key in binGroups.Keys)
+                var usedRepresentation = new UsedRepresentation();
+
+                #region Basic Representation Info
+
+                usedRepresentation.IsFinalRepresentation = true;
+
+                usedRepresentation.CodedObject = Codings.OBJECT_STAMP;
+                usedRepresentation.CodedID = parts.ToString();
+                usedRepresentation.IsInteractedWith = true;
+                usedRepresentation.IsUsed = true;
+                usedRepresentation.RepresentationInformation = $"{numberOfStampedObjects} image(s)";
+
+                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
+                var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
+                usedRepresentation.AdditionalInformation.Add(englishValue);
+
+                var parentStampsCount = parentStampIDsOfParts[key].Distinct().Count();
+                var parentStampInfo = $"From {parentStampsCount} Stamps";
+                usedRepresentation.AdditionalInformation.Add(parentStampInfo);
+
+                #endregion // Basic Representation Info
+
+                #region Representation Correctness
+
+                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+                var representationCorrectness = Correctness.Unknown;
+                if (usedRepresentation.IsUsed)
                 {
-                    var parts = key;
-                    var count = binGroups[key];
-                    id += count;
-                    var binString = count == 1 ? "bin" : "bins";
-                    var englishValue = string.Format("{0} {1} of {2}", count, binString, parts);
-                    englishValues.Add(englishValue);
+                    var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
+
+                    var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                    var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                    var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+
+                    if (leftCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (rightCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (alternativeCorrectness == Correctness.Correct)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.Correct;
+                    }
+                    else if (leftCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (rightCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (alternativeCorrectness == Correctness.PartiallyCorrect)
+                    {
+                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                        representationCorrectness = Correctness.PartiallyCorrect;
+                    }
+                    else if (leftCorrectness == Correctness.Incorrect ||
+                             rightCorrectness == Correctness.Incorrect ||
+                             alternativeCorrectness == Correctness.Incorrect)
+                    {
+                        representationCorrectness = Correctness.Incorrect;
+                    }
                 }
 
-                var formattedEnglishValue = string.Join("\n  - ", englishValues);
-                var codedValue = string.Format("{0} [{1}]\n  - {2}", obj, id, formattedEnglishValue);
-                finalCodedRepresentations.Add(codedValue);
-                allRepresentations.Add(obj);
+                usedRepresentation.Correctness = representationCorrectness;
+                usedRepresentation.MatchedRelationSide = matchedRelationSide;
+
+                #endregion // Representation Correctness
+
+                tag.RepresentationsUsed.Add(usedRepresentation);
+            }
+        }
+
+        public static bool IsMR2STEP(RepresentationsUsedTag tag)
+        {
+            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+
+            var unmatchedRepresentations =
+                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE && r.Correctness == Correctness.Incorrect).Select(r => r.CodedObject).Distinct().ToList();
+
+            // TODO: Doesn't handle altReps
+
+            if (!leftSideRepresentations.Any() ||
+                !rightSideRepresentations.Any())
+            {
+                return false;
             }
 
-            allRepresentations = allRepresentations.Distinct().ToList();
-            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated, allRepresentations, deletedCodedRepresentations, finalCodedRepresentations);
-            page.AddTag(tag);
+            foreach (var leftSideRepresentation in leftSideRepresentations)
+            {
+                if (!rightSideRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+
+                if (unmatchedRepresentations.Any() &&
+                    !unmatchedRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion // Static Methods
