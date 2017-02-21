@@ -14,6 +14,11 @@ namespace Classroom_Learning_Partner.Services
             var analysisRows = new List<string>();
             foreach (var page in notebook.Pages)
             {
+                //if (page.PageNumber != 276)
+                //{
+                //    continue;
+                //}
+
                 HistoryAnalysis.GenerateSemanticEvents(page);
                 var analysisEntry = GenerateAnalysisEntryForPage(page);
                 var analysisRow = analysisEntry.BuildEntryLine();
