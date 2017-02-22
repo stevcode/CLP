@@ -149,7 +149,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public bool IsAutoSaveOn { get; set; } = true;
+        public bool IsAutoSaveOn { get; set; } = false;
 
         #endregion // Cache Properties
 
