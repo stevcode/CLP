@@ -62,8 +62,8 @@
             <Button Content="Delete This Page"
                     Command="{Binding DeletePageCommand}" />
 
-            <Button Content="Differentiate This Page"
-                    Command="{Binding DifferentiatePageCommand}" />
+            <!--<Button Content="Differentiate This Page"
+                    Command="{Binding DifferentiatePageCommand}" />-->
 
             <!--<Rectangle Height="1"
                        Margin="1 5"

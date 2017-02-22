@@ -284,7 +284,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Command="{Binding EditStudentGroupsCommand}"
+            <!--<Button Command="{Binding EditStudentGroupsCommand}"
                     Height="84"
                     Margin="26 20"
                     HorizontalAlignment="Left"
@@ -298,7 +298,7 @@
                     <TextBlock Text="Edit Student Groups" />
 
                 </StackPanel>
-            </Button>
+            </Button>-->
 
         </StackPanel>
 
