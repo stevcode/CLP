@@ -1757,6 +1757,11 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
+            if (page.Owner.ID == Person.AUTHOR_ID)
+            {
+                page.History.ClearNonAnimationHistory();
+            }
+
             var entires = new List<ZipEntrySaver>
                           {
                               new ZipEntrySaver(page, notebook),
