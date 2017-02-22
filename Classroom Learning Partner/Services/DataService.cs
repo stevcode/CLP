@@ -149,7 +149,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public bool IsAutoSaveOn { get; set; } = false;
+        public bool IsAutoSaveOn { get; set; } = true;
 
         #endregion // Cache Properties
 
@@ -1755,6 +1755,11 @@ namespace Classroom_Learning_Partner.Services
             if (!File.Exists(page.ContainerZipFilePath))
             {
                 return;
+            }
+
+            if (page.Owner.ID == Person.AUTHOR_ID)
+            {
+                page.History.ClearNonAnimationHistory();
             }
 
             var entires = new List<ZipEntrySaver>

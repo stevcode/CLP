@@ -114,7 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
             MovePageToCommand = new Command(OnMovePageToCommandExecute, OnMovePageToCanExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute);
-            TrimPageCommand = new Command(OnTrimPageCommandExecute);
+            TrimPageCommand = new Command(OnTrimPageCommandExecute, OnTrimPageCanExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
             DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute, OnDeletePageCanExecute);
@@ -196,6 +196,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Height = CLPPage.LANDSCAPE_HEIGHT;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
+
+            RaisePropertyChanged(nameof(CurrentPage));
         }
 
         /// <summary>Moves the CurrentPage Up in the notebook.</summary>
@@ -314,6 +316,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.Height += PAGE_INCREASE_AMOUNT;
             }
 
+            RaisePropertyChanged(nameof(CurrentPage));
+
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
@@ -336,6 +340,30 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnTrimPageCommandExecute()
         {
             CurrentPage.TrimPage();
+        }
+
+        private bool OnTrimPageCanExecute()
+        {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+
+            var lowestY = CurrentPage.PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] { 0 }).Max();
+            foreach (var bounds in CurrentPage.InkStrokes.Select(s => s.GetBounds()))
+            {
+                if (bounds.Bottom >= CurrentPage.Height)
+                {
+                    lowestY = Math.Max(lowestY, CurrentPage.Height);
+                    break;
+                }
+                lowestY = Math.Max(lowestY, bounds.Bottom);
+            }
+
+            var defaultHeight = Math.Abs(CurrentPage.Width - CLPPage.LANDSCAPE_WIDTH) < .000001 ? CLPPage.LANDSCAPE_HEIGHT : CLPPage.PORTRAIT_HEIGHT;
+
+            var newHeight = Math.Max(defaultHeight, lowestY);
+            return newHeight < CurrentPage.Height;
         }
 
         /// <summary>Completely clears a page of ink strokes and pageObjects.</summary>

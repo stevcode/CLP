@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 const int LIMIT = NumberLine.NUMBER_LINE_MAX_SIZE + 1;
-                MessageBox.Show("You need to end at a number less than " + LIMIT, "Oops");
+                MessageBox.Show($"You need to end at a number greater than 0 less than {LIMIT}.", "Oops");
             }
         }
 
