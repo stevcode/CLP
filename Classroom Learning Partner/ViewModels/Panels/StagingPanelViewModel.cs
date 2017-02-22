@@ -22,10 +22,10 @@ namespace Classroom_Learning_Partner.ViewModels
         //PageNumber,   //Hack: For Demo
         SubmissionTime,
         RepresentationType,
-        RepresentationCorrectness,
-        AnswerCorrectness,
+        //RepresentationCorrectness,
+        //FinalAnswerCorrectness,
         OverallCorrectness,
-        AnswerBeforeRepresentation,
+        //AnswerBeforeRepresentation,
         //TroubleWithFactorPairs,        //Hack: For Demo
         //TroubleWithRemainders,
         //TroubleWithDivision,
@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription RepresentationTypeGroup = new PropertyGroupDescription("RepresentationType");
 
         private static readonly PropertyGroupDescription RepresentationCorrectnessGroup = new PropertyGroupDescription("RepresentationCorrectness");
-        private static readonly PropertyGroupDescription AnswerCorrectnessGroup = new PropertyGroupDescription("AnswerCorrectness");
+        private static readonly PropertyGroupDescription AnswerCorrectnessGroup = new PropertyGroupDescription("FinalAnswerCorrectness");
         private static readonly PropertyGroupDescription ABRGroup = new PropertyGroupDescription("ABR");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Ascending);
@@ -79,7 +79,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription RepresentationTypeDescendingSort = new SortDescription("RepresentationType", ListSortDirection.Descending);
 
         private static readonly SortDescription RepresentationCorrectnessAscendingSort = new SortDescription("RepresentationCorrectness", ListSortDirection.Ascending);
-        private static readonly SortDescription AnswerCorrectnessAscendingSort = new SortDescription("AnswerCorrectness", ListSortDirection.Ascending);
+        private static readonly SortDescription AnswerCorrectnessAscendingSort = new SortDescription("FinalAnswerCorrectness", ListSortDirection.Ascending);
         private static readonly SortDescription ABRAscendingSort = new SortDescription("ABR", ListSortDirection.Ascending);
         private static readonly SortDescription ARICAscendingSort = new SortDescription("ARIC", ListSortDirection.Ascending);
 
@@ -456,15 +456,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.RepresentationType:
                     ApplySortAndGroupByRepresentationType();
                     break;
-                case SortAndGroupTypes.RepresentationCorrectness:
-                    ApplySortAndGroupByRepresentationCorrectness();
-                    break;
-                case SortAndGroupTypes.AnswerCorrectness:
-                    ApplySortAndGroupByAnswerCorrectness();
-                    break;
-                case SortAndGroupTypes.AnswerBeforeRepresentation:
-                    ApplySortAndGroupByABR();
-                    break;
+                //case SortAndGroupTypes.RepresentationCorrectness:
+                //    ApplySortAndGroupByRepresentationCorrectness();
+                //    break;
+                //case SortAndGroupTypes.FinalAnswerCorrectness:
+                //    ApplySortAndGroupByAnswerCorrectness();
+                //    break;
+                //case SortAndGroupTypes.AnswerBeforeRepresentation:
+                //    ApplySortAndGroupByABR();
+                //    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
