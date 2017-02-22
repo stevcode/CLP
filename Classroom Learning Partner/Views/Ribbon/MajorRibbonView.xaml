@@ -238,7 +238,7 @@
                                                      LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
                                                      IsContextButton="True" />
 
-                        <customControls:RibbonButton Text="Add New Animation Page"
+                        <!--<customControls:RibbonButton Text="Add New Animation Page"
                                                      Command="{Binding AddNewAnimationPageCommand}"
                                                      LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
                                                      IsContextButton="True" />
@@ -248,7 +248,7 @@
                                                            IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
                                                            IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                            LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
-                                                           IsContextButton="True" />
+                                                           IsContextButton="True" />-->
 
                         <customControls:ToggleRibbonButton UnCheckedText="Show Page Replay"
                                                            CheckedText="Hide Page Replay"
