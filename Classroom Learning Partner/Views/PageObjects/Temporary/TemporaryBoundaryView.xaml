@@ -4,7 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com">
 
     <Grid>
-        <!--<Rectangle HorizontalAlignment="Center"
+        <Rectangle HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    IsHitTestVisible="False"
                    Width="{Binding Width}"
@@ -13,9 +13,9 @@
                    Fill="PaleVioletRed"
                    Stroke="PaleVioletRed"
                    StrokeThickness="1"
-                   Stretch="Fill" />-->
+                   Stretch="Fill" />
 
-        <Rectangle HorizontalAlignment="Center"
+        <!--<Rectangle HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    IsHitTestVisible="False"
                    Width="{Binding Width}"
@@ -24,9 +24,9 @@
                    Stroke="Black"
                    StrokeDashArray="6 2"
                    StrokeThickness="3"
-                   Stretch="Fill" />
+                   Stretch="Fill" />-->
 
-        <!--<Canvas ClipToBounds="False">
+        <Canvas ClipToBounds="False">
             <TextBox Text="{Binding RegionText}"
                      Background="White"
                      Opacity="0.8"
@@ -35,7 +35,7 @@
                      Margin="0 -28 0 0"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Top" />
-        </Canvas>-->
+        </Canvas>
 
     </Grid>
 

@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner
 {
     public partial class ConversionService
     {
-        public const bool IS_LARGE_CACHE = true;
+        public const bool IS_LARGE_CACHE = false;
 
         public ConversionService() { }
 
