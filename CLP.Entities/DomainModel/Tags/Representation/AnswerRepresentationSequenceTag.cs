@@ -141,16 +141,26 @@ namespace CLP.Entities
 
             // ARA
             var startItem = string.Empty;
+            var isRepresentationUsedAfterAnswer = false;
             foreach (var item in sequence)
             {
                 var isItemAnswer = item == "A-COR" || item == "A-INC";
+                if (!isItemAnswer)
+                {
+                    if (!string.IsNullOrWhiteSpace(startItem))
+                    {
+                        isRepresentationUsedAfterAnswer = true;
+                    }
+                    continue;
+                }
+                
                 if (string.IsNullOrWhiteSpace(startItem))
                 {
                     startItem = item;
                     continue;
                 }
 
-                if (!isItemAnswer)
+                if (!isRepresentationUsedAfterAnswer)
                 {
                     continue;
                 }
@@ -161,18 +171,26 @@ namespace CLP.Entities
                 if (isStartCOR && isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_COR_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (!isStartCOR && !isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_INC_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (isStartCOR && !isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_INC_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (!isStartCOR && isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_COR_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
             }
 
