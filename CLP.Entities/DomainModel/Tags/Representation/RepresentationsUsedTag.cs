@@ -131,7 +131,7 @@ namespace CLP.Entities
                 //      - Correct, LS
                 //      - additional info
                 //      - additional info
-                //      - Analysis Codes:
+                //      - Codes:
 
                 var header = $"{CodedObject} [{CodedID}] {RepresentationInformation}";
                 var sections = new List<string>();
@@ -155,13 +155,13 @@ namespace CLP.Entities
                 sections.AddRange(AdditionalInformation);
 
                 var formattedAnalysisCodes = string.Join(", ", AnalysisCodes);
-                var formattedAnalysisCodeSection = $"Analysis Codes: {formattedAnalysisCodes}";
+                var formattedAnalysisCodeSection = $"Codes: {formattedAnalysisCodes}";
                 if (AnalysisCodes.Any())
                 {
                     sections.Add(formattedAnalysisCodeSection);
                 }
 
-                var formattedSections = string.Join("\n  - ", sections);
+                var formattedSections = sections.Any() ? $"  - {string.Join("\n  - ", sections)}" : string.Empty;
                 var formattedValue = $"{header}\n{formattedSections}";
 
                 return formattedValue;
