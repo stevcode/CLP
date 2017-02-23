@@ -342,6 +342,8 @@ namespace CLP.Entities
             // When one of the above patterns is recognized, the start and end historyIndex and associated arrayID are stored in a list
             // of patternEndPoints. Every identified patternEndPoint will be analyzed at that point in history for skip counting
             // and any skip count strokes found at that point will be isolated in their own clusters.
+            // BUG: Doesn't take into account arrays created by cutting/snapping
+            // TODO: This code more or less already gets run in the RepsUsed tag, perhaps one pass of representation pattern points can be generated and used throughout?
             var patternStartPoints = new Dictionary<string, string>();
             var patternEndPoints = new List<dynamic>();
 
@@ -364,25 +366,25 @@ namespace CLP.Entities
                     else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_MOVE)
                     {
                         var startPattern = $"{Codings.EVENT_OBJECT_MOVE};{currentSemanticEvent.FirstHistoryAction.HistoryActionIndex}";
-                        if (patternStartPoints.Keys.Contains(arrayID))
+                        if (!patternStartPoints.Keys.Contains(arrayID))
+                        {
+                            patternStartPoints.Add(arrayID, startPattern);
+                        }
+                        else
                         {
                             if (patternStartPoints[arrayID].Contains(Codings.EVENT_INK_CHANGE))
                             {
                                 var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
                                 var endHistoryIndex = currentSemanticEvent.LastHistoryAction.HistoryActionIndex;
                                 patternEndPoints.Add(new
-                                {
-                                    ArrayID = arrayID,
-                                    StartHistoryIndex = startHistoryIndex,
-                                    EndHistoryIndex = endHistoryIndex
-                                });
+                                                     {
+                                                         ArrayID = arrayID,
+                                                         StartHistoryIndex = startHistoryIndex,
+                                                         EndHistoryIndex = endHistoryIndex
+                                                     });
                             }
 
                             patternStartPoints[arrayID] = startPattern;
-                        }
-                        else
-                        {
-                            patternStartPoints.Add(arrayID, startPattern);
                         }
                     }
                     else if (currentSemanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
@@ -397,11 +399,11 @@ namespace CLP.Entities
                             var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
                             var endHistoryIndex = currentSemanticEvent.LastHistoryAction.HistoryActionIndex;
                             patternEndPoints.Add(new
-                            {
-                                ArrayID = arrayID,
-                                StartHistoryIndex = startHistoryIndex,
-                                EndHistoryIndex = endHistoryIndex
-                            });
+                                                 {
+                                                     ArrayID = arrayID,
+                                                     StartHistoryIndex = startHistoryIndex,
+                                                     EndHistoryIndex = endHistoryIndex
+                                                 });
                         }
 
                         patternStartPoints.Remove(arrayID);
@@ -429,11 +431,11 @@ namespace CLP.Entities
                 var startHistoryIndex = patternStartPoints[arrayID].Split(';')[1];
                 var endHistoryIndex = semanticEvents.Last().LastHistoryAction.HistoryActionIndex;
                 patternEndPoints.Add(new
-                {
-                    ArrayID = arrayID,
-                    StartHistoryIndex = startHistoryIndex,
-                    EndHistoryIndex = endHistoryIndex
-                });
+                                     {
+                                         ArrayID = arrayID,
+                                         StartHistoryIndex = startHistoryIndex,
+                                         EndHistoryIndex = endHistoryIndex
+                                     });
             }
 
             #endregion // Recognized Pattern End Points
@@ -454,11 +456,15 @@ namespace CLP.Entities
                     continue;
                 }
 
+                // Test for all strokes added
                 var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes<ObjectsOnPageChangedHistoryAction>(startHistoryIndex, endHistoryIndex);
                 var strokeGroupPerRowHistory = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesAddedToPage, endHistoryIndex);
                 var interpretedRowValuesHistory = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowHistory, endHistoryIndex);
                 var isSkipCountingHistory = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesHistory);
 
+                // Test for all strokes on the page, necessary because just all the adds (if there are a lot of erases as well) could be too dense
+                // and cause garbled interpretations that aren't correctly recognized.
+                // TODO: May be able to optimize by running this first. If it is skip counting, then continue, if not, run the above as an additional check.
                 var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex<ObjectsOnPageChangedHistoryAction>(endHistoryIndex);
                 var strokeGroupPerRowOnPage = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
                 var interpretedRowValuesOnPage = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
@@ -511,29 +517,30 @@ namespace CLP.Entities
             var inkEvents = semanticEvents.Where(h => h.CodedObject == Codings.OBJECT_INK && h.EventType == Codings.EVENT_INK_CHANGE).ToList();
             var historyActions = inkEvents.SelectMany(h => h.HistoryActions).OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokesAdded = historyActions.SelectMany(i => i.StrokesAdded).ToList();
+            var strokesToCluster = strokesAdded.Where(stroke => !InkClusters.Any(c => c.Strokes.Contains(stroke))).ToList();
 
             var unclusteredStrokes = new StrokeCollection();
-            var smallStrokes = strokesAdded.Where(s => s.IsInvisiblySmall()).ToList();
+            var smallStrokes = strokesToCluster.Where(s => s.IsInvisiblySmall()).ToList();
             foreach (var smallStroke in smallStrokes)
             {
-                strokesAdded.Remove(smallStroke);
+                strokesToCluster.Remove(smallStroke);
                 unclusteredStrokes.Add(smallStroke);
             }
 
             var strokeClusters = new List<StrokeCollection>();
 
-            if (strokesAdded.Count == 1)
+            if (strokesToCluster.Count == 1)
             {
-                strokeClusters.Add(new StrokeCollection(strokesAdded));
+                strokeClusters.Add(new StrokeCollection(strokesToCluster));
             }
-            else if (strokesAdded.Count > 1)
+            else if (strokesToCluster.Count > 1)
             {
                 const int MAX_EPSILON = 1000;
                 const int MINIMUM_STROKES_IN_CLUSTER = 1;
 
                 Func<Stroke, Stroke, double> distanceEquation = (s1, s2) => Math.Sqrt(s1.DistanceSquaredByClosestPoint(s2));
 
-                var optics = new OPTICS<Stroke>(MAX_EPSILON, MINIMUM_STROKES_IN_CLUSTER, strokesAdded, distanceEquation);
+                var optics = new OPTICS<Stroke>(MAX_EPSILON, MINIMUM_STROKES_IN_CLUSTER, strokesToCluster, distanceEquation);
                 optics.BuildReachability();
                 var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
@@ -542,14 +549,14 @@ namespace CLP.Entities
                 var currentCluster = new StrokeCollection();
                 var allClusteredStrokes = new List<Stroke>();
                 var firstStrokeIndex = (int)reachabilityDistances[0].OriginalIndex;
-                var firstStroke = strokesAdded[firstStrokeIndex];
+                var firstStroke = strokesToCluster[firstStrokeIndex];
                 currentCluster.Add(firstStroke);
                 allClusteredStrokes.Add(firstStroke);
 
                 for (var i = 1; i < reachabilityDistances.Count; i++)
                 {
                     var strokeIndex = (int)reachabilityDistances[i].OriginalIndex;
-                    var stroke = strokesAdded[strokeIndex];
+                    var stroke = strokesToCluster[strokeIndex];
 
                     // Epsilon cluster decision.
                     var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
@@ -572,7 +579,7 @@ namespace CLP.Entities
                     strokeClusters.Add(new StrokeCollection(finalCluster));
                 }
 
-                foreach (var stroke in strokesAdded.Where(stroke => !allClusteredStrokes.Contains(stroke)))
+                foreach (var stroke in strokesToCluster.Where(stroke => !allClusteredStrokes.Contains(stroke)))
                 {
                     unclusteredStrokes.Add(stroke);
                 }
