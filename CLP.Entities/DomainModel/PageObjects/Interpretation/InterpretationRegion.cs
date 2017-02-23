@@ -64,7 +64,23 @@ namespace CLP.Entities
 
         public override string CodedName => Codings.OBJECT_FILL_IN;
 
-        public override string CodedID => string.Empty; // TODO: Make this work with IncrementID
+        public override string CodedID
+        {
+            get
+            {
+                var answer = Codings.ANSWER_UNDEFINED;
+                var relationDefinitionTag = ParentPage.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
+                if (relationDefinitionTag != null)
+                {
+                    var definitionAnswer = relationDefinitionTag.Answer;
+                    var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
+                    answer = truncatedAnswer.ToString();
+                }
+                var codedID = answer;
+
+                return codedID;
+            }
+        }
 
         public override int ZIndex => 30;
 
