@@ -1287,23 +1287,6 @@ namespace CLP.Entities
             var bottomLeftArc = Math.Atan2(-dimensions.Y / 2, -dimensions.X / 2);
             var bottomRightArc = Math.Atan2(-dimensions.Y / 2, dimensions.X / 2);
 
-            if (centroidArcFromMid >= 0 &&
-                centroidArcFromMid <= topRightArc)
-            {
-                return Codings.EVENT_INFO_INK_LOCATION_RIGHT;
-            }
-
-            if (centroidArcFromMid >= bottomRightArc)
-            {
-                return Codings.EVENT_INFO_INK_LOCATION_RIGHT;
-            }
-
-            if (centroidArcFromMid >= topLeftArc &&
-                centroidArcFromMid <= bottomLeftArc)
-            {
-                return Codings.EVENT_INFO_INK_LOCATION_LEFT;
-            }
-
             if (centroidArcFromMid > topRightArc &&
                 centroidArcFromMid < topLeftArc)
             {
@@ -1314,6 +1297,24 @@ namespace CLP.Entities
                 centroidArcFromMid < bottomRightArc)
             {
                 return Codings.EVENT_INFO_INK_LOCATION_BOTTOM;
+            }
+
+            if (centroidArcFromMid >= 0 &&
+                centroidArcFromMid <= topRightArc)
+            {
+                return Codings.EVENT_INFO_INK_LOCATION_RIGHT;
+            }
+
+            if (centroidArcFromMid <= 0 &&
+                centroidArcFromMid >= bottomRightArc)
+            {
+                return Codings.EVENT_INFO_INK_LOCATION_RIGHT;
+            }
+
+            if (centroidArcFromMid >= topLeftArc ||
+                centroidArcFromMid <= bottomLeftArc)
+            {
+                return Codings.EVENT_INFO_INK_LOCATION_LEFT;
             }
 
             return Codings.EVENT_INFO_INK_LOCATION_NONE;
