@@ -93,6 +93,17 @@ namespace CLP.Entities
                 }
             }
 
+            if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
+            {
+                var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                var sequenceIdentifier = $"{ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                sequence.Add(sequenceIdentifier);
+            }
+            else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
+            {
+                sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
+            }
+
             if (!sequence.Any())
             {
                 return;
