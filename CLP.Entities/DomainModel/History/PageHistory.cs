@@ -16,14 +16,23 @@ namespace CLP.Entities
     [Serializable]
     public class PageHistory : AEntityBase
     {
-        private readonly object _historyLock = new object();
+        #region Constants
+
         public const double SAMPLE_RATE = 9;
-        public IHistoryBatch CurrentHistoryBatch;
+
+        #endregion // Constants
+
+        #region Fields
+
+        private readonly object _historyLock = new object();
         private bool _isUndoingOperation;
+
+        public IHistoryBatch CurrentHistoryBatch;
+
+        #endregion // Fields
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="PageHistory" /> from scratch.</summary>
         public PageHistory() { }
 
         #endregion //Constructors
@@ -58,10 +67,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData RedoActionsProperty = RegisterProperty("RedoActions", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        public List<IHistoryAction> CompleteOrderedHistoryActions
-        {
-            get { return UndoActions.Reverse().Concat(RedoActions).ToList(); }
-        }
+        public List<IHistoryAction> CompleteOrderedHistoryActions => UndoActions.Reverse().Concat(RedoActions).ToList();
 
         public List<IHistoryAction> OrderedAnimationHistoryActions
         {
@@ -165,15 +171,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0.0);
 
-        public int CurrentHistoryIndex
-        {
-            get { return UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0; }
-        }
+        public int CurrentHistoryIndex => UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0;
 
-        public int CurrentAnimationDelay
-        {
-            get { return RedoActions.Any() ? RedoActions.First().AnimationDelay : 0; }
-        }
+        public int CurrentAnimationDelay => RedoActions.Any() ? RedoActions.First().AnimationDelay : 0;
 
         public bool IsAnimation
         {
@@ -204,10 +204,7 @@ namespace CLP.Entities
             }
         }
 
-        public bool IsPlaybackEnabled
-        {
-            get { return IsAnimation || IsNonAnimationPlaybackEnabled; }
-        }
+        public bool IsPlaybackEnabled => IsAnimation || IsNonAnimationPlaybackEnabled;
 
         #endregion //Playback Indication
 
@@ -256,10 +253,7 @@ namespace CLP.Entities
             }
         }
 
-        public double PlaybackLength
-        {
-            get { return IsNonAnimationPlaybackEnabled ? HistoryLength : AnimationLength; }
-        }
+        public double PlaybackLength => IsNonAnimationPlaybackEnabled ? HistoryLength : AnimationLength;
 
         #endregion //Playback Lengths
 
@@ -538,23 +532,6 @@ namespace CLP.Entities
 
             UpdateTicks();
             return true;
-        }
-
-        //HACK
-        public void ConversionUndo()
-        {
-            lock (_historyLock)
-            {
-                var historyAction = UndoActions.FirstOrDefault();
-                if (historyAction == null)
-                {
-                    return;
-                }
-                historyAction.ConversionUndo();
-
-                UndoActions.RemoveFirst();
-                RedoActions.Insert(0, historyAction);
-            }
         }
 
         public bool Undo(bool isAnimationUndo = false)

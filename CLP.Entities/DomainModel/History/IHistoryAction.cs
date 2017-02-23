@@ -19,7 +19,6 @@ namespace CLP.Entities
         string FormattedValue { get; }
         
         // Methods
-        void ConversionUndo();
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
         IHistoryAction CreatePackagedHistoryAction();
