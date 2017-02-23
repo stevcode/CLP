@@ -522,7 +522,7 @@ namespace CLP.Entities
                 var mostRecentSkipEvent =
                     semanticEvents.LastOrDefault(
                                                  e =>
-                                                     e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                     e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
                                                      (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE));
 
                 if (mostRecentSkipEvent != null)
