@@ -464,7 +464,6 @@ namespace CLP.Entities
 
                 // Test for all strokes on the page, necessary because just all the adds (if there are a lot of erases as well) could be too dense
                 // and cause garbled interpretations that aren't correctly recognized.
-                // TODO: May be able to optimize by running this first. If it is skip counting, then continue, if not, run the above as an additional check.
                 var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex<ObjectsOnPageChangedHistoryAction>(endHistoryIndex);
                 var strokeGroupPerRowOnPage = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
                 var interpretedRowValuesOnPage = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
