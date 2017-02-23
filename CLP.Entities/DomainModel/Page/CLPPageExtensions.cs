@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
@@ -181,27 +180,27 @@ namespace CLP.Entities
         }
 
         /// <summary>Gets all strokes that were on the page immediately after the historyAction at the given historyIndex was performed</summary>
-        public static List<Stroke> GetStrokesOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
+        public static List<Stroke> GetStrokesOnPageAtHistoryIndex<T>(this CLPPage page, int historyIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
-            var strokes = page.InkStrokes.Where(s => s.IsOnPageAtHistoryIndex(page, historyIndex)).ToList();
-            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsOnPageAtHistoryIndex(page, historyIndex)).ToList();
+            var strokes = page.InkStrokes.Where(s => s.IsOnPageAtHistoryIndex<T>(page, historyIndex)).ToList();
+            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsOnPageAtHistoryIndex<T>(page, historyIndex)).ToList();
             var strokesOnPage = strokes.Concat(trashedStrokes).Distinct().ToList();
 
             return strokesOnPage;
         }
 
         /// <summary>Gets all strokes that were added to the page between the given historyIndexes (including strokes that were added by the historyActions at both historyIndexes).</summary>
-        public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes(this CLPPage page, int startHistoryIndex, int endHistoryIndex)
+        public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes<T>(this CLPPage page, int startHistoryIndex, int endHistoryIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
             Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
 
-            var strokes = page.InkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
-            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var strokes = page.InkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes<T>(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes<T>(page, startHistoryIndex, endHistoryIndex)).ToList();
             var strokesAddedToPage = strokes.Concat(trashedStrokes).Distinct().ToList();
 
             return strokesAddedToPage;

@@ -136,6 +136,7 @@
     <Compile Include="DomainModel\Cache\Session.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
     <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
+    <Compile Include="DomainModel\History\IStrokesOnPageChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />

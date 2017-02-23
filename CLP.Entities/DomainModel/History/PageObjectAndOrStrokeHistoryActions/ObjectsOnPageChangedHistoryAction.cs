@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ObjectsOnPageChangedHistoryAction : AHistoryActionBase
+    public class ObjectsOnPageChangedHistoryAction : AHistoryActionBase, IStrokesOnPageChangedHistoryAction
     {
         #region Constructors
 

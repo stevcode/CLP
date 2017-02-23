@@ -46,7 +46,7 @@ namespace CLP.Entities
 
         public List<Stroke> GetClusterStrokesOnPageAtHistoryIndex(CLPPage page, int historyIndex)
         {
-            return page.GetStrokesOnPageAtHistoryIndex(historyIndex).Where(s => Strokes.Contains(s)).ToList();
+            return page.GetStrokesOnPageAtHistoryIndex<IStrokesOnPageChangedHistoryAction>(historyIndex).Where(s => Strokes.Contains(s)).ToList();
         }
     }
 
@@ -454,12 +454,12 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes(startHistoryIndex, endHistoryIndex);
+                var strokesAddedToPage = page.GetStrokesAddedToPageBetweenHistoryIndexes<ObjectsOnPageChangedHistoryAction>(startHistoryIndex, endHistoryIndex);
                 var strokeGroupPerRowHistory = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesAddedToPage, endHistoryIndex);
                 var interpretedRowValuesHistory = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowHistory, endHistoryIndex);
                 var isSkipCountingHistory = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesHistory);
 
-                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex(endHistoryIndex);
+                var strokesOnPage = page.GetStrokesOnPageAtHistoryIndex<ObjectsOnPageChangedHistoryAction>(endHistoryIndex);
                 var strokeGroupPerRowOnPage = ArraySemanticEvents.GroupPossibleSkipCountStrokes(page, array, strokesOnPage, endHistoryIndex);
                 var interpretedRowValuesOnPage = ArraySemanticEvents.InterpretSkipCountGroups(page, array, strokeGroupPerRowOnPage, endHistoryIndex);
                 var isSkipCountingOnPage = ArraySemanticEvents.IsSkipCounting(interpretedRowValuesOnPage);

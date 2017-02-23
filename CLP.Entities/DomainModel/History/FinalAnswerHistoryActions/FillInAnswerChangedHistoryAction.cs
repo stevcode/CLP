@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public class FillInAnswerChangedHistoryAction : AHistoryActionBase
+    public class FillInAnswerChangedHistoryAction : AHistoryActionBase, IStrokesOnPageChangedHistoryAction
     {
         #region Constructors
 
