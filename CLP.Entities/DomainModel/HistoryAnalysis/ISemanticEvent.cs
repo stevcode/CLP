@@ -33,5 +33,7 @@ namespace CLP.Entities
         IHistoryAction LastHistoryAction { get; }
         List<IHistoryAction> HistoryActions { get; }
         string CodedValue { get; }
+
+        bool ContainsHistoryActionID(string historyActionID);
     }
 }

@@ -301,6 +301,26 @@ namespace CLP.Entities
 
         #endregion //Properties
 
+        #region Methods
+
+        public bool ContainsHistoryActionID(string historyActionID)
+        {
+            if (!HistoryActionIDs.Any() &&
+                !SemanticEvents.Any())
+            {
+                return false;
+            }
+
+            if (HistoryActionIDs.Any())
+            {
+                return HistoryActionIDs.Contains(historyActionID);
+            }
+
+            return SemanticEvents.Any(e => e.ContainsHistoryActionID(historyActionID));
+        }
+
+        #endregion // Methods
+
         #region Static Methods
 
         public static SemanticEvent GetErrorSemanticEvent(CLPPage page, IHistoryAction historyAction, string errorType, string errorMessage)

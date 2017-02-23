@@ -175,6 +175,14 @@ namespace CLP.Entities
 
         public IHistoryAction CurrentHistoryAction => UndoActions.FirstOrDefault();
 
+        public ISemanticEvent CurrentSemanticEvent
+        {
+            get
+            {
+                return CurrentHistoryAction == null ? null : SemanticEvents.LastOrDefault(e => e.ContainsHistoryActionID(CurrentHistoryAction.ID));
+            }
+        }
+
         public int CurrentAnimationDelay => RedoActions.Any() ? RedoActions.First().AnimationDelay : 0;
 
         public bool IsAnimation
@@ -401,6 +409,7 @@ namespace CLP.Entities
             {
                 RaisePropertyChanged(nameof(CurrentHistoryIndex));
                 RaisePropertyChanged(nameof(CurrentHistoryAction));
+                RaisePropertyChanged(nameof(CurrentSemanticEvent));
                 RaisePropertyChanged(nameof(HistoryLength));
                 RaisePropertyChanged(nameof(AnimationLength));
                 RaisePropertyChanged(nameof(PlaybackLength));

@@ -586,6 +586,7 @@
                         <ControlTemplate x:Key="SemanticEventsTemplate">
                             <ListBox DataContext="{Binding}"
                                      ItemsSource="{Binding CurrentPage.History.SemanticEvents}"
+                                     SelectedItem="{Binding CurrentPage.History.CurrentSemanticEvent, Mode=OneWay}"
                                      SelectionMode="Single"
                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                      VirtualizingPanel.IsVirtualizing="True"
@@ -595,6 +596,13 @@
                                      VirtualizingStackPanel.ScrollUnit="Pixel"
                                      ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="IsHitTestVisible"
+                                                Value="False" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock FontWeight="Bold"
