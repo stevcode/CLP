@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Windows.Ink;
 using System.Windows.Threading;
@@ -25,9 +24,7 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="PageHistory" /> from scratch.</summary>
-        public PageHistory()
-        {
-        }
+        public PageHistory() { }
 
         #endregion //Constructors
 
@@ -334,8 +331,7 @@ namespace CLP.Entities
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
                                       let isTrashedInkStrokeBeingUsed =
-                                      UndoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) ||
-                                      RedoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
+                                      UndoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) || RedoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
                                       where !isTrashedInkStrokeBeingUsed
                                       select trashedInkStroke).ToList();
             foreach (var stroke in inkStrokesToRemove)
@@ -345,8 +341,7 @@ namespace CLP.Entities
 
             var pageObjectsToRemove = (from trashedPageObject in TrashedPageObjects
                                        let isTrashedPageObjectBeingUsed =
-                                       UndoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID)) ||
-                                       RedoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID))
+                                       UndoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID)) || RedoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID))
                                        where !isTrashedPageObjectBeingUsed
                                        select trashedPageObject).ToList();
             foreach (var pageObject in pageObjectsToRemove)
