@@ -173,6 +173,8 @@ namespace CLP.Entities
 
         public int CurrentHistoryIndex => UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0;
 
+        public IHistoryAction CurrentHistoryAction => UndoActions.FirstOrDefault();
+
         public int CurrentAnimationDelay => RedoActions.Any() ? RedoActions.First().AnimationDelay : 0;
 
         public bool IsAnimation
@@ -398,6 +400,7 @@ namespace CLP.Entities
             lock (_historyLock)
             {
                 RaisePropertyChanged(nameof(CurrentHistoryIndex));
+                RaisePropertyChanged(nameof(CurrentHistoryAction));
                 RaisePropertyChanged(nameof(HistoryLength));
                 RaisePropertyChanged(nameof(AnimationLength));
                 RaisePropertyChanged(nameof(PlaybackLength));

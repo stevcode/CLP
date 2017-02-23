@@ -608,6 +608,7 @@
                         <ControlTemplate x:Key="HistoryActionsTemplate">
                             <ListBox DataContext="{Binding}"
                                      ItemsSource="{Binding CurrentPage.History.CompleteOrderedHistoryActions}"
+                                     SelectedItem="{Binding CurrentPage.History.CurrentHistoryAction, Mode=OneWay}"
                                      SelectionMode="Single"
                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                      VirtualizingPanel.IsVirtualizing="True"
@@ -616,6 +617,13 @@
                                      VirtualizingStackPanel.CacheLengthUnit="Page"
                                      VirtualizingStackPanel.ScrollUnit="Pixel"
                                      ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+                                
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="IsHitTestVisible"
+                                                Value="False" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
