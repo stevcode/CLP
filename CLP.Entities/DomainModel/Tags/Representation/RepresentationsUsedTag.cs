@@ -156,7 +156,10 @@ namespace CLP.Entities
 
                 var formattedAnalysisCodes = string.Join(", ", AnalysisCodes);
                 var formattedAnalysisCodeSection = $"Analysis Codes: {formattedAnalysisCodes}";
-                sections.Add(formattedAnalysisCodeSection);
+                if (AnalysisCodes.Any())
+                {
+                    sections.Add(formattedAnalysisCodeSection);
+                }
 
                 var formattedSections = string.Join("\n  - ", sections);
                 var formattedValue = $"{header}\n{formattedSections}";
