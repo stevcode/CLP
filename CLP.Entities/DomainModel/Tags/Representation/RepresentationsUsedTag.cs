@@ -577,12 +577,15 @@ namespace CLP.Entities
                                 }
 
                                 var wrongDimensionText = string.Empty;
-                                var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
-                                if (percentMatchWrongDimensions >= 0.80)
+                                if (skips.Count > 1)
                                 {
-                                    wrongDimensionText = ", wrong dimension";
+                                    var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                                    if (percentMatchWrongDimensions >= 0.80)
+                                    {
+                                        wrongDimensionText = ", wrong dimension";
+                                    }
                                 }
-
+                                
                                 var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
                                 usedRepresentation.AdditionalInformation.Add(skipCodedValue);
                             }
