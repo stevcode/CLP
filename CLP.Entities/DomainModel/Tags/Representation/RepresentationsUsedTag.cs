@@ -538,6 +538,33 @@ namespace CLP.Entities
                             {
                                 // HACK: temporary print out of Wrong Dimension analysis
                                 var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                                if (skipStrings.Count == 1 &&
+                                    string.IsNullOrEmpty(skipStrings.First()))
+                                {
+                                    mostRecentSkipEvent =
+                                        semanticEvents.LastOrDefault(
+                                                                     e =>
+                                                                         e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                                         (e.EventType == Codings.EVENT_ARRAY_SKIP));
+
+                                    if (mostRecentSkipEvent != null)
+                                    {
+                                        eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
+                                        if (eventInfoParts.Length == 2)
+                                        {
+                                            formattedInterpretationParts = eventInfoParts[0].Split("; ");
+                                            if (formattedInterpretationParts.Length == 2)
+                                            {
+                                                formattedSkips = formattedInterpretationParts[1];
+                                                if (!string.IsNullOrEmpty(formattedSkips))
+                                                {
+                                                    skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 var skips = new List<int>();
                                 foreach (var skip in skipStrings)
                                 {
