@@ -579,7 +579,7 @@ namespace CLP.Entities
                                 var wrongDimensionText = string.Empty;
                                 if (skips.Count > 1)
                                 {
-                                    var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count - 1) * 1.0;
+                                    var percentMatchWrongDimensions = wrongDimensionMatches / ((skips.Count - 1) * 1.0);
                                     if (percentMatchWrongDimensions >= 0.80)
                                     {
                                         wrongDimensionText = ", wrong dimension";
