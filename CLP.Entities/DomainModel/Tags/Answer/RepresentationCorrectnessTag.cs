@@ -113,13 +113,13 @@ namespace CLP.Entities
                 switch (divisionDefinition.RelationType)
                 {
                     case DivisionRelationDefinitionTag.RelationTypes.Partitive:
-                        simplifiedRelation.GroupSize = divisionDefinition.Divisor.RelationPartAnswerValue;
-                        simplifiedRelation.NumberOfGroups = divisionDefinition.Quotient;
+                        simplifiedRelation.GroupSize = divisionDefinition.Quotient;
+                        simplifiedRelation.NumberOfGroups = divisionDefinition.Divisor.RelationPartAnswerValue;
                         simplifiedRelation.IsOrderedGroup = true;
                         break;
                     case DivisionRelationDefinitionTag.RelationTypes.Quotative:
-                        simplifiedRelation.GroupSize = divisionDefinition.Quotient;
-                        simplifiedRelation.NumberOfGroups = divisionDefinition.Divisor.RelationPartAnswerValue;
+                        simplifiedRelation.GroupSize = divisionDefinition.Divisor.RelationPartAnswerValue;
+                        simplifiedRelation.NumberOfGroups = divisionDefinition.Quotient;
                         simplifiedRelation.IsOrderedGroup = true;
                         break;
                     default:
