@@ -875,6 +875,7 @@ namespace CLP.Entities
 
                 var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
                 var representationCorrectness = Correctness.Unknown;
+                var isSwapped = false;
                 if (usedRepresentation.IsUsed)
                 {
                     var jumpSizes = jumpGroups[numberLineID];
@@ -920,6 +921,8 @@ namespace CLP.Entities
                     {
                         representationCorrectness = Correctness.Incorrect;
                     }
+
+                    isSwapped = representationRelation.IsSwapped;
                 }
                 else
                 {
@@ -961,6 +964,10 @@ namespace CLP.Entities
 
                 usedRepresentation.Correctness = representationCorrectness;
                 usedRepresentation.MatchedRelationSide = matchedRelationSide;
+                if (isSwapped)
+                {
+                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
+                }
 
                 #endregion // Representation Correctness
 
@@ -1072,6 +1079,11 @@ namespace CLP.Entities
                              alternativeCorrectness == Correctness.Incorrect)
                     {
                         representationCorrectness = Correctness.Incorrect;
+                    }
+
+                    if (representationRelation.IsSwapped)
+                    {
+                        usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
                     }
                 }
 
