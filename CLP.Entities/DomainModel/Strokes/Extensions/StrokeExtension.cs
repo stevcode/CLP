@@ -929,8 +929,6 @@ namespace CLP.Entities
 
             var strokeBounds = stroke.GetBounds();
 
-            // Debug.WriteLine("stroke weight: {0}", stroke.StrokeWeight());
-
             return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
         }
 
@@ -951,6 +949,26 @@ namespace CLP.Entities
             var strokeRight = stroke.GetBounds().Right;
 
             return Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
+        }
+
+        public static double BoundsWidth(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeLeft = stroke.GetBounds().Left;
+            var strokeRight = stroke.GetBounds().Right;
+
+            return Math.Abs(strokeLeft - strokeRight);
+        }
+
+        public static double BoundsHeight(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeTop = stroke.GetBounds().Top;
+            var strokeBottom = stroke.GetBounds().Bottom;
+
+            return Math.Abs(strokeTop - strokeBottom);
         }
 
         #endregion // Shape Detection

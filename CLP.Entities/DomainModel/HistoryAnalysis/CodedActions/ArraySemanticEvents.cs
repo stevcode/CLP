@@ -245,6 +245,83 @@ namespace CLP.Entities
 
         #region Clustering
 
+        public static ISemanticEvent CountingLine(CLPPage page, IHistoryAction historyAction)
+        {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(historyAction), historyAction);
+
+            var objectsChangedHistoryAction = historyAction as ObjectsOnPageChangedHistoryAction;
+            if (objectsChangedHistoryAction == null ||
+                objectsChangedHistoryAction.IsUsingPageObjects ||
+                !objectsChangedHistoryAction.IsUsingStrokes)
+            {
+                return null;
+            }
+
+            var strokes = objectsChangedHistoryAction.StrokesAdded;
+            var isAddedStroke = true;
+            if (!strokes.Any())
+            {
+                isAddedStroke = false;
+                strokes = objectsChangedHistoryAction.StrokesRemoved;
+            }
+
+            if (strokes.Count != 1)
+            {
+                return null;
+            }
+
+            var stroke = strokes.First();
+
+            var historyIndex = objectsChangedHistoryAction.HistoryActionIndex;
+            var arraysOnPage = page.GetPageObjectsOnPageAtHistoryIndex(historyIndex).OfType<CLPArray>().Where(a => a.ArrayType == ArrayTypes.Array && a.IsGridOn).ToList();
+
+            if (!arraysOnPage.Any())
+            {
+                return null;
+            }
+
+            var array = InkSemanticEvents.FindMostOverlappedPageObjectAtHistoryIndex(page, arraysOnPage.Cast<IPageObject>().ToList(), stroke, historyIndex) as CLPArray;
+            if (array == null)
+            {
+                return null;
+            }
+
+            #region Counting Line Interpretation
+
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayWidth = arrayDimensions.X - (2 * array.LabelLength);
+
+            var referenceStrokeCopy = stroke.GetStrokeCopyAtHistoryIndex(page, historyIndex);
+            var isHorizontalLine = referenceStrokeCopy.IsHorizontalLine();
+            var strokeBoundsWidth = referenceStrokeCopy.BoundsWidth();
+
+            var isCountingLine = isHorizontalLine && strokeBoundsWidth > arrayWidth / 2;
+
+            #endregion // Counting Line Interpretation
+
+            if (!isCountingLine)
+            {
+                return null;
+            }
+
+            var codedObject = Codings.OBJECT_ARRAY;
+            var eventType = isAddedStroke ? Codings.EVENT_ARRAY_COUNT_LINE : Codings.EVENT_ARRAY_COUNT_LINE_ERASE;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
+
+            var countingLineEvent = new SemanticEvent(page, historyAction)
+                                    {
+                                        CodedObject = codedObject,
+                                        EventType = eventType,
+                                        CodedObjectID = codedID,
+                                        CodedObjectIDIncrement = incrementID,
+                                        ReferencePageObjectID = array.ID
+                                    };
+
+            return countingLineEvent;
+        }
+
         public static ISemanticEvent InkDivide(CLPPage page, IHistoryAction historyAction)
         {
             Argument.IsNotNull(nameof(page), page);

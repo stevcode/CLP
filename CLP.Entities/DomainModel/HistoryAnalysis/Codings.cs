@@ -145,6 +145,10 @@ namespace CLP.Entities
         public const string EVENT_ARRAY_SKIP_ERASE = "skip erase";
         public const string EVENT_ARRAY_EQN = "eqn";
         public const string EVENT_ARRAY_EQN_ERASE = "eqn erase";
+        public const string EVENT_ARRAY_COUNT_LINE = "count line";
+        public const string EVENT_ARRAY_COUNT_LINE_ERASE = "count line erase";
+        public const string EVENT_ARRAY_COUNT_DOT = "count dot";
+        public const string EVENT_ARRAY_COUNT_DOT_ERASE = "count dot erase";
 
         #endregion // Array Event Types
 
