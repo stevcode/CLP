@@ -56,14 +56,6 @@ namespace CLP.Entities
                                                                                 { OBJECT_TEXT, "Text" }
                                                                             };
 
-        public static readonly Dictionary<string, string> FriendlyCorrectness = new Dictionary<string, string>
-                                                                                {
-                                                                                    { CORRECTNESS_CORRECT, "Correct" },
-                                                                                    { CORRECTNESS_INCORRECT, "Incorrect" },
-                                                                                    { CORRECTNESS_PARTIAL, "Partially Correct" },
-                                                                                    { CORRECTNESS_UNKNOWN, "Unknown" }
-                                                                                };
-
         public static string CorrectnessToCodedCorrectness(Correctness correctness)
         {
             switch (correctness)
@@ -74,6 +66,8 @@ namespace CLP.Entities
                     return CORRECTNESS_PARTIAL;
                 case Correctness.Incorrect:
                     return CORRECTNESS_INCORRECT;
+                case Correctness.Illegible:
+                    return CORRECTNESS_ILLEGIBLE;
                 default:
                     return CORRECTNESS_UNKNOWN;
             }
@@ -82,9 +76,26 @@ namespace CLP.Entities
         public static string CorrectnessToFriendlyCorrectness(Correctness correctness)
         {
             var codedCorrectness = CorrectnessToCodedCorrectness(correctness);
-            var friendlyCorrectness = FriendlyCorrectness[codedCorrectness];
+            var friendlyCorrectness = CodedCorrectnessToFriendlyCorrectness(codedCorrectness);
 
             return friendlyCorrectness;
+        }
+
+        public static string CodedCorrectnessToFriendlyCorrectness(string codedCorrectness)
+        {
+            switch (codedCorrectness)
+            {
+                case CORRECTNESS_CORRECT:
+                    return "Correct";
+                case CORRECTNESS_PARTIAL:
+                    return "Partially Correct";
+                case CORRECTNESS_INCORRECT:
+                    return "Incorrect";
+                case CORRECTNESS_ILLEGIBLE:
+                    return "Illegible";
+                default:
+                    return "Unknown";
+            }
         }
 
         public static Correctness CodedCorrectnessToCorrectness(string codedCorrectness)
@@ -97,6 +108,8 @@ namespace CLP.Entities
                     return Correctness.PartiallyCorrect;
                 case CORRECTNESS_INCORRECT:
                     return Correctness.Incorrect;
+                case CORRECTNESS_ILLEGIBLE:
+                    return Correctness.Illegible;
                 default:
                     return Correctness.Unknown;
             }
@@ -273,6 +286,7 @@ namespace CLP.Entities
         public const string CORRECTNESS_CORRECT = "COR";
         public const string CORRECTNESS_PARTIAL = "PAR";
         public const string CORRECTNESS_INCORRECT = "INC";
+        public const string CORRECTNESS_ILLEGIBLE = "ILL";
         public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";
