@@ -798,15 +798,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData UnmatchedNLJEProperty = RegisterProperty("UnmatchedNLJE", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string UnmatchedNumberLineSwitched
-        {
-            get { return GetValue<string>(UnmatchedNumberLineSwitchedProperty); }
-            set { SetValue(UnmatchedNumberLineSwitchedProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedNumberLineSwitchedProperty = RegisterProperty("UnmatchedNumberLineSwitched", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
         public string UnmatchedNumberLineBlank
         {
             get { return GetValue<string>(UnmatchedNumberLineBlankProperty); }
@@ -836,15 +827,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData UnmatchedStampImagesCreatedCountProperty = RegisterProperty("UnmatchedStampImagesCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
-        public string UnmatchedStampImagesSwitched
-        {
-            get { return GetValue<string>(UnmatchedStampImagesSwitchedProperty); }
-            set { SetValue(UnmatchedStampImagesSwitchedProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedStampImagesSwitchedProperty = RegisterProperty("UnmatchedStampImagesSwitched", typeof(string), string.Empty);
 
         #endregion // Stamps
 
@@ -1043,11 +1025,9 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
             cellContents.Add(UnmatchedNLJE);
-            cellContents.Add(UnmatchedNumberLineSwitched);
             cellContents.Add(UnmatchedNumberLineBlank);
             cellContents.Add(UnmatchedStampCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
-            cellContents.Add(UnmatchedStampImagesSwitched);
             cellContents.Add(string.Join(", ", UnmatchedRepresentationsAndCorrectness));
             cellContents.Add(IsUnmatchedMR);
 
@@ -1161,11 +1141,9 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL used");
             cellContents.Add("Unmatched NLJE");
-            cellContents.Add("Unmatched NL switched");
             cellContents.Add("Unmatched NL blank");
             cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
-            cellContents.Add("Unmatched STA switched");
             cellContents.Add("Unmatched REP Correctness");
             cellContents.Add("Unmatched MR");
 

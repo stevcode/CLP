@@ -697,8 +697,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.UnmatchedNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
-            entry.UnmatchedNumberLineSwitched = unmatchedUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
-
             entry.UnmatchedNumberLineBlank = unmatchedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             #endregion // Number Lines
@@ -724,8 +722,6 @@ namespace Classroom_Learning_Partner.Services
                     entry.UnmatchedStampImagesCreatedCount += stampImageCount;
                 }
             }
-
-            entry.UnmatchedStampImagesSwitched = unmatchedStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             #endregion // Stamps
 
