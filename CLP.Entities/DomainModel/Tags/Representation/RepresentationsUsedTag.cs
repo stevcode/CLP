@@ -691,11 +691,38 @@ namespace CLP.Entities
             #endregion // Static Skips
         }
 
+        private class NumberLineJumpTotal
+        {
+            public NumberLineJumpTotal(string numberLineID, int startHistoryActionIndex)
+            {
+                NumberLineID = numberLineID;
+                StartHistoryActionIndex = startHistoryActionIndex;
+                IsPatternFinished = false;
+                CurrentJumps = new List<NumberLineJumpSize>();
+                TotalJumpsAfterLastJumpsAdded = new List<NumberLineJumpSize>();
+                JumpEraseCount = 0;
+                JumpEraseSinceLastAddCount = 0;
+                LastJumpEraseHistoryActionIndex = -1;
+                LastJumpEraseSemanticEventIndex = -1;
+                IsUsingTotalJumpsAfterLastJumpsAdded = false;
+            }
+
+            public string NumberLineID { get; set; }
+            public int StartHistoryActionIndex { get; set; }
+            public int LastJumpEraseHistoryActionIndex { get; set; }
+            public int LastJumpEraseSemanticEventIndex { get; set; }
+            public bool IsUsingTotalJumpsAfterLastJumpsAdded { get; set; }
+            public bool IsPatternFinished { get; set; }
+            public List<NumberLineJumpSize> CurrentJumps { get; set; }
+            public List<NumberLineJumpSize> TotalJumpsAfterLastJumpsAdded { get; set; }
+            public int JumpEraseCount { get; set; }
+            public int JumpEraseSinceLastAddCount { get; set; }
+        }
+
         public static void GenerateNumberLinesUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
         {
             var patternPoints = new List<PatternPoint>();
-            var jumpGroups = new Dictionary<string, List<NumberLineJumpSize>>();
-            var jumpEraseCount = new Dictionary<string, int>();
+            var numberLineJumpTotals = new List<NumberLineJumpTotal>();
 
             #region Find Pattern Points
 
@@ -720,6 +747,9 @@ namespace CLP.Entities
                                            StartEventType = semanticEvent.EventType
                                        };
                     patternPoints.Add(patternPoint);
+
+                    var numberLineJumpTotal = new NumberLineJumpTotal(patternPoint.PageObjectID, patternPoint.StartHistoryActionIndex);
+                    numberLineJumpTotals.Add(numberLineJumpTotal);
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP)
                 {
@@ -735,14 +765,35 @@ namespace CLP.Entities
                         allJumps.AddRange(historyAction.JumpsAdded);
                     }
 
-                    if (!jumpGroups.ContainsKey(numberLineID))
+                    var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && !jt.IsPatternFinished);
+
+                    if (!numberLineJumpTotal.CurrentJumps.Any() &&
+                        numberLineJumpTotal.JumpEraseSinceLastAddCount > 1)
                     {
-                        jumpGroups.Add(numberLineID, allJumps);
+                        var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID &&
+                                                                    p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
+                        patternPoint.EndHistoryActionIndex = numberLineJumpTotal.LastJumpEraseHistoryActionIndex;
+                        patternPoint.EndSemanticEventIndex = numberLineJumpTotal.LastJumpEraseSemanticEventIndex;
+                        patternPoint.EndEventType = Codings.EVENT_NUMBER_LINE_JUMP_ERASE;
+
+                        numberLineJumpTotal.IsPatternFinished = true;
+                        
+                        var newPatternPoint = new PatternPoint
+                                              {
+                                                  PageObjectID = numberLineID,
+                                                  StartHistoryActionIndex = jumpSizesChangedHistoryActions.First().HistoryActionIndex,
+                                                  StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                                  StartEventType = semanticEvent.EventType
+                                              };
+                        patternPoints.Add(newPatternPoint);
+
+                        numberLineJumpTotal = new NumberLineJumpTotal(newPatternPoint.PageObjectID, newPatternPoint.StartHistoryActionIndex);
+                        numberLineJumpTotals.Add(numberLineJumpTotal);
                     }
-                    else
-                    {
-                        jumpGroups[numberLineID].AddRange(allJumps);
-                    }
+
+                    numberLineJumpTotal.CurrentJumps.AddRange(allJumps);
+                    numberLineJumpTotal.TotalJumpsAfterLastJumpsAdded = numberLineJumpTotal.CurrentJumps.ToList();
+                    numberLineJumpTotal.JumpEraseSinceLastAddCount = 0;
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_NUMBER_LINE_JUMP_ERASE)
                 {
@@ -758,29 +809,25 @@ namespace CLP.Entities
                         allJumps.AddRange(historyAction.JumpsRemoved);
                     }
 
+                    var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && !jt.IsPatternFinished);
                     var jumpsToRemove = (from jump in allJumps
-                                         from currentJump in jumpGroups[numberLineID]
-                                         where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
+                                         from currentJump in numberLineJumpTotal.CurrentJumps
+                                           where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
                                          select currentJump).ToList();
 
-                    if (!jumpEraseCount.ContainsKey(numberLineID))
-                    {
-                        jumpEraseCount.Add(numberLineID, 1);
-                    }
-                    jumpEraseCount[numberLineID] += jumpsToRemove.Count;
-
+                    numberLineJumpTotal.JumpEraseCount += jumpsToRemove.Count;
+                    numberLineJumpTotal.JumpEraseSinceLastAddCount += jumpsToRemove.Count;
                     foreach (var jump in jumpsToRemove)
                     {
-                        if (!jumpGroups.ContainsKey(numberLineID))
-                        {
-                            continue;
-                        }
+                        numberLineJumpTotal.CurrentJumps.Remove(jump);
+                    }
 
-                        jumpGroups[numberLineID].Remove(jump);
-                        if (!jumpGroups[numberLineID].Any())
-                        {
-                            jumpGroups.Remove(numberLineID);
-                        }
+                    if (!numberLineJumpTotal.CurrentJumps.Any() &&
+                        numberLineJumpTotal.JumpEraseSinceLastAddCount > 1)
+                    {
+                        numberLineJumpTotal.IsUsingTotalJumpsAfterLastJumpsAdded = true;
+                        numberLineJumpTotal.LastJumpEraseHistoryActionIndex = jumpSizesChangedHistoryActions.Last().HistoryActionIndex;
+                        numberLineJumpTotal.LastJumpEraseSemanticEventIndex = semanticEvent.SemanticEventIndex;
                     }
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
@@ -792,12 +839,11 @@ namespace CLP.Entities
                         continue;
                     }
 
-                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == numberLineID);
-                    if (patternPoint == null)
-                    {
-                        continue;
-                    }
+                    var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && !jt.IsPatternFinished);
+                    numberLineJumpTotal.IsPatternFinished = true;
 
+                    var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID &&
+                                                                p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
                     patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
                     patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
                     patternPoint.EndEventType = semanticEvent.EventType;
@@ -815,6 +861,9 @@ namespace CLP.Entities
                     continue;
                 }
 
+                var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && jt.StartHistoryActionIndex == patternPoint.StartHistoryActionIndex);
+                var jumps = numberLineJumpTotal.IsUsingTotalJumpsAfterLastJumpsAdded ? numberLineJumpTotal.TotalJumpsAfterLastJumpsAdded : numberLineJumpTotal.CurrentJumps;
+
                 var usedRepresentation = new UsedRepresentation();
 
                 #region Basic Representation Info
@@ -831,10 +880,10 @@ namespace CLP.Entities
                 usedRepresentation.CodedID = numberLine.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
                 usedRepresentation.IsInteractedWith =
                     semanticEvents.Where(e => e.ReferencePageObjectID == numberLineID).Any(e => e.EventType == Codings.EVENT_NUMBER_LINE_JUMP || e.EventType == Codings.EVENT_NUMBER_LINE_CHANGE);
-                usedRepresentation.IsUsed = jumpGroups.ContainsKey(numberLineID);
+                usedRepresentation.IsUsed = numberLineJumpTotal.TotalJumpsAfterLastJumpsAdded.Any();
                 if (usedRepresentation.IsUsed)
                 {
-                    usedRepresentation.RepresentationInformation = NumberLine.ConsolidateJumps(jumpGroups[numberLineID].ToList());
+                    usedRepresentation.RepresentationInformation = NumberLine.ConsolidateJumps(jumps.ToList());
                 }
 
                 if (!string.IsNullOrEmpty(usedRepresentation.RepresentationInformation))
@@ -863,8 +912,7 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.AddRange(jumpsInEnglish);
                 }
 
-                if (jumpEraseCount.ContainsKey(numberLineID) &&
-                    jumpEraseCount[numberLineID] > 1)
+                if (numberLineJumpTotal.JumpEraseCount > 1)
                 {
                     usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_NLJE);
                 }
@@ -878,7 +926,7 @@ namespace CLP.Entities
                 var isSwapped = false;
                 if (usedRepresentation.IsUsed)
                 {
-                    var jumpSizes = jumpGroups[numberLineID];
+                    var jumpSizes = jumps;
                     var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
 
                     var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
