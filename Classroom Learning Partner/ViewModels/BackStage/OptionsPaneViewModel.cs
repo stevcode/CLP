@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 
@@ -53,6 +54,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 AnalysisService.RunAnalysis(notebook);
             }
+
+            MessageBox.Show("Analysis Finished.");
         }
 
         #endregion //Commands
