@@ -31,6 +31,7 @@ namespace Classroom_Learning_Partner
         public static string AnnAuthorTagsAndee => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - Andee.clp");
         public static string AnnAuthorTagsLily2 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK2.clp");
         public static string AnnAuthorTagsLily1 => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Fixed - LK.clp");
+        public static string AnnAuthorTagsStitched => Path.Combine(AnnAuthorTagsFolder, "Ann - Fall 2014 - Stitched.clp");
 
         public static string AssessmentCacheFolder => Path.Combine(DataService.DesktopFolderPath, "Cache.Chapter6.Assessment");
         public static string AssessmentNotebooksFolder => Path.Combine(AssessmentCacheFolder, "Notebooks");
@@ -3105,8 +3106,9 @@ namespace Classroom_Learning_Partner
             #endregion // Constraints
 
             var pageNumber = newPage.PageNumber;
+            var isUsingStitched = true;
 
-            var authorTagCachePath = string.Empty;
+            var authorTagCachePath = isUsingStitched ? AnnAuthorTagsStitched : string.Empty;
             if (lily1PageNumbers.Contains(pageNumber))
             {
                 authorTagCachePath = AnnAuthorTagsLily1;
@@ -3131,7 +3133,7 @@ namespace Classroom_Learning_Partner
 
             #region Load Author Page
 
-            var zipContainerFilePath = authorTagCachePath;
+            var zipContainerFilePath = isUsingStitched ? AnnAuthorTagsStitched : authorTagCachePath;
 
             var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
             using (var zip = ZipFile.Read(zipContainerFilePath))
@@ -3141,7 +3143,7 @@ namespace Classroom_Learning_Partner
                 zip.UseZip64WhenSaving = Zip64Option.Always;
                 zip.CaseSensitiveRetrieval = true;
 
-                var internalPagesDirectory = "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
+                var internalPagesDirectory = isUsingStitched ? "notebooks/Math Notebook;pUVQ-qBPyUWCuHWMs9dryA/A;AUTHOR;AUTHOR0000000000000000/pages/" : "notebooks/A;AUTHOR;AUTHOR0000000000000000/pages/";
                 var allPageEntries = zip.GetEntriesInDirectory(internalPagesDirectory).ToList();
                 var pageEntries = (from pageEntry in allPageEntries
                                    let nameComposite = CLPPage.NameComposite.ParseFromString(pageEntry.GetEntryNameWithoutExtension())
