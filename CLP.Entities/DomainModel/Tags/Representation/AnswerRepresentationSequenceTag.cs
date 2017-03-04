@@ -93,6 +93,11 @@ namespace CLP.Entities
                 }
             }
 
+            if (mostRecentSequenceItem == null)
+            {
+                return;
+            }
+
             if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
