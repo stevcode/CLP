@@ -139,11 +139,27 @@ namespace CLP.Entities
                 // BUG: Potential bug, or possibly not, up for discussion. I've removed the following condition from this if-statement:
                 // && firstAddend.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
                 // AR & LK wanted same group numbers to count fully as correct for alternative relation matching, but we had originally decided
-                // that only same group size would count.
+                // that only same group size would count. Similar issue for the next 2 alt relations.
                 if (Math.Abs(firstAddend.Factors.First().RelationPartAnswerValue - secondAddend.Factors.First().RelationPartAnswerValue) < 0.001)
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
+                    var alternateRelation = $"{numberOfGroups} x {groupSize} = {Sum}";
+                    alternateRelations.Add(alternateRelation);
+                }
+
+                if (Math.Abs(firstAddend.Factors.First().RelationPartAnswerValue - secondAddend.Factors.Last().RelationPartAnswerValue) < 0.001)
+                {
+                    var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.First().RelationPartAnswerValue;
+                    var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
+                    var alternateRelation = $"{numberOfGroups} x {groupSize} = {Sum}";
+                    alternateRelations.Add(alternateRelation);
+                }
+
+                if (Math.Abs(firstAddend.Factors.Last().RelationPartAnswerValue - secondAddend.Factors.First().RelationPartAnswerValue) < 0.001)
+                {
+                    var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue;
+                    var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var alternateRelation = $"{numberOfGroups} x {groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
