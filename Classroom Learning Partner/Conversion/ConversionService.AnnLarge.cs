@@ -427,7 +427,7 @@ namespace Classroom_Learning_Partner
 
             if (IS_LARGE_CACHE)
             {
-                AddLargeCacheTags(newPage);
+                AddLargeCacheTagsAndInterpretationRegions(newPage);
             }
             else
             {
@@ -3089,7 +3089,7 @@ namespace Classroom_Learning_Partner
             newPage.AddTag(relationDefinitionToAdd);
         }
 
-        public static void AddLargeCacheTags(CLPPage newPage)
+        public static void AddLargeCacheTagsAndInterpretationRegions(CLPPage newPage)
         {
             #region Constraints
 
@@ -3162,6 +3162,11 @@ namespace Classroom_Learning_Partner
                 RecursiveParentPageTagSet(authorPageTag, newPage);
 
                 newPage.AddTag(authorPageTag);
+            }
+
+            foreach (var interpretationRegion in authorPage.PageObjects.OfType<InterpretationRegion>())
+            {
+                newPage.PageObjects.Add(interpretationRegion);
             }
         }
 
