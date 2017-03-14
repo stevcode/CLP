@@ -1055,6 +1055,63 @@ namespace CLP.Entities
 
         public static void GenerateStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
         {
+            var stampObjectIDsOnPage = new List<string>();
+            var stampObjectIDsOnPageSinceLastClear = new List<string>();
+            var stampObjectIDsRemovedSinceLastAdd = new List<string>();
+
+            var endPoints = new Dictionary<int,List<string>>();
+            var endPointCount = 0;
+
+            #region Find Pattern Points
+
+            foreach (var semanticEvent in semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT))
+            {
+                var stampedObjectID = semanticEvent.ReferencePageObjectID;
+
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                {
+                    stampObjectIDsOnPage.Add(stampedObjectID);
+                    stampObjectIDsOnPageSinceLastClear.Add(stampedObjectID);
+                    foreach (var removedStampObjectID in stampObjectIDsRemovedSinceLastAdd)
+                    {
+                        stampObjectIDsOnPageSinceLastClear.Remove(removedStampObjectID);
+                    }
+                    stampObjectIDsRemovedSinceLastAdd.Clear();
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
+                {
+                    stampObjectIDsOnPage.Remove(stampedObjectID);
+                    stampObjectIDsRemovedSinceLastAdd.Add(stampedObjectID);
+
+                    if (stampObjectIDsOnPage.Any())
+                    {
+                        continue;
+                    }
+
+                    endPointCount++;
+                    endPoints.Add(endPointCount, stampObjectIDsOnPageSinceLastClear);
+                    stampObjectIDsOnPageSinceLastClear.Clear();
+                    stampObjectIDsRemovedSinceLastAdd.Clear();
+                }
+            }
+
+            if (stampObjectIDsOnPage.Any())
+            {
+                endPoints.Add(-1, stampObjectIDsOnPage);
+            }
+
+            #endregion // Find Pattern Points
+
+
+            foreach (var endPoint in endPoints)
+            {
+                var isFinalRepresentation = endPoint.Key == -1;
+
+
+
+            }
+
+            // TODO: Try separated by parentID first, then combined
             var stampedObjectGroups = new Dictionary<int,int>();  // <Parts,Number of StampedObjects with Parts Value>
             var parentStampIDsOfParts = new Dictionary<int,List<string>>();
             foreach (var stampedObject in page.PageObjects.OfType<StampedObject>())
