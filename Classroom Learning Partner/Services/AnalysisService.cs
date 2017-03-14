@@ -727,6 +727,17 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
+            var totalNumberLineUsedCount = entry.LeftNumberLineUsedCount + entry.RightNumberLineUsedCount + entry.AlternativeNumberLineUsedCount + entry.UnmatchedNumberLineUsedCount;
+            if (totalNumberLineUsedCount == 0)
+            {
+                entry.NLJE = AnalysisEntry.NA;
+            }
+            else
+            {
+                var isNLJEUsed = entry.LeftNLJE == AnalysisEntry.YES || entry.RightNLJE == AnalysisEntry.YES || entry.AlternativeNLJE == AnalysisEntry.YES || entry.UnmatchedNLJE == AnalysisEntry.YES;
+                entry.NLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
+            }
+
             entry.IsMR2STEP = AnalysisEntry.NA;
             if (representationsUsedTag != null &&
                 representationsUsedTag.RepresentationsUsedType == RepresentationsUsedTypes.RepresentationsUsed &&

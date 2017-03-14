@@ -826,6 +826,15 @@ namespace Classroom_Learning_Partner.Services
         #region Whole Page Analysis
 
         /// <summary>SUMMARY</summary>
+        public string NLJE
+        {
+            get { return GetValue<string>(NLJEProperty); }
+            set { SetValue(NLJEProperty, value); }
+        }
+
+        public static readonly PropertyData NLJEProperty = RegisterProperty("NLJE", typeof(string), string.Empty);
+
+        /// <summary>SUMMARY</summary>
         public string IsMR2STEP
         {
             get { return GetValue<string>(IsMR2STEPProperty); }
@@ -937,7 +946,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
             cellContents.Add(LeftNumberLineUsedCount.ToString());
-            cellContents.Add(LeftNLJE);
             cellContents.Add(LeftNumberLineSwitched);
             cellContents.Add(LeftStampCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
@@ -953,7 +961,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
             cellContents.Add(RightNumberLineUsedCount.ToString());
-            cellContents.Add(RightNLJE);
             cellContents.Add(RightNumberLineSwitched);
             cellContents.Add(RightStampCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
@@ -969,7 +976,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
-            cellContents.Add(AlternativeNLJE);
             cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeStampCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
@@ -985,7 +991,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
-            cellContents.Add(UnmatchedNLJE);
             cellContents.Add(UnmatchedNumberLineBlank);
             cellContents.Add(UnmatchedStampCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
@@ -993,6 +998,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsUnmatchedMR);
 
             // Whole Page Analysis
+            cellContents.Add(NLJE);
             cellContents.Add(IsMR2STEP);
             cellContents.Add(FinalAnswerCorrectness);
             cellContents.Add(IsABR);
@@ -1049,7 +1055,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left ARR skip");
             cellContents.Add("Left ARR skip tags");
             cellContents.Add("Left NL used");
-            cellContents.Add("Left NLJE");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
@@ -1065,7 +1070,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right ARR skip");
             cellContents.Add("Right ARR skip tags");
             cellContents.Add("Right NL used");
-            cellContents.Add("Right NLJE");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
@@ -1081,7 +1085,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
             cellContents.Add("Alternative NL used");
-            cellContents.Add("Alternative NLJE");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
@@ -1097,7 +1100,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL used");
-            cellContents.Add("Unmatched NLJE");
             cellContents.Add("Unmatched NL blank");
             cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
@@ -1105,6 +1107,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched MR");
 
             // Whole Page Analysis
+            cellContents.Add("NLJE");
             cellContents.Add("MR2STEP");
             cellContents.Add("Final ANS");
             cellContents.Add("ABR");
