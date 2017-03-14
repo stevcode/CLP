@@ -766,30 +766,6 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            var correctnessSummaryTag = page.Tags.OfType<CorrectnessSummaryTag>().FirstOrDefault();
-            if (correctnessSummaryTag == null)
-            {
-                entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_UNKNOWN;
-            }
-            else
-            {
-                switch (correctnessSummaryTag.Correctness)
-                {
-                    case Correctness.Correct:
-                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_CORRECT;
-                        break;
-                    case Correctness.Incorrect:
-                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_INCORRECT;
-                        break;
-                    case Correctness.PartiallyCorrect:
-                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_PARTIAL;
-                        break;
-                    default:
-                        entry.CorrectnessSummary = AnalysisEntry.CORRECTNESS_UNKNOWN;
-                        break;
-                }
-            }
-
             var answerRepresentationSequenceTag = page.Tags.OfType<AnswerRepresentationSequenceTag>().FirstOrDefault();
             if (answerRepresentationSequenceTag == null)
             {

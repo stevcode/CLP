@@ -870,15 +870,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
 
-        /// <summary>Overall correctness summary of the page.</summary>
-        public string CorrectnessSummary
-        {
-            get { return GetValue<string>(CorrectnessSummaryProperty); }
-            set { SetValue(CorrectnessSummaryProperty, value); }
-        }
-
-        public static readonly PropertyData CorrectnessSummaryProperty = RegisterProperty("CorrectnessSummary", typeof(string), string.Empty);
-
         /// <summary>SUMMARY</summary>
         public string IsABR
         {
@@ -1034,7 +1025,6 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Analysis
             cellContents.Add(IsMR2STEP);
             cellContents.Add(FinalAnswerCorrectness);
-            cellContents.Add(CorrectnessSummary);
             cellContents.Add(IsABR);
             cellContents.Add(IsRAA);
             cellContents.Add(string.Join(", ", AnswersChangedAfterRepresentation));
@@ -1150,7 +1140,6 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Analysis
             cellContents.Add("MR2STEP");
             cellContents.Add("Final ANS");
-            cellContents.Add("Correctness Summary");
             cellContents.Add("ABR");
             cellContents.Add("RAA");
             cellContents.Add("ANS Changed");
