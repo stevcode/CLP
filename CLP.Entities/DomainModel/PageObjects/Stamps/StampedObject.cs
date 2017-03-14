@@ -21,11 +21,8 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="StampedObject" /> from scratch.</summary>
         public StampedObject() { }
 
-        /// <summary>Initializes <see cref="StampedObject" /> from</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StampedObject" /> belongs to.</param>
         public StampedObject(CLPPage parentPage, string parentStampID, string imageHashID, StampedObjectTypes stampedObjectType)
             : base(parentPage)
         {
@@ -35,8 +32,6 @@ namespace CLP.Entities
             CanAcceptPageObjects = stampedObjectType == StampedObjectTypes.GroupStampedObject || stampedObjectType == StampedObjectTypes.EmptyGroupStampedObject;
         }
 
-        /// <summary>Initializes <see cref="StampedObject" /> from</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StampedObject" /> belongs to.</param>
         public StampedObject(CLPPage parentPage, string parentStampID, StampedObjectTypes stampedObjectType)
             : this(parentPage, parentStampID, string.Empty, stampedObjectType) { }
 
@@ -44,10 +39,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        public double PartsHeight
-        {
-            get { return 20; }
-        }
+        public double PartsHeight => 20;
 
         /// <summary>The Unique Identifier for the <see cref="StampedObject" />'s parent <see cref="Stamp" />.</summary>
         public string ParentStampID
@@ -130,31 +122,17 @@ namespace CLP.Entities
                         throw new ArgumentOutOfRangeException();
                 }
 
-                return string.Format("{0} with {1} Part(s)", stampObjectType, Parts);
+                return $"{stampObjectType} with {Parts} Part(s)";
             }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_STAMPED_OBJECTS; }
-        }
+        public override string CodedName => Codings.OBJECT_STAMPED_OBJECTS;
 
-        public override string CodedID
-        {
-            get { return ""; //pictorial, discrete/unitized, drag/menu
-            }
-        }
+        public override string CodedID => ""; // pictorial, discrete/unitized, drag/menu
 
-        public override int ZIndex
-        {
-            get { return StampedObjectType == StampedObjectTypes.GroupStampedObject || StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject ? 70 : 80; }
-        }
+        public override int ZIndex => StampedObjectType == StampedObjectTypes.GroupStampedObject || StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject ? 70 : 80;
 
-        /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override bool IsBackgroundInteractable => false;
 
         public override void OnAdded(bool fromHistory = false)
         {
