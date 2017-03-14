@@ -353,15 +353,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData LeftNumberLineSwitchedProperty = RegisterProperty("LeftNumberLineSwitched", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string LeftNumberLineBlank
-        {
-            get { return GetValue<string>(LeftNumberLineBlankProperty); }
-            set { SetValue(LeftNumberLineBlankProperty, value); }
-        }
-
-        public static readonly PropertyData LeftNumberLineBlankProperty = RegisterProperty("LeftNumberLineBlank", typeof(string), string.Empty);
-
         #endregion // Number Line
 
         #region Stamps
@@ -504,15 +495,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData RightNumberLineSwitchedProperty = RegisterProperty("RightNumberLineSwitched", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string RightNumberLineBlank
-        {
-            get { return GetValue<string>(RightNumberLineBlankProperty); }
-            set { SetValue(RightNumberLineBlankProperty, value); }
-        }
-
-        public static readonly PropertyData RightNumberLineBlankProperty = RegisterProperty("RightNumberLineBlank", typeof(string), string.Empty);
-
         #endregion // Number Line
 
         #region Stamps
@@ -654,15 +636,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AlternativeNumberLineSwitchedProperty = RegisterProperty("AlternativeNumberLineSwitched", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public string AlternativeNumberLineBlank
-        {
-            get { return GetValue<string>(AlternativeNumberLineBlankProperty); }
-            set { SetValue(AlternativeNumberLineBlankProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeNumberLineBlankProperty = RegisterProperty("AlternativeNumberLineBlank", typeof(string), string.Empty);
 
         #endregion // Number Line
 
@@ -966,7 +939,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNLJE);
             cellContents.Add(LeftNumberLineSwitched);
-            cellContents.Add(LeftNumberLineBlank);
             cellContents.Add(LeftStampCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
@@ -983,7 +955,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNLJE);
             cellContents.Add(RightNumberLineSwitched);
-            cellContents.Add(RightNumberLineBlank);
             cellContents.Add(RightStampCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
@@ -1000,7 +971,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
             cellContents.Add(AlternativeNLJE);
             cellContents.Add(AlternativeNumberLineSwitched);
-            cellContents.Add(AlternativeNumberLineBlank);
             cellContents.Add(AlternativeStampCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesSwitched);
@@ -1081,7 +1051,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left NL used");
             cellContents.Add("Left NLJE");
             cellContents.Add("Left NL switched");
-            cellContents.Add("Left NL blank");
             cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
             cellContents.Add("Left STA switched");
@@ -1098,7 +1067,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right NL used");
             cellContents.Add("Right NLJE");
             cellContents.Add("Right NL switched");
-            cellContents.Add("Right NL blank");
             cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
             cellContents.Add("Right STA switched");
@@ -1115,7 +1083,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative NL used");
             cellContents.Add("Alternative NLJE");
             cellContents.Add("Alternative NL switched");
-            cellContents.Add("Alternative NL blank");
             cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
             cellContents.Add("Alternative STA switched");
