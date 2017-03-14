@@ -363,7 +363,7 @@ namespace Classroom_Learning_Partner.Services
             entry.NumberLineCreatedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_ADD);
             entry.NumberLineDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_DELETE);
             entry.StampDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMP && e.EventType == Codings.EVENT_OBJECT_DELETE);
-            entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECTS && e.EventType == Codings.EVENT_OBJECT_DELETE);
+            entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT && e.EventType == Codings.EVENT_OBJECT_DELETE);
 
             #endregion // Whole Page Characteristics
 
