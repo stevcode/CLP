@@ -32,6 +32,9 @@ namespace CLP.Entities
             return false;
         }
 
+        /// <summary>
+        /// Removes all white-space characters from the current <see cref="String" /> object.
+        /// </summary>
         public static string TrimAll(this string s)
         {
             Argument.IsNotNull("s", s);

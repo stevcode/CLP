@@ -496,7 +496,33 @@ namespace CLP.Entities
 
                 if (subArrayGroups.ContainsKey(arrayID))
                 {
-                    usedRepresentation.RepresentationInformation = string.Join(", ", subArrayGroups[arrayID]);
+                    // HACK - 2 existing strokes that create the same ink divide should combine. Ideally, this should be fixed in the DIVIDE INK event.
+                    var subArrays = subArrayGroups[arrayID].ToList();
+                    var subArraysToIgnore = new List<string>();
+
+                    for (var i = 0; i < subArrays.Count - 1; i++)
+                    {
+                        var subArray = subArrays[i];
+                        var trimmedSubArray = subArray.Replace('a', ' ').Replace('b', ' ').Replace('c', ' ').Replace('d', ' ').Replace('e', ' ').Replace('f', ' ').Replace('g', ' ').Replace('h', ' ').Trim();
+                        for (var j = i + 1; j < subArrays.Count; j++)
+                        {
+                            var nextSubArray = subArrays[j];
+                            var nextTrimmedSubArray = nextSubArray.Replace('a', ' ').Replace('b', ' ').Replace('c', ' ').Replace('d', ' ').Replace('e', ' ').Replace('f', ' ').Replace('g', ' ').Replace('h', ' ').Trim();
+
+                            if (trimmedSubArray == nextTrimmedSubArray)
+                            {
+                                subArraysToIgnore.Add(trimmedSubArray);
+                            }
+                        }
+                    }
+
+                    subArraysToIgnore = subArraysToIgnore.Distinct().ToList();
+                    foreach (var subArray in subArraysToIgnore)
+                    {
+                        subArrays.Remove(subArray);
+                    }
+
+                    usedRepresentation.RepresentationInformation = string.Join(", ", subArrays);
                 }
 
                 if (patternPoint.EndEventType == Codings.EVENT_CUT)
@@ -682,13 +708,6 @@ namespace CLP.Entities
 
                 tag.RepresentationsUsed.Add(usedRepresentation);
             }
-
-            #region Static Skips
-
-            //var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array);
-
-
-            #endregion // Static Skips
         }
 
         private class NumberLineJumpTotal

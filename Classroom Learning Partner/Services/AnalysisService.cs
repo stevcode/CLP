@@ -658,7 +658,7 @@ namespace Classroom_Learning_Partner.Services
 
             entry.UnmatchedArraySnapCount = unmatchedUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
 
-            entry.UnmatchedArrayDivideCount = unmatchedUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+            entry.UnmatchedArrayDivideCount = unmatchedUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',') ).Sum();
 
             var unmatchedArraysWithSkips = unmatchedUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
