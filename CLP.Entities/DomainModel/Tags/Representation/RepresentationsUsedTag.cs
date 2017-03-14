@@ -122,6 +122,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
 
+        /// <summary>List of all the PageObject IDs used by this singular Representation construct.</summary>
+        public List<string> PageObjectIDs
+        {
+            get { return GetValue<List<string>>(PageObjectIDsProperty); }
+            set { SetValue(PageObjectIDsProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>), () => new List<string>());
+        
         public string FormattedValue
         {
             get
@@ -476,6 +485,7 @@ namespace CLP.Entities
                 }
 
                 var usedRepresentation = new UsedRepresentation();
+                usedRepresentation.PageObjectIDs.Add(arrayID);
 
                 #region Basic Representation Info
 
@@ -884,6 +894,7 @@ namespace CLP.Entities
                 var jumps = numberLineJumpTotal.IsUsingTotalJumpsAfterLastJumpsAdded ? numberLineJumpTotal.TotalJumpsAfterLastJumpsAdded : numberLineJumpTotal.CurrentJumps;
 
                 var usedRepresentation = new UsedRepresentation();
+                usedRepresentation.PageObjectIDs.Add(numberLineID);
 
                 #region Basic Representation Info
 
