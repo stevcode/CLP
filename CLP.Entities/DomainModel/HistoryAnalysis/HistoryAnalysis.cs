@@ -186,7 +186,11 @@ namespace CLP.Entities
             TypeSwitch.On(historyAction)
                       .Case<ObjectsOnPageChangedHistoryAction>(h =>
                                                                {
-                                                                   var generatedSemanticEvents = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                   var generatedSemanticEvents = ObjectSemanticEvents.Add(page, h);
+                                                                   if (!generatedSemanticEvents.Any())
+                                                                   {
+                                                                       generatedSemanticEvents = ObjectSemanticEvents.Delete(page, h);
+                                                                   }
                                                                    semanticEvents.AddRange(generatedSemanticEvents);
                                                                })
                       .Case<PartsValueChangedHistoryAction>(h =>

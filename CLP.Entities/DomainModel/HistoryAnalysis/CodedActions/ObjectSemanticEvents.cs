@@ -19,7 +19,7 @@ namespace CLP.Entities
                 objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
-                return null;
+                return new List<ISemanticEvent>();
             }
 
             var addedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsAdded;
@@ -31,8 +31,9 @@ namespace CLP.Entities
                        };
             }
 
-            var isMultiAdd = addedPageObjects.Count > 1;
-            var eventType = isMultiAdd ? Codings.EVENT_OBJECT_MULTIPLE_ADD : Codings.EVENT_OBJECT_ADD;
+            //var isMultiAdd = addedPageObjects.Count > 1;
+            //var eventType = isMultiAdd ? Codings.EVENT_OBJECT_MULTIPLE_ADD : Codings.EVENT_OBJECT_ADD;
+            var eventType = Codings.EVENT_OBJECT_ADD;
 
             var semanticEvents = new List<ISemanticEvent>();
             foreach (var addedPageObject in addedPageObjects)
@@ -83,7 +84,7 @@ namespace CLP.Entities
                 objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
-                return null;
+                return new List<ISemanticEvent>();
             }
 
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
@@ -95,8 +96,9 @@ namespace CLP.Entities
                        };
             }
 
-            var isMultiDelete = removedPageObjects.Count > 1;
-            var eventType = isMultiDelete ? Codings.EVENT_OBJECT_MULTIPLE_DELETE : Codings.EVENT_OBJECT_DELETE;
+            //var isMultiDelete = removedPageObjects.Count > 1;
+            //var eventType = isMultiDelete ? Codings.EVENT_OBJECT_MULTIPLE_DELETE : Codings.EVENT_OBJECT_DELETE;
+            var eventType = Codings.EVENT_OBJECT_DELETE;
 
             var semanticEvents = new List<ISemanticEvent>();
             foreach (var removedPageObject in removedPageObjects)
