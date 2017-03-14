@@ -162,36 +162,23 @@ namespace CLP.Entities
                         break;
                 }
 
-                return string.Format("{0} with {1} Part(s)", stampType, Parts);
+                return $"{stampType} with {Parts} Part(s)";
             }
         }
 
-        public override string CodedName
-        {
-            get { return Codings.OBJECT_STAMP; }
-        }
+        public override string CodedName => Codings.OBJECT_STAMP;
 
-        public override int ZIndex
-        {
-            get { return 60; }
-        }
+        public override string CodedID => Parts.ToString(); // TODO: pictorial, discrete/unitized
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
+        public override int ZIndex => 60;
+
+        public override bool IsBackgroundInteractable => true;
 
         /// <summary>Minimum Height of the <see cref="IPageObject" />.</summary>
-        public override double MinimumHeight
-        {
-            get { return 25 + PartsHeight + HandleHeight; }
-        }
+        public override double MinimumHeight => 25 + PartsHeight + HandleHeight;
 
         /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
-        public override double MinimumWidth
-        {
-            get { return 25; }
-        }
+        public override double MinimumWidth => 25;
 
         public override void OnAdded(bool fromHistory = false)
         {
@@ -318,15 +305,9 @@ namespace CLP.Entities
         #region AStrokeAccepter Overrides
 
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
-        public override int StrokeHitTestPercentage
-        {
-            get { return 50; }
-        }
+        public override int StrokeHitTestPercentage => 50;
 
-        public override Rect StrokeAcceptanceBoundingBox
-        {
-            get { return new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight); }
-        }
+        public override Rect StrokeAcceptanceBoundingBox => new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
 
         #endregion //AStrokeAccepter Overrides
 
