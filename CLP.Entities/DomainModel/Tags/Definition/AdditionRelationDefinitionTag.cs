@@ -130,9 +130,7 @@ namespace CLP.Entities
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue + secondAddend.Factors.First().RelationPartAnswerValue;
-                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
-                                        ? " group(s) of "
-                                        : " x ";
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : " x ";
                     var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
@@ -146,8 +144,7 @@ namespace CLP.Entities
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
-                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : " x ";
-                    var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
+                    var alternateRelation = $"{numberOfGroups} x {groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
 
