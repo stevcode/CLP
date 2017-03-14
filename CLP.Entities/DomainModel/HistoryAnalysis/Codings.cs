@@ -31,7 +31,7 @@ namespace CLP.Entities
         public const string OBJECT_REMAINDER_TILES = "TILES";
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";
-        public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
+        public const string OBJECT_STAMPED_OBJECT = "STAMP IMAGE";
         public const string OBJECT_BINS = "BINS";
         public const string OBJECT_FILL_IN = "ANS FI";
         public const string OBJECT_MULTIPLE_CHOICE = "ANS MC";
@@ -49,7 +49,7 @@ namespace CLP.Entities
                                                                                 { OBJECT_REMAINDER_TILES, "Remainder Tiles" },
                                                                                 { OBJECT_NUMBER_LINE, "Number Line" },
                                                                                 { OBJECT_STAMP, "Stamp" },
-                                                                                { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
+                                                                                { OBJECT_STAMPED_OBJECT, "Stamp Image" },
                                                                                 { OBJECT_BINS, "Bins" },
                                                                                 { OBJECT_FILL_IN, "Final Answer Fill In" },
                                                                                 { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
@@ -342,7 +342,7 @@ namespace CLP.Entities
         public static bool IsRepresentationEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
-                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;
+                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECT || semanticEvent.CodedObject == OBJECT_BINS;
         }
 
         #endregion // Methods

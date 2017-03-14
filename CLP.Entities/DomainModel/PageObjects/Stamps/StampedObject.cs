@@ -126,9 +126,9 @@ namespace CLP.Entities
             }
         }
 
-        public override string CodedName => Codings.OBJECT_STAMPED_OBJECTS;
+        public override string CodedName => Codings.OBJECT_STAMPED_OBJECT;
 
-        public override string CodedID => ""; // pictorial, discrete/unitized, drag/menu
+        public override string CodedID => Parts.ToString(); // TODO: pictorial, discrete/unitized, drag/menu
 
         public override int ZIndex => StampedObjectType == StampedObjectTypes.GroupStampedObject || StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject ? 70 : 80;
 
