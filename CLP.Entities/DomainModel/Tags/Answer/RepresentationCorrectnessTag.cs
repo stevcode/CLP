@@ -295,32 +295,55 @@ namespace CLP.Entities
             }
 
             var leftSimplifiedRelation = new SimplifiedRelation
-            {
-                GroupSize = partOneDefinition.Factors.Last().RelationPartAnswerValue,
-                NumberOfGroups = partOneDefinition.Factors.First().RelationPartAnswerValue,
-                Product = partOneDefinition.Product,
-                IsOrderedGroup = partOneDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
-            };
+                                         {
+                                             GroupSize = partOneDefinition.Factors.Last().RelationPartAnswerValue,
+                                             NumberOfGroups = partOneDefinition.Factors.First().RelationPartAnswerValue,
+                                             Product = partOneDefinition.Product,
+                                             IsOrderedGroup = partOneDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                         };
 
             var rightSimplifiedRelation = new SimplifiedRelation
-            {
-                GroupSize = partTwoDefinition.Factors.Last().RelationPartAnswerValue,
-                NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue,
-                Product = partTwoDefinition.Product,
-                IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
-            };
+                                          {
+                                              GroupSize = partTwoDefinition.Factors.Last().RelationPartAnswerValue,
+                                              NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue,
+                                              Product = partTwoDefinition.Product,
+                                              IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                          };
 
-            if (!(Math.Abs(leftSimplifiedRelation.GroupSize - rightSimplifiedRelation.GroupSize) < 0.0001))
+            var groupSize = -1.0;
+            var numberOfGroups = -1.0;
+
+            if (Math.Abs(leftSimplifiedRelation.GroupSize - rightSimplifiedRelation.GroupSize) < 0.001)
+            {
+                groupSize = leftSimplifiedRelation.GroupSize;
+                numberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.NumberOfGroups;
+            }
+            else if (Math.Abs(leftSimplifiedRelation.NumberOfGroups - rightSimplifiedRelation.NumberOfGroups) < 0.001)
+            {
+                groupSize = leftSimplifiedRelation.GroupSize + rightSimplifiedRelation.GroupSize;
+                numberOfGroups = leftSimplifiedRelation.NumberOfGroups;
+            }
+            else if (Math.Abs(leftSimplifiedRelation.NumberOfGroups - rightSimplifiedRelation.GroupSize) < 0.001)
+            {
+                groupSize = leftSimplifiedRelation.GroupSize + rightSimplifiedRelation.NumberOfGroups;
+                numberOfGroups = leftSimplifiedRelation.NumberOfGroups;
+            }
+            else if (Math.Abs(leftSimplifiedRelation.GroupSize - rightSimplifiedRelation.NumberOfGroups) < 0.001)
+            {
+                groupSize = leftSimplifiedRelation.GroupSize;
+                numberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.GroupSize;
+            }
+            else
             {
                 return null;
             }
 
             var simplifiedRelation = new SimplifiedRelation
-            {
-                GroupSize = leftSimplifiedRelation.GroupSize,
-                NumberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.NumberOfGroups,
-                IsOrderedGroup = true
-            };
+                                     {
+                                         GroupSize = groupSize,
+                                         NumberOfGroups = numberOfGroups,
+                                         IsOrderedGroup = false
+                                     };
 
             simplifiedRelation.Product = simplifiedRelation.GroupSize * simplifiedRelation.NumberOfGroups;
             simplifiedRelation.PageDefinition = relationDefinitionTag;
