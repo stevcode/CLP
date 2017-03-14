@@ -154,10 +154,10 @@ namespace CLP.Entities
                 historyActionBuffer.Add(currentHistoryAction);
                 if (historyActionBuffer.Count == 1)
                 {
-                    var singleSemanticEvent = VerifyAndGenerateSingleActionEvent(page, historyActionBuffer.First());
-                    if (singleSemanticEvent != null)
+                    var singleSemanticEvents = VerifyAndGenerateSingleActionEvent(page, historyActionBuffer.First());
+                    if (singleSemanticEvents.Any())
                     {
-                        initialSemanticEvents.Add(singleSemanticEvent);
+                        initialSemanticEvents.AddRange(singleSemanticEvents);
                         historyActionBuffer.Clear();
                         continue;
                     }
@@ -175,41 +175,49 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        private static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
+        private static List<ISemanticEvent> VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(historyAction), historyAction);
 
             // TODO: Division Values Changed, DT Array Snapped/Removed, Animation Stop/Start
 
-            ISemanticEvent semanticEvent = null;
+            var semanticEvents = new List<ISemanticEvent>();
             TypeSwitch.On(historyAction)
                       .Case<ObjectsOnPageChangedHistoryAction>(h =>
                                                                {
-                                                                   semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                   var generatedSemanticEvents = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                   semanticEvents.AddRange(generatedSemanticEvents);
                                                                })
                       .Case<PartsValueChangedHistoryAction>(h =>
                                                                 {
-                                                                    semanticEvent = StampSemanticEvents.PartsValueChanged(page, h);
+                                                                    var semanticEvent = StampSemanticEvents.PartsValueChanged(page, h);
+                                                                    semanticEvents.Add(semanticEvent);
                                                                 })
                       .Case<CLPArrayRotateHistoryAction>(h =>
                                                          {
-                                                             semanticEvent = ArraySemanticEvents.Rotate(page, h);
+                                                             var semanticEvent = ArraySemanticEvents.Rotate(page, h);
+                                                             semanticEvents.Add(semanticEvent);
                                                          })
                       .Case<PageObjectCutHistoryAction>(h =>
                                                         {
-                                                            semanticEvent = ArraySemanticEvents.Cut(page, h);
+                                                            var semanticEvent = ArraySemanticEvents.Cut(page, h);
+                                                            semanticEvents.Add(semanticEvent);
                                                         })
                       .Case<CLPArraySnapHistoryAction>(h =>
                                                        {
-                                                           semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                           var semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                           semanticEvents.Add(semanticEvent);
                                                        })
                       .Case<CLPArrayDivisionsChangedHistoryAction>(h =>
                                                                    {
-                                                                       semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                       var semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                       semanticEvents.Add(semanticEvent);
                                                                    });
 
-            return semanticEvent;
+            
+
+            return semanticEvents;
         }
 
         private static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)

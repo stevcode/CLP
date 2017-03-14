@@ -10,7 +10,7 @@ namespace CLP.Entities
     {
         #region Initialization
 
-        public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
+        public static List<ISemanticEvent> Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
@@ -25,7 +25,10 @@ namespace CLP.Entities
             var addedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsAdded;
             if (!addedPageObjects.Any())
             {
-                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Add, No PageObjects");
+                return new List<ISemanticEvent>
+                       {
+                           SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Add, No PageObjects")
+                       };
             }
 
             var isMultiAdd = addedPageObjects.Count > 1;
@@ -51,25 +54,27 @@ namespace CLP.Entities
                 semanticEvents.Add(semanticEvent);
             }
 
-            if (addedPageObjects.Count == 1)
-            {
-                return semanticEvents.First();
-            }
+            return semanticEvents;
 
-            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
-            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+            //if (addedPageObjects.Count == 1)
+            //{
+            //    return semanticEvents.First();
+            //}
 
-            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
-                                        {
-                                            CodedObject = compoundCodedObject,
-                                            EventType = eventType,
-                                            CodedObjectID = compoundCodedObjectID
-                                        };
+            //var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            //var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
 
-            return compoundSemanticEvent;
+            //var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+            //                            {
+            //                                CodedObject = compoundCodedObject,
+            //                                EventType = eventType,
+            //                                CodedObjectID = compoundCodedObjectID
+            //                            };
+
+            //return compoundSemanticEvent;
         }
 
-        public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
+        public static List<ISemanticEvent> Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
@@ -84,7 +89,10 @@ namespace CLP.Entities
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
             if (!removedPageObjects.Any())
             {
-                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Delete, No PageObjects");
+                return new List<ISemanticEvent>
+                       {
+                           SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Delete, No PageObjects")
+                       };
             }
 
             var isMultiDelete = removedPageObjects.Count > 1;
@@ -110,22 +118,24 @@ namespace CLP.Entities
                 semanticEvents.Add(semanticEvent);
             }
 
-            if (removedPageObjects.Count == 1)
-            {
-                return semanticEvents.First();
-            }
+            return semanticEvents;
 
-            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
-            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+            //if (removedPageObjects.Count == 1)
+            //{
+            //    return semanticEvents.First();
+            //}
 
-            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
-                                        {
-                                            CodedObject = compoundCodedObject,
-                                            EventType = eventType,
-                                            CodedObjectID = compoundCodedObjectID
-                                        };
+            //var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            //var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
 
-            return compoundSemanticEvent;
+            //var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+            //                            {
+            //                                CodedObject = compoundCodedObject,
+            //                                EventType = eventType,
+            //                                CodedObjectID = compoundCodedObjectID
+            //                            };
+
+            //return compoundSemanticEvent;
         }
 
         public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryActions)
