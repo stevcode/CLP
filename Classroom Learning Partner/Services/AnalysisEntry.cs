@@ -628,15 +628,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData AlternativeNLJEProperty = RegisterProperty("AlternativeNLJE", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string AlternativeNumberLineSwitched
-        {
-            get { return GetValue<string>(AlternativeNumberLineSwitchedProperty); }
-            set { SetValue(AlternativeNumberLineSwitchedProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeNumberLineSwitchedProperty = RegisterProperty("AlternativeNumberLineSwitched", typeof(string), string.Empty);
-
         #endregion // Number Line
 
         #region Stamps
@@ -658,15 +649,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AlternativeStampImagesCreatedCountProperty = RegisterProperty("AlternativeStampImagesCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
-        public string AlternativeStampImagesSwitched
-        {
-            get { return GetValue<string>(AlternativeStampImagesSwitchedProperty); }
-            set { SetValue(AlternativeStampImagesSwitchedProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeStampImagesSwitchedProperty = RegisterProperty("AlternativeStampImagesSwitched", typeof(string), string.Empty);
 
         #endregion // Stamps
 
@@ -976,10 +958,8 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
-            cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeStampCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
-            cellContents.Add(AlternativeStampImagesSwitched);
             cellContents.Add(string.Join(", ", AlternativeRepresentationsAndCorrectness));
             cellContents.Add(IsAlternativeMR);
 
@@ -1085,10 +1065,8 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
             cellContents.Add("Alternative NL used");
-            cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
-            cellContents.Add("Alternative STA switched");
             cellContents.Add("Alternative REP Correctness");
             cellContents.Add("Alternative MR");
 
