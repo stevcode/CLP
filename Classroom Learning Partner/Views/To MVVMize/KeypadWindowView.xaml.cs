@@ -27,14 +27,14 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
 
         private void ValueButton_Click(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
+            var btn = sender as Button;
             NumbersEntered.Text = NumbersEntered.Text + btn.Content;
         }
 
         private void EnterButton_Click(object sender, RoutedEventArgs e)
         {
             int partNum;
-            var isNum = Int32.TryParse(NumbersEntered.Text, out partNum);
+            var isNum = int.TryParse(NumbersEntered.Text, out partNum);
             if (NumbersEntered.Text.Length > 0 && isNum && partNum < _limit)
             {
                 DialogResult = true;

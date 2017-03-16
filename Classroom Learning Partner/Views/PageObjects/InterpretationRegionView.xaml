@@ -143,6 +143,25 @@
                     </Style>
                 </Rectangle.Style>
             </Rectangle>
+
+            <Label Content="{Binding ExpectedValue}"
+                   FontSize="12"
+                   Height="Auto"
+                   Width="Auto">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsIntermediary}"
+                                         Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
             
             <Thumb Tag="PageObjectHitBox"
                    Width="{Binding Width}"

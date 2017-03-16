@@ -53,6 +53,24 @@ namespace CLP.Entities
 
         public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof(ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
 
+        /// <summary>SUMMARY</summary>
+        public bool IsIntermediary
+        {
+            get { return GetValue<bool>(IsIntermediaryProperty); }
+            set { SetValue(IsIntermediaryProperty, value); }
+        }
+
+        public static readonly PropertyData IsIntermediaryProperty = RegisterProperty("IsIntermediary", typeof(bool), false);
+
+        /// <summary>SUMMARY</summary>
+        public int ExpectedValue
+        {
+            get { return GetValue<int>(ExpectedValueProperty); }
+            set { SetValue(ExpectedValueProperty, value); }
+        }
+
+        public static readonly PropertyData ExpectedValueProperty = RegisterProperty("ExpectedValue", typeof(int), 0);
+        
         #endregion // Properties
 
         #region APageObjectBase Overrides
