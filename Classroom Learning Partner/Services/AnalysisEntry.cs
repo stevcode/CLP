@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.Services
         public const string CORRECTNESS_CORRECT = "C";
         public const string CORRECTNESS_INCORRECT = "I";
         public const string CORRECTNESS_PARTIAL = "P";
+        public const string CORRECTNESS_ILLEGIBLE = "ILL";
 
         public const string PROBLEM_TYPE_1_PART = "1P";
         public const string PROBLEM_TYPE_2_PART = "2P";

@@ -761,6 +761,9 @@ namespace Classroom_Learning_Partner.Services
                     case Correctness.PartiallyCorrect:
                         entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_PARTIAL;
                         break;
+                    case Correctness.Illegible:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_ILLEGIBLE;
+                        break;
                     default:
                         entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
                         break;
