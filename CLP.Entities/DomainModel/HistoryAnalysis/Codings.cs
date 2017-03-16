@@ -68,6 +68,8 @@ namespace CLP.Entities
                     return CORRECTNESS_INCORRECT;
                 case Correctness.Illegible:
                     return CORRECTNESS_ILLEGIBLE;
+                case Correctness.Unanswered:
+                    return CORRECTNESS_UNANSWERED;
                 default:
                     return CORRECTNESS_UNKNOWN;
             }
@@ -93,6 +95,8 @@ namespace CLP.Entities
                     return "Incorrect";
                 case CORRECTNESS_ILLEGIBLE:
                     return "Illegible";
+                case CORRECTNESS_UNANSWERED:
+                    return "Unanswered";
                 default:
                     return "Unknown";
             }
@@ -110,6 +114,8 @@ namespace CLP.Entities
                     return Correctness.Incorrect;
                 case CORRECTNESS_ILLEGIBLE:
                     return Correctness.Illegible;
+                case CORRECTNESS_UNANSWERED:
+                    return Correctness.Unanswered;
                 default:
                     return Correctness.Unknown;
             }
@@ -287,6 +293,7 @@ namespace CLP.Entities
         public const string CORRECTNESS_PARTIAL = "PAR";
         public const string CORRECTNESS_INCORRECT = "INC";
         public const string CORRECTNESS_ILLEGIBLE = "ILL";
+        public const string CORRECTNESS_UNANSWERED = "UNANSWERED";
         public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";

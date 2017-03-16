@@ -9,6 +9,7 @@ namespace CLP.Entities
         PartiallyCorrect,
         Incorrect,
         Illegible,
+        Unanswered,
         Unknown
     }
 

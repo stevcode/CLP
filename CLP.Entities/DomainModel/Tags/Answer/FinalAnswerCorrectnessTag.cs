@@ -130,7 +130,7 @@ namespace CLP.Entities
                 }
 
                 tag.StudentAnswer = BLANK_STUDENT_ANSWER;
-                tag.FinalAnswerCorrectness = Correctness.Incorrect;
+                tag.FinalAnswerCorrectness = Correctness.Unanswered;
             }
             else
             {

@@ -764,6 +764,9 @@ namespace Classroom_Learning_Partner.Services
                     case Correctness.Illegible:
                         entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_ILLEGIBLE;
                         break;
+                    case Correctness.Unanswered:
+                        entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNANSWERED;
+                        break;
                     default:
                         entry.FinalAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
                         break;
