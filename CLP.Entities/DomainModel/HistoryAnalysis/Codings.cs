@@ -219,6 +219,7 @@ namespace CLP.Entities
         public const string EVENT_INFO_INK_LOCATION_RIGHT_SKIP = "right skip region of";
         public const string EVENT_INFO_INK_LOCATION_TOP = "above";
         public const string EVENT_INFO_INK_LOCATION_BOTTOM = "below";
+        public const string EVENT_INFO_INK_LOCATION_BOTTOM_SKIP = "bottom skip region of";
         public const string EVENT_INFO_INK_LOCATION_OVER = "over";
         public const string EVENT_INFO_INK_LOCATION_TOP_LEFT = "left and above";
         public const string EVENT_INFO_INK_LOCATION_TOP_RIGHT = "right and above";

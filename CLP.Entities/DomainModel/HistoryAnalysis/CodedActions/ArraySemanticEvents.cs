@@ -581,6 +581,75 @@ namespace CLP.Entities
             return semanticEvent;
         }
 
+        public static ISemanticEvent BottomSkipCounting(CLPPage page, ISemanticEvent inkEvent)
+        {
+            Argument.IsNotNull(nameof(page), page);
+            Argument.IsNotNull(nameof(inkEvent), inkEvent);
+
+            if (inkEvent.CodedObject != Codings.OBJECT_INK ||
+                !(inkEvent.EventType == Codings.EVENT_INK_ADD ||
+                  inkEvent.EventType == Codings.EVENT_INK_ERASE))
+            {
+                return null;
+            }
+
+            var referenceArrayID = inkEvent.ReferencePageObjectID;
+            if (referenceArrayID == null)
+            {
+                return null;
+            }
+
+            // BUG: Potential bug, if the array was deleted, but all the ink of the skip count wasn't deleted when the array was deleted
+            // because it wasn't fully captured, this inkEvent shouldn't continue quite the way it does here. Something like the following:
+            // INK strokes erase [A] formerly skip strokes for ARR [8x8]
+            var array = page.GetPageObjectByIDOnPageOrInHistory(referenceArrayID) as CLPArray;
+            if (array == null)
+            {
+                return null;
+            }
+
+            var isSkipAdd = inkEvent.EventType == Codings.EVENT_INK_ADD;
+
+            var strokes = isSkipAdd
+                              ? inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
+                              : inkEvent.HistoryActions.Cast<ObjectsOnPageChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
+
+            var firstStroke = strokes.First();
+            var cluster = InkSemanticEvents.InkClusters.FirstOrDefault(c => c.Strokes.Contains(firstStroke) && c.ClusterType == InkCluster.ClusterTypes.ArrayBottomSkipCounting);
+            if (cluster == null)
+            {
+                return null;
+            }
+
+            var historyIndex = inkEvent.LastHistoryAction.HistoryActionIndex;
+            var strokesOnPage = cluster.GetClusterStrokesOnPageAtHistoryIndex(page, historyIndex);
+
+            var formattedSkips = InterpretBottomSkipCountStrokes(strokes);
+            var formattedSkipsOnPage = InterpretBottomSkipCountStrokes(strokesOnPage);
+
+            var formattedInterpretation = $"{formattedSkips}; {formattedSkipsOnPage}";
+
+            var codedObject = Codings.OBJECT_ARRAY;
+            var eventType = isSkipAdd ? Codings.EVENT_ARRAY_SKIP : Codings.EVENT_ARRAY_SKIP_ERASE;
+            var codedID = array.GetCodedIDAtHistoryIndex(historyIndex);
+            var incrementID = ObjectSemanticEvents.GetCurrentIncrementIDForPageObject(array.ID, codedObject, codedID);
+            var location = "bottom";
+
+            var eventInfo = $"{formattedInterpretation}, {location}";
+
+            var semanticEvent = new SemanticEvent(page, inkEvent)
+                                {
+                                    CodedObject = codedObject,
+                                    EventType = eventType,
+                                    CodedObjectID = codedID,
+                                    CodedObjectIDIncrement = incrementID,
+                                    EventInformation = eventInfo,
+                                    ReferencePageObjectID = referenceArrayID
+                                };
+
+            return semanticEvent;
+        }
+
         public static ISemanticEvent ArrayEquation(CLPPage page, ISemanticEvent inkEvent)
         {
             Argument.IsNotNull(nameof(page), page);
@@ -1892,6 +1961,124 @@ namespace CLP.Entities
             var result = string.Join("\n", jumpRanges);
             return result;
         }
+
+        #region BottomSkipCounting
+
+        public static List<Stroke> GroupPossibleBottomSkipCountStrokes(CLPArray array, List<Stroke> strokes, int historyIndex)
+        {
+            const double TOP_OF_VISUAL_BOTTOM_THRESHOLD = 45.0;
+            const double BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD = 51.5;
+
+            var arrayPosition = array.GetPositionAtHistoryIndex(historyIndex);
+            var arrayDimensions = array.GetDimensionsAtHistoryIndex(historyIndex);
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            var arrayVisualBottom = arrayPosition.Y + arrayDimensions.Y - array.LabelLength;
+            var arrayVisualLeft = arrayPosition.X + array.LabelLength;
+            var halfGridSquareSize = array.GridSquareSize * 0.5;
+
+            var skipCountStrokes = new List<Stroke>();
+            var acceptedBoundary = new Rect(arrayVisualLeft - halfGridSquareSize,
+                                            arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD,
+                                            array.GridSquareSize * (arrayColumnsAndRows.X + 1),
+                                            BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
+
+            foreach (var stroke in strokes)
+            {
+                // Rule 1: Rejected for being invisibly small.
+                if (stroke.IsInvisiblySmall())
+                {
+                    continue;
+                }
+
+                var strokeBounds = stroke.GetBounds();
+
+                // Rule 3: Rejected for being outside the accepted skip counting bounds
+                var intersect = Rect.Intersect(strokeBounds, acceptedBoundary);
+                if (intersect.IsEmpty)
+                {
+                    continue;
+                }
+
+                var intersectPercentage = intersect.Area() / strokeBounds.Area();
+                if (intersectPercentage <= 0.50)
+                {
+                    continue;
+                }
+
+                if (intersectPercentage <= 0.90)
+                {
+                    var weightedCenterY = stroke.WeightedCenter().Y;
+                    if (weightedCenterY < arrayVisualBottom - TOP_OF_VISUAL_BOTTOM_THRESHOLD ||
+                        weightedCenterY > arrayVisualBottom + BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD)
+                    {
+                        continue;
+                    }
+                }
+
+                skipCountStrokes.Add(stroke);
+            }
+
+            return skipCountStrokes;
+        }
+
+        public static string InterpretBottomSkipCountStrokes(List<Stroke> strokes)
+        {
+            // No strokes at all inside acceptable boundary
+            if (!strokes.Any())
+            {
+                return string.Empty;
+            }
+
+            var interpretations = InkInterpreter.StrokesToAllGuessesText(new StrokeCollection(strokes));
+            var guess = InkInterpreter.InterpretationClosestToANumber(interpretations);
+
+            return guess;
+        }
+
+        public static bool IsBottomSkipCounting(CLPArray array, string interpretation)
+        {
+            if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
+            var expectedValue = string.Empty;
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                expectedValue += i * array.Rows;
+            }
+
+            var expectedValueForWrongDimension = string.Empty;
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                expectedValueForWrongDimension += i * array.Columns;
+            }
+
+            var editDistance = EditDistance.Compute(expectedValue, interpretation);
+            var wrongDimensionEditDistance = EditDistance.Compute(expectedValueForWrongDimension, interpretation);
+
+            return editDistance <= 4 || wrongDimensionEditDistance <=4;
+        }
+
+        public static bool IsBottomSkipCountingByWrongDimension(CLPArray array, string interpretation)
+        {
+            if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
+            var expectedValueForWrongDimension = string.Empty;
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                expectedValueForWrongDimension += i * array.Columns;
+            }
+
+            var wrongDimensionEditDistance = EditDistance.Compute(expectedValueForWrongDimension, interpretation);
+
+            return wrongDimensionEditDistance <= 4;
+        }
+
+        #endregion // BottomSkipCounting
 
         #endregion // Utility
 

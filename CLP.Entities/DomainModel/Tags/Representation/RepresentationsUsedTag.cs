@@ -572,6 +572,8 @@ namespace CLP.Entities
                             var formattedSkips = formattedInterpretationParts[1];
                             if (!string.IsNullOrEmpty(formattedSkips))
                             {
+                                var isBottomSkipCounting = mostRecentSkipEvent.EventInformation.Contains("bottom");
+
                                 // HACK: temporary print out of Wrong Dimension analysis
                                 var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
                                 if (skipStrings.Count == 1 &&
@@ -648,8 +650,14 @@ namespace CLP.Entities
                                         wrongDimensionText = ", wrong dimension";
                                     }
                                 }
-                                
-                                var skipCodedValue = $"skip [{formattedSkips}]{wrongDimensionText}";
+
+                                if (isBottomSkipCounting)
+                                {
+                                    wrongDimensionText = ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips) ? ", wrong dimension" : string.Empty;
+                                }
+
+                                var skipText = isBottomSkipCounting ? "bottom skip" : "skip";
+                                var skipCodedValue = $"{skipText} [{formattedSkips}]{wrongDimensionText}";
                                 usedRepresentation.AdditionalInformation.Add(skipCodedValue);
                             }
                         }

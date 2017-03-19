@@ -686,6 +686,17 @@ namespace CLP.Entities
                 // TODO: Attempt Dots/Lines interpretation
             }
 
+            if (semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP) &&
+                semanticEvent.EventInformation.Contains(Codings.OBJECT_ARRAY))
+            {
+                var interpretedEvent = ArraySemanticEvents.BottomSkipCounting(page, semanticEvent);
+                if (interpretedEvent != null)
+                {
+                    allInterpretedEvents.Add(interpretedEvent);
+                    return allInterpretedEvents;
+                }
+            }
+
             if (!semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER))
             {
                 var interpretedEvent = InkSemanticEvents.Arithmetic(page, semanticEvent);

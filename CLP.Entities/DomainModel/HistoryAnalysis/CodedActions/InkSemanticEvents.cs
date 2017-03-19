@@ -19,6 +19,7 @@ namespace CLP.Entities
             FinalAnswerMultipleChoice,
             InkDivide,
             ArraySkipCounting,
+            ArrayBottomSkipCounting,
             ArrayEquation,
             ARITH,
             PossibleARReqn
@@ -490,7 +491,38 @@ namespace CLP.Entities
                     }
                     InkClusters.Add(skipCluster);
                 }
+                else
+                {
+                    var possibleBottomSkipStrokesAddedToPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesAddedToPage, endHistoryIndex);
+                    var interpretedBottomSkipCountingHistory = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesAddedToPage);
+                    var isBottomSkipCountingHistory = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingHistory);
 
+                    var possibleBottomSkipStrokesOnPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesOnPage, endHistoryIndex);
+                    var interpretedBottomSkipCountingOnPage = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesOnPage);
+                    var isBottomSkipCountingOnPage = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingOnPage);
+
+                    if (isBottomSkipCountingHistory || isBottomSkipCountingOnPage)
+                    {
+                        var skipCluster = new InkCluster
+                                          {
+                                              ClusterType = InkCluster.ClusterTypes.ArrayBottomSkipCounting,
+                                              PageObjectReferenceID = arrayID,
+                                              LocationReference = Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP
+                                          };
+
+                        var bottomSkipStrokes = possibleBottomSkipStrokesAddedToPage.Concat(possibleBottomSkipStrokesOnPage).Distinct().ToList();
+                        foreach (var stroke in bottomSkipStrokes)
+                        {
+                            var currentCluster = GetContainingCluster(stroke);
+                            if (currentCluster.ClusterType != InkCluster.ClusterTypes.InkDivide)
+                            {
+                                MoveStrokeToDifferentCluster(skipCluster, stroke);
+                            }
+                        }
+
+                        InkClusters.Add(skipCluster);
+                    }
+                }
                 // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ArrayEquation.
                 // BUG: Right now, ARR eqn relies on OPTICS to create an Unknown cluster completely over the array, See "Update to Pre-Clustering, Line 545
                 // Will need to create a temp cluster of possible arr eqn, then after optics runs, any cluster  that contains strokes from these temp clusters will
@@ -712,6 +744,20 @@ namespace CLP.Entities
                 if (array != null)
                 {
                     var locationReference = Codings.EVENT_INFO_INK_LOCATION_RIGHT_SKIP;
+                    var referenceCodedObject = Codings.OBJECT_ARRAY;
+                    var referenceCodedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
+
+                    eventInfo = $"{locationReference} {referenceCodedObject} [{referenceCodedID}]";
+                    referencePageObjectID = arrayID;
+                }
+            }
+            else if (cluster.ClusterType == InkCluster.ClusterTypes.ArrayBottomSkipCounting)
+            {
+                var arrayID = cluster.PageObjectReferenceID;
+                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID);
+                if (array != null)
+                {
+                    var locationReference = Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP;
                     var referenceCodedObject = Codings.OBJECT_ARRAY;
                     var referenceCodedID = array.GetCodedIDAtHistoryIndex(previousHistoryIndex);
 
