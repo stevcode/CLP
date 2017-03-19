@@ -693,8 +693,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.UnmatchedNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
-            entry.UnmatchedNumberLineBlank = unmatchedNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
-
             #endregion // Number Lines
 
             #region Stamps

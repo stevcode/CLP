@@ -781,15 +781,6 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData UnmatchedNLJEProperty = RegisterProperty("UnmatchedNLJE", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string UnmatchedNumberLineBlank
-        {
-            get { return GetValue<string>(UnmatchedNumberLineBlankProperty); }
-            set { SetValue(UnmatchedNumberLineBlankProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedNumberLineBlankProperty = RegisterProperty("UnmatchedNumberLineBlank", typeof(string), string.Empty);
-
         #endregion // Number Line
 
         #region Stamps
@@ -1009,7 +1000,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
-            cellContents.Add(UnmatchedNumberLineBlank);
             cellContents.Add(UnmatchedStampCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedRepresentationsAndCorrectness));
@@ -1119,7 +1109,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL used");
-            cellContents.Add("Unmatched NL blank");
             cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
             cellContents.Add("Unmatched REP Correctness");
