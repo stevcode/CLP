@@ -605,8 +605,10 @@ namespace Classroom_Learning_Partner.Services
                 entry.AlternativeNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
+            entry.AlternativeNumberLineSwitched = alternativeUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             entry.AlternativeNumberLineBlank = alternativeNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+            
             #endregion // Number Lines
 
             #region Stamps
@@ -630,6 +632,8 @@ namespace Classroom_Learning_Partner.Services
                     entry.AlternativeStampImagesCreatedCount += stampImageCount;
                 }
             }
+
+            entry.AlternativeStampImagesSwitched = alternativeStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             #endregion // Stamps
 
