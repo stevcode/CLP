@@ -355,6 +355,15 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData LeftNumberLineSwitchedProperty = RegisterProperty("LeftNumberLineSwitched", typeof(string), string.Empty);
 
+        /// <summary>SUMMARY</summary>
+        public string LeftNumberLineBlank
+        {
+            get { return GetValue<string>(LeftNumberLineBlankProperty); }
+            set { SetValue(LeftNumberLineBlankProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineBlankProperty = RegisterProperty("LeftNumberLineBlank", typeof(string), string.Empty);
+
         #endregion // Number Line
 
         #region Stamps
@@ -497,6 +506,15 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData RightNumberLineSwitchedProperty = RegisterProperty("RightNumberLineSwitched", typeof(string), string.Empty);
 
+        /// <summary>SUMMARY</summary>
+        public string RightNumberLineBlank
+        {
+            get { return GetValue<string>(RightNumberLineBlankProperty); }
+            set { SetValue(RightNumberLineBlankProperty, value); }
+        }
+
+        public static readonly PropertyData RightNumberLineBlankProperty = RegisterProperty("RightNumberLineBlank", typeof(string), string.Empty);
+
         #endregion // Number Line
 
         #region Stamps
@@ -629,6 +647,15 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AlternativeNLJEProperty = RegisterProperty("AlternativeNLJE", typeof(string), string.Empty);
+
+        /// <summary>SUMMARY</summary>
+        public string AlternativeNumberLineBlank
+        {
+            get { return GetValue<string>(AlternativeNumberLineBlankProperty); }
+            set { SetValue(AlternativeNumberLineBlankProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeNumberLineBlankProperty = RegisterProperty("AlternativeNumberLineBlank", typeof(string), string.Empty);
 
         #endregion // Number Line
 
@@ -937,6 +964,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
             cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
+            cellContents.Add(LeftNumberLineBlank);
             cellContents.Add(LeftStampCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
@@ -952,6 +980,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
             cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
+            cellContents.Add(RightNumberLineBlank);
             cellContents.Add(RightStampCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
@@ -966,6 +995,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
+            cellContents.Add(AlternativeNumberLineBlank);
             cellContents.Add(AlternativeStampCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeRepresentationsAndCorrectness));
@@ -1044,6 +1074,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left ARR skip tags");
             cellContents.Add("Left NL used");
             cellContents.Add("Left NL switched");
+            cellContents.Add("Left NL blank");
             cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
             cellContents.Add("Left STA switched");
@@ -1059,6 +1090,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right ARR skip tags");
             cellContents.Add("Right NL used");
             cellContents.Add("Right NL switched");
+            cellContents.Add("Right NL blank");
             cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
             cellContents.Add("Right STA switched");
@@ -1073,6 +1105,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
             cellContents.Add("Alternative NL used");
+            cellContents.Add("Alternative NL blank");
             cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
             cellContents.Add("Alternative REP Correctness");

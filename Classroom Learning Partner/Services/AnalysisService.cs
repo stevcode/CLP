@@ -423,6 +423,8 @@ namespace Classroom_Learning_Partner.Services
 
             entry.LeftNumberLineSwitched = leftUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
+            entry.LeftNumberLineBlank = leftNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
             #endregion // Number Lines
 
             #region Stamps
@@ -513,6 +515,8 @@ namespace Classroom_Learning_Partner.Services
 
             entry.RightNumberLineSwitched = rightUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
+            entry.RightNumberLineBlank = rightNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
+
             #endregion // Number Lines
 
             #region Stamps
@@ -601,6 +605,8 @@ namespace Classroom_Learning_Partner.Services
                 entry.AlternativeNLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
+
+            entry.AlternativeNumberLineBlank = alternativeNumberLines.Any(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH)) ? AnalysisEntry.YES : AnalysisEntry.NO;
             #endregion // Number Lines
 
             #region Stamps
