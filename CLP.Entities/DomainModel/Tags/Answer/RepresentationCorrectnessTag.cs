@@ -129,7 +129,6 @@ namespace CLP.Entities
                         break;
                 }
 
-
                 simplifiedRelation.Product = divisionDefinition.Dividend.RelationPartAnswerValue;
                 simplifiedRelation.PageDefinition = relationDefinitionTag;
 
@@ -312,16 +311,19 @@ namespace CLP.Entities
 
             var groupSize = -1.0;
             var numberOfGroups = -1.0;
+            var isOrderedGroup = false;
 
             if (Math.Abs(leftSimplifiedRelation.GroupSize - rightSimplifiedRelation.GroupSize) < 0.001)
             {
                 groupSize = leftSimplifiedRelation.GroupSize;
                 numberOfGroups = leftSimplifiedRelation.NumberOfGroups + rightSimplifiedRelation.NumberOfGroups;
+                isOrderedGroup = true;
             }
             else if (Math.Abs(leftSimplifiedRelation.NumberOfGroups - rightSimplifiedRelation.NumberOfGroups) < 0.001)
             {
                 groupSize = leftSimplifiedRelation.GroupSize + rightSimplifiedRelation.GroupSize;
                 numberOfGroups = leftSimplifiedRelation.NumberOfGroups;
+                isOrderedGroup = true;
             }
             else if (Math.Abs(leftSimplifiedRelation.NumberOfGroups - rightSimplifiedRelation.GroupSize) < 0.001)
             {
@@ -342,7 +344,7 @@ namespace CLP.Entities
                                      {
                                          GroupSize = groupSize,
                                          NumberOfGroups = numberOfGroups,
-                                         IsOrderedGroup = false
+                                         IsOrderedGroup = isOrderedGroup
                                      };
 
             simplifiedRelation.Product = simplifiedRelation.GroupSize * simplifiedRelation.NumberOfGroups;

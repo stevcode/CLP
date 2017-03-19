@@ -143,7 +143,8 @@ namespace CLP.Entities
                 {
                     var groupSize = firstAddend.Factors.Last().RelationPartAnswerValue + secondAddend.Factors.Last().RelationPartAnswerValue;
                     var numberOfGroups = firstAddend.Factors.First().RelationPartAnswerValue;
-                    var alternateRelation = $"{numberOfGroups} x {groupSize} = {Sum}";
+                    var delimiter = firstAddend.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups ? " group(s) of " : " x ";
+                    var alternateRelation = $"{numberOfGroups}{delimiter}{groupSize} = {Sum}";
                     alternateRelations.Add(alternateRelation);
                 }
                 else if (Math.Abs(firstAddend.Factors.First().RelationPartAnswerValue - secondAddend.Factors.Last().RelationPartAnswerValue) < 0.001)
