@@ -2336,6 +2336,12 @@ namespace Classroom_Learning_Partner
                 var strokeID = newHistoryAction.StrokeIDsAdded.First();
                 var addedStroke = newPage.GetVerifiedStrokeOnPageByID(strokeID);
 
+                if (addedStroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Stroke for AddedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
+
                 #region Check for Multiple Choice Fill-In
 
                 // TODO: Necessary to handle all MC on page?
@@ -2531,6 +2537,12 @@ namespace Classroom_Learning_Partner
             {
                 var strokeID = newHistoryAction.StrokeIDsRemoved.First();
                 var removedStroke = newPage.GetVerifiedStrokeInHistoryByID(strokeID);
+
+                if (removedStroke == null)
+                {
+                    Debug.WriteLine($"[ERROR] Strokes Changed, Stroke for RemovedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    return null;
+                }
 
                 #region Check for Multiple Choice Erase
 
