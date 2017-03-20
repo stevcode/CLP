@@ -1110,133 +1110,138 @@ namespace CLP.Entities
 
             #endregion // Find Pattern Points
 
-
             foreach (var endPoint in endPoints)
             {
                 var isFinalRepresentation = endPoint.Key == -1;
 
+                var stampedObjectIDs = endPoint.Value;
+                var stampedObjects = stampedObjectIDs.Select(page.GetPageObjectByIDOnPageOrInHistory).Where(so => so != null).Cast<StampedObject>().ToList();
+                var groupedStampedObjects = stampedObjects.GroupBy(so => so.ParentStampID);
 
+                if (groupedStampedObjects.Count() == 1)
+                {
+                    var stampObjectsGroup = groupedStampedObjects.First().ToList();
+                    var usedRepresentation = GenerateUsedStampRepresentation(stampObjectsGroup, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                    tag.RepresentationsUsed.Add(usedRepresentation);
+                    continue;
+                }
 
+                if (groupedStampedObjects.Count() == 2)
+                {
+                    var firstStampObjectsGroup = groupedStampedObjects.First().ToList();
+                    var firstUsedRepresentation = GenerateUsedStampRepresentation(firstStampObjectsGroup, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+
+                    var secondStampObjectsGroup = groupedStampedObjects.Last().ToList();
+                    var secondUsedRepresentation = GenerateUsedStampRepresentation(secondStampObjectsGroup, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+
+                    if (firstUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE ||
+                        secondUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE)
+                    {
+                        tag.RepresentationsUsed.Add(firstUsedRepresentation);
+                        tag.RepresentationsUsed.Add(secondUsedRepresentation);
+                        continue;
+                    }
+                }
+
+                var allStampedObjects = groupedStampedObjects.SelectMany(g => g).ToList();
+                var combinedUsedRepresentation = GenerateUsedStampRepresentation(allStampedObjects, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                tag.RepresentationsUsed.Add(combinedUsedRepresentation);
             }
+        }
 
-            // TODO: Try separated by parentID first, then combined
-            var stampedObjectGroups = new Dictionary<int,int>();  // <Parts,Number of StampedObjects with Parts Value>
-            var parentStampIDsOfParts = new Dictionary<int,List<string>>();
-            foreach (var stampedObject in page.PageObjects.OfType<StampedObject>())
+        private static UsedRepresentation GenerateUsedStampRepresentation(List<StampedObject> stampedObjects, bool isFinalRepresentation, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        {
+            if (!stampedObjects.Any())
             {
-                var parts = stampedObject.Parts;
-                if (stampedObjectGroups.ContainsKey(parts))
-                {
-                    stampedObjectGroups[parts]++;
-                }
-                else
-                {
-                    stampedObjectGroups.Add(parts, 1);
-                }
-
-                if (parentStampIDsOfParts.ContainsKey(parts))
-                {
-                    parentStampIDsOfParts[parts].Add(stampedObject.ParentStampID);
-                }
-                else
-                {
-                    var parentStampIDs = new List<string>
-                                         {
-                                             stampedObject.ParentStampID
-                                         };
-                    parentStampIDsOfParts.Add(parts, parentStampIDs);
-                }
+                return null;
             }
 
-            foreach (var key in stampedObjectGroups.Keys)
+            var parts = stampedObjects.First().Parts;
+            var numberOfStampedObjects = stampedObjects.Count;
+
+            var usedRepresentation = new UsedRepresentation();
+
+            #region Basic Representation Info
+
+            usedRepresentation.IsFinalRepresentation = isFinalRepresentation;
+
+            usedRepresentation.CodedObject = Codings.OBJECT_STAMP;
+            usedRepresentation.CodedID = parts.ToString();
+            usedRepresentation.IsInteractedWith = true;
+            usedRepresentation.IsUsed = true;
+            usedRepresentation.RepresentationInformation = $"{numberOfStampedObjects} image(s)";
+
+            var groupString = numberOfStampedObjects == 1 ? "group" : "groups";
+            var englishValue = $"{numberOfStampedObjects} {groupString} of {parts}";
+            usedRepresentation.AdditionalInformation.Add(englishValue);
+
+            var numberOfParentStamps = stampedObjects.Select(so => so.ParentStampID).Distinct().Count();
+            var parentStampInfo = $"From {numberOfParentStamps} Stamps";
+            usedRepresentation.AdditionalInformation.Add(parentStampInfo);
+
+            #endregion // Basic Representation Info
+
+            #region Representation Correctness
+
+            var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+            var representationCorrectness = Correctness.Unknown;
+            if (usedRepresentation.IsUsed)
             {
-                var parts = key;
-                var numberOfStampedObjects = stampedObjectGroups[key];
+                var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
 
-                var usedRepresentation = new UsedRepresentation();
+                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
 
-                #region Basic Representation Info
-
-                usedRepresentation.IsFinalRepresentation = true;
-
-                usedRepresentation.CodedObject = Codings.OBJECT_STAMP;
-                usedRepresentation.CodedID = parts.ToString();
-                usedRepresentation.IsInteractedWith = true;
-                usedRepresentation.IsUsed = true;
-                usedRepresentation.RepresentationInformation = $"{numberOfStampedObjects} image(s)";
-
-                var groupString = stampedObjectGroups[key] == 1 ? "group" : "groups";
-                var englishValue = $"{stampedObjectGroups[key]} {groupString} of {parts}";
-                usedRepresentation.AdditionalInformation.Add(englishValue);
-
-                var parentStampsCount = parentStampIDsOfParts[key].Distinct().Count();
-                var parentStampInfo = $"From {parentStampsCount} Stamps";
-                usedRepresentation.AdditionalInformation.Add(parentStampInfo);
-
-                #endregion // Basic Representation Info
-
-                #region Representation Correctness
-
-                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
-                var representationCorrectness = Correctness.Unknown;
-                if (usedRepresentation.IsUsed)
+                if (leftCorrectness == Correctness.Correct)
                 {
-                    var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
-
-                    var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
-                    var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
-                    var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
-
-                    if (leftCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (rightCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (alternativeCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (leftCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (rightCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (alternativeCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (leftCorrectness == Correctness.Incorrect ||
-                             rightCorrectness == Correctness.Incorrect ||
-                             alternativeCorrectness == Correctness.Incorrect)
-                    {
-                        representationCorrectness = Correctness.Incorrect;
-                    }
-
-                    if (representationRelation.IsSwapped)
-                    {
-                        usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
-                    }
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (rightCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (alternativeCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (leftCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (rightCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (leftCorrectness == Correctness.Incorrect ||
+                         rightCorrectness == Correctness.Incorrect ||
+                         alternativeCorrectness == Correctness.Incorrect)
+                {
+                    representationCorrectness = Correctness.Incorrect;
                 }
 
-                usedRepresentation.Correctness = representationCorrectness;
-                usedRepresentation.MatchedRelationSide = matchedRelationSide;
-
-                #endregion // Representation Correctness
-
-                tag.RepresentationsUsed.Add(usedRepresentation);
+                if (representationRelation.IsSwapped)
+                {
+                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
+                }
             }
+
+            usedRepresentation.Correctness = representationCorrectness;
+            usedRepresentation.MatchedRelationSide = matchedRelationSide;
+
+            #endregion // Representation Correctness
+
+            return usedRepresentation;
         }
 
         public static bool IsMR2STEP(RepresentationsUsedTag tag)
