@@ -950,7 +950,7 @@ namespace CLP.Entities
                                                                                   isPreviousStrokeInvisiblySmall,
                                                                                   currentHistoryAction.HistoryActionIndex,
                                                                                   previousStroke,
-                                                                                  interpretationRegion.ID);
+                                                                                  interpretationRegion);
 
                     processedEvents.Add(processedInkEvent);
 
@@ -970,7 +970,7 @@ namespace CLP.Entities
                                                                               isPreviousStrokeInvisiblySmall,
                                                                               historyActions.Last().HistoryActionIndex + 1,
                                                                               previousStroke,
-                                                                              interpretationRegion.ID);
+                                                                              interpretationRegion);
 
                 processedEvents.Add(processedInkEvent);
             }
@@ -978,7 +978,7 @@ namespace CLP.Entities
             return processedEvents;
         }
 
-        public static ISemanticEvent ProcessANSFIChangeHistoryActionBuffer(CLPPage page, List<IHistoryAction> historyActionBuffer, bool isPreviousInkAdd, bool isPreviousStrokeInvisiblySmall, int currentHistoryActionIndex, Stroke previousStroke, string interpretationID)
+        public static ISemanticEvent ProcessANSFIChangeHistoryActionBuffer(CLPPage page, List<IHistoryAction> historyActionBuffer, bool isPreviousInkAdd, bool isPreviousStrokeInvisiblySmall, int currentHistoryActionIndex, Stroke previousStroke, InterpretationRegion interpretationRegion)
         {
             var strokesInBuffer = isPreviousInkAdd
                                       ? historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
@@ -1018,6 +1018,12 @@ namespace CLP.Entities
                 var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
                 answer = truncatedAnswer.ToString();
             }
+
+            if (interpretationRegion.IsIntermediary)
+            {
+                answer = interpretationRegion.ExpectedValue.ToString();
+            }
+
             var codedID = answer;
 
             var previousHistoryIndex = currentHistoryActionIndex - 1;
@@ -1069,7 +1075,7 @@ namespace CLP.Entities
             }
 
             var eventInfo = $"\"{interpretation}\"; \"{interpretationOnPage}\", {correctness}";
-            var referencePageObjectID = interpretationID;
+            var referencePageObjectID = interpretationRegion.ID;
 
             var processedInkEvent = new SemanticEvent(page, historyActionBuffer)
                                     {

@@ -97,7 +97,7 @@ namespace CLP.Entities
             var lastFinalAnswerEvent =
                 semanticEvents.LastOrDefault(
                                              e =>
-                                                 Codings.IsFinalAnswerEvent(e) && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
+                                                 Codings.IsFinalAnswerEvent(e) && e.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
                                                  e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE);
 
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);

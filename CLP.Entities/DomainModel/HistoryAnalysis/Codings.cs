@@ -34,6 +34,7 @@ namespace CLP.Entities
         public const string OBJECT_STAMPED_OBJECT = "STAMP IMAGE";
         public const string OBJECT_BINS = "BINS";
         public const string OBJECT_FILL_IN = "ANS FI";
+        public const string OBJECT_INTERMEDIARY_FILL_IN = "INT ANS FI";
         public const string OBJECT_MULTIPLE_CHOICE = "ANS MC";
         public const string OBJECT_TEXT = "TEXT";
 
@@ -52,6 +53,7 @@ namespace CLP.Entities
                                                                                 { OBJECT_STAMPED_OBJECT, "Stamp Image" },
                                                                                 { OBJECT_BINS, "Bins" },
                                                                                 { OBJECT_FILL_IN, "Final Answer Fill In" },
+                                                                                { OBJECT_INTERMEDIARY_FILL_IN, "Intermediary Answer Fill In" },
                                                                                 { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
                                                                                 { OBJECT_TEXT, "Text" }
                                                                             };
@@ -313,7 +315,7 @@ namespace CLP.Entities
 
         public static bool IsFinalAnswerEvent(ISemanticEvent semanticEvent)
         {
-            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
+            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_INTERMEDIARY_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
         public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)

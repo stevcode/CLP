@@ -80,6 +80,8 @@ namespace CLP.Entities
 
         public InterpretationRegion PageObject => ParentPage.GetPageObjectByIDOnPageOrInHistory(InterpretationRegionID) as InterpretationRegion;
 
+        public bool IsIntermediaryFillIn => PageObject?.IsIntermediary == true;
+
         public List<Stroke> StrokesAdded
         {
             get { return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
@@ -103,7 +105,8 @@ namespace CLP.Entities
             get
             {
                 var changeType = StrokeIDsRemoved.Any() ? "erasing" : "adding";
-                return $"Changed Fill-In Answer by {changeType} a stroke.";
+                var intermediarySignifier = IsIntermediaryFillIn ? "Intermediary" : "Fill-In";
+                return $"Changed {intermediarySignifier} Answer by {changeType} a stroke.";
             }
         }
 
