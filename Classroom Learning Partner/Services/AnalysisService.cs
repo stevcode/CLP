@@ -362,7 +362,6 @@ namespace Classroom_Learning_Partner.Services
             entry.ArrayDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_ARRAY && e.EventType == Codings.EVENT_OBJECT_DELETE);
             entry.NumberLineCreatedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_ADD);
             entry.NumberLineDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_DELETE);
-            entry.StampDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMP && e.EventType == Codings.EVENT_OBJECT_DELETE);
             entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT && e.EventType == Codings.EVENT_OBJECT_DELETE);
             entry.StampImageRepresentationDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation);
 
@@ -440,6 +439,10 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var parentStampCount = (int)parentStampParts[1].ToInt();
                     entry.LeftStampCreatedCount += parentStampCount;
+                    if (!usedRepresentation.IsFinalRepresentation)
+                    {
+                        entry.StampDeletedCount += parentStampCount;
+                    }
                 }
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
@@ -532,6 +535,10 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var parentStampCount = (int)parentStampParts[1].ToInt();
                     entry.RightStampCreatedCount += parentStampCount;
+                    if (!usedRepresentation.IsFinalRepresentation)
+                    {
+                        entry.StampDeletedCount += parentStampCount;
+                    }
                 }
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
@@ -624,6 +631,10 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var parentStampCount = (int)parentStampParts[1].ToInt();
                     entry.AlternativeStampCreatedCount += parentStampCount;
+                    if (!usedRepresentation.IsFinalRepresentation)
+                    {
+                        entry.StampDeletedCount += parentStampCount;
+                    }
                 }
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
@@ -712,6 +723,10 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var parentStampCount = (int)parentStampParts[1].ToInt();
                     entry.UnmatchedStampCreatedCount += parentStampCount;
+                    if (!usedRepresentation.IsFinalRepresentation)
+                    {
+                        entry.StampDeletedCount += parentStampCount;
+                    }
                 }
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
