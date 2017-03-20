@@ -830,29 +830,46 @@ namespace Classroom_Learning_Partner.Services
             var answerRepresentationSequenceTag = page.Tags.OfType<AnswerRepresentationSequenceTag>().FirstOrDefault();
             if (answerRepresentationSequenceTag == null)
             {
-                entry.IsABR = AnalysisEntry.NO;
-                entry.IsRAA = AnalysisEntry.NO;
+                entry.ABR_RAA.Add(AnalysisEntry.NA);
                 entry.AnswersChangedAfterRepresentation.Add(AnalysisEntry.NO);
             }
             else
             {
-                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_COR_BEFORE_REP) ||
-                    answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INC_BEFORE_REP))
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_FINAL_ANS_COR_BEFORE_REP) ||
+                    answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_FINAL_ANS_INC_BEFORE_REP))
                 {
-                    entry.IsABR = AnalysisEntry.YES;
-                }
-                else
-                {
-                    entry.IsABR = AnalysisEntry.NO;
+                    entry.ABR_RAA.Add(AnalysisEntry.FABR);
                 }
 
-                entry.IsRAA = answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_REP_AFTER_ANSWER) ? AnalysisEntry.YES : AnalysisEntry.NO;
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP) ||
+                    answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP))
+                {
+                    entry.ABR_RAA.Add(AnalysisEntry.IABR);
+                }
+
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER))
+                {
+                    entry.ABR_RAA.Add(AnalysisEntry.RAFA);
+                }
+
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER))
+                {
+                    entry.ABR_RAA.Add(AnalysisEntry.RAIA);
+                }
+
+                if (!entry.ABR_RAA.Any())
+                {
+                    entry.ABR_RAA.Add(AnalysisEntry.NA);
+                }
 
                 foreach (var analysisCode in answerRepresentationSequenceTag.AnalysisCodes)
                 {
-                    if (analysisCode == Codings.ANALYSIS_COR_BEFORE_REP ||
-                        analysisCode == Codings.ANALYSIS_INC_BEFORE_REP ||
-                        analysisCode == Codings.ANALYSIS_REP_AFTER_ANSWER)
+                    if (analysisCode == Codings.ANALYSIS_FINAL_ANS_COR_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_FINAL_ANS_INC_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER ||
+                        analysisCode == Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER)
                     {
                         continue;
                     }

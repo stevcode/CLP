@@ -51,6 +51,11 @@ namespace Classroom_Learning_Partner.Services
         public const string SPECIAL_INTEREST_GROUP_2PSF = "2PSF";
         public const string SPECIAL_INTEREST_GROUP_2PSS = "2PSS";
 
+        public const string FABR = "FABR";
+        public const string IABR = "IABR";
+        public const string RAFA = "RAFA";
+        public const string RAIA = "RAIA";
+
         #endregion // Constants
 
         #region Constructors
@@ -880,23 +885,14 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string IsABR
+        /// <summary>List of existance of various ABR/RAA codes.</summary>
+        public List<string> ABR_RAA
         {
-            get { return GetValue<string>(IsABRProperty); }
-            set { SetValue(IsABRProperty, value); }
+            get { return GetValue<List<string>>(ABR_RAAProperty); }
+            set { SetValue(ABR_RAAProperty, value); }
         }
 
-        public static readonly PropertyData IsABRProperty = RegisterProperty("IsABR", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public string IsRAA
-        {
-            get { return GetValue<string>(IsRAAProperty); }
-            set { SetValue(IsRAAProperty, value); }
-        }
-
-        public static readonly PropertyData IsRAAProperty = RegisterProperty("IsRAA", typeof(string), string.Empty);
+        public static readonly PropertyData ABR_RAAProperty = RegisterProperty("ABR_RAA", typeof(List<string>), () => new List<string>());
 
         /// <summary>SUMMARY</summary>
         public List<string> AnswersChangedAfterRepresentation
@@ -1038,8 +1034,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsMR2STEP);
             cellContents.Add(IntermediaryAnswerCorrectness);
             cellContents.Add(FinalAnswerCorrectness);
-            cellContents.Add(IsABR);
-            cellContents.Add(IsRAA);
+            cellContents.Add(string.Join(", ", ABR_RAA));
             cellContents.Add(string.Join(", ", AnswersChangedAfterRepresentation));
             cellContents.Add(InkColorsUsedCount.ToString());
 
@@ -1151,7 +1146,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Intermediary ANS");
             cellContents.Add("Final ANS");
             cellContents.Add("ABR");
-            cellContents.Add("RAA");
             cellContents.Add("ANS Changed");
             cellContents.Add("Colors");
 

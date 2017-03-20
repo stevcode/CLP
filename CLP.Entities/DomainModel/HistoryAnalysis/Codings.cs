@@ -243,13 +243,16 @@ namespace CLP.Entities
 
         #region Representation Sequence
 
-        public const string ANALYSIS_COR_BEFORE_REP = "ABR-C";
-        public const string ANALYSIS_INC_BEFORE_REP = "ABR-I";
+        public const string ANALYSIS_FINAL_ANS_COR_BEFORE_REP = "FABR-C";
+        public const string ANALYSIS_FINAL_ANS_INC_BEFORE_REP = "FABR-I";
+        public const string ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP = "IABR-C";
+        public const string ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP = "FABR-I";
         public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
-        public const string ANALYSIS_REP_AFTER_ANSWER = "RAA";
+        public const string ANALYSIS_REP_AFTER_FINAL_ANSWER = "RAFA";
+        public const string ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER = "RAIA";
 
         #endregion // Representation Sequence
 
