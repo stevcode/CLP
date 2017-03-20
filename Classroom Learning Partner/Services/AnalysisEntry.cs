@@ -862,6 +862,15 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData IsMR2STEPProperty = RegisterProperty("IsMR2STEP", typeof(string), string.Empty);
 
+        /// <summary>Correctness of the Intermediary Fill-In answer.</summary>
+        public string IntermediaryAnswerCorrectness
+        {
+            get { return GetValue<string>(IntermediaryAnswerCorrectnessProperty); }
+            set { SetValue(IntermediaryAnswerCorrectnessProperty, value); }
+        }
+
+        public static readonly PropertyData IntermediaryAnswerCorrectnessProperty = RegisterProperty("IntermediaryAnswerCorrectness", typeof(string), string.Empty);
+
         /// <summary>Correctness of the Fill-In/Multiple Choice answer.</summary>
         public string FinalAnswerCorrectness
         {
@@ -1027,6 +1036,7 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Analysis
             cellContents.Add(NLJE);
             cellContents.Add(IsMR2STEP);
+            cellContents.Add(IntermediaryAnswerCorrectness);
             cellContents.Add(FinalAnswerCorrectness);
             cellContents.Add(IsABR);
             cellContents.Add(IsRAA);
@@ -1138,6 +1148,7 @@ namespace Classroom_Learning_Partner.Services
             // Whole Page Analysis
             cellContents.Add("NLJE");
             cellContents.Add("MR2STEP");
+            cellContents.Add("Intermediary ANS");
             cellContents.Add("Final ANS");
             cellContents.Add("ABR");
             cellContents.Add("RAA");

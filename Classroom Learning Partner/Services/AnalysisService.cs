@@ -767,6 +767,36 @@ namespace Classroom_Learning_Partner.Services
                 entry.IsMR2STEP = isMR2STEP ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 
+            var intermediaryAnswerCorrectnessTag = page.Tags.OfType<IntermediaryAnswerCorrectnessTag>().FirstOrDefault();
+            if (intermediaryAnswerCorrectnessTag == null)
+            {
+                entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
+            }
+            else
+            {
+                switch (intermediaryAnswerCorrectnessTag.IntermediaryAnswerCorrectness)
+                {
+                    case Correctness.Correct:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_CORRECT;
+                        break;
+                    case Correctness.Incorrect:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_INCORRECT;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_PARTIAL;
+                        break;
+                    case Correctness.Illegible:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_ILLEGIBLE;
+                        break;
+                    case Correctness.Unanswered:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNANSWERED;
+                        break;
+                    default:
+                        entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
+                        break;
+                }
+            }
+
             var finalAnswerCorrectnessTag = page.Tags.OfType<FinalAnswerCorrectnessTag>().FirstOrDefault();
             if (finalAnswerCorrectnessTag == null)
             {
