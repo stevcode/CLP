@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Ink;
 using Catel;
 using Catel.Collections;
 
@@ -16,7 +18,7 @@ namespace CLP.Entities
             ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();
 
-            // TODO: Pass 0 to "update" certain ink strokes over a Fill-In Ans to appropriate historyAction?
+            FixANSFIHistoryActions(page);
 
             // First Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
@@ -137,6 +139,81 @@ namespace CLP.Entities
 
             #endregion // Logging
         }
+
+        #region Zero Pass: Fix ANS FI HistoryActions
+
+        private static void FixANSFIHistoryActions(CLPPage page)
+        {
+            var strokeChangedHistoryActions = page.History.UndoActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.IsUsingStrokes).OrderBy(h => h.HistoryActionIndex).ToList();
+
+            foreach (var strokeChangedHistoryAction in strokeChangedHistoryActions)
+            {
+                var isAdd = false;
+                Stroke strokeChanged = null;
+                if (strokeChangedHistoryAction.StrokeIDsAdded.Count == 1 &&
+                    !strokeChangedHistoryAction.StrokeIDsRemoved.Any())
+                {
+                    isAdd = true;
+
+                    var strokeID = strokeChangedHistoryAction.StrokeIDsAdded.First();
+                    strokeChanged = page.GetStrokeByIDOnPageOrInHistory(strokeID);
+                }
+                else if (strokeChangedHistoryAction.StrokeIDsRemoved.Count == 1 &&
+                         !strokeChangedHistoryAction.StrokeIDsAdded.Any())
+                {
+                    isAdd = false;
+
+                    var strokeID = strokeChangedHistoryAction.StrokeIDsRemoved.First();
+                    strokeChanged = page.GetStrokeByIDOnPageOrInHistory(strokeID);
+                }
+
+                if (strokeChanged == null)
+                {
+                    continue;
+                }
+
+                #region Check for Interpretation Region Fill-In
+
+                foreach (var interpretationRegion in page.PageObjects.OfType<InterpretationRegion>())
+                {
+                    var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(strokeChanged);
+                    if (!isStrokeOver)
+                    {
+                        continue;
+                    }
+
+                    var strokesAdded = new List<Stroke>();
+                    var strokesRemoved = new List<Stroke>();
+
+                    if (isAdd)
+                    {
+                        strokesAdded.Add(strokeChanged);
+                    }
+                    else
+                    {
+                        strokesRemoved.Add(strokeChanged);
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                    var fillInAnswerChangedHistoryAction = new FillInAnswerChangedHistoryAction(page,
+                                                                                                page.Owner,
+                                                                                                interpretationRegion,
+                                                                                                strokesAdded,
+                                                                                                strokesRemoved);
+
+                    fillInAnswerChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+
+                    var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
+                    page.History.UndoActions[indexToReplace] = fillInAnswerChangedHistoryAction;
+
+                    break;
+                }
+
+                #endregion // Check for Interpretation Region Fill-In
+            }
+        }
+
+        #endregion // Zero Pass: Fix ANS FI HistoryActions
 
         #region First Pass: Initialization
 

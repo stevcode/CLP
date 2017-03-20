@@ -1147,6 +1147,8 @@ namespace CLP.Entities
                 var combinedUsedRepresentation = GenerateUsedStampRepresentation(allStampedObjects, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
                 tag.RepresentationsUsed.Add(combinedUsedRepresentation);
             }
+
+            tag.RepresentationsUsed = tag.RepresentationsUsed.Where(r => r != null).ToList();
         }
 
         private static UsedRepresentation GenerateUsedStampRepresentation(List<StampedObject> stampedObjects, bool isFinalRepresentation, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
