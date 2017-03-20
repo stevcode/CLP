@@ -221,6 +221,7 @@
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
+    <Compile Include="DomainModel\Tags\Answer\IntermediaryAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\AdditionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />

@@ -748,6 +748,7 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             var finalAnswerCorrectness = FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             var representationCorrectness = RepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
