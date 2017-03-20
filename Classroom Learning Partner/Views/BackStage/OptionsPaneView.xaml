@@ -40,6 +40,14 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
+            <Button Content="Clear Author History"
+                    Command="{Binding ClearAuthorHistoryItemsCommand}"
+                    Height="50"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
         </StackPanel>
 
     </DockPanel>

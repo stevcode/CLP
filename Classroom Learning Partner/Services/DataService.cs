@@ -209,6 +209,11 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var page in CurrentNotebook.Pages)
             {
+                if (page.Owner.ID == Person.AUTHOR_ID)
+                {
+                    page.History.ClearNonAnimationHistory();
+                }
+
                 entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
             }
 
