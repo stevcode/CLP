@@ -1099,7 +1099,7 @@ namespace CLP.Entities
                     }
 
                     endPointCount++;
-                    endPoints.Add(endPointCount, stampObjectIDsOnPageSinceLastClear);
+                    endPoints.Add(endPointCount, stampObjectIDsOnPageSinceLastClear.ToList());
                     stampObjectIDsOnPageSinceLastClear.Clear();
                     stampObjectIDsRemovedSinceLastAdd.Clear();
                 }
