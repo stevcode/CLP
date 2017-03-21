@@ -2042,22 +2042,26 @@ namespace CLP.Entities
                 return false;
             }
 
+
+            return IsBottomSkipCountingByCorrectDimension(array, interpretation) || IsBottomSkipCountingByWrongDimension(array, interpretation);
+        }
+
+        public static bool IsBottomSkipCountingByCorrectDimension(CLPArray array, string interpretation)
+        {
+            if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
             var expectedValue = string.Empty;
             for (var i = 1; i <= array.Columns; i++)
             {
                 expectedValue += i * array.Rows;
             }
 
-            var expectedValueForWrongDimension = string.Empty;
-            for (var i = 1; i <= array.Columns; i++)
-            {
-                expectedValueForWrongDimension += i * array.Columns;
-            }
-
             var editDistance = EditDistance.Compute(expectedValue, interpretation);
-            var wrongDimensionEditDistance = EditDistance.Compute(expectedValueForWrongDimension, interpretation);
 
-            return editDistance <= 4 || wrongDimensionEditDistance <=4;
+            return editDistance <= 4;
         }
 
         public static bool IsBottomSkipCountingByWrongDimension(CLPArray array, string interpretation)

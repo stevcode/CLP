@@ -653,7 +653,9 @@ namespace CLP.Entities
 
                                 if (isBottomSkipCounting)
                                 {
-                                    wrongDimensionText = ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips) ? ", wrong dimension" : string.Empty;
+                                    var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips) &&
+                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips);
+                                    wrongDimensionText = isWrongDimension ? ", wrong dimension" : string.Empty;
                                 }
 
                                 var skipText = isBottomSkipCounting ? "bottom skip" : "skip";
