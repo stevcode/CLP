@@ -1007,7 +1007,7 @@ namespace CLP.Entities
                 return inkIgnoreEvent;
             }
 
-            var codedObject = Codings.OBJECT_FILL_IN;
+            var codedObject = interpretationRegion.IsIntermediary ? Codings.OBJECT_INTERMEDIARY_FILL_IN : Codings.OBJECT_FILL_IN;
             var eventType = isPreviousInkAdd ? Codings.EVENT_FILL_IN_ADD : Codings.EVENT_FILL_IN_ERASE;
 
             var answer = Codings.ANSWER_UNDEFINED;
