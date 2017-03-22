@@ -768,7 +768,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var intermediaryAnswerCorrectnessTag = page.Tags.OfType<IntermediaryAnswerCorrectnessTag>().FirstOrDefault();
-            if (intermediaryAnswerCorrectnessTag == null)
+            if (entry.ProblemType == AnalysisEntry.PROBLEM_TYPE_1_PART)
+            {
+                entry.IntermediaryAnswerCorrectness = AnalysisEntry.NA;
+            }
+            else if (intermediaryAnswerCorrectnessTag == null)
             {
                 entry.IntermediaryAnswerCorrectness = AnalysisEntry.CORRECTNESS_UNKNOWN;
             }
