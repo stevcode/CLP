@@ -457,7 +457,11 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Stamps
 
-            entry.LeftRepresentationsAndCorrectness = leftRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation: string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}").ToList();
+            entry.LeftRepresentationsAndCorrectness =
+                leftRepresentations.Select(
+                                           r =>
+                                                   $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                                   .ToList();
 
             entry.IsLeftMR = leftRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -553,7 +557,11 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Stamps
 
-            entry.RightRepresentationsAndCorrectness = rightRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}").ToList();
+            entry.RightRepresentationsAndCorrectness =
+                rightRepresentations.Select(
+                                            r =>
+                                                    $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                                    .ToList();
 
             entry.IsRightMR = rightRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -649,7 +657,11 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Stamps
 
-            entry.AlternativeRepresentationsAndCorrectness = alternativeRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}").ToList();
+            entry.AlternativeRepresentationsAndCorrectness =
+                alternativeRepresentations.Select(
+                                                  r =>
+                                                          $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                                          .ToList();
 
             entry.IsAlternativeMR = alternativeRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -739,7 +751,11 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Stamps
 
-            entry.UnmatchedRepresentationsAndCorrectness = unmatchedRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}").ToList();
+            entry.UnmatchedRepresentationsAndCorrectness =
+                unmatchedRepresentations.Select(
+                                                r =>
+                                                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                                        .ToList();
 
             entry.IsUnmatchedMR = unmatchedRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
