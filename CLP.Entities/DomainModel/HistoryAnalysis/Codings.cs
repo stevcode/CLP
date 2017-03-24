@@ -246,7 +246,7 @@ namespace CLP.Entities
         public const string ANALYSIS_FINAL_ANS_COR_BEFORE_REP = "FABR-C";
         public const string ANALYSIS_FINAL_ANS_INC_BEFORE_REP = "FABR-I";
         public const string ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP = "IABR-C";
-        public const string ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP = "FABR-I";
+        public const string ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP = "IABR-I";
         public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";

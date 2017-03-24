@@ -316,6 +316,9 @@ namespace CLP.Entities
             {
                 historyAction.HistoryActionIndex = UndoActions.Count + RedoActions.IndexOf(historyAction);
             }
+
+            RaisePropertyChanged(nameof(UndoActions));
+            RaisePropertyChanged(nameof(RedoActions));
         }
 
         public void RefreshCachedFormattedValues()

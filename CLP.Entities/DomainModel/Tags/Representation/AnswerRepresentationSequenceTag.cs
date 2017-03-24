@@ -76,7 +76,37 @@ namespace CLP.Entities
                     else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                              mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
-                        sequence.Add(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER);
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
+
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
+                    {
+                        sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                }
+                else if (Codings.IsFinalAnswerEvent(semanticEvent) &&
+                         semanticEvent.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                {
+                    if (mostRecentSequenceItem == null)
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
+
                         mostRecentSequenceItem = semanticEvent;
                     }
                     else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
@@ -127,7 +157,7 @@ namespace CLP.Entities
                 sequence.Add(sequenceIdentifier);
             }
             else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
-                     mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                     mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
                 var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
