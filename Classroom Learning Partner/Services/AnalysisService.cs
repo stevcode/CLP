@@ -392,14 +392,39 @@ namespace Classroom_Learning_Partner.Services
             {
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = usedRepresentation.CodedID;
-                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
-                var skipCorrectness = "C";
-                if (skipInformation.Contains("wrong dimension"))
+                var skipInformations = usedRepresentation.AdditionalInformation.Where(a => a.Contains("skip")).ToList();
+
+                var skips = new List<string>();
+                foreach (var skipInformation in skipInformations)
                 {
-                    skipCorrectness = "WD";
+                    var skipCorrectness = string.Empty;
+                    if (skipInformation.Contains("correct"))
+                    {
+                        skipCorrectness = "C";
+                    }
+                    else if (skipInformation.Contains("wrong dimension"))
+                    {
+                        skipCorrectness = "WD";
+                    }
+                    else if (skipInformation.Contains("arithmetic error"))
+                    {
+                        skipCorrectness = "AE";
+                    }
+                    else if (skipInformation.Contains("no dimension"))
+                    {
+                        skipCorrectness = "ND";
+                    }
+                    else
+                    {
+                        skipCorrectness = "NS";
+                    }
+
+                    var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
+                    var skip = $"{skipSide}, {skipCorrectness}";
+                    skips.Add(skip);
                 }
 
-                entry.LeftArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+                entry.LeftArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {string.Join("; ", skips)}");
             }
 
             #endregion // Arrays
@@ -492,14 +517,39 @@ namespace Classroom_Learning_Partner.Services
             {
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = usedRepresentation.CodedID;
-                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
-                var skipCorrectness = "C";
-                if (skipInformation.Contains("wrong dimension"))
+                var skipInformations = usedRepresentation.AdditionalInformation.Where(a => a.Contains("skip")).ToList();
+
+                var skips = new List<string>();
+                foreach (var skipInformation in skipInformations)
                 {
-                    skipCorrectness = "WD";
+                    var skipCorrectness = string.Empty;
+                    if (skipInformation.Contains("correct"))
+                    {
+                        skipCorrectness = "C";
+                    }
+                    else if (skipInformation.Contains("wrong dimension"))
+                    {
+                        skipCorrectness = "WD";
+                    }
+                    else if (skipInformation.Contains("arithmetic error"))
+                    {
+                        skipCorrectness = "AE";
+                    }
+                    else if (skipInformation.Contains("no dimension"))
+                    {
+                        skipCorrectness = "ND";
+                    }
+                    else
+                    {
+                        skipCorrectness = "NS";
+                    }
+
+                    var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
+                    var skip = $"{skipSide}, {skipCorrectness}";
+                    skips.Add(skip);
                 }
 
-                entry.RightArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+                entry.RightArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {string.Join("; ", skips)}");
             }
 
             #endregion // Arrays
@@ -592,14 +642,39 @@ namespace Classroom_Learning_Partner.Services
             {
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = usedRepresentation.CodedID;
-                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
-                var skipCorrectness = "C";
-                if (skipInformation.Contains("wrong dimension"))
+                var skipInformations = usedRepresentation.AdditionalInformation.Where(a => a.Contains("skip")).ToList();
+
+                var skips = new List<string>();
+                foreach (var skipInformation in skipInformations)
                 {
-                    skipCorrectness = "WD";
+                    var skipCorrectness = string.Empty;
+                    if (skipInformation.Contains("correct"))
+                    {
+                        skipCorrectness = "C";
+                    }
+                    else if (skipInformation.Contains("wrong dimension"))
+                    {
+                        skipCorrectness = "WD";
+                    }
+                    else if (skipInformation.Contains("arithmetic error"))
+                    {
+                        skipCorrectness = "AE";
+                    }
+                    else if (skipInformation.Contains("no dimension"))
+                    {
+                        skipCorrectness = "ND";
+                    }
+                    else
+                    {
+                        skipCorrectness = "NS";
+                    }
+
+                    var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
+                    var skip = $"{skipSide}, {skipCorrectness}";
+                    skips.Add(skip);
                 }
 
-                entry.AlternativeArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+                entry.AlternativeArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {string.Join("; ", skips)}");
             }
 
             #endregion // Arrays
@@ -692,14 +767,39 @@ namespace Classroom_Learning_Partner.Services
             {
                 var codedObject = Codings.OBJECT_ARRAY;
                 var codedID = usedRepresentation.CodedID;
-                var skipInformation = usedRepresentation.AdditionalInformation.First(a => a.Contains("skip"));
-                var skipCorrectness = "C";
-                if (skipInformation.Contains("wrong dimension"))
+                var skipInformations = usedRepresentation.AdditionalInformation.Where(a => a.Contains("skip")).ToList();
+
+                var skips = new List<string>();
+                foreach (var skipInformation in skipInformations)
                 {
-                    skipCorrectness = "WD";
+                    var skipCorrectness = string.Empty;
+                    if (skipInformation.Contains("correct"))
+                    {
+                        skipCorrectness = "C";
+                    }
+                    else if (skipInformation.Contains("wrong dimension"))
+                    {
+                        skipCorrectness = "WD";
+                    }
+                    else if (skipInformation.Contains("arithmetic error"))
+                    {
+                        skipCorrectness = "AE";
+                    }
+                    else if (skipInformation.Contains("no dimension"))
+                    {
+                        skipCorrectness = "ND";
+                    }
+                    else
+                    {
+                        skipCorrectness = "NS";
+                    }
+
+                    var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
+                    var skip = $"{skipSide}, {skipCorrectness}";
+                    skips.Add(skip);
                 }
 
-                entry.UnmatchedArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {skipCorrectness}");
+                entry.UnmatchedArraySkipCountingCorretness.Add($"{codedObject} [{codedID}] {string.Join("; ", skips)}");
             }
 
             #endregion // Arrays
