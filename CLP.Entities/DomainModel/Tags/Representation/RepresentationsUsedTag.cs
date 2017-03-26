@@ -555,115 +555,28 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.Add("Created by Snap");
                 }
 
-                var mostRecentSkipEvent =
+                var mostRecentSideSkipEvent =
                     semanticEvents.LastOrDefault(
                                                  e =>
                                                      e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE));
+                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) && !e.EventInformation.Contains("bottom"));
 
-                if (mostRecentSkipEvent != null)
+                var sideSkipCodedValue = SideSkipCountingCorrectness(array, mostRecentSideSkipEvent);
+                if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
                 {
-                    var eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
-                    if (eventInfoParts.Length == 2)
-                    {
-                        var formattedInterpretationParts = eventInfoParts[0].Split("; ");
-                        if (formattedInterpretationParts.Length == 2)
-                        {
-                            var formattedSkips = formattedInterpretationParts[1];
-                            if (!string.IsNullOrEmpty(formattedSkips))
-                            {
-                                var isBottomSkipCounting = mostRecentSkipEvent.EventInformation.Contains("bottom");
+                    usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
+                }
 
-                                // HACK: temporary print out of Wrong Dimension analysis
-                                var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-                                if (skipStrings.Count == 1 &&
-                                    string.IsNullOrEmpty(skipStrings.First()))
-                                {
-                                    mostRecentSkipEvent =
-                                        semanticEvents.LastOrDefault(
-                                                                     e =>
-                                                                         e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                                                         (e.EventType == Codings.EVENT_ARRAY_SKIP));
+                var mostRecentBottomSkipEvent =
+                    semanticEvents.LastOrDefault(
+                                                 e =>
+                                                     e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) && e.EventInformation.Contains("bottom"));
 
-                                    if (mostRecentSkipEvent != null)
-                                    {
-                                        eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
-                                        if (eventInfoParts.Length == 2)
-                                        {
-                                            formattedInterpretationParts = eventInfoParts[0].Split("; ");
-                                            if (formattedInterpretationParts.Length == 2)
-                                            {
-                                                formattedSkips = formattedInterpretationParts[1];
-                                                if (!string.IsNullOrEmpty(formattedSkips))
-                                                {
-                                                    skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                var skips = new List<int>();
-                                foreach (var skip in skipStrings)
-                                {
-                                    if (string.IsNullOrEmpty(skip))
-                                    {
-                                        skips.Add(-1);
-                                        continue;
-                                    }
-
-                                    int number;
-                                    var isNumber = int.TryParse(skip, out number);
-                                    if (isNumber)
-                                    {
-                                        skips.Add(number);
-                                        continue;
-                                    }
-
-                                    skips.Add(-1);
-                                }
-
-                                var wrongDimensionMatches = 0;
-                                for (int i = 0; i < skips.Count - 1; i++)
-                                {
-                                    var currentValue = skips[i];
-                                    var nextValue = skips[i + 1];
-                                    if (currentValue == -1 ||
-                                        nextValue == -1)
-                                    {
-                                        continue;
-                                    }
-                                    var difference = nextValue - currentValue;
-                                    if (difference == array.Rows &&
-                                        array.Rows != array.Columns)
-                                    {
-                                        wrongDimensionMatches++;
-                                    }
-                                }
-
-                                var wrongDimensionText = string.Empty;
-                                if (skips.Count > 1)
-                                {
-                                    var percentMatchWrongDimensions = wrongDimensionMatches / ((skips.Count - 1) * 1.0);
-                                    if (percentMatchWrongDimensions >= 0.80)
-                                    {
-                                        wrongDimensionText = ", wrong dimension";
-                                    }
-                                }
-
-                                if (isBottomSkipCounting)
-                                {
-                                    var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips) &&
-                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips);
-                                    wrongDimensionText = isWrongDimension ? ", wrong dimension" : string.Empty;
-                                }
-
-                                var skipText = isBottomSkipCounting ? "bottom skip" : "skip";
-                                var skipCodedValue = $"{skipText} [{formattedSkips}]{wrongDimensionText}";
-                                usedRepresentation.AdditionalInformation.Add(skipCodedValue);
-                            }
-                        }
-                    }
+                var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent);
+                if (!string.IsNullOrWhiteSpace(bottomSkipCodedValue))
+                {
+                    usedRepresentation.AdditionalInformation.Add(bottomSkipCodedValue);
                 }
 
                 #endregion // Basic Representation Info
@@ -728,6 +641,233 @@ namespace CLP.Entities
 
                 tag.RepresentationsUsed.Add(usedRepresentation);
             }
+        }
+
+        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
+        {
+            if (array == null ||
+                skipCountingEvent == null)
+            {
+                return null;
+            }
+
+            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
+            if (eventInfoParts.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+            if (formattedInterpretationParts.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedSkips = formattedInterpretationParts[1];
+            if (string.IsNullOrWhiteSpace(formattedSkips))
+            {
+                return null;
+            }
+
+            var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+
+            // Not sure what the purpose of this was, but re-implement if necessary
+            //if (skipStrings.Count == 1 &&
+            //    string.IsNullOrEmpty(skipStrings.First()))
+            //{
+            //    mostRecentSkipEvent =
+            //        semanticEvents.LastOrDefault(
+            //                                     e =>
+            //                                         e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+            //                                         (e.EventType == Codings.EVENT_ARRAY_SKIP));
+
+            //    if (mostRecentSkipEvent != null)
+            //    {
+            //        eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
+            //        if (eventInfoParts.Length == 2)
+            //        {
+            //            formattedInterpretationParts = eventInfoParts[0].Split("; ");
+            //            if (formattedInterpretationParts.Length == 2)
+            //            {
+            //                formattedSkips = formattedInterpretationParts[1];
+            //                if (!string.IsNullOrEmpty(formattedSkips))
+            //                {
+            //                    skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            var skips = new List<int>();
+            foreach (var skip in skipStrings)
+            {
+                if (string.IsNullOrEmpty(skip))
+                {
+                    skips.Add(-1);
+                    continue;
+                }
+
+                int number;
+                var isNumber = int.TryParse(skip, out number);
+                if (isNumber)
+                {
+                    skips.Add(number);
+                    continue;
+                }
+
+                skips.Add(-1);
+            }
+
+            var correctDimensionMatches = 0;
+            var wrongDimensionMatches = 0;
+            var differences = new List<int>();
+            for (var i = 0; i < skips.Count; i++)
+            {
+                var currentValue = skips[i];
+                if (currentValue == -1)
+                {
+                    continue;
+                }
+
+                var expectedValue = (i + 1) * array.Columns;
+                if (currentValue == expectedValue)
+                {
+                    correctDimensionMatches++;
+                }
+
+                var wrongDimensionExpectedValue = (i + 1) * array.Rows;
+                if (currentValue == wrongDimensionExpectedValue &&
+                    array.Rows != array.Columns)
+                {
+                    wrongDimensionMatches++;
+                }
+
+                if (i >= skips.Count - 1)
+                {
+                    continue;
+                }
+
+                var nextValue = skips[i + 1];
+                var difference = nextValue - currentValue;
+                differences.Add(difference);
+            }
+
+            var isCorrectDimensions = false;
+            var isWrongDimension = false;
+            var isArithmeticError = false;
+            var isNonsense = false;
+            var isNoDimension = false;
+
+            if (skips.Count == 1)
+            {
+                if (correctDimensionMatches > 0)
+                {
+                    isCorrectDimensions = true;
+                }
+                else if (wrongDimensionMatches > 0)
+                {
+                    isWrongDimension = true;
+                }
+                else
+                {
+                    isNonsense = true;
+                }
+            }
+            else
+            {
+                var percentMatchCorrectDimensions = correctDimensionMatches / (skips.Count * 1.0);
+                if (percentMatchCorrectDimensions >= 0.80)
+                {
+                    isCorrectDimensions = true;
+                }
+
+                if (skips.Count > 1 &&
+                !isCorrectDimensions)
+                {
+                    var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count * 1.0);
+                    if (percentMatchWrongDimensions >= 0.80)
+                    {
+                        isWrongDimension = true;
+                    }
+                }
+
+                if (!isCorrectDimensions &&
+                    !isWrongDimension)
+                {
+                    if (percentMatchCorrectDimensions >= 0.5)
+                    {
+                        isArithmeticError = true;
+                    }
+                    else if (differences.Distinct().Count() == 1)
+                    {
+                        isNoDimension = true;
+                    }
+                    else
+                    {
+                        isNonsense = true;
+                    }
+                }
+            }
+
+            var correctnessText = string.Empty;
+            if (isCorrectDimensions)
+            {
+                correctnessText = "correct";
+            }
+            else if (isWrongDimension)
+            {
+                correctnessText = "wrong dimension";
+            }
+            else if (isArithmeticError)
+            {
+                correctnessText = "arithmetic error";
+            }
+            else if (isNoDimension)
+            {
+                correctnessText = "no dimension";
+            }
+            else
+            {
+                correctnessText = "random numbers";
+            }
+
+            var skipCodedValue = $"skip [{formattedSkips}], {correctnessText}";
+            return skipCodedValue;
+        }
+
+        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
+        {
+            if (array == null ||
+                skipCountingEvent == null)
+            {
+                return null;
+            }
+
+            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
+            if (eventInfoParts.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+            if (formattedInterpretationParts.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedSkips = formattedInterpretationParts[1];
+            if (string.IsNullOrWhiteSpace(formattedSkips))
+            {
+                return null;
+            }
+
+            var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips) &&
+                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips);
+            var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
+
+            var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
+            return skipCodedValue;
         }
 
         private class NumberLineJumpTotal
