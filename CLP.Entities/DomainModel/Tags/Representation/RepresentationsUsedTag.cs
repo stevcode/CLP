@@ -585,57 +585,8 @@ namespace CLP.Entities
 
                 // TODO: One-to-one comparison of each array at pattern points. Could take pattern point created by cut and consider those cut arrays as one?
 
-                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
-                var representationCorrectness = Correctness.Unknown;
                 var representationRelation = RepresentationCorrectnessTag.GenerateArrayRelation(array, patternPoint.EndHistoryActionIndex);
-
-                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
-                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
-                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
-
-                if (leftCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (rightCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (alternativeCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (leftCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (rightCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (alternativeCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (leftCorrectness == Correctness.Incorrect ||
-                         rightCorrectness == Correctness.Incorrect ||
-                         alternativeCorrectness == Correctness.Incorrect)
-                {
-                    representationCorrectness = Correctness.Incorrect;
-                }
-
-                usedRepresentation.Correctness = representationCorrectness;
-                usedRepresentation.MatchedRelationSide = matchedRelationSide;
-                if (representationRelation.IsSwapped)
-                {
-                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
-                }
+                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
 
                 #endregion // Representation Correctness
 
@@ -1066,58 +1017,11 @@ namespace CLP.Entities
 
                 #region Representation Correctness
 
-                var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
-                var representationCorrectness = Correctness.Unknown;
-                var isSwapped = false;
-                if (usedRepresentation.IsUsed)
-                {
-                    var jumpSizes = jumps;
-                    var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
+                var jumpSizes = jumps;
+                var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
+                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
 
-                    var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
-                    var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
-                    var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
-
-                    if (leftCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (rightCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (alternativeCorrectness == Correctness.Correct)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                        representationCorrectness = Correctness.Correct;
-                    }
-                    else if (leftCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (rightCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (alternativeCorrectness == Correctness.PartiallyCorrect)
-                    {
-                        matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                        representationCorrectness = Correctness.PartiallyCorrect;
-                    }
-                    else if (leftCorrectness == Correctness.Incorrect ||
-                             rightCorrectness == Correctness.Incorrect ||
-                             alternativeCorrectness == Correctness.Incorrect)
-                    {
-                        representationCorrectness = Correctness.Incorrect;
-                    }
-
-                    isSwapped = representationRelation.IsSwapped;
-                }
-                else
+                if (!usedRepresentation.IsUsed)
                 {
                     var codedID = usedRepresentation.CodedID;
 
@@ -1153,13 +1057,6 @@ namespace CLP.Entities
                             usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
                         }
                     }
-                }
-
-                usedRepresentation.Correctness = representationCorrectness;
-                usedRepresentation.MatchedRelationSide = matchedRelationSide;
-                if (isSwapped)
-                {
-                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
                 }
 
                 #endregion // Representation Correctness
@@ -1331,61 +1228,8 @@ namespace CLP.Entities
 
             #region Representation Correctness
 
-            var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
-            var representationCorrectness = Correctness.Unknown;
-            if (usedRepresentation.IsUsed)
-            {
-                var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
-
-                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
-                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
-                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
-
-                if (leftCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (rightCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (alternativeCorrectness == Correctness.Correct)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                    representationCorrectness = Correctness.Correct;
-                }
-                else if (leftCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (rightCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (alternativeCorrectness == Correctness.PartiallyCorrect)
-                {
-                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
-                    representationCorrectness = Correctness.PartiallyCorrect;
-                }
-                else if (leftCorrectness == Correctness.Incorrect ||
-                         rightCorrectness == Correctness.Incorrect ||
-                         alternativeCorrectness == Correctness.Incorrect)
-                {
-                    representationCorrectness = Correctness.Incorrect;
-                }
-
-                if (representationRelation.IsSwapped)
-                {
-                    usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
-                }
-            }
-
-            usedRepresentation.Correctness = representationCorrectness;
-            usedRepresentation.MatchedRelationSide = matchedRelationSide;
+            var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
+            SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
 
             #endregion // Representation Correctness
 
@@ -1446,6 +1290,96 @@ namespace CLP.Entities
             }
 
             return false;
+        }
+
+        public static void SetCorrectnessAndSide(UsedRepresentation usedRepresentation,
+                                                 SimplifiedRelation representationRelation,
+                                                 SimplifiedRelation leftRelation,
+                                                 SimplifiedRelation rightRelation,
+                                                 SimplifiedRelation alternativeRelation)
+        {
+            var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
+            var representationCorrectness = Correctness.Unknown;
+            if (usedRepresentation.IsUsed)
+            {
+                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+
+                if (leftCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (rightCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (alternativeCorrectness == Correctness.Correct)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.Correct;
+                }
+                else if (leftCorrectness == Correctness.PartiallyCorrect &&
+                         representationRelation.IsSwapped)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (rightCorrectness == Correctness.PartiallyCorrect &&
+                         representationRelation.IsSwapped)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect &&
+                         representationRelation.IsSwapped)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (leftCorrectness == Correctness.PartiallyCorrect &&
+                         rightCorrectness == Correctness.Incorrect &&
+                         alternativeCorrectness == Correctness.Incorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (rightCorrectness == Correctness.PartiallyCorrect &&
+                         leftCorrectness == Correctness.Incorrect &&
+                         alternativeCorrectness == Correctness.Incorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect &&
+                         leftCorrectness == Correctness.Incorrect &&
+                         rightCorrectness == Correctness.Incorrect)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect ||
+                         leftCorrectness == Correctness.PartiallyCorrect ||
+                         rightCorrectness == Correctness.PartiallyCorrect)
+                {
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (leftCorrectness == Correctness.Incorrect &&
+                         rightCorrectness == Correctness.Incorrect &&
+                         alternativeCorrectness == Correctness.Incorrect)
+                {
+                    representationCorrectness = Correctness.Incorrect;
+                }
+            }
+
+            usedRepresentation.Correctness = representationCorrectness;
+            usedRepresentation.MatchedRelationSide = matchedRelationSide;
+            if (representationRelation.IsSwapped)
+            {
+                usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
+            }
         }
 
         #endregion // Static Methods
