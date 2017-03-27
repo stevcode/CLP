@@ -406,17 +406,9 @@ namespace Classroom_Learning_Partner.Services
                     {
                         skipCorrectness = "WD";
                     }
-                    else if (skipInformation.Contains("arithmetic error"))
-                    {
-                        skipCorrectness = "AE";
-                    }
-                    else if (skipInformation.Contains("no dimension"))
-                    {
-                        skipCorrectness = "ND";
-                    }
                     else
                     {
-                        skipCorrectness = "NS";
+                        skipCorrectness = "O";
                     }
 
                     var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
@@ -553,17 +545,9 @@ namespace Classroom_Learning_Partner.Services
                     {
                         skipCorrectness = "WD";
                     }
-                    else if (skipInformation.Contains("arithmetic error"))
-                    {
-                        skipCorrectness = "AE";
-                    }
-                    else if (skipInformation.Contains("no dimension"))
-                    {
-                        skipCorrectness = "ND";
-                    }
                     else
                     {
-                        skipCorrectness = "NS";
+                        skipCorrectness = "O";
                     }
 
                     var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
@@ -694,17 +678,9 @@ namespace Classroom_Learning_Partner.Services
                     {
                         skipCorrectness = "WD";
                     }
-                    else if (skipInformation.Contains("arithmetic error"))
-                    {
-                        skipCorrectness = "AE";
-                    }
-                    else if (skipInformation.Contains("no dimension"))
-                    {
-                        skipCorrectness = "ND";
-                    }
                     else
                     {
-                        skipCorrectness = "NS";
+                        skipCorrectness = "O";
                     }
 
                     var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";
@@ -835,17 +811,9 @@ namespace Classroom_Learning_Partner.Services
                     {
                         skipCorrectness = "WD";
                     }
-                    else if (skipInformation.Contains("arithmetic error"))
-                    {
-                        skipCorrectness = "AE";
-                    }
-                    else if (skipInformation.Contains("no dimension"))
-                    {
-                        skipCorrectness = "ND";
-                    }
                     else
                     {
-                        skipCorrectness = "NS";
+                        skipCorrectness = "O";
                     }
 
                     var skipSide = skipInformation.Contains("bottom") ? "bottom" : "right";

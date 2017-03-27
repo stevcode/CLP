@@ -755,9 +755,6 @@ namespace CLP.Entities
 
             var isCorrectDimensions = false;
             var isWrongDimension = false;
-            var isArithmeticError = false;
-            var isNonsense = false;
-            var isNoDimension = false;
 
             if (skips.Count == 1)
             {
@@ -769,43 +766,19 @@ namespace CLP.Entities
                 {
                     isWrongDimension = true;
                 }
-                else
-                {
-                    isNonsense = true;
-                }
             }
             else
             {
-                var percentMatchCorrectDimensions = correctDimensionMatches / (skips.Count * 1.0);
-                if (percentMatchCorrectDimensions >= 0.80)
+                if (correctDimensionMatches == skips.Count)
                 {
                     isCorrectDimensions = true;
                 }
 
-                if (skips.Count > 1 &&
-                !isCorrectDimensions)
+                if (!isCorrectDimensions)
                 {
-                    var percentMatchWrongDimensions = wrongDimensionMatches / (skips.Count * 1.0);
-                    if (percentMatchWrongDimensions >= 0.80)
+                    if (wrongDimensionMatches >= Math.Floor(skips.Count * 0.8))
                     {
                         isWrongDimension = true;
-                    }
-                }
-
-                if (!isCorrectDimensions &&
-                    !isWrongDimension)
-                {
-                    if (percentMatchCorrectDimensions >= 0.5)
-                    {
-                        isArithmeticError = true;
-                    }
-                    else if (differences.Distinct().Count() == 1)
-                    {
-                        isNoDimension = true;
-                    }
-                    else
-                    {
-                        isNonsense = true;
                     }
                 }
             }
@@ -819,17 +792,9 @@ namespace CLP.Entities
             {
                 correctnessText = "wrong dimension";
             }
-            else if (isArithmeticError)
-            {
-                correctnessText = "arithmetic error";
-            }
-            else if (isNoDimension)
-            {
-                correctnessText = "no dimension";
-            }
             else
             {
-                correctnessText = "random numbers";
+                correctnessText = "other";
             }
 
             var skipCodedValue = $"skip [{formattedSkips}], {correctnessText}";
