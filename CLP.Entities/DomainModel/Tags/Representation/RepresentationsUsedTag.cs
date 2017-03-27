@@ -1406,30 +1406,52 @@ namespace CLP.Entities
 
         public static bool IsMR2STEP(RepresentationsUsedTag tag)
         {
-            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
-            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
-            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE && r.Correctness == Correctness.Correct).Select(r => r.CodedObject).Distinct().ToList();
+            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
+            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT).Select(r => r.CodedObject).Distinct().ToList();
+            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE).Select(r => r.CodedObject).Distinct().ToList();
 
-            var unmatchedRepresentations =
-                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE && r.Correctness == Correctness.Incorrect).Select(r => r.CodedObject).Distinct().ToList();
-
-            // TODO: Doesn't handle altReps
-
-            if (!leftSideRepresentations.Any() ||
-                !rightSideRepresentations.Any())
-            {
-                return false;
-            }
+            var unmatchedRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
 
             foreach (var leftSideRepresentation in leftSideRepresentations)
             {
-                if (!rightSideRepresentations.Contains(leftSideRepresentation))
+                if (rightSideRepresentations.Any() &&
+                    !rightSideRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+
+                if (alternativeSideRepresentations.Any() &&
+                    !alternativeSideRepresentations.Contains(leftSideRepresentation))
                 {
                     return true;
                 }
 
                 if (unmatchedRepresentations.Any() &&
                     !unmatchedRepresentations.Contains(leftSideRepresentation))
+                {
+                    return true;
+                }
+            }
+
+            foreach (var rightSideRepresentation in rightSideRepresentations)
+            {
+                if (alternativeSideRepresentations.Any() &&
+                    !alternativeSideRepresentations.Contains(rightSideRepresentation))
+                {
+                    return true;
+                }
+
+                if (unmatchedRepresentations.Any() &&
+                    !unmatchedRepresentations.Contains(rightSideRepresentation))
+                {
+                    return true;
+                }
+            }
+
+            foreach (var alternativeSideRepresentation in alternativeSideRepresentations)
+            {
+                if (unmatchedRepresentations.Any() &&
+                    !unmatchedRepresentations.Contains(alternativeSideRepresentation))
                 {
                     return true;
                 }
