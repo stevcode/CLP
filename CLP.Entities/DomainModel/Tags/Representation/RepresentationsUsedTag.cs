@@ -1245,6 +1245,12 @@ namespace CLP.Entities
                 }
             }
 
+            if (stampObjectIDsRemovedSinceLastAdd.Any())
+            {
+                endPointCount++;
+                endPoints.Add(endPointCount, stampObjectIDsRemovedSinceLastAdd.ToList());
+            }
+
             if (stampObjectIDsOnPage.Any())
             {
                 endPoints.Add(-1, stampObjectIDsOnPage);
