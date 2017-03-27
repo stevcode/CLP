@@ -456,17 +456,20 @@ namespace Classroom_Learning_Partner.Services
 
             var leftStampImages = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_STAMP).ToList();
 
+            var leftStampIDsCreated = new List<string>();
+            var leftStampIDsDeleted = new List<string>();
             foreach (var usedRepresentation in leftStampImages)
             {
-                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("From"));
-                var parentStampParts = parentStampAdditionalInfo.Split(' ');
-                if (parentStampParts.Length == 3)
+                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
+                var parentStampInfoParts = parentStampAdditionalInfo.Split(" - ");
+                if (parentStampInfoParts.Length == 2)
                 {
-                    var parentStampCount = (int)parentStampParts[1].ToInt();
-                    entry.LeftStampCreatedCount += parentStampCount;
+                    var parentStampIDsComposite = parentStampInfoParts[1];
+                    var parentStampIDs = parentStampIDsComposite.Split(" ; ").ToList();
+                    leftStampIDsCreated.AddRange(parentStampIDs);
                     if (!usedRepresentation.IsFinalRepresentation)
                     {
-                        entry.StampDeletedCount += parentStampCount;
+                        leftStampIDsDeleted.AddRange(parentStampIDs);
                     }
                 }
 
@@ -477,6 +480,9 @@ namespace Classroom_Learning_Partner.Services
                     entry.LeftStampImagesCreatedCount += stampImageCount;
                 }
             }
+
+            entry.LeftStampCreatedCount = leftStampIDsCreated.Distinct().Count();
+            entry.StampDeletedCount = leftStampIDsDeleted.Distinct().Count();
 
             entry.LeftStampImagesSwitched = leftStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 

@@ -1208,8 +1208,10 @@ namespace CLP.Entities
             var stampObjectIDsOnPage = new List<string>();
             var stampObjectIDsOnPageSinceLastClear = new List<string>();
             var stampObjectIDsRemovedSinceLastAdd = new List<string>();
+            var stampObjectIDsRemovedButPartOfCurrentRepresentation = new List<string>();
 
             var endPoints = new Dictionary<int,List<string>>();
+            var endPointCompanions = new Dictionary<int, List<string>>();
             var endPointCount = 0;
 
             #region Find Pattern Points
@@ -1226,6 +1228,7 @@ namespace CLP.Entities
                     {
                         stampObjectIDsOnPageSinceLastClear.Remove(removedStampObjectID);
                     }
+                    stampObjectIDsRemovedButPartOfCurrentRepresentation.AddRange(stampObjectIDsRemovedSinceLastAdd);
                     stampObjectIDsRemovedSinceLastAdd.Clear();
                 }
                 else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
@@ -1240,6 +1243,8 @@ namespace CLP.Entities
 
                     endPointCount++;
                     endPoints.Add(endPointCount, stampObjectIDsOnPageSinceLastClear.ToList());
+                    endPointCompanions.Add(endPointCount, stampObjectIDsRemovedButPartOfCurrentRepresentation.ToList());
+                    stampObjectIDsRemovedButPartOfCurrentRepresentation.Clear();
                     stampObjectIDsOnPageSinceLastClear.Clear();
                     stampObjectIDsRemovedSinceLastAdd.Clear();
                 }
@@ -1254,6 +1259,7 @@ namespace CLP.Entities
             if (stampObjectIDsOnPage.Any())
             {
                 endPoints.Add(-1, stampObjectIDsOnPage);
+                endPointCompanions.Add(-1, stampObjectIDsRemovedButPartOfCurrentRepresentation.ToList());
             }
 
             #endregion // Find Pattern Points
@@ -1325,7 +1331,11 @@ namespace CLP.Entities
             var englishValue = $"{numberOfStampedObjects} {groupString} of {parts}";
             usedRepresentation.AdditionalInformation.Add(englishValue);
 
-            var numberOfParentStamps = stampedObjects.Select(so => so.ParentStampID).Distinct().Count();
+            var parentStampIDs = stampedObjects.Select(so => so.ParentStampID).Distinct().ToList();
+            var parentStampIDsInfo = $"UNLISTED (PSID) : {string.Join(" ; ", parentStampIDs)}";
+            usedRepresentation.AdditionalInformation.Add(parentStampIDsInfo);
+
+            var numberOfParentStamps = parentStampIDs.Count();
             var parentStampInfo = $"From {numberOfParentStamps} Stamps";
             usedRepresentation.AdditionalInformation.Add(parentStampInfo);
 
