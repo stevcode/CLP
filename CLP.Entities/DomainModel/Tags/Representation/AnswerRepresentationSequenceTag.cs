@@ -249,8 +249,8 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var isStartCOR = startItem == "A-COR";
-                var isCurrentCOR = item == "A-COR";
+                var isStartCOR = startItem == "FA-COR";
+                var isCurrentCOR = item == "FA-COR";
 
                 if (isStartCOR && isCurrentCOR)
                 {
