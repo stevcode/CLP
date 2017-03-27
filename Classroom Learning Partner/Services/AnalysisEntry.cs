@@ -243,6 +243,15 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData NumberLineDeletedCountProperty = RegisterProperty("NumberLineDeletedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
+        public int StampCreatedCount
+        {
+            get { return GetValue<int>(StampCreatedCountProperty); }
+            set { SetValue(StampCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData StampCreatedCountProperty = RegisterProperty("StampCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int StampDeletedCount
         {
             get { return GetValue<int>(StampDeletedCountProperty); }
@@ -372,15 +381,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Number Line
 
         #region Stamps
-
-        /// <summary>SUMMARY</summary>
-        public int LeftStampCreatedCount
-        {
-            get { return GetValue<int>(LeftStampCreatedCountProperty); }
-            set { SetValue(LeftStampCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData LeftStampCreatedCountProperty = RegisterProperty("LeftStampCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int LeftStampImagesCreatedCount
@@ -610,15 +610,6 @@ namespace Classroom_Learning_Partner.Services
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int RightStampCreatedCount
-        {
-            get { return GetValue<int>(RightStampCreatedCountProperty); }
-            set { SetValue(RightStampCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData RightStampCreatedCountProperty = RegisterProperty("RightStampCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int RightStampImagesCreatedCount
         {
             get { return GetValue<int>(RightStampImagesCreatedCountProperty); }
@@ -845,15 +836,6 @@ namespace Classroom_Learning_Partner.Services
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int AlternativeStampCreatedCount
-        {
-            get { return GetValue<int>(AlternativeStampCreatedCountProperty); }
-            set { SetValue(AlternativeStampCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeStampCreatedCountProperty = RegisterProperty("AlternativeStampCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int AlternativeStampImagesCreatedCount
         {
             get { return GetValue<int>(AlternativeStampImagesCreatedCountProperty); }
@@ -1063,15 +1045,6 @@ namespace Classroom_Learning_Partner.Services
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int UnmatchedStampCreatedCount
-        {
-            get { return GetValue<int>(UnmatchedStampCreatedCountProperty); }
-            set { SetValue(UnmatchedStampCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedStampCreatedCountProperty = RegisterProperty("UnmatchedStampCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int UnmatchedStampImagesCreatedCount
         {
             get { return GetValue<int>(UnmatchedStampImagesCreatedCountProperty); }
@@ -1219,6 +1192,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(ArrayDeletedCount.ToString());
             cellContents.Add(NumberLineCreatedCount.ToString());
             cellContents.Add(NumberLineDeletedCount.ToString());
+            cellContents.Add(StampCreatedCount.ToString());
             cellContents.Add(StampDeletedCount.ToString());
             cellContents.Add(IndividualStampImageDeletedCount.ToString());
             cellContents.Add(StampImageRepresentationDeletedCount.ToString());
@@ -1233,7 +1207,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
             cellContents.Add(LeftNumberLineBlank);
-            cellContents.Add(LeftStampCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
             cellContents.Add(LeftArrayCorrectCount.ToString());
@@ -1258,7 +1231,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
             cellContents.Add(RightNumberLineBlank);
-            cellContents.Add(RightStampCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
             cellContents.Add(RightArrayCorrectCount.ToString());
@@ -1283,7 +1255,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeNumberLineBlank);
-            cellContents.Add(AlternativeStampCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesSwitched);
             cellContents.Add(AlternativeArrayCorrectCount.ToString());
@@ -1306,7 +1277,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
-            cellContents.Add(UnmatchedStampCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedRepresentationsAndCorrectness));
             cellContents.Add(IsUnmatchedMR);
@@ -1357,6 +1327,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("ARR Deleted");
             cellContents.Add("NL Created");
             cellContents.Add("NL Deleted");
+            cellContents.Add("STA Created");
             cellContents.Add("STA Deleted");
             cellContents.Add("STA IMAGES Deleted");
             cellContents.Add("ALL STA IMAGES on page Deleted");
@@ -1371,7 +1342,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left NL used");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left NL blank");
-            cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
             cellContents.Add("Left STA switched");
             cellContents.Add("Left ARR COR");
@@ -1396,7 +1366,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right NL used");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right NL blank");
-            cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
             cellContents.Add("Right STA switched");
             cellContents.Add("Right ARR COR");
@@ -1421,7 +1390,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative NL used");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative NL blank");
-            cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
             cellContents.Add("Alternative STA switched");
             cellContents.Add("Alternative ARR COR");
@@ -1444,7 +1412,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL used");
-            cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
             cellContents.Add("Unmatched REP Correctness");
             cellContents.Add("Unmatched MR");
