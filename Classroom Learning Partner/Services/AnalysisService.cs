@@ -1083,7 +1083,7 @@ namespace Classroom_Learning_Partner.Services
                 {
                     if (analysisCode == Codings.ANALYSIS_FINAL_ANS_COR_BEFORE_REP ||
                         analysisCode == Codings.ANALYSIS_FINAL_ANS_INC_BEFORE_REP ||
-                        analysisCode == Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP ||
+                        analysisCode == Codings.ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP ||
                         analysisCode == Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP ||
                         analysisCode == Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER ||
                         analysisCode == Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER)

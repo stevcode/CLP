@@ -228,7 +228,7 @@ namespace CLP.Entities
             var isRepresentationUsedAfterAnswer = false;
             foreach (var item in sequence)
             {
-                var isItemAnswer = item == "FA-COR" || item == "FA-INC";
+                var isItemAnswer = item == "FA-COR" || item == "FA-INC" || item == "FA-ILL";
                 if (!isItemAnswer)
                 {
                     if (!string.IsNullOrWhiteSpace(startItem))
