@@ -1302,11 +1302,22 @@ namespace CLP.Entities
             var representationCorrectness = Correctness.Unknown;
             if (usedRepresentation.IsUsed)
             {
-                representationRelation.IsSwapped = false;
-
-                leftRelation.IsSwapped = false;
-                rightRelation.IsSwapped = false;
-                alternativeRelation.IsSwapped = false;
+                if (representationRelation != null)
+                {
+                    representationRelation.IsSwapped = false;
+                }
+                if (leftRelation != null)
+                {
+                    leftRelation.IsSwapped = false;
+                }
+                if (rightRelation != null)
+                {
+                    rightRelation.IsSwapped = false;
+                }
+                if (alternativeRelation != null)
+                {
+                    alternativeRelation.IsSwapped = false;
+                }
 
                 var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
                 var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
@@ -1328,6 +1339,7 @@ namespace CLP.Entities
                     representationCorrectness = Correctness.Correct;
                 }
                 else if (leftCorrectness == Correctness.PartiallyCorrect &&
+                         leftRelation != null &&
                          leftRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
@@ -1335,6 +1347,7 @@ namespace CLP.Entities
                     representationRelation.IsSwapped = true;
                 }
                 else if (rightCorrectness == Correctness.PartiallyCorrect &&
+                         rightRelation != null &&
                          rightRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
@@ -1342,6 +1355,7 @@ namespace CLP.Entities
                     representationRelation.IsSwapped = true;
                 }
                 else if (alternativeCorrectness == Correctness.PartiallyCorrect &&
+                         alternativeRelation != null &&
                          alternativeRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
@@ -1385,7 +1399,8 @@ namespace CLP.Entities
 
             usedRepresentation.Correctness = representationCorrectness;
             usedRepresentation.MatchedRelationSide = matchedRelationSide;
-            if (representationRelation.IsSwapped)
+            if (representationRelation != null && 
+                representationRelation.IsSwapped)
             {
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
             }
