@@ -1302,6 +1302,12 @@ namespace CLP.Entities
             var representationCorrectness = Correctness.Unknown;
             if (usedRepresentation.IsUsed)
             {
+                representationRelation.IsSwapped = false;
+
+                leftRelation.IsSwapped = false;
+                rightRelation.IsSwapped = false;
+                alternativeRelation.IsSwapped = false;
+
                 var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
                 var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
                 var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
@@ -1322,22 +1328,25 @@ namespace CLP.Entities
                     representationCorrectness = Correctness.Correct;
                 }
                 else if (leftCorrectness == Correctness.PartiallyCorrect &&
-                         representationRelation.IsSwapped)
+                         leftRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
                     representationCorrectness = Correctness.PartiallyCorrect;
+                    representationRelation.IsSwapped = true;
                 }
                 else if (rightCorrectness == Correctness.PartiallyCorrect &&
-                         representationRelation.IsSwapped)
+                         rightRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
                     representationCorrectness = Correctness.PartiallyCorrect;
+                    representationRelation.IsSwapped = true;
                 }
                 else if (alternativeCorrectness == Correctness.PartiallyCorrect &&
-                         representationRelation.IsSwapped)
+                         alternativeRelation.IsSwapped)
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
                     representationCorrectness = Correctness.PartiallyCorrect;
+                    representationRelation.IsSwapped = true;
                 }
                 else if (leftCorrectness == Correctness.PartiallyCorrect &&
                          rightCorrectness == Correctness.Incorrect &&

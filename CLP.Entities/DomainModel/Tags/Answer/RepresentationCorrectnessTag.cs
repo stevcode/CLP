@@ -502,7 +502,7 @@ namespace CLP.Entities
                 if (representationRelation.GroupSize == definitionRelation.NumberOfGroups &&
                     representationRelation.NumberOfGroups == definitionRelation.GroupSize)
                 {
-                    representationRelation.IsSwapped = true;
+                    definitionRelation.IsSwapped = true;
                     return Correctness.PartiallyCorrect;
                 }
 
