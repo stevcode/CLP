@@ -491,16 +491,22 @@ namespace Classroom_Learning_Partner.Services
             #region Representation Correctness Counts
 
             entry.LeftArrayCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Correct);
-            entry.LeftArrayPartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
-            entry.LeftArrayIncorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Incorrect);
+            entry.LeftArrayPartiallyCorrectCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftArrayPartiallyCorrectSwappedCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.LeftNumberLineCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
-            entry.LeftNumberLinePartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
-            entry.LeftNumberLineIncorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
+            entry.LeftNumberLinePartiallyCorrectCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftNumberLinePartiallyCorrectSwappedCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.LeftStampCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
-            entry.LeftStampPartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect);
-            entry.LeftStampIncorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Incorrect);
+            entry.LeftStampPartiallyCorrectCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftStampPartiallyCorrectSwappedCount =
+                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
@@ -636,16 +642,22 @@ namespace Classroom_Learning_Partner.Services
             #region Representation Correctness Counts
 
             entry.RightArrayCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Correct);
-            entry.RightArrayPartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
-            entry.RightArrayIncorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Incorrect);
+            entry.RightArrayPartiallyCorrectCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightArrayPartiallyCorrectSwappedCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.RightNumberLineCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
-            entry.RightNumberLinePartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
-            entry.RightNumberLineIncorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
+            entry.RightNumberLinePartiallyCorrectCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightNumberLinePartiallyCorrectSwappedCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.RightStampCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
-            entry.RightStampPartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect);
-            entry.RightStampIncorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Incorrect);
+            entry.RightStampPartiallyCorrectCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightStampPartiallyCorrectSwappedCount =
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
@@ -781,16 +793,22 @@ namespace Classroom_Learning_Partner.Services
             #region Representation Correctness Counts
 
             entry.AlternativeArrayCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Correct);
-            entry.AlternativeArrayPartiallyCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
-            entry.AlternativeArrayIncorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Incorrect);
+            entry.AlternativeArrayPartiallyCorrectCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.AlternativeArrayPartiallyCorrectSwappedCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.AlternativeNumberLineCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
-            entry.AlternativeNumberLinePartiallyCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
-            entry.AlternativeNumberLineIncorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
+            entry.AlternativeNumberLinePartiallyCorrectCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.AlternativeNumberLinePartiallyCorrectSwappedCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.AlternativeStampCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
-            entry.AlternativeStampPartiallyCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect);
-            entry.AlternativeStampIncorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Incorrect);
+            entry.AlternativeStampPartiallyCorrectCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.AlternativeStampPartiallyCorrectSwappedCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
@@ -916,6 +934,19 @@ namespace Classroom_Learning_Partner.Services
             entry.StampDeletedCount += unmatchedStampIDsDeleted.Count;
 
             #endregion // Stamps
+
+            #region Representation Correctness Counts
+
+            entry.UnmatchedArrayPartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
+            entry.UnmatchedArrayIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Incorrect);
+
+            entry.UnmatchedNumberLinePartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
+            entry.UnmatchedNumberLineIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
+
+            entry.UnmatchedStampPartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect);
+            entry.UnmatchedStampIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Incorrect);
+
+            #endregion // Representation Correctness Counts
 
             entry.UnmatchedRepresentationsAndCorrectness =
                 unmatchedRepresentations.Select(
