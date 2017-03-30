@@ -102,5 +102,11 @@ namespace CLP.Entities
         public override bool IsBackgroundInteractable => false;
 
         #endregion // APageObjectBase Overrides
+
+        #region IStrokeAccepter Overrides
+
+        public override int StrokeHitTestPercentage => 85;
+
+        #endregion // IStrokeAccepter Overrides
     }
 }
