@@ -491,39 +491,62 @@ namespace CLP.Entities
                     }
                     InkClusters.Add(skipCluster);
                 }
-                else
+
+                var possibleBottomSkipStrokesAddedToPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesAddedToPage, endHistoryIndex);
+                var interpretedBottomSkipCountingHistory = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesAddedToPage);
+                var isBottomSkipCountingHistory = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingHistory);
+
+                var possibleBottomSkipStrokesOnPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesOnPage, endHistoryIndex);
+                var interpretedBottomSkipCountingOnPage = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesOnPage);
+                var isBottomSkipCountingOnPage = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingOnPage);
+
+                if (isBottomSkipCountingHistory || isBottomSkipCountingOnPage)
                 {
-                    var possibleBottomSkipStrokesAddedToPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesAddedToPage, endHistoryIndex);
-                    var interpretedBottomSkipCountingHistory = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesAddedToPage);
-                    var isBottomSkipCountingHistory = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingHistory);
+                    var skipCluster = new InkCluster
+                                      {
+                                          ClusterType = InkCluster.ClusterTypes.ArrayBottomSkipCounting,
+                                          PageObjectReferenceID = arrayID,
+                                          LocationReference = Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP
+                                      };
 
-                    var possibleBottomSkipStrokesOnPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesOnPage, endHistoryIndex);
-                    var interpretedBottomSkipCountingOnPage = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesOnPage);
-                    var isBottomSkipCountingOnPage = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingOnPage);
-
-                    if (isBottomSkipCountingHistory || isBottomSkipCountingOnPage)
+                    var bottomSkipStrokes = possibleBottomSkipStrokesAddedToPage.Concat(possibleBottomSkipStrokesOnPage).Distinct().ToList();
+                    foreach (var stroke in bottomSkipStrokes)
                     {
-                        var skipCluster = new InkCluster
-                                          {
-                                              ClusterType = InkCluster.ClusterTypes.ArrayBottomSkipCounting,
-                                              PageObjectReferenceID = arrayID,
-                                              LocationReference = Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP
-                                          };
-
-                        var bottomSkipStrokes = possibleBottomSkipStrokesAddedToPage.Concat(possibleBottomSkipStrokesOnPage).Distinct().ToList();
-                        foreach (var stroke in bottomSkipStrokes)
+                        var currentCluster = GetContainingCluster(stroke);
+                        if (currentCluster.ClusterType == InkCluster.ClusterTypes.InkDivide)
                         {
-                            var currentCluster = GetContainingCluster(stroke);
-                            if (currentCluster.ClusterType != InkCluster.ClusterTypes.InkDivide)
-                            {
-                                MoveStrokeToDifferentCluster(skipCluster, stroke);
-                            }
+                            continue;
                         }
 
-                        InkClusters.Add(skipCluster);
+                        if (!skipCluster.Strokes.Contains(stroke))
+                        {
+                            skipCluster.Strokes.Add(stroke);
+                        }
+
+                        var fromCluster =
+                            InkClusters.FirstOrDefault(
+                                                       c =>
+                                                           c.Strokes.Contains(stroke) && c != skipCluster && c.ClusterType != InkCluster.ClusterTypes.ArraySkipCounting &&
+                                                           c.ClusterType != InkCluster.ClusterTypes.ArrayBottomSkipCounting);
+                        if (fromCluster == null)
+                        {
+                            continue;
+                        }
+
+                        if (fromCluster.Strokes.Contains(stroke))
+                        {
+                            fromCluster.Strokes.Remove(stroke);
+                        }
+
+                        if (!fromCluster.Strokes.Any())
+                        {
+                            InkClusters.Remove(fromCluster);
+                        }
                     }
+
+                    InkClusters.Add(skipCluster);
                 }
-                // TODO: ELSE: Test for skip counting along the bottom  here, give it it's own cluster as above, then continue below with ArrayEquation.
+
                 // BUG: Right now, ARR eqn relies on OPTICS to create an Unknown cluster completely over the array, See "Update to Pre-Clustering, Line 545
                 // Will need to create a temp cluster of possible arr eqn, then after optics runs, any cluster  that contains strokes from these temp clusters will
                 // be split into just a cluster containing the strokes from temp cluster and a cluster containing the rest from the optics cluster
