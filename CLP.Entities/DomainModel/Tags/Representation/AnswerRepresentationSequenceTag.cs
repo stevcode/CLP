@@ -208,8 +208,8 @@ namespace CLP.Entities
             var lastCorrectFinalAnswerIndex = sequence.LastIndexOf("FA-COR");
             var lastIncorrectFinalAnswerIndex = sequence.LastIndexOf("FA-INC");
             var lastFinalAnswerIndex = Math.Max(lastCorrectFinalAnswerIndex, lastIncorrectFinalAnswerIndex);
-            if (lastFinalAnswerIndex >= 0 &&
-                lastFinalAnswerIndex < sequence.Count - 1)
+            var sequenceAfterLastFinalAnswer = sequence.Skip(lastFinalAnswerIndex + 1).ToList();
+            if (sequenceAfterLastFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER);
             }
@@ -217,8 +217,8 @@ namespace CLP.Entities
             var lastCorrectIntermediaryAnswerIndex = sequence.LastIndexOf("IA-COR");
             var lastIncorrectIntermediaryAnswerIndex = sequence.LastIndexOf("IA-INC");
             var lastIntermediaryAnswerIndex = Math.Max(lastCorrectIntermediaryAnswerIndex, lastIncorrectIntermediaryAnswerIndex);
-            if (lastIntermediaryAnswerIndex >= 0 &&
-                lastIntermediaryAnswerIndex < sequence.Count - 1)
+            var sequenceAfterLastIntermediaryAnswer = sequence.Skip(lastIntermediaryAnswerIndex + 1).ToList();
+            if (sequenceAfterLastIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER);
             }
