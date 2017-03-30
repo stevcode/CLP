@@ -360,7 +360,6 @@ namespace Classroom_Learning_Partner.Services
             }
 
             entry.ArrayDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && !r.IsFinalRepresentation);
-            entry.NumberLineCreatedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_NUMBER_LINE && e.EventType == Codings.EVENT_OBJECT_ADD);
             entry.NumberLineDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && !r.IsFinalRepresentation);
             entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT && e.EventType == Codings.EVENT_OBJECT_DELETE);
             entry.StampImageRepresentationDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation);
