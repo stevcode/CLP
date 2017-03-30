@@ -1049,7 +1049,7 @@ namespace Classroom_Learning_Partner.Services
                     entry.ABR_RAA.Add(AnalysisEntry.FABR);
                 }
 
-                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP) ||
+                if (answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP) ||
                     answerRepresentationSequenceTag.AnalysisCodes.Contains(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP))
                 {
                     entry.ABR_RAA.Add(AnalysisEntry.IABR);
