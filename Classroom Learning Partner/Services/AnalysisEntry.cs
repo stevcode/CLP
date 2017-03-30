@@ -423,15 +423,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData LeftArrayPartiallyCorrectCountProperty = RegisterProperty("LeftArrayPartiallyCorrectCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int LeftArrayPartiallyCorrectSwappedCount
-        {
-            get { return GetValue<int>(LeftArrayPartiallyCorrectSwappedCountProperty); }
-            set { SetValue(LeftArrayPartiallyCorrectSwappedCountProperty, value); }
-        }
-
-        public static readonly PropertyData LeftArrayPartiallyCorrectSwappedCountProperty = RegisterProperty("LeftArrayPartiallyCorrectSwappedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int LeftNumberLineCorrectCount
         {
             get { return GetValue<int>(LeftNumberLineCorrectCountProperty); }
@@ -650,15 +641,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData RightArrayPartiallyCorrectCountProperty = RegisterProperty("RightArrayPartiallyCorrectCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int RightArrayPartiallyCorrectSwappedCount
-        {
-            get { return GetValue<int>(RightArrayPartiallyCorrectSwappedCountProperty); }
-            set { SetValue(RightArrayPartiallyCorrectSwappedCountProperty, value); }
-        }
-
-        public static readonly PropertyData RightArrayPartiallyCorrectSwappedCountProperty = RegisterProperty("RightArrayPartiallyCorrectSwappedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int RightNumberLineCorrectCount
         {
             get { return GetValue<int>(RightNumberLineCorrectCountProperty); }
@@ -874,15 +856,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AlternativeArrayPartiallyCorrectCountProperty = RegisterProperty("AlternativeArrayPartiallyCorrectCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
-        public int AlternativeArrayPartiallyCorrectSwappedCount
-        {
-            get { return GetValue<int>(AlternativeArrayPartiallyCorrectSwappedCountProperty); }
-            set { SetValue(AlternativeArrayPartiallyCorrectSwappedCountProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeArrayPartiallyCorrectSwappedCountProperty = RegisterProperty("AlternativeArrayPartiallyCorrectSwappedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int AlternativeNumberLineCorrectCount
@@ -1269,7 +1242,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftStampImagesSwitched);
             cellContents.Add(LeftArrayCorrectCount.ToString());
             cellContents.Add(LeftArrayPartiallyCorrectCount.ToString());
-            cellContents.Add(LeftArrayPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(LeftNumberLineCorrectCount.ToString());
             cellContents.Add(LeftNumberLinePartiallyCorrectCount.ToString());
             cellContents.Add(LeftNumberLinePartiallyCorrectSwappedCount.ToString());
@@ -1293,7 +1265,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightStampImagesSwitched);
             cellContents.Add(RightArrayCorrectCount.ToString());
             cellContents.Add(RightArrayPartiallyCorrectCount.ToString());
-            cellContents.Add(RightArrayPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(RightNumberLineCorrectCount.ToString());
             cellContents.Add(RightNumberLinePartiallyCorrectCount.ToString());
             cellContents.Add(RightNumberLinePartiallyCorrectSwappedCount.ToString());
@@ -1317,7 +1288,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeStampImagesSwitched);
             cellContents.Add(AlternativeArrayCorrectCount.ToString());
             cellContents.Add(AlternativeArrayPartiallyCorrectCount.ToString());
-            cellContents.Add(AlternativeArrayPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(AlternativeNumberLineCorrectCount.ToString());
             cellContents.Add(AlternativeNumberLinePartiallyCorrectCount.ToString());
             cellContents.Add(AlternativeNumberLinePartiallyCorrectSwappedCount.ToString());
@@ -1410,7 +1380,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left STA switched");
             cellContents.Add("Left ARR COR");
             cellContents.Add("Left ARR PAR");
-            cellContents.Add("Left ARR PAR SWAPPED");
             cellContents.Add("Left NL COR");
             cellContents.Add("Left NL PAR");
             cellContents.Add("Left NL PAR SWAPPED");
@@ -1434,7 +1403,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right STA switched");
             cellContents.Add("Right ARR COR");
             cellContents.Add("Right ARR PAR");
-            cellContents.Add("Right ARR PAR SWAPPED");
             cellContents.Add("Right NL COR");
             cellContents.Add("Right NL PAR");
             cellContents.Add("Right NL PAR SWAPPED");
@@ -1458,7 +1426,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative STA switched");
             cellContents.Add("Alternative ARR COR");
             cellContents.Add("Alternative ARR PAR");
-            cellContents.Add("Alternative ARR PAR SWAPPED");
             cellContents.Add("Alternative NL COR");
             cellContents.Add("Alternative NL PAR");
             cellContents.Add("Alternative NL PAR SWAPPED");
