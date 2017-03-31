@@ -234,15 +234,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData NumberLineDeletedCountProperty = RegisterProperty("NumberLineDeletedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int StampCreatedCount
-        {
-            get { return GetValue<int>(StampCreatedCountProperty); }
-            set { SetValue(StampCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData StampCreatedCountProperty = RegisterProperty("StampCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int StampDeletedCount
         {
             get { return GetValue<int>(StampDeletedCountProperty); }
@@ -372,6 +363,15 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Number Line
 
         #region Stamps
+
+        /// <summary>SUMMARY</summary>
+        public int LeftStampsCreatedCount
+        {
+            get { return GetValue<int>(LeftStampsCreatedCountProperty); }
+            set { SetValue(LeftStampsCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftStampsCreatedCountProperty = RegisterProperty("LeftStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int LeftStampImagesCreatedCount
@@ -592,6 +592,15 @@ namespace Classroom_Learning_Partner.Services
         #region Stamps
 
         /// <summary>SUMMARY</summary>
+        public int RightStampsCreatedCount
+        {
+            get { return GetValue<int>(RightStampsCreatedCountProperty); }
+            set { SetValue(RightStampsCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightStampsCreatedCountProperty = RegisterProperty("RightStampsCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int RightStampImagesCreatedCount
         {
             get { return GetValue<int>(RightStampImagesCreatedCountProperty); }
@@ -809,6 +818,15 @@ namespace Classroom_Learning_Partner.Services
         #region Stamps
 
         /// <summary>SUMMARY</summary>
+        public int AlternativeStampsCreatedCount
+        {
+            get { return GetValue<int>(AlternativeStampsCreatedCountProperty); }
+            set { SetValue(AlternativeStampsCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeStampsCreatedCountProperty = RegisterProperty("AlternativeStampsCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int AlternativeStampImagesCreatedCount
         {
             get { return GetValue<int>(AlternativeStampImagesCreatedCountProperty); }
@@ -1007,6 +1025,15 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Number Line
 
         #region Stamps
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedStampsCreatedCount
+        {
+            get { return GetValue<int>(UnmatchedStampsCreatedCountProperty); }
+            set { SetValue(UnmatchedStampsCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedStampsCreatedCountProperty = RegisterProperty("UnmatchedStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int UnmatchedStampImagesCreatedCount
@@ -1213,7 +1240,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsBlank);
             cellContents.Add(ArrayDeletedCount.ToString());
             cellContents.Add(NumberLineDeletedCount.ToString());
-            cellContents.Add(StampCreatedCount.ToString());
             cellContents.Add(StampDeletedCount.ToString());
             cellContents.Add(IndividualStampImageDeletedCount.ToString());
             cellContents.Add(StampImageRepresentationDeletedCount.ToString());
@@ -1228,6 +1254,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftNumberLineCreatedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
             cellContents.Add(LeftNumberLineBlank);
+            cellContents.Add(LeftStampsCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
             cellContents.Add(LeftArrayCorrectCount.ToString());
@@ -1251,6 +1278,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightNumberLineCreatedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
             cellContents.Add(RightNumberLineBlank);
+            cellContents.Add(RightStampsCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
             cellContents.Add(RightArrayCorrectCount.ToString());
@@ -1274,6 +1302,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeNumberLineCreatedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeNumberLineBlank);
+            cellContents.Add(AlternativeStampsCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesSwitched);
             cellContents.Add(AlternativeArrayCorrectCount.ToString());
@@ -1295,6 +1324,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineCreatedCount.ToString());
+            cellContents.Add(UnmatchedStampsCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
             cellContents.Add(UnmatchedArrayPartiallyCorrectCount.ToString());
             cellContents.Add(UnmatchedArrayIncorrectCount.ToString());
@@ -1350,7 +1380,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Blank");
             cellContents.Add("ARR Deleted");
             cellContents.Add("NL Deleted");
-            cellContents.Add("STA Created");
             cellContents.Add("STA Deleted");
             cellContents.Add("STA IMAGES Deleted");
             cellContents.Add("ALL STA IMAGES on page Deleted");
@@ -1365,6 +1394,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left NL created");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left NL blank");
+            cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
             cellContents.Add("Left STA switched");
             cellContents.Add("Left ARR COR");
@@ -1388,6 +1418,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right NL created");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right NL blank");
+            cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
             cellContents.Add("Right STA switched");
             cellContents.Add("Right ARR COR");
@@ -1411,6 +1442,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative NL created");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative NL blank");
+            cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
             cellContents.Add("Alternative STA switched");
             cellContents.Add("Alternative ARR COR");
@@ -1432,6 +1464,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL created");
+            cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
             cellContents.Add("Unmatched ARR PAR");
             cellContents.Add("Unmatched ARR INC");

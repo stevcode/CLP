@@ -454,7 +454,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var usedRepresentation in leftStampImages)
             {
                 var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" - ");
+                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
                 if (parentStampInfoParts.Length == 2)
                 {
                     var parentStampIDsComposite = parentStampInfoParts[1];
@@ -471,7 +471,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" - ");
+                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
                     var companionStampedObjectIDsComposite = parentStampInfoParts[1];
@@ -480,7 +480,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            entry.StampCreatedCount += leftStampIDsCreated.Count;
+            entry.LeftStampsCreatedCount += leftStampIDsCreated.Count;
             entry.StampDeletedCount += leftStampIDsDeleted.Count;
 
             entry.LeftStampImagesSwitched = leftStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
@@ -602,7 +602,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var usedRepresentation in rightStampImages)
             {
                 var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" - ");
+                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
                 if (parentStampInfoParts.Length == 2)
                 {
                     var parentStampIDsComposite = parentStampInfoParts[1];
@@ -619,7 +619,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" - ");
+                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
                     var companionStampedObjectIDsComposite = parentStampInfoParts[1];
@@ -628,7 +628,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            entry.StampCreatedCount += rightStampIDsCreated.Count;
+            entry.RightStampsCreatedCount += rightStampIDsCreated.Count;
             entry.StampDeletedCount += rightStampIDsDeleted.Count;
 
             entry.RightStampImagesSwitched = rightStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
@@ -750,7 +750,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var usedRepresentation in alternativeStampImages)
             {
                 var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" - ");
+                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
                 if (parentStampInfoParts.Length == 2)
                 {
                     var parentStampIDsComposite = parentStampInfoParts[1];
@@ -767,7 +767,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" - ");
+                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
                     var companionStampedObjectIDsComposite = parentStampInfoParts[1];
@@ -776,7 +776,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            entry.StampCreatedCount += alternativeStampIDsCreated.Count;
+            entry.AlternativeStampsCreatedCount += alternativeStampIDsCreated.Count;
             entry.StampDeletedCount += alternativeStampIDsDeleted.Count;
 
             entry.AlternativeStampImagesSwitched = alternativeStampImages.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
@@ -894,7 +894,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var usedRepresentation in unmatchedStampImages)
             {
                 var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" - ");
+                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
                 if (parentStampInfoParts.Length == 2)
                 {
                     var parentStampIDsComposite = parentStampInfoParts[1];
@@ -911,7 +911,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" - ");
+                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
                     var companionStampedObjectIDsComposite = parentStampInfoParts[1];
@@ -920,7 +920,7 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            entry.StampCreatedCount += unmatchedStampIDsCreated.Count;
+            entry.UnmatchedStampsCreatedCount += unmatchedStampIDsCreated.Count;
             entry.StampDeletedCount += unmatchedStampIDsDeleted.Count;
 
             #endregion // Stamps
