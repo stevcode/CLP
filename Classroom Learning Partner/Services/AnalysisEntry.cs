@@ -225,15 +225,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData ArrayDeletedCountProperty = RegisterProperty("ArrayDeletedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int NumberLineCreatedCount
-        {
-            get { return GetValue<int>(NumberLineCreatedCountProperty); }
-            set { SetValue(NumberLineCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData NumberLineCreatedCountProperty = RegisterProperty("NumberLineCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int NumberLineDeletedCount
         {
             get { return GetValue<int>(NumberLineDeletedCountProperty); }
@@ -341,6 +332,15 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Array
 
         #region Number Line
+
+        /// <summary>SUMMARY</summary>
+        public int LeftNumberLineCreatedCount
+        {
+            get { return GetValue<int>(LeftNumberLineCreatedCountProperty); }
+            set { SetValue(LeftNumberLineCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineCreatedCountProperty = RegisterProperty("LeftNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int LeftNumberLineUsedCount
@@ -561,6 +561,15 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
+        public int RightNumberLineCreatedCount
+        {
+            get { return GetValue<int>(RightNumberLineCreatedCountProperty); }
+            set { SetValue(RightNumberLineCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightNumberLineCreatedCountProperty = RegisterProperty("RightNumberLineCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int RightNumberLineUsedCount
         {
             get { return GetValue<int>(RightNumberLineUsedCountProperty); }
@@ -779,6 +788,15 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
+        public int AlternativeNumberLineCreatedCount
+        {
+            get { return GetValue<int>(AlternativeNumberLineCreatedCountProperty); }
+            set { SetValue(AlternativeNumberLineCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeNumberLineCreatedCountProperty = RegisterProperty("AlternativeNumberLineCreatedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int AlternativeNumberLineUsedCount
         {
             get { return GetValue<int>(AlternativeNumberLineUsedCountProperty); }
@@ -994,6 +1012,15 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Array
 
         #region Number Line
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedNumberLineCreatedCount
+        {
+            get { return GetValue<int>(UnmatchedNumberLineCreatedCountProperty); }
+            set { SetValue(UnmatchedNumberLineCreatedCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedNumberLineCreatedCountProperty = RegisterProperty("UnmatchedNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int UnmatchedNumberLineUsedCount
@@ -1221,7 +1248,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsInkOnly);
             cellContents.Add(IsBlank);
             cellContents.Add(ArrayDeletedCount.ToString());
-            cellContents.Add(NumberLineCreatedCount.ToString());
             cellContents.Add(NumberLineDeletedCount.ToString());
             cellContents.Add(StampCreatedCount.ToString());
             cellContents.Add(StampDeletedCount.ToString());
@@ -1235,6 +1261,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftArrayDivideCount.ToString());
             cellContents.Add(LeftArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
+            cellContents.Add(LeftNumberLineCreatedCount.ToString());
             cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
             cellContents.Add(LeftNumberLineBlank);
@@ -1258,6 +1285,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightArrayDivideCount.ToString());
             cellContents.Add(RightArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
+            cellContents.Add(RightNumberLineCreatedCount.ToString());
             cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
             cellContents.Add(RightNumberLineBlank);
@@ -1281,6 +1309,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArrayDivideCount.ToString());
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
+            cellContents.Add(AlternativeNumberLineCreatedCount.ToString());
             cellContents.Add(AlternativeNumberLineUsedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeNumberLineBlank);
@@ -1304,6 +1333,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArrayDivideCount.ToString());
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
+            cellContents.Add(UnmatchedNumberLineCreatedCount.ToString());
             cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
             cellContents.Add(UnmatchedArrayPartiallyCorrectCount.ToString());
@@ -1359,7 +1389,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("INK Only");
             cellContents.Add("Blank");
             cellContents.Add("ARR Deleted");
-            cellContents.Add("NL Created");
             cellContents.Add("NL Deleted");
             cellContents.Add("STA Created");
             cellContents.Add("STA Deleted");
@@ -1373,6 +1402,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left ARR divide");
             cellContents.Add("Left ARR skip");
             cellContents.Add("Left ARR skip tags");
+            cellContents.Add("Left NL created");
             cellContents.Add("Left NL used");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left NL blank");
@@ -1396,6 +1426,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right ARR divide");
             cellContents.Add("Right ARR skip");
             cellContents.Add("Right ARR skip tags");
+            cellContents.Add("Right NL created");
             cellContents.Add("Right NL used");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right NL blank");
@@ -1419,6 +1450,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR divide");
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
+            cellContents.Add("Alternative NL created");
             cellContents.Add("Alternative NL used");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative NL blank");
@@ -1442,6 +1474,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR divide");
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
+            cellContents.Add("Unmatched NL created");
             cellContents.Add("Unmatched NL used");
             cellContents.Add("Unmatched STA IMAGES");
             cellContents.Add("Unmatched ARR PAR");
