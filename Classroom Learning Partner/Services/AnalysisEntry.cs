@@ -352,13 +352,13 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData LeftNumberLineSwitchedProperty = RegisterProperty("LeftNumberLineSwitched", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string LeftNumberLineBlank
+        public int LeftNumberLineBlankCount
         {
-            get { return GetValue<string>(LeftNumberLineBlankProperty); }
-            set { SetValue(LeftNumberLineBlankProperty, value); }
+            get { return GetValue<int>(LeftNumberLineBlankCountProperty); }
+            set { SetValue(LeftNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData LeftNumberLineBlankProperty = RegisterProperty("LeftNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData LeftNumberLineBlankCountProperty = RegisterProperty("LeftNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
@@ -579,13 +579,13 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData RightNumberLineSwitchedProperty = RegisterProperty("RightNumberLineSwitched", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string RightNumberLineBlank
+        public int RightNumberLineBlankCount
         {
-            get { return GetValue<string>(RightNumberLineBlankProperty); }
-            set { SetValue(RightNumberLineBlankProperty, value); }
+            get { return GetValue<int>(RightNumberLineBlankCountProperty); }
+            set { SetValue(RightNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData RightNumberLineBlankProperty = RegisterProperty("RightNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData RightNumberLineBlankCountProperty = RegisterProperty("RightNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
@@ -805,13 +805,14 @@ namespace Classroom_Learning_Partner.Services
         
         public static readonly PropertyData AlternativeNumberLineSwitchedProperty = RegisterProperty("AlternativeNumberLineSwitched", typeof(string), string.Empty);
 
-        public string AlternativeNumberLineBlank
+        /// <summary>SUMMARY</summary>
+        public int AlternativeNumberLineBlankCount
         {
-            get { return GetValue<string>(AlternativeNumberLineBlankProperty); }
-            set { SetValue(AlternativeNumberLineBlankProperty, value); }
+            get { return GetValue<int>(AlternativeNumberLineBlankCountProperty); }
+            set { SetValue(AlternativeNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData AlternativeNumberLineBlankProperty = RegisterProperty("AlternativeNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData AlternativeNumberLineBlankCountProperty = RegisterProperty("AlternativeNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
@@ -1253,7 +1254,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
             cellContents.Add(LeftNumberLineCreatedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
-            cellContents.Add(LeftNumberLineBlank);
+            cellContents.Add(LeftNumberLineBlankCount.ToString());
             cellContents.Add(LeftStampsCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
@@ -1277,7 +1278,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
             cellContents.Add(RightNumberLineCreatedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
-            cellContents.Add(RightNumberLineBlank);
+            cellContents.Add(RightNumberLineBlankCount.ToString());
             cellContents.Add(RightStampsCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
@@ -1301,7 +1302,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineCreatedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
-            cellContents.Add(AlternativeNumberLineBlank);
+            cellContents.Add(AlternativeNumberLineBlankCount.ToString());
             cellContents.Add(AlternativeStampsCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesSwitched);
