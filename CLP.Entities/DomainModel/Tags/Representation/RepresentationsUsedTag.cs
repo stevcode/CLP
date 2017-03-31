@@ -1033,6 +1033,7 @@ namespace CLP.Entities
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
                             usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                            usedRepresentation.IsUsed = true;
                         }
                     }
 
@@ -1044,6 +1045,7 @@ namespace CLP.Entities
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
                             usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                            usedRepresentation.IsUsed = true;
                         }
                     }
 
@@ -1055,6 +1057,7 @@ namespace CLP.Entities
                             Math.Abs(product - numberLineEndPoint) < 0.0001)
                         {
                             usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH);
+                            usedRepresentation.IsUsed = true;
                         }
                     }
                 }

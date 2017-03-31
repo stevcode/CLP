@@ -343,15 +343,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData LeftNumberLineCreatedCountProperty = RegisterProperty("LeftNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int LeftNumberLineUsedCount
-        {
-            get { return GetValue<int>(LeftNumberLineUsedCountProperty); }
-            set { SetValue(LeftNumberLineUsedCountProperty, value); }
-        }
-
-        public static readonly PropertyData LeftNumberLineUsedCountProperty = RegisterProperty("LeftNumberLineUsedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public string LeftNLJE
         {
             get { return GetValue<string>(LeftNLJEProperty); }
@@ -568,15 +559,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData RightNumberLineCreatedCountProperty = RegisterProperty("RightNumberLineCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
-        public int RightNumberLineUsedCount
-        {
-            get { return GetValue<int>(RightNumberLineUsedCountProperty); }
-            set { SetValue(RightNumberLineUsedCountProperty, value); }
-        }
-
-        public static readonly PropertyData RightNumberLineUsedCountProperty = RegisterProperty("RightNumberLineUsedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string RightNLJE
@@ -797,15 +779,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData AlternativeNumberLineCreatedCountProperty = RegisterProperty("AlternativeNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int AlternativeNumberLineUsedCount
-        {
-            get { return GetValue<int>(AlternativeNumberLineUsedCountProperty); }
-            set { SetValue(AlternativeNumberLineUsedCountProperty, value); }
-        }
-
-        public static readonly PropertyData AlternativeNumberLineUsedCountProperty = RegisterProperty("AlternativeNumberLineUsedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public string AlternativeNLJE
         {
             get { return GetValue<string>(AlternativeNLJEProperty); }
@@ -1021,15 +994,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData UnmatchedNumberLineCreatedCountProperty = RegisterProperty("UnmatchedNumberLineCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
-        public int UnmatchedNumberLineUsedCount
-        {
-            get { return GetValue<int>(UnmatchedNumberLineUsedCountProperty); }
-            set { SetValue(UnmatchedNumberLineUsedCountProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedNumberLineUsedCountProperty = RegisterProperty("UnmatchedNumberLineUsedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string UnmatchedNLJE
@@ -1262,7 +1226,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
             cellContents.Add(LeftNumberLineCreatedCount.ToString());
-            cellContents.Add(LeftNumberLineUsedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
             cellContents.Add(LeftNumberLineBlank);
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
@@ -1286,7 +1249,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
             cellContents.Add(RightNumberLineCreatedCount.ToString());
-            cellContents.Add(RightNumberLineUsedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
             cellContents.Add(RightNumberLineBlank);
             cellContents.Add(RightStampImagesCreatedCount.ToString());
@@ -1310,7 +1272,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
             cellContents.Add(AlternativeNumberLineCreatedCount.ToString());
-            cellContents.Add(AlternativeNumberLineUsedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
             cellContents.Add(AlternativeNumberLineBlank);
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
@@ -1334,7 +1295,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
             cellContents.Add(UnmatchedNumberLineCreatedCount.ToString());
-            cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
             cellContents.Add(UnmatchedArrayPartiallyCorrectCount.ToString());
             cellContents.Add(UnmatchedArrayIncorrectCount.ToString());
@@ -1403,7 +1363,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left ARR skip");
             cellContents.Add("Left ARR skip tags");
             cellContents.Add("Left NL created");
-            cellContents.Add("Left NL used");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left NL blank");
             cellContents.Add("Left STA IMAGES");
@@ -1427,7 +1386,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right ARR skip");
             cellContents.Add("Right ARR skip tags");
             cellContents.Add("Right NL created");
-            cellContents.Add("Right NL used");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right NL blank");
             cellContents.Add("Right STA IMAGES");
@@ -1451,7 +1409,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
             cellContents.Add("Alternative NL created");
-            cellContents.Add("Alternative NL used");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative NL blank");
             cellContents.Add("Alternative STA IMAGES");
@@ -1475,7 +1432,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
             cellContents.Add("Unmatched NL created");
-            cellContents.Add("Unmatched NL used");
             cellContents.Add("Unmatched STA IMAGES");
             cellContents.Add("Unmatched ARR PAR");
             cellContents.Add("Unmatched ARR INC");

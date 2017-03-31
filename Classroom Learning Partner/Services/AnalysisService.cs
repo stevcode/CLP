@@ -359,10 +359,10 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            entry.ArrayDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && !r.IsFinalRepresentation);
-            entry.NumberLineDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && !r.IsFinalRepresentation);
+            entry.ArrayDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && !r.IsFinalRepresentation && r.IsUsed);
+            entry.NumberLineDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && !r.IsFinalRepresentation && r.IsUsed);
             entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT && e.EventType == Codings.EVENT_OBJECT_DELETE);
-            entry.StampImageRepresentationDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation);
+            entry.StampImageRepresentationDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation && r.IsUsed);
 
             #endregion // Whole Page Characteristics
 
@@ -427,9 +427,9 @@ namespace Classroom_Learning_Partner.Services
             var leftNumberLines = leftRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
             var leftUsedNumberLines = leftNumberLines.Where(r => r.IsUsed).ToList();
 
-            entry.LeftNumberLineUsedCount = leftUsedNumberLines.Count;
+            entry.LeftNumberLineCreatedCount = leftUsedNumberLines.Count;
 
-            if (entry.LeftNumberLineUsedCount == 0)
+            if (entry.LeftNumberLineCreatedCount == 0)
             {
                 entry.LeftNLJE = AnalysisEntry.NA;
             }
@@ -575,9 +575,9 @@ namespace Classroom_Learning_Partner.Services
             var rightNumberLines = rightRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
             var rightUsedNumberLines = rightNumberLines.Where(r => r.IsUsed).ToList();
 
-            entry.RightNumberLineUsedCount = rightUsedNumberLines.Count;
+            entry.RightNumberLineCreatedCount = rightUsedNumberLines.Count;
 
-            if (entry.RightNumberLineUsedCount == 0)
+            if (entry.RightNumberLineCreatedCount == 0)
             {
                 entry.RightNLJE = AnalysisEntry.NA;
             }
@@ -723,9 +723,9 @@ namespace Classroom_Learning_Partner.Services
             var alternativeNumberLines = alternativeRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
             var alternativeUsedNumberLines = alternativeNumberLines.Where(r => r.IsUsed).ToList();
 
-            entry.AlternativeNumberLineUsedCount = alternativeUsedNumberLines.Count;
+            entry.AlternativeNumberLineCreatedCount = alternativeUsedNumberLines.Count;
 
-            if (entry.AlternativeNumberLineUsedCount == 0)
+            if (entry.AlternativeNumberLineCreatedCount == 0)
             {
                 entry.AlternativeNLJE = AnalysisEntry.NA;
             }
@@ -871,9 +871,9 @@ namespace Classroom_Learning_Partner.Services
             var unmatchedNumberLines = unmatchedRepresentations.Where(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE).ToList();
             var unmatchedUsedNumberLines = unmatchedNumberLines.Where(r => r.IsUsed).ToList();
 
-            entry.UnmatchedNumberLineUsedCount = unmatchedUsedNumberLines.Count;
+            entry.UnmatchedNumberLineCreatedCount = unmatchedUsedNumberLines.Count;
 
-            if (entry.UnmatchedNumberLineUsedCount == 0)
+            if (entry.UnmatchedNumberLineCreatedCount == 0)
             {
                 entry.UnmatchedNLJE = AnalysisEntry.NA;
             }
@@ -950,7 +950,7 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
-            var totalNumberLineUsedCount = entry.LeftNumberLineUsedCount + entry.RightNumberLineUsedCount + entry.AlternativeNumberLineUsedCount + entry.UnmatchedNumberLineUsedCount;
+            var totalNumberLineUsedCount = entry.LeftNumberLineCreatedCount + entry.RightNumberLineCreatedCount + entry.AlternativeNumberLineCreatedCount + entry.UnmatchedNumberLineCreatedCount;
             if (totalNumberLineUsedCount == 0)
             {
                 entry.NLJE = AnalysisEntry.NA;
