@@ -535,6 +535,13 @@ namespace CLP.Entities
                     usedRepresentation.RepresentationInformation = string.Join(", ", subArrays);
                 }
 
+                var inkDivideAddEventsCount =
+                    semanticEvents.Count(
+                                         e =>
+                                             e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                             e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK);
+                usedRepresentation.AdditionalInformation.Add($"Total Ink Divides : {inkDivideAddEventsCount}");
+
                 if (patternPoint.EndEventType == Codings.EVENT_CUT)
                 {
                     usedRepresentation.AdditionalInformation.Add("Deleted by Cut");
