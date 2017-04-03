@@ -383,8 +383,19 @@ namespace Classroom_Learning_Partner.Services
 
             entry.LeftArraySnapCount = leftUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
 
-            entry.LeftArrayDivideCount = leftUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+            var leftArraysWithInkDivides = leftUsedArrays.Where(r => r.AdditionalInformation.Any(s => s.Contains("Total Ink Divides"))).ToList();
+            foreach (var leftArrayWithInkDivides in leftArraysWithInkDivides)
+            {
+                var inkDividesInformation = leftArrayWithInkDivides.AdditionalInformation.First(s => s.Contains("Total Ink Divides"));
+                var inkDividesInformationParts = inkDividesInformation.Split(" : ");
+                if (inkDividesInformationParts.Length != 2)
+                {
+                    continue;
+                }
 
+                entry.LeftArrayDivideCount += (int)inkDividesInformationParts[1].ToInt();
+            }
+            
             var leftArraysWithSkips = leftUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
             entry.LeftArraySkipCount = leftArraysWithSkips.Count;
@@ -531,7 +542,18 @@ namespace Classroom_Learning_Partner.Services
 
             entry.RightArraySnapCount = rightUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
 
-            entry.RightArrayDivideCount = rightUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+            var rightArraysWithInkDivides = rightUsedArrays.Where(r => r.AdditionalInformation.Any(s => s.Contains("Total Ink Divides"))).ToList();
+            foreach (var rightArrayWithInkDivides in rightArraysWithInkDivides)
+            {
+                var inkDividesInformation = rightArrayWithInkDivides.AdditionalInformation.First(s => s.Contains("Total Ink Divides"));
+                var inkDividesInformationParts = inkDividesInformation.Split(" : ");
+                if (inkDividesInformationParts.Length != 2)
+                {
+                    continue;
+                }
+
+                entry.RightArrayDivideCount += (int)inkDividesInformationParts[1].ToInt();
+            }
 
             var rightArraysWithSkips = rightUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
@@ -679,7 +701,18 @@ namespace Classroom_Learning_Partner.Services
 
             entry.AlternativeArraySnapCount = alternativeUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
 
-            entry.AlternativeArrayDivideCount = alternativeUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',')).Sum();
+            var alternativeArraysWithInkDivides = alternativeUsedArrays.Where(r => r.AdditionalInformation.Any(s => s.Contains("Total Ink Divides"))).ToList();
+            foreach (var alternativeArrayWithInkDivides in alternativeArraysWithInkDivides)
+            {
+                var inkDividesInformation = alternativeArrayWithInkDivides.AdditionalInformation.First(s => s.Contains("Total Ink Divides"));
+                var inkDividesInformationParts = inkDividesInformation.Split(" : ");
+                if (inkDividesInformationParts.Length != 2)
+                {
+                    continue;
+                }
+
+                entry.AlternativeArrayDivideCount += (int)inkDividesInformationParts[1].ToInt();
+            }
 
             var alternativeArraysWithSkips = alternativeUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
@@ -827,7 +860,18 @@ namespace Classroom_Learning_Partner.Services
 
             entry.UnmatchedArraySnapCount = unmatchedUsedArrays.Count(r => r.AdditionalInformation.Any(a => a.Contains("Created by Snap")));
 
-            entry.UnmatchedArrayDivideCount = unmatchedUsedArrays.Select(r => r.RepresentationInformation.Count(c => c == ',') ).Sum();
+            var unmatchedArraysWithInkDivides = unmatchedUsedArrays.Where(r => r.AdditionalInformation.Any(s => s.Contains("Total Ink Divides"))).ToList();
+            foreach (var unmatchedArrayWithInkDivides in unmatchedArraysWithInkDivides)
+            {
+                var inkDividesInformation = unmatchedArrayWithInkDivides.AdditionalInformation.First(s => s.Contains("Total Ink Divides"));
+                var inkDividesInformationParts = inkDividesInformation.Split(" : ");
+                if (inkDividesInformationParts.Length != 2)
+                {
+                    continue;
+                }
+
+                entry.UnmatchedArrayDivideCount += (int)inkDividesInformationParts[1].ToInt();
+            }
 
             var unmatchedArraysWithSkips = unmatchedUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
