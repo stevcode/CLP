@@ -1982,6 +1982,11 @@ namespace CLP.Entities
                                             array.GridSquareSize * (arrayColumnsAndRows.X + 1),
                                             BOTTOM_OF_VISUAL_BOTTOM_THRESHOLD + TOP_OF_VISUAL_BOTTOM_THRESHOLD);
 
+            if (arrayColumnsAndRows.X == 1)
+            {
+                return skipCountStrokes;
+            }
+
             foreach (var stroke in strokes)
             {
                 // Rule 1: Rejected for being invisibly small.
@@ -2035,20 +2040,31 @@ namespace CLP.Entities
             return guess;
         }
 
-        public static bool IsBottomSkipCounting(CLPArray array, string interpretation)
+        public static bool IsBottomSkipCounting(CLPArray array, string interpretation, int historyIndex)
         {
             if (string.IsNullOrEmpty(interpretation))
             {
                 return false;
             }
 
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            if (arrayColumnsAndRows.X == 1)
+            {
+                return false;
+            }
 
-            return IsBottomSkipCountingByCorrectDimension(array, interpretation) || IsBottomSkipCountingByWrongDimension(array, interpretation);
+            return IsBottomSkipCountingByCorrectDimension(array, interpretation, historyIndex) || IsBottomSkipCountingByWrongDimension(array, interpretation, historyIndex);
         }
 
-        public static bool IsBottomSkipCountingByCorrectDimension(CLPArray array, string interpretation)
+        public static bool IsBottomSkipCountingByCorrectDimension(CLPArray array, string interpretation, int historyIndex)
         {
             if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            if (arrayColumnsAndRows.X == 1)
             {
                 return false;
             }
@@ -2064,9 +2080,15 @@ namespace CLP.Entities
             return editDistance <= 4;
         }
 
-        public static bool IsBottomSkipCountingByWrongDimension(CLPArray array, string interpretation)
+        public static bool IsBottomSkipCountingByWrongDimension(CLPArray array, string interpretation, int historyIndex)
         {
             if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            if (arrayColumnsAndRows.X == 1)
             {
                 return false;
             }

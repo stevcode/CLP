@@ -494,11 +494,11 @@ namespace CLP.Entities
 
                 var possibleBottomSkipStrokesAddedToPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesAddedToPage, endHistoryIndex);
                 var interpretedBottomSkipCountingHistory = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesAddedToPage);
-                var isBottomSkipCountingHistory = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingHistory);
+                var isBottomSkipCountingHistory = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingHistory, endHistoryIndex);
 
                 var possibleBottomSkipStrokesOnPage = ArraySemanticEvents.GroupPossibleBottomSkipCountStrokes(array, strokesOnPage, endHistoryIndex);
                 var interpretedBottomSkipCountingOnPage = ArraySemanticEvents.InterpretBottomSkipCountStrokes(possibleBottomSkipStrokesOnPage);
-                var isBottomSkipCountingOnPage = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingOnPage);
+                var isBottomSkipCountingOnPage = ArraySemanticEvents.IsBottomSkipCounting(array, interpretedBottomSkipCountingOnPage, endHistoryIndex);
 
                 if (isBottomSkipCountingHistory || isBottomSkipCountingOnPage)
                 {

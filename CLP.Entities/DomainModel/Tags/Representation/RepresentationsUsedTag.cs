@@ -785,8 +785,9 @@ namespace CLP.Entities
                 return null;
             }
 
-            var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips) &&
-                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips);
+            var historyIndex = skipCountingEvent.LastHistoryAction.HistoryActionIndex;
+            var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
+                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
             var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
 
             var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
