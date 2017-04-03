@@ -209,7 +209,8 @@ namespace CLP.Entities
             var lastIncorrectFinalAnswerIndex = sequence.LastIndexOf("FA-INC");
             var lastFinalAnswerIndex = Math.Max(lastCorrectFinalAnswerIndex, lastIncorrectFinalAnswerIndex);
             var sequenceAfterLastFinalAnswer = sequence.Skip(lastFinalAnswerIndex + 1).ToList();
-            if (sequenceAfterLastFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            if (lastFinalAnswerIndex != -1 &&
+                sequenceAfterLastFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER);
             }
@@ -218,7 +219,8 @@ namespace CLP.Entities
             var lastIncorrectIntermediaryAnswerIndex = sequence.LastIndexOf("IA-INC");
             var lastIntermediaryAnswerIndex = Math.Max(lastCorrectIntermediaryAnswerIndex, lastIncorrectIntermediaryAnswerIndex);
             var sequenceAfterLastIntermediaryAnswer = sequence.Skip(lastIntermediaryAnswerIndex + 1).ToList();
-            if (sequenceAfterLastIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            if (lastIntermediaryAnswerIndex != -1 && 
+                sequenceAfterLastIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER);
             }

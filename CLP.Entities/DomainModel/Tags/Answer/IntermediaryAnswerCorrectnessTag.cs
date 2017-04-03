@@ -85,9 +85,8 @@ namespace CLP.Entities
             var tag = new IntermediaryAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
             if (lastIntermediaryAnswerEvent == null)
             {
-                var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().FirstOrDefault();
-                if (interpretationRegion == null ||
-                    !interpretationRegion.IsIntermediary)
+                var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().FirstOrDefault(r => r.IsIntermediary);
+                if (interpretationRegion == null)
                 {
                     return null;
                 }

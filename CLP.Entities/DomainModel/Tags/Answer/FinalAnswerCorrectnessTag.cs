@@ -103,10 +103,14 @@ namespace CLP.Entities
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
             if (lastFinalAnswerEvent == null)
             {
-                var finalAnswerPageObject = page.PageObjects.FirstOrDefault(p => p is MultipleChoice || p is InterpretationRegion);
+                IPageObject finalAnswerPageObject = page.PageObjects.OfType<MultipleChoice>().FirstOrDefault();
                 if (finalAnswerPageObject == null)
                 {
-                    return null;
+                    finalAnswerPageObject = page.PageObjects.OfType<InterpretationRegion>().FirstOrDefault(p => !p.IsIntermediary);
+                    if (finalAnswerPageObject == null)
+                    {
+                        return null;
+                    }
                 }
 
                 var multipleChoice = finalAnswerPageObject as MultipleChoice;
