@@ -205,22 +205,50 @@ namespace CLP.Entities
             }
 
             // RAA
-            var lastCorrectFinalAnswerIndex = sequence.LastIndexOf("FA-COR");
-            var lastIncorrectFinalAnswerIndex = sequence.LastIndexOf("FA-INC");
-            var lastFinalAnswerIndex = Math.Max(lastCorrectFinalAnswerIndex, lastIncorrectFinalAnswerIndex);
-            var sequenceAfterLastFinalAnswer = sequence.Skip(lastFinalAnswerIndex + 1).ToList();
-            if (lastFinalAnswerIndex != -1 &&
-                sequenceAfterLastFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            var firstCorrectFinalAnswerIndex = sequence.IndexOf("FA-COR");
+            var firstIncorrectFinalAnswerIndex = sequence.IndexOf("FA-INC");
+            var firstIllegibleFinalAnswerIndex = sequence.IndexOf("FA-ILL");
+            var finalAnswerIndexes = new List<int>();
+            if (firstCorrectFinalAnswerIndex != -1)
+            {
+                finalAnswerIndexes.Add(firstCorrectFinalAnswerIndex);
+            }
+            if (firstIncorrectFinalAnswerIndex != -1)
+            {
+                finalAnswerIndexes.Add(firstIncorrectFinalAnswerIndex);
+            }
+            if (firstIllegibleFinalAnswerIndex != -1)
+            {
+                finalAnswerIndexes.Add(firstIllegibleFinalAnswerIndex);
+            }
+            var firstFinalAnswerIndex = !finalAnswerIndexes.Any() ? -1 : finalAnswerIndexes.Min();
+            var sequenceAfterFirstFinalAnswer = sequence.Skip(firstFinalAnswerIndex + 1).ToList();
+            if (firstFinalAnswerIndex != -1 &&
+                sequenceAfterFirstFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER);
             }
 
-            var lastCorrectIntermediaryAnswerIndex = sequence.LastIndexOf("IA-COR");
-            var lastIncorrectIntermediaryAnswerIndex = sequence.LastIndexOf("IA-INC");
-            var lastIntermediaryAnswerIndex = Math.Max(lastCorrectIntermediaryAnswerIndex, lastIncorrectIntermediaryAnswerIndex);
-            var sequenceAfterLastIntermediaryAnswer = sequence.Skip(lastIntermediaryAnswerIndex + 1).ToList();
-            if (lastIntermediaryAnswerIndex != -1 && 
-                sequenceAfterLastIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            var firstCorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-COR");
+            var firstIncorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-INC");
+            var firstIllegibleIntermediaryAnswerIndex = sequence.IndexOf("IA-ILL");
+            var intermediaryAnswerIndexes = new List<int>();
+            if (firstCorrectIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstCorrectIntermediaryAnswerIndex);
+            }
+            if (firstIncorrectIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstIncorrectIntermediaryAnswerIndex);
+            }
+            if (firstIllegibleIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
+            }
+            var firstIntermediaryAnswerIndex =  !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
+            var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
+            if (firstIntermediaryAnswerIndex != -1 &&
+                sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
                 tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER);
             }
