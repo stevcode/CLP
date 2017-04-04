@@ -1400,8 +1400,8 @@ namespace CLP.Entities
                 {
                     representationCorrectness = Correctness.PartiallyCorrect;
                 }
-                else if (leftCorrectness == Correctness.Incorrect &&
-                         rightCorrectness == Correctness.Incorrect &&
+                else if (leftCorrectness == Correctness.Incorrect ||
+                         rightCorrectness == Correctness.Incorrect ||
                          alternativeCorrectness == Correctness.Incorrect)
                 {
                     representationCorrectness = Correctness.Incorrect;
