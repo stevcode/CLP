@@ -976,6 +976,7 @@ namespace Classroom_Learning_Partner.Services
 
             entry.UnmatchedNumberLinePartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
             entry.UnmatchedNumberLineIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
+            entry.UnmatchedNumberLineUnknownCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Unknown);
 
             entry.UnmatchedStampPartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect);
             entry.UnmatchedStampIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Incorrect);

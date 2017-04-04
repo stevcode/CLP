@@ -1086,6 +1086,15 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData UnmatchedNumberLineIncorrectCountProperty = RegisterProperty("UnmatchedNumberLineIncorrectCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
+        public int UnmatchedNumberLineUnknownCount
+        {
+            get { return GetValue<int>(UnmatchedNumberLineUnknownCountProperty); }
+            set { SetValue(UnmatchedNumberLineUnknownCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedNumberLineUnknownCountProperty = RegisterProperty("UnmatchedNumberLineUnknownCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
         public int UnmatchedStampPartiallyCorrectCount
         {
             get { return GetValue<int>(UnmatchedStampPartiallyCorrectCountProperty); }
@@ -1331,6 +1340,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArrayIncorrectCount.ToString());
             cellContents.Add(UnmatchedNumberLinePartiallyCorrectCount.ToString());
             cellContents.Add(UnmatchedNumberLineIncorrectCount.ToString());
+            cellContents.Add(UnmatchedNumberLineUnknownCount.ToString());
             cellContents.Add(UnmatchedStampPartiallyCorrectCount.ToString());
             cellContents.Add(UnmatchedStampIncorrectCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedRepresentationsAndCorrectness));
@@ -1471,6 +1481,7 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR INC");
             cellContents.Add("Unmatched NL PAR");
             cellContents.Add("Unmatched NL INC");
+            cellContents.Add("Unmatched NL UNKNOWN");
             cellContents.Add("Unmatched STA PAR");
             cellContents.Add("Unmatched STA INC");
             cellContents.Add("Unmatched REP Correctness");
