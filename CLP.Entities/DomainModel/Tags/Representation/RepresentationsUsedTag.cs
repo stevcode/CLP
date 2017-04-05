@@ -1468,6 +1468,9 @@ namespace CLP.Entities
                 }
             }
 
+            // HACK: BUG: This is at the request of Lily for the stats. All other things considered, this is a situation where a student just had a little
+            // trouble getting the jumps exactly correct on a Number Line, but they still got the jump size and number of jumps correct and ended at the right
+            // spot. It should be COR, but Lily wanted it set to PAR.
             if (isOverlapsAndGaps &&
                 representationCorrectness == Correctness.Correct)
             {
