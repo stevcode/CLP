@@ -539,7 +539,7 @@ namespace CLP.Entities
                     semanticEvents.Count(
                                          e =>
                                              e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                             e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK);
+                                             e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK && e.ReferencePageObjectID == arrayID);
                 usedRepresentation.AdditionalInformation.Add($"Total Ink Divides : {inkDivideAddEventsCount}");
 
                 if (patternPoint.EndEventType == Codings.EVENT_CUT)
