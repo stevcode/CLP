@@ -485,8 +485,8 @@ namespace Classroom_Learning_Partner.Services
                 var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
-                    var companionStampedObjectIDsComposite = parentStampInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").ToList();
+                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                     entry.LeftStampImagesCreatedCount += companionStampedObjectIDs.Count;
                 }
             }
@@ -644,8 +644,8 @@ namespace Classroom_Learning_Partner.Services
                 var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
-                    var companionStampedObjectIDsComposite = parentStampInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").ToList();
+                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                     entry.RightStampImagesCreatedCount += companionStampedObjectIDs.Count;
                 }
             }
@@ -803,8 +803,8 @@ namespace Classroom_Learning_Partner.Services
                 var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
-                    var companionStampedObjectIDsComposite = parentStampInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").ToList();
+                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                     entry.AlternativeStampImagesCreatedCount += companionStampedObjectIDs.Count;
                 }
             }
@@ -958,8 +958,8 @@ namespace Classroom_Learning_Partner.Services
                 var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
                 if (companionStampedObjectInfoParts.Length == 2)
                 {
-                    var companionStampedObjectIDsComposite = parentStampInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").ToList();
+                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                     entry.UnmatchedStampImagesCreatedCount += companionStampedObjectIDs.Count;
                 }
             }
