@@ -420,7 +420,7 @@ namespace CLP.Entities
             var isEqualGroups = jumpSizes.All(j => j.JumpSize == firstGroupSize);
 
             var product = -1;
-            var lastJump = jumpSizes.LastOrDefault();
+            var lastJump = jumpSizes.OrderBy(j => j.StartingTickIndex).LastOrDefault();
             if (lastJump != null)
             {
                 product = lastJump.StartingTickIndex + lastJump.JumpSize;
