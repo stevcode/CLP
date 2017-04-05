@@ -1016,6 +1016,44 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.AddRange(jumpsInEnglish);
                 }
 
+                var arcs = new List<dynamic>();
+                foreach (var jump in jumps)
+                {
+                    arcs.Add(new
+                    {
+                        Start = jump.StartingTickIndex,
+                        End = jump.JumpSize + jump.StartingTickIndex
+                    });
+                }
+                var sortedArcs = arcs.Distinct().OrderBy(x => x.Start).ToList();
+                var gaps = 0;
+                var overlaps = 0;
+                for (var i = 0; i < sortedArcs.Count - 1; i++)
+                {
+                    if (sortedArcs[i].End < sortedArcs[i + 1].Start)
+                    {
+                        gaps++;
+                    }
+                    else if (sortedArcs[i].End > sortedArcs[i + 1].Start)
+                    {
+                        overlaps++;
+                    }
+                }
+
+                var hasGaps = gaps > 0;
+                var hasOverlaps = overlaps > 0;
+                var hasGapsAndOverlaps = hasGaps && hasOverlaps;
+
+                if (hasGaps)
+                {
+                    usedRepresentation.AdditionalInformation.Add($"Has {gaps} Gaps.");
+                }
+
+                if (hasOverlaps)
+                {
+                    usedRepresentation.AdditionalInformation.Add($"Has {overlaps} Overlaps.");
+                }
+
                 if (numberLineJumpTotal.JumpEraseCount > 1)
                 {
                     usedRepresentation.AnalysisCodes.Add(Codings.NUMBER_LINE_NLJE);
@@ -1027,7 +1065,7 @@ namespace CLP.Entities
 
                 var jumpSizes = jumps;
                 var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
-                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
+                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation, hasGapsAndOverlaps);
 
                 if (!usedRepresentation.IsUsed)
                 {
@@ -1307,7 +1345,8 @@ namespace CLP.Entities
                                                  SimplifiedRelation representationRelation,
                                                  SimplifiedRelation leftRelation,
                                                  SimplifiedRelation rightRelation,
-                                                 SimplifiedRelation alternativeRelation)
+                                                 SimplifiedRelation alternativeRelation,
+                                                 bool isOverlapsAndGaps = false)
         {
             var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
             var representationCorrectness = Correctness.Unknown;
@@ -1394,6 +1433,27 @@ namespace CLP.Entities
                     matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
                     representationCorrectness = Correctness.PartiallyCorrect;
                 }
+                else if (leftCorrectness == Correctness.PartiallyCorrect &&
+                         rightRelation == null &&
+                         alternativeRelation == null)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (rightCorrectness == Correctness.PartiallyCorrect &&
+                         leftRelation == null &&
+                         alternativeRelation == null)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
+                else if (alternativeCorrectness == Correctness.PartiallyCorrect &&
+                         leftRelation == null &&
+                         rightRelation == null)
+                {
+                    matchedRelationSide = Codings.MATCHED_RELATION_ALTERNATIVE;
+                    representationCorrectness = Correctness.PartiallyCorrect;
+                }
                 else if (alternativeCorrectness == Correctness.PartiallyCorrect ||
                          leftCorrectness == Correctness.PartiallyCorrect ||
                          rightCorrectness == Correctness.PartiallyCorrect)
@@ -1408,13 +1468,23 @@ namespace CLP.Entities
                 }
             }
 
+            if (isOverlapsAndGaps &&
+                representationCorrectness == Correctness.Correct)
+            {
+                representationCorrectness = Correctness.PartiallyCorrect;
+                usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS;
+            }
+
             usedRepresentation.Correctness = representationCorrectness;
             usedRepresentation.MatchedRelationSide = matchedRelationSide;
             if (representationRelation != null && 
-                representationRelation.IsSwapped)
+                representationRelation.IsSwapped &&
+                usedRepresentation.CorrectnessReason != Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS)
             {
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
             }
+
+            
         }
 
         #endregion // Static Methods
