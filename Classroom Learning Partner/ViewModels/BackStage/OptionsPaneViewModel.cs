@@ -54,7 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent && n.Owner.ID != "d7tlNq2ryUqW53USnrea-A"))
             {
-                AnalysisService.RunAnalysis(notebook);
+                AnalysisService.RunAnalysisOnLoadedNotebook(notebook);
             }
 
             MessageBox.Show("Analysis Finished.");

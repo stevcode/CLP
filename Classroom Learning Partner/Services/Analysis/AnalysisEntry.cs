@@ -60,6 +60,8 @@ namespace Classroom_Learning_Partner.Services
 
         #region Constructors
 
+        public AnalysisEntry() { }
+
         public AnalysisEntry(string ownerName, int pageNumber)
         {
             OwnerName = ownerName;
