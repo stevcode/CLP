@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Catel;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -36,7 +37,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Page Number Lists
 
-        private static List<int> _mainPageNumbersToAnalyze = new List<int>
+        public static List<int> MainPageNumbersToAnalyze = new List<int>
                                                              {
                                                                  11,
                                                                  12,
@@ -255,7 +256,7 @@ namespace Classroom_Learning_Partner.Services
                                                                  385
                                                              };
 
-        private static List<int> _otherPageNumbersToAnalyze = new List<int>
+        public static List<int> OtherPageNumbersToAnalyze = new List<int>
                                                               {
                                                                   10,
                                                                   15,
@@ -392,53 +393,253 @@ namespace Classroom_Learning_Partner.Services
 
             Debug.WriteLine("Beginning Rolling Batch Analysis of cache.");
 
-            if (!Directory.Exists(RollingAnalysisFilePath))
-            {
-                Directory.CreateDirectory(RollingAnalysisFilePath);
-            }
-
             if (!Directory.Exists(ConvertedPagesFolder))
             {
                 Directory.CreateDirectory(ConvertedPagesFolder);
             }
 
+            InitializeRollingAnalysisFile();
+
             var analysisTracker = InitializeAnalysisTrackerFile();
             Debug.WriteLine("Analysis Tracker loaded.");
 
+            InitializePagesFolderPaths();
+
             var pageNumbersLeftToAnalyze = pageNumbersToAnalyze.Except(analysisTracker.CompletedPageNumbers).ToList();
             var allStudentIDs = analysisTracker.StudentNotebooks.Select(n => n.Owner.ID).ToList();
+            var backupCount = 0;
 
             foreach (var pageNumber in pageNumbersLeftToAnalyze)
             {
                 Debug.WriteLine($"Beginning loop through analysis of page {pageNumber}.");
-                if (!analysisTracker.InProgressPages.ContainsKey(pageNumber))
+                if (!analysisTracker.InProgressPages.Any(pp => pp.PageNumber == pageNumber))
                 {
-                    analysisTracker.InProgressPages.Add(pageNumber, new List<string>());
+                    var newPageProgress = new AnalysisTracker.PageProgress
+                                          {
+                                              PageNumber = pageNumber
+                                          };
+                    analysisTracker.InProgressPages.Add(newPageProgress);
                 }
+
+                var pageProgress = analysisTracker.InProgressPages.First(pp => pp.PageNumber == pageNumber);
 
                 foreach (var studentNotebook in analysisTracker.StudentNotebooks)
                 {
                     var studentID = studentNotebook.Owner.ID;
-                    if (analysisTracker.InProgressPages[pageNumber].Contains(studentID))
+
+                    if (pageProgress.StudentIDs.Contains(studentID))
                     {
                         continue;
                     }
 
                     var studentName = studentNotebook.Owner.FullName;
+                    var stopWatch = new Stopwatch();
+
+                    #region Conversion
 
                     Debug.WriteLine($"Beginning conversion of {studentName}'s page {pageNumber}.");
 
+                    stopWatch.Start();
+
                     var pagesFolderPath = StudentIDToNotebookPagesFolderPath[studentID];
                     var pageFilePath = ConversionService.GetPageFilePathFromPageNumber(pagesFolderPath, pageNumber);
+                    if (string.IsNullOrWhiteSpace(pageFilePath))
+                    {
+                        pageProgress.StudentIDs.Add(studentID);
+                        Debug.WriteLine($"[INFO] Page Path File did not exist for {studentName}'s page {pageNumber}.");
+                        continue;
+                    }
                     var page = ConversionService.ConvertCacheAnnPageFile(pageFilePath);
+                    if (page == null)
+                    {
+                        pageProgress.StudentIDs.Add(studentID);
+                        Debug.WriteLine($"[ERROR] NULL Page after conversion for {studentName}'s page {pageNumber}.");
+                        continue;
+                    }
+
+                    stopWatch.Stop();
+
+                    var conversionTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
 
                     Debug.WriteLine($"Finished conversion of {studentName}'s page {pageNumber}.");
 
+                    #endregion // Conversion
+
+                    #region Analysis
+
+                    Debug.WriteLine($"Beginning analysis of {studentName}'s page {pageNumber}.");
+
+                    stopWatch.Reset();
+                    stopWatch.Start();
+
+                    HistoryAnalysis.GenerateSemanticEvents(page);
+
+                    stopWatch.Stop();
+
+                    var analysisTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
+                    var numberOfHistoryActions = page.History.CompleteOrderedHistoryActions.Count;
+                    if (numberOfHistoryActions == 0)
+                    {
+                        numberOfHistoryActions = 1;
+                    }
+
+                    var averageAnalysisTimePerHistoryActionInMilliseconds = analysisTimeInMilliseconds / numberOfHistoryActions;
+
+                    Debug.WriteLine($"Finished analysis of {studentName}'s page {pageNumber}.");
+
+                    #endregion // Analysis
+
+                    #region Compiling Statistics
+
+                    Debug.WriteLine($"Beginning compiling statistics for {studentName}'s page {pageNumber}.");
+
+                    stopWatch.Reset();
+                    stopWatch.Start();
+
+                    var analysisEntry = GenerateAnalysisEntryForPage(page);
+                    var analysisRow = analysisEntry.BuildEntryLine();
+
+                    stopWatch.Stop();
+
+                    var statisticsComplingTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
+
+                    Debug.WriteLine($"Finished compiling statistics for {studentName}'s page {pageNumber}.");
+
+                    #endregion // Compiling Statistics
+
+                    #region Calculating Average Times
+
+                    var totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = conversionTimeInMilliseconds + analysisTimeInMilliseconds + statisticsComplingTimeInMilliseconds;
+                    var newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = (analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds +
+                                                                                                    totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds) / 2.0;
+                    if (analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds == 0.0)
+                    {
+                        newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
+                    }
+
+                    var newAveragePageAnalysisTimeInMilliseconds = (analysisTracker.AveragePageAnalysisTimeInMilliseconds + analysisTimeInMilliseconds) / 2.0;
+                    if (analysisTracker.AveragePageAnalysisTimeInMilliseconds == 0.0)
+                    {
+                        newAveragePageAnalysisTimeInMilliseconds = analysisTimeInMilliseconds;
+                    }
+
+                    var newAverageHistoryActionAnalysisTimeInMilliseconds = (analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds + averageAnalysisTimePerHistoryActionInMilliseconds) / 2.0;
+                    if (analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds == 0.0)
+                    {
+                        newAverageHistoryActionAnalysisTimeInMilliseconds = averageAnalysisTimePerHistoryActionInMilliseconds;
+                    }
+
+                    #endregion // Calculating Average Times
+
+                    #region Setting Up Paths
+
+                    var convertedStudentPagesFolderName = $"{studentName};{studentID}";
+                    var convertedStudentPagesFolderPath = Path.Combine(ConvertedPagesFolder, convertedStudentPagesFolderName);
+
+                    var pageJsonFileName = $"{page.DefaultZipEntryName}.json";
+                    var pageJsonFilePath = Path.Combine(convertedStudentPagesFolderPath, pageJsonFileName);
+
+                    #endregion // Setting Up Paths
+
+                    #region Updating Analysis Tracker
+
+                    pageProgress.StudentIDs.Add(studentID);
+                    var remainingStudentIDs = allStudentIDs.Except(pageProgress.StudentIDs);
+                    if (!remainingStudentIDs.Any())
+                    {
+                        analysisTracker.CompletedPageNumbers.Add(pageNumber);
+                        analysisTracker.InProgressPages.Remove(pageProgress);
+                    }
+
+                    analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
+                    analysisTracker.AveragePageAnalysisTimeInMilliseconds = newAveragePageAnalysisTimeInMilliseconds;
+                    analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds = newAverageHistoryActionAnalysisTimeInMilliseconds;
+
+                    var pageNumbersStillLeftToAnalyzeCount = pageNumbersToAnalyze.Except(analysisTracker.CompletedPageNumbers).Count();
+                    var totalPagesStillLeftToAnalyzeCount = pageNumbersStillLeftToAnalyzeCount * allStudentIDs.Count;
+                    if (remainingStudentIDs.Any())
+                    {
+                        totalPagesStillLeftToAnalyzeCount -= (allStudentIDs.Count - remainingStudentIDs.Count());
+                    }
+                    var timeRemainingInMilliseconds = totalPagesStillLeftToAnalyzeCount* newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
+                    var timeSpan = new TimeSpan(0, 0, 0, 0, (int)timeRemainingInMilliseconds.ToInt());
+                    var formattedTimeRemaining = timeSpan.ToString(@"hh\:mm\:ss");
+                    analysisTracker.AnalysisTimeRemaining = formattedTimeRemaining;
+
+                    analysisTracker.SaveTime = FastDateTime.Now;
+
+                    #endregion // Updating Analysis Tracker  6233115ms
+
+                    #region Saving Files
+
+                    Debug.WriteLine($"Saving files for {studentName}'s page {pageNumber}.");
+
+                    page.ToJsonFile(pageJsonFilePath);
+
+                    var analysisTrackerBackupFilePath = $"{AnalysisTrackerFilePath}.bak{backupCount}";
+                    if (File.Exists(AnalysisTrackerFilePath) &&
+                        File.Exists(analysisTrackerBackupFilePath))
+                    {
+                        File.Delete(analysisTrackerBackupFilePath);
+                    }
+                    File.Move(AnalysisTrackerFilePath, analysisTrackerBackupFilePath);
+                    analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
+
+                    var rollingAnalysisBackupFilePath = $"{RollingAnalysisFilePath}.bak{backupCount}";
+                    if (File.Exists(RollingAnalysisFilePath) &&
+                        File.Exists(rollingAnalysisBackupFilePath))
+                    {
+                        File.Delete(rollingAnalysisBackupFilePath);
+                    }
+                    File.Move(RollingAnalysisFilePath, rollingAnalysisBackupFilePath);
+                    File.AppendAllText(RollingAnalysisFilePath, Environment.NewLine + analysisRow);
+
+                    backupCount++;
+                    if (backupCount > 44)
+                    {
+                        backupCount = 0;
+                    }
+
+                    Debug.WriteLine($"Finished saving files for {studentName}'s page {pageNumber}.");
+
+                    #endregion // Saving Files
+
+                    Debug.WriteLine($"Time Remaining: {formattedTimeRemaining}");
+                }
+
+                var isModified = false;
+                if (!analysisTracker.CompletedPageNumbers.Contains(pageNumber))
+                {
+                    analysisTracker.CompletedPageNumbers.Add(pageNumber);
+                    isModified = true;
+                }
+
+                if (analysisTracker.InProgressPages.Any(pp => pp.PageNumber == pageNumber))
+                {
+                    analysisTracker.InProgressPages.Remove(pageProgress);
+                    isModified = true;
+                }
+
+                if (isModified)
+                {
+                    var analysisTrackerBackupFilePath = $"{AnalysisTrackerFilePath}.bak{backupCount}";
+                    if (File.Exists(AnalysisTrackerFilePath) &&
+                        File.Exists(analysisTrackerBackupFilePath))
+                    {
+                        File.Delete(analysisTrackerBackupFilePath);
+                    }
+                    File.Move(AnalysisTrackerFilePath, analysisTrackerBackupFilePath);
+
+                    analysisTracker.SaveTime = FastDateTime.Now;
+                    analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
+
+                    backupCount++;
+                    if (backupCount > 44)
+                    {
+                        backupCount = 0;
+                    }
                 }
             }
-
-
-
 
             Debug.WriteLine("Ending Rolling Batch Analysis of cache.");
         }
@@ -481,12 +682,58 @@ namespace Classroom_Learning_Partner.Services
 
                 analysisTracker.StudentNotebooks.Add(studentNotebook);
 
+                var studentName = studentNotebook.Owner.FullName;
                 var studentID = studentNotebook.Owner.ID;
-                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-                StudentIDToNotebookPagesFolderPath.Add(studentID, pagesFolderPath);
+                var convertedStudentPagesFolderName = $"{studentName};{studentID}";
+                var convertedStudentPagesFolderPath = Path.Combine(ConvertedPagesFolder, convertedStudentPagesFolderName);
+                if (!Directory.Exists(convertedStudentPagesFolderPath))
+                {
+                    Directory.CreateDirectory(convertedStudentPagesFolderPath);
+                }
             }
 
+            analysisTracker.SaveTime = FastDateTime.Now;
+            analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
             return analysisTracker;
+        }
+
+        private static void InitializePagesFolderPaths()
+        {
+            var dirInfo = new DirectoryInfo(NotebooksFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var folderName = directory.Name;
+                var folderNameParts = folderName.Split(';');
+                if (folderNameParts.Length != 5)
+                {
+                    continue;
+                }
+
+                var ownerType = folderNameParts[4];
+                if (ownerType != "S")
+                {
+                    continue;
+                }
+
+                var notebookFolderPath = directory.FullName;
+                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+
+                var studentID = folderNameParts[3];
+                StudentIDToNotebookPagesFolderPath.Add(studentID, pagesFolderPath);
+            }
+        }
+
+        private static void InitializeRollingAnalysisFile()
+        {
+            if (File.Exists(RollingAnalysisFilePath))
+            {
+                return;
+            }
+
+            File.WriteAllText(RollingAnalysisFilePath, "");
+
+            var headerRow = AnalysisEntry.BuildHeaderEntryLine();
+            File.AppendAllText(RollingAnalysisFilePath, headerRow);
         }
 
         public static AnalysisEntry GenerateAnalysisEntryForPage(CLPPage page)

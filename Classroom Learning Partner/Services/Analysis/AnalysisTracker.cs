@@ -1,15 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
+    [Serializable]
     public class AnalysisTracker : AEntityBase
     {
+        #region Nested
+
+        [Serializable]
+        public class PageProgress : AEntityBase
+        {
+            #region Constructors
+
+            public PageProgress() { }
+
+            #endregion // Constructors
+
+            #region Properties
+
+            public int PageNumber
+            {
+                get { return GetValue<int>(PageNumberProperty); }
+                set { SetValue(PageNumberProperty, value); }
+            }
+
+            public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int), 0);
+
+            public List<string> StudentIDs
+            {
+                get { return GetValue<List<string>>(StudentIDsProperty); }
+                set { SetValue(StudentIDsProperty, value); }
+            }
+
+            public static readonly PropertyData StudentIDsProperty = RegisterProperty("StudentIDs", typeof(List<string>), () => new List<string>());
+
+            #endregion // Properties
+        }
+
+        #endregion // Nested
+
         #region Constructors
 
         public AnalysisTracker() { }
@@ -17,6 +49,14 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Constructors
 
         #region Properties
+
+        public DateTime SaveTime
+        {
+            get { return GetValue<DateTime>(SaveTimeProperty); }
+            set { SetValue(SaveTimeProperty, value); }
+        }
+
+        public static readonly PropertyData SaveTimeProperty = RegisterProperty("SaveTime", typeof(DateTime), DateTime.Now);
 
         public List<Notebook> StudentNotebooks
         {
@@ -34,14 +74,13 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData CompletedPageNumbersProperty = RegisterProperty("CompletedPageNumbers", typeof(List<int>), () => new List<int>());
 
-        // <Page Number, Student IDs>
-        public Dictionary<int, List<string>> InProgressPages
+        public List<PageProgress> InProgressPages
         {
-            get { return GetValue<Dictionary<int, List<string>>>(InProgressPagesProperty); }
+            get { return GetValue<List<PageProgress>>(InProgressPagesProperty); }
             set { SetValue(InProgressPagesProperty, value); }
         }
 
-        public static readonly PropertyData InProgressPagesProperty = RegisterProperty("InProgressPages", typeof(Dictionary<int, List<string>>), () => new Dictionary<int, List<string>>());
+        public static readonly PropertyData InProgressPagesProperty = RegisterProperty("InProgressPages", typeof(List<PageProgress>), () => new List<PageProgress>());
 
         public double AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds
         {
@@ -49,7 +88,8 @@ namespace Classroom_Learning_Partner.Services
             set { SetValue(AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty, value); }
         }
 
-        public static readonly PropertyData AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty = RegisterProperty("AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds", typeof(double), 0.0);
+        public static readonly PropertyData AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty =
+            RegisterProperty("AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds", typeof(double), 0.0);
 
         public double AveragePageAnalysisTimeInMilliseconds
         {
@@ -66,6 +106,14 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AverageHistoryActionAnalysisTimeInMillisecondsProperty = RegisterProperty("AverageHistoryActionAnalysisTimeInMilliseconds", typeof(double), 0.0);
+
+        public string AnalysisTimeRemaining
+        {
+            get { return GetValue<string>(AnalysisTimeRemainingProperty); }
+            set { SetValue(AnalysisTimeRemainingProperty, value); }
+        }
+
+        public static readonly PropertyData AnalysisTimeRemainingProperty = RegisterProperty("AnalysisTimeRemaining", typeof(string), string.Empty);
 
         #endregion // Properties
     }
