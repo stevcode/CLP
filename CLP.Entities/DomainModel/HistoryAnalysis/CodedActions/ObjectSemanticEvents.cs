@@ -308,6 +308,12 @@ namespace CLP.Entities
                 CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
             }
 
+            if (!CurrentIncrementIDForPageObject.ContainsKey(compoundID))
+            {
+                CLogger.AppendToLog("[ERROR]: CurrentIncrementIDForPageObject doesn't already contain compoundID key, and prior this check wasn't necessary. See above entries for Page Owner and Number.");
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+
             return CurrentIncrementIDForPageObject[compoundID].ToLetter();
         }
 
