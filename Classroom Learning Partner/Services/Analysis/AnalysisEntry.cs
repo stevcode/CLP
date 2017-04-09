@@ -1218,12 +1218,6 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Properties
 
-        #region Static Properties
-
-        //public Dictionary<string,int> 
-
-        #endregion // Static Properties
-
         #region Methods
 
         public string BuildEntryLine()

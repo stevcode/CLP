@@ -82,30 +82,40 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData InProgressPagesProperty = RegisterProperty("InProgressPages", typeof(List<PageProgress>), () => new List<PageProgress>());
 
-        public double AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds
+        public double FullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds
         {
-            get { return GetValue<double>(AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty); }
-            set { SetValue(AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty, value); }
+            get { return GetValue<double>(FullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty); }
+            set { SetValue(FullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty, value); }
         }
 
-        public static readonly PropertyData AverageFullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty =
-            RegisterProperty("AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds", typeof(double), 0.0);
+        public static readonly PropertyData FullPageConversionAndAnalysisEntryGenerationTimeInMillisecondsProperty = RegisterProperty("FullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds",
+                                                                                                                                      typeof(double),
+                                                                                                                                      0.0);
 
-        public double AveragePageAnalysisTimeInMilliseconds
+        public double PageAnalysisTimeInMilliseconds
         {
-            get { return GetValue<double>(AveragePageAnalysisTimeInMillisecondsProperty); }
-            set { SetValue(AveragePageAnalysisTimeInMillisecondsProperty, value); }
+            get { return GetValue<double>(PageAnalysisTimeInMillisecondsProperty); }
+            set { SetValue(PageAnalysisTimeInMillisecondsProperty, value); }
         }
 
-        public static readonly PropertyData AveragePageAnalysisTimeInMillisecondsProperty = RegisterProperty("AveragePageAnalysisTimeInMilliseconds", typeof(double), 0.0);
+        public static readonly PropertyData PageAnalysisTimeInMillisecondsProperty = RegisterProperty("PageAnalysisTimeInMilliseconds", typeof(double), 0.0);
 
-        public double AverageHistoryActionAnalysisTimeInMilliseconds
+        public int TotalPagesAnalyzed
         {
-            get { return GetValue<double>(AverageHistoryActionAnalysisTimeInMillisecondsProperty); }
-            set { SetValue(AverageHistoryActionAnalysisTimeInMillisecondsProperty, value); }
+            get { return GetValue<int>(TotalPagesAnalyzedProperty); }
+            set { SetValue(TotalPagesAnalyzedProperty, value); }
         }
 
-        public static readonly PropertyData AverageHistoryActionAnalysisTimeInMillisecondsProperty = RegisterProperty("AverageHistoryActionAnalysisTimeInMilliseconds", typeof(double), 0.0);
+        public static readonly PropertyData TotalPagesAnalyzedProperty = RegisterProperty("TotalPagesAnalyzed", typeof(int), 0);
+
+        public int TotalHistoryActionsAnalyzed
+        {
+            get { return GetValue<int>(TotalHistoryActionsAnalyzedProperty); }
+            set { SetValue(TotalHistoryActionsAnalyzedProperty, value); }
+        }
+
+        public static readonly PropertyData TotalHistoryActionsAnalyzedProperty = RegisterProperty("TotalHistoryActionsAnalyzed", typeof(int), 0);
+        
 
         public string AnalysisTimeRemaining
         {
@@ -114,6 +124,49 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData AnalysisTimeRemainingProperty = RegisterProperty("AnalysisTimeRemaining", typeof(string), string.Empty);
+
+        #region Calculated Properties
+
+        public double AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds
+        {
+            get
+            {
+                if (TotalPagesAnalyzed == 0)
+                {
+                    return 0;
+                }
+
+                return FullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds / TotalPagesAnalyzed;
+            }
+        }
+
+        public double AveragePageAnalysisTimeInMilliseconds
+        {
+            get
+            {
+                if (TotalPagesAnalyzed == 0)
+                {
+                    return 0;
+                }
+
+                return PageAnalysisTimeInMilliseconds / TotalPagesAnalyzed;
+            }
+        }
+
+        public double AverageHistoryActionAnalysisTimeInMilliseconds
+        {
+            get
+            {
+                if (TotalHistoryActionsAnalyzed == 0)
+                {
+                    return 0.0;
+                }
+
+                return PageAnalysisTimeInMilliseconds / TotalHistoryActionsAnalyzed;
+            }
+        }
+
+        #endregion // Calculated Properties
 
         #endregion // Properties
     }

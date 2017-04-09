@@ -479,13 +479,6 @@ namespace Classroom_Learning_Partner.Services
                     stopWatch.Stop();
 
                     var analysisTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
-                    var numberOfHistoryActions = page.History.CompleteOrderedHistoryActions.Count;
-                    if (numberOfHistoryActions == 0)
-                    {
-                        numberOfHistoryActions = 1;
-                    }
-
-                    var averageAnalysisTimePerHistoryActionInMilliseconds = analysisTimeInMilliseconds / numberOfHistoryActions;
 
                     CLogger.AppendToLog($"Finished analysis of {studentName}'s page {pageNumber}.");
 
@@ -509,30 +502,6 @@ namespace Classroom_Learning_Partner.Services
 
                     #endregion // Compiling Statistics
 
-                    #region Calculating Average Times
-
-                    var totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = conversionTimeInMilliseconds + analysisTimeInMilliseconds + statisticsComplingTimeInMilliseconds;
-                    var newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = (analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds +
-                                                                                                    totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds) / 2.0;
-                    if (analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds == 0.0)
-                    {
-                        newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
-                    }
-
-                    var newAveragePageAnalysisTimeInMilliseconds = (analysisTracker.AveragePageAnalysisTimeInMilliseconds + analysisTimeInMilliseconds) / 2.0;
-                    if (analysisTracker.AveragePageAnalysisTimeInMilliseconds == 0.0)
-                    {
-                        newAveragePageAnalysisTimeInMilliseconds = analysisTimeInMilliseconds;
-                    }
-
-                    var newAverageHistoryActionAnalysisTimeInMilliseconds = (analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds + averageAnalysisTimePerHistoryActionInMilliseconds) / 2.0;
-                    if (analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds == 0.0)
-                    {
-                        newAverageHistoryActionAnalysisTimeInMilliseconds = averageAnalysisTimePerHistoryActionInMilliseconds;
-                    }
-
-                    #endregion // Calculating Average Times
-
                     #region Setting Up Paths
 
                     var convertedStudentPagesFolderName = $"{studentName};{studentID}";
@@ -553,9 +522,11 @@ namespace Classroom_Learning_Partner.Services
                         analysisTracker.InProgressPages.Remove(pageProgress);
                     }
 
-                    analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
-                    analysisTracker.AveragePageAnalysisTimeInMilliseconds = newAveragePageAnalysisTimeInMilliseconds;
-                    analysisTracker.AverageHistoryActionAnalysisTimeInMilliseconds = newAverageHistoryActionAnalysisTimeInMilliseconds;
+                    var totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = conversionTimeInMilliseconds + analysisTimeInMilliseconds + statisticsComplingTimeInMilliseconds;
+                    analysisTracker.FullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds += totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
+                    analysisTracker.PageAnalysisTimeInMilliseconds += analysisTimeInMilliseconds;
+                    analysisTracker.TotalPagesAnalyzed++;
+                    analysisTracker.TotalHistoryActionsAnalyzed += page.History.CompleteOrderedHistoryActions.Count;
 
                     var pageNumbersStillLeftToAnalyzeCount = pageNumbersToAnalyze.Except(analysisTracker.CompletedPageNumbers).Count();
                     var totalPagesStillLeftToAnalyzeCount = pageNumbersStillLeftToAnalyzeCount * allStudentIDs.Count;
@@ -563,14 +534,14 @@ namespace Classroom_Learning_Partner.Services
                     {
                         totalPagesStillLeftToAnalyzeCount -= (allStudentIDs.Count - remainingStudentIDs.Count());
                     }
-                    var timeRemainingInMilliseconds = totalPagesStillLeftToAnalyzeCount* newAverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
+                    var timeRemainingInMilliseconds = totalPagesStillLeftToAnalyzeCount * analysisTracker.AverageFullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
                     var timeSpan = new TimeSpan(0, 0, 0, 0, (int)timeRemainingInMilliseconds.ToInt());
                     var formattedTimeRemaining = timeSpan.ToString(@"hh\:mm\:ss");
                     analysisTracker.AnalysisTimeRemaining = formattedTimeRemaining;
 
                     analysisTracker.SaveTime = FastDateTime.Now;
 
-                    #endregion // Updating Analysis Tracker  6233115ms
+                    #endregion // Updating Analysis Tracker
 
                     #region Saving Files
 
