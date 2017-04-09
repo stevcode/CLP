@@ -564,7 +564,7 @@ namespace Classroom_Learning_Partner.Services
                     {
                         File.Delete(rollingAnalysisBackupFilePath);
                     }
-                    File.Move(RollingAnalysisFilePath, rollingAnalysisBackupFilePath);
+                    File.Copy(RollingAnalysisFilePath, rollingAnalysisBackupFilePath);
                     File.AppendAllText(RollingAnalysisFilePath, Environment.NewLine + analysisRow);
 
                     backupCount++;
