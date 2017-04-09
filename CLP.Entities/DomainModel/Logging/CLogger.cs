@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Catel;
 
@@ -75,13 +76,18 @@ namespace CLP.Entities
 
         #region Methods
 
-        public static void AppendToLog(string appendString)
+        public static void AppendToLog(string appendString, bool isForcedDebugWriteline = true)
         {
             lock (LogLock)
             {
                 var currentTime = FastDateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 var loggedString = $"{Environment.NewLine}{currentTime} - {appendString}";
                 File.AppendAllText(CachedLogFilePath, loggedString);
+                if (isForcedDebugWriteline)
+                {
+                    Debug.WriteLine(appendString);
+                }
+
                 BackupLog();
             }
         }
@@ -89,7 +95,7 @@ namespace CLP.Entities
         private static void BackupLog()
         {
             var fileInfo = new FileInfo(CachedLogFilePath);
-            var fileSizeInKb = fileInfo.Length / 32; //1024;
+            var fileSizeInKb = fileInfo.Length / 1024;
             if (fileSizeInKb <= 1024.0)
             {
                 return;
@@ -100,9 +106,15 @@ namespace CLP.Entities
 
         public static void ForceNewLogFile()
         {
+            if (!File.Exists(CachedLogFilePath))
+            {
+                return;
+            }
+
             var currentTime = FastDateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            var backupFileName = $"{currentTime}.{DEFAULT_LOG_FILE_NAME}.{DEFAULT_LOG_FILE_EXTENSION}";
+            var backupFileName = $"{DEFAULT_LOG_FILE_NAME}.{currentTime}.{DEFAULT_LOG_FILE_EXTENSION}";
             var backupFilePath = Path.Combine(DefaultCLPLogsFolderPath, backupFileName);
+
             File.Move(CachedLogFilePath, backupFilePath);
         }
 
