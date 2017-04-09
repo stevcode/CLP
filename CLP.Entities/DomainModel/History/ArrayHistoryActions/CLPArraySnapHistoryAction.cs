@@ -226,14 +226,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Persisting Array not found on page or in history.");
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Snapped Array not found on page or in history.");
                 return;
             }
 
@@ -270,14 +270,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Persisting Array not found on page or in history.");
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Snapped Array not found on page or in history.");
                 return;
             }
 

@@ -15,7 +15,7 @@ namespace CLP.Entities
         {
             Argument.IsNotNull(nameof(page), page);
 
-            Debug.WriteLine($"Analyzing {page.Owner.FullName}'s Page {page.PageNumber}, Version Index {page.VersionIndex}");
+            CLogger.AppendToLog($"Analyzing {page.Owner.FullName}'s Page {page.PageNumber}, Version Index {page.VersionIndex}");
 
             ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();

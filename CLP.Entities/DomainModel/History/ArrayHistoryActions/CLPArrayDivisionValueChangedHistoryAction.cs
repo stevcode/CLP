@@ -83,7 +83,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Division Value Changed not found on page or in history.");
                 return;
             }
 
@@ -95,7 +95,7 @@ namespace CLP.Entities
             }
             catch (Exception)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Division Value Changed DivisionIndex out of bounds.");
             }
         }
 

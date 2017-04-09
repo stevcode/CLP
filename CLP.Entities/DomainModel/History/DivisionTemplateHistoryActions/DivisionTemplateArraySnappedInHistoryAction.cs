@@ -77,14 +77,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Division Template for Array Snapped In not found on page or in history.");
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Array Snapped In not found on page or in history.");
                 return;
             }
 
@@ -99,14 +99,14 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Division Template for Array Snapped In not found on page or in history.");
                 return;
             }
 
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedInArrayID) as CLPArray;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Array Snapped In not found on page or in history.");
                 return;
             }
 

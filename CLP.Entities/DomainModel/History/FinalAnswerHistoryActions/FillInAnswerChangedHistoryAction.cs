@@ -118,7 +118,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -131,7 +131,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -150,7 +150,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -163,7 +163,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 addedStrokes.Add(stroke);

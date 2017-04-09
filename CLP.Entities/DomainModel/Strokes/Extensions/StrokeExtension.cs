@@ -572,7 +572,7 @@ namespace CLP.Entities
                 page.PageObjects.Add(tempGrid);
             }
 
-            // Debug.WriteLine("found " + occupiedCells.Count + " occupied cells");
+            // CLogger.AppendToLog("found " + occupiedCells.Count + " occupied cells");
 
             return DetectCycle(occupiedCells, cellWidth, cellHeight);
         }
@@ -622,7 +622,7 @@ namespace CLP.Entities
                                 var i = 0;
                                 while (i < cycle.Count())
                                 {
-                                    // Debug.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
+                                    // CLogger.AppendToLog("{0}, {1}", cycle[i].X, cycle[i].Y);
                                     i++;
                                 }
                                 return true;
@@ -699,8 +699,8 @@ namespace CLP.Entities
             while (i < stylusPoints.Count)
             {
                 nextPoint = stylusPoints[i].ToPoint();
-                // Debug.WriteLine("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
-                // Debug.WriteLine("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
+                // CLogger.AppendToLog("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
+                // CLogger.AppendToLog("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
                 nextPoint.X = RoundToNearestCell(nextPoint.X, cellWidth) - xOffset;
                 nextPoint.Y = RoundToNearestCell(nextPoint.Y, cellHeight) - yOffset;
 
@@ -833,13 +833,13 @@ namespace CLP.Entities
             int i = 0;
             while (i < slopes.Count)
             {
-                // Debug.WriteLine("slope: {0}", slopes[i]);
+                // CLogger.AppendToLog("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            // Debug.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // CLogger.AppendToLog("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
@@ -902,13 +902,13 @@ namespace CLP.Entities
                 {
                     slopes[i] += 180;
                 }
-                // Debug.WriteLine("slope: {0}", slopes[i]);
+                // CLogger.AppendToLog("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            // Debug.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // CLogger.AppendToLog("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }

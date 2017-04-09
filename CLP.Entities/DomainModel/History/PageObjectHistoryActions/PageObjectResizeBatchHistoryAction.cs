@@ -104,14 +104,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Resized PageObject not found on page or in history.");
                 CurrentBatchTickIndex = -1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Resized PageObject has no Streched Dimensions");
                 CurrentBatchTickIndex = -1;
                 return;
             }
@@ -152,14 +152,14 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
             if (pageObject == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Resized PageObject not found on page or in history.");
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }
 
             if (!StretchedDimensions.Any())
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Resized PageObject has no Streched Dimensions");
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }

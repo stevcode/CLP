@@ -158,7 +158,7 @@ namespace CLP.Entities
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
+                CLogger.AppendToLog("LassoRegion.OnMoved() Exception: " + ex.Message);
                 base.OnMoved(oldX, oldY, fromHistory);
             }
         }

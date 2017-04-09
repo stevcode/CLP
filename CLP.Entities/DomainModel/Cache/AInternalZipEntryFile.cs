@@ -132,7 +132,7 @@ namespace CLP.Entities
             //IsSavedLocally = false;
             //IsSavedOverTheNetwork = false;
 
-            //Debug.WriteLine($"Property Changed: {e.PropertyName}, Old Value: {e.OldValue}, New Value: {e.NewValue}");
+            //CLogger.AppendToLog($"Property Changed: {e.PropertyName}, Old Value: {e.OldValue}, New Value: {e.NewValue}");
         }
 
         #endregion

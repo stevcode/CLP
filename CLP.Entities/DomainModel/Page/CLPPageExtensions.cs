@@ -36,7 +36,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
+            CLogger.AppendToLog("PageObject incorrectly existed in TrashedPageObjects.");
             page.History.TrashedPageObjects.Remove(pageObject);
             page.PageObjects.Add(pageObject);
 
@@ -61,7 +61,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("PageObject incorrectly existed on Page.");
+            CLogger.AppendToLog("PageObject incorrectly existed on Page.");
             page.History.TrashedPageObjects.Add(pageObject);
             page.PageObjects.Remove(pageObject);
 
@@ -114,7 +114,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
+            CLogger.AppendToLog("Stroke incorrectly existed in TrashedInkStrokes.");
             page.History.TrashedInkStrokes.Remove(stroke);
             page.InkStrokes.Add(stroke);
 
@@ -139,7 +139,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("Stroke incorrectly existed on Page.");
+            CLogger.AppendToLog("Stroke incorrectly existed on Page.");
             page.History.TrashedInkStrokes.Add(stroke);
             page.InkStrokes.Remove(stroke);
 
@@ -218,7 +218,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Debug.WriteLine("Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    CLogger.AppendToLog($"Stroke without ID on page {page.PageNumber}, {page.Owner.FullName}");
                 }
             }
 
@@ -226,7 +226,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Debug.WriteLine("Trashed Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    CLogger.AppendToLog($"Trashed Stroke without ID on page {page.PageNumber}, {page.Owner.FullName}");
                 }
             }
         }

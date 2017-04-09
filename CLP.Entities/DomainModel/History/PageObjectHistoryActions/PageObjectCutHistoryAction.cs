@@ -139,7 +139,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Cutting Stroke not found on page or in history.");
                 return;
             }
 
@@ -204,7 +204,7 @@ namespace CLP.Entities
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Cutting Stroke not found on page or in history.");
                 return;
             }
 

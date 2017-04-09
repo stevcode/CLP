@@ -112,7 +112,7 @@ namespace CLP.Entities
 
             if (!PageObjectIDs.Any())
             {
-                Debug.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CLogger.AppendToLog("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
                 CurrentBatchTickIndex = -1;
                 return;
             }
@@ -163,7 +163,7 @@ namespace CLP.Entities
 
             if (!PageObjectIDs.Any())
             {
-                Debug.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CLogger.AppendToLog("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }

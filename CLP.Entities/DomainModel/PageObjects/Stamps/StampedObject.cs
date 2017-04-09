@@ -228,7 +228,7 @@ namespace CLP.Entities
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Mark.OnMoved() Exception: " + ex.Message);
+                CLogger.AppendToLog("Mark.OnMoved() Exception: " + ex.Message);
             }
 
             base.OnMoved(oldX, oldY, fromHistory);

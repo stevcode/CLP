@@ -70,7 +70,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Division Template for Array Removed not found on page or in history.");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as DivisionTemplate;
             if (divisionTemplate == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Division Template for Array Removed not found on page or in history.");
                 return;
             }
 
