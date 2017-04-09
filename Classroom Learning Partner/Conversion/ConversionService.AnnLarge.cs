@@ -1303,7 +1303,7 @@ namespace Classroom_Learning_Partner
 
             if (!newMultipleChoice.ChoiceBubbles.Any())
             {
-                Console.WriteLine($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                Debug.WriteLine($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
 
                 newMultipleChoice = null;
             }
@@ -1415,7 +1415,7 @@ namespace Classroom_Learning_Partner
 
             if (pageHistory.RedoItems.Any())
             {
-                Console.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                Debug.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
                 return;
             }
 
