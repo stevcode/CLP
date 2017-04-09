@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Classroom_Learning_Partner.ViewModels;
@@ -9,7 +10,31 @@ namespace Classroom_Learning_Partner.Services
 {
     public static class AnalysisService
     {
+        #region Constants
+
+        private const string ANALYSIS_TRACKER_FILE_NAME = "Analysis Tracker.json";
+        private const string ROLLING_ANALYSIS_FILE_NAME = "Batch Analysis.tsv";
+        private const string ANN_CACHE_FILE_NAME = "Ann - Fall 2014.clp";
+        private const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
+
+        #endregion // Constants
+
         #region Members
+
+        private static string AnalysisFolder => Path.Combine(DataService.DesktopFolderPath, "Rolling Analysis");
+        private static string ConvertedPagesFolder => Path.Combine(AnalysisFolder, "Converted Pages");
+
+        private static string AnalysisTrackerFilePath => Path.Combine(AnalysisFolder, ANALYSIS_TRACKER_FILE_NAME);
+        private static string RollingAnalysisFilePath => Path.Combine(AnalysisFolder, ROLLING_ANALYSIS_FILE_NAME);
+        private static string AnnFullZipFilePath => Path.Combine(AnalysisFolder, ANN_CACHE_FILE_NAME);
+
+        private static readonly string NotebooksFolderPath = ConversionService.AnnNotebooksFolder;
+        private static readonly string ClassesFolderPath = ConversionService.AnnClassesFolder;
+        private static readonly string ImagesFolderPath = ConversionService.AnnImageFolder;
+
+        private static readonly Dictionary<string,string> StudentIDToNotebookPagesFolderPath = new Dictionary<string,string>();
+
+        #region Page Number Lists
 
         private static List<int> _mainPageNumbersToAnalyze = new List<int>
                                                              {
@@ -325,6 +350,8 @@ namespace Classroom_Learning_Partner.Services
                                                                   353
                                                               };
 
+        #endregion // Page Number Lists
+
         #endregion // Members
 
         public static void RunAnalysisOnLoadedNotebook(Notebook notebook)
@@ -359,10 +386,107 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public static void RunFullBatchAnalysis()
+        public static void RunFullBatchAnalysis(List<int> pageNumbersToAnalyze)
         {
-            var pageNumbersToAnalyze = _otherPageNumbersToAnalyze;
+            // *****Important Note: Ensure IS_LARGE_CACHE is set to true in ConversionService*****
 
+            Debug.WriteLine("Beginning Rolling Batch Analysis of cache.");
+
+            if (!Directory.Exists(RollingAnalysisFilePath))
+            {
+                Directory.CreateDirectory(RollingAnalysisFilePath);
+            }
+
+            if (!Directory.Exists(ConvertedPagesFolder))
+            {
+                Directory.CreateDirectory(ConvertedPagesFolder);
+            }
+
+            var analysisTracker = InitializeAnalysisTrackerFile();
+            Debug.WriteLine("Analysis Tracker loaded.");
+
+            var pageNumbersLeftToAnalyze = pageNumbersToAnalyze.Except(analysisTracker.CompletedPageNumbers).ToList();
+            var allStudentIDs = analysisTracker.StudentNotebooks.Select(n => n.Owner.ID).ToList();
+
+            foreach (var pageNumber in pageNumbersLeftToAnalyze)
+            {
+                Debug.WriteLine($"Beginning loop through analysis of page {pageNumber}.");
+                if (!analysisTracker.InProgressPages.ContainsKey(pageNumber))
+                {
+                    analysisTracker.InProgressPages.Add(pageNumber, new List<string>());
+                }
+
+                foreach (var studentNotebook in analysisTracker.StudentNotebooks)
+                {
+                    var studentID = studentNotebook.Owner.ID;
+                    if (analysisTracker.InProgressPages[pageNumber].Contains(studentID))
+                    {
+                        continue;
+                    }
+
+                    var studentName = studentNotebook.Owner.FullName;
+
+                    Debug.WriteLine($"Beginning conversion of {studentName}'s page {pageNumber}.");
+
+                    var pagesFolderPath = StudentIDToNotebookPagesFolderPath[studentID];
+                    var pageFilePath = ConversionService.GetPageFilePathFromPageNumber(pagesFolderPath, pageNumber);
+                    var page = ConversionService.ConvertCacheAnnPageFile(pageFilePath);
+
+                    Debug.WriteLine($"Finished conversion of {studentName}'s page {pageNumber}.");
+
+                }
+            }
+
+
+
+
+            Debug.WriteLine("Ending Rolling Batch Analysis of cache.");
+        }
+
+        private static AnalysisTracker InitializeAnalysisTrackerFile()
+        {
+            if (File.Exists(AnalysisTrackerFilePath))
+            {
+                Debug.WriteLine("Analysis Tracker already exists, loading...");
+                return AEntityBase.FromJsonFile<AnalysisTracker>(AnalysisTrackerFilePath);
+            }
+
+            Debug.WriteLine("Initializing new Analysis Tracker...");
+
+            var analysisTracker = new AnalysisTracker();
+
+            var dirInfo = new DirectoryInfo(NotebooksFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var folderName = directory.Name;
+                var folderNameParts = folderName.Split(';');
+                if (folderNameParts.Length != 5)
+                {
+                    continue;
+                }
+
+                var ownerType = folderNameParts[4];
+                if (ownerType != "S")
+                {
+                    continue;
+                }
+
+                var notebookFolderPath = directory.FullName;
+                var studentNotebook = ConversionService.ConvertCacheAnnNotebookFile(notebookFolderPath);
+                if (studentNotebook == null)
+                {
+                    Debug.WriteLine($"[ERROR] Failed to convert student notebook file in the following notebook folder path: {notebookFolderPath}");
+                    continue;
+                }
+
+                analysisTracker.StudentNotebooks.Add(studentNotebook);
+
+                var studentID = studentNotebook.Owner.ID;
+                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+                StudentIDToNotebookPagesFolderPath.Add(studentID, pagesFolderPath);
+            }
+
+            return analysisTracker;
         }
 
         public static AnalysisEntry GenerateAnalysisEntryForPage(CLPPage page)

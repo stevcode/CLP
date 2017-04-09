@@ -273,6 +273,57 @@ namespace Classroom_Learning_Partner
             return notebook;
         }
 
+        public static Notebook ConvertCacheAnnNotebookFile(string notebookFolderPath)
+        {
+            var oldNotebook = Ann.Notebook.LoadLocalNotebook(notebookFolderPath);
+            if (ReferenceEquals(null, oldNotebook))
+            {
+                return null;
+            }
+
+            var newNotebook = ConvertNotebook(oldNotebook);
+            return newNotebook;
+        }
+
+        public static string GetPageFilePathFromPageNumber(string studentPagesFolderPath, int pageNumber)
+        {
+            var pageFilePaths = Directory.EnumerateFiles(studentPagesFolderPath, "*.xml");
+            foreach (var pageFilePath in pageFilePaths)
+            {
+                var pageNameComposite = Ann.PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                if (ReferenceEquals(null, pageNameComposite))
+                {
+                    continue;
+                }
+
+                if (pageNameComposite.VersionIndex != "0")
+                {
+                    continue;
+                }
+
+                if (pageNumber.ToString() != pageNameComposite.PageNumber)
+                {
+                    continue;
+                }
+
+                return pageFilePath;
+            }
+
+            return string.Empty;
+        }
+
+        public static CLPPage ConvertCacheAnnPageFile(string pageFilePath)
+        {
+            var oldPage = Ann.CLPPage.LoadLocalPage(pageFilePath);
+            if (ReferenceEquals(null, oldPage))
+            {
+                return null;
+            }
+
+            var newPage = ConvertPage(oldPage);
+            return newPage;
+        }
+
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
         {
             Debug.WriteLine($"Loading Subject To Convert: {filePath}");
