@@ -23,7 +23,7 @@ namespace Classroom_Learning_Partner
         public static void ConvertAnnCache()
         {
             var cacheType = IS_LARGE_CACHE ? "Large" : "Assessment";
-            Debug.WriteLine($"Beginning Conversion of Ann's {cacheType} Cache.");
+            CLogger.AppendToLog($"Beginning Conversion of Ann's {cacheType} Cache.");
 
             var zipPath = IS_LARGE_CACHE ? AnnZipFilePath : AssessmentZipFilePath;
             var notebooksFolderPath = IS_LARGE_CACHE ? AnnNotebooksFolder : AssessmentNotebooksFolder;
@@ -66,7 +66,7 @@ namespace Classroom_Learning_Partner
 
             SaveSessionsToZip(zipPath, sessions, authorNotebook);
 
-            Debug.WriteLine($"Finished Conversion of Ann's {cacheType} Cache.");
+            CLogger.AppendToLog($"Finished Conversion of Ann's {cacheType} Cache.");
         }
 
         #endregion // Loop
@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner
 
         public static void SaveNotebooksToZip(string zipFilePath, List<Notebook> notebooks)
         {
-            Debug.WriteLine("Saving Notebooks To Zip.");
+            CLogger.AppendToLog("Saving Notebooks To Zip.");
 
             if (File.Exists(zipFilePath))
             {
@@ -154,16 +154,16 @@ namespace Classroom_Learning_Partner
                 zip.Save(zipFilePath);
             }
 
-            Debug.WriteLine("Finished Saving Notebooks To Zip.");
+            CLogger.AppendToLog("Finished Saving Notebooks To Zip.");
         }
 
         public static void SaveClassRosterToZip(string zipFilePath, ClassRoster classRoster)
         {
-            Debug.WriteLine("Saving Roster To Zip.");
+            CLogger.AppendToLog("Saving Roster To Zip.");
 
             if (!File.Exists(zipFilePath))
             {
-                Debug.WriteLine("[ERROR] Failed Saving Roster To Zip, Zip file doesn't exist.");
+                CLogger.AppendToLog("[ERROR] Failed Saving Roster To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -187,16 +187,16 @@ namespace Classroom_Learning_Partner
                 zip.Save();
             }
 
-            Debug.WriteLine("Finished Saving Roster To Zip.");
+            CLogger.AppendToLog("Finished Saving Roster To Zip.");
         }
 
         public static void SaveSessionsToZip(string zipFilePath, List<Session> sessions, Notebook authorNotebook)
         {
-            Debug.WriteLine("Saving Sessions To Zip.");
+            CLogger.AppendToLog("Saving Sessions To Zip.");
 
             if (!File.Exists(zipFilePath))
             {
-                Debug.WriteLine("[ERROR] Failed Saving Sessions To Zip, Zip file doesn't exist.");
+                CLogger.AppendToLog("[ERROR] Failed Saving Sessions To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -252,16 +252,16 @@ namespace Classroom_Learning_Partner
                 zip.Save();
             }
 
-            Debug.WriteLine("Finished Saving Sessions To Zip.");
+            CLogger.AppendToLog("Finished Saving Sessions To Zip.");
         }
 
         public static void SaveImagesToZip(string zipFilePath, string imageDirectoryPath)
         {
-            Debug.WriteLine("Saving Images To Zip.");
+            CLogger.AppendToLog("Saving Images To Zip.");
 
             if (!File.Exists(zipFilePath))
             {
-                Debug.WriteLine("[ERROR] Failed Saving Images To Zip, Zip file doesn't exist.");
+                CLogger.AppendToLog("[ERROR] Failed Saving Images To Zip, Zip file doesn't exist.");
                 return;
             }
 
@@ -291,7 +291,7 @@ namespace Classroom_Learning_Partner
                 zip.Save();
             }
 
-            Debug.WriteLine("Finished Saving Images To Zip.");
+            CLogger.AppendToLog("Finished Saving Images To Zip.");
         }
 
         #endregion // All
@@ -357,7 +357,7 @@ namespace Classroom_Learning_Partner
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
-                Debug.WriteLine("[CONVERSION ERROR]: Person.FullName is blank.");
+                CLogger.AppendToLog("[CONVERSION ERROR]: Person.FullName is blank.");
             }
 
             return newPerson;

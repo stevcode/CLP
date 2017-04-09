@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,7 +42,6 @@ namespace Classroom_Learning_Partner.Views
             for (var i = 0; i < reachabilityDistances.Count; i++)
             {
                 var d = reachabilityDistances[i];
-                Debug.WriteLine(d);
                 var x = i;
                 var y = d;
                 var circle = new Ellipse

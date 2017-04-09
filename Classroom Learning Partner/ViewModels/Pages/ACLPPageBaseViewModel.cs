@@ -385,7 +385,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
+                CLogger.AppendToLog("PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
@@ -1200,15 +1200,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                    //st.Stop();
                                    //var unzipTime = st.ElapsedMilliseconds;
 
-                                   //Debug.WriteLine();
-                                   //Debug.WriteLine("Json conversion time: {0}", jTime);
-                                   //Debug.WriteLine("Zip conversion time {0}", zTime);
-                                   //Debug.WriteLine("UnJson conversion time: {0}", unjsonTime);
-                                   //Debug.WriteLine("UnZip conversion time {0}", unzipTime);
-                                   //Debug.WriteLine("Json string length: {0}", jLength);
-                                   //Debug.WriteLine("Json zipped length: {0}", zjson.Length);
-                                   //Debug.WriteLine("ToString string length: {0}", toStringLength);
-                                   //Debug.WriteLine("Zip string length: {0}", toZipLength);
+                                   //CLogger.AppendToLog();
+                                   //CLogger.AppendToLog("Json conversion time: {0}", jTime);
+                                   //CLogger.AppendToLog("Zip conversion time {0}", zTime);
+                                   //CLogger.AppendToLog("UnJson conversion time: {0}", unjsonTime);
+                                   //CLogger.AppendToLog("UnZip conversion time {0}", unzipTime);
+                                   //CLogger.AppendToLog("Json string length: {0}", jLength);
+                                   //CLogger.AppendToLog("Json zipped length: {0}", zjson.Length);
+                                   //CLogger.AppendToLog("ToString string length: {0}", toStringLength);
+                                   //CLogger.AppendToLog("Zip string length: {0}", toZipLength);
 
                                    //try
                                    //{

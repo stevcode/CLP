@@ -391,7 +391,9 @@ namespace Classroom_Learning_Partner.Services
         {
             // *****Important Note: Ensure IS_LARGE_CACHE is set to true in ConversionService*****
 
-            Debug.WriteLine("Beginning Rolling Batch Analysis of cache.");
+            CLogger.ForceNewLogFile();
+
+            CLogger.AppendToLog("Beginning Rolling Batch Analysis of cache.");
 
             if (!Directory.Exists(ConvertedPagesFolder))
             {
@@ -401,7 +403,7 @@ namespace Classroom_Learning_Partner.Services
             InitializeRollingAnalysisFile();
 
             var analysisTracker = InitializeAnalysisTrackerFile();
-            Debug.WriteLine("Analysis Tracker loaded.");
+            CLogger.AppendToLog("Analysis Tracker loaded.");
 
             InitializePagesFolderPaths();
 
@@ -411,7 +413,7 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var pageNumber in pageNumbersLeftToAnalyze)
             {
-                Debug.WriteLine($"Beginning loop through analysis of page {pageNumber}.");
+                CLogger.AppendToLog($"Beginning loop through analysis of page {pageNumber}.");
                 if (!analysisTracker.InProgressPages.Any(pp => pp.PageNumber == pageNumber))
                 {
                     var newPageProgress = new AnalysisTracker.PageProgress
@@ -437,7 +439,7 @@ namespace Classroom_Learning_Partner.Services
 
                     #region Conversion
 
-                    Debug.WriteLine($"Beginning conversion of {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Beginning conversion of {studentName}'s page {pageNumber}.");
 
                     stopWatch.Start();
 
@@ -446,14 +448,14 @@ namespace Classroom_Learning_Partner.Services
                     if (string.IsNullOrWhiteSpace(pageFilePath))
                     {
                         pageProgress.StudentIDs.Add(studentID);
-                        Debug.WriteLine($"[INFO] Page Path File did not exist for {studentName}'s page {pageNumber}.");
+                        CLogger.AppendToLog($"[INFO] Page Path File did not exist for {studentName}'s page {pageNumber}.");
                         continue;
                     }
                     var page = ConversionService.ConvertCacheAnnPageFile(pageFilePath);
                     if (page == null)
                     {
                         pageProgress.StudentIDs.Add(studentID);
-                        Debug.WriteLine($"[ERROR] NULL Page after conversion for {studentName}'s page {pageNumber}.");
+                        CLogger.AppendToLog($"[ERROR] NULL Page after conversion for {studentName}'s page {pageNumber}.");
                         continue;
                     }
 
@@ -461,13 +463,13 @@ namespace Classroom_Learning_Partner.Services
 
                     var conversionTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
 
-                    Debug.WriteLine($"Finished conversion of {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Finished conversion of {studentName}'s page {pageNumber}.");
 
                     #endregion // Conversion
 
                     #region Analysis
 
-                    Debug.WriteLine($"Beginning analysis of {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Beginning analysis of {studentName}'s page {pageNumber}.");
 
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -485,13 +487,13 @@ namespace Classroom_Learning_Partner.Services
 
                     var averageAnalysisTimePerHistoryActionInMilliseconds = analysisTimeInMilliseconds / numberOfHistoryActions;
 
-                    Debug.WriteLine($"Finished analysis of {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Finished analysis of {studentName}'s page {pageNumber}.");
 
                     #endregion // Analysis
 
                     #region Compiling Statistics
 
-                    Debug.WriteLine($"Beginning compiling statistics for {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Beginning compiling statistics for {studentName}'s page {pageNumber}.");
 
                     stopWatch.Reset();
                     stopWatch.Start();
@@ -503,7 +505,7 @@ namespace Classroom_Learning_Partner.Services
 
                     var statisticsComplingTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
 
-                    Debug.WriteLine($"Finished compiling statistics for {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Finished compiling statistics for {studentName}'s page {pageNumber}.");
 
                     #endregion // Compiling Statistics
 
@@ -572,7 +574,7 @@ namespace Classroom_Learning_Partner.Services
 
                     #region Saving Files
 
-                    Debug.WriteLine($"Saving files for {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Saving files for {studentName}'s page {pageNumber}.");
 
                     page.ToJsonFile(pageJsonFilePath);
 
@@ -600,11 +602,11 @@ namespace Classroom_Learning_Partner.Services
                         backupCount = 0;
                     }
 
-                    Debug.WriteLine($"Finished saving files for {studentName}'s page {pageNumber}.");
+                    CLogger.AppendToLog($"Finished saving files for {studentName}'s page {pageNumber}.");
 
                     #endregion // Saving Files
 
-                    Debug.WriteLine($"Time Remaining: {formattedTimeRemaining}");
+                    CLogger.AppendToLog($"Time Remaining: {formattedTimeRemaining}");
                 }
 
                 var isModified = false;
@@ -641,18 +643,18 @@ namespace Classroom_Learning_Partner.Services
                 }
             }
 
-            Debug.WriteLine("Ending Rolling Batch Analysis of cache.");
+            CLogger.AppendToLog("Ending Rolling Batch Analysis of cache.");
         }
 
         private static AnalysisTracker InitializeAnalysisTrackerFile()
         {
             if (File.Exists(AnalysisTrackerFilePath))
             {
-                Debug.WriteLine("Analysis Tracker already exists, loading...");
+                CLogger.AppendToLog("Analysis Tracker already exists, loading...");
                 return AEntityBase.FromJsonFile<AnalysisTracker>(AnalysisTrackerFilePath);
             }
 
-            Debug.WriteLine("Initializing new Analysis Tracker...");
+            CLogger.AppendToLog("Initializing new Analysis Tracker...");
 
             var analysisTracker = new AnalysisTracker();
 
@@ -676,7 +678,7 @@ namespace Classroom_Learning_Partner.Services
                 var studentNotebook = ConversionService.ConvertCacheAnnNotebookFile(notebookFolderPath);
                 if (studentNotebook == null)
                 {
-                    Debug.WriteLine($"[ERROR] Failed to convert student notebook file in the following notebook folder path: {notebookFolderPath}");
+                    CLogger.AppendToLog($"[ERROR] Failed to convert student notebook file in the following notebook folder path: {notebookFolderPath}");
                     continue;
                 }
 

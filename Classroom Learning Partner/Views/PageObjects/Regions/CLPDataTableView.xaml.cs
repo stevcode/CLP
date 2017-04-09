@@ -22,10 +22,10 @@ namespace Classroom_Learning_Partner.Views
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            //Debug.WriteLine("DIMENSIONS: " + this.Grid.Columns + " , " + this.Grid.Rows + " , " + this.Grid.Width);
+            //CLogger.AppendToLog("DIMENSIONS: " + this.Grid.Columns + " , " + this.Grid.Rows + " , " + this.Grid.Width);
             for (int i = 0; i < this.Grid.Rows * this.Grid.Columns; i++)
             {
-                //Debug.WriteLine("DOING THIS");
+                //CLogger.AppendToLog("DOING THIS");
                 Rectangle rect = new Rectangle();
                 rect.Stroke = Brushes.Black;
                 rect.StrokeThickness = 0.5;

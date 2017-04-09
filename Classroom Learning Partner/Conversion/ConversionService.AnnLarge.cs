@@ -135,7 +135,7 @@ namespace Classroom_Learning_Partner
 
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
-            Debug.WriteLine($"Loading Notebook To Convert: {notebookFolder}");
+            CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
             Ann.Notebook oldNotebook;
 
             if (IS_LARGE_CACHE)
@@ -148,20 +148,20 @@ namespace Classroom_Learning_Partner
                 oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
             }
             
-            Debug.WriteLine("Notebook Loaded");
+            CLogger.AppendToLog("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
-            Debug.WriteLine("Notebook Converted");
+            CLogger.AppendToLog("Notebook Converted");
 
             foreach (var page in oldNotebook.Pages)
             {
-                Debug.WriteLine($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                CLogger.AppendToLog($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 var newPage = ConvertPage(page);
-                Debug.WriteLine($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                CLogger.AppendToLog($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
                 foreach (var submission in page.Submissions)
                 {
-                    Debug.WriteLine($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    CLogger.AppendToLog($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     var newSubmission = ConvertPage(submission);
-                    Debug.WriteLine($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    CLogger.AppendToLog($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
                     newPage.Submissions.Add(newSubmission);
                 }
 
@@ -326,22 +326,22 @@ namespace Classroom_Learning_Partner
 
         public static ClassRoster ConvertCacheAnnClassSubject(string filePath, Notebook notebook)
         {
-            Debug.WriteLine($"Loading Subject To Convert: {filePath}");
+            CLogger.AppendToLog($"Loading Subject To Convert: {filePath}");
             var classSubject = Ann.ClassSubject.OpenClassSubject(filePath);
-            Debug.WriteLine("Subject Loaded");
+            CLogger.AppendToLog("Subject Loaded");
             var classRoster = ConvertAnnClassSubject(classSubject, notebook);
-            Debug.WriteLine("Subject Converted");
+            CLogger.AppendToLog("Subject Converted");
 
             return classRoster;
         }
 
         public static Session ConvertCacheAnnClassPeriod(string filePath)
         {
-            Debug.WriteLine($"Loading Class Period To Convert: {filePath}");
+            CLogger.AppendToLog($"Loading Class Period To Convert: {filePath}");
             var classPeriod = Ann.ClassPeriod.LoadLocalClassPeriod(filePath);
-            Debug.WriteLine("Class Period Loaded");
+            CLogger.AppendToLog("Class Period Loaded");
             var session = ConvertClassPeriod(classPeriod);
-            Debug.WriteLine("Class Period Converted");
+            CLogger.AppendToLog("Class Period Converted");
 
             return session;
         }
@@ -361,7 +361,7 @@ namespace Classroom_Learning_Partner
 
             if (string.IsNullOrWhiteSpace(newPerson.FullName))
             {
-                Debug.WriteLine($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
+                CLogger.AppendToLog($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
             }
 
             return newPerson;
@@ -562,7 +562,7 @@ namespace Classroom_Learning_Partner
 
             if (newPageObject == null)
             {
-                Debug.WriteLine($"[ERROR] newPageObject is NULL. Original pageObject is {pageObject.GetType()}");
+                CLogger.AppendToLog($"[ERROR] newPageObject is NULL. Original pageObject is {pageObject.GetType()}");
             }
 
             return newPageObject;
@@ -1303,7 +1303,7 @@ namespace Classroom_Learning_Partner
 
             if (!newMultipleChoice.ChoiceBubbles.Any())
             {
-                Debug.WriteLine($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                CLogger.AppendToLog($"[ERROR] Unhandled Multiple Choice Box during conversion. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
 
                 newMultipleChoice = null;
             }
@@ -1415,7 +1415,7 @@ namespace Classroom_Learning_Partner
 
             if (pageHistory.RedoItems.Any())
             {
-                Debug.WriteLine($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
+                CLogger.AppendToLog($"[ERROR] PageHistory Has Redo Items. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}");
                 return;
             }
 
@@ -1569,7 +1569,7 @@ namespace Classroom_Learning_Partner
 
             if (newHistoryAction == null)
             {
-                Debug.WriteLine($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] newHistoryAction is NULL. Original historyItem is {historyItem.GetType()}. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
             }
 
             return newHistoryAction;
@@ -1606,7 +1606,7 @@ namespace Classroom_Learning_Partner
         {
             if (!historyItem.PageObjectIDs.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Added, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Added, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1625,7 +1625,7 @@ namespace Classroom_Learning_Partner
             {
                 if (pageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] PageObject for PageObject Added not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] PageObject for PageObject Added not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
                 newPage.PageObjects.Remove(pageObject);
@@ -1642,7 +1642,7 @@ namespace Classroom_Learning_Partner
         {
             if (!historyItem.PageObjectIDs.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Removed, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Removed, no pageObjects added. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1661,7 +1661,7 @@ namespace Classroom_Learning_Partner
             {
                 if (pageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] PageObject for PageObject Removed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] PageObject for PageObject Removed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
                 newPage.History.TrashedPageObjects.Remove(pageObject);
@@ -1678,7 +1678,7 @@ namespace Classroom_Learning_Partner
         {
             if (historyItem.StretchedDimensions.Count < 2)
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Resize has no Streched Dimensions (or 1). Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Resize has no Streched Dimensions (or 1). Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1697,7 +1697,7 @@ namespace Classroom_Learning_Partner
             var pageObject = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PageObjectID);
             if (pageObject == null)
             {
-                Debug.WriteLine($"[ERROR] PageObject for PageObject Resize not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] PageObject for PageObject Resize not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1720,13 +1720,13 @@ namespace Classroom_Learning_Partner
         {
             if (string.IsNullOrEmpty(historyItem.PageObjectID))
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Move has NULL PageObjectID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Move has NULL PageObjectID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             if (!historyItem.TravelledPositions.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1734,7 +1734,7 @@ namespace Classroom_Learning_Partner
                 Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
                 Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1759,7 +1759,7 @@ namespace Classroom_Learning_Partner
                 var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
                 if (pageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] PageObject for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] PageObject for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -1785,13 +1785,13 @@ namespace Classroom_Learning_Partner
         {
             if (!historyItem.PageObjectIDs.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no PageObjectIDs. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObjects Move has no PageObjectIDs. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             if (!historyItem.TravelledPositions.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] PageObjects Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObjects Move has no Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1799,7 +1799,7 @@ namespace Classroom_Learning_Partner
                 Math.Abs(historyItem.TravelledPositions.First().X - historyItem.TravelledPositions.Last().X) < 0.00001 &&
                 Math.Abs(historyItem.TravelledPositions.First().Y - historyItem.TravelledPositions.Last().Y) < 0.00001)
             {
-                Debug.WriteLine($"[NON-ERROR] PageObjects Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObjects Move has the same Travelled Positions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1823,7 +1823,7 @@ namespace Classroom_Learning_Partner
                 var pageObject = newPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
                 if (pageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] PageObjects for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] PageObjects for PageObject Move not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -1849,14 +1849,14 @@ namespace Classroom_Learning_Partner
         {
             if (string.IsNullOrEmpty(historyItem.CuttingStrokeID))
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke ID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke ID. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             var cuttingStroke = newPage.GetVerifiedStrokeInHistoryByID(historyItem.CuttingStrokeID);
             if (cuttingStroke == null)
             {
-                Debug.WriteLine($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] PageObject Cut has NULL Cutting Stroke. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1885,7 +1885,7 @@ namespace Classroom_Learning_Partner
 
                     if (historyItem.HalvedPageObjectIDs.Count > 2)
                     {
-                        Debug.WriteLine($"[ERROR] PageObject Cut has one Cut PageObject, but more than 2 Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        CLogger.AppendToLog($"[ERROR] PageObject Cut has one Cut PageObject, but more than 2 Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                         return null;
                     }
 
@@ -1905,7 +1905,7 @@ namespace Classroom_Learning_Partner
                 {
                     if (halvedPageObject == null)
                     {
-                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        CLogger.AppendToLog($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                         return null;
                     }
                     newPage.PageObjects.Remove(halvedPageObject);
@@ -1915,7 +1915,7 @@ namespace Classroom_Learning_Partner
                 var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.CutPageObjectID);
                 if (cutPageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -1945,7 +1945,7 @@ namespace Classroom_Learning_Partner
 
             if (historyItem.CutPageObjectIDs.Count * 2 != historyItem.HalvedPageObjectIDs.Count)
             {
-                Debug.WriteLine($"[ERROR] PageObject Cut has mismatched number of Cut PageObjects and Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] PageObject Cut has mismatched number of Cut PageObjects and Halved PageObjects. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -1965,7 +1965,7 @@ namespace Classroom_Learning_Partner
                 var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyItemCutPageObjectID) as ICuttable;
                 if (cutPageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] Cut PageObject on PageObject Cut not found in history or on page. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Cut PageObject on PageObject Cut not found in history or on page. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -1993,7 +1993,7 @@ namespace Classroom_Learning_Partner
                 {
                     if (halvedPageObject == null)
                     {
-                        Debug.WriteLine($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                        CLogger.AppendToLog($"[ERROR] Halved PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                         return null;
                     }
                     newPage.PageObjects.Remove(halvedPageObject);
@@ -2003,7 +2003,7 @@ namespace Classroom_Learning_Partner
                 var cutPageObject = newPage.GetVerifiedPageObjectInTrashByID(historyAction.CutPageObjectID);
                 if (cutPageObject == null)
                 {
-                    Debug.WriteLine($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Cut PageObject for PageObject Cut not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -2055,7 +2055,7 @@ namespace Classroom_Learning_Partner
             var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine($"[ERROR] Array for Rotate not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Array for Rotate not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2094,7 +2094,7 @@ namespace Classroom_Learning_Partner
             var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine($"[ERROR] Array for Grid Toggle not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Array for Grid Toggle not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2149,14 +2149,14 @@ namespace Classroom_Learning_Partner
             var persistingArray = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
-                Debug.WriteLine($"[ERROR] Persisting Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Persisting Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             var snappedArray = newPage.GetVerifiedPageObjectInTrashByID(newHistoryAction.SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
-                Debug.WriteLine($"[ERROR] Snapped Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Snapped Array for Snap not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2210,7 +2210,7 @@ namespace Classroom_Learning_Partner
             var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine($"[ERROR] Array for Division Value Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Array for Division Value Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2223,7 +2223,7 @@ namespace Classroom_Learning_Partner
             }
             catch (Exception)
             {
-                Debug.WriteLine($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Division Value Changed, Division Index out of bounds. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2237,7 +2237,7 @@ namespace Classroom_Learning_Partner
             if (!historyItem.AddedDivisions.Any() &&
                 !historyItem.RemovedDivisions.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] Division Values Changed, empty divisions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] Division Values Changed, empty divisions. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2255,7 +2255,7 @@ namespace Classroom_Learning_Partner
             var array = newPage.GetVerifiedPageObjectOnPageByID(newHistoryAction.ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine($"[ERROR] Array for Divisions Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Array for Divisions Changed not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2317,14 +2317,14 @@ namespace Classroom_Learning_Partner
             if (!(nextUnconvertedHistoryItem is Ann.NumberLineEndPointsChangedHistoryItem) && 
                 !(nextUnconvertedHistoryItem is Ann.PageObjectResizeBatchHistoryItem))
             {
-                Debug.WriteLine($"[ERROR] Number Line End Point Change not followed by PageObject Resize or another Number Line End Point Change. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Number Line End Point Change not followed by PageObject Resize or another Number Line End Point Change. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             var numberLine = newPage.GetVerifiedPageObjectOnPageByID(historyItem.NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Number Line for Number Line End Point Change not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2335,7 +2335,7 @@ namespace Classroom_Learning_Partner
                 if (potentialNumberLineMatch == null ||
                     numberLine.ID != potentialNumberLineMatch.ID)
                 {
-                    Debug.WriteLine($"[ERROR] Number Line for Number Line End Point Change doesn't match next PageObject Resize Number Line. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Number Line for Number Line End Point Change doesn't match next PageObject Resize Number Line. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -2401,7 +2401,7 @@ namespace Classroom_Learning_Partner
             if (!historyItem.StrokeIDsAdded.Any() &&
                 !historyItem.StrokeIDsRemoved.Any())
             {
-                Debug.WriteLine($"[NON-ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[NON-ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2424,7 +2424,7 @@ namespace Classroom_Learning_Partner
 
                 if (addedStroke == null)
                 {
-                    Debug.WriteLine($"[ERROR] Strokes Changed, Stroke for AddedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke for AddedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -2454,7 +2454,7 @@ namespace Classroom_Learning_Partner
                         {
                             if (stroke == null)
                             {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                                 continue;
                             }
 
@@ -2468,7 +2468,7 @@ namespace Classroom_Learning_Partner
                         {
                             if (stroke == null)
                             {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                                 continue;
                             }
 
@@ -2521,7 +2521,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
 
@@ -2535,7 +2535,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
 
@@ -2591,7 +2591,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
 
@@ -2626,7 +2626,7 @@ namespace Classroom_Learning_Partner
 
                 if (removedStroke == null)
                 {
-                    Debug.WriteLine($"[ERROR] Strokes Changed, Stroke for RemovedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke for RemovedID doesn't exist on page or in trash. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     return null;
                 }
 
@@ -2654,7 +2654,7 @@ namespace Classroom_Learning_Partner
                         {
                             if (stroke == null)
                             {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                                 continue;
                             }
 
@@ -2668,7 +2668,7 @@ namespace Classroom_Learning_Partner
                         {
                             if (stroke == null)
                             {
-                                Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                                CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in MultipleChoiceBubbleStatusChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                                 continue;
                             }
 
@@ -2721,7 +2721,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
 
@@ -2735,7 +2735,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
 
@@ -2809,7 +2809,7 @@ namespace Classroom_Learning_Partner
                     {
                         if (stroke == null)
                         {
-                            Debug.WriteLine($"[ERROR] Strokes Changed, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                            CLogger.AppendToLog($"[ERROR] Strokes Changed, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                             continue;
                         }
                         newPage.History.TrashedInkStrokes.Remove(stroke);
@@ -2838,19 +2838,19 @@ namespace Classroom_Learning_Partner
             else if (newHistoryAction.StrokesRemoved.Count == 1 &&
                      newHistoryAction.StrokesAdded.Count == 2)
             {
-                Debug.WriteLine($"[ERROR] Strokes Changed, Point Erase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Strokes Changed, Point Erase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
             else
             {
                 // TODO: Handle, Emma P 11, HistoryItem #222 (in Converted Cache)
-                Debug.WriteLine($"[ERROR] Strokes Changed, Not SingleAdd, SingleErase, or PointErase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Strokes Changed, Not SingleAdd, SingleErase, or PointErase. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
             if (!newHistoryAction.IsUsingStrokes)
             {
-                Debug.WriteLine($"[ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                CLogger.AppendToLog($"[ERROR] Strokes Changed, no strokes changed. Next newHistoryAction is NULL ERROR ignorable. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                 return null;
             }
 
@@ -2861,7 +2861,7 @@ namespace Classroom_Learning_Partner
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsAdded. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Strokes Changed, Null stroke in StrokeIDsAdded. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -2874,7 +2874,7 @@ namespace Classroom_Learning_Partner
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine($"[ERROR] Strokes Changed, Null stroke in StrokeIDsRemoved. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
+                    CLogger.AppendToLog($"[ERROR] Strokes Changed, Null stroke in StrokeIDsRemoved. Page {newPage.PageNumber}, VersionIndex {newPage.VersionIndex}, Owner: {newPage.Owner.FullName}. HistoryItemID: {historyItem.ID}");
                     continue;
                 }
                 removedStrokes.Add(stroke);

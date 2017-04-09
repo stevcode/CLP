@@ -1893,7 +1893,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
-                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
+                CLogger.AppendToLog($"Notebook Folder: {notebookFolder}");
                 var notebook = ConversionService.ConvertCacheEmilyNotebook(notebookFolder);
                 notebooks.Add(notebook);
 
