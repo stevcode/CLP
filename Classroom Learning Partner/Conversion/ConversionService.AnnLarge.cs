@@ -508,6 +508,10 @@ namespace Classroom_Learning_Partner
                 }
 
                 var newPageObject = ConvertPageObject(pageObject, newPage);
+                if (newPageObject == null)
+                {
+                    continue;
+                }
                 newPage.PageObjects.Add(newPageObject);
             }
 
@@ -1405,6 +1409,10 @@ namespace Classroom_Learning_Partner
             foreach (var trashedPageObject in pageHistory.TrashedPageObjects)
             {
                 var newTrashedPageObject = ConvertPageObject(trashedPageObject, newPage);
+                if (newTrashedPageObject == null)
+                {
+                    continue;
+                }
                 newPageHistory.TrashedPageObjects.Add(newTrashedPageObject);
             }
 

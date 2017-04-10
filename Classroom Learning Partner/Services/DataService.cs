@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
-            AnalysisService.RunFullBatchAnalysis(AnalysisService.OtherPageNumbersToAnalyze);
+            AnalysisService.RunFullBatchAnalysis(AnalysisService.MainPageNumbersToAnalyze);
         }
 
         #endregion // Constructors
