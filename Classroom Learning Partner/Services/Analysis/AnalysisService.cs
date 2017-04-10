@@ -137,10 +137,10 @@ namespace Classroom_Learning_Partner.Services
                                                                  213,
                                                                  214,
                                                                  215,
-                                                                 217,
+                                                              //   217,  Removed, something wrong with page definition. No hidden value?
                                                                  218,
                                                                  219,
-                                                                 221,
+                                                              //   221,   same
                                                                  225,
                                                                  226,
                                                                  227,
@@ -151,7 +151,7 @@ namespace Classroom_Learning_Partner.Services
                                                                  232,
                                                                  233,
                                                                  234,
-                                                                 236,
+                                                              //   236,  same
                                                                  240,
                                                                  241,
                                                                  242,
