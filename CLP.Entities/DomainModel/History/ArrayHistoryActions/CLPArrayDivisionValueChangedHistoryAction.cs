@@ -83,7 +83,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Division Value Changed not found on page or in history.");
                 return;
             }
 
@@ -95,7 +95,7 @@ namespace CLP.Entities
             }
             catch (Exception)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Division Value Changed DivisionIndex out of bounds.");
             }
         }
 
@@ -113,8 +113,6 @@ namespace CLP.Entities
                 return array == null ? "[ERROR] Array for Division Value Changed not found on page or in history." : $"Changed {array.FormattedName} division value from {PreviousValue} to {NewValue}";
             }
         }
-
-        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

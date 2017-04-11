@@ -328,8 +328,9 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Conversion\ConversionService.cs" />
-    <Compile Include="Services\AnalysisEntry.cs" />
-    <Compile Include="Services\AnalysisService.cs" />
+    <Compile Include="Services\Analysis\AnalysisEntry.cs" />
+    <Compile Include="Services\Analysis\AnalysisService.cs" />
+    <Compile Include="Services\Analysis\AnalysisTracker.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\INetworkService.cs" />

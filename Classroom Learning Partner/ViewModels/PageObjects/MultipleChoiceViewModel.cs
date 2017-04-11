@@ -91,9 +91,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var creationViewModel = new MultipleChoiceCreationViewModel(multipleChoice);
             var multiplicationView = new MultipleChoiceCreationView(creationViewModel)
-            {
-                Owner = Application.Current.MainWindow
-            };
+                                     {
+                                         Owner = Application.Current.MainWindow
+                                     };
             multiplicationView.ShowDialog();
 
             multipleChoice.SetOffsets();

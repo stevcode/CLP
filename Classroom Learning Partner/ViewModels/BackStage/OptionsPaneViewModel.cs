@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -19,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             RunAnalysisCommand = new Command(OnRunAnalysisCommandExecute);
+            ClearAuthorHistoryItemsCommand = new Command(OnClearAuthorHistoryItemsCommandExecute);
         }
 
         #endregion //Constructor
@@ -51,8 +54,47 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent && n.Owner.ID != "d7tlNq2ryUqW53USnrea-A"))
             {
-                AnalysisService.RunAnalysis(notebook);
+                AnalysisService.RunAnalysisOnLoadedNotebook(notebook);
             }
+
+            MessageBox.Show("Analysis Finished.");
+        }
+
+        /// <summary>SUMMARY</summary>
+        public Command ClearAuthorHistoryItemsCommand { get; private set; }
+
+        private void OnClearAuthorHistoryItemsCommandExecute()
+        {
+            foreach (var notebook in _dataService.LoadedNotebooks)
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    ClearAuthoredHistoryActions(page);
+                    foreach (var submission in page.Submissions)
+                    {
+                        ClearAuthoredHistoryActions(submission);
+                    }
+                }
+            }
+
+            MessageBox.Show("Finished.");
+        }
+
+        private void ClearAuthoredHistoryActions(CLPPage page)
+        {
+            var undoActionsToRemove = page.History.UndoActions.Where(a => a.OwnerID == Person.AUTHOR_ID).ToList();
+            foreach (var historyAction in undoActionsToRemove)
+            {
+                page.History.UndoActions.Remove(historyAction);
+            }
+
+            var redoActionsToRemove = page.History.RedoActions.Where(a => a.OwnerID == Person.AUTHOR_ID).ToList();
+            foreach (var historyAction in redoActionsToRemove)
+            {
+                page.History.RedoActions.Remove(historyAction);
+            }
+
+            page.History.RefreshHistoryIndexes();
         }
 
         #endregion //Commands

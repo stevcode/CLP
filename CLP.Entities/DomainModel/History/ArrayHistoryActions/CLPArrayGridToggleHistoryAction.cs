@@ -53,7 +53,7 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Grid Toggle not found on page or in history.");
                 return;
             }
 
@@ -74,8 +74,6 @@ namespace CLP.Entities
                 return array == null ? "[ERROR] Array for Grid Toggle not found on page or in history." : $"Toggled Grid of {array.FormattedName} {(IsToggledOn ? "on" : "off")}.";
             }
         }
-
-        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

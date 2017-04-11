@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Ink;
 using Catel;
 using Catel.Collections;
 
@@ -13,10 +15,12 @@ namespace CLP.Entities
         {
             Argument.IsNotNull(nameof(page), page);
 
+            CLogger.AppendToLog($"Analyzing {page.Owner.FullName}'s Page {page.PageNumber}, Version Index {page.VersionIndex}");
+
             ObjectSemanticEvents.InitializeIncrementIDs();
             page.History.SemanticEvents.Clear();
 
-            // TODO: Pass 0 to "update" certain ink strokes over a Fill-In Ans to appropriate historyAction?
+            FixANSFIHistoryActions(page);
 
             // First Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
@@ -138,6 +142,81 @@ namespace CLP.Entities
             #endregion // Logging
         }
 
+        #region Zero Pass: Fix ANS FI HistoryActions
+
+        private static void FixANSFIHistoryActions(CLPPage page)
+        {
+            var strokeChangedHistoryActions = page.History.UndoActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.IsUsingStrokes).OrderBy(h => h.HistoryActionIndex).ToList();
+
+            foreach (var strokeChangedHistoryAction in strokeChangedHistoryActions)
+            {
+                var isAdd = false;
+                Stroke strokeChanged = null;
+                if (strokeChangedHistoryAction.StrokeIDsAdded.Count == 1 &&
+                    !strokeChangedHistoryAction.StrokeIDsRemoved.Any())
+                {
+                    isAdd = true;
+
+                    var strokeID = strokeChangedHistoryAction.StrokeIDsAdded.First();
+                    strokeChanged = page.GetStrokeByIDOnPageOrInHistory(strokeID);
+                }
+                else if (strokeChangedHistoryAction.StrokeIDsRemoved.Count == 1 &&
+                         !strokeChangedHistoryAction.StrokeIDsAdded.Any())
+                {
+                    isAdd = false;
+
+                    var strokeID = strokeChangedHistoryAction.StrokeIDsRemoved.First();
+                    strokeChanged = page.GetStrokeByIDOnPageOrInHistory(strokeID);
+                }
+
+                if (strokeChanged == null)
+                {
+                    continue;
+                }
+
+                #region Check for Interpretation Region Fill-In
+
+                foreach (var interpretationRegion in page.PageObjects.OfType<InterpretationRegion>())
+                {
+                    var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(strokeChanged);
+                    if (!isStrokeOver)
+                    {
+                        continue;
+                    }
+
+                    var strokesAdded = new List<Stroke>();
+                    var strokesRemoved = new List<Stroke>();
+
+                    if (isAdd)
+                    {
+                        strokesAdded.Add(strokeChanged);
+                    }
+                    else
+                    {
+                        strokesRemoved.Add(strokeChanged);
+                    }
+
+                    interpretationRegion.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                    var fillInAnswerChangedHistoryAction = new FillInAnswerChangedHistoryAction(page,
+                                                                                                page.Owner,
+                                                                                                interpretationRegion,
+                                                                                                strokesAdded,
+                                                                                                strokesRemoved);
+
+                    fillInAnswerChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+
+                    var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
+                    page.History.UndoActions[indexToReplace] = fillInAnswerChangedHistoryAction;
+
+                    break;
+                }
+
+                #endregion // Check for Interpretation Region Fill-In
+            }
+        }
+
+        #endregion // Zero Pass: Fix ANS FI HistoryActions
+
         #region First Pass: Initialization
 
         private static List<ISemanticEvent> GenerateInitialSemanticEvents(CLPPage page)
@@ -154,10 +233,10 @@ namespace CLP.Entities
                 historyActionBuffer.Add(currentHistoryAction);
                 if (historyActionBuffer.Count == 1)
                 {
-                    var singleSemanticEvent = VerifyAndGenerateSingleActionEvent(page, historyActionBuffer.First());
-                    if (singleSemanticEvent != null)
+                    var singleSemanticEvents = VerifyAndGenerateSingleActionEvent(page, historyActionBuffer.First());
+                    if (singleSemanticEvents.Any())
                     {
-                        initialSemanticEvents.Add(singleSemanticEvent);
+                        initialSemanticEvents.AddRange(singleSemanticEvents);
                         historyActionBuffer.Clear();
                         continue;
                     }
@@ -175,41 +254,53 @@ namespace CLP.Entities
             return initialSemanticEvents;
         }
 
-        private static ISemanticEvent VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
+        private static List<ISemanticEvent> VerifyAndGenerateSingleActionEvent(CLPPage page, IHistoryAction historyAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(historyAction), historyAction);
 
             // TODO: Division Values Changed, DT Array Snapped/Removed, Animation Stop/Start
 
-            ISemanticEvent semanticEvent = null;
+            var semanticEvents = new List<ISemanticEvent>();
             TypeSwitch.On(historyAction)
                       .Case<ObjectsOnPageChangedHistoryAction>(h =>
                                                                {
-                                                                   semanticEvent = ObjectSemanticEvents.Add(page, h) ?? ObjectSemanticEvents.Delete(page, h);
+                                                                   var generatedSemanticEvents = ObjectSemanticEvents.Add(page, h);
+                                                                   if (!generatedSemanticEvents.Any())
+                                                                   {
+                                                                       generatedSemanticEvents = ObjectSemanticEvents.Delete(page, h);
+                                                                   }
+                                                                   semanticEvents.AddRange(generatedSemanticEvents);
                                                                })
                       .Case<PartsValueChangedHistoryAction>(h =>
                                                                 {
-                                                                    semanticEvent = StampSemanticEvents.PartsValueChanged(page, h);
+                                                                    var semanticEvent = StampSemanticEvents.PartsValueChanged(page, h);
+                                                                    semanticEvents.Add(semanticEvent);
                                                                 })
                       .Case<CLPArrayRotateHistoryAction>(h =>
                                                          {
-                                                             semanticEvent = ArraySemanticEvents.Rotate(page, h);
+                                                             var semanticEvent = ArraySemanticEvents.Rotate(page, h);
+                                                             semanticEvents.Add(semanticEvent);
                                                          })
                       .Case<PageObjectCutHistoryAction>(h =>
                                                         {
-                                                            semanticEvent = ArraySemanticEvents.Cut(page, h);
+                                                            var semanticEvent = ArraySemanticEvents.Cut(page, h);
+                                                            semanticEvents.Add(semanticEvent);
                                                         })
                       .Case<CLPArraySnapHistoryAction>(h =>
                                                        {
-                                                           semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                           var semanticEvent = ArraySemanticEvents.Snap(page, h);
+                                                           semanticEvents.Add(semanticEvent);
                                                        })
                       .Case<CLPArrayDivisionsChangedHistoryAction>(h =>
                                                                    {
-                                                                       semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                       var semanticEvent = ArraySemanticEvents.Divide(page, h);
+                                                                       semanticEvents.Add(semanticEvent);
                                                                    });
 
-            return semanticEvent;
+            
+
+            return semanticEvents;
         }
 
         private static ISemanticEvent VerifyAndGenerateCompoundActionEvent(CLPPage page, List<IHistoryAction> historyActions, IHistoryAction nextHistoryAction)
@@ -674,6 +765,17 @@ namespace CLP.Entities
                 // TODO: Attempt Dots/Lines interpretation
             }
 
+            if (semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_BOTTOM_SKIP) &&
+                semanticEvent.EventInformation.Contains(Codings.OBJECT_ARRAY))
+            {
+                var interpretedEvent = ArraySemanticEvents.BottomSkipCounting(page, semanticEvent);
+                if (interpretedEvent != null)
+                {
+                    allInterpretedEvents.Add(interpretedEvent);
+                    return allInterpretedEvents;
+                }
+            }
+
             if (!semanticEvent.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER))
             {
                 var interpretedEvent = InkSemanticEvents.Arithmetic(page, semanticEvent);
@@ -725,14 +827,13 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            //ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
-            //AttemptAnswerBeforeRepresentationTag(page, semanticEvents);
-            //AttemptAnswerChangedAfterRepresentationTag(page, semanticEvents);
+            IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             var finalAnswerCorrectness = FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             var representationCorrectness = RepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
+            ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
         }
 
         #endregion // Last Pass: Tag Generation

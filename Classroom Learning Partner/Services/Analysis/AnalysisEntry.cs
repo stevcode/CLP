@@ -19,6 +19,8 @@ namespace Classroom_Learning_Partner.Services
         public const string CORRECTNESS_CORRECT = "C";
         public const string CORRECTNESS_INCORRECT = "I";
         public const string CORRECTNESS_PARTIAL = "P";
+        public const string CORRECTNESS_ILLEGIBLE = "ILL";
+        public const string CORRECTNESS_UNANSWERED = "UNA";
 
         public const string PROBLEM_TYPE_1_PART = "1P";
         public const string PROBLEM_TYPE_2_PART = "2P";
@@ -49,9 +51,16 @@ namespace Classroom_Learning_Partner.Services
         public const string SPECIAL_INTEREST_GROUP_2PSF = "2PSF";
         public const string SPECIAL_INTEREST_GROUP_2PSS = "2PSS";
 
+        public const string FABR = "FABR";
+        public const string IABR = "IABR";
+        public const string RAFA = "RAFA";
+        public const string RAIA = "RAIA";
+
         #endregion // Constants
 
         #region Constructors
+
+        public AnalysisEntry() { }
 
         public AnalysisEntry(string ownerName, int pageNumber)
         {
@@ -218,15 +227,6 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData ArrayDeletedCountProperty = RegisterProperty("ArrayDeletedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
-        public int NumberLineCreatedCount
-        {
-            get { return GetValue<int>(NumberLineCreatedCountProperty); }
-            set { SetValue(NumberLineCreatedCountProperty, value); }
-        }
-
-        public static readonly PropertyData NumberLineCreatedCountProperty = RegisterProperty("NumberLineCreatedCount", typeof(int), 0);
-
-        /// <summary>SUMMARY</summary>
         public int NumberLineDeletedCount
         {
             get { return GetValue<int>(NumberLineDeletedCountProperty); }
@@ -327,13 +327,13 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
-        public int LeftNumberLineUsedCount
+        public int LeftNumberLineCreatedCount
         {
-            get { return GetValue<int>(LeftNumberLineUsedCountProperty); }
-            set { SetValue(LeftNumberLineUsedCountProperty, value); }
+            get { return GetValue<int>(LeftNumberLineCreatedCountProperty); }
+            set { SetValue(LeftNumberLineCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData LeftNumberLineUsedCountProperty = RegisterProperty("LeftNumberLineUsedCount", typeof(int), 0);
+        public static readonly PropertyData LeftNumberLineCreatedCountProperty = RegisterProperty("LeftNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string LeftNLJE
@@ -354,26 +354,26 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData LeftNumberLineSwitchedProperty = RegisterProperty("LeftNumberLineSwitched", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string LeftNumberLineBlank
+        public int LeftNumberLineBlankCount
         {
-            get { return GetValue<string>(LeftNumberLineBlankProperty); }
-            set { SetValue(LeftNumberLineBlankProperty, value); }
+            get { return GetValue<int>(LeftNumberLineBlankCountProperty); }
+            set { SetValue(LeftNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData LeftNumberLineBlankProperty = RegisterProperty("LeftNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData LeftNumberLineBlankCountProperty = RegisterProperty("LeftNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int LeftStampCreatedCount
+        public int LeftStampsCreatedCount
         {
-            get { return GetValue<int>(LeftStampCreatedCountProperty); }
-            set { SetValue(LeftStampCreatedCountProperty, value); }
+            get { return GetValue<int>(LeftStampsCreatedCountProperty); }
+            set { SetValue(LeftStampsCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData LeftStampCreatedCountProperty = RegisterProperty("LeftStampCreatedCount", typeof(int), 0);
+        public static readonly PropertyData LeftStampsCreatedCountProperty = RegisterProperty("LeftStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int LeftStampImagesCreatedCount
@@ -394,6 +394,82 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData LeftStampImagesSwitchedProperty = RegisterProperty("LeftStampImagesSwitched", typeof(string), string.Empty);
 
         #endregion // Stamps
+
+        #region Representation Correctness Counts
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArrayCorrectCount
+        {
+            get { return GetValue<int>(LeftArrayCorrectCountProperty); }
+            set { SetValue(LeftArrayCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArrayCorrectCountProperty = RegisterProperty("LeftArrayCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftArrayPartiallyCorrectCount
+        {
+            get { return GetValue<int>(LeftArrayPartiallyCorrectCountProperty); }
+            set { SetValue(LeftArrayPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftArrayPartiallyCorrectCountProperty = RegisterProperty("LeftArrayPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftNumberLineCorrectCount
+        {
+            get { return GetValue<int>(LeftNumberLineCorrectCountProperty); }
+            set { SetValue(LeftNumberLineCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLineCorrectCountProperty = RegisterProperty("LeftNumberLineCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftNumberLinePartiallyCorrectCount
+        {
+            get { return GetValue<int>(LeftNumberLinePartiallyCorrectCountProperty); }
+            set { SetValue(LeftNumberLinePartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLinePartiallyCorrectCountProperty = RegisterProperty("LeftNumberLinePartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftNumberLinePartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(LeftNumberLinePartiallyCorrectSwappedCountProperty); }
+            set { SetValue(LeftNumberLinePartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftNumberLinePartiallyCorrectSwappedCountProperty = RegisterProperty("LeftNumberLinePartiallyCorrectSwappedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftStampCorrectCount
+        {
+            get { return GetValue<int>(LeftStampCorrectCountProperty); }
+            set { SetValue(LeftStampCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftStampCorrectCountProperty = RegisterProperty("LeftStampCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftStampPartiallyCorrectCount
+        {
+            get { return GetValue<int>(LeftStampPartiallyCorrectCountProperty); }
+            set { SetValue(LeftStampPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftStampPartiallyCorrectCountProperty = RegisterProperty("LeftStampPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int LeftStampPartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(LeftStampPartiallyCorrectSwappedCountProperty); }
+            set { SetValue(LeftStampPartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData LeftStampPartiallyCorrectSwappedCountProperty = RegisterProperty("LeftStampPartiallyCorrectSwappedCount", typeof(int), 0);
+
+        #endregion // Representation Correctness Counts
 
         /// <summary>SUMMARY</summary>
         public List<string> LeftRepresentationsAndCorrectness
@@ -478,13 +554,13 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
-        public int RightNumberLineUsedCount
+        public int RightNumberLineCreatedCount
         {
-            get { return GetValue<int>(RightNumberLineUsedCountProperty); }
-            set { SetValue(RightNumberLineUsedCountProperty, value); }
+            get { return GetValue<int>(RightNumberLineCreatedCountProperty); }
+            set { SetValue(RightNumberLineCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData RightNumberLineUsedCountProperty = RegisterProperty("RightNumberLineUsedCount", typeof(int), 0);
+        public static readonly PropertyData RightNumberLineCreatedCountProperty = RegisterProperty("RightNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string RightNLJE
@@ -505,26 +581,26 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData RightNumberLineSwitchedProperty = RegisterProperty("RightNumberLineSwitched", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string RightNumberLineBlank
+        public int RightNumberLineBlankCount
         {
-            get { return GetValue<string>(RightNumberLineBlankProperty); }
-            set { SetValue(RightNumberLineBlankProperty, value); }
+            get { return GetValue<int>(RightNumberLineBlankCountProperty); }
+            set { SetValue(RightNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData RightNumberLineBlankProperty = RegisterProperty("RightNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData RightNumberLineBlankCountProperty = RegisterProperty("RightNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int RightStampCreatedCount
+        public int RightStampsCreatedCount
         {
-            get { return GetValue<int>(RightStampCreatedCountProperty); }
-            set { SetValue(RightStampCreatedCountProperty, value); }
+            get { return GetValue<int>(RightStampsCreatedCountProperty); }
+            set { SetValue(RightStampsCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData RightStampCreatedCountProperty = RegisterProperty("RightStampCreatedCount", typeof(int), 0);
+        public static readonly PropertyData RightStampsCreatedCountProperty = RegisterProperty("RightStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int RightStampImagesCreatedCount
@@ -545,6 +621,82 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData RightStampImagesSwitchedProperty = RegisterProperty("RightStampImagesSwitched", typeof(string), string.Empty);
 
         #endregion // Stamps
+
+        #region Representation Correctness Counts
+
+        /// <summary>SUMMARY</summary>
+        public int RightArrayCorrectCount
+        {
+            get { return GetValue<int>(RightArrayCorrectCountProperty); }
+            set { SetValue(RightArrayCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArrayCorrectCountProperty = RegisterProperty("RightArrayCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightArrayPartiallyCorrectCount
+        {
+            get { return GetValue<int>(RightArrayPartiallyCorrectCountProperty); }
+            set { SetValue(RightArrayPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightArrayPartiallyCorrectCountProperty = RegisterProperty("RightArrayPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightNumberLineCorrectCount
+        {
+            get { return GetValue<int>(RightNumberLineCorrectCountProperty); }
+            set { SetValue(RightNumberLineCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightNumberLineCorrectCountProperty = RegisterProperty("RightNumberLineCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightNumberLinePartiallyCorrectCount
+        {
+            get { return GetValue<int>(RightNumberLinePartiallyCorrectCountProperty); }
+            set { SetValue(RightNumberLinePartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightNumberLinePartiallyCorrectCountProperty = RegisterProperty("RightNumberLinePartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightNumberLinePartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(RightNumberLinePartiallyCorrectSwappedCountProperty); }
+            set { SetValue(RightNumberLinePartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightNumberLinePartiallyCorrectSwappedCountProperty = RegisterProperty("RightNumberLinePartiallyCorrectSwappedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightStampCorrectCount
+        {
+            get { return GetValue<int>(RightStampCorrectCountProperty); }
+            set { SetValue(RightStampCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightStampCorrectCountProperty = RegisterProperty("RightStampCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightStampPartiallyCorrectCount
+        {
+            get { return GetValue<int>(RightStampPartiallyCorrectCountProperty); }
+            set { SetValue(RightStampPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightStampPartiallyCorrectCountProperty = RegisterProperty("RightStampPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int RightStampPartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(RightStampPartiallyCorrectSwappedCountProperty); }
+            set { SetValue(RightStampPartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData RightStampPartiallyCorrectSwappedCountProperty = RegisterProperty("RightStampPartiallyCorrectSwappedCount", typeof(int), 0);
+
+        #endregion // Representation Correctness Counts
 
         /// <summary>SUMMARY</summary>
         public List<string> RightRepresentationsAndCorrectness
@@ -629,13 +781,13 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
-        public int AlternativeNumberLineUsedCount
+        public int AlternativeNumberLineCreatedCount
         {
-            get { return GetValue<int>(AlternativeNumberLineUsedCountProperty); }
-            set { SetValue(AlternativeNumberLineUsedCountProperty, value); }
+            get { return GetValue<int>(AlternativeNumberLineCreatedCountProperty); }
+            set { SetValue(AlternativeNumberLineCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData AlternativeNumberLineUsedCountProperty = RegisterProperty("AlternativeNumberLineUsedCount", typeof(int), 0);
+        public static readonly PropertyData AlternativeNumberLineCreatedCountProperty = RegisterProperty("AlternativeNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string AlternativeNLJE
@@ -652,30 +804,30 @@ namespace Classroom_Learning_Partner.Services
             get { return GetValue<string>(AlternativeNumberLineSwitchedProperty); }
             set { SetValue(AlternativeNumberLineSwitchedProperty, value); }
         }
-
+        
         public static readonly PropertyData AlternativeNumberLineSwitchedProperty = RegisterProperty("AlternativeNumberLineSwitched", typeof(string), string.Empty);
 
         /// <summary>SUMMARY</summary>
-        public string AlternativeNumberLineBlank
+        public int AlternativeNumberLineBlankCount
         {
-            get { return GetValue<string>(AlternativeNumberLineBlankProperty); }
-            set { SetValue(AlternativeNumberLineBlankProperty, value); }
+            get { return GetValue<int>(AlternativeNumberLineBlankCountProperty); }
+            set { SetValue(AlternativeNumberLineBlankCountProperty, value); }
         }
 
-        public static readonly PropertyData AlternativeNumberLineBlankProperty = RegisterProperty("AlternativeNumberLineBlank", typeof(string), string.Empty);
+        public static readonly PropertyData AlternativeNumberLineBlankCountProperty = RegisterProperty("AlternativeNumberLineBlankCount", typeof(int), 0);
 
         #endregion // Number Line
 
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int AlternativeStampCreatedCount
+        public int AlternativeStampsCreatedCount
         {
-            get { return GetValue<int>(AlternativeStampCreatedCountProperty); }
-            set { SetValue(AlternativeStampCreatedCountProperty, value); }
+            get { return GetValue<int>(AlternativeStampsCreatedCountProperty); }
+            set { SetValue(AlternativeStampsCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData AlternativeStampCreatedCountProperty = RegisterProperty("AlternativeStampCreatedCount", typeof(int), 0);
+        public static readonly PropertyData AlternativeStampsCreatedCountProperty = RegisterProperty("AlternativeStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int AlternativeStampImagesCreatedCount
@@ -696,6 +848,82 @@ namespace Classroom_Learning_Partner.Services
         public static readonly PropertyData AlternativeStampImagesSwitchedProperty = RegisterProperty("AlternativeStampImagesSwitched", typeof(string), string.Empty);
 
         #endregion // Stamps
+
+        #region Representation Correctness Counts
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArrayCorrectCount
+        {
+            get { return GetValue<int>(AlternativeArrayCorrectCountProperty); }
+            set { SetValue(AlternativeArrayCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArrayCorrectCountProperty = RegisterProperty("AlternativeArrayCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeArrayPartiallyCorrectCount
+        {
+            get { return GetValue<int>(AlternativeArrayPartiallyCorrectCountProperty); }
+            set { SetValue(AlternativeArrayPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeArrayPartiallyCorrectCountProperty = RegisterProperty("AlternativeArrayPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeNumberLineCorrectCount
+        {
+            get { return GetValue<int>(AlternativeNumberLineCorrectCountProperty); }
+            set { SetValue(AlternativeNumberLineCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeNumberLineCorrectCountProperty = RegisterProperty("AlternativeNumberLineCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeNumberLinePartiallyCorrectCount
+        {
+            get { return GetValue<int>(AlternativeNumberLinePartiallyCorrectCountProperty); }
+            set { SetValue(AlternativeNumberLinePartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeNumberLinePartiallyCorrectCountProperty = RegisterProperty("AlternativeNumberLinePartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeNumberLinePartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(AlternativeNumberLinePartiallyCorrectSwappedCountProperty); }
+            set { SetValue(AlternativeNumberLinePartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeNumberLinePartiallyCorrectSwappedCountProperty = RegisterProperty("AlternativeNumberLinePartiallyCorrectSwappedCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeStampCorrectCount
+        {
+            get { return GetValue<int>(AlternativeStampCorrectCountProperty); }
+            set { SetValue(AlternativeStampCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeStampCorrectCountProperty = RegisterProperty("AlternativeStampCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeStampPartiallyCorrectCount
+        {
+            get { return GetValue<int>(AlternativeStampPartiallyCorrectCountProperty); }
+            set { SetValue(AlternativeStampPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeStampPartiallyCorrectCountProperty = RegisterProperty("AlternativeStampPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int AlternativeStampPartiallyCorrectSwappedCount
+        {
+            get { return GetValue<int>(AlternativeStampPartiallyCorrectSwappedCountProperty); }
+            set { SetValue(AlternativeStampPartiallyCorrectSwappedCountProperty, value); }
+        }
+
+        public static readonly PropertyData AlternativeStampPartiallyCorrectSwappedCountProperty = RegisterProperty("AlternativeStampPartiallyCorrectSwappedCount", typeof(int), 0);
+
+        #endregion // Representation Correctness Counts
 
         /// <summary>SUMMARY</summary>
         public List<string> AlternativeRepresentationsAndCorrectness
@@ -780,13 +1008,13 @@ namespace Classroom_Learning_Partner.Services
         #region Number Line
 
         /// <summary>SUMMARY</summary>
-        public int UnmatchedNumberLineUsedCount
+        public int UnmatchedNumberLineCreatedCount
         {
-            get { return GetValue<int>(UnmatchedNumberLineUsedCountProperty); }
-            set { SetValue(UnmatchedNumberLineUsedCountProperty, value); }
+            get { return GetValue<int>(UnmatchedNumberLineCreatedCountProperty); }
+            set { SetValue(UnmatchedNumberLineCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData UnmatchedNumberLineUsedCountProperty = RegisterProperty("UnmatchedNumberLineUsedCount", typeof(int), 0);
+        public static readonly PropertyData UnmatchedNumberLineCreatedCountProperty = RegisterProperty("UnmatchedNumberLineCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public string UnmatchedNLJE
@@ -797,36 +1025,18 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData UnmatchedNLJEProperty = RegisterProperty("UnmatchedNLJE", typeof(string), string.Empty);
 
-        /// <summary>SUMMARY</summary>
-        public string UnmatchedNumberLineSwitched
-        {
-            get { return GetValue<string>(UnmatchedNumberLineSwitchedProperty); }
-            set { SetValue(UnmatchedNumberLineSwitchedProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedNumberLineSwitchedProperty = RegisterProperty("UnmatchedNumberLineSwitched", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public string UnmatchedNumberLineBlank
-        {
-            get { return GetValue<string>(UnmatchedNumberLineBlankProperty); }
-            set { SetValue(UnmatchedNumberLineBlankProperty, value); }
-        }
-
-        public static readonly PropertyData UnmatchedNumberLineBlankProperty = RegisterProperty("UnmatchedNumberLineBlank", typeof(string), string.Empty);
-
         #endregion // Number Line
 
         #region Stamps
 
         /// <summary>SUMMARY</summary>
-        public int UnmatchedStampCreatedCount
+        public int UnmatchedStampsCreatedCount
         {
-            get { return GetValue<int>(UnmatchedStampCreatedCountProperty); }
-            set { SetValue(UnmatchedStampCreatedCountProperty, value); }
+            get { return GetValue<int>(UnmatchedStampsCreatedCountProperty); }
+            set { SetValue(UnmatchedStampsCreatedCountProperty, value); }
         }
 
-        public static readonly PropertyData UnmatchedStampCreatedCountProperty = RegisterProperty("UnmatchedStampCreatedCount", typeof(int), 0);
+        public static readonly PropertyData UnmatchedStampsCreatedCountProperty = RegisterProperty("UnmatchedStampsCreatedCount", typeof(int), 0);
 
         /// <summary>SUMMARY</summary>
         public int UnmatchedStampImagesCreatedCount
@@ -837,16 +1047,74 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData UnmatchedStampImagesCreatedCountProperty = RegisterProperty("UnmatchedStampImagesCreatedCount", typeof(int), 0);
 
+        #endregion // Stamps
+
+        #region Representation Correctness Counts
+
         /// <summary>SUMMARY</summary>
-        public string UnmatchedStampImagesSwitched
+        public int UnmatchedArrayPartiallyCorrectCount
         {
-            get { return GetValue<string>(UnmatchedStampImagesSwitchedProperty); }
-            set { SetValue(UnmatchedStampImagesSwitchedProperty, value); }
+            get { return GetValue<int>(UnmatchedArrayPartiallyCorrectCountProperty); }
+            set { SetValue(UnmatchedArrayPartiallyCorrectCountProperty, value); }
         }
 
-        public static readonly PropertyData UnmatchedStampImagesSwitchedProperty = RegisterProperty("UnmatchedStampImagesSwitched", typeof(string), string.Empty);
+        public static readonly PropertyData UnmatchedArrayPartiallyCorrectCountProperty = RegisterProperty("UnmatchedArrayPartiallyCorrectCount", typeof(int), 0);
 
-        #endregion // Stamps
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedArrayIncorrectCount
+        {
+            get { return GetValue<int>(UnmatchedArrayIncorrectCountProperty); }
+            set { SetValue(UnmatchedArrayIncorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedArrayIncorrectCountProperty = RegisterProperty("UnmatchedArrayIncorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedNumberLinePartiallyCorrectCount
+        {
+            get { return GetValue<int>(UnmatchedNumberLinePartiallyCorrectCountProperty); }
+            set { SetValue(UnmatchedNumberLinePartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedNumberLinePartiallyCorrectCountProperty = RegisterProperty("UnmatchedNumberLinePartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedNumberLineIncorrectCount
+        {
+            get { return GetValue<int>(UnmatchedNumberLineIncorrectCountProperty); }
+            set { SetValue(UnmatchedNumberLineIncorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedNumberLineIncorrectCountProperty = RegisterProperty("UnmatchedNumberLineIncorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedNumberLineUnknownCount
+        {
+            get { return GetValue<int>(UnmatchedNumberLineUnknownCountProperty); }
+            set { SetValue(UnmatchedNumberLineUnknownCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedNumberLineUnknownCountProperty = RegisterProperty("UnmatchedNumberLineUnknownCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedStampPartiallyCorrectCount
+        {
+            get { return GetValue<int>(UnmatchedStampPartiallyCorrectCountProperty); }
+            set { SetValue(UnmatchedStampPartiallyCorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedStampPartiallyCorrectCountProperty = RegisterProperty("UnmatchedStampPartiallyCorrectCount", typeof(int), 0);
+
+        /// <summary>SUMMARY</summary>
+        public int UnmatchedStampIncorrectCount
+        {
+            get { return GetValue<int>(UnmatchedStampIncorrectCountProperty); }
+            set { SetValue(UnmatchedStampIncorrectCountProperty, value); }
+        }
+
+        public static readonly PropertyData UnmatchedStampIncorrectCountProperty = RegisterProperty("UnmatchedStampIncorrectCount", typeof(int), 0);
+
+        #endregion // Representation Correctness Counts
 
         /// <summary>SUMMARY</summary>
         public List<string> UnmatchedRepresentationsAndCorrectness
@@ -871,6 +1139,15 @@ namespace Classroom_Learning_Partner.Services
         #region Whole Page Analysis
 
         /// <summary>SUMMARY</summary>
+        public string NLJE
+        {
+            get { return GetValue<string>(NLJEProperty); }
+            set { SetValue(NLJEProperty, value); }
+        }
+
+        public static readonly PropertyData NLJEProperty = RegisterProperty("NLJE", typeof(string), string.Empty);
+
+        /// <summary>SUMMARY</summary>
         public string IsMR2STEP
         {
             get { return GetValue<string>(IsMR2STEPProperty); }
@@ -878,6 +1155,15 @@ namespace Classroom_Learning_Partner.Services
         }
 
         public static readonly PropertyData IsMR2STEPProperty = RegisterProperty("IsMR2STEP", typeof(string), string.Empty);
+
+        /// <summary>Correctness of the Intermediary Fill-In answer.</summary>
+        public string IntermediaryAnswerCorrectness
+        {
+            get { return GetValue<string>(IntermediaryAnswerCorrectnessProperty); }
+            set { SetValue(IntermediaryAnswerCorrectnessProperty, value); }
+        }
+
+        public static readonly PropertyData IntermediaryAnswerCorrectnessProperty = RegisterProperty("IntermediaryAnswerCorrectness", typeof(string), string.Empty);
 
         /// <summary>Correctness of the Fill-In/Multiple Choice answer.</summary>
         public string FinalAnswerCorrectness
@@ -888,32 +1174,14 @@ namespace Classroom_Learning_Partner.Services
 
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(string), string.Empty);
 
-        /// <summary>Overall correctness summary of the page.</summary>
-        public string CorrectnessSummary
+        /// <summary>List of existance of various ABR/RAA codes.</summary>
+        public List<string> ABR_RAA
         {
-            get { return GetValue<string>(CorrectnessSummaryProperty); }
-            set { SetValue(CorrectnessSummaryProperty, value); }
+            get { return GetValue<List<string>>(ABR_RAAProperty); }
+            set { SetValue(ABR_RAAProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessSummaryProperty = RegisterProperty("CorrectnessSummary", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public string IsABR
-        {
-            get { return GetValue<string>(IsABRProperty); }
-            set { SetValue(IsABRProperty, value); }
-        }
-
-        public static readonly PropertyData IsABRProperty = RegisterProperty("IsABR", typeof(string), string.Empty);
-
-        /// <summary>SUMMARY</summary>
-        public string IsRAA
-        {
-            get { return GetValue<string>(IsRAAProperty); }
-            set { SetValue(IsRAAProperty, value); }
-        }
-
-        public static readonly PropertyData IsRAAProperty = RegisterProperty("IsRAA", typeof(string), string.Empty);
+        public static readonly PropertyData ABR_RAAProperty = RegisterProperty("ABR_RAA", typeof(List<string>), () => new List<string>());
 
         /// <summary>SUMMARY</summary>
         public List<string> AnswersChangedAfterRepresentation
@@ -977,7 +1245,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(IsInkOnly);
             cellContents.Add(IsBlank);
             cellContents.Add(ArrayDeletedCount.ToString());
-            cellContents.Add(NumberLineCreatedCount.ToString());
             cellContents.Add(NumberLineDeletedCount.ToString());
             cellContents.Add(StampDeletedCount.ToString());
             cellContents.Add(IndividualStampImageDeletedCount.ToString());
@@ -990,13 +1257,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(LeftArrayDivideCount.ToString());
             cellContents.Add(LeftArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", LeftArraySkipCountingCorretness));
-            cellContents.Add(LeftNumberLineUsedCount.ToString());
-            cellContents.Add(LeftNLJE);
+            cellContents.Add(LeftNumberLineCreatedCount.ToString());
             cellContents.Add(LeftNumberLineSwitched);
-            cellContents.Add(LeftNumberLineBlank);
-            cellContents.Add(LeftStampCreatedCount.ToString());
+            cellContents.Add(LeftNumberLineBlankCount.ToString());
+            cellContents.Add(LeftStampsCreatedCount.ToString());
             cellContents.Add(LeftStampImagesCreatedCount.ToString());
             cellContents.Add(LeftStampImagesSwitched);
+            cellContents.Add(LeftArrayCorrectCount.ToString());
+            cellContents.Add(LeftArrayPartiallyCorrectCount.ToString());
+            cellContents.Add(LeftNumberLineCorrectCount.ToString());
+            cellContents.Add(LeftNumberLinePartiallyCorrectCount.ToString());
+            cellContents.Add(LeftNumberLinePartiallyCorrectSwappedCount.ToString());
+            cellContents.Add(LeftStampCorrectCount.ToString());
+            cellContents.Add(LeftStampPartiallyCorrectCount.ToString());
+            cellContents.Add(LeftStampPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(string.Join(", ", LeftRepresentationsAndCorrectness));
             cellContents.Add(IsLeftMR);
 
@@ -1007,13 +1281,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(RightArrayDivideCount.ToString());
             cellContents.Add(RightArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", RightArraySkipCountingCorretness));
-            cellContents.Add(RightNumberLineUsedCount.ToString());
-            cellContents.Add(RightNLJE);
+            cellContents.Add(RightNumberLineCreatedCount.ToString());
             cellContents.Add(RightNumberLineSwitched);
-            cellContents.Add(RightNumberLineBlank);
-            cellContents.Add(RightStampCreatedCount.ToString());
+            cellContents.Add(RightNumberLineBlankCount.ToString());
+            cellContents.Add(RightStampsCreatedCount.ToString());
             cellContents.Add(RightStampImagesCreatedCount.ToString());
             cellContents.Add(RightStampImagesSwitched);
+            cellContents.Add(RightArrayCorrectCount.ToString());
+            cellContents.Add(RightArrayPartiallyCorrectCount.ToString());
+            cellContents.Add(RightNumberLineCorrectCount.ToString());
+            cellContents.Add(RightNumberLinePartiallyCorrectCount.ToString());
+            cellContents.Add(RightNumberLinePartiallyCorrectSwappedCount.ToString());
+            cellContents.Add(RightStampCorrectCount.ToString());
+            cellContents.Add(RightStampPartiallyCorrectCount.ToString());
+            cellContents.Add(RightStampPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(string.Join(", ", RightRepresentationsAndCorrectness));
             cellContents.Add(IsRightMR);
 
@@ -1024,13 +1305,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(AlternativeArrayDivideCount.ToString());
             cellContents.Add(AlternativeArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeArraySkipCountingCorretness));
-            cellContents.Add(AlternativeNumberLineUsedCount.ToString());
-            cellContents.Add(AlternativeNLJE);
+            cellContents.Add(AlternativeNumberLineCreatedCount.ToString());
             cellContents.Add(AlternativeNumberLineSwitched);
-            cellContents.Add(AlternativeNumberLineBlank);
-            cellContents.Add(AlternativeStampCreatedCount.ToString());
+            cellContents.Add(AlternativeNumberLineBlankCount.ToString());
+            cellContents.Add(AlternativeStampsCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesCreatedCount.ToString());
             cellContents.Add(AlternativeStampImagesSwitched);
+            cellContents.Add(AlternativeArrayCorrectCount.ToString());
+            cellContents.Add(AlternativeArrayPartiallyCorrectCount.ToString());
+            cellContents.Add(AlternativeNumberLineCorrectCount.ToString());
+            cellContents.Add(AlternativeNumberLinePartiallyCorrectCount.ToString());
+            cellContents.Add(AlternativeNumberLinePartiallyCorrectSwappedCount.ToString());
+            cellContents.Add(AlternativeStampCorrectCount.ToString());
+            cellContents.Add(AlternativeStampPartiallyCorrectCount.ToString());
+            cellContents.Add(AlternativeStampPartiallyCorrectSwappedCount.ToString());
             cellContents.Add(string.Join(", ", AlternativeRepresentationsAndCorrectness));
             cellContents.Add(IsAlternativeMR);
 
@@ -1041,22 +1329,25 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add(UnmatchedArrayDivideCount.ToString());
             cellContents.Add(UnmatchedArraySkipCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedArraySkipCountingCorretness));
-            cellContents.Add(UnmatchedNumberLineUsedCount.ToString());
-            cellContents.Add(UnmatchedNLJE);
-            cellContents.Add(UnmatchedNumberLineSwitched);
-            cellContents.Add(UnmatchedNumberLineBlank);
-            cellContents.Add(UnmatchedStampCreatedCount.ToString());
+            cellContents.Add(UnmatchedNumberLineCreatedCount.ToString());
+            cellContents.Add(UnmatchedStampsCreatedCount.ToString());
             cellContents.Add(UnmatchedStampImagesCreatedCount.ToString());
-            cellContents.Add(UnmatchedStampImagesSwitched);
+            cellContents.Add(UnmatchedArrayPartiallyCorrectCount.ToString());
+            cellContents.Add(UnmatchedArrayIncorrectCount.ToString());
+            cellContents.Add(UnmatchedNumberLinePartiallyCorrectCount.ToString());
+            cellContents.Add(UnmatchedNumberLineIncorrectCount.ToString());
+            cellContents.Add(UnmatchedNumberLineUnknownCount.ToString());
+            cellContents.Add(UnmatchedStampPartiallyCorrectCount.ToString());
+            cellContents.Add(UnmatchedStampIncorrectCount.ToString());
             cellContents.Add(string.Join(", ", UnmatchedRepresentationsAndCorrectness));
             cellContents.Add(IsUnmatchedMR);
 
             // Whole Page Analysis
+            cellContents.Add(NLJE);
             cellContents.Add(IsMR2STEP);
+            cellContents.Add(IntermediaryAnswerCorrectness);
             cellContents.Add(FinalAnswerCorrectness);
-            cellContents.Add(CorrectnessSummary);
-            cellContents.Add(IsABR);
-            cellContents.Add(IsRAA);
+            cellContents.Add(string.Join(", ", ABR_RAA));
             cellContents.Add(string.Join(", ", AnswersChangedAfterRepresentation));
             cellContents.Add(InkColorsUsedCount.ToString());
 
@@ -1095,7 +1386,6 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("INK Only");
             cellContents.Add("Blank");
             cellContents.Add("ARR Deleted");
-            cellContents.Add("NL Created");
             cellContents.Add("NL Deleted");
             cellContents.Add("STA Deleted");
             cellContents.Add("STA IMAGES Deleted");
@@ -1108,13 +1398,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Left ARR divide");
             cellContents.Add("Left ARR skip");
             cellContents.Add("Left ARR skip tags");
-            cellContents.Add("Left NL used");
-            cellContents.Add("Left NLJE");
+            cellContents.Add("Left NL created");
             cellContents.Add("Left NL switched");
             cellContents.Add("Left NL blank");
             cellContents.Add("Left STA created");
             cellContents.Add("Left STA IMAGES");
             cellContents.Add("Left STA switched");
+            cellContents.Add("Left ARR COR");
+            cellContents.Add("Left ARR PAR");
+            cellContents.Add("Left NL COR");
+            cellContents.Add("Left NL PAR");
+            cellContents.Add("Left NL PAR SWAPPED");
+            cellContents.Add("Left STA COR");
+            cellContents.Add("Left STA PAR");
+            cellContents.Add("Left STA PAR SWAPPED");
             cellContents.Add("Left REP Correctness");
             cellContents.Add("Left MR");
 
@@ -1125,13 +1422,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Right ARR divide");
             cellContents.Add("Right ARR skip");
             cellContents.Add("Right ARR skip tags");
-            cellContents.Add("Right NL used");
-            cellContents.Add("Right NLJE");
+            cellContents.Add("Right NL created");
             cellContents.Add("Right NL switched");
             cellContents.Add("Right NL blank");
             cellContents.Add("Right STA created");
             cellContents.Add("Right STA IMAGES");
             cellContents.Add("Right STA switched");
+            cellContents.Add("Right ARR COR");
+            cellContents.Add("Right ARR PAR");
+            cellContents.Add("Right NL COR");
+            cellContents.Add("Right NL PAR");
+            cellContents.Add("Right NL PAR SWAPPED");
+            cellContents.Add("Right STA COR");
+            cellContents.Add("Right STA PAR");
+            cellContents.Add("Right STA PAR SWAPPED");
             cellContents.Add("Right REP Correctness");
             cellContents.Add("Right MR");
 
@@ -1142,13 +1446,20 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Alternative ARR divide");
             cellContents.Add("Alternative ARR skip");
             cellContents.Add("Alternative ARR skip tags");
-            cellContents.Add("Alternative NL used");
-            cellContents.Add("Alternative NLJE");
+            cellContents.Add("Alternative NL created");
             cellContents.Add("Alternative NL switched");
             cellContents.Add("Alternative NL blank");
             cellContents.Add("Alternative STA created");
             cellContents.Add("Alternative STA IMAGES");
             cellContents.Add("Alternative STA switched");
+            cellContents.Add("Alternative ARR COR");
+            cellContents.Add("Alternative ARR PAR");
+            cellContents.Add("Alternative NL COR");
+            cellContents.Add("Alternative NL PAR");
+            cellContents.Add("Alternative NL PAR SWAPPED");
+            cellContents.Add("Alternative STA COR");
+            cellContents.Add("Alternative STA PAR");
+            cellContents.Add("Alternative STA PAR SWAPPED");
             cellContents.Add("Alternative REP Correctness");
             cellContents.Add("Alternative MR");
 
@@ -1159,22 +1470,25 @@ namespace Classroom_Learning_Partner.Services
             cellContents.Add("Unmatched ARR divide");
             cellContents.Add("Unmatched ARR skip");
             cellContents.Add("Unmatched ARR skip tags");
-            cellContents.Add("Unmatched NL used");
-            cellContents.Add("Unmatched NLJE");
-            cellContents.Add("Unmatched NL switched");
-            cellContents.Add("Unmatched NL blank");
+            cellContents.Add("Unmatched NL created");
             cellContents.Add("Unmatched STA created");
             cellContents.Add("Unmatched STA IMAGES");
-            cellContents.Add("Unmatched STA switched");
+            cellContents.Add("Unmatched ARR PAR");
+            cellContents.Add("Unmatched ARR INC");
+            cellContents.Add("Unmatched NL PAR");
+            cellContents.Add("Unmatched NL INC");
+            cellContents.Add("Unmatched NL UNKNOWN");
+            cellContents.Add("Unmatched STA PAR");
+            cellContents.Add("Unmatched STA INC");
             cellContents.Add("Unmatched REP Correctness");
             cellContents.Add("Unmatched MR");
 
             // Whole Page Analysis
+            cellContents.Add("NLJE");
             cellContents.Add("MR2STEP");
+            cellContents.Add("Intermediary ANS");
             cellContents.Add("Final ANS");
-            cellContents.Add("Correctness Summary");
             cellContents.Add("ABR");
-            cellContents.Add("RAA");
             cellContents.Add("ANS Changed");
             cellContents.Add("Colors");
 

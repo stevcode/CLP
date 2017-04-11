@@ -10,7 +10,7 @@ namespace CLP.Entities
     {
         #region Initialization
 
-        public static ISemanticEvent Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
+        public static List<ISemanticEvent> Add(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
@@ -19,17 +19,21 @@ namespace CLP.Entities
                 objectsOnPageChangedHistoryAction.PageObjectIDsRemoved.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
-                return null;
+                return new List<ISemanticEvent>();
             }
 
             var addedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsAdded;
             if (!addedPageObjects.Any())
             {
-                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Add, No PageObjects");
+                return new List<ISemanticEvent>
+                       {
+                           SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Add, No PageObjects")
+                       };
             }
 
-            var isMultiAdd = addedPageObjects.Count > 1;
-            var eventType = isMultiAdd ? Codings.EVENT_OBJECT_MULTIPLE_ADD : Codings.EVENT_OBJECT_ADD;
+            //var isMultiAdd = addedPageObjects.Count > 1;
+            //var eventType = isMultiAdd ? Codings.EVENT_OBJECT_MULTIPLE_ADD : Codings.EVENT_OBJECT_ADD;
+            var eventType = Codings.EVENT_OBJECT_ADD;
 
             var semanticEvents = new List<ISemanticEvent>();
             foreach (var addedPageObject in addedPageObjects)
@@ -51,25 +55,27 @@ namespace CLP.Entities
                 semanticEvents.Add(semanticEvent);
             }
 
-            if (addedPageObjects.Count == 1)
-            {
-                return semanticEvents.First();
-            }
+            return semanticEvents;
 
-            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
-            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+            //if (addedPageObjects.Count == 1)
+            //{
+            //    return semanticEvents.First();
+            //}
 
-            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
-                                        {
-                                            CodedObject = compoundCodedObject,
-                                            EventType = eventType,
-                                            CodedObjectID = compoundCodedObjectID
-                                        };
+            //var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            //var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
 
-            return compoundSemanticEvent;
+            //var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+            //                            {
+            //                                CodedObject = compoundCodedObject,
+            //                                EventType = eventType,
+            //                                CodedObjectID = compoundCodedObjectID
+            //                            };
+
+            //return compoundSemanticEvent;
         }
 
-        public static ISemanticEvent Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
+        public static List<ISemanticEvent> Delete(CLPPage page, ObjectsOnPageChangedHistoryAction objectsOnPageChangedHistoryAction)
         {
             Argument.IsNotNull(nameof(page), page);
             Argument.IsNotNull(nameof(objectsOnPageChangedHistoryAction), objectsOnPageChangedHistoryAction);
@@ -78,17 +84,21 @@ namespace CLP.Entities
                 objectsOnPageChangedHistoryAction.PageObjectIDsAdded.Any() ||
                 objectsOnPageChangedHistoryAction.IsUsingStrokes)
             {
-                return null;
+                return new List<ISemanticEvent>();
             }
 
             var removedPageObjects = objectsOnPageChangedHistoryAction.PageObjectsRemoved;
             if (!removedPageObjects.Any())
             {
-                return SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Delete, No PageObjects");
+                return new List<ISemanticEvent>
+                       {
+                           SemanticEvent.GetErrorSemanticEvent(page, objectsOnPageChangedHistoryAction, Codings.ERROR_TYPE_EMPTY_LIST, "Delete, No PageObjects")
+                       };
             }
 
-            var isMultiDelete = removedPageObjects.Count > 1;
-            var eventType = isMultiDelete ? Codings.EVENT_OBJECT_MULTIPLE_DELETE : Codings.EVENT_OBJECT_DELETE;
+            //var isMultiDelete = removedPageObjects.Count > 1;
+            //var eventType = isMultiDelete ? Codings.EVENT_OBJECT_MULTIPLE_DELETE : Codings.EVENT_OBJECT_DELETE;
+            var eventType = Codings.EVENT_OBJECT_DELETE;
 
             var semanticEvents = new List<ISemanticEvent>();
             foreach (var removedPageObject in removedPageObjects)
@@ -110,22 +120,24 @@ namespace CLP.Entities
                 semanticEvents.Add(semanticEvent);
             }
 
-            if (removedPageObjects.Count == 1)
-            {
-                return semanticEvents.First();
-            }
+            return semanticEvents;
 
-            var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
-            var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
+            //if (removedPageObjects.Count == 1)
+            //{
+            //    return semanticEvents.First();
+            //}
 
-            var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
-                                        {
-                                            CodedObject = compoundCodedObject,
-                                            EventType = eventType,
-                                            CodedObjectID = compoundCodedObjectID
-                                        };
+            //var compoundCodedObject = Codings.OBJECT_PAGE_OBJECTS;
+            //var compoundCodedObjectID = string.Join(", ", semanticEvents.Select(e => $"{e.CodedObject} {e.CodedObjectID} {e.CodedObjectIDIncrement}").ToList());
 
-            return compoundSemanticEvent;
+            //var compoundSemanticEvent = new SemanticEvent(page, semanticEvents)
+            //                            {
+            //                                CodedObject = compoundCodedObject,
+            //                                EventType = eventType,
+            //                                CodedObjectID = compoundCodedObjectID
+            //                            };
+
+            //return compoundSemanticEvent;
         }
 
         public static ISemanticEvent Move(CLPPage page, List<ObjectsMovedBatchHistoryAction> objectsMovedHistoryActions)
@@ -293,6 +305,12 @@ namespace CLP.Entities
             else if (!isEraseEvent)
             {
                 CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID]++;
+                CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
+            }
+
+            if (!CurrentIncrementIDForPageObject.ContainsKey(compoundID))
+            {
+                CLogger.AppendToLog("[ERROR]: CurrentIncrementIDForPageObject doesn't already contain compoundID key, and prior this check wasn't necessary. See above entries for Page Owner and Number.");
                 CurrentIncrementIDForPageObject[compoundID] = CurrentHighestIncrementIDsForCodedObjectAndID[objectAndID];
             }
 

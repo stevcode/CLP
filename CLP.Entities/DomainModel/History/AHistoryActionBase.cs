@@ -122,24 +122,6 @@ namespace CLP.Entities
 
         #region Methods
 
-        #region Conversion
-
-        public void ConversionUndo()
-        {
-            if (ParentPage == null)
-            {
-                return;
-            }
-
-            ParentPage.IsTagAddPrevented = true;
-            ConversionUndoAction();
-            ParentPage.IsTagAddPrevented = false;
-        }
-
-        protected abstract void ConversionUndoAction();
-
-        #endregion // Conversion
-
         public void Undo(bool isAnimationUndo = false)
         {
             if (ParentPage == null)

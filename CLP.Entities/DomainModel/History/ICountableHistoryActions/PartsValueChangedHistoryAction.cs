@@ -63,7 +63,7 @@ namespace CLP.Entities
             var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
             if (pageObject == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, ICountable for Parts Value Changed not found on page or in history.");
                 return;
             }
 
@@ -86,8 +86,6 @@ namespace CLP.Entities
                            : $"Changed value of {pageObject.FormattedName} parts from {PreviousValue} to {NewValue}.";
             }
         }
-
-        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

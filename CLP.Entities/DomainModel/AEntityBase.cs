@@ -45,6 +45,12 @@ namespace CLP.Entities
             }
         }
 
+        public void ToJsonFile(string filePath, bool formatWithIndents = true)
+        {
+            var jsonString = ToJsonString(formatWithIndents);
+            File.WriteAllText(filePath, jsonString);
+        }
+
         public static T FromJsonString<T>(string json) where T : class
         {
             using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
@@ -65,10 +71,16 @@ namespace CLP.Entities
                 //}
                 //catch (Exception ex)
                 //{
-                //    Debug.WriteLine($"Error trying to deserialize {typeof(T)} via json.\n{ex.Message}");
+                //    CLogger.AppendToLog($"Error trying to deserialize {typeof(T)} via json.\n{ex.Message}");
                 //    return null;
                 //}
             }
+        }
+
+        public static T FromJsonFile<T>(string filePath) where T : class
+        {
+            var json = File.ReadAllText(filePath);
+            return FromJsonString<T>(json);
         }
     }
 }

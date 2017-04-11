@@ -68,7 +68,7 @@ namespace CLP.Entities
                            (NewRegions.Any() && NewRegions.First().Orientation == ArrayDivisionOrientation.Vertical);
                 }
 
-                Debug.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array Divisions Changed is missing Old and New Regions.");
                 return null;
             }
         }
@@ -103,21 +103,19 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction() { }
-
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Divisions Changed not found on page or in history.");
                 return;
             }
 
             if (IsColumnRegionsChange == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array Divisions Changed is missing Old and New Regions.");
                 return;
             }
 
@@ -139,13 +137,13 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array for Divisions Changed not found on page or in history.");
                 return;
             }
 
             if (IsColumnRegionsChange == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Array Divisions Changed is missing Old and New Regions.");
                 return;
             }
 

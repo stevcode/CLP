@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
@@ -37,7 +36,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
+            CLogger.AppendToLog("PageObject incorrectly existed in TrashedPageObjects.");
             page.History.TrashedPageObjects.Remove(pageObject);
             page.PageObjects.Add(pageObject);
 
@@ -62,7 +61,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("PageObject incorrectly existed on Page.");
+            CLogger.AppendToLog("PageObject incorrectly existed on Page.");
             page.History.TrashedPageObjects.Add(pageObject);
             page.PageObjects.Remove(pageObject);
 
@@ -115,7 +114,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
+            CLogger.AppendToLog("Stroke incorrectly existed in TrashedInkStrokes.");
             page.History.TrashedInkStrokes.Remove(stroke);
             page.InkStrokes.Add(stroke);
 
@@ -140,7 +139,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            Debug.WriteLine("Stroke incorrectly existed on Page.");
+            CLogger.AppendToLog("Stroke incorrectly existed on Page.");
             page.History.TrashedInkStrokes.Add(stroke);
             page.InkStrokes.Remove(stroke);
 
@@ -181,27 +180,27 @@ namespace CLP.Entities
         }
 
         /// <summary>Gets all strokes that were on the page immediately after the historyAction at the given historyIndex was performed</summary>
-        public static List<Stroke> GetStrokesOnPageAtHistoryIndex(this CLPPage page, int historyIndex)
+        public static List<Stroke> GetStrokesOnPageAtHistoryIndex<T>(this CLPPage page, int historyIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
-            var strokes = page.InkStrokes.Where(s => s.IsOnPageAtHistoryIndex(page, historyIndex)).ToList();
-            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsOnPageAtHistoryIndex(page, historyIndex)).ToList();
+            var strokes = page.InkStrokes.Where(s => s.IsOnPageAtHistoryIndex<T>(page, historyIndex)).ToList();
+            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsOnPageAtHistoryIndex<T>(page, historyIndex)).ToList();
             var strokesOnPage = strokes.Concat(trashedStrokes).Distinct().ToList();
 
             return strokesOnPage;
         }
 
         /// <summary>Gets all strokes that were added to the page between the given historyIndexes (including strokes that were added by the historyActions at both historyIndexes).</summary>
-        public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes(this CLPPage page, int startHistoryIndex, int endHistoryIndex)
+        public static List<Stroke> GetStrokesAddedToPageBetweenHistoryIndexes<T>(this CLPPage page, int startHistoryIndex, int endHistoryIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
             Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
 
-            var strokes = page.InkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
-            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var strokes = page.InkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes<T>(page, startHistoryIndex, endHistoryIndex)).ToList();
+            var trashedStrokes = page.History.TrashedInkStrokes.Where(s => s.IsAddedBetweenHistoryIndexes<T>(page, startHistoryIndex, endHistoryIndex)).ToList();
             var strokesAddedToPage = strokes.Concat(trashedStrokes).Distinct().ToList();
 
             return strokesAddedToPage;
@@ -219,7 +218,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Debug.WriteLine("Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    CLogger.AppendToLog($"Stroke without ID on page {page.PageNumber}, {page.Owner.FullName}");
                 }
             }
 
@@ -227,7 +226,7 @@ namespace CLP.Entities
             {
                 if (stroke.GetStrokeID() == "noStrokeID")
                 {
-                    Debug.WriteLine("Trashed Stroke without ID on page {0}, {1}", page.PageNumber, page.Owner.FullName);
+                    CLogger.AppendToLog($"Trashed Stroke without ID on page {page.PageNumber}, {page.Owner.FullName}");
                 }
             }
         }

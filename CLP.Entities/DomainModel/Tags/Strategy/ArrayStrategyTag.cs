@@ -86,7 +86,7 @@ namespace CLP.Entities
                     if (currentSemanticEvent.EventType == Codings.EVENT_ARRAY_SKIP)
                     {
                         var arrayID = currentSemanticEvent.ReferencePageObjectID;
-                        var compoundID = string.Format("{0};{1};{2}", currentSemanticEvent.CodedObjectID, currentSemanticEvent.CodedObjectIDIncrement, arrayID);
+                        var compoundID = $"{currentSemanticEvent.CodedObjectID};{currentSemanticEvent.CodedObjectIDIncrement};{arrayID}";
 
                         if (!skipArithCount.ContainsKey(compoundID))
                         {

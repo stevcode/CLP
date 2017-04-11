@@ -1165,7 +1165,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var numberOfArrays = Int32.Parse(keyPad.NumbersEntered.Text);
+            var numberOfArrays = int.Parse(keyPad.NumbersEntered.Text);
 
             var xPosition = 10.0;
             var yPosition = 160.0;

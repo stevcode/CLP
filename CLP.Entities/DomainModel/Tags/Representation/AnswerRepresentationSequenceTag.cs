@@ -53,24 +53,65 @@ namespace CLP.Entities
         public static void AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
             const string REPRESENTATION_SEQUENCE_IDENTIFIER = "R";
-            const string ANSWER_SEQUENCE_IDENTIFIER = "A";
+            const string FINAL_ANSWER_SEQUENCE_IDENTIFIER = "FA";
+            const string INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER = "IA";
 
             var sequence = new List<string>();
             ISemanticEvent mostRecentSequenceItem = null;
 
             foreach (var semanticEvent in semanticEvents)
             {
-                if (Codings.IsFinalAnswerEvent(semanticEvent))
+                if (Codings.IsFinalAnswerEvent(semanticEvent) &&
+                    semanticEvent.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                 {
-                    if (mostRecentSequenceItem == null ||
-                        Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
+                    if (mostRecentSequenceItem == null)
                     {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
+
                         mostRecentSequenceItem = semanticEvent;
                     }
                     else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
                     {
                         sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                }
+                else if (Codings.IsFinalAnswerEvent(semanticEvent) &&
+                         semanticEvent.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                {
+                    if (mostRecentSequenceItem == null)
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
 
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
+                    {
+                        sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
                         mostRecentSequenceItem = semanticEvent;
                     }
                 }
@@ -82,15 +123,49 @@ namespace CLP.Entities
                     {
                         mostRecentSequenceItem = semanticEvent;
                     }
-                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem))
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var sequenceIdentifier = $"{ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        sequence.Add(sequenceIdentifier);
+
+                        mostRecentSequenceItem = semanticEvent;
+                    }
+                    else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                             mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+                    {
+                        var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
                         sequence.Add(sequenceIdentifier);
 
                         mostRecentSequenceItem = semanticEvent;
                     }
                 }
+            }
+
+            if (mostRecentSequenceItem == null)
+            {
+                return;
+            }
+
+            if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
+            {
+                var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                sequence.Add(sequenceIdentifier);
+            }
+            else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
+                     mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
+            {
+                var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
+                var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                sequence.Add(sequenceIdentifier);
+            }
+            else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
+            {
+                sequence.Add(REPRESENTATION_SEQUENCE_IDENTIFIER);
             }
 
             if (!sequence.Any())
@@ -99,69 +174,137 @@ namespace CLP.Entities
             }
 
             var tag = new AnswerRepresentationSequenceTag(page, Origin.StudentPageGenerated)
-            {
-                Sequence = sequence
-            };
+                      {
+                          Sequence = sequence
+                      };
 
             // ABR
             var firstRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
             if (firstRepresentationIndex > 0)
             {
-                var previousSequenceItem = sequence[firstRepresentationIndex - 1];
-                if (previousSequenceItem.Contains(Codings.CORRECTNESS_CORRECT))
+                var previousSequenceItems = sequence.Take(firstRepresentationIndex);
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_BEFORE_REP);
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_FINAL_ANS_COR_BEFORE_REP);
                 }
-                else if (previousSequenceItem.Contains(Codings.CORRECTNESS_INCORRECT))
+
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_BEFORE_REP);
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_FINAL_ANS_INC_BEFORE_REP);
+                }
+
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP);
+                }
+
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
+                {
+                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP);
                 }
             }
 
             // RAA
-            var lastCorrectAnswerIndex = sequence.LastIndexOf("A-COR");
-            var lastIncorrectAnswerIndex = sequence.LastIndexOf("A-INC");
-            var lastAnswerIndex = Math.Max(lastCorrectAnswerIndex, lastIncorrectAnswerIndex);
-            if (lastAnswerIndex >= 0 &&
-                lastAnswerIndex < sequence.Count - 1)
+            var firstCorrectFinalAnswerIndex = sequence.IndexOf("FA-COR");
+            var firstIncorrectFinalAnswerIndex = sequence.IndexOf("FA-INC");
+            var firstIllegibleFinalAnswerIndex = sequence.IndexOf("FA-ILL");
+            var finalAnswerIndexes = new List<int>();
+            if (firstCorrectFinalAnswerIndex != -1)
             {
-                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_ANSWER);
+                finalAnswerIndexes.Add(firstCorrectFinalAnswerIndex);
+            }
+            if (firstIncorrectFinalAnswerIndex != -1)
+            {
+                finalAnswerIndexes.Add(firstIncorrectFinalAnswerIndex);
+            }
+            if (firstIllegibleFinalAnswerIndex != -1)
+            {
+                finalAnswerIndexes.Add(firstIllegibleFinalAnswerIndex);
+            }
+            var firstFinalAnswerIndex = !finalAnswerIndexes.Any() ? -1 : finalAnswerIndexes.Min();
+            var sequenceAfterFirstFinalAnswer = sequence.Skip(firstFinalAnswerIndex + 1).ToList();
+            if (firstFinalAnswerIndex != -1 &&
+                sequenceAfterFirstFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            {
+                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER);
+            }
+
+            var firstCorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-COR");
+            var firstIncorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-INC");
+            var firstIllegibleIntermediaryAnswerIndex = sequence.IndexOf("IA-ILL");
+            var intermediaryAnswerIndexes = new List<int>();
+            if (firstCorrectIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstCorrectIntermediaryAnswerIndex);
+            }
+            if (firstIncorrectIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstIncorrectIntermediaryAnswerIndex);
+            }
+            if (firstIllegibleIntermediaryAnswerIndex != -1)
+            {
+                intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
+            }
+            var firstIntermediaryAnswerIndex =  !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
+            var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
+            if (firstIntermediaryAnswerIndex != -1 &&
+                sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            {
+                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER);
             }
 
             // ARA
             var startItem = string.Empty;
+            var isRepresentationUsedAfterAnswer = false;
             foreach (var item in sequence)
             {
-                var isItemAnswer = item == "A-COR" || item == "A-INC";
+                var isItemAnswer = item == "FA-COR" || item == "FA-INC" || item == "FA-ILL";
+                if (!isItemAnswer)
+                {
+                    if (!string.IsNullOrWhiteSpace(startItem))
+                    {
+                        isRepresentationUsedAfterAnswer = true;
+                    }
+                    continue;
+                }
+                
                 if (string.IsNullOrWhiteSpace(startItem))
                 {
                     startItem = item;
                     continue;
                 }
 
-                if (!isItemAnswer)
+                if (!isRepresentationUsedAfterAnswer)
                 {
                     continue;
                 }
 
-                var isStartCOR = startItem == "A-COR";
-                var isCurrentCOR = item == "A-COR";
+                var isStartCOR = startItem == "FA-COR";
+                var isCurrentCOR = item == "FA-COR";
 
                 if (isStartCOR && isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_COR_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (!isStartCOR && !isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_INC_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (isStartCOR && !isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_INC_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
                 else if (!isStartCOR && isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_COR_AFTER_REP);
+                    startItem = item;
+                    isRepresentationUsedAfterAnswer = false;
                 }
             }
 

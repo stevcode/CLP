@@ -107,7 +107,7 @@ namespace Classroom_Learning_Partner.Services
                     var potentialPagesDirectoryInfo = new DirectoryInfo(potentialPagesFolder);
                     if (!potentialPagesDirectoryInfo.Exists)
                     {
-                        Debug.WriteLine($"Pages folder doesn't exist for {potentialStudentNotebooksDirectoryInfo.FullName}");
+                        CLogger.AppendToLog($"Pages folder doesn't exist for {potentialStudentNotebooksDirectoryInfo.FullName}");
                         continue;
                     }
                     var pages = potentialPagesDirectoryInfo.GetFiles("p;*.xml");
@@ -116,7 +116,7 @@ namespace Classroom_Learning_Partner.Services
                         var pageComposite = System.IO.Path.GetFileNameWithoutExtension(pageFileInfo.Name).Split(';');
                         if (pageComposite.Length != 5)
                         {
-                            Debug.WriteLine($"PageComposite not 5 for {pageFileInfo.FullName}");
+                            CLogger.AppendToLog($"PageComposite not 5 for {pageFileInfo.FullName}");
                             continue;
                         }
 
@@ -179,7 +179,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var studentName in missingPages.Keys)
             {
                 var pagesMissing = string.Join(", ", missingPages[studentName]);
-                Debug.WriteLine("{0} is missing pages: {1}", studentName, pagesMissing);
+                CLogger.AppendToLog($"{studentName} is missing pages: {pagesMissing}");
             }
         }
 
@@ -352,9 +352,9 @@ namespace Classroom_Learning_Partner.Services
 
             //        totalPages++;
 
-            //        Debug.WriteLine("Generating Representations Used Tag for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+            //        CLogger.AppendToLog("Generating Representations Used Tag for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
             //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
-            //        Debug.WriteLine("Finished generating Representations Used Tag.\n");
+            //        CLogger.AppendToLog("Finished generating Representations Used Tag.\n");
 
             //        var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag) as RepresentationsUsedTag;
             //        if (tag == null)
@@ -536,7 +536,7 @@ namespace Classroom_Learning_Partner.Services
 
             //        totalPages.Add(string.Format("{0}, page {1}", lastSubmission.Owner.FullName, lastSubmission.PageNumber));
 
-            //        Debug.WriteLine("Generating Skip Counting Stats for page {0}, for {1}", lastSubmission.PageNumber, lastSubmission.Owner.FullName);
+            //        CLogger.AppendToLog("Generating Skip Counting Stats for page {0}, for {1}", lastSubmission.PageNumber, lastSubmission.Owner.FullName);
             //        var arraysOnPage = lastSubmission.PageObjects.OfType<CLPArray>().ToList();
 
             //        //Iterates over arrays on page
@@ -953,7 +953,7 @@ namespace Classroom_Learning_Partner.Services
             //            //    correctedImprovedSkipCount++;
             //            //}
             //        }
-            //        Debug.WriteLine("Finished Skip Counting Stats for page {0}, for {1}", lastSubmission.PageNumber, lastSubmission.Owner.FullName);
+            //        CLogger.AppendToLog("Finished Skip Counting Stats for page {0}, for {1}", lastSubmission.PageNumber, lastSubmission.Owner.FullName);
             //    }
             //}
 
@@ -1773,7 +1773,7 @@ namespace Classroom_Learning_Partner.Services
 
             //        var isBlank = isArrayUsedCount + isNumberLinesUsedCount + isStampUsedCount == 0 && !inkOnPage.Any() && !trashedInk.Any() ? "Y" : "N";
 
-            //        Debug.WriteLine($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
+            //        CLogger.AppendToLog($"Name: {studentName}, Page Number: {pageNumber}, Submission Time: {submissionTime}, " +
             //                          $"ARR: {arraysUsedCount}, ARR cut: {cutsOverArrayCount}, ARR snap: {twoArraysSnappedTogetherCount}, ARR divide: {arrayDividersChangedCount}, ARR rotate: {arrayRotateCount}, " +
             //                          $"STAMP total: {stampsCount}, STAMP on page: {stampsOnPageCount}, STAMP used: {stampsUsedCount}, " +
             //                          $"STAMP IMAGES total: {stampImagesCount}, STAMP IMAGES on page: {stampImagesOnPageCount}, " +
@@ -1847,7 +1847,7 @@ namespace Classroom_Learning_Partner.Services
             //foreach (var studentName in missingPages.Keys)
             //{
             //    var pagesMissing = string.Join(", ", missingPages[studentName]);
-            //    Debug.WriteLine("{0} is missing pages: {1}", studentName, pagesMissing);
+            //    CLogger.AppendToLog("{0} is missing pages: {1}", studentName, pagesMissing);
             //}
 
             //var orderedFileRows = fileRows.OrderBy(r => r.First()).ThenBy(r => int.Parse(r[1])).ToList();
@@ -1916,9 +1916,9 @@ namespace Classroom_Learning_Partner.Services
             //                          page.PageNumber.ToString()
             //                      };
 
-            //        Debug.WriteLine("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
+            //        CLogger.AppendToLog("Generating SEvents for page {0}, for {1}", page.PageNumber, page.Owner.FullName);
             //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
-            //        Debug.WriteLine("Finished generating SEvents.\n");
+            //        CLogger.AppendToLog("Finished generating SEvents.\n");
 
             //        var pass2Event = lastSubmission.History.SemanticEvents.FirstOrDefault(h => h.CodedObject == "PASS" && h.CodedObjectID == "2");
             //        var pass2Index = lastSubmission.History.SemanticEvents.IndexOf(pass2Action);

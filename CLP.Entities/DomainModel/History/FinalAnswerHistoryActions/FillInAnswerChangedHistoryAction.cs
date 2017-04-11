@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public class FillInAnswerChangedHistoryAction : AHistoryActionBase
+    public class FillInAnswerChangedHistoryAction : AHistoryActionBase, IStrokesOnPageChangedHistoryAction
     {
         #region Constructors
 
@@ -80,6 +80,8 @@ namespace CLP.Entities
 
         public InterpretationRegion PageObject => ParentPage.GetPageObjectByIDOnPageOrInHistory(InterpretationRegionID) as InterpretationRegion;
 
+        public bool IsIntermediaryFillIn => PageObject?.IsIntermediary == true;
+
         public List<Stroke> StrokesAdded
         {
             get { return StrokeIDsAdded.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList(); }
@@ -103,11 +105,10 @@ namespace CLP.Entities
             get
             {
                 var changeType = StrokeIDsRemoved.Any() ? "erasing" : "adding";
-                return $"Changed Fill-In Answer by {changeType} a stroke.";
+                var intermediarySignifier = IsIntermediaryFillIn ? "Intermediary" : "Fill-In";
+                return $"Changed {intermediarySignifier} Answer by {changeType} a stroke.";
             }
         }
-
-        protected override void ConversionUndoAction() { }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -117,7 +118,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -130,7 +131,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -149,7 +150,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsRemoved in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -162,7 +163,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Null stroke in StrokeIDsAdded in FillInAnswerChangedHistoryAction.");
                     continue;
                 }
                 addedStrokes.Add(stroke);

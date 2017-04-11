@@ -134,15 +134,13 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction() { }
-
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Number Line for Jump Size Changed not found on page or in history.");
                 return;
             }
 

@@ -485,20 +485,20 @@ namespace CLP.Entities
         }
 
         /// <summary>Signifies the stroke was on the page immediately after the historyAction at the given historyIndex was performed</summary>
-        public static bool IsOnPageAtHistoryIndex(this Stroke stroke, CLPPage page, int historyIndex)
+        public static bool IsOnPageAtHistoryIndex<T>(this Stroke stroke, CLPPage page, int historyIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("stroke", stroke);
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("historyIndex", historyIndex);
 
-            var orderedObjectsChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedStrokesChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<T>().ToList();
             var strokeID = stroke.GetStrokeID();
 
-            var addedAtAnyPointHistoryAction = orderedObjectsChangedHistoryActions.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
+            var addedAtAnyPointHistoryAction = orderedStrokesChangedHistoryActions.FirstOrDefault(h => h.StrokeIDsAdded.Contains(strokeID));
             var isPartOfHistory = addedAtAnyPointHistoryAction != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryAction =
-                orderedObjectsChangedHistoryActions.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryActionIndex <= historyIndex);
+                orderedStrokesChangedHistoryActions.LastOrDefault(h => (h.StrokeIDsAdded.Contains(strokeID) || h.StrokeIDsRemoved.Contains(strokeID)) && h.HistoryActionIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryAction != null && addedOrRemovedBeforeThisHistoryIndexHistoryAction.StrokeIDsAdded.Contains(strokeID);
 
@@ -506,17 +506,17 @@ namespace CLP.Entities
         }
 
         /// <summary>Signifies the stroke was added to the page between the given historyIndexes (including strokes that were added by the historyActions at both historyIndexes)</summary>
-        public static bool IsAddedBetweenHistoryIndexes(this Stroke stroke, CLPPage page, int startHistoryIndex, int endHistoryIndex)
+        public static bool IsAddedBetweenHistoryIndexes<T>(this Stroke stroke, CLPPage page, int startHistoryIndex, int endHistoryIndex) where T : IStrokesOnPageChangedHistoryAction
         {
             Argument.IsNotNull("stroke", stroke);
             Argument.IsNotNull("page", page);
             Argument.IsNotNull("startHistoryIndex", startHistoryIndex);
             Argument.IsNotNull("endHistoryIndex", endHistoryIndex);
 
-            var orderedObjectsChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
+            var orderedStrokesChangedHistoryActions = page.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
             var strokeID = stroke.GetStrokeID();
 
-            var isAddedBetweenIndexes = orderedObjectsChangedHistoryActions.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryActionIndex >= startHistoryIndex && h.HistoryActionIndex <= endHistoryIndex);
+            var isAddedBetweenIndexes = orderedStrokesChangedHistoryActions.Any(h => h.StrokeIDsAdded.Contains(strokeID) && h.HistoryActionIndex >= startHistoryIndex && h.HistoryActionIndex <= endHistoryIndex);
 
             return isAddedBetweenIndexes;
         }
@@ -572,7 +572,7 @@ namespace CLP.Entities
                 page.PageObjects.Add(tempGrid);
             }
 
-            // Debug.WriteLine("found " + occupiedCells.Count + " occupied cells");
+            // CLogger.AppendToLog("found " + occupiedCells.Count + " occupied cells");
 
             return DetectCycle(occupiedCells, cellWidth, cellHeight);
         }
@@ -622,7 +622,7 @@ namespace CLP.Entities
                                 var i = 0;
                                 while (i < cycle.Count())
                                 {
-                                    // Debug.WriteLine("{0}, {1}", cycle[i].X, cycle[i].Y);
+                                    // CLogger.AppendToLog("{0}, {1}", cycle[i].X, cycle[i].Y);
                                     i++;
                                 }
                                 return true;
@@ -699,8 +699,8 @@ namespace CLP.Entities
             while (i < stylusPoints.Count)
             {
                 nextPoint = stylusPoints[i].ToPoint();
-                // Debug.WriteLine("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
-                // Debug.WriteLine("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
+                // CLogger.AppendToLog("{0} = {1}", nextPoint.X, ((int)(nextPoint.X / CELL_SIZE)) * CELL_SIZE - xOffset) ;
+                // CLogger.AppendToLog("{0} = {1}", nextPoint.Y, ((int)(nextPoint.Y / CELL_SIZE)) * CELL_SIZE - yOffset);
                 nextPoint.X = RoundToNearestCell(nextPoint.X, cellWidth) - xOffset;
                 nextPoint.Y = RoundToNearestCell(nextPoint.Y, cellHeight) - yOffset;
 
@@ -833,13 +833,13 @@ namespace CLP.Entities
             int i = 0;
             while (i < slopes.Count)
             {
-                // Debug.WriteLine("slope: {0}", slopes[i]);
+                // CLogger.AppendToLog("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            // Debug.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // CLogger.AppendToLog("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
@@ -902,13 +902,13 @@ namespace CLP.Entities
                 {
                     slopes[i] += 180;
                 }
-                // Debug.WriteLine("slope: {0}", slopes[i]);
+                // CLogger.AppendToLog("slope: {0}", slopes[i]);
                 i++;
             }
 
             double avg = slopes.Average();
             double variation = CalculateStdDev(slopes);
-            // Debug.WriteLine("avg: {0}, stddev: {1}", avg, variation);
+            // CLogger.AppendToLog("avg: {0}, stddev: {1}", avg, variation);
 
             return (Math.Abs(avg) <= AVG_SLOPE_THRESHOLD_DEGREES && variation <= VARIATION_THRESHOLD_DEGREES);
         }
@@ -928,8 +928,6 @@ namespace CLP.Entities
             const double MAX_STROKE_BOUNDS = 5.0;
 
             var strokeBounds = stroke.GetBounds();
-
-            // Debug.WriteLine("stroke weight: {0}", stroke.StrokeWeight());
 
             return stroke.StrokeWeight() <= MAX_STROKE_WEIGHT && strokeBounds.Height <= MAX_STROKE_BOUNDS && strokeBounds.Width <= MAX_STROKE_BOUNDS;
         }
@@ -951,6 +949,26 @@ namespace CLP.Entities
             var strokeRight = stroke.GetBounds().Right;
 
             return Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom);
+        }
+
+        public static double BoundsWidth(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeLeft = stroke.GetBounds().Left;
+            var strokeRight = stroke.GetBounds().Right;
+
+            return Math.Abs(strokeLeft - strokeRight);
+        }
+
+        public static double BoundsHeight(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var strokeTop = stroke.GetBounds().Top;
+            var strokeBottom = stroke.GetBounds().Bottom;
+
+            return Math.Abs(strokeTop - strokeBottom);
         }
 
         #endregion // Shape Detection

@@ -159,15 +159,13 @@ namespace CLP.Entities
             }
         }
 
-        protected override void ConversionUndoAction() { }
-
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Number Line for Jump Size Changed not found on page or in history.");
                 return;
             }
 
@@ -175,7 +173,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.");
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -192,7 +190,7 @@ namespace CLP.Entities
                 var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
                 if (jumpToRemove == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Jump in JumpsAdded not found on Number Line during Undo.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Jump in JumpsAdded not found on Number Line during Undo.");
                     continue;
                 }
 
@@ -203,7 +201,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.");
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -230,7 +228,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
-                Debug.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryActionIndex);
+                CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Number Line for Jump Size Changed not found on page or in history.");
                 return;
             }
 
@@ -238,7 +236,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.");
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -255,7 +253,7 @@ namespace CLP.Entities
                 var jumpToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jump.StartingTickIndex && j.JumpSize == jump.JumpSize && j.JumpColor == jump.JumpColor);
                 if (jumpToRemove == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Jump in JumpsRemoved not found on Number Line during Redo.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Jump in JumpsRemoved not found on Number Line during Redo.");
                     continue;
                 }
 
@@ -266,7 +264,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Debug.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.", HistoryActionIndex);
+                    CLogger.AppendToLog($"[ERROR] on Index #{HistoryActionIndex}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryAction not found on page or in history.");
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);

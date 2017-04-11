@@ -8,6 +8,8 @@ namespace CLP.Entities
         Correct,
         PartiallyCorrect,
         Incorrect,
+        Illegible,
+        Unanswered,
         Unknown
     }
 

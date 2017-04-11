@@ -112,11 +112,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    Debug.WriteLine("Skipping Submission from Page #: " + submission.PageNumber);
+                    CLogger.AppendToLog("Skipping Submission from Page #: " + submission.PageNumber);
                     if (lastSubmissionAdded != null)
                     {
-                        Debug.WriteLine("Last Submission Page #: " + lastSubmissionAdded.PageNumber);
-                        Debug.WriteLine("Last Submission Page Owner: " + lastSubmissionAdded.Owner.FullName);
+                        CLogger.AppendToLog("Last Submission Page #: " + lastSubmissionAdded.PageNumber);
+                        CLogger.AppendToLog("Last Submission Page Owner: " + lastSubmissionAdded.Owner.FullName);
                     }
                 }
             }

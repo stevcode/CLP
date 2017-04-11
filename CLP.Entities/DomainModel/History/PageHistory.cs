@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Windows.Ink;
 using System.Windows.Threading;
@@ -17,17 +16,24 @@ namespace CLP.Entities
     [Serializable]
     public class PageHistory : AEntityBase
     {
-        private readonly object _historyLock = new object();
+        #region Constants
+
         public const double SAMPLE_RATE = 9;
-        public IHistoryBatch CurrentHistoryBatch;
+
+        #endregion // Constants
+
+        #region Fields
+
+        private readonly object _historyLock = new object();
         private bool _isUndoingOperation;
+
+        public IHistoryBatch CurrentHistoryBatch;
+
+        #endregion // Fields
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="PageHistory" /> from scratch.</summary>
-        public PageHistory()
-        {
-        }
+        public PageHistory() { }
 
         #endregion //Constructors
 
@@ -61,10 +67,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData RedoActionsProperty = RegisterProperty("RedoActions", typeof(ObservableCollection<IHistoryAction>), () => new ObservableCollection<IHistoryAction>());
 
-        public List<IHistoryAction> CompleteOrderedHistoryActions
-        {
-            get { return UndoActions.Reverse().Concat(RedoActions).ToList(); }
-        }
+        public List<IHistoryAction> CompleteOrderedHistoryActions => UndoActions.Reverse().Concat(RedoActions).ToList();
 
         public List<IHistoryAction> OrderedAnimationHistoryActions
         {
@@ -168,15 +171,19 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0.0);
 
-        public int CurrentHistoryIndex
+        public int CurrentHistoryIndex => UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0;
+
+        public IHistoryAction CurrentHistoryAction => UndoActions.FirstOrDefault();
+
+        public ISemanticEvent CurrentSemanticEvent
         {
-            get { return UndoActions.Any() ? UndoActions.First().HistoryActionIndex : 0; }
+            get
+            {
+                return CurrentHistoryAction == null ? null : SemanticEvents.LastOrDefault(e => e.ContainsHistoryActionID(CurrentHistoryAction.ID));
+            }
         }
 
-        public int CurrentAnimationDelay
-        {
-            get { return RedoActions.Any() ? RedoActions.First().AnimationDelay : 0; }
-        }
+        public int CurrentAnimationDelay => RedoActions.Any() ? RedoActions.First().AnimationDelay : 0;
 
         public bool IsAnimation
         {
@@ -207,10 +214,7 @@ namespace CLP.Entities
             }
         }
 
-        public bool IsPlaybackEnabled
-        {
-            get { return IsAnimation || IsNonAnimationPlaybackEnabled; }
-        }
+        public bool IsPlaybackEnabled => IsAnimation || IsNonAnimationPlaybackEnabled;
 
         #endregion //Playback Indication
 
@@ -259,10 +263,7 @@ namespace CLP.Entities
             }
         }
 
-        public double PlaybackLength
-        {
-            get { return IsNonAnimationPlaybackEnabled ? HistoryLength : AnimationLength; }
-        }
+        public double PlaybackLength => IsNonAnimationPlaybackEnabled ? HistoryLength : AnimationLength;
 
         #endregion //Playback Lengths
 
@@ -315,6 +316,9 @@ namespace CLP.Entities
             {
                 historyAction.HistoryActionIndex = UndoActions.Count + RedoActions.IndexOf(historyAction);
             }
+
+            RaisePropertyChanged(nameof(UndoActions));
+            RaisePropertyChanged(nameof(RedoActions));
         }
 
         public void RefreshCachedFormattedValues()
@@ -334,8 +338,7 @@ namespace CLP.Entities
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
                                       let isTrashedInkStrokeBeingUsed =
-                                      UndoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) ||
-                                      RedoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
+                                      UndoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) || RedoActions.Any(h => h.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
                                       where !isTrashedInkStrokeBeingUsed
                                       select trashedInkStroke).ToList();
             foreach (var stroke in inkStrokesToRemove)
@@ -345,8 +348,7 @@ namespace CLP.Entities
 
             var pageObjectsToRemove = (from trashedPageObject in TrashedPageObjects
                                        let isTrashedPageObjectBeingUsed =
-                                       UndoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID)) ||
-                                       RedoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID))
+                                       UndoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID)) || RedoActions.Any(h => h.IsUsingTrashedPageObject(trashedPageObject.ID))
                                        where !isTrashedPageObjectBeingUsed
                                        select trashedPageObject).ToList();
             foreach (var pageObject in pageObjectsToRemove)
@@ -409,6 +411,8 @@ namespace CLP.Entities
             lock (_historyLock)
             {
                 RaisePropertyChanged(nameof(CurrentHistoryIndex));
+                RaisePropertyChanged(nameof(CurrentHistoryAction));
+                RaisePropertyChanged(nameof(CurrentSemanticEvent));
                 RaisePropertyChanged(nameof(HistoryLength));
                 RaisePropertyChanged(nameof(AnimationLength));
                 RaisePropertyChanged(nameof(PlaybackLength));
@@ -543,23 +547,6 @@ namespace CLP.Entities
 
             UpdateTicks();
             return true;
-        }
-
-        //HACK
-        public void ConversionUndo()
-        {
-            lock (_historyLock)
-            {
-                var historyAction = UndoActions.FirstOrDefault();
-                if (historyAction == null)
-                {
-                    return;
-                }
-                historyAction.ConversionUndo();
-
-                UndoActions.RemoveFirst();
-                RedoActions.Insert(0, historyAction);
-            }
         }
 
         public bool Undo(bool isAnimationUndo = false)

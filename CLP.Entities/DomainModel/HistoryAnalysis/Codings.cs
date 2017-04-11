@@ -31,9 +31,10 @@ namespace CLP.Entities
         public const string OBJECT_REMAINDER_TILES = "TILES";
         public const string OBJECT_NUMBER_LINE = "NL";
         public const string OBJECT_STAMP = "STAMP";
-        public const string OBJECT_STAMPED_OBJECTS = "STAMP IMAGES";
+        public const string OBJECT_STAMPED_OBJECT = "STAMP IMAGE";
         public const string OBJECT_BINS = "BINS";
         public const string OBJECT_FILL_IN = "ANS FI";
+        public const string OBJECT_INTERMEDIARY_FILL_IN = "INT ANS FI";
         public const string OBJECT_MULTIPLE_CHOICE = "ANS MC";
         public const string OBJECT_TEXT = "TEXT";
 
@@ -49,20 +50,13 @@ namespace CLP.Entities
                                                                                 { OBJECT_REMAINDER_TILES, "Remainder Tiles" },
                                                                                 { OBJECT_NUMBER_LINE, "Number Line" },
                                                                                 { OBJECT_STAMP, "Stamp" },
-                                                                                { OBJECT_STAMPED_OBJECTS, "Stamp Images" },
+                                                                                { OBJECT_STAMPED_OBJECT, "Stamp Image" },
                                                                                 { OBJECT_BINS, "Bins" },
                                                                                 { OBJECT_FILL_IN, "Final Answer Fill In" },
+                                                                                { OBJECT_INTERMEDIARY_FILL_IN, "Intermediary Answer Fill In" },
                                                                                 { OBJECT_MULTIPLE_CHOICE, "Final Answer Multiple Choice" },
                                                                                 { OBJECT_TEXT, "Text" }
                                                                             };
-
-        public static readonly Dictionary<string, string> FriendlyCorrectness = new Dictionary<string, string>
-                                                                                {
-                                                                                    { CORRECTNESS_CORRECT, "Correct" },
-                                                                                    { CORRECTNESS_INCORRECT, "Incorrect" },
-                                                                                    { CORRECTNESS_PARTIAL, "Partially Correct" },
-                                                                                    { CORRECTNESS_UNKNOWN, "Unknown" }
-                                                                                };
 
         public static string CorrectnessToCodedCorrectness(Correctness correctness)
         {
@@ -74,6 +68,10 @@ namespace CLP.Entities
                     return CORRECTNESS_PARTIAL;
                 case Correctness.Incorrect:
                     return CORRECTNESS_INCORRECT;
+                case Correctness.Illegible:
+                    return CORRECTNESS_ILLEGIBLE;
+                case Correctness.Unanswered:
+                    return CORRECTNESS_UNANSWERED;
                 default:
                     return CORRECTNESS_UNKNOWN;
             }
@@ -82,9 +80,28 @@ namespace CLP.Entities
         public static string CorrectnessToFriendlyCorrectness(Correctness correctness)
         {
             var codedCorrectness = CorrectnessToCodedCorrectness(correctness);
-            var friendlyCorrectness = FriendlyCorrectness[codedCorrectness];
+            var friendlyCorrectness = CodedCorrectnessToFriendlyCorrectness(codedCorrectness);
 
             return friendlyCorrectness;
+        }
+
+        public static string CodedCorrectnessToFriendlyCorrectness(string codedCorrectness)
+        {
+            switch (codedCorrectness)
+            {
+                case CORRECTNESS_CORRECT:
+                    return "Correct";
+                case CORRECTNESS_PARTIAL:
+                    return "Partially Correct";
+                case CORRECTNESS_INCORRECT:
+                    return "Incorrect";
+                case CORRECTNESS_ILLEGIBLE:
+                    return "Illegible";
+                case CORRECTNESS_UNANSWERED:
+                    return "Unanswered";
+                default:
+                    return "Unknown";
+            }
         }
 
         public static Correctness CodedCorrectnessToCorrectness(string codedCorrectness)
@@ -97,6 +114,10 @@ namespace CLP.Entities
                     return Correctness.PartiallyCorrect;
                 case CORRECTNESS_INCORRECT:
                     return Correctness.Incorrect;
+                case CORRECTNESS_ILLEGIBLE:
+                    return Correctness.Illegible;
+                case CORRECTNESS_UNANSWERED:
+                    return Correctness.Unanswered;
                 default:
                     return Correctness.Unknown;
             }
@@ -145,6 +166,10 @@ namespace CLP.Entities
         public const string EVENT_ARRAY_SKIP_ERASE = "skip erase";
         public const string EVENT_ARRAY_EQN = "eqn";
         public const string EVENT_ARRAY_EQN_ERASE = "eqn erase";
+        public const string EVENT_ARRAY_COUNT_LINE = "count line";
+        public const string EVENT_ARRAY_COUNT_LINE_ERASE = "count line erase";
+        public const string EVENT_ARRAY_COUNT_DOT = "count dot";
+        public const string EVENT_ARRAY_COUNT_DOT_ERASE = "count dot erase";
 
         #endregion // Array Event Types
 
@@ -196,6 +221,7 @@ namespace CLP.Entities
         public const string EVENT_INFO_INK_LOCATION_RIGHT_SKIP = "right skip region of";
         public const string EVENT_INFO_INK_LOCATION_TOP = "above";
         public const string EVENT_INFO_INK_LOCATION_BOTTOM = "below";
+        public const string EVENT_INFO_INK_LOCATION_BOTTOM_SKIP = "bottom skip region of";
         public const string EVENT_INFO_INK_LOCATION_OVER = "over";
         public const string EVENT_INFO_INK_LOCATION_TOP_LEFT = "left and above";
         public const string EVENT_INFO_INK_LOCATION_TOP_RIGHT = "right and above";
@@ -217,13 +243,16 @@ namespace CLP.Entities
 
         #region Representation Sequence
 
-        public const string ANALYSIS_COR_BEFORE_REP = "ABR-C";
-        public const string ANALYSIS_INC_BEFORE_REP = "ABR-I";
+        public const string ANALYSIS_FINAL_ANS_COR_BEFORE_REP = "FABR-C";
+        public const string ANALYSIS_FINAL_ANS_INC_BEFORE_REP = "FABR-I";
+        public const string ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP = "IABR-C";
+        public const string ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP = "IABR-I";
         public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
         public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
         public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
         public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
-        public const string ANALYSIS_REP_AFTER_ANSWER = "RAA";
+        public const string ANALYSIS_REP_AFTER_FINAL_ANSWER = "RAFA";
+        public const string ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER = "RAIA";
 
         #endregion // Representation Sequence
 
@@ -269,6 +298,8 @@ namespace CLP.Entities
         public const string CORRECTNESS_CORRECT = "COR";
         public const string CORRECTNESS_PARTIAL = "PAR";
         public const string CORRECTNESS_INCORRECT = "INC";
+        public const string CORRECTNESS_ILLEGIBLE = "ILL";
+        public const string CORRECTNESS_UNANSWERED = "UNANSWERED";
         public const string CORRECTNESS_UNKNOWN = "UNKNOWN";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";
@@ -280,6 +311,7 @@ namespace CLP.Entities
 
         public const string PARTIAL_REASON_UNKNOWN = "UNKNOWN";
         public const string PARTIAL_REASON_SWAPPED = "SWAPPED";
+        public const string PARTIAL_REASON_GAPS_AND_OVERLAPS = "GAPS AND OVERLAPS";
 
         #endregion // Correctness
 
@@ -287,7 +319,7 @@ namespace CLP.Entities
 
         public static bool IsFinalAnswerEvent(ISemanticEvent semanticEvent)
         {
-            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
+            return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_INTERMEDIARY_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
         public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)
@@ -324,7 +356,7 @@ namespace CLP.Entities
         public static bool IsRepresentationEvent(ISemanticEvent semanticEvent)
         {
             return semanticEvent.CodedObject == OBJECT_ARRAY || semanticEvent.CodedObject == OBJECT_NUMBER_LINE || semanticEvent.CodedObject == OBJECT_STAMP ||
-                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECTS || semanticEvent.CodedObject == OBJECT_BINS;
+                   semanticEvent.CodedObject == OBJECT_STAMPED_OBJECT || semanticEvent.CodedObject == OBJECT_BINS;
         }
 
         #endregion // Methods

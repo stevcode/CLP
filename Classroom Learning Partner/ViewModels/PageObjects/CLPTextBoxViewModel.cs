@@ -261,11 +261,6 @@ namespace Classroom_Learning_Partner.ViewModels
             TextBoxView.SetFont(0, null, null, null, null, IsUnderlined);
         }
 
-        public override string Title
-        {
-            get { return "TextBoxVM"; }
-        }
-
         #endregion //Constructor
 
         #region Buttons

@@ -82,6 +82,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
+            AnalysisService.RunFullBatchAnalysis(AnalysisService.LastPageNumbersToAnalyze);
         }
 
         #endregion // Constructors
@@ -149,7 +150,7 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public bool IsAutoSaveOn { get; set; } = true;
+        public bool IsAutoSaveOn { get; set; } = false;
 
         #endregion // Cache Properties
 
@@ -209,6 +210,11 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var page in CurrentNotebook.Pages)
             {
+                if (page.Owner.ID == Person.AUTHOR_ID)
+                {
+                    page.History.ClearNonAnimationHistory();
+                }
+
                 entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
             }
 
@@ -1887,7 +1893,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
-                Debug.WriteLine($"Notebook Folder: {notebookFolder}");
+                CLogger.AppendToLog($"Notebook Folder: {notebookFolder}");
                 var notebook = ConversionService.ConvertCacheEmilyNotebook(notebookFolder);
                 notebooks.Add(notebook);
 

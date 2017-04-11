@@ -97,16 +97,20 @@ namespace CLP.Entities
             var lastFinalAnswerEvent =
                 semanticEvents.LastOrDefault(
                                              e =>
-                                                 Codings.IsFinalAnswerEvent(e) && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
-                                                 e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE);
+                                                 Codings.IsFinalAnswerEvent(e) && e.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
+                                                 e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL && (e.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE ? e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE : true));
 
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
             if (lastFinalAnswerEvent == null)
             {
-                var finalAnswerPageObject = page.PageObjects.FirstOrDefault(p => p is MultipleChoice || p is InterpretationRegion);
+                IPageObject finalAnswerPageObject = page.PageObjects.OfType<MultipleChoice>().FirstOrDefault();
                 if (finalAnswerPageObject == null)
                 {
-                    return null;
+                    finalAnswerPageObject = page.PageObjects.OfType<InterpretationRegion>().FirstOrDefault(p => !p.IsIntermediary);
+                    if (finalAnswerPageObject == null)
+                    {
+                        return null;
+                    }
                 }
 
                 var multipleChoice = finalAnswerPageObject as MultipleChoice;
@@ -130,7 +134,7 @@ namespace CLP.Entities
                 }
 
                 tag.StudentAnswer = BLANK_STUDENT_ANSWER;
-                tag.FinalAnswerCorrectness = Correctness.Incorrect;
+                tag.FinalAnswerCorrectness = Correctness.Unanswered;
             }
             else
             {

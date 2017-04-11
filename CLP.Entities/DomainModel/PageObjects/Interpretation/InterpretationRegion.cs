@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -56,6 +53,24 @@ namespace CLP.Entities
 
         public static readonly PropertyData InterpretersProperty = RegisterProperty("Interpreters", typeof(ObservableCollection<Interpreters>), () => new ObservableCollection<Interpreters>());
 
+        /// <summary>SUMMARY</summary>
+        public bool IsIntermediary
+        {
+            get { return GetValue<bool>(IsIntermediaryProperty); }
+            set { SetValue(IsIntermediaryProperty, value); }
+        }
+
+        public static readonly PropertyData IsIntermediaryProperty = RegisterProperty("IsIntermediary", typeof(bool), false);
+
+        /// <summary>SUMMARY</summary>
+        public int ExpectedValue
+        {
+            get { return GetValue<int>(ExpectedValueProperty); }
+            set { SetValue(ExpectedValueProperty, value); }
+        }
+
+        public static readonly PropertyData ExpectedValueProperty = RegisterProperty("ExpectedValue", typeof(int), 0);
+        
         #endregion // Properties
 
         #region APageObjectBase Overrides
@@ -64,12 +79,34 @@ namespace CLP.Entities
 
         public override string CodedName => Codings.OBJECT_FILL_IN;
 
-        public override string CodedID => string.Empty; // TODO: Make this work with IncrementID
+        public override string CodedID
+        {
+            get
+            {
+                var answer = Codings.ANSWER_UNDEFINED;
+                var relationDefinitionTag = ParentPage.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
+                if (relationDefinitionTag != null)
+                {
+                    var definitionAnswer = relationDefinitionTag.Answer;
+                    var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
+                    answer = truncatedAnswer.ToString();
+                }
+                var codedID = answer;
+
+                return codedID;
+            }
+        }
 
         public override int ZIndex => 30;
 
         public override bool IsBackgroundInteractable => false;
 
         #endregion // APageObjectBase Overrides
+
+        #region IStrokeAccepter Overrides
+
+        public override int StrokeHitTestPercentage => 85;
+
+        #endregion // IStrokeAccepter Overrides
     }
 }
