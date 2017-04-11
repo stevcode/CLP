@@ -256,6 +256,13 @@ namespace Classroom_Learning_Partner.Services
                                                                  385
                                                              };
 
+        public static List<int> LastPageNumbersToAnalyze = new List<int>
+                                                           {
+                                                               217,
+                                                               221,
+                                                               236
+                                                           };
+
         public static List<int> OtherPageNumbersToAnalyze = new List<int>
                                                               {
                                                                   10,
