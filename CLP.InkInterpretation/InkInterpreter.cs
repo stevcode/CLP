@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
-using System.Threading.Tasks;
 using System.Windows.Ink;
 using Windows.Foundation;
 using Windows.UI.Input.Inking;
@@ -131,7 +129,6 @@ namespace CLP.InkInterpretation
             var trimmedInterpretations = interpretations.Select(i => i.Replace(" ", string.Empty)).ToList();
             foreach (var trimmed in trimmedInterpretations)
             {
-                int parsedInterpretation;
                 var adjustedInterpretation = trimmed.Replace("~", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("&", "8");
                 adjustedInterpretation = adjustedInterpretation.Replace(">", "7");
@@ -140,7 +137,7 @@ namespace CLP.InkInterpretation
                 adjustedInterpretation = adjustedInterpretation.Replace("Z", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("z", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("\"", "11");
-                if (int.TryParse(adjustedInterpretation, out parsedInterpretation))
+                if (int.TryParse(adjustedInterpretation, out var parsedInterpretation))
                 {
                     if (parsedInterpretation == number)
                     {
