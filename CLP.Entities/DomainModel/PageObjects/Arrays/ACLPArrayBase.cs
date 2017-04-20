@@ -456,6 +456,14 @@ namespace CLP.Entities
                 RaisePropertyChanged(nameof(ArrayWidth));
                 RaisePropertyChanged(nameof(GridSquareSize));
             }
+            if (e.PropertyName == nameof(Rows))
+            {
+                RaisePropertyChanged(nameof(LeftLabelText));
+            }
+            if (e.PropertyName == nameof(Columns))
+            {
+                RaisePropertyChanged(nameof(TopLabelText));
+            }
             base.OnPropertyChanged(e);
         }
 
