@@ -46,3 +46,5 @@ _ReSharper*/
 
 # Bypass Ignore
 !NuGet.exe
+*.psess
+*.vspx
