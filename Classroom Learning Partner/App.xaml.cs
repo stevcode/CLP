@@ -12,7 +12,6 @@ using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using Squirrel;
 
 namespace Classroom_Learning_Partner
 {
@@ -21,15 +20,6 @@ namespace Classroom_Learning_Partner
     {
         protected override async void OnStartup(StartupEventArgs e)
         {
-#if RELEASE
-            var testPathForReleases = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CLP Releases");
-
-            using (var updateManager = new UpdateManager(testPathForReleases))
-            {
-                await updateManager.UpdateApp();
-            }
-#endif
-
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 

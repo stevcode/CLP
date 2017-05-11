@@ -147,29 +147,9 @@
       <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.4.4\lib\Net45\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="itextsharp, Version=5.5.1.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\itextsharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Mdb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Pdb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.4\lib\net45\Mono.Cecil.Rocks.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -178,18 +158,6 @@
     <Reference Include="NRtfTree, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\NRtfTree.dll</HintPath>
-    </Reference>
-    <Reference Include="NuGet.Squirrel, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.4.4\lib\Net45\NuGet.Squirrel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Squirrel, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\squirrel.windows.1.4.4\lib\Net45\Squirrel.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Drawing" />

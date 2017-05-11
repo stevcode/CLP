@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
-using NuGet;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
