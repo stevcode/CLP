@@ -25,6 +25,16 @@ namespace Classroom_Learning_Partner
 
             var currentProgramMode = ProgramModes.Teacher;
 
+#if TEACHER
+            currentProgramMode = ProgramModes.Teacher;
+#endif
+#if STUDENT
+            currentProgramMode = ProgramModes.Student;
+#endif
+#if PROJECTOR
+            currentProgramMode = ProgramModes.Projector;
+#endif
+
             InitializeCatelSettings();
             InitializeServices();
             
@@ -40,13 +50,13 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.SetWorkspace();
         }
 
-        #region Static Properties
+#region Static Properties
 
         public static MainWindowViewModel MainWindowViewModel { get; private set; }
 
-        #endregion // Static Properties
+#endregion // Static Properties
 
-        #region Static Methods
+#region Static Methods
 
         private static void InitializeCatelSettings()
         {
@@ -99,7 +109,7 @@ namespace Classroom_Learning_Partner
             networkService.Connect();
         }
 
-        #region Error Handling
+#region Error Handling
 
         private static void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -142,11 +152,11 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        #endregion // Error Handling
+#endregion // Error Handling
 
-        #endregion // Static Methods
+#endregion // Static Methods
 
-        #region Old Network Methods
+#region Old Network Methods
 
         private static CLPNetwork _network = new CLPNetwork();
 
@@ -158,6 +168,6 @@ namespace Classroom_Learning_Partner
 
 
 
-        #endregion // Network Methods
+#endregion // Network Methods
     }
 }

@@ -1,7 +1,5 @@
 @echo off
-rem *****Begin Comment*****
 rem Builds CLP
-rem *****End Comment*******
 setlocal
 cd /d "%~dp0"
 
@@ -11,56 +9,33 @@ set msbuildexe="%programfiles(x86)%\Microsoft Visual Studio\2017\Community\MSBui
 rem Directory paths
 set localDirectory=%~dp0
 set iconFile="%localDirectory%Classroom Learning Partner\Resources\Images\Icons\CLPPaperClipLogoCircled.ico"
-set nuGetDirectory=%localDirectory%tools\NuGet
 set scriptsDirectory=%localDirectory%tools\Scripts
 set outputDirectory=%localDirectory%output
-set buildsDirectory=%outputDirectory%\1-builds
-set anyCPUBuildRelease=%buildsDirectory%\Release\AnyCPU
-set x64BuildRelease=%buildsDirectory%\Release\x64
-set x86BuildRelease=%buildsDirectory%\Release\x86
-set anyCPUBuildStandalone=%buildsDirectory%\Standalone\AnyCPU
-set x64BuildStandalone=%buildsDirectory%\Standalone\x64
-set x86BuildStandalone=%buildsDirectory%\Standalone\x86
-set releasesDirectory=%outputDirectory%\2-releases
-set anyCPURelease=%releasesDirectory%\Release\AnyCPU
-set x64Release=%releasesDirectory%\Release\x64
-set x86Release=%releasesDirectory%\Release\x86
-set anyCPUStandalone=%releasesDirectory%\Standalone\AnyCPU
-set x64Standalone=%releasesDirectory%\Standalone\x64
-set x86Standalone=%releasesDirectory%\Standalone\x86
-set packagesDirectory=%outputDirectory%\3-packages
-set installerDirectory=%outputDirectory%\4-installer
+set versionTrackingDirectory=%outputDirectory%\version-tracking
 
-echo Cleaning directories...
-rmdir /q /s "%buildsDirectory%" 1>nul 2>nul
-rmdir /q /s "%releasesDirectory%" 1>nul 2>nul
-echo Directories cleaned.
-echo.
-
-echo Initializing directories...
-mkdir "%buildsDirectory%" 1>nul 2>nul
-mkdir "%anyCPURelease%" 1>nul 2>nul
-mkdir "%anyCPUStandalone%" 1>nul 2>nul
-mkdir "%packagesDirectory%" 1>nul 2>nul
-mkdir "%installerDirectory%" 1>nul 2>nul
-echo Directories initialized.
-echo.
-
+echo Calculating Latest Version...
 rem Set Version
 set /a dailyBuildVersion=0
 for /f %%i in ('cscript "%scriptsDirectory%\DateVersionGenerator.vbs" //Nologo') do set dateVersion=%%i
-for /f "delims=" %%i in ('git rev-parse --short HEAD') do set shortHash=%%i
+
 set assemblyVersion=%dateVersion%.%dailyBuildVersion%
 
 rem Increment dailyBuildVersion
 :DoWhile
-if not exist "%installerDirectory%\CLP Setup - %assemblyVersion%.exe" (goto EndDoWhile)
+if not exist "%versionTrackingDirectory%\v%assemblyVersion%" (goto EndDoWhile)
 set /a dailyBuildVersion=%dailyBuildVersion% + 1
 set assemblyVersion=%dateVersion%.%dailyBuildVersion%
 goto DoWhile
 :EndDoWhile
+echo Latest Version Calculated.
+echo.
 
-set hashVersion=%dateVersion%.%dailyBuildVersion%-r%shortHash%
+echo Updating Version Assembly Info...
+
+type nul >"%versionTrackingDirectory%\v%assemblyVersion%"
+
+for /f "delims=" %%i in ('git rev-parse --short HEAD') do set shortHash=%%i
+set hashVersion=%assemblyVersion%-r%shortHash%
 
 rem Remove last line from VersionAssemblyInfo.cs
 set versionAssemblyInfo=%localDirectory%VersionAssemblyInfo.cs
@@ -72,58 +47,84 @@ echo using System.Reflection; >> "%versionAssemblyInfo%"
 echo [assembly: AssemblyVersion("%assemblyVersion%")] >> "%versionAssemblyInfo%"
 echo [assembly: AssemblyInformationalVersion("%hashVersion%")] >> "%versionAssemblyInfo%"
 
-echo Making Classroom Learning Partner: Release and Standalone Builds. Version %hashVersion%.
+echo Version Assembly Info Updated.
 echo.
 
-echo Building Release Configuration...
-%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Release /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
+rem More directory paths
+set buildsDirectory=%outputDirectory%\1-builds
+set TeacherBuildDirectory=%buildsDirectory%\Teacher
+set StudentBuildDirectory=%buildsDirectory%\Student
+set ProjectorBuildDirectory=%buildsDirectory%\Projector
+set releasesDirectory=%outputDirectory%\2-releases
+set TeacherReleaseDirectory="%releasesDirectory%\Teacher %assemblyVersion%"
+set StudentReleaseDirectory="%releasesDirectory%\Student %assemblyVersion%"
+set ProjectorReleaseDirectory="%releasesDirectory%\Projector %assemblyVersion%"
 
-if not "%ERRORLEVEL%"=="0" (echo ERROR: Release Build Failed. & goto Quit)
-echo Release Configuration built.
+echo Cleaning Build and Release Directories...
+rmdir /q /s "%TeacherBuildDirectory%" 1>nul 2>nul
+rmdir /q /s "%StudentBuildDirectory%" 1>nul 2>nul
+rmdir /q /s "%ProjectorBuildDirectory%" 1>nul 2>nul
+rmdir /q /s "%releasesDirectory%" 1>nul 2>nul
+echo Directories Cleaned.
 echo.
 
-echo Building Standalone Configuration...
-%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Standalone /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
-
-if not "%ERRORLEVEL%"=="0" (echo ERROR: Standalone Build Failed. & goto Quit)
-echo Standalone Configuration built.
+echo Initializing Build and Release Directories...
+mkdir "%buildsDirectory%" 1>nul 2>nul
+mkdir "%TeacherBuildDirectory%" 1>nul 2>nul
+mkdir "%StudentBuildDirectory%" 1>nul 2>nul
+mkdir "%ProjectorBuildDirectory%" 1>nul 2>nul
+mkdir "%TeacherReleaseDirectory%" 1>nul 2>nul
+mkdir "%StudentReleaseDirectory%" 1>nul 2>nul
+mkdir "%ProjectorReleaseDirectory%" 1>nul 2>nul
+echo Directories Initialized.
 echo.
 
-echo Releasing AnyCPU Release...
-mkdir "%anyCPURelease%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuildRelease%\"*.dll "%anyCPURelease%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuildRelease%\Classroom Learning Partner.exe" "%anyCPURelease%" 1>nul 2>nul
-xcopy /y "%anyCPUBuildRelease%\Classroom Learning Partner.exe.config" "%anyCPURelease%" 1>nul 2>nul
-echo AnyCPU Release released.
+echo Making Classroom Learning Partner: Release Builds. Version %hashVersion%.
 echo.
 
-echo Releasing AnyCPU Standalone...
-mkdir "%anyCPUStandalone%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuildStandalone%\"*.dll "%anyCPUStandalone%\lib" 1>nul 2>nul
-xcopy /y "%anyCPUBuildStandalone%\Classroom Learning Partner.exe" "%anyCPUStandalone%" 1>nul 2>nul
-xcopy /y "%anyCPUBuildStandalone%\Classroom Learning Partner.exe.config" "%anyCPUStandalone%" 1>nul 2>nul
-echo AnyCPU Standalone released.
+echo Building Teacher Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Teacher /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
+
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Teacher Build Failed. & goto Quit)
+echo Teacher Configuration Built.
 echo.
 
-rem Create the NuGet package for Squirrel to use
-echo Packaging CLP...
-"%nuGetDirectory%\nuget" pack "%localDirectory%CLPDeployment.nuspec" -Version %assemblyVersion% -OutputDirectory "%packagesDirectory%"
+echo Building Student Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Student /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
 
-if not "%ERRORLEVEL%"=="0" (echo ERROR: Creating the NuGet Package Failed. & goto Quit)
-echo CLP packaged.
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Student Build Failed. & goto Quit)
+echo Student Configuration Built.
 echo.
 
-rem Attempt to build the installer using Squirrel
-echo Creating CLP Installer...
-set squirrelDirectory=%localDirectory%packages\squirrel.windows.1.4.4\tools
-"%squirrelDirectory%\Squirrel.exe" --releasify "%packagesDirectory%"\ClassroomLearningPartner.%assemblyVersion%.nupkg --releaseDir "%installerDirectory%" --setupIcon "%~dp0CLPPaperClipLogoCircled.ico"
+echo Building Projector Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Projector /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
 
-if not "%ERRORLEVEL%"=="0" (echo ERROR: Creating the installer failed. Check Squirrel version is still 1.4.4. & goto Quit)
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Projector Build Failed. & goto Quit)
+echo Projector Configuration Built.
+echo.
 
-move /y "%installerDirectory%\Setup.exe" "%installerDirectory%\CLP Setup - %assemblyVersion%.exe" >nul
-move /y "%installerDirectory%\Setup.msi" "%installerDirectory%\CLP Setup - %assemblyVersion%.msi" >nul
+echo Releasing Teacher Build...
+mkdir "%TeacherReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%TeacherBuildDirectory%\"*.dll "%TeacherReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%TeacherBuildDirectory%\Classroom Learning Partner.exe" "%TeacherReleaseDirectory%" 1>nul 2>nul
+xcopy /y "%TeacherBuildDirectory%\Classroom Learning Partner.exe.config" "%TeacherReleaseDirectory%" 1>nul 2>nul
+echo Teacher Build Released.
+echo.
 
-echo CLP Installer created.
+echo Releasing Student Build...
+mkdir "%StudentReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%StudentBuildDirectory%\"*.dll "%StudentReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%StudentBuildDirectory%\Classroom Learning Partner.exe" "%StudentReleaseDirectory%" 1>nul 2>nul
+xcopy /y "%StudentBuildDirectory%\Classroom Learning Partner.exe.config" "%StudentReleaseDirectory%" 1>nul 2>nul
+echo Student Build Released.
+echo.
+
+echo Releasing Teacher Build...
+mkdir "%ProjectorReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%ProjectorBuildDirectory%\"*.dll "%ProjectorReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%ProjectorBuildDirectory%\Classroom Learning Partner.exe" "%ProjectorReleaseDirectory%" 1>nul 2>nul
+xcopy /y "%ProjectorBuildDirectory%\Classroom Learning Partner.exe.config" "%ProjectorReleaseDirectory%" 1>nul 2>nul
+echo Teacher Build Released.
 echo.
 
 echo All operations completed successfully.
