@@ -8,7 +8,7 @@ using System.Windows;
 
 [assembly: AssemblyTitle("Classroom Learning Partner")]
 [assembly: AssemblyDescription("Classroom Learning Partner")]
-[assembly: AssemblyCopyright("Copyright © 2016")]
+[assembly: AssemblyCopyright("Copyright © 2017")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("INK-12")]
 [assembly: AssemblyProduct("Classroom Learning Partner")]
