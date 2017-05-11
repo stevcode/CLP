@@ -12,6 +12,7 @@ set iconFile="%localDirectory%Classroom Learning Partner\Resources\Images\Icons\
 set scriptsDirectory=%localDirectory%tools\Scripts
 set outputDirectory=%localDirectory%output
 set versionTrackingDirectory=%outputDirectory%\version-tracking
+mkdir "%versionTrackingDirectory%" 1>nul 2>nul
 
 echo Calculating Latest Version...
 rem Set Version
@@ -22,7 +23,7 @@ set assemblyVersion=%dateVersion%.%dailyBuildVersion%
 
 rem Increment dailyBuildVersion
 :DoWhile
-if not exist "%versionTrackingDirectory%\v%assemblyVersion%" (goto EndDoWhile)
+if not exist "%versionTrackingDirectory%\%assemblyVersion%.version" (goto EndDoWhile)
 set /a dailyBuildVersion=%dailyBuildVersion% + 1
 set assemblyVersion=%dateVersion%.%dailyBuildVersion%
 goto DoWhile
@@ -32,7 +33,7 @@ echo.
 
 echo Updating Version Assembly Info...
 
-type nul >"%versionTrackingDirectory%\v%assemblyVersion%"
+type nul >"%versionTrackingDirectory%\%assemblyVersion%.version"
 
 for /f "delims=" %%i in ('git rev-parse --short HEAD') do set shortHash=%%i
 set hashVersion=%assemblyVersion%-r%shortHash%
@@ -56,14 +57,12 @@ set TeacherBuildDirectory=%buildsDirectory%\Teacher
 set StudentBuildDirectory=%buildsDirectory%\Student
 set ProjectorBuildDirectory=%buildsDirectory%\Projector
 set releasesDirectory=%outputDirectory%\2-releases
-set TeacherReleaseDirectory="%releasesDirectory%\Teacher %assemblyVersion%"
-set StudentReleaseDirectory="%releasesDirectory%\Student %assemblyVersion%"
-set ProjectorReleaseDirectory="%releasesDirectory%\Projector %assemblyVersion%"
+set TeacherReleaseDirectory=%releasesDirectory%\Teacher-%assemblyVersion%
+set StudentReleaseDirectory=%releasesDirectory%\Student-%assemblyVersion%
+set ProjectorReleaseDirectory=%releasesDirectory%\Projector-%assemblyVersion%
 
 echo Cleaning Build and Release Directories...
-rmdir /q /s "%TeacherBuildDirectory%" 1>nul 2>nul
-rmdir /q /s "%StudentBuildDirectory%" 1>nul 2>nul
-rmdir /q /s "%ProjectorBuildDirectory%" 1>nul 2>nul
+rmdir /q /s "%buildsDirectory%" 1>nul 2>nul
 rmdir /q /s "%releasesDirectory%" 1>nul 2>nul
 echo Directories Cleaned.
 echo.
@@ -73,6 +72,7 @@ mkdir "%buildsDirectory%" 1>nul 2>nul
 mkdir "%TeacherBuildDirectory%" 1>nul 2>nul
 mkdir "%StudentBuildDirectory%" 1>nul 2>nul
 mkdir "%ProjectorBuildDirectory%" 1>nul 2>nul
+mkdir "%releasesDirectory%" 1>nul 2>nul
 mkdir "%TeacherReleaseDirectory%" 1>nul 2>nul
 mkdir "%StudentReleaseDirectory%" 1>nul 2>nul
 mkdir "%ProjectorReleaseDirectory%" 1>nul 2>nul
