@@ -192,22 +192,30 @@ namespace Classroom_Learning_Partner
             #region Constraints
 
             //var pageNumbersToLoad = new List<int> { 209, 218, 222, 235, 253, 258, 259, 262, 275, 276, 278, 281, 295, 299, 300, 307, 323, 328, 346, 360, 368, 370, 382, 383, 384, 385 };
+            //var pageNumbersToLoad = new List<int>
+            //                        {
+            //                            218,
+            //                            276,
+            //                            323,
+            //                            328,
+            //                            346,
+            //                            253,
+            //                            383,
+            //                            281,
+            //                            328,
+            //                            368,
+            //                            275,
+            //                            295,
+            //                            281,
+            //                            300
+            //                        };
+
+            // NL Playback issues
             var pageNumbersToLoad = new List<int>
                                     {
-                                        218,
-                                        276,
-                                        323,
-                                        328,
-                                        346,
                                         253,
-                                        383,
-                                        281,
-                                        328,
-                                        368,
-                                        275,
-                                        295,
-                                        281,
-                                        300
+                                        323,
+                                        328
                                     };
 
             //var pageNumbersToLoad = new List<int>

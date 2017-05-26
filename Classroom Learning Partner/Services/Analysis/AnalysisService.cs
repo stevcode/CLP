@@ -263,6 +263,19 @@ namespace Classroom_Learning_Partner.Services
                                                                236
                                                            };
 
+        public static List<int> FixedPageNumbersToAnalyze = new List<int>
+                                                           {
+                                                               278,
+                                                               280,
+                                                               287,
+                                                               289,
+                                                               296,
+                                                               298,
+                                                               308,
+                                                               310,
+                                                               320
+                                                           };
+
         public static List<int> OtherPageNumbersToAnalyze = new List<int>
                                                               {
                                                                   10,

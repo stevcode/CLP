@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Services
         event EventHandler<EventArgs> RoleChanged;
 
 
-        // OnRoleChange?.Invoke(value); see page 548
+        // OnRoleChange?.Invoke(value); see page 548, 563
         // p 557 for loop that would make for better async event?
     }
 }
