@@ -23,8 +23,9 @@ namespace Classroom_Learning_Partner.Services
         #region Members
 
         private static string AnalysisFolder => Path.Combine(DataService.DesktopFolderPath, "Rolling Analysis");
+        private static string CombineFolder => Path.Combine(DataService.DesktopFolderPath, "Combine");
         private static string ConvertedPagesFolder => Path.Combine(AnalysisFolder, "Converted Pages");
-
+        
         private static string AnalysisTrackerFilePath => Path.Combine(AnalysisFolder, ANALYSIS_TRACKER_FILE_NAME);
         private static string RollingAnalysisFilePath => Path.Combine(AnalysisFolder, ROLLING_ANALYSIS_FILE_NAME);
         private static string AnnFullZipFilePath => Path.Combine(AnalysisFolder, ANN_CACHE_FILE_NAME);
@@ -635,6 +636,82 @@ namespace Classroom_Learning_Partner.Services
             }
 
             CLogger.AppendToLog("Ending Rolling Batch Analysis of cache.");
+        }
+
+        public static void RunFullBatchAnalysisOnAlreadyConvertedPages()
+        {
+            CLogger.ForceNewLogFile();
+
+            CLogger.AppendToLog("Beginning Rolling Batch Analysis of cache.");
+
+            if (!Directory.Exists(AnalysisFolder))
+            {
+                Directory.CreateDirectory(AnalysisFolder);
+            }
+
+            InitializeRollingAnalysisFile();
+
+            var combineFolderPath = CombineFolder;
+            var directoryInfo = new DirectoryInfo(combineFolderPath);
+            var pageFiles = directoryInfo.GetFiles("*.json", SearchOption.AllDirectories);
+
+            var totalPagesLoaded = 0;
+            var totalPageLoadTimeInMilliseconds = 0.0;
+            long totalFileSizeInBytes = 0;
+
+            var backupCount = 0;
+
+            foreach (var pageFileInfo in pageFiles)
+            {
+                var pagesRemaining = pageFiles.Length - totalPagesLoaded;
+                CLogger.AppendToLog($"Pages Remaining: {pagesRemaining}");
+                var filePath = pageFileInfo.FullName;
+                CLogger.AppendToLog($"Loading Page: {filePath}");
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                var page = AEntityBase.FromJsonFile<CLPPage>(filePath);
+                stopWatch.Stop();
+                CLogger.AppendToLog($"Page Loaded: {filePath}");
+
+                CLogger.AppendToLog($"Analyzing Page: {filePath}");
+                HistoryAnalysis.GenerateSemanticEvents(page);
+                CLogger.AppendToLog($"Page Analyzed: {filePath}");
+
+                var analysisEntry = GenerateAnalysisEntryForPage(page);
+                var analysisRow = analysisEntry.BuildEntryLine();
+
+                var rollingAnalysisBackupFilePath = $"{RollingAnalysisFilePath}.bak{backupCount}";
+                if (File.Exists(RollingAnalysisFilePath) &&
+                    File.Exists(rollingAnalysisBackupFilePath))
+                {
+                    File.Delete(rollingAnalysisBackupFilePath);
+                }
+                File.Copy(RollingAnalysisFilePath, rollingAnalysisBackupFilePath);
+                File.AppendAllText(RollingAnalysisFilePath, Environment.NewLine + analysisRow);
+
+                backupCount++;
+                if (backupCount > 44)
+                {
+                    backupCount = 0;
+                }
+
+                #region Stats
+
+                var pageLoadTimeInMilliseconds = stopWatch.ElapsedMilliseconds;
+                var fileSizeInBytes = pageFileInfo.Length;
+
+                totalPagesLoaded++;
+                totalPageLoadTimeInMilliseconds += pageLoadTimeInMilliseconds;
+                totalFileSizeInBytes += fileSizeInBytes;
+
+                #endregion // Stats
+            }
+
+            var averageTimeToLoadPageInMilliseconds = totalPageLoadTimeInMilliseconds / totalPagesLoaded;
+            CLogger.AppendToLog($"Average Time to Load Page: {averageTimeToLoadPageInMilliseconds} ms");
+            var averageTimeToLoadByteInMilliseconds = totalPageLoadTimeInMilliseconds / totalFileSizeInBytes;
+            CLogger.AppendToLog($"Average Time to Load 1 byte: {averageTimeToLoadByteInMilliseconds} ms");
+            CLogger.AppendToLog("*****DONE*****");
         }
 
         private static AnalysisTracker InitializeAnalysisTrackerFile()
