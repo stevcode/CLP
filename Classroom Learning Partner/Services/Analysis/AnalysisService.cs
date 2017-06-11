@@ -23,7 +23,6 @@ namespace Classroom_Learning_Partner.Services
         #region Members
 
         private static string AnalysisFolder => Path.Combine(DataService.DesktopFolderPath, "Rolling Analysis");
-        private static string CombineFolder => Path.Combine(DataService.DesktopFolderPath, "Combine");
         private static string ConvertedPagesFolder => Path.Combine(AnalysisFolder, "Converted Pages");
         
         private static string AnalysisTrackerFilePath => Path.Combine(AnalysisFolder, ANALYSIS_TRACKER_FILE_NAME);
@@ -651,7 +650,7 @@ namespace Classroom_Learning_Partner.Services
 
             InitializeRollingAnalysisFile();
 
-            var combineFolderPath = CombineFolder;
+            var combineFolderPath = Path.Combine(DataService.DesktopFolderPath, "Combine");
             var directoryInfo = new DirectoryInfo(combineFolderPath);
             var pageFiles = directoryInfo.GetFiles("*.json", SearchOption.AllDirectories);
 

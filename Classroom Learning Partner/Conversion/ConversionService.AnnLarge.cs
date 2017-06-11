@@ -43,6 +43,187 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
+        public static void Combine()
+        {
+            // *****Important Note: Ensure IS_LARGE_CACHE is set to true in ConversionService*****
+
+            CLogger.ForceNewLogFile();
+
+            CLogger.AppendToLog("Beginning Combination.");
+
+            var zipFilePath = Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014 - Combined.clp");
+
+            ///////////
+
+            var notebooksFolderPath = AnnNotebooksFolder;
+            var classesFolderPath = AnnClassesFolder;
+            var imagesFolderPath = AnnImageFolder;
+            const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
+
+            var notebooks = new List<Notebook>();
+            Notebook authorNotebook = null;
+
+            var dirInfo = new DirectoryInfo(notebooksFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+
+                CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
+                var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+                CLogger.AppendToLog("Notebook Loaded");
+
+                CLogger.AppendToLog("Converting Notebook");
+                var newNotebook = ConvertNotebook(oldNotebook);
+                CLogger.AppendToLog("Notebook Converted");
+
+                notebooks.Add(newNotebook);
+
+                if (newNotebook.OwnerID == Person.AUTHOR_ID)
+                {
+                    authorNotebook = newNotebook;
+                }
+
+                if (newNotebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in oldNotebook.Pages)
+                {
+                    CLogger.AppendToLog($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                    var newPage = ConvertPage(page);
+                    CLogger.AppendToLog($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
+
+                    newNotebook.Pages.Add(newPage);
+
+                    if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
+                    {
+                        PageNumberToIDMap.Add(newPage.PageNumber, newPage.ID);
+                    }
+
+                    if (!PageIDToNumberMap.ContainsKey(newPage.ID))
+                    {
+                        PageIDToNumberMap.Add(newPage.ID, newPage.PageNumber);
+                    }
+                }
+            }
+
+            //
+
+            CLogger.AppendToLog("Saving Notebooks To Zip.");
+
+            if (File.Exists(zipFilePath))
+            {
+                File.Delete(zipFilePath);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var notebook in notebooks)
+            {
+                notebook.ContainerZipFilePath = zipFilePath;
+
+                entryList.Add(new DataService.ZipEntrySaver(notebook, notebook));
+
+                if (notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in notebook.Pages)
+                {
+                    page.ContainerZipFilePath = zipFilePath;
+                    entryList.Add(new DataService.ZipEntrySaver(page, notebook));
+                    foreach (var submission in page.Submissions)
+                    {
+                        submission.ContainerZipFilePath = zipFilePath;
+                        entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
+                    }
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save(zipFilePath);
+            }
+
+            CLogger.AppendToLog("Finished Saving Notebooks To Zip.");
+
+            //
+
+            var subjectFilePath = Path.Combine(classesFolderPath, SUBJECT_FILE_NAME);
+            var classRoster = ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
+            SaveClassRosterToZip(zipFilePath, classRoster);
+
+            SaveImagesToZip(zipFilePath, imagesFolderPath);
+
+            var classesDirInfo = new DirectoryInfo(classesFolderPath);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            SaveSessionsToZip(zipFilePath, sessions, authorNotebook);
+
+            foreach (var notebook in notebooks)
+            {
+                if (!notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                CLogger.AppendToLog($"Moving page json files for {notebook.Owner.FullName}");
+
+                var internalPagesDirectoryPath = notebook.NotebookPagesDirectoryPath;
+
+                var combineFolderPath = Path.Combine(DataService.DesktopFolderPath, "Combine");
+                var combineStudentFolderName = $"{notebook.Owner.FullName};{notebook.Owner.ID}";
+                var combineStudentFolderPath = Path.Combine(combineFolderPath, combineStudentFolderName);
+
+                using (var zip = ZipFile.Read(zipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    var directoryInfo = new DirectoryInfo(combineStudentFolderPath);
+                    foreach (var fileInfo in directoryInfo.GetFiles())
+                    {
+                        var fileNameWithExtension = fileInfo.Name;
+                        var pageFilePath = fileInfo.FullName;
+
+                        var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(internalPagesDirectoryPath, fileNameWithExtension);
+                        if (zip.ContainsEntry(internalFilePath))
+                        {
+                            continue;
+                        }
+
+                        var entry = zip.AddFile(pageFilePath);
+                        entry.FileName = internalFilePath;
+                    }
+
+                    zip.Save();
+                }
+
+                CLogger.AppendToLog($"Finished moving page json files for {notebook.Owner.FullName}");
+            }
+
+            CLogger.AppendToLog("Finished Combination.");            
+        }
+
         public static void Stitch()
         {
             #region Constraints
