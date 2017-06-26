@@ -696,6 +696,8 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
 
+                
+
                 var newPageObject = ConvertPageObject(pageObject, newPage);
                 if (newPageObject == null)
                 {
@@ -1016,8 +1018,15 @@ namespace Classroom_Learning_Partner
             }
 
             newNumberLine.CanAcceptStrokes = numberLine.CanAcceptStrokes;
-            newNumberLine.AcceptedStrokes = numberLine.AcceptedStrokes;  // TODO: Confirm this is necessary?
+            //newNumberLine.AcceptedStrokes = numberLine.AcceptedStrokes;  // TODO: Confirm this is necessary?
             newNumberLine.AcceptedStrokeParentIDs = numberLine.AcceptedStrokeParentIDs;
+
+            // BUG: TODO: HACK: Should be done for all stroke acceptors and pageObject acceptors
+            foreach (var acceptedStrokeParentID in newNumberLine.AcceptedStrokeParentIDs)
+            {
+                var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
+                newNumberLine.AcceptedStrokes.Add(stroke);
+            }
 
             return newNumberLine;
         }
@@ -1714,6 +1723,7 @@ namespace Classroom_Learning_Partner
 
         #endregion // History
 
+        
         #region HistoryActions
 
         public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)

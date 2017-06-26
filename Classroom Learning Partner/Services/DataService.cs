@@ -84,6 +84,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
             //AnalysisService.RunFullBatchAnalysis(AnalysisService.FixedPageNumbersToAnalyze);
+            //AnalysisService.RunFullBatchAnalysis(new List<int>{51, 213, 251, 253, 311, 321, 327, 328, 330, 342, 346, 348, 349});
             //AnalysisService.RunFullBatchAnalysisOnAlreadyConvertedPages();
         }
 
