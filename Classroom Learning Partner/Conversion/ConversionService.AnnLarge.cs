@@ -1604,6 +1604,12 @@ namespace Classroom_Learning_Partner
         {
             var newPageHistory = new PageHistory();
             newPage.History = newPageHistory;
+
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            {
+                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
+            }
+
             foreach (var trashedPageObject in pageHistory.TrashedPageObjects)
             {
                 var newTrashedPageObject = ConvertPageObject(trashedPageObject, newPage);
@@ -1612,11 +1618,6 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
                 newPageHistory.TrashedPageObjects.Add(newTrashedPageObject);
-            }
-
-            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
-            {
-                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
             }
 
             if (pageHistory.RedoItems.Any())

@@ -371,6 +371,8 @@ namespace Classroom_Learning_Partner.Services
                                                                   353
                                                               };
 
+        public static List<int> AllPageNumbersToAnalyze = MainPageNumbersToAnalyze.Concat(OtherPageNumbersToAnalyze).Concat(LastPageNumbersToAnalyze).Distinct().ToList();
+
         #endregion // Page Number Lists
 
         #endregion // Members
