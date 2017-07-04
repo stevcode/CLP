@@ -2959,7 +2959,11 @@ namespace Classroom_Learning_Partner
 
                             removedStrokesToFillInRegion.Add(stroke);
                             newPage.History.TrashedInkStrokes.Remove(stroke);
-                            newPage.InkStrokes.Add(stroke);
+                            // HACK: Djemimah Filois's page 353 conversion fails when it tries to add a stroke already on the page
+                            if (!newPage.InkStrokes.Contains(stroke))
+                            {
+                                newPage.InkStrokes.Add(stroke);
+                            }
                         }
 
                         interpretationRegion.ChangeAcceptedStrokes(removedStrokesToFillInRegion, addedStrokesToFillInRegion);
