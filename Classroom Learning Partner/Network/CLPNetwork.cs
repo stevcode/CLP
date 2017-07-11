@@ -31,6 +31,8 @@ namespace Classroom_Learning_Partner
         public CLPNetwork()
         {
             CurrentUser = new Person();
+            // TODO: Can you make DiscoveredServices async, so that you can be notified as soon as it's populated?
+            // Possibly p 759-760, task.ContinueWith(), TaskContinuationOptions.OnlyOnRanToCompletion?
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
             DiscoveredStudents = new DiscoveredServices<IStudentContract>();
@@ -99,6 +101,8 @@ namespace Classroom_Learning_Partner
                                    Thread.CurrentThread.IsBackground = true;
                                    while (!DiscoveredProjectors.Addresses.Any())
                                    {
+                                       // TODO: Avoid calling Sleep in production code. Can be solved with an await Task.Delay()
+                                       // p 777, possible solution, but probably primitive
                                        Thread.Sleep(1000);
                                    }
 

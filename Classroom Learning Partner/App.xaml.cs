@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner
     {
         protected override async void OnStartup(StartupEventArgs e)
         {
+            // TODO: Is there a difference between this and AppDomain.CurrentDomain.UnhandledException += blah?
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
