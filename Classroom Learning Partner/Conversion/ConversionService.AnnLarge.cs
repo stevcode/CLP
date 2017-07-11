@@ -43,6 +43,187 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
+        public static void Combine()
+        {
+            // *****Important Note: Ensure IS_LARGE_CACHE is set to true in ConversionService*****
+
+            CLogger.ForceNewLogFile();
+
+            CLogger.AppendToLog("Beginning Combination.");
+
+            var zipFilePath = Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014 - Combined.clp");
+
+            ///////////
+
+            var notebooksFolderPath = AnnNotebooksFolder;
+            var classesFolderPath = AnnClassesFolder;
+            var imagesFolderPath = AnnImageFolder;
+            const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
+
+            var notebooks = new List<Notebook>();
+            Notebook authorNotebook = null;
+
+            var dirInfo = new DirectoryInfo(notebooksFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolder = directory.FullName;
+
+                CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
+                var oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+                CLogger.AppendToLog("Notebook Loaded");
+
+                CLogger.AppendToLog("Converting Notebook");
+                var newNotebook = ConvertNotebook(oldNotebook);
+                CLogger.AppendToLog("Notebook Converted");
+
+                notebooks.Add(newNotebook);
+
+                if (newNotebook.OwnerID == Person.AUTHOR_ID)
+                {
+                    authorNotebook = newNotebook;
+                }
+
+                if (newNotebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in oldNotebook.Pages)
+                {
+                    CLogger.AppendToLog($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                    var newPage = ConvertPage(page);
+                    CLogger.AppendToLog($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
+
+                    newNotebook.Pages.Add(newPage);
+
+                    if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
+                    {
+                        PageNumberToIDMap.Add(newPage.PageNumber, newPage.ID);
+                    }
+
+                    if (!PageIDToNumberMap.ContainsKey(newPage.ID))
+                    {
+                        PageIDToNumberMap.Add(newPage.ID, newPage.PageNumber);
+                    }
+                }
+            }
+
+            //
+
+            CLogger.AppendToLog("Saving Notebooks To Zip.");
+
+            if (File.Exists(zipFilePath))
+            {
+                File.Delete(zipFilePath);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+            foreach (var notebook in notebooks)
+            {
+                notebook.ContainerZipFilePath = zipFilePath;
+
+                entryList.Add(new DataService.ZipEntrySaver(notebook, notebook));
+
+                if (notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                foreach (var page in notebook.Pages)
+                {
+                    page.ContainerZipFilePath = zipFilePath;
+                    entryList.Add(new DataService.ZipEntrySaver(page, notebook));
+                    foreach (var submission in page.Submissions)
+                    {
+                        submission.ContainerZipFilePath = zipFilePath;
+                        entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
+                    }
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                zip.Save(zipFilePath);
+            }
+
+            CLogger.AppendToLog("Finished Saving Notebooks To Zip.");
+
+            //
+
+            var subjectFilePath = Path.Combine(classesFolderPath, SUBJECT_FILE_NAME);
+            var classRoster = ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
+            SaveClassRosterToZip(zipFilePath, classRoster);
+
+            SaveImagesToZip(zipFilePath, imagesFolderPath);
+
+            var classesDirInfo = new DirectoryInfo(classesFolderPath);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
+
+            SaveSessionsToZip(zipFilePath, sessions, authorNotebook);
+
+            foreach (var notebook in notebooks)
+            {
+                if (!notebook.Owner.IsStudent)
+                {
+                    continue;
+                }
+
+                CLogger.AppendToLog($"Moving page json files for {notebook.Owner.FullName}");
+
+                var internalPagesDirectoryPath = notebook.NotebookPagesDirectoryPath;
+
+                var combineFolderPath = Path.Combine(DataService.DesktopFolderPath, "Combine");
+                var combineStudentFolderName = $"{notebook.Owner.FullName};{notebook.Owner.ID}";
+                var combineStudentFolderPath = Path.Combine(combineFolderPath, combineStudentFolderName);
+
+                using (var zip = ZipFile.Read(zipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    var directoryInfo = new DirectoryInfo(combineStudentFolderPath);
+                    foreach (var fileInfo in directoryInfo.GetFiles())
+                    {
+                        var fileNameWithExtension = fileInfo.Name;
+                        var pageFilePath = fileInfo.FullName;
+
+                        var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(internalPagesDirectoryPath, fileNameWithExtension);
+                        if (zip.ContainsEntry(internalFilePath))
+                        {
+                            continue;
+                        }
+
+                        var entry = zip.AddFile(pageFilePath);
+                        entry.FileName = internalFilePath;
+                    }
+
+                    zip.Save();
+                }
+
+                CLogger.AppendToLog($"Finished moving page json files for {notebook.Owner.FullName}");
+            }
+
+            CLogger.AppendToLog("Finished Combination.");            
+        }
+
         public static void Stitch()
         {
             #region Constraints
@@ -192,22 +373,30 @@ namespace Classroom_Learning_Partner
             #region Constraints
 
             //var pageNumbersToLoad = new List<int> { 209, 218, 222, 235, 253, 258, 259, 262, 275, 276, 278, 281, 295, 299, 300, 307, 323, 328, 346, 360, 368, 370, 382, 383, 384, 385 };
+            //var pageNumbersToLoad = new List<int>
+            //                        {
+            //                            218,
+            //                            276,
+            //                            323,
+            //                            328,
+            //                            346,
+            //                            253,
+            //                            383,
+            //                            281,
+            //                            328,
+            //                            368,
+            //                            275,
+            //                            295,
+            //                            281,
+            //                            300
+            //                        };
+
+            // NL Playback issues
             var pageNumbersToLoad = new List<int>
                                     {
-                                        218,
-                                        276,
-                                        323,
-                                        328,
-                                        346,
                                         253,
-                                        383,
-                                        281,
-                                        328,
-                                        368,
-                                        275,
-                                        295,
-                                        281,
-                                        300
+                                        323,
+                                        328
                                     };
 
             //var pageNumbersToLoad = new List<int>
@@ -506,6 +695,8 @@ namespace Classroom_Learning_Partner
                 {
                     continue;
                 }
+
+                
 
                 var newPageObject = ConvertPageObject(pageObject, newPage);
                 if (newPageObject == null)
@@ -827,8 +1018,15 @@ namespace Classroom_Learning_Partner
             }
 
             newNumberLine.CanAcceptStrokes = numberLine.CanAcceptStrokes;
-            newNumberLine.AcceptedStrokes = numberLine.AcceptedStrokes;  // TODO: Confirm this is necessary?
+            //newNumberLine.AcceptedStrokes = numberLine.AcceptedStrokes;  // TODO: Confirm this is necessary?
             newNumberLine.AcceptedStrokeParentIDs = numberLine.AcceptedStrokeParentIDs;
+
+            // BUG: TODO: HACK: Should be done for all stroke acceptors and pageObject acceptors
+            foreach (var acceptedStrokeParentID in newNumberLine.AcceptedStrokeParentIDs)
+            {
+                var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
+                newNumberLine.AcceptedStrokes.Add(stroke);
+            }
 
             return newNumberLine;
         }
@@ -1406,6 +1604,12 @@ namespace Classroom_Learning_Partner
         {
             var newPageHistory = new PageHistory();
             newPage.History = newPageHistory;
+
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            {
+                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
+            }
+
             foreach (var trashedPageObject in pageHistory.TrashedPageObjects)
             {
                 var newTrashedPageObject = ConvertPageObject(trashedPageObject, newPage);
@@ -1414,11 +1618,6 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
                 newPageHistory.TrashedPageObjects.Add(newTrashedPageObject);
-            }
-
-            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
-            {
-                newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
             }
 
             if (pageHistory.RedoItems.Any())
@@ -1525,6 +1724,7 @@ namespace Classroom_Learning_Partner
 
         #endregion // History
 
+        
         #region HistoryActions
 
         public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
@@ -2759,7 +2959,11 @@ namespace Classroom_Learning_Partner
 
                             removedStrokesToFillInRegion.Add(stroke);
                             newPage.History.TrashedInkStrokes.Remove(stroke);
-                            newPage.InkStrokes.Add(stroke);
+                            // HACK: Djemimah Filois's page 353 conversion fails when it tries to add a stroke already on the page
+                            if (!newPage.InkStrokes.Contains(stroke))
+                            {
+                                newPage.InkStrokes.Add(stroke);
+                            }
                         }
 
                         interpretationRegion.ChangeAcceptedStrokes(removedStrokesToFillInRegion, addedStrokesToFillInRegion);

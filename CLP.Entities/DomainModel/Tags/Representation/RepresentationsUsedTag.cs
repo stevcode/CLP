@@ -1414,14 +1414,16 @@ namespace CLP.Entities
                 }
                 else if (leftCorrectness == Correctness.PartiallyCorrect &&
                          rightCorrectness == Correctness.Incorrect &&
-                         alternativeCorrectness == Correctness.Incorrect)
+                         (alternativeCorrectness == Correctness.Incorrect ||
+                          alternativeCorrectness == Correctness.Unknown))
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
                     representationCorrectness = Correctness.PartiallyCorrect;
                 }
                 else if (rightCorrectness == Correctness.PartiallyCorrect &&
                          leftCorrectness == Correctness.Incorrect &&
-                         alternativeCorrectness == Correctness.Incorrect)
+                         (alternativeCorrectness == Correctness.Incorrect || 
+                          alternativeCorrectness == Correctness.Unknown))
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
                     representationCorrectness = Correctness.PartiallyCorrect;

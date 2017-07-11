@@ -79,10 +79,13 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
+            //ConversionService.Combine();
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
             //ConvertEmilyCache();
-            //AnalysisService.RunFullBatchAnalysis(AnalysisService.LastPageNumbersToAnalyze);
+            //AnalysisService.RunFullBatchAnalysis(AnalysisService.AllPageNumbersToAnalyze);
+            //AnalysisService.RunFullBatchAnalysis(new List<int>{213});
+            //AnalysisService.RunFullBatchAnalysisOnAlreadyConvertedPages();
         }
 
         #endregion // Constructors

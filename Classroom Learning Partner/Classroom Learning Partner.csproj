@@ -246,9 +246,11 @@
     <Compile Include="Services\Analysis\AnalysisService.cs" />
     <Compile Include="Services\Analysis\AnalysisTracker.cs" />
     <Compile Include="Services\DataService.cs" />
-    <Compile Include="Services\IDataService.cs" />
-    <Compile Include="Services\INetworkService.cs" />
-    <Compile Include="Services\IPageInteractionService.cs" />
+    <Compile Include="Services\Enums\ProgramRoles.cs" />
+    <Compile Include="Services\Interfaces\IDataService.cs" />
+    <Compile Include="Services\Interfaces\INetworkService.cs" />
+    <Compile Include="Services\Interfaces\IPageInteractionService.cs" />
+    <Compile Include="Services\Interfaces\IRoleService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Services\TestService.cs" />
