@@ -1603,13 +1603,22 @@ namespace Classroom_Learning_Partner.Services
         public static List<CLPPage> GetPagesFromPageZipEntryLoaders(List<PageZipEntryLoader> pageZipEntryLoaders, string zipContainerFilePath)
         {
             var pages = new List<CLPPage>();
-            foreach (var pageZipEntryLoader in pageZipEntryLoaders)
-            {
-                var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
-                page.ContainerZipFilePath = zipContainerFilePath;
-                page.PageNumber = pageZipEntryLoader.PageNumber;
-                pages.Add(page);
-            }
+            //foreach (var pageZipEntryLoader in pageZipEntryLoaders)
+            //{
+            //    var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+            //    page.ContainerZipFilePath = zipContainerFilePath;
+            //    page.PageNumber = pageZipEntryLoader.PageNumber;
+            //    pages.Add(page);
+            //}
+
+            Parallel.ForEach(pageZipEntryLoaders,
+                             pageZipEntryLoader =>
+                             {
+                                 var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+                                 page.ContainerZipFilePath = zipContainerFilePath;
+                                 page.PageNumber = pageZipEntryLoader.PageNumber;
+                                 pages.Add(page);
+                             });
 
             return pages;
         }
