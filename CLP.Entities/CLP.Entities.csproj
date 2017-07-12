@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
+    <Compile Include="DomainModel\Cache\NotebookExtensions.cs" />
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />

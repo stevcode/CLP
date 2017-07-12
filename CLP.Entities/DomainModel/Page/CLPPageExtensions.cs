@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using Catel;
@@ -232,5 +231,20 @@ namespace CLP.Entities
         }
 
         #endregion // Testing
+
+        #region Cache
+
+        public static CLPPage CopyPageForNewOwner(this CLPPage page, Person newOwner)
+        {
+            Argument.IsNotNull("page", page);
+            Argument.IsNotNull("newOwner", newOwner);
+
+            var newPage = page.DeepCopy();
+            newPage.Owner = newOwner;
+
+            return newPage;
+        }
+
+        #endregion // Cache
     }
 }

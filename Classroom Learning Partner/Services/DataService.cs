@@ -471,7 +471,7 @@ namespace Classroom_Learning_Partner.Services
                 // TODO: Parallel?
                 foreach (var teacher in classRoster.ListOfTeachers)
                 {
-                    var notebook = CopyNotebookForNewOwner(authorNotebook, teacher);
+                    var notebook = authorNotebook.CopyNotebookForNewOwner(teacher);
                     if (notebookEntries.Select(e => e.FileName).Contains(notebook.GetZipEntryFullPath(notebook)))
                     {
                         continue;
@@ -482,7 +482,7 @@ namespace Classroom_Learning_Partner.Services
 
                     foreach (var authorPage in authorNotebook.Pages)
                     {
-                        var page = CopyPageForNewOwner(authorPage, teacher);
+                        var page = authorPage.CopyPageForNewOwner(teacher);
                         page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
                         entryList.Add(new ZipEntrySaver(page, notebook));
                         notebook.Pages.Add(page);
@@ -495,7 +495,7 @@ namespace Classroom_Learning_Partner.Services
                 // TODO: Parallel?
                 foreach (var student in classRoster.ListOfStudents)
                 {
-                    var notebook = CopyNotebookForNewOwner(authorNotebook, student);
+                    var notebook = authorNotebook.CopyNotebookForNewOwner(student);
                     if (notebookEntries.Select(e => e.FileName).Contains(notebook.GetZipEntryFullPath(notebook)))
                     {
                         continue;
@@ -513,7 +513,7 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var page = CopyPageForNewOwner(authorPage, student);
+                        var page = authorPage.CopyPageForNewOwner(student);
                         page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
                         entryList.Add(new ZipEntrySaver(page, notebook));
                         notebook.Pages.Add(page);
@@ -528,7 +528,7 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var page = CopyPageForNewOwner(authorPage, student);
+                        var page = authorPage.CopyPageForNewOwner(student);
                         page.ContainerZipFilePath = authorNotebook.ContainerZipFilePath;
                         entryList.Add(new ZipEntrySaver(page, notebook));
                         notebook.Pages.Add(page);
@@ -790,7 +790,7 @@ namespace Classroom_Learning_Partner.Services
                     }
                 }
 
-                var newPage = CopyPageForNewOwner(page, newOwner);
+                var newPage = page.CopyPageForNewOwner(newOwner);
                 newPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
                 var previousPage = loadedNotebook.Pages.LastOrDefault(p => p.PageNumber < newPage.PageNumber);
                 var insertionIndex = 0;
@@ -885,7 +885,7 @@ namespace Classroom_Learning_Partner.Services
                 foreach (var loadedNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID && n.Owner.ID != notebook.Owner.ID))
                 {
                     var newOwner = loadedNotebook.Owner;
-                    var generatedNewPage = CopyPageForNewOwner(newPage, newOwner);
+                    var generatedNewPage = newPage.CopyPageForNewOwner(newOwner);
                     generatedNewPage.ContainerZipFilePath = notebook.ContainerZipFilePath;
                     loadedNotebook.Pages.Insert(index, generatedNewPage);
                     entryList.Add(new ZipEntrySaver(generatedNewPage, loadedNotebook));
@@ -1431,28 +1431,6 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook
 
-        public static Notebook CopyFullNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
-        {
-            var newNotebook = CopyNotebookForNewOwner(originalNotebook, newOwner);
-            foreach (var originalPage in originalNotebook.Pages)
-            {
-                var newPage = CopyPageForNewOwner(originalPage, newOwner);
-                newNotebook.Pages.Add(newPage);
-            }
-
-            return newNotebook;
-        }
-
-        public static Notebook CopyNotebookForNewOwner(Notebook notebook, Person newOwner)
-        {
-            var newNotebook = notebook.DeepCopy();
-            newNotebook.Owner = newOwner;
-            newNotebook.GenerationDate = DateTime.Now;
-            newNotebook.LastSavedDate = DateTime.Now;
-
-            return newNotebook;
-        }
-
         public static List<Notebook> LoadAllNotebooksFromCLPContainer(string zipContainerFilePath)
         {
             var notebooks = new List<Notebook>();
@@ -1538,14 +1516,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Notebook
 
         #region Page
-
-        public static CLPPage CopyPageForNewOwner(CLPPage page, Person newOwner)
-        {
-            var newPage = page.DeepCopy();
-            newPage.Owner = newOwner;
-
-            return newPage;
-        }
 
         public static List<string> GetAllPageIDsInNotebook(ZipFile zip, Notebook notebook)
         {

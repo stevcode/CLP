@@ -167,8 +167,6 @@ namespace Classroom_Learning_Partner
             set { _network = value; }
         }
 
-
-
 #endregion // Network Methods
     }
 }
