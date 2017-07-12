@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel;
@@ -1463,6 +1464,9 @@ namespace Classroom_Learning_Partner.Services
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
 
+            var  stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var pageZipEntryLoaders = new List<PageZipEntryLoader>();
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
@@ -1482,10 +1486,16 @@ namespace Classroom_Learning_Partner.Services
                     pageEntries = GetAllPageEntriesInNotebook(zip, notebook);
                 }
 
+                
                 pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries);
+                
             }
 
+            var s = new Stopwatch();
+            s.Start();
             var pages = GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
+            s.Stop();
+            CLogger.AppendToLog($"Time to get Get Pages from ZipEntryLoaders: {s.ElapsedMilliseconds}");
 
             if (owner.IsStudent)
             {
@@ -1506,6 +1516,9 @@ namespace Classroom_Learning_Partner.Services
             {
                 notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == overwrittenStartingPageID) ?? pages.FirstOrDefault();
             }
+
+            stopwatch.Stop();
+            CLogger.AppendToLog($"Total Elapsed Milliseconds: {stopwatch.ElapsedMilliseconds}");
         }
 
         public static void SaveNotebook(Notebook notebook)
@@ -1618,8 +1631,11 @@ namespace Classroom_Learning_Partner.Services
                 var submissionEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs, true);
                 submissionZipEntryLoaders = GetPageZipEntryLoadersFromEntries(submissionEntries);
             }
-
+            var s = new Stopwatch();
+            s.Start();
             var submissions = GetPagesFromPageZipEntryLoaders(submissionZipEntryLoaders, zipContainerFilePath);
+            s.Stop();
+            CLogger.AppendToLog($"Time to get Get Submissions from ZipEntryLoaders: {s.ElapsedMilliseconds}");
 
             return submissions;
         }
