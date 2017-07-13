@@ -2,11 +2,15 @@
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 using Catel.Data;
 using Catel.IoC;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Json;
+using Catel.Runtime.Serialization.Xml;
 using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
 using JsonSerializer = Catel.Runtime.Serialization.Json.JsonSerializer;
 
 namespace CLP.Entities
@@ -23,7 +27,7 @@ namespace CLP.Entities
 
         public string ToJsonString(bool formatWithIndents = true)
         {
-            using (var stream = new MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
                 var configuration = new JsonSerializationConfiguration
                                     {
@@ -35,9 +39,9 @@ namespace CLP.Entities
                                     };
 
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
-                jsonSerializer.Serialize(this, stream, configuration);
-                stream.Position = 0;
-                using (var reader = new StreamReader(stream))
+                jsonSerializer.Serialize(this, memoryStream, configuration);
+                memoryStream.Position = 0;
+                using (var reader = new StreamReader(memoryStream))
                 {
                     var jsonString = reader.ReadToEnd();
                     return jsonString;
@@ -53,7 +57,7 @@ namespace CLP.Entities
 
         public static T FromJsonString<T>(string json) where T : class
         {
-            using (var stream = new MemoryStream(Encoding.Default.GetBytes(json)))
+            using (var memoryStream = new MemoryStream(Encoding.Default.GetBytes(json)))
             {
                 var configuration = new JsonSerializationConfiguration
                                     {
@@ -66,7 +70,7 @@ namespace CLP.Entities
                 var jsonSerializer = new JsonSerializer(SerializationManager, TypeFactory.Default, ObjectAdapter);
                 //try
                 //{
-                    var deserialized = jsonSerializer.Deserialize(typeof(T), stream, configuration);
+                    var deserialized = jsonSerializer.Deserialize(typeof(T), memoryStream, configuration);
                     return (T)deserialized;
                 //}
                 //catch (Exception ex)
@@ -81,6 +85,39 @@ namespace CLP.Entities
         {
             var json = File.ReadAllText(filePath);
             return FromJsonString<T>(json);
+        }
+
+        public string ToXmlString()
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, memoryStream, null);
+
+                memoryStream.Position = 0L;
+                using (var xmlReader = XmlReader.Create(memoryStream))
+                {
+                    return XDocument.Load(xmlReader).ToString();
+                }
+            }
+        }
+
+        public static T FromXmlString<T>(string xml) where T : class
+        {
+            var xmlDocument = XDocument.Parse(xml);
+
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var xmlWriter = XmlWriter.Create(memoryStream))
+                {
+                    xmlDocument.Save(xmlWriter);
+                }
+
+                memoryStream.Position = 0L;
+
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                return (T) xmlSerializer.Deserialize(typeof(T), memoryStream, null);
+            }
         }
     }
 }
