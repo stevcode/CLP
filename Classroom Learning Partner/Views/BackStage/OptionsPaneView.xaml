@@ -22,6 +22,11 @@
 
         </StackPanel>
 
+        <TextBlock DockPanel.Dock="Bottom" 
+                   Text="{Binding VersionText}"
+                   HorizontalAlignment="Center"
+                   Margin="10" />
+
         <StackPanel>
 
             <Button Content="Change Main Color"

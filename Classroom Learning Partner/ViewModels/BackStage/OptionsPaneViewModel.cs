@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -30,6 +31,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>Title Text for the Pane.</summary>
         public override string PaneTitleText => "Options";
+
+        public string VersionText
+        {
+            get
+            {
+                var productVersion = Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+                var versionText = productVersion?.InformationalVersion;
+                return $"CLP Version: {versionText}";
+            }
+        }
 
         #endregion //Bindings
 
