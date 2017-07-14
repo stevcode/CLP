@@ -83,7 +83,7 @@
         <TextBox Text="{Binding Alias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
         <TextBlock Grid.ColumnSpan="2"
-                   Text="*Alias will overwrite the full name and display name."
+                   Text="*Alias will overwrite the full name and Nickname/Title."
                    Margin="20 0 0 0"
                    FontSize="10" />
 
