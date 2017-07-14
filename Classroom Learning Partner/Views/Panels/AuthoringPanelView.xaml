@@ -65,6 +65,7 @@
             <!--<Button Content="Differentiate This Page"
                     Command="{Binding DifferentiatePageCommand}" />-->
 
+            <!-- Non-Release Build Stuff
             <Rectangle Height="1"
                        Margin="1 5"
                        Stroke="{StaticResource GrayBorderColor}" />
@@ -90,7 +91,7 @@
             </ComboBox>
 
             <Button Content="Add Meta Data Tags"
-                    Command="{Binding AddMetaDataTagsCommand}" />
+                    Command="{Binding AddMetaDataTagsCommand}" />-->
             
         </StackPanel>
 

@@ -37,6 +37,7 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
+            <!-- Non-Release Build Stuff
             <Button Content="Generate Analysis Stats"
                     Command="{Binding RunAnalysisCommand}"
                     Height="50"
@@ -51,7 +52,7 @@
                     Width="300"
                     Margin="10"
                     FontSize="22"
-                    FontWeight="Bold" />
+                    FontWeight="Bold" />-->
 
         </StackPanel>
 
