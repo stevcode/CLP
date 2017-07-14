@@ -115,15 +115,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var referenceNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => !n.Owner.IsStudent);
-            if (referenceNotebook == null)
-            {
-                referenceNotebook = _dataService.LoadedNotebooks.FirstOrDefault();
-            }
+            const double LEFT_PADDED_WIDTH = 156.0;
+            const double SCROLL_BAR_WIDTH = 25.0;
 
+            var referenceNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => !n.Owner.IsStudent) ?? _dataService.LoadedNotebooks.FirstOrDefault();
             var pageCount = referenceNotebook.Pages.Count;
 
-            var calculatedWidth = pageCount * 40 + 110;
+            var calculatedWidth = pageCount * 40 + LEFT_PADDED_WIDTH + SCROLL_BAR_WIDTH;
             if (Application.Current.MainWindow.ActualWidth < calculatedWidth * 2)
             {
                 Length = Application.Current.MainWindow.ActualWidth / 2;
