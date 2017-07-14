@@ -28,11 +28,9 @@ namespace Classroom_Learning_Partner
 
 #if TEACHER
             currentProgramMode = ProgramModes.Teacher;
-#endif
-#if STUDENT
+#elif STUDENT
             currentProgramMode = ProgramModes.Student;
-#endif
-#if PROJECTOR
+#elif PROJECTOR
             currentProgramMode = ProgramModes.Projector;
 #endif
 
@@ -166,8 +164,6 @@ namespace Classroom_Learning_Partner
             get { return _network; }
             set { _network = value; }
         }
-
-
 
 #endregion // Network Methods
     }
