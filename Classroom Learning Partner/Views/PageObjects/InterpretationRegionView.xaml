@@ -132,7 +132,7 @@
                 <Rectangle.Style>
                     <Style TargetType="Rectangle">
                         <Setter Property="StrokeThickness"
-                                Value="3" />
+                                Value="0" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}}"
                                          Value="True">
