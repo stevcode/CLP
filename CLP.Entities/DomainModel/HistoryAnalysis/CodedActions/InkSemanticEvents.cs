@@ -1088,7 +1088,8 @@ namespace CLP.Entities
             }
 
             var correctness = answer == Codings.ANSWER_UNDEFINED ? Codings.CORRECTNESS_UNKNOWN : answer == interpretationOnPage ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
-            if (correctness == Codings.CORRECTNESS_INCORRECT)
+            if (correctness == Codings.CORRECTNESS_INCORRECT &&
+                !string.IsNullOrWhiteSpace(interpretationOnPage))
             {
                 int numericalValue;
                 if (!int.TryParse(interpretationOnPage, out numericalValue))
