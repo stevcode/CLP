@@ -25,7 +25,7 @@ namespace CLP.Entities
             // First Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
-                                                CodedObject = "PASS",
+                                                CodedObject = "\tPASS",
                                                 CodedObjectID = "1",
                                                 EventInformation = "Initialization"
                                             });
@@ -44,7 +44,7 @@ namespace CLP.Entities
             // Second Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
-                                                CodedObject = "PASS",
+                                                CodedObject = "\tPASS",
                                                 CodedObjectID = "2",
                                                 EventInformation = "Ink Clustering"
                                             });
@@ -63,7 +63,7 @@ namespace CLP.Entities
             // Third Pass
             page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
                                             {
-                                                CodedObject = "PASS",
+                                                CodedObject = "\tPASS",
                                                 CodedObjectID = "3",
                                                 EventInformation = "Ink Interpretation"
                                             });
