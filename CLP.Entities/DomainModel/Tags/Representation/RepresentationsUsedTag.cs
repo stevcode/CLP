@@ -1262,12 +1262,7 @@ namespace CLP.Entities
             var englishValue = $"{numberOfStampedObjects} {groupString} of {parts}";
             usedRepresentation.AdditionalInformation.Add(englishValue);
 
-            var companionStampedObjectIDsInfo = $"UNLISTED (COID) : {string.Join(" ; ", companionStampedObjectIDs)}";
-            usedRepresentation.AdditionalInformation.Add(companionStampedObjectIDsInfo);
-
             var parentStampIDs = stampedObjects.Select(so => so.ParentStampID).Distinct().ToList();
-            var parentStampIDsInfo = $"UNLISTED (PSID) : {string.Join(" ; ", parentStampIDs)}";
-            usedRepresentation.AdditionalInformation.Add(parentStampIDsInfo);
 
             var numberOfParentStamps = parentStampIDs.Count();
             var parentStampInfo = $"From {numberOfParentStamps} Stamps";
