@@ -1046,12 +1046,12 @@ namespace CLP.Entities
 
                 if (hasGaps)
                 {
-                    usedRepresentation.AdditionalInformation.Add($"Has {gaps} Gaps.");
+                    usedRepresentation.AdditionalInformation.Add($"Has {gaps} Gap(s).");
                 }
 
                 if (hasOverlaps)
                 {
-                    usedRepresentation.AdditionalInformation.Add($"Has {overlaps} Overlaps.");
+                    usedRepresentation.AdditionalInformation.Add($"Has {overlaps} Overlap(s).");
                 }
 
                 if (numberLineJumpTotal.JumpEraseCount > 1)
@@ -1265,7 +1265,7 @@ namespace CLP.Entities
             var parentStampIDs = stampedObjects.Select(so => so.ParentStampID).Distinct().ToList();
 
             var numberOfParentStamps = parentStampIDs.Count();
-            var parentStampInfo = $"From {numberOfParentStamps} Stamps";
+            var parentStampInfo = $"From {numberOfParentStamps} Stamp(s)";
             usedRepresentation.AdditionalInformation.Add(parentStampInfo);
 
             #endregion // Basic Representation Info
