@@ -1464,9 +1464,6 @@ namespace Classroom_Learning_Partner.Services
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
 
-            var  stopwatch = new Stopwatch();
-            stopwatch.Start();
-
             var pageZipEntryLoaders = new List<PageZipEntryLoader>();
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
@@ -1491,11 +1488,7 @@ namespace Classroom_Learning_Partner.Services
                 
             }
 
-            var s = new Stopwatch();
-            s.Start();
             var pages = GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
-            s.Stop();
-            CLogger.AppendToLog($"Time to get Get Pages from ZipEntryLoaders: {s.ElapsedMilliseconds}");
 
             if (owner.IsStudent)
             {
@@ -1516,9 +1509,6 @@ namespace Classroom_Learning_Partner.Services
             {
                 notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == overwrittenStartingPageID) ?? pages.FirstOrDefault();
             }
-
-            stopwatch.Stop();
-            CLogger.AppendToLog($"Total Elapsed Milliseconds: {stopwatch.ElapsedMilliseconds}");
         }
 
         public static void SaveNotebook(Notebook notebook)
