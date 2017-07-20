@@ -1583,10 +1583,10 @@ namespace Classroom_Learning_Partner
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13
                     {
                         interpretationRegion.ID = "cgXYlAbAM0GGy8iBI4tmoo";
-                        interpretationRegion.XPosition = 240.3143;
+                        interpretationRegion.XPosition = 220.3143;
                         interpretationRegion.YPosition = 661.8379;
                         interpretationRegion.Height = 131.1860;
-                        interpretationRegion.Width = 103.4241;
+                        interpretationRegion.Width = 123.4241;
                         break;
                     }
                 default:
