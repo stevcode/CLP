@@ -718,6 +718,11 @@ namespace Classroom_Learning_Partner
             
             ConvertPageHistory(page.History, newPage);
 
+            if (!IS_LARGE_CACHE)
+            {
+                HistoryAnalysis.GenerateSemanticEvents(newPage);
+            }
+
             return newPage;
         }
 
@@ -1724,7 +1729,6 @@ namespace Classroom_Learning_Partner
 
         #endregion // History
 
-        
         #region HistoryActions
 
         public static IHistoryAction ConvertHistoryAction(Ann.IHistoryItem historyItem, CLPPage newPage, List<Ann.IHistoryItem> unconvertedUndoItems)
