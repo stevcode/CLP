@@ -1630,11 +1630,8 @@ namespace Classroom_Learning_Partner.Services
                 var submissionEntries = GetPageEntriesFromPageIDs(zip, notebook, pageIDs, true);
                 submissionZipEntryLoaders = GetPageZipEntryLoadersFromEntries(submissionEntries);
             }
-            var s = new Stopwatch();
-            s.Start();
+
             var submissions = GetPagesFromPageZipEntryLoaders(submissionZipEntryLoaders, zipContainerFilePath);
-            s.Stop();
-            CLogger.AppendToLog($"Time to get Get Submissions from ZipEntryLoaders: {s.ElapsedMilliseconds}");
 
             return submissions;
         }
