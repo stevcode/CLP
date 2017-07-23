@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //DivisionTemplateStrategy,
         Starred,
         HadHelp,
+        HistoryLength
         //Correctness
     }
 
@@ -77,6 +78,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription DivisionTemplateStrategyDescendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Descending);
         private static readonly SortDescription RepresentationTypeAscendingSort = new SortDescription("RepresentationType", ListSortDirection.Ascending);
         private static readonly SortDescription RepresentationTypeDescendingSort = new SortDescription("RepresentationType", ListSortDirection.Descending);
+        private static readonly SortDescription HistoryLengthAscendingSort = new SortDescription("History.HistoryLength", ListSortDirection.Ascending);
+        private static readonly SortDescription HistoryLengthDescendingSort = new SortDescription("History.HistoryLength", ListSortDirection.Descending);
 
         private static readonly SortDescription RepresentationCorrectnessAscendingSort = new SortDescription("RepresentationCorrectness", ListSortDirection.Ascending);
         private static readonly SortDescription AnswerCorrectnessAscendingSort = new SortDescription("FinalAnswerCorrectness", ListSortDirection.Ascending);
@@ -100,7 +103,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
          //   AppendCollectionOfPagesToStage(SingleAddedPages);
          //   FilterCollectionOfPagesFromStage(SingleRemovedPages);
-            CurrentSortAndGroupType =  SortAndGroupTypes.StudentName;              // SortAndGroupTypes.PageNumber;  //Hack: For Demo
+            CurrentSortAndGroupType =  SortAndGroupTypes.StudentName;
         }
 
         async Task StagingPanelViewModel_InitializedAsync(object sender, EventArgs e) { Length = InitialLength; }
@@ -456,6 +459,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.RepresentationType:
                     ApplySortAndGroupByRepresentationType();
                     break;
+                case SortAndGroupTypes.HistoryLength:
+                    ApplySortAndGroupByHistoryLength();
+                    break;
                 //case SortAndGroupTypes.RepresentationCorrectness:
                 //    ApplySortAndGroupByRepresentationCorrectness();
                 //    break;
@@ -511,10 +517,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(StarredGroup);
             SortedAndGroupedPages.SortDescriptions.Add(StarredAscendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -526,10 +528,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(HadHelpGroup);
             SortedAndGroupedPages.SortDescriptions.Add(HadHelpAscendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
@@ -543,10 +541,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(OverallCorrectnessGroup);
             SortedAndGroupedPages.SortDescriptions.Add(OverallCorrectnessAscendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -558,10 +552,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(TroubleWithFactorPairsGroup);
             SortedAndGroupedPages.SortDescriptions.Add(TroubleWithFactorPairsDescendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
@@ -575,10 +565,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(TroubleWithRemaindersGroup);
             SortedAndGroupedPages.SortDescriptions.Add(TroubleWithRemaindersDescendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -590,10 +576,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(TroubleWithDivisionGroup);
             SortedAndGroupedPages.SortDescriptions.Add(TroubleWithDivisionDescendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
@@ -607,10 +589,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(DivisionTemplateStrategyGroup);
             SortedAndGroupedPages.SortDescriptions.Add(DivisionTemplateStrategyAscendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -623,12 +601,16 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(RepresentationTypeGroup);
             SortedAndGroupedPages.SortDescriptions.Add(RepresentationTypeAscendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByHistoryLength()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.SortDescriptions.Add(HistoryLengthAscendingSort);
         }
 
         public void ApplySortAndGroupByRepresentationCorrectness()
@@ -638,10 +620,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(RepresentationCorrectnessGroup);
             SortedAndGroupedPages.SortDescriptions.Add(RepresentationCorrectnessAscendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
@@ -655,10 +633,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.GroupDescriptions.Add(AnswerCorrectnessGroup);
             SortedAndGroupedPages.SortDescriptions.Add(AnswerCorrectnessAscendingSort);
 
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -670,10 +644,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(ABRGroup);
             SortedAndGroupedPages.SortDescriptions.Add(ABRAscendingSort);
-
-            //HACK: for demo video
-            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
