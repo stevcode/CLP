@@ -555,28 +555,14 @@ namespace Classroom_Learning_Partner.Services
             var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
             SetCurrentClassRoster(classRoster);
 
-            LoadPagesIntoNotebook(notebook, pageNumbers, overwrittenStartingPageID);
             var existingNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == notebook.ID && n.Owner.ID == notebook.Owner.ID);
             if (existingNotebook == null)
             {
                 LoadedNotebooks.Add(notebook);
                 existingNotebook = notebook;
             }
-            else
-            {
-                foreach (var page in notebook.Pages)
-                {
-                    var existingPage = existingNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
-                    if (existingPage != null)
-                    {
-                        continue;
-                    }
 
-                    existingNotebook.Pages.Add(page);
-                }
-
-                existingNotebook.Pages = existingNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
-            }
+            LoadPagesIntoNotebook(existingNotebook, pageNumbers, overwrittenStartingPageID);
 
             // Load Student Notebooks
             if ((!owner.IsStudent &&
@@ -586,29 +572,14 @@ namespace Classroom_Learning_Partner.Services
                 var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID);
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
-                    LoadPagesIntoNotebook(studentNotebook, pageNumbers, overwrittenStartingPageID);
-
                     var existingStudentNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == studentNotebook.ID && n.Owner.ID == studentNotebook.Owner.ID);
                     if (existingStudentNotebook == null)
                     {
                         LoadedNotebooks.Add(studentNotebook);
+                        existingStudentNotebook = studentNotebook;
                     }
-                    else
-                    {
-                        foreach (var page in studentNotebook.Pages)
-                        {
-                            var existingPage =
-                                existingStudentNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
-                            if (existingPage != null)
-                            {
-                                continue;
-                            }
 
-                            existingStudentNotebook.Pages.Add(page);
-                        }
-                        existingStudentNotebook.Pages =
-                            existingStudentNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
-                    }
+                    LoadPagesIntoNotebook(existingStudentNotebook, pageNumbers, overwrittenStartingPageID);
                 }
 
                 // Also Load Teacher Notebooks for Editing
@@ -616,29 +587,14 @@ namespace Classroom_Learning_Partner.Services
                 {
                     foreach (var teacherNotebook in otherNotebooks.Where(n => !n.Owner.IsStudent && classRoster.ListOfTeachers.Any(p => n.Owner.DisplayName == p.DisplayName)))
                     {
-                        LoadPagesIntoNotebook(teacherNotebook, pageNumbers, overwrittenStartingPageID);
-
                         var existingTeacherNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == teacherNotebook.ID && n.Owner.ID == teacherNotebook.Owner.ID);
                         if (existingTeacherNotebook == null)
                         {
                             LoadedNotebooks.Add(teacherNotebook);
+                            existingTeacherNotebook = teacherNotebook;
                         }
-                        else
-                        {
-                            foreach (var page in teacherNotebook.Pages)
-                            {
-                                var existingPage =
-                                    existingTeacherNotebook.Pages.FirstOrDefault(p => p.ID == page.ID && p.DifferentiationLevel == page.DifferentiationLevel && p.SubPageNumber == page.SubPageNumber);
-                                if (existingPage != null)
-                                {
-                                    continue;
-                                }
 
-                                existingTeacherNotebook.Pages.Add(page);
-                            }
-                            existingTeacherNotebook.Pages =
-                                existingTeacherNotebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
-                        }
+                        LoadPagesIntoNotebook(existingTeacherNotebook, pageNumbers, overwrittenStartingPageID);
                     }
                 }
             }
@@ -1483,12 +1439,11 @@ namespace Classroom_Learning_Partner.Services
                     pageEntries = GetAllPageEntriesInNotebook(zip, notebook);
                 }
 
-                
-                pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries);
-                
+                var loadedPageNumbers = notebook.Pages.Select(p => p.PageNumber).ToList();
+                pageZipEntryLoaders = GetPageZipEntryLoadersFromEntries(pageEntries).Where(zipEntryLoader => !loadedPageNumbers.Contains(zipEntryLoader.PageNumber)).ToList();
             }
 
-            var pages = GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).OrderBy(p => p.PageNumber).ToList();
+            var pages = GetPagesFromPageZipEntryLoaders(pageZipEntryLoaders, zipContainerFilePath).ToList();
 
             if (owner.IsStudent)
             {
@@ -1504,10 +1459,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             notebook.Pages.AddRange(pages);
-            notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? pages.FirstOrDefault();
+            notebook.Pages = notebook.Pages.OrderBy(p => p.PageNumber).ThenBy(p => p.DifferentiationLevel).ThenBy(p => p.SubPageNumber).ToObservableCollection();
+            notebook.CurrentPage = notebook.Pages.FirstOrDefault(p => p.ID == notebook.CurrentPageID) ?? notebook.Pages.FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(overwrittenStartingPageID))
             {
-                notebook.CurrentPage = pages.FirstOrDefault(p => p.ID == overwrittenStartingPageID) ?? pages.FirstOrDefault();
+                notebook.CurrentPage = notebook.Pages.FirstOrDefault(p => p.ID == overwrittenStartingPageID) ?? notebook.Pages.FirstOrDefault();
             }
         }
 
@@ -1738,6 +1694,12 @@ namespace Classroom_Learning_Partner.Services
 
         public static void SavePage(Notebook notebook, CLPPage page)
         {
+            if (notebook == null || 
+                page == null)
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(page.ContainerZipFilePath))
             {
                 page.ContainerZipFilePath = notebook.ContainerZipFilePath;
