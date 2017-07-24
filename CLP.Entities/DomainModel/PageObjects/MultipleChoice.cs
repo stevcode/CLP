@@ -21,7 +21,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class ChoiceBubble : AEntityBase
+    public class ChoiceBubble : ASerializableBase
     {
         #region Constructors
 

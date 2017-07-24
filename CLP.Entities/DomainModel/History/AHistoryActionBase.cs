@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public abstract class AHistoryActionBase : AEntityBase, IHistoryAction
+    public abstract class AHistoryActionBase : ASerializableBase, IHistoryAction
     {
         #region Constructors
 

@@ -1366,7 +1366,7 @@ namespace Classroom_Learning_Partner.Services
 
                 foreach (var sessionString in sessionStrings)
                 {
-                    var session = AEntityBase.FromJsonString<Session>(sessionString);
+                    var session = ASerializableBase.FromJsonString<Session>(sessionString);
                     session.ContainerZipFilePath = zipContainerFilePath;
                     sessions.Add(session);
                 }
@@ -1402,7 +1402,7 @@ namespace Classroom_Learning_Partner.Services
 
                 foreach (var notebookString in notebookStrings)
                 {
-                    var notebook = AEntityBase.FromJsonString<Notebook>(notebookString);
+                    var notebook = ASerializableBase.FromJsonString<Notebook>(notebookString);
                     notebook.ContainerZipFilePath = zipContainerFilePath;
                     notebooks.Add(notebook);
                 }
@@ -1551,7 +1551,7 @@ namespace Classroom_Learning_Partner.Services
             var pages = new List<CLPPage>();
             //foreach (var pageZipEntryLoader in pageZipEntryLoaders)
             //{
-            //    var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+            //    var page = ASerializableBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
             //    page.ContainerZipFilePath = zipContainerFilePath;
             //    page.PageNumber = pageZipEntryLoader.PageNumber;
             //    pages.Add(page);
@@ -1560,7 +1560,7 @@ namespace Classroom_Learning_Partner.Services
             Parallel.ForEach(pageZipEntryLoaders,
                              pageZipEntryLoader =>
                              {
-                                 var page = AEntityBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+                                 var page = ASerializableBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
                                  page.ContainerZipFilePath = zipContainerFilePath;
                                  page.PageNumber = pageZipEntryLoader.PageNumber;
                                  pages.Add(page);

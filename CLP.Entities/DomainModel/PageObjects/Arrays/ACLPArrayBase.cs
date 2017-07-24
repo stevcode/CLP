@@ -13,7 +13,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class CLPArrayDivision : AEntityBase
+    public class CLPArrayDivision : ASerializableBase
     {
         #region Constructors
 

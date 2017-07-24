@@ -17,7 +17,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class NumberLineTick : AEntityBase
+    public class NumberLineTick : ASerializableBase
     {
         #region Constructors
 
@@ -84,7 +84,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class NumberLineJumpSize : AEntityBase
+    public class NumberLineJumpSize : ASerializableBase
     {
         #region Constructors
 

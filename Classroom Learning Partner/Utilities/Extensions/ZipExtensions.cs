@@ -95,12 +95,12 @@ namespace Classroom_Learning_Partner
 
         /// <summary>Extracts a json zip entry into an Entity.</summary>
         /// <param name="entry">Entry to extract.</param>
-        public static T ExtractJsonEntity<T>(this ZipEntry entry) where T : AEntityBase
+        public static T ExtractJsonEntity<T>(this ZipEntry entry) where T : ASerializableBase
         {
             Argument.IsNotNull("entry", entry);
 
             var jsonString = entry.ExtractJsonString();
-            var entity = AEntityBase.FromJsonString<T>(jsonString);
+            var entity = ASerializableBase.FromJsonString<T>(jsonString);
 
             return entity;
         }

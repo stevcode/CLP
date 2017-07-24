@@ -30,7 +30,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public abstract class ATagBase : AEntityBase, ITag
+    public abstract class ATagBase : ASerializableBase, ITag
     {
         #region Constructors
 

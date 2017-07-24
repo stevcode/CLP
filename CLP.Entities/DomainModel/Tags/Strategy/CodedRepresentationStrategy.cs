@@ -4,7 +4,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class CodedRepresentationStrategy : AEntityBase
+    public class CodedRepresentationStrategy : ASerializableBase
     {
         #region Constructors
 

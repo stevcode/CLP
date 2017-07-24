@@ -536,7 +536,7 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NO_DATA_SERVICE;
             }
 
-            var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
+            var submission = ASerializableBase.FromJsonString<CLPPage>(submissionJson);
             if (submission == null)
             {
                 return MESSAGE_SUBMISSION_NOT_DESERIALIZED;

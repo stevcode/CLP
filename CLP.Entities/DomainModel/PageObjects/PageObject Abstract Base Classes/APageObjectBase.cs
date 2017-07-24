@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public abstract class APageObjectBase : AEntityBase, IPageObject
+    public abstract class APageObjectBase : ASerializableBase, IPageObject
     {
         #region Constructors
 

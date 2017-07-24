@@ -670,7 +670,7 @@ namespace Classroom_Learning_Partner.Services
                 CLogger.AppendToLog($"Loading Page: {filePath}");
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var page = AEntityBase.FromJsonFile<CLPPage>(filePath);
+                var page = ASerializableBase.FromJsonFile<CLPPage>(filePath);
                 stopWatch.Stop();
                 CLogger.AppendToLog($"Page Loaded: {filePath}");
 
@@ -720,7 +720,7 @@ namespace Classroom_Learning_Partner.Services
             if (File.Exists(AnalysisTrackerFilePath))
             {
                 CLogger.AppendToLog("Analysis Tracker already exists, loading...");
-                return AEntityBase.FromJsonFile<AnalysisTracker>(AnalysisTrackerFilePath);
+                return ASerializableBase.FromJsonFile<AnalysisTracker>(AnalysisTrackerFilePath);
             }
 
             CLogger.AppendToLog("Initializing new Analysis Tracker...");

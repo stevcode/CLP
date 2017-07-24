@@ -6,12 +6,12 @@ using CLP.Entities;
 namespace Classroom_Learning_Partner.Services
 {
     [Serializable]
-    public class AnalysisTracker : AEntityBase
+    public class AnalysisTracker : ASerializableBase
     {
         #region Nested
 
         [Serializable]
-        public class PageProgress : AEntityBase
+        public class PageProgress : ASerializableBase
         {
             #region Constructors
 

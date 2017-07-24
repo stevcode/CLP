@@ -14,7 +14,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class Person : AEntityBase, IConnectedPerson
+    public class Person : ASerializableBase, IConnectedPerson
     {
         #region Constants
 

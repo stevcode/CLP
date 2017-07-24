@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public class SemanticEvent : AEntityBase, ISemanticEvent
+    public class SemanticEvent : ASerializableBase, ISemanticEvent
     {
         #region Constants
 

@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public class PageHistory : AEntityBase
+    public class PageHistory : ASerializableBase
     {
         #region Constants
 

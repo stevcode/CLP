@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace CLP.Entities
 {
     [Serializable]
-    public abstract class AInternalZipEntryFile : AEntityBase
+    public abstract class AInternalZipEntryFile : ASerializableBase
     {
         #region Constants
 

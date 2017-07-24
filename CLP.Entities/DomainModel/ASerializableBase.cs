@@ -15,14 +15,14 @@ using JsonSerializer = Catel.Runtime.Serialization.Json.JsonSerializer;
 
 namespace CLP.Entities
 {
-    public abstract class AEntityBase : ModelBase
+    public abstract class ASerializableBase : ModelBase
     {
         private static readonly ISerializationManager SerializationManager = ServiceLocator.Default.ResolveType<ISerializationManager>();
         private static readonly IObjectAdapter ObjectAdapter = ServiceLocator.Default.ResolveType<IObjectAdapter>();
 
-        protected AEntityBase() { }
+        protected ASerializableBase() { }
 
-        protected AEntityBase(SerializationInfo info, StreamingContext context)
+        protected ASerializableBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         public string ToJsonString(bool formatWithIndents = true)

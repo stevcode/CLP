@@ -13,7 +13,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class UsedRepresentation : AEntityBase
+    public class UsedRepresentation : ASerializableBase
     {
         #region Constructors
 

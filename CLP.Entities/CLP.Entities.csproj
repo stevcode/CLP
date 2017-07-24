@@ -88,7 +88,7 @@
     <Compile Include="DomainModel\History\IStrokesOnPageChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Logging\CLogger.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
-    <Compile Include="DomainModel\AEntityBase.cs" />
+    <Compile Include="DomainModel\ASerializableBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
