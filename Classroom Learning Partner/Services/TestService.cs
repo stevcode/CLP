@@ -1217,40 +1217,40 @@ namespace Classroom_Learning_Partner.Services
 
         private void OnAnonymizeCacheCommandExecute()
         {
-            //const string TEXT_FILE_NAME = "AnonymousNames.txt";
-            //var anonymousTextFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), TEXT_FILE_NAME);
-            //if (!File.Exists(anonymousTextFilePath))
-            //{
-            //    MessageBox.Show("You are missing AnonymousNames.txt on the Desktop.");
-            //    return;
-            //}
+            const string TEXT_FILE_NAME = "AnonymousNames.txt";
+            var anonymousTextFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), TEXT_FILE_NAME);
+            if (!File.Exists(anonymousTextFilePath))
+            {
+                MessageBox.Show("You are missing AnonymousNames.txt on the Desktop.");
+                return;
+            }
 
-            //var names = new Dictionary<string, string>();
-            //var textFile = new StreamReader(anonymousTextFilePath);
-            //string line;
-            //while ((line = textFile.ReadLine()) != null)
-            //{
-            //    var parts = line.Split(',');
-            //    if (parts.Length != 2)
-            //    {
-            //        MessageBox.Show("AnonymousNames.txt is in the wrong format.");
-            //        textFile.Close();
-            //        return;
-            //    }
+            var names = new Dictionary<string, string>();
+            var textFile = new StreamReader(anonymousTextFilePath);
+            string line;
+            while ((line = textFile.ReadLine()) != null)
+            {
+                var parts = line.Split(',');
+                if (parts.Length != 2)
+                {
+                    MessageBox.Show("AnonymousNames.txt is in the wrong format.");
+                    textFile.Close();
+                    return;
+                }
 
-            //    var oldName = parts[0];
-            //    var newName = parts[1];
-            //    newName = newName.Replace("\t", string.Empty);
-            //    newName = newName.Replace("\n", string.Empty);
-            //    newName = newName.Trim();
+                var oldName = parts[0];
+                var newName = parts[1];
+                newName = newName.Replace("\t", string.Empty);
+                newName = newName.Replace("\n", string.Empty);
+                newName = newName.Trim();
 
-            //    if (!names.ContainsKey(oldName))
-            //    {
-            //        names.Add(oldName, newName);
-            //    }
-            //}
+                if (!names.ContainsKey(oldName))
+                {
+                    names.Add(oldName, newName);
+                }
+            }
 
-            //textFile.Close();
+            textFile.Close();
 
             //var cacheInfoToAnonymize = SelectedCache;
             //var newCacheFolderPath = cacheInfoToAnonymize.CacheFolderPath + ".Anon";

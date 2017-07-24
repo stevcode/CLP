@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 using Ionic.Zip;
@@ -15,6 +16,7 @@ namespace Classroom_Learning_Partner
     public partial class ConversionService
     {
         public const bool IS_LARGE_CACHE = false;
+        public const bool IS_ANONYMIZED_CACHE = true;
 
         public ConversionService() { }
 
@@ -351,7 +353,49 @@ namespace Classroom_Learning_Partner
 
         public static Person ConvertPerson(Emily.Person person)
         {
-            var newPerson = Person.ParseFromFullName(person.FullName, person.IsStudent);
+            var name = person.FullName;
+            if (IS_ANONYMIZED_CACHE)
+            {
+                const string TEXT_FILE_NAME = "AnonymousNames - Emily.txt";
+                var anonymousTextFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), TEXT_FILE_NAME);
+                if (!File.Exists(anonymousTextFilePath))
+                {
+                    MessageBox.Show("You are missing AnonymousNames.txt on the Desktop.");
+                }
+
+                var names = new Dictionary<string, string>();
+                var textFile = new StreamReader(anonymousTextFilePath);
+                string line;
+                while ((line = textFile.ReadLine()) != null)
+                {
+                    var parts = line.Split(',');
+                    if (parts.Length != 2)
+                    {
+                        MessageBox.Show("AnonymousNames.txt is in the wrong format.");
+                        textFile.Close();
+                    }
+
+                    var oldName = parts[0];
+                    var newName = parts[1];
+                    newName = newName.Replace("\t", string.Empty);
+                    newName = newName.Replace("\n", string.Empty);
+                    newName = newName.Trim();
+
+                    if (!names.ContainsKey(oldName))
+                    {
+                        names.Add(oldName, newName);
+                    }
+                }
+
+                textFile.Close();
+
+                if (names.ContainsKey(person.FullName))
+                {
+                    name = names[person.FullName];
+                }
+            }
+
+            var newPerson = Person.ParseFromFullName(name, person.IsStudent);
             newPerson.ID = person.ID;
             newPerson.Alias = person.Alias;
 

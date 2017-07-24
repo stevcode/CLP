@@ -1899,7 +1899,8 @@ namespace Classroom_Learning_Partner.Services
 
             ConversionService.SaveNotebooksToZip(ConversionService.EmilyZipFilePath, notebooks);
 
-            var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
+            //var subjectFilePath = Path.Combine(ConversionService.AnnClassesFolder, "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml");
+            var subjectFilePath = Path.Combine(ConversionService.EmilyClassesFolder, "subject;AAAAABERAAAAAAAAAAAAAQ.xml");
             var classRoster = ConversionService.ConvertCacheEmilyClassSubject(subjectFilePath, authorNotebook);
             classRoster.ListOfTeachers.Clear();
             classRoster.ListOfTeachers.Add(teacher);
