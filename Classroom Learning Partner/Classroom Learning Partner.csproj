@@ -432,7 +432,6 @@
     <Compile Include="Views\Controls\WebcamPlayer\CapPlayer.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapStructures.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\FilterInfo.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\APageObjectBaseViewModel.cs" />
@@ -500,9 +499,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\CLPArrayView.xaml.cs">
       <DependentUpon>CLPArrayView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
-      <DependentUpon>CLPAudioView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml.cs">
       <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
@@ -819,10 +815,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\Arrays\CLPArrayView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\CLPAudioView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
