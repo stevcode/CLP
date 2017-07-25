@@ -83,6 +83,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.Combine();
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
+            //ConversionService.AnonymizationFixesForAssessmentCache();
             //ConvertEmilyCache();
             //AnalysisService.RunFullBatchAnalysis(AnalysisService.AllPageNumbersToAnalyze);
             //AnalysisService.RunFullBatchAnalysis(new List<int>{213});
@@ -1555,13 +1556,6 @@ namespace Classroom_Learning_Partner.Services
         public static List<CLPPage> GetPagesFromPageZipEntryLoaders(List<PageZipEntryLoader> pageZipEntryLoaders, string zipContainerFilePath)
         {
             var pages = new List<CLPPage>();
-            //foreach (var pageZipEntryLoader in pageZipEntryLoaders)
-            //{
-            //    var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
-            //    page.ContainerZipFilePath = zipContainerFilePath;
-            //    page.PageNumber = pageZipEntryLoader.PageNumber;
-            //    pages.Add(page);
-            //}
 
             Parallel.ForEach(pageZipEntryLoaders,
                              pageZipEntryLoader =>
@@ -1721,18 +1715,18 @@ namespace Classroom_Learning_Partner.Services
                 page.History.ClearNonAnimationHistory();
             }
 
-            var entires = new List<ZipEntrySaver>
+            var entries = new List<ZipEntrySaver>
                           {
                               new ZipEntrySaver(page, notebook),
                               new ZipEntrySaver(notebook, notebook)
                           };
 
-            SaveZipEntries(page.ContainerZipFilePath, entires);
+            SaveZipEntries(page.ContainerZipFilePath, entries);
         }
 
         public static void PropogatePageChanges(Notebook authorNotebook, List<Notebook> otherNotebooks, CLPPage authorPage)
         {
-            var entires = new List<ZipEntrySaver>();
+            var entries = new List<ZipEntrySaver>();
 
             foreach (var otherNotebook in otherNotebooks.Where(n => n.ID == authorNotebook.ID && n.Owner.ID != Person.AUTHOR_ID))
             {
@@ -1747,10 +1741,10 @@ namespace Classroom_Learning_Partner.Services
                 PropogatePageAuthoredInk(authorPage, page);
                 PropogatePageTags(authorPage, page);
 
-                entires.Add(new ZipEntrySaver(page, otherNotebook));
+                entries.Add(new ZipEntrySaver(page, otherNotebook));
             }
 
-            SaveZipEntries(authorPage.ContainerZipFilePath, entires);
+            SaveZipEntries(authorPage.ContainerZipFilePath, entries);
         }
 
         public static void PropogatePageProperties(CLPPage authorPage, CLPPage otherPage)
