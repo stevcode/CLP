@@ -307,7 +307,7 @@ namespace CLP.Entities
         public const string MATCHED_RELATION_LEFT = "LS";
         public const string MATCHED_RELATION_RIGHT = "RS";
         public const string MATCHED_RELATION_ALTERNATIVE = "ALT";
-        public const string MATCHED_RELATION_NONE = "NONE";
+        public const string MATCHED_RELATION_NONE = "UNMATCHED";
 
         public const string PARTIAL_REASON_UNKNOWN = "UNKNOWN";
         public const string PARTIAL_REASON_SWAPPED = "SWAPPED";
