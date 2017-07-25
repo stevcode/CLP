@@ -18,8 +18,6 @@ namespace Classroom_Learning_Partner
         public const bool IS_LARGE_CACHE = false;
         public const bool IS_ANONYMIZED_CACHE = true;
 
-        public ConversionService() { }
-
         #region Loop
 
         public static void ConvertAnnCache()
@@ -69,6 +67,121 @@ namespace Classroom_Learning_Partner
             SaveSessionsToZip(zipPath, sessions, authorNotebook);
 
             CLogger.AppendToLog($"Finished Conversion of Ann's {cacheType} Cache.");
+
+            if (!IS_LARGE_CACHE &&
+                IS_ANONYMIZED_CACHE)
+            {
+                AnonymizationFixesForAssessmentCache();
+            }
+        }
+
+        public static void AnonymizationFixesForAssessmentCache()
+        {
+            CLogger.AppendToLog("Beginning fixes for anonymized cache.");
+
+            var allNotebooks = DataService.LoadAllNotebooksFromCLPContainer(AssessmentZipFilePath);
+
+            #region Anonymize Page 1
+
+            var authorNotebook = allNotebooks.First(n => n.Owner.ID == Person.AUTHOR_ID);
+            DataService.LoadPagesIntoNotebook(authorNotebook,
+                                              new List<int>
+                                              {
+                                                  1
+                                              });
+            var authorPage = authorNotebook.Pages.First();
+
+            
+            foreach (var notebook in allNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                DataService.LoadPagesIntoNotebook(notebook,
+                                                  new List<int>
+                                                  {
+                                                      1
+                                                  });
+
+                var page = notebook.Pages.First();
+                var submissions = new List<CLPPage>();
+                submissions.AddRange(page.Submissions);
+                using (var zip = ZipFile.Read(AssessmentZipFilePath))
+                {
+                    foreach (var submission in submissions)
+                    {
+                        zip.RemoveEntry(submission.GetZipEntryFullPath(notebook));
+                    }
+
+                    zip.Save();
+                }
+
+                var replacementPage = authorPage.CopyForNewOwner(notebook.Owner);
+                var replacementEntries = new List<DataService.ZipEntrySaver>
+                              {
+                                  new DataService.ZipEntrySaver(replacementPage, notebook)
+                              };
+
+                DataService.SaveZipEntries(AssessmentZipFilePath, replacementEntries);
+            }
+
+            #endregion // Anonymize Page 1
+
+            #region Specific fix for inked student name
+
+            var specificStudentNotebook = allNotebooks.First(n => n.Owner.ID == "_3ll1DzkbU6LPZVShajTWg");
+            specificStudentNotebook.Pages.Clear();
+            DataService.LoadPagesIntoNotebook(specificStudentNotebook,
+                                              new List<int>
+                                              {
+                                                  3
+                                              });
+
+            var pageToAlter = specificStudentNotebook.Pages.First();
+            var submissionToAlter = pageToAlter.Submissions.First();
+            var toAlter = new List<CLPPage>
+                          {
+                              pageToAlter,
+                              submissionToAlter
+                          };
+
+            foreach (var page in toAlter)
+            {
+                var historyActionsToRemove = page.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= 126 && h.HistoryActionIndex <= 165)
+                                                 .Cast<ObjectsOnPageChangedHistoryAction>()
+                                                 .ToList();
+                var strokesToRemove = historyActionsToRemove.SelectMany(h => h.StrokesAdded).Distinct().ToList();
+
+                foreach (var stroke in strokesToRemove)
+                {
+                    if (page.InkStrokes.Contains(stroke))
+                    {
+                        page.InkStrokes.Remove(stroke);
+                    }
+
+                    if (page.History.TrashedInkStrokes.Contains(stroke))
+                    {
+                        page.History.TrashedInkStrokes.Remove(stroke);
+                    }
+                }
+
+                foreach (var objectsOnPageChangedHistoryAction in historyActionsToRemove)
+                {
+                    page.History.UndoActions.Remove(objectsOnPageChangedHistoryAction);
+                }
+
+                page.History.RefreshHistoryIndexes();
+                HistoryAnalysis.GenerateSemanticEvents(page);
+            }
+
+            var entries = new List<DataService.ZipEntrySaver>
+                          {
+                              new DataService.ZipEntrySaver(pageToAlter, specificStudentNotebook),
+                              new DataService.ZipEntrySaver(submissionToAlter, specificStudentNotebook)
+                          };
+
+            DataService.SaveZipEntries(AssessmentZipFilePath, entries);
+
+            #endregion // Specific fix for inked student name
+
+            CLogger.AppendToLog("Finished fixes for anonymized cache.");
         }
 
         #endregion // Loop
