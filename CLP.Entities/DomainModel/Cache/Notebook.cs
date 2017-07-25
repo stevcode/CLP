@@ -260,7 +260,7 @@ namespace CLP.Entities
 
         public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
-            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{NotebookSetDirectoryName}/{NotebookOwnerDirectoryName}/{DefaultZipEntryName}.json";
+            return $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{NotebookSetDirectoryName}/{NotebookOwnerDirectoryName}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

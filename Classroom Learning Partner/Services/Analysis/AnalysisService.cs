@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.Services
     {
         #region Constants
 
-        private const string ANALYSIS_TRACKER_FILE_NAME = "Analysis Tracker.json";
+        private const string ANALYSIS_TRACKER_FILE_NAME = "Analysis Tracker.xml";
         private const string ROLLING_ANALYSIS_FILE_NAME = "Batch Analysis.tsv";
         private const string ANN_CACHE_FILE_NAME = "Ann - Fall 2014.clp";
         private const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
@@ -529,8 +529,8 @@ namespace Classroom_Learning_Partner.Services
                     var convertedStudentPagesFolderName = $"{studentName};{studentID}";
                     var convertedStudentPagesFolderPath = Path.Combine(ConvertedPagesFolder, convertedStudentPagesFolderName);
 
-                    var pageJsonFileName = $"{page.DefaultZipEntryName}.json";
-                    var pageJsonFilePath = Path.Combine(convertedStudentPagesFolderPath, pageJsonFileName);
+                    var pageXmlFileName = $"{page.DefaultZipEntryName}.xml";
+                    var pageXmlFilePath = Path.Combine(convertedStudentPagesFolderPath, pageXmlFileName);
 
                     #endregion // Setting Up Paths
 
@@ -569,7 +569,7 @@ namespace Classroom_Learning_Partner.Services
 
                     CLogger.AppendToLog($"Saving files for {studentName}'s page {pageNumber}.");
 
-                    page.ToXmlFile(pageJsonFilePath);
+                    page.ToXmlFile(pageXmlFilePath);
 
                     var analysisTrackerBackupFilePath = $"{AnalysisTrackerFilePath}.bak{backupCount}";
                     if (File.Exists(AnalysisTrackerFilePath) &&
@@ -654,7 +654,7 @@ namespace Classroom_Learning_Partner.Services
 
             var combineFolderPath = Path.Combine(DataService.DesktopFolderPath, "Combine");
             var directoryInfo = new DirectoryInfo(combineFolderPath);
-            var pageFiles = directoryInfo.GetFiles("*.json", SearchOption.AllDirectories);
+            var pageFiles = directoryInfo.GetFiles("*.xml", SearchOption.AllDirectories);
 
             var totalPagesLoaded = 0;
             var totalPageLoadTimeInMilliseconds = 0.0;

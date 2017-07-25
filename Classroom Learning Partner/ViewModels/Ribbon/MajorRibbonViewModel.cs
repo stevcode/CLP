@@ -722,15 +722,15 @@ namespace Classroom_Learning_Partner.ViewModels
                                                  return;
                                              }
 
-                                             var submissionJson = submission.ToXmlString();
-                                             if (string.IsNullOrEmpty(submissionJson))
+                                             var submissionXml = submission.ToXmlString();
+                                             if (string.IsNullOrEmpty(submissionXml))
                                              {
                                                  return;
                                              }
 
                                              try
                                              {
-                                                 _networkService.InstructorProxy.AddStudentSubmission(submissionJson, _dataService.CurrentNotebook.ID);
+                                                 _networkService.InstructorProxy.AddStudentSubmission(submissionXml, _dataService.CurrentNotebook.ID);
                                              }
                                              catch (Exception)
                                              {

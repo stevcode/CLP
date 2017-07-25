@@ -30,12 +30,12 @@ namespace Classroom_Learning_Partner.Services
             {
                 EntryFile = entryFile;
                 InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebook);
-                JsonString = entryFile.ToXmlString();
+                XmlString = entryFile.ToXmlString();
             }
 
             public AInternalZipEntryFile EntryFile { get; set; }
             private string InternalFilePath { get; set; }
-            private string JsonString { get; set; }
+            private string XmlString { get; set; }
 
             public void UpdateEntry(ZipFile zip, bool isOverwriting = true)
             {
@@ -45,19 +45,19 @@ namespace Classroom_Learning_Partner.Services
                     return;
                 }
 
-                zip.UpdateEntry(InternalFilePath, JsonString);
+                zip.UpdateEntry(InternalFilePath, XmlString);
             }
         }
 
         public class PageZipEntryLoader
         {
-            public PageZipEntryLoader(string jsonString, int pageNumber)
+            public PageZipEntryLoader(string xmlString, int pageNumber)
             {
-                JsonString = jsonString;
+                XmlString = xmlString;
                 PageNumber = pageNumber;
             }
 
-            public string JsonString { get; set; }
+            public string XmlString { get; set; }
             public int PageNumber { get; set; }
         }
 
@@ -83,7 +83,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.Combine();
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
-            //ConvertEmilyCache();
+            ConvertEmilyCache();
             //AnalysisService.RunFullBatchAnalysis(AnalysisService.AllPageNumbersToAnalyze);
             //AnalysisService.RunFullBatchAnalysis(new List<int>{213});
             //AnalysisService.RunFullBatchAnalysisOnAlreadyConvertedPages();
@@ -235,8 +235,8 @@ namespace Classroom_Learning_Partner.Services
                 {
                     // TODO: Test if needed. Won't work unless zip has been saved.
                     // Implied that entries are not added to zip.Entries until saved. Need to verify. Code definitely says added to internal _entries before save, so test this
-                    //zip.SelectEntries("*.json");
-                    //zip.SelectEntries("p;*.json", "blah/blah/pages/"); test this.
+                    //zip.SelectEntries("*.xml");
+                    //zip.SelectEntries("p;*.xml", "blah/blah/pages/"); test this.
 
                     //zip.UpdateFile only applies to adding a file from the disc to the zip archive, N/A for clp unless we need it for images?
                     //          for images, probably zip.AddEntry(entryPath, memoryStream); also have byte[] byteArray for content
@@ -467,7 +467,7 @@ namespace Classroom_Learning_Partner.Services
 
                 var entryList = new List<ZipEntrySaver>();
 
-                var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
+                var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.xml");
 
                 // TODO: Parallel?
                 foreach (var teacher in classRoster.ListOfTeachers)
@@ -943,7 +943,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.xml";
                         pageEntry.FileName = newEntryFullPath;
                     }
 
@@ -987,7 +987,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.xml";
                         submissionEntry.FileName = newEntryFullPath;
                     }
                 }
@@ -1026,7 +1026,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.xml";
                         pageEntry.FileName = newEntryFullPath;
                     }
 
@@ -1057,7 +1057,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.xml";
                         submissionEntry.FileName = newEntryFullPath;
                     }
                 }
@@ -1201,25 +1201,25 @@ namespace Classroom_Learning_Partner.Services
             var pageZipEntryLoaders = new List<PageZipEntryLoader>();
             foreach (var entry in entries)
             {
-                var jsonString = entry.ExtractJsonString();
+                var xmlString = entry.ExtractXmlString();
                 var nameCompositeString = entry.GetEntryNameWithoutExtension();
                 var pageNameComposite = CLPPage.NameComposite.ParseFromString(nameCompositeString);
                 var pageNumber = pageNameComposite.PageNumber;
-                var pageZipEntryLoader = new PageZipEntryLoader(jsonString, pageNumber);
+                var pageZipEntryLoader = new PageZipEntryLoader(xmlString, pageNumber);
                 pageZipEntryLoaders.Add(pageZipEntryLoader);
             }
 
             return pageZipEntryLoaders;
         }
 
-        public static T LoadJsonEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
+        public static T LoadXmlEntry<T>(string zipContainerFilePath, string entryPath) where T : AInternalZipEntryFile
         {
             try
             {
                 using (var zip = ZipFile.Read(zipContainerFilePath))
                 {
                     var entry = zip.GetEntry(entryPath);
-                    var zipEntryFile = entry.ExtractJsonEntity<T>();
+                    var zipEntryFile = entry.ExtractXmlEntity<T>();
                     zipEntryFile.ContainerZipFilePath = zipContainerFilePath;
 
                     return zipEntryFile;
@@ -1337,9 +1337,9 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var entryPath = $"{ClassRoster.DEFAULT_INTERNAL_FILE_NAME}.json";
+            var entryPath = $"{ClassRoster.DEFAULT_INTERNAL_FILE_NAME}.xml";
 
-            return LoadJsonEntry<ClassRoster>(fileInfo.FullName, entryPath);
+            return LoadXmlEntry<ClassRoster>(fileInfo.FullName, entryPath);
         }
 
         public static void SaveClassRoster(ClassRoster classRoster)
@@ -1361,7 +1361,7 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var internalSessionsDirectory = $"{AInternalZipEntryFile.ZIP_SESSIONS_FOLDER_NAME}/";
                     var sessionEntries = zip.GetEntriesInDirectory(internalSessionsDirectory);
-                    sessionStrings.AddRange(sessionEntries.Select(sessionEntry => sessionEntry.ExtractJsonString()));
+                    sessionStrings.AddRange(sessionEntries.Select(sessionEntry => sessionEntry.ExtractXmlString()));
                 }
 
                 foreach (var sessionString in sessionStrings)
@@ -1396,8 +1396,8 @@ namespace Classroom_Learning_Partner.Services
                 var notebookStrings = new List<string>();
                 using (var zip = ZipFile.Read(zipContainerFilePath))
                 {
-                    var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json");
-                    notebookStrings.AddRange(notebookEntries.Select(notebookEntry => notebookEntry.ExtractJsonString()));
+                    var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.xml");
+                    notebookStrings.AddRange(notebookEntries.Select(notebookEntry => notebookEntry.ExtractXmlString()));
                 }
 
                 foreach (var notebookString in notebookStrings)
@@ -1551,7 +1551,7 @@ namespace Classroom_Learning_Partner.Services
             var pages = new List<CLPPage>();
             //foreach (var pageZipEntryLoader in pageZipEntryLoaders)
             //{
-            //    var page = ASerializableBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+            //    var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
             //    page.ContainerZipFilePath = zipContainerFilePath;
             //    page.PageNumber = pageZipEntryLoader.PageNumber;
             //    pages.Add(page);
@@ -1560,7 +1560,7 @@ namespace Classroom_Learning_Partner.Services
             Parallel.ForEach(pageZipEntryLoaders,
                              pageZipEntryLoader =>
                              {
-                                 var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.JsonString);
+                                 var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
                                  page.ContainerZipFilePath = zipContainerFilePath;
                                  page.PageNumber = pageZipEntryLoader.PageNumber;
                                  pages.Add(page);
@@ -1638,7 +1638,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookPagesDirectoryPath}{newEntryName}.xml";
                         pageEntry.FileName = newEntryFullPath;
                     }
 
@@ -1683,7 +1683,7 @@ namespace Classroom_Learning_Partner.Services
                         }
 
                         var newEntryName = pageNameComposite.ToNameCompositeString();
-                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.json";
+                        var newEntryFullPath = $"{otherNotebook.NotebookSubmissionsDirectoryPath}{newEntryName}.xml";
                         submissionEntry.FileName = newEntryFullPath;
                     }
                 }

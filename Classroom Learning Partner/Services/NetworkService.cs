@@ -231,13 +231,13 @@ namespace Classroom_Learning_Partner.Services
                                        }
                                        else
                                        {
-                                           var classRosterJson = InstructorProxy.GetClassRosterJson();
-                                           if (string.IsNullOrWhiteSpace(classRosterJson))
+                                           var classRosterXml = InstructorProxy.GetClassRosterXml();
+                                           if (string.IsNullOrWhiteSpace(classRosterXml))
                                            {
                                                return;
                                            }
 
-                                           var classRoster = ASerializableBase.FromXmlString<ClassRoster>(classRosterJson);
+                                           var classRoster = ASerializableBase.FromXmlString<ClassRoster>(classRosterXml);
                                            _dataService.SetCurrentClassRoster(classRoster);
                                            var students = classRoster.ListOfStudents;
                                            var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;

@@ -117,7 +117,7 @@ namespace CLP.Entities
         {
             var notebookOwnerDirectoryPath = $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebook.NotebookSetDirectoryName}/{parentNotebook.NotebookOwnerDirectoryName}";
 
-            return $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+            return $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

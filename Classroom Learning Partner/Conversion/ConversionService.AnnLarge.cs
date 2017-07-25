@@ -184,7 +184,7 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
 
-                CLogger.AppendToLog($"Moving page json files for {notebook.Owner.FullName}");
+                CLogger.AppendToLog($"Moving page xml files for {notebook.Owner.FullName}");
 
                 var internalPagesDirectoryPath = notebook.NotebookPagesDirectoryPath;
 
@@ -218,7 +218,7 @@ namespace Classroom_Learning_Partner
                     zip.Save();
                 }
 
-                CLogger.AppendToLog($"Finished moving page json files for {notebook.Owner.FullName}");
+                CLogger.AppendToLog($"Finished moving page xml files for {notebook.Owner.FullName}");
             }
 
             CLogger.AppendToLog("Finished Combination.");            
@@ -300,8 +300,8 @@ namespace Classroom_Learning_Partner
 
             using (var zip = ZipFile.Read(AnnAuthorTagsLily1))
             {
-                var notebookEntry = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json").First();
-                var notebookString = notebookEntry.ExtractJsonString();
+                var notebookEntry = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.xml").First();
+                var notebookString = notebookEntry.ExtractXmlString();
                 var notebook = ASerializableBase.FromXmlString<Notebook>(notebookString);
                 notebook.ContainerZipFilePath = zipPath;
 
@@ -738,8 +738,6 @@ namespace Classroom_Learning_Partner
                 {
                     continue;
                 }
-
-                
 
                 var newPageObject = ConvertPageObject(pageObject, newPage);
                 if (newPageObject == null)

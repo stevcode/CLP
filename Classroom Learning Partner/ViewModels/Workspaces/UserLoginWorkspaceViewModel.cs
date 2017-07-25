@@ -127,8 +127,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var notebookJson = _networkService.InstructorProxy.GetStudentNotebookJson(_networkService.CurrentUser.ID);
-                switch (notebookJson)
+                var notebookXml = _networkService.InstructorProxy.GetStudentNotebookXml(_networkService.CurrentUser.ID);
+                switch (notebookXml)
                 {
                     case InstructorService.MESSAGE_NO_DATA_SERVICE:
                         IsLoggingIn = false;
@@ -141,32 +141,32 @@ namespace Classroom_Learning_Partner.ViewModels
                         return;
                 }
 
-                if (string.IsNullOrWhiteSpace(notebookJson))
+                if (string.IsNullOrWhiteSpace(notebookXml))
                 {
                     IsLoggingIn = false;
                     return;
                 }
 
-                var notebook = ASerializableBase.FromXmlString<Notebook>(notebookJson);
+                var notebook = ASerializableBase.FromXmlString<Notebook>(notebookXml);
                 if (notebook == null)
                 {
                     IsLoggingIn = false;
                     return;
                 }
 
-                var pagesJson = _networkService.InstructorProxy.GetStudentNotebookPagesJson(_networkService.CurrentUser.ID);
-                if (!pagesJson.Any())
+                var pagesXml = _networkService.InstructorProxy.GetStudentNotebookPagesXml(_networkService.CurrentUser.ID);
+                if (!pagesXml.Any())
                 {
                     IsLoggingIn = false;
                     return;
                 }
 
-                var pages = Enumerable.OrderBy(pagesJson.Select(ASerializableBase.FromXmlString<CLPPage>), p => p.PageNumber).ToList();
+                var pages = Enumerable.OrderBy(pagesXml.Select(ASerializableBase.FromXmlString<CLPPage>), p => p.PageNumber).ToList();
 
-                var submissionsJson = _networkService.InstructorProxy.GetStudentPageSubmissionsJson(_networkService.CurrentUser.ID);
-                foreach (var submissionJson in submissionsJson)
+                var submissionsXml = _networkService.InstructorProxy.GetStudentPageSubmissionsXml(_networkService.CurrentUser.ID);
+                foreach (var submissionXml in submissionsXml)
                 {
-                    var submission = ASerializableBase.FromXmlString<CLPPage>(submissionJson);
+                    var submission = ASerializableBase.FromXmlString<CLPPage>(submissionXml);
                     var page = pages.FirstOrDefault(p => p.ID == submission.ID);
                     if (page != null)
                     {

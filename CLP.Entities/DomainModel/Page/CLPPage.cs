@@ -873,8 +873,8 @@ namespace CLP.Entities
             var notebookOwnerDirectoryPath = $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebook.NotebookSetDirectoryName}/{parentNotebook.NotebookOwnerDirectoryName}";
 
             return VersionIndex == 0
-                       ? $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultZipEntryName}.json"
-                       : $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+                       ? $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultZipEntryName}.xml"
+                       : $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

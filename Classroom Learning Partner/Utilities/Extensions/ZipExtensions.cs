@@ -78,9 +78,9 @@ namespace Classroom_Learning_Partner
 
         #region ZipEntry
 
-        /// <summary>Extracts a zip entry into the Json string it contains.</summary>
+        /// <summary>Extracts a zip entry into the Xml string it contains.</summary>
         /// <param name="entry">Entry to extract.</param>
-        public static string ExtractJsonString(this ZipEntry entry)
+        public static string ExtractXmlString(this ZipEntry entry)
         {
             Argument.IsNotNull("entry", entry);
 
@@ -88,19 +88,19 @@ namespace Classroom_Learning_Partner
             {
                 entry.Extract(memoryStream);
 
-                var jsonString = Encoding.ASCII.GetString(memoryStream.ToArray());
-                return jsonString;
+                var xmlString = Encoding.ASCII.GetString(memoryStream.ToArray());
+                return xmlString;
             }
         }
 
-        /// <summary>Extracts a json zip entry into an Entity.</summary>
+        /// <summary>Extracts a xml zip entry into an Entity.</summary>
         /// <param name="entry">Entry to extract.</param>
-        public static T ExtractJsonEntity<T>(this ZipEntry entry) where T : ASerializableBase
+        public static T ExtractXmlEntity<T>(this ZipEntry entry) where T : ASerializableBase
         {
             Argument.IsNotNull("entry", entry);
 
-            var jsonString = entry.ExtractJsonString();
-            var entity = ASerializableBase.FromXmlString<T>(jsonString);
+            var xmlString = entry.ExtractXmlString();
+            var entity = ASerializableBase.FromXmlString<T>(xmlString);
 
             return entity;
         }
