@@ -302,7 +302,7 @@ namespace Classroom_Learning_Partner
             {
                 var notebookEntry = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.json").First();
                 var notebookString = notebookEntry.ExtractJsonString();
-                var notebook = ASerializableBase.FromJsonString<Notebook>(notebookString);
+                var notebook = ASerializableBase.FromXmlString<Notebook>(notebookString);
                 notebook.ContainerZipFilePath = zipPath;
 
                 notebook.Pages = authorPages.OrderBy(p => p.PageNumber).ToObservableCollection();

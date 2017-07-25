@@ -237,7 +237,7 @@ namespace Classroom_Learning_Partner.Services
                                                return;
                                            }
 
-                                           var classRoster = ASerializableBase.FromJsonString<ClassRoster>(classRosterJson);
+                                           var classRoster = ASerializableBase.FromXmlString<ClassRoster>(classRosterJson);
                                            _dataService.SetCurrentClassRoster(classRoster);
                                            var students = classRoster.ListOfStudents;
                                            var workspace = App.MainWindowViewModel.Workspace as UserLoginWorkspaceViewModel;

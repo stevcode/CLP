@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var notebook = ASerializableBase.FromJsonString<Notebook>(notebookJson);
+                var notebook = ASerializableBase.FromXmlString<Notebook>(notebookJson);
                 if (notebook == null)
                 {
                     IsLoggingIn = false;
@@ -161,12 +161,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var pages = Enumerable.OrderBy(pagesJson.Select(ASerializableBase.FromJsonString<CLPPage>), p => p.PageNumber).ToList();
+                var pages = Enumerable.OrderBy(pagesJson.Select(ASerializableBase.FromXmlString<CLPPage>), p => p.PageNumber).ToList();
 
                 var submissionsJson = _networkService.InstructorProxy.GetStudentPageSubmissionsJson(_networkService.CurrentUser.ID);
                 foreach (var submissionJson in submissionsJson)
                 {
-                    var submission = ASerializableBase.FromJsonString<CLPPage>(submissionJson);
+                    var submission = ASerializableBase.FromXmlString<CLPPage>(submissionJson);
                     var page = pages.FirstOrDefault(p => p.ID == submission.ID);
                     if (page != null)
                     {

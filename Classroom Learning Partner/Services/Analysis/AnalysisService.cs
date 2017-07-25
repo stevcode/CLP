@@ -569,7 +569,7 @@ namespace Classroom_Learning_Partner.Services
 
                     CLogger.AppendToLog($"Saving files for {studentName}'s page {pageNumber}.");
 
-                    page.ToJsonFile(pageJsonFilePath);
+                    page.ToXmlFile(pageJsonFilePath);
 
                     var analysisTrackerBackupFilePath = $"{AnalysisTrackerFilePath}.bak{backupCount}";
                     if (File.Exists(AnalysisTrackerFilePath) &&
@@ -578,7 +578,7 @@ namespace Classroom_Learning_Partner.Services
                         File.Delete(analysisTrackerBackupFilePath);
                     }
                     File.Move(AnalysisTrackerFilePath, analysisTrackerBackupFilePath);
-                    analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
+                    analysisTracker.ToXmlFile(AnalysisTrackerFilePath);
 
                     var rollingAnalysisBackupFilePath = $"{RollingAnalysisFilePath}.bak{backupCount}";
                     if (File.Exists(RollingAnalysisFilePath) &&
@@ -626,7 +626,7 @@ namespace Classroom_Learning_Partner.Services
                     File.Move(AnalysisTrackerFilePath, analysisTrackerBackupFilePath);
 
                     analysisTracker.SaveTime = FastDateTime.Now;
-                    analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
+                    analysisTracker.ToXmlFile(AnalysisTrackerFilePath);
 
                     backupCount++;
                     if (backupCount > 44)
@@ -670,7 +670,7 @@ namespace Classroom_Learning_Partner.Services
                 CLogger.AppendToLog($"Loading Page: {filePath}");
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
-                var page = ASerializableBase.FromJsonFile<CLPPage>(filePath);
+                var page = ASerializableBase.FromXmlFile<CLPPage>(filePath);
                 stopWatch.Stop();
                 CLogger.AppendToLog($"Page Loaded: {filePath}");
 
@@ -720,7 +720,7 @@ namespace Classroom_Learning_Partner.Services
             if (File.Exists(AnalysisTrackerFilePath))
             {
                 CLogger.AppendToLog("Analysis Tracker already exists, loading...");
-                return ASerializableBase.FromJsonFile<AnalysisTracker>(AnalysisTrackerFilePath);
+                return ASerializableBase.FromXmlFile<AnalysisTracker>(AnalysisTrackerFilePath);
             }
 
             CLogger.AppendToLog("Initializing new Analysis Tracker...");
@@ -764,7 +764,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             analysisTracker.SaveTime = FastDateTime.Now;
-            analysisTracker.ToJsonFile(AnalysisTrackerFilePath);
+            analysisTracker.ToXmlFile(AnalysisTrackerFilePath);
             return analysisTracker;
         }
 

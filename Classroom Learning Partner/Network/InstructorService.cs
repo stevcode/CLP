@@ -78,7 +78,7 @@ namespace Classroom_Learning_Partner
             }
 
             var currentClassRoster = dataService.CurrentClassRoster;
-            var classRosterJsonString = currentClassRoster.ToJsonString(false);
+            var classRosterJsonString = currentClassRoster.ToXmlString();
 
             return classRosterJsonString;
         }
@@ -262,7 +262,7 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER;
             }
 
-            var notebookJsonString = notebook.ToJsonString(false);
+            var notebookJsonString = notebook.ToXmlString();
 
             return notebookJsonString;
         }
@@ -318,7 +318,7 @@ namespace Classroom_Learning_Partner
                 return pageJsonStrings;
             }
 
-            pageJsonStrings.AddRange(notebook.Pages.Select(page => page.ToJsonString(false)));
+            pageJsonStrings.AddRange(notebook.Pages.Select(page => page.ToXmlString()));
 
             return pageJsonStrings;
         }
@@ -347,7 +347,7 @@ namespace Classroom_Learning_Partner
 
             submissionJsonStrings.AddRange(from page in notebook.Pages
                                            from submission in page.Submissions
-                                           select submission.ToJsonString(false));
+                                           select submission.ToXmlString());
 
             return submissionJsonStrings;
         }
@@ -360,7 +360,7 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NO_DATA_SERVICE;
             }
 
-            var submission = ASerializableBase.FromJsonString<CLPPage>(submissionJson);
+            var submission = ASerializableBase.FromXmlString<CLPPage>(submissionJson);
             if (submission == null)
             {
                 return MESSAGE_SUBMISSION_NOT_DESERIALIZED;

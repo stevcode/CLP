@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner
             Argument.IsNotNull("entry", entry);
 
             var jsonString = entry.ExtractJsonString();
-            var entity = ASerializableBase.FromJsonString<T>(jsonString);
+            var entity = ASerializableBase.FromXmlString<T>(jsonString);
 
             return entity;
         }

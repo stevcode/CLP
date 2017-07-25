@@ -722,7 +722,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                  return;
                                              }
 
-                                             var submissionJson = submission.ToJsonString(false);
+                                             var submissionJson = submission.ToXmlString();
                                              if (string.IsNullOrEmpty(submissionJson))
                                              {
                                                  return;
