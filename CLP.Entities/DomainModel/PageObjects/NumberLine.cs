@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -96,9 +95,6 @@ namespace CLP.Entities
             StartingTickIndex = startTickIndex;
             JumpColor = jumpColor;
         }
-
-        public NumberLineJumpSize(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 
