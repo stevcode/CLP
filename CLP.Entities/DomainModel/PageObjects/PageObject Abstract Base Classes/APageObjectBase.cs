@@ -4,11 +4,10 @@ using System.Windows;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
-    public abstract class APageObjectBase : AEntityBase, IPageObject
+    public abstract class APageObjectBase : ASerializableBase, IPageObject
     {
         #region Constructors
 
@@ -124,7 +123,6 @@ namespace CLP.Entities
 
         /// <summary>The <see cref="IPageObject" />'s parent <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public CLPPage ParentPage
         {

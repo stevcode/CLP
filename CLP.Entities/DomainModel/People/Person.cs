@@ -3,7 +3,6 @@ using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -14,7 +13,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class Person : AEntityBase, IConnectedPerson
+    public class Person : ASerializableBase, IConnectedPerson
     {
         #region Constants
 
@@ -175,7 +174,6 @@ namespace CLP.Entities
 
         /// <summary>Friendly Name of the computer the <see cref="Person" /> is currently using.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public string CurrentMachineName
         {
@@ -187,7 +185,6 @@ namespace CLP.Entities
 
         /// <summary>TCP address of the computer the <see cref="Person" /> is currently using.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public string CurrentMachineAddress
         {
@@ -199,7 +196,6 @@ namespace CLP.Entities
 
         /// <summary>Whether or not this <see cref="Person" /> currently has an established connection with CurrentUser.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public bool IsConnected
         {

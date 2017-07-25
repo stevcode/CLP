@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -70,7 +69,6 @@ namespace CLP.Entities
 
         /// <summary>Parent notebook the Display belongs to.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public Notebook ParentNotebook
         {
@@ -91,7 +89,6 @@ namespace CLP.Entities
 
         /// <summary>List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
@@ -120,7 +117,7 @@ namespace CLP.Entities
         {
             var notebookOwnerDirectoryPath = $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebook.NotebookSetDirectoryName}/{parentNotebook.NotebookOwnerDirectoryName}";
 
-            return $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+            return $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_DISPLAYS_FOLDER_NAME}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

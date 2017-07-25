@@ -63,22 +63,6 @@
       <HintPath>..\packages\Catel.Core.4.5.4\lib\net46\Catel.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Serialization.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\ModifiedCatelJson\Catel.Serialization.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -104,7 +88,7 @@
     <Compile Include="DomainModel\History\IStrokesOnPageChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Logging\CLogger.cs" />
     <Compile Include="DomainModel\Page\CLPPage.cs" />
-    <Compile Include="DomainModel\AEntityBase.cs" />
+    <Compile Include="DomainModel\ASerializableBase.cs" />
     <Compile Include="DomainModel\Page\CLPPageExtensions.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
@@ -255,11 +239,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="lib\ModifiedCatelJson\Catel.Serialization.Json.dll" />
-    <Content Include="lib\ModifiedCatelJson\Catel.Serialization.Json.pdb" />
-    <Content Include="lib\ModifiedCatelJson\Catel.Serialization.Json.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,7 +5,6 @@ using System.Windows;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -42,7 +41,6 @@ namespace CLP.Entities
 
         /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<IPageObject> AcceptedPageObjects
         {

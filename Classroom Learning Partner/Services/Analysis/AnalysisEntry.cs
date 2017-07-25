@@ -4,7 +4,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
-    public class AnalysisEntry : AEntityBase
+    public class AnalysisEntry : ASerializableBase
     {
         #region Constants
 

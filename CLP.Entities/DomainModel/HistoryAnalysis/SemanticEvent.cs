@@ -4,12 +4,11 @@ using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class SemanticEvent : AEntityBase, ISemanticEvent
+    public class SemanticEvent : ASerializableBase, ISemanticEvent
     {
         #region Constants
 
@@ -223,7 +222,6 @@ namespace CLP.Entities
 
         /// <summary>The <see cref="ISemanticEvent" />'s parent <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public CLPPage ParentPage
         {

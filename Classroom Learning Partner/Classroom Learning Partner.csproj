@@ -119,10 +119,6 @@
       <HintPath>..\packages\Catel.MVVM.4.5.4\lib\net46\Catel.MVVM.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Catel.Serialization.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CLP.Entities\lib\ModifiedCatelJson\Catel.Serialization.Json.dll</HintPath>
-    </Reference>
     <Reference Include="CLP.Entities.Ann, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\CLP.Entities.Ann.dll</HintPath>
@@ -150,10 +146,6 @@
     <Reference Include="itextsharp, Version=5.5.1.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\itextsharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="NRtfTree, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -315,7 +307,6 @@
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
-    <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="Views\BackStage\BackStageView.xaml.cs">
       <DependentUpon>BackStageView.xaml</DependentUpon>
@@ -433,14 +424,6 @@
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Extenders\ListBoxExtenders.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapInterfaces.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapPlayer.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapStructures.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\FilterInfo.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\APageObjectBaseViewModel.cs" />
@@ -509,9 +492,6 @@
     <Compile Include="Views\PageObjects\Arrays\CLPArrayView.xaml.cs">
       <DependentUpon>CLPArrayView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
-      <DependentUpon>CLPAudioView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml.cs">
       <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
@@ -568,9 +548,6 @@
     </Compile>
     <Compile Include="Views\Panels\SubmissionHistoryPanelView.xaml.cs">
       <DependentUpon>SubmissionHistoryPanelView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
-      <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
       <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
@@ -830,10 +807,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPAudioView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -907,10 +880,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\SubmissionHistoryPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Panels\WebcamPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

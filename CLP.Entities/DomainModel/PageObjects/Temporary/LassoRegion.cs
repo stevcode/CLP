@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -39,7 +38,6 @@ namespace CLP.Entities
 
         /// <summary>List of all the lassoed <see cref="IPageObject" />s.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<IPageObject> LassoedPageObjects
         {
@@ -51,7 +49,6 @@ namespace CLP.Entities
 
         /// <summary>StrokeCollection of all the lassoed <see cref="Stroke" />s.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection LassoedStrokes
         {

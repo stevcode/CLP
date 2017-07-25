@@ -7,7 +7,6 @@ using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -285,7 +284,6 @@ namespace CLP.Entities
 
         /// <summary>The thumbnail for the <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public ImageSource PageThumbnail
         {
@@ -297,7 +295,6 @@ namespace CLP.Entities
 
         /// <summary>Submissions associated with this <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public ObservableCollection<CLPPage> Submissions
         {
@@ -309,7 +306,6 @@ namespace CLP.Entities
 
         /// <summary>Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection InkStrokes
         {
@@ -877,8 +873,8 @@ namespace CLP.Entities
             var notebookOwnerDirectoryPath = $"{ZIP_NOTEBOOKS_FOLDER_NAME}/{parentNotebook.NotebookSetDirectoryName}/{parentNotebook.NotebookOwnerDirectoryName}";
 
             return VersionIndex == 0
-                       ? $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultZipEntryName}.json"
-                       : $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+                       ? $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/{DefaultZipEntryName}.xml"
+                       : $"{notebookOwnerDirectoryPath}/{ZIP_NOTEBOOK_SUBMISSIONS_FOLDER_NAME}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

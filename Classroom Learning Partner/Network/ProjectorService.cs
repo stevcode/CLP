@@ -45,7 +45,7 @@ namespace Classroom_Learning_Partner
 
 
         [OperationContract]
-        string AddStudentSubmission(string submissionJson, string notebookID);
+        string AddStudentSubmission(string submissionXml, string notebookID);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -528,7 +528,7 @@ namespace Classroom_Learning_Partner
 
         #endregion
 
-        public string AddStudentSubmission(string submissionJson, string notebookID)
+        public string AddStudentSubmission(string submissionXml, string notebookID)
         {
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
@@ -536,7 +536,7 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NO_DATA_SERVICE;
             }
 
-            var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
+            var submission = ASerializableBase.FromXmlString<CLPPage>(submissionXml);
             if (submission == null)
             {
                 return MESSAGE_SUBMISSION_NOT_DESERIALIZED;

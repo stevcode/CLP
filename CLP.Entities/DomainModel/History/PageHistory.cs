@@ -9,12 +9,11 @@ using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class PageHistory : AEntityBase
+    public class PageHistory : ASerializableBase
     {
         #region Constants
 
@@ -195,10 +194,9 @@ namespace CLP.Entities
         }
 
         /// <summary>Forces playback on non-animation pages.</summary>
-        [XmlIgnore] [JsonIgnore] [ExcludeFromSerialization] private bool _isNonAnimationPlaybackEnabled = false;
+        [XmlIgnore] [ExcludeFromSerialization] private bool _isNonAnimationPlaybackEnabled = false;
 
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public bool IsNonAnimationPlaybackEnabled
         {
@@ -280,7 +278,6 @@ namespace CLP.Entities
 
         /// <summary>A list of all the <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection TrashedInkStrokes
         {

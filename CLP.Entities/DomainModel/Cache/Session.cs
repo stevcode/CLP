@@ -108,7 +108,7 @@ namespace CLP.Entities
 
         public override string GetZipEntryFullPath(Notebook parentNotebook)
         {
-            return $"{ZIP_SESSIONS_FOLDER_NAME}/{DefaultZipEntryName}.json";
+            return $"{ZIP_SESSIONS_FOLDER_NAME}/{DefaultZipEntryName}.xml";
         }
 
         #endregion

@@ -1174,7 +1174,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    }
 
                                    //var st = Stopwatch.StartNew();
-                                   //var jsonString = (historyActionCopy as AEntityBase).ToJsonString();
+                                   //var jsonString = (historyActionCopy as ASerializableBase).ToJsonString();
                                    //var zjson = jsonString.CompressWithGZip();
                                    //st.Stop();
                                    //var jTime = st.ElapsedMilliseconds;
@@ -1182,7 +1182,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                    //st.Restart();
                                    //var backToJson = zjson.DecompressFromGZip();
-                                   //var unjHistoryAction = AEntityBase.FromJsonString<object>(backToJson);
+                                   //var unjHistoryAction = ASerializableBase.FromJsonString<object>(backToJson);
                                    //st.Stop();
                                    //var unjsonTime = st.ElapsedMilliseconds;
 

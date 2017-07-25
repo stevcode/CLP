@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,7 +16,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class NumberLineTick : AEntityBase
+    public class NumberLineTick : ASerializableBase
     {
         #region Constructors
 
@@ -84,7 +83,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class NumberLineJumpSize : AEntityBase
+    public class NumberLineJumpSize : ASerializableBase
     {
         #region Constructors
 
@@ -96,9 +95,6 @@ namespace CLP.Entities
             StartingTickIndex = startTickIndex;
             JumpColor = jumpColor;
         }
-
-        public NumberLineJumpSize(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         #endregion //Constructors
 

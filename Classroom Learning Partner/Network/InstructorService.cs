@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        string GetClassRosterJson();
+        string GetClassRosterXml();
 
         [OperationContract]
         string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
@@ -24,19 +24,19 @@ namespace Classroom_Learning_Partner
         void StudentLogout(string studentID);
 
         [OperationContract]
-        string GetStudentNotebookJson(string studentID);
+        string GetStudentNotebookXml(string studentID);
 
         [OperationContract]
         Dictionary<string, byte[]> GetImages(List<string> imageHashIDs);
 
         [OperationContract]
-        List<string> GetStudentNotebookPagesJson(string studentID);
+        List<string> GetStudentNotebookPagesXml(string studentID);
 
         [OperationContract]
-        List<string> GetStudentPageSubmissionsJson(string studentID);
+        List<string> GetStudentPageSubmissionsXml(string studentID);
 
         [OperationContract]
-        string AddStudentSubmission(string submissionJson, string notebookID);
+        string AddStudentSubmission(string submissionXml, string notebookID);
 
         [OperationContract]
         void AddSerializedPages(string zippedPages, string notebookID);
@@ -69,7 +69,7 @@ namespace Classroom_Learning_Partner
 
         #region IInstructorContract Members
 
-        public string GetClassRosterJson()
+        public string GetClassRosterXml()
         {
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
@@ -78,9 +78,9 @@ namespace Classroom_Learning_Partner
             }
 
             var currentClassRoster = dataService.CurrentClassRoster;
-            var classRosterJsonString = currentClassRoster.ToJsonString(false);
+            var classRosterXmlString = currentClassRoster.ToXmlString();
 
-            return classRosterJsonString;
+            return classRosterXmlString;
         }
 
         public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
@@ -242,7 +242,7 @@ namespace Classroom_Learning_Partner
             student.IsConnected = false;
         }
 
-        public string GetStudentNotebookJson(string studentID)
+        public string GetStudentNotebookXml(string studentID)
         {
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
@@ -262,9 +262,9 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NOTEBOOK_NOT_LOADED_BY_TEACHER;
             }
 
-            var notebookJsonString = notebook.ToJsonString(false);
+            var notebookXmlString = notebook.ToXmlString();
 
-            return notebookJsonString;
+            return notebookXmlString;
         }
 
         public Dictionary<string, byte[]> GetImages(List<string> imageHashIDs)
@@ -296,63 +296,63 @@ namespace Classroom_Learning_Partner
             return imageList;
         }
 
-        public List<string> GetStudentNotebookPagesJson(string studentID)
+        public List<string> GetStudentNotebookPagesXml(string studentID)
         {
-            var pageJsonStrings = new List<string>();
+            var pageXmlStrings = new List<string>();
 
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
             {
-                return pageJsonStrings;
+                return pageXmlStrings;
             }
 
             var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
             if (student == null)
             {
-                return pageJsonStrings;
+                return pageXmlStrings;
             }
 
             var notebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.Owner.ID == studentID);
             if (notebook == null)
             {
-                return pageJsonStrings;
+                return pageXmlStrings;
             }
 
-            pageJsonStrings.AddRange(notebook.Pages.Select(page => page.ToJsonString(false)));
+            pageXmlStrings.AddRange(notebook.Pages.Select(page => page.ToXmlString()));
 
-            return pageJsonStrings;
+            return pageXmlStrings;
         }
 
-        public List<string> GetStudentPageSubmissionsJson(string studentID)
+        public List<string> GetStudentPageSubmissionsXml(string studentID)
         {
-            var submissionJsonStrings = new List<string>();
+            var submissionXmlStrings = new List<string>();
 
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
             {
-                return submissionJsonStrings;
+                return submissionXmlStrings;
             }
 
             var student = dataService.CurrentClassRoster.ListOfStudents.FirstOrDefault(s => s.ID == studentID);
             if (student == null)
             {
-                return submissionJsonStrings;
+                return submissionXmlStrings;
             }
 
             var notebook = dataService.LoadedNotebooks.FirstOrDefault(n => n.Owner.ID == studentID);
             if (notebook == null)
             {
-                return submissionJsonStrings;
+                return submissionXmlStrings;
             }
 
-            submissionJsonStrings.AddRange(from page in notebook.Pages
+            submissionXmlStrings.AddRange(from page in notebook.Pages
                                            from submission in page.Submissions
-                                           select submission.ToJsonString(false));
+                                           select submission.ToXmlString());
 
-            return submissionJsonStrings;
+            return submissionXmlStrings;
         }
 
-        public string AddStudentSubmission(string submissionJson, string notebookID)
+        public string AddStudentSubmission(string submissionXml, string notebookID)
         {
             var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             if (dataService == null)
@@ -360,7 +360,7 @@ namespace Classroom_Learning_Partner
                 return MESSAGE_NO_DATA_SERVICE;
             }
 
-            var submission = AEntityBase.FromJsonString<CLPPage>(submissionJson);
+            var submission = ASerializableBase.FromXmlString<CLPPage>(submissionXml);
             if (submission == null)
             {
                 return MESSAGE_SUBMISSION_NOT_DESERIALIZED;
@@ -426,7 +426,7 @@ namespace Classroom_Learning_Partner
                                {
                                    try
                                    {
-                                       networkService.ProjectorProxy.AddStudentSubmission(submissionJson, notebookID);
+                                       networkService.ProjectorProxy.AddStudentSubmission(submissionXml, notebookID);
                                    }
                                    catch (Exception)
                                    {
