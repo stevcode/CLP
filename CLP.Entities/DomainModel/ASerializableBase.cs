@@ -10,7 +10,7 @@ namespace CLP.Entities
 {
     public abstract class ASerializableBase : ModelBase
     {
-        public string ToXmlString(XmlSerializerOptimalizationMode optimalizationMode = XmlSerializerOptimalizationMode.PrettyXmlAgressive)
+        public string ToXmlString(XmlSerializerOptimalizationMode optimalizationMode = XmlSerializerOptimalizationMode.Performance)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -30,7 +30,7 @@ namespace CLP.Entities
             }
         }
 
-        public void ToXmlFile(string filePath, XmlSerializerOptimalizationMode optimalizationMode = XmlSerializerOptimalizationMode.PrettyXmlAgressive)
+        public void ToXmlFile(string filePath, XmlSerializerOptimalizationMode optimalizationMode = XmlSerializerOptimalizationMode.Performance)
         {
             // Copied from personal json implementation
             var xmlString = ToXmlString(optimalizationMode);
