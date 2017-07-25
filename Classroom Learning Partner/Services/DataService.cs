@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 EntryFile = entryFile;
                 InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebook);
-                JsonString = entryFile.ToJsonString();
+                JsonString = entryFile.ToXmlString();
             }
 
             public AInternalZipEntryFile EntryFile { get; set; }
@@ -1366,7 +1366,7 @@ namespace Classroom_Learning_Partner.Services
 
                 foreach (var sessionString in sessionStrings)
                 {
-                    var session = ASerializableBase.FromJsonString<Session>(sessionString);
+                    var session = ASerializableBase.FromXmlString<Session>(sessionString);
                     session.ContainerZipFilePath = zipContainerFilePath;
                     sessions.Add(session);
                 }
@@ -1402,7 +1402,7 @@ namespace Classroom_Learning_Partner.Services
 
                 foreach (var notebookString in notebookStrings)
                 {
-                    var notebook = ASerializableBase.FromJsonString<Notebook>(notebookString);
+                    var notebook = ASerializableBase.FromXmlString<Notebook>(notebookString);
                     notebook.ContainerZipFilePath = zipContainerFilePath;
                     notebooks.Add(notebook);
                 }
@@ -1560,7 +1560,7 @@ namespace Classroom_Learning_Partner.Services
             Parallel.ForEach(pageZipEntryLoaders,
                              pageZipEntryLoader =>
                              {
-                                 var page = ASerializableBase.FromJsonString<CLPPage>(pageZipEntryLoader.JsonString);
+                                 var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.JsonString);
                                  page.ContainerZipFilePath = zipContainerFilePath;
                                  page.PageNumber = pageZipEntryLoader.PageNumber;
                                  pages.Add(page);
