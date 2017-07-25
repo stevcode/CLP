@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -66,7 +64,6 @@ namespace CLP.Entities
 
         /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="MultipleChoiceBubbleStatusChangedHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<StrokeDTO> PackagedSerializedStrokes
         {

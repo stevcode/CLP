@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -42,25 +40,21 @@ namespace CLP.Entities
 
         /// <summary>Associated FilePath of the <see cref="AInternalZipEntryFile" />'s container zip file.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public string ContainerZipFilePath { get; set; }
 
         /// <summary>Has the file been saved locally to disc?</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public bool IsSavedLocally { get; set; }
 
         /// <summary>Has the file been saved over the network?</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public bool IsSavedOverTheNetwork { get; set; }
 
         /// <summary><see cref="AInternalZipEntryFile" />'s internal file name without extension.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public abstract string DefaultZipEntryName { get; }
 

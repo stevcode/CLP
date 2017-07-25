@@ -5,7 +5,6 @@ using System.Linq;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -145,7 +144,6 @@ namespace CLP.Entities
 
         /// <summary>Currently selected <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public CLPPage CurrentPage
         {
@@ -177,7 +175,6 @@ namespace CLP.Entities
 
         /// <summary>Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public ObservableCollection<CLPPage> Pages
         {
@@ -189,7 +186,6 @@ namespace CLP.Entities
 
         /// <summary>List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public ObservableCollection<IDisplay> Displays
         {
@@ -201,7 +197,6 @@ namespace CLP.Entities
 
         /// <summary>The selected display in the list of the Notebook's Displays. SingleDisplay is displayed when null.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public IDisplay CurrentDisplay
         {

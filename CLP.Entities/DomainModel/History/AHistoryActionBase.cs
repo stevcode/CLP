@@ -2,7 +2,6 @@
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -84,7 +83,6 @@ namespace CLP.Entities
 
         /// <summary>The <see cref="AHistoryActionBase" />'s parent <see cref="CLPPage" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public CLPPage ParentPage    // TODO: Have to set after Deserialization, otherwise null
         {

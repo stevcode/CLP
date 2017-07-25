@@ -5,7 +5,6 @@ using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -38,7 +37,6 @@ namespace CLP.Entities
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<Stroke> AcceptedStrokes
         {

@@ -6,7 +6,6 @@ using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace CLP.Entities
 {
@@ -79,7 +78,6 @@ namespace CLP.Entities
 
         /// <summary>List of the Halved <see cref="IPageObject" />s to be used on another machine when <see cref="PageObjectCutHistoryAction" /> is unpacked.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public List<IPageObject> PackagedPageObjects
         {
@@ -91,7 +89,6 @@ namespace CLP.Entities
 
         /// <summary>Serialized <see cref="Stroke" /> used to cut the <see cref="ICuttable" />.</summary>
         [XmlIgnore]
-        [JsonIgnore]
         [ExcludeFromSerialization]
         public StrokeDTO PackagedCuttingStroke
         {
