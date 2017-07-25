@@ -83,7 +83,7 @@ namespace Classroom_Learning_Partner.Services
             //ConversionService.Combine();
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
-            ConvertEmilyCache();
+            //ConvertEmilyCache();
             //AnalysisService.RunFullBatchAnalysis(AnalysisService.AllPageNumbersToAnalyze);
             //AnalysisService.RunFullBatchAnalysis(new List<int>{213});
             //AnalysisService.RunFullBatchAnalysisOnAlreadyConvertedPages();
@@ -550,6 +550,9 @@ namespace Classroom_Learning_Partner.Services
 
         public void LoadNotebook(Notebook notebook, List<int> pageNumbers, bool isLoadingStudentNotebooks = true, string overwrittenStartingPageID = "")
         {
+            var s = new Stopwatch();
+            s.Start();
+
             var owner = notebook.Owner;
             var zipContainerFilePath = notebook.ContainerZipFilePath;
             var classRoster = LoadClassRosterFromCLPContainer(zipContainerFilePath);
@@ -600,6 +603,9 @@ namespace Classroom_Learning_Partner.Services
             }
 
             SetCurrentNotebook(existingNotebook);
+
+            s.Stop();
+            CLogger.AppendToLog($"Time to open xml notebook in milliseconds: {s.ElapsedMilliseconds}");
         }
 
         #endregion // Notebook Methods
