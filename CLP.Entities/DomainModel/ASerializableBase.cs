@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using Catel;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 using Catel.Runtime.Serialization.Xml;
@@ -58,6 +59,8 @@ namespace CLP.Entities
 
         public static T FromXmlString<T>(string xml) where T : class
         {
+            Argument.IsNotNullOrWhitespace(() => xml);
+
             var xmlDocument = XDocument.Parse(xml);
 
             using (var memoryStream = new MemoryStream())
