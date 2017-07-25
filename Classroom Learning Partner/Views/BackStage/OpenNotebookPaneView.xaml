@@ -133,7 +133,7 @@
 
                 </Button>
 
-                <TextBlock Text="Class Roster"
+                <TextBlock Text="Class Notebooks"
                            Style="{StaticResource BackStageHeaderTextBlock}" />
 
             </DockPanel>
