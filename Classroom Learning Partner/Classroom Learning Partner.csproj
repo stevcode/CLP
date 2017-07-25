@@ -307,7 +307,6 @@
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
-    <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="Views\BackStage\BackStageView.xaml.cs">
       <DependentUpon>BackStageView.xaml</DependentUpon>
@@ -425,13 +424,6 @@
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Extenders\ListBoxExtenders.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapInterfaces.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapPlayer.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\CapStructures.cs" />
-    <Compile Include="Views\Controls\WebcamPlayer\FilterInfo.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\APageObjectBaseViewModel.cs" />
@@ -556,9 +548,6 @@
     </Compile>
     <Compile Include="Views\Panels\SubmissionHistoryPanelView.xaml.cs">
       <DependentUpon>SubmissionHistoryPanelView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
-      <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
       <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
@@ -891,10 +880,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\SubmissionHistoryPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Panels\WebcamPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

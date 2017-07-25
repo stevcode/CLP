@@ -115,10 +115,6 @@
                  Visibility="{Binding RightPanel.IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
             <Control.Resources>
 
-                <ControlTemplate x:Key="WebcamPanelTemplate">
-                    <views:WebcamPanelView DataContext="{Binding RightPanel}" />
-                </ControlTemplate>
-
                 <ControlTemplate x:Key="DisplaysPanelTemplate">
                     <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
@@ -132,13 +128,6 @@
             <Control.Style>
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
-
-                        <!--WebcamPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeOfConverter}}"
-                                     Value="{x:Type viewModels:WebcamPanelViewModel}">
-                            <Setter Property="Template"
-                                    Value="{StaticResource WebcamPanelTemplate}" />
-                        </DataTrigger>
 
                         <!--DisplaysPanel trigger-->
                         <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeOfConverter}}"
