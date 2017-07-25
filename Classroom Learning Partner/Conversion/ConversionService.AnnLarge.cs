@@ -562,7 +562,7 @@ namespace Classroom_Learning_Partner
                     if (parts.Length != 2)
                     {
                         MessageBox.Show("AnonymousNames.txt is in the wrong format.");
-                        textFile.Close();
+                        break;
                     }
 
                     var oldName = parts[0];

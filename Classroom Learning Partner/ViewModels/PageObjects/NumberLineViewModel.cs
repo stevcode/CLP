@@ -222,8 +222,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragArrowStopCommandExecute(DragCompletedEventArgs e)
         {
-            var tooLow = false;
-            var tooLowNumberTry = 0;
             var initialWidth = Width;
             var initialHeight = Height;
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
@@ -277,8 +275,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     else
                     {
                         MessageBox.Show("You have already drawn past this number on the number line.");
-                        tooLow = true;
-                        tooLowNumberTry = newNumberLineSize;
                     }
                 }
             }

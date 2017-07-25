@@ -1094,7 +1094,6 @@ namespace CLP.Entities
 
                 if (mostLikelyStroke == null)
                 {
-                    var highestRowIntersectPercentage = 0.0;
                     var mostLikelyRow = 0;
                     for (var row = 1; row <= arrayColumnsAndRows.Y; row++)
                     {
