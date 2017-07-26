@@ -650,18 +650,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAnalyzeSkipCountingCommandExecute()
         {
-            var existingTags = CurrentPage.Tags.OfType<TempArraySkipCountingTag>().ToList();
+            AnalyzeSkipCountingStatic(CurrentPage, IsDebuggingFlag);
+        }
+
+        public static void AnalyzeSkipCountingStatic(CLPPage page, bool isDebuggingFlag = false)
+        {
+            var existingTags = page.Tags.OfType<TempArraySkipCountingTag>().ToList();
             foreach (var tempArraySkipCountingTag in existingTags)
             {
-                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+                page.RemoveTag(tempArraySkipCountingTag);
             }
 
-            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var arraysOnPage = page.PageObjects.OfType<CLPArray>().ToList();
 
             //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
-                var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(CurrentPage, array, IsDebuggingFlag);
+                var formattedSkips = ArraySemanticEvents.StaticSkipCountAnalysis(page, array, isDebuggingFlag);
                 if (string.IsNullOrEmpty(formattedSkips))
                 {
                     continue;
@@ -670,7 +675,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var unformattedSkips = formattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
                 var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, array.Rows, array.Columns);
 
-                var tag = new TempArraySkipCountingTag(CurrentPage, Origin.StudentPageGenerated)
+                var tag = new TempArraySkipCountingTag(page, Origin.StudentPageGenerated)
                           {
                               CodedID = array.CodedID,
                               RowInterpretations = formattedSkips,
@@ -679,7 +684,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 CLogger.AppendToLog(tag.FormattedValue);
 
-                CurrentPage.AddTag(tag);
+                page.AddTag(tag);
             }
         }
 

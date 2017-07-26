@@ -23,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             RunAnalysisCommand = new Command(OnRunAnalysisCommandExecute);
             ClearAuthorHistoryItemsCommand = new Command(OnClearAuthorHistoryItemsCommandExecute);
+            AnalyzeAllLoadedPagesCommand = new Command(OnAnalyzeAllLoadedPagesCommandExecute);
+            AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
         }
 
         #endregion //Constructor
@@ -106,6 +108,50 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             page.History.RefreshHistoryIndexes();
+        }
+
+        public Command AnalyzeAllLoadedPagesCommand { get; private set; }
+
+        private void OnAnalyzeAllLoadedPagesCommandExecute()
+        {
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    HistoryAnalysis.GenerateSemanticEvents(page);
+                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    foreach (var submission in page.Submissions)
+                    {
+                        HistoryAnalysis.GenerateSemanticEvents(submission);
+                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                    }
+                }
+            }
+
+            MessageBox.Show("Analysis Finished.");
+        }
+
+        public Command AnalyzeCurrentPageAndSubmissionsCommand { get; private set; }
+
+        private void OnAnalyzeCurrentPageAndSubmissionsCommandExecute()
+        {
+            var currentPage = _dataService.CurrentPage;
+
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                foreach (var page in notebook.Pages.Where(p => p.PageNumber == currentPage.PageNumber))
+                {
+                    HistoryAnalysis.GenerateSemanticEvents(page);
+                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    foreach (var submission in page.Submissions)
+                    {
+                        HistoryAnalysis.GenerateSemanticEvents(submission);
+                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                    }
+                }
+            }
+
+            MessageBox.Show("Analysis Finished.");
         }
 
         #endregion //Commands
