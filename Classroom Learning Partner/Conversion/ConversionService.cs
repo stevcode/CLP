@@ -83,103 +83,319 @@ namespace Classroom_Learning_Partner
 
             #region Anonymize Page 1
 
-            var authorNotebook = allNotebooks.First(n => n.Owner.ID == Person.AUTHOR_ID);
-            DataService.LoadPagesIntoNotebook(authorNotebook,
-                                              new List<int>
-                                              {
-                                                  1
-                                              });
-            var authorPage = authorNotebook.Pages.First();
-
+            //var authorNotebook = allNotebooks.First(n => n.Owner.ID == Person.AUTHOR_ID);
+            //DataService.LoadPagesIntoNotebook(authorNotebook,
+            //                                  new List<int>
+            //                                  {
+            //                                      1
+            //                                  });
+            //var authorPage = authorNotebook.Pages.First();
             
-            foreach (var notebook in allNotebooks.Where(n => n.Owner.IsStudent))
-            {
-                DataService.LoadPagesIntoNotebook(notebook,
-                                                  new List<int>
-                                                  {
-                                                      1
-                                                  });
+            //foreach (var notebook in allNotebooks.Where(n => n.Owner.IsStudent))
+            //{
+            //    DataService.LoadPagesIntoNotebook(notebook,
+            //                                      new List<int>
+            //                                      {
+            //                                          1
+            //                                      });
 
-                var page = notebook.Pages.First();
-                var submissions = new List<CLPPage>();
-                submissions.AddRange(page.Submissions);
-                using (var zip = ZipFile.Read(AssessmentZipFilePath))
-                {
-                    foreach (var submission in submissions)
-                    {
-                        zip.RemoveEntry(submission.GetZipEntryFullPath(notebook));
-                    }
+            //    var page = notebook.Pages.First();
+            //    var submissions = new List<CLPPage>();
+            //    submissions.AddRange(page.Submissions);
+            //    using (var zip = ZipFile.Read(AssessmentZipFilePath))
+            //    {
+            //        foreach (var submission in submissions)
+            //        {
+            //            zip.RemoveEntry(submission.GetZipEntryFullPath(notebook));
+            //        }
 
-                    zip.Save();
-                }
+            //        zip.Save();
+            //    }
 
-                var replacementPage = authorPage.CopyForNewOwner(notebook.Owner);
-                var replacementEntries = new List<DataService.ZipEntrySaver>
-                              {
-                                  new DataService.ZipEntrySaver(replacementPage, notebook)
-                              };
+            //    var replacementPage = authorPage.CopyForNewOwner(notebook.Owner);
+            //    var replacementEntries = new List<DataService.ZipEntrySaver>
+            //                  {
+            //                      new DataService.ZipEntrySaver(replacementPage, notebook)
+            //                  };
 
-                DataService.SaveZipEntries(AssessmentZipFilePath, replacementEntries);
-            }
+            //    DataService.SaveZipEntries(AssessmentZipFilePath, replacementEntries);
+            //}
 
             #endregion // Anonymize Page 1
 
             #region Specific fix for inked student name
 
-            var specificStudentNotebook = allNotebooks.First(n => n.Owner.ID == "_3ll1DzkbU6LPZVShajTWg");
-            specificStudentNotebook.Pages.Clear();
-            DataService.LoadPagesIntoNotebook(specificStudentNotebook,
-                                              new List<int>
-                                              {
-                                                  3
-                                              });
+            //var specificStudentNotebook = allNotebooks.First(n => n.Owner.ID == "_3ll1DzkbU6LPZVShajTWg");
+            //specificStudentNotebook.Pages.Clear();
+            //DataService.LoadPagesIntoNotebook(specificStudentNotebook,
+            //                                  new List<int>
+            //                                  {
+            //                                      3
+            //                                  });
 
-            var pageToAlter = specificStudentNotebook.Pages.First();
-            var submissionToAlter = pageToAlter.Submissions.First();
-            var toAlter = new List<CLPPage>
-                          {
-                              pageToAlter,
-                              submissionToAlter
-                          };
+            //var pageToAlter = specificStudentNotebook.Pages.First();
+            //var submissionToAlter = pageToAlter.Submissions.First();
+            //var toAlter = new List<CLPPage>
+            //              {
+            //                  pageToAlter,
+            //                  submissionToAlter
+            //              };
 
-            foreach (var page in toAlter)
-            {
-                var historyActionsToRemove = page.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= 126 && h.HistoryActionIndex <= 165)
-                                                 .Cast<ObjectsOnPageChangedHistoryAction>()
-                                                 .ToList();
-                var strokesToRemove = historyActionsToRemove.SelectMany(h => h.StrokesAdded).Distinct().ToList();
+            //foreach (var page in toAlter)
+            //{
+            //    var historyActionsToRemove = page.History.CompleteOrderedHistoryActions.Where(h => h.HistoryActionIndex >= 126 && h.HistoryActionIndex <= 165)
+            //                                     .Cast<ObjectsOnPageChangedHistoryAction>()
+            //                                     .ToList();
+            //    var strokesToRemove = historyActionsToRemove.SelectMany(h => h.StrokesAdded).Distinct().ToList();
 
-                foreach (var stroke in strokesToRemove)
-                {
-                    if (page.InkStrokes.Contains(stroke))
-                    {
-                        page.InkStrokes.Remove(stroke);
-                    }
+            //    foreach (var stroke in strokesToRemove)
+            //    {
+            //        if (page.InkStrokes.Contains(stroke))
+            //        {
+            //            page.InkStrokes.Remove(stroke);
+            //        }
 
-                    if (page.History.TrashedInkStrokes.Contains(stroke))
-                    {
-                        page.History.TrashedInkStrokes.Remove(stroke);
-                    }
-                }
+            //        if (page.History.TrashedInkStrokes.Contains(stroke))
+            //        {
+            //            page.History.TrashedInkStrokes.Remove(stroke);
+            //        }
+            //    }
 
-                foreach (var objectsOnPageChangedHistoryAction in historyActionsToRemove)
-                {
-                    page.History.UndoActions.Remove(objectsOnPageChangedHistoryAction);
-                }
+            //    foreach (var objectsOnPageChangedHistoryAction in historyActionsToRemove)
+            //    {
+            //        page.History.UndoActions.Remove(objectsOnPageChangedHistoryAction);
+            //    }
 
-                page.History.RefreshHistoryIndexes();
-                HistoryAnalysis.GenerateSemanticEvents(page);
-            }
+            //    page.History.RefreshHistoryIndexes();
+            //    HistoryAnalysis.GenerateSemanticEvents(page);
+            //}
 
-            var entries = new List<DataService.ZipEntrySaver>
-                          {
-                              new DataService.ZipEntrySaver(pageToAlter, specificStudentNotebook),
-                              new DataService.ZipEntrySaver(submissionToAlter, specificStudentNotebook)
-                          };
+            //var entries = new List<DataService.ZipEntrySaver>
+            //              {
+            //                  new DataService.ZipEntrySaver(pageToAlter, specificStudentNotebook),
+            //                  new DataService.ZipEntrySaver(submissionToAlter, specificStudentNotebook)
+            //              };
 
-            DataService.SaveZipEntries(AssessmentZipFilePath, entries);
+            //DataService.SaveZipEntries(AssessmentZipFilePath, entries);
 
             #endregion // Specific fix for inked student name
+
+            #region Adding Equivalence Definitions
+
+            var alsoAllNotebooks = DataService.LoadAllNotebooksFromCLPContainer(AssessmentZipFilePath);
+            foreach (var notebook in alsoAllNotebooks)
+            {
+                var replacementEntries = new List<DataService.ZipEntrySaver>();
+
+                DataService.LoadPagesIntoNotebook(notebook,
+                                                  new List<int>
+                                                  {
+                                                      2,
+                                                      4,
+                                                      7,
+                                                      8,
+                                                      9
+                                                  });
+
+                var page2 = notebook.Pages.First(p => p.PageNumber == 2);
+                var allPage2 = page2.Submissions.ToList();
+                allPage2.Add(page2);
+                foreach (var page in allPage2)
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorL.NumericValue = 42.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorL.NumericValue = 6.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(page, Origin.Author);
+                    leftRelationPart.Quotient = 7.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorR.NumericValue = 2.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorR.NumericValue = 5.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(page, Origin.Author);
+                    rightRelationPart.Sum = 7.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(page, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    page.AddTag(equivTag);
+
+                    replacementEntries.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+
+                var page4 = notebook.Pages.First(p => p.PageNumber == 4);
+                var allPage4 = page4.Submissions.ToList();
+                allPage4.Add(page4);
+                foreach (var page in allPage4)
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorL.NumericValue = 72.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorL.NumericValue = 9.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(page, Origin.Author);
+                    leftRelationPart.Quotient = 8.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorR.NumericValue = 5.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorR.NumericValue = 3.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(page, Origin.Author);
+                    rightRelationPart.Sum = 8.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(page, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    page.AddTag(equivTag);
+
+                    replacementEntries.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+
+                var page7 = notebook.Pages.First(p => p.PageNumber == 7);
+                var allPage7 = page7.Submissions.ToList();
+                allPage7.Add(page7);
+                foreach (var page in allPage7)
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorL.NumericValue = 4.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorL.NumericValue = 9.0;
+
+                    var leftRelationPart = new MultiplicationRelationDefinitionTag(page, Origin.Author);
+                    leftRelationPart.Product = 36.0;
+                    leftRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    leftRelationPart.Factors.Add(firstFactorL);
+                    leftRelationPart.Factors.Add(secondFactorL);
+
+                    var firstFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorR.NumericValue = 6.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorR.NumericValue = 6.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new MultiplicationRelationDefinitionTag(page, Origin.Author);
+                    rightRelationPart.Product = 36.0;
+                    rightRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    rightRelationPart.Factors.Add(firstFactorR);
+                    rightRelationPart.Factors.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(page, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    page.AddTag(equivTag);
+
+                    replacementEntries.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+
+                var page8 = notebook.Pages.First(p => p.PageNumber == 8);
+                var allPage8 = page8.Submissions.ToList();
+                allPage8.Add(page8);
+                foreach (var page in allPage8)
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorL.NumericValue = 7.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorL.NumericValue = 7.0;
+
+                    var leftRelationPart = new MultiplicationRelationDefinitionTag(page, Origin.Author);
+                    leftRelationPart.Product = 49.0;
+                    leftRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    leftRelationPart.Factors.Add(firstFactorL);
+                    leftRelationPart.Factors.Add(secondFactorL);
+
+                    var firstFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorR.NumericValue = 30.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorR.NumericValue = 19.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(page, Origin.Author);
+                    rightRelationPart.Sum = 49.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(page, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    page.AddTag(equivTag);
+
+                    replacementEntries.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+
+                var page9 = notebook.Pages.First(p => p.PageNumber == 9);
+                var allPage9 = page9.Submissions.ToList();
+                allPage9.Add(page9);
+                foreach (var page in allPage9)
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorL.NumericValue = 35.0;
+                    firstFactorL.IsNotGiven = true;
+
+                    var secondFactorL = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorL.NumericValue = 7.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(page, Origin.Author);
+                    leftRelationPart.Quotient = 5.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    firstFactorR.NumericValue = 40.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(page, Origin.Author);
+                    secondFactorR.NumericValue = 8.0;
+
+                    var rightRelationPart = new DivisionRelationDefinitionTag(page, Origin.Author);
+                    rightRelationPart.Quotient = 5.0;
+                    rightRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    rightRelationPart.Dividend = firstFactorR;
+                    rightRelationPart.Divisor = secondFactorR;
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(page, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    page.AddTag(equivTag);
+
+                    replacementEntries.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+
+                DataService.SaveZipEntries(AssessmentZipFilePath, replacementEntries);
+            }
+
+            #endregion // Adding Equivalence Definitions
 
             CLogger.AppendToLog("Finished fixes for anonymized cache.");
         }
