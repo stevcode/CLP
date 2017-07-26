@@ -204,6 +204,9 @@ namespace Classroom_Learning_Partner.Services
 
         #region Cache Methods
 
+        private bool _isSavingSubmissions = true;
+        private bool _isSavingAllNotebooks = true;
+
         public void SaveLocal()
         {
             var zipContainerFilePath = CurrentNotebook.ContainerZipFilePath;
@@ -213,16 +216,45 @@ namespace Classroom_Learning_Partner.Services
                                 new ZipEntrySaver(CurrentNotebook, CurrentNotebook)
                             };
 
-            foreach (var page in CurrentNotebook.Pages)
+            if (_isSavingAllNotebooks)
             {
-                if (page.Owner.ID == Person.AUTHOR_ID)
+                foreach (var notebook in LoadedNotebooks)
                 {
-                    page.History.ClearNonAnimationHistory();
+                    foreach (var page in notebook.Pages)
+                    {
+                        if (page.Owner.ID == Person.AUTHOR_ID)
+                        {
+                            page.History.ClearNonAnimationHistory();
+                        }
+
+                        entryList.Add(new ZipEntrySaver(page, notebook));
+
+                        if (_isSavingSubmissions)
+                        {
+                            entryList.AddRange(page.Submissions.Select(submission => new ZipEntrySaver(submission, notebook)));
+                        }
+                    }
                 }
-
-                entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
             }
+            else
+            {
+                foreach (var page in CurrentNotebook.Pages)
+                {
+                    if (page.Owner.ID == Person.AUTHOR_ID)
+                    {
+                        page.History.ClearNonAnimationHistory();
+                    }
 
+                    entryList.Add(new ZipEntrySaver(page, CurrentNotebook));
+
+                    if (_isSavingSubmissions)
+                    {
+                        entryList.AddRange(page.Submissions.Select(submission => new ZipEntrySaver(submission, CurrentNotebook)));
+                    }
+                }
+            }
+            
+            // HACK: Bad because it's assuming all open/loaded notebooks are in the same cache. Needs refined.
             if (File.Exists(zipContainerFilePath))
             {
                 //var readOptions = new ReadOptions
