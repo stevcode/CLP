@@ -3,12 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Ink;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI.Input.Inking;
 
 namespace CLP.InkInterpretation
 {
     public static class InkInterpreter
     {
+        public static void SaveStrokesToGif(StrokeCollection strokes)
+        {
+            var inkManager = new InkManager();
+            var strokeBuilder = new InkStrokeBuilder();
+
+            //Convert System.Windows.Ink.Stroke to Windows.UI.Input.Inking.InkStroke and add to InkManager
+            foreach (var stroke in strokes.Select(s => s.StylusPoints.Select(sp => new Point(sp.X, sp.Y))).Select(pts => strokeBuilder.CreateStroke(pts)))
+            {
+                inkManager.AddStroke(stroke);
+            }
+
+            var desktopFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var desktopStorageFolder = StorageFolder.GetFolderFromPathAsync(desktopFolderPath).GetAwaiter().GetResult();
+            var fileName = "strokes.gif";
+            var storageFile = desktopStorageFolder.CreateFileAsync(fileName).GetAwaiter().GetResult();
+
+            try
+            {
+                using (var stream = storageFile.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult())
+                {
+                    stream.Size = 0;
+                    inkManager.SaveAsync(stream).GetAwaiter().GetResult();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
         public static string StrokesToBestGuessText(StrokeCollection strokes)
         {
             if (strokes == null ||
