@@ -38,6 +38,8 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
+        public override bool IsSingleValueTag => true;
+
         public override Category Category => Category.Answer;
 
         public override string FormattedName => "Representation Correctness";

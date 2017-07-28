@@ -77,8 +77,6 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override bool IsSingleValueTag => false;
-
         public override Category Category => Category.MetaData;
 
         public override string FormattedName => TagName;
