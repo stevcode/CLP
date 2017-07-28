@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -72,6 +73,11 @@ namespace Classroom_Learning_Partner
                 IS_ANONYMIZED_CACHE)
             {
                 AnonymizationFixesForAssessmentCache();
+            }
+
+            foreach (var line in CapturedStrokesLog.Distinct())
+            {
+                CLogger.AppendToLog(line);
             }
         }
 
