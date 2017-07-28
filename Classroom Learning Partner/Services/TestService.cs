@@ -229,19 +229,6 @@ namespace Classroom_Learning_Partner.Services
             //_dataService.SetCurrentNotebook(notebookInfo);
         }
 
-        private void OnClearPagesNonAnimationHistoryCommandExecute()
-        {
-            PleaseWaitHelper.Show(() =>
-            {
-                //foreach (var page in Notebook.Pages)
-                //{
-                //    page.History.ClearNonAnimationHistory();
-                //}
-            },
-                                  null,
-                                  "Clearing History");
-        }
-
         private void OnGenerateStudentNotebooksCommandExecute()
         {
             // HACK: This is very hardcoded.

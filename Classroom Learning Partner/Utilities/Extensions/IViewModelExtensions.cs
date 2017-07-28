@@ -37,7 +37,7 @@ namespace Classroom_Learning_Partner
             var dependencyResolver = viewModel.GetDependencyResolver();
             var uiVisualerService = dependencyResolver.Resolve<IUIVisualizerService>();
 
-            return uiVisualerService.Show(viewModel);
+            return uiVisualerService.ShowAsync(viewModel).GetAwaiter().GetResult();
         }
 
         public static bool? ShowWindowAsDialog(this IViewModel viewModel)
@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner
             var dependencyResolver = viewModel.GetDependencyResolver();
             var uiVisualerService = dependencyResolver.Resolve<IUIVisualizerService>();
 
-            return uiVisualerService.ShowDialog(viewModel);
+            return uiVisualerService.ShowDialogAsync(viewModel).GetAwaiter().GetResult();
         }
 
         public static T CreateViewModel<T>(this IViewModel viewModel, object dataContext) where T : ViewModelBase
