@@ -168,7 +168,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var openFileService = dependencyResolver.Resolve<IOpenFileService>();
             openFileService.Filter = "Text files (*.txt)|*.txt";
             openFileService.IsMultiSelect = false;
-            if (!openFileService.DetermineFile())
+            if (!openFileService.DetermineFileAsync().GetAwaiter().GetResult())
             {
                 return;
             }
