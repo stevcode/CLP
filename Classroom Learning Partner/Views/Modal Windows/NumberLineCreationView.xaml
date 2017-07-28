@@ -2,18 +2,19 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://schemas.catelproject.com"
+                  xmlns:orc="http://www.wildgums.net.au/orc"
                   Title="Create a Number Line"
                   ShowInTaskbar="False"
                   Background="{StaticResource GrayBackgroundColor}">
-    <catel:StackGrid Height="350"
+    <orc:StackGrid Height="350"
                      Width="300">
-        <catel:StackGrid.RowDefinitions>
+        <orc:StackGrid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-        </catel:StackGrid.RowDefinitions>
+        </orc:StackGrid.RowDefinitions>
 
         <Grid HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
@@ -68,22 +69,22 @@
 
         </Grid>
 
-        <catel:StackGrid Margin="2"
+        <orc:StackGrid Margin="2"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch">
 
-            <catel:StackGrid.RowDefinitions>
+            <orc:StackGrid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
-            </catel:StackGrid.RowDefinitions>
+            </orc:StackGrid.RowDefinitions>
 
-            <catel:StackGrid.ColumnDefinitions>
+            <orc:StackGrid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
-            </catel:StackGrid.ColumnDefinitions>
+            </orc:StackGrid.ColumnDefinitions>
 
             <Button Content="1"
                     Command="{Binding NumberPressCommand}"
@@ -129,7 +130,7 @@
                     Content="Backspace"
                     Command="{Binding BackspacePressCommand}" />
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"
@@ -166,5 +167,5 @@
 
         </StackPanel>
 
-    </catel:StackGrid>
+    </orc:StackGrid>
 </catel:DataWindow>

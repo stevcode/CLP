@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://schemas.catelproject.com"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                  xmlns:orc="http://www.wildgums.net.au/orc"
                   Title="Sessions"
                   ShowInTaskbar="False">
 
@@ -28,7 +29,7 @@
 
         </StackPanel>
 
-        <catel:StackGrid DockPanel.Dock="Left"
+        <orc:StackGrid DockPanel.Dock="Left"
                          VerticalAlignment="Stretch">
 
             <Grid.RowDefinitions>
@@ -85,7 +86,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
         <Line DockPanel.Dock="Left"
               Stretch="Fill"
@@ -95,7 +96,7 @@
               Stroke="{StaticResource GrayEdgeColor}"
               StrokeThickness="1" />
 
-        <catel:StackGrid Margin="10 0">
+        <orc:StackGrid Margin="10 0">
 
             <Grid.Resources>
                 
@@ -115,12 +116,12 @@
                 
             </Grid.Resources>
 
-            <catel:StackGrid.ColumnDefinitions>
+            <orc:StackGrid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-            </catel:StackGrid.ColumnDefinitions>
+            </orc:StackGrid.ColumnDefinitions>
 
-            <catel:StackGrid.RowDefinitions>
+            <orc:StackGrid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -130,7 +131,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-            </catel:StackGrid.RowDefinitions>
+            </orc:StackGrid.RowDefinitions>
 
             <TextBlock Text="Title:"
                        FontWeight="Bold" />
@@ -203,7 +204,7 @@
 
             </StackPanel>
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
     </DockPanel>
 

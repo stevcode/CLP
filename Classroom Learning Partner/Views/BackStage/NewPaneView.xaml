@@ -1,7 +1,8 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.NewPaneView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:catel="http://schemas.catelproject.com">
+                   xmlns:catel="http://schemas.catelproject.com"
+                   xmlns:orc="http://www.wildgums.net.au/orc">
 
     <catel:UserControl.Resources>
         <ResourceDictionary>
@@ -22,7 +23,7 @@
 
         </StackPanel>
 
-        <catel:StackGrid DockPanel.Dock="Left"
+        <orc:StackGrid DockPanel.Dock="Left"
                          VerticalAlignment="Stretch">
 
             <Grid.RowDefinitions>
@@ -79,7 +80,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
         <Line DockPanel.Dock="Left"
               Stretch="Fill"
@@ -98,7 +99,7 @@
                        Margin="26 10 0 10"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <catel:StackGrid HorizontalAlignment="Left"
+            <orc:StackGrid HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Margin="26 0 0 0">
 
@@ -146,7 +147,7 @@
                     </StackPanel>
                 </Button>
 
-            </catel:StackGrid>
+            </orc:StackGrid>
 
         </DockPanel>
 

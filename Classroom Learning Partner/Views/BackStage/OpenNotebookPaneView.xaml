@@ -87,7 +87,7 @@
 
         </StackPanel>
 
-        <catel:StackGrid DockPanel.Dock="Left"
+        <orc:StackGrid DockPanel.Dock="Left"
                          VerticalAlignment="Stretch">
 
             <Grid.RowDefinitions>
@@ -176,7 +176,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
         <Line DockPanel.Dock="Left"
               Stretch="Fill"
@@ -195,7 +195,7 @@
                        Margin="26 10 0 10"
                        Style="{StaticResource BackStageHeaderTextBlock}" />
 
-            <catel:StackGrid DockPanel.Dock="Left"
+            <orc:StackGrid DockPanel.Dock="Left"
                              HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Margin="26 0 0 0">
@@ -254,9 +254,9 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-            </catel:StackGrid>
+            </orc:StackGrid>
 
-            <catel:StackGrid HorizontalAlignment="Left"
+            <orc:StackGrid HorizontalAlignment="Left"
                              VerticalAlignment="Top"
                              Margin="26 0 0 0">
 
@@ -314,7 +314,7 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-            </catel:StackGrid>
+            </orc:StackGrid>
 
         </DockPanel>
 

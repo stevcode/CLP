@@ -5,6 +5,7 @@
                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                  xmlns:orc="http://www.wildgums.net.au/orc"
                   Title="{Binding WindowTitle}"
                   ShowInTaskbar="False"
                   Background="{StaticResource GrayBackgroundColor}">
@@ -39,13 +40,13 @@
         </Style>
     </Window.Resources>
 
-    <catel:StackGrid Width="{x:Static views:PersonView.WINDOW_WIDTH}">
-        <catel:StackGrid.ColumnDefinitions>
+    <orc:StackGrid Width="{x:Static views:PersonView.WINDOW_WIDTH}">
+        <orc:StackGrid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-        </catel:StackGrid.ColumnDefinitions>
+        </orc:StackGrid.ColumnDefinitions>
 
-        <catel:StackGrid.RowDefinitions>
+        <orc:StackGrid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -55,7 +56,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-        </catel:StackGrid.RowDefinitions>
+        </orc:StackGrid.RowDefinitions>
 
         <Label Content="Full Name:" />
         <TextBlock Text="{Binding Person.FullName}"
@@ -109,6 +110,6 @@
 
         </StackPanel>
 
-    </catel:StackGrid>
+    </orc:StackGrid>
     
 </catel:DataWindow>
