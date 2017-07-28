@@ -780,7 +780,7 @@ namespace Classroom_Learning_Partner
             if (!IS_LARGE_CACHE)
             {
                 HistoryAnalysis.GenerateSemanticEvents(newPage);
-                PageInformationPanelViewModel.AnalyzeSkipCountingStatic(newPage);
+                //PageInformationPanelViewModel.AnalyzeSkipCountingStatic(newPage);
             }
 
             return newPage;
