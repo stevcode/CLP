@@ -76,9 +76,6 @@ namespace Classroom_Learning_Partner
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
-            // Disable Catel Validation
-            Catel.Data.ModelBase.SuspendValidationForAllModels = true;
-
             // Manual Register views to viewModels that don't adhere to standard naming conventions.
             var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
             viewModelLocator.Register(typeof(ColumnDisplayPreviewView), typeof(ColumnDisplayViewModel));
