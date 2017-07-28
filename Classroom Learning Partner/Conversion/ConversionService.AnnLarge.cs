@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Ink;
 using Catel.Collections;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -762,6 +763,7 @@ namespace Classroom_Learning_Partner
             if (!IS_LARGE_CACHE)
             {
                 HistoryAnalysis.GenerateSemanticEvents(newPage);
+                PageInformationPanelViewModel.AnalyzeSkipCountingStatic(newPage);
             }
 
             return newPage;
