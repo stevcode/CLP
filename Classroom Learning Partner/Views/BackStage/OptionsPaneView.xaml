@@ -54,7 +54,7 @@
                     FontSize="22"
                     FontWeight="Bold" />-->
 
-            <Button Content="Analyze All Page's Submissions"
+            <Button Content="Analyze All Pages' Submissions"
                     Command="{Binding AnalyzeAllLoadedPagesCommand}"
                     Height="50"
                     Width="300"
