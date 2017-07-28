@@ -14,9 +14,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>UserControl view model.</summary>
-    [InterestedIn(typeof(MajorRibbonViewModel))]
-    [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
@@ -447,7 +444,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        // HACK: Needs a WindowManager Service. From InterestedIn attribute following MajorRibbonViewModel and MainWindowViewModel
+        protected void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
             if (viewModel == null)
             {
@@ -511,8 +509,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods

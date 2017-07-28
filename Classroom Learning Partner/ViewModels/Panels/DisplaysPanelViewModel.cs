@@ -11,8 +11,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>UserControl view model.</summary>
-    [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
@@ -196,7 +194,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        // HACK: Needs to be handeled by some ProjectionService. This was in InterestedIn attribute call from MainWindowViewModel
+        protected void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
             if (propertyName == "IsProjectorFrozen" &&
                 viewModel is MainWindowViewModel)
@@ -254,8 +253,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods

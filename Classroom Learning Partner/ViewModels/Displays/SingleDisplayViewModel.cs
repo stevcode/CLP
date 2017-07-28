@@ -6,7 +6,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof (CLPPageViewModel))]
     public class SingleDisplayViewModel : ViewModelBase
     {
         #region Constructor
@@ -16,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             InitializeCommands();
+
         }
 
         #endregion //Constructor
@@ -34,6 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>A property mapped to a property on the Model SingleDisplay.</summary>
         [ViewModelToModel("Notebook")]
+        [Model(SupportIEditableObject = false)]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -72,6 +73,22 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //
             }
+        }
+
+        [ViewModelToModel("CurrentPage")]
+        public double Height
+        {
+            get { return GetValue<double>(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
+        }
+
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), null, OnHeightChanged);
+
+        private static void OnHeightChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            var singleDisplayViewModel = sender as SingleDisplayViewModel;
+
+            singleDisplayViewModel?.OnPageResize();
         }
 
         #endregion //Model
@@ -185,22 +202,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if (propertyName == "Height")
-            {
-                var pageViewModel = viewModel as ACLPPageBaseViewModel;
-                if (pageViewModel != null &&
-                    CurrentPage != null &&
-                    pageViewModel.Page.ID == CurrentPage.ID)
-                {
-                    OnPageResize();
-                }
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-        }
 
         private void OnPageResize()
         {

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +21,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof (MajorRibbonViewModel))]
     public abstract class ACLPPageBaseViewModel : ViewModelBase
     {
         #region Constructor
@@ -642,28 +640,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                     break;
             }
-        }
-
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            //if (propertyName == "CanSendToTeacher" &&
-            //    viewModel is RibbonViewModel)
-            //{
-            //    RaisePropertyChanged("HasSubmissions");
-            //}
-
-            //if (propertyName == "IsSending" &&
-            //    viewModel is RibbonViewModel)
-            //{
-            //    RaisePropertyChanged("HasSubmissions");
-            //}
-
-            if (IsPagePreview)
-            {
-                return;
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods   
