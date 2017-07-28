@@ -52,8 +52,7 @@
                     Gesture="CTRL+SHIFT+A" />
     </Window.InputBindings>
 
-    <!-- Grid Margin of -6 necessary to override DataWindow's default stylings -->
-    <Grid Margin="-6">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
