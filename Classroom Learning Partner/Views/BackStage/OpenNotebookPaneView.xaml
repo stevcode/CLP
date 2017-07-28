@@ -1,7 +1,8 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.OpenNotebookPaneView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                   xmlns:catel="http://schemas.catelproject.com">
+                   xmlns:catel="http://schemas.catelproject.com"
+                   xmlns:orc="http://www.wildgums.net.au/orc">
 
     <catel:UserControl.Resources>
         <ResourceDictionary>
