@@ -3242,6 +3242,180 @@ namespace Classroom_Learning_Partner
 
         public static void AddAssessmentRelationDefinitionTags(CLPPage newPage)
         {
+            switch (newPage.PageNumber)
+            {
+                case 2:
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorL.NumericValue = 42.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorL.NumericValue = 6.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(newPage, Origin.Author);
+                    leftRelationPart.Quotient = 7.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorR.NumericValue = 2.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorR.NumericValue = 5.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(newPage, Origin.Author);
+                    rightRelationPart.Sum = 7.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(newPage, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    newPage.AddTag(equivTag);
+                    break;
+                }
+                case 4:
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorL.NumericValue = 72.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorL.NumericValue = 9.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(newPage, Origin.Author);
+                    leftRelationPart.Quotient = 8.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorR.NumericValue = 5.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorR.NumericValue = 3.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(newPage, Origin.Author);
+                    rightRelationPart.Sum = 8.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(newPage, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    newPage.AddTag(equivTag);
+                    break;
+                }
+                case 7:
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorL.NumericValue = 4.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorL.NumericValue = 9.0;
+
+                    var leftRelationPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author);
+                    leftRelationPart.Product = 36.0;
+                    leftRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    leftRelationPart.Factors.Add(firstFactorL);
+                    leftRelationPart.Factors.Add(secondFactorL);
+
+                    var firstFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorR.NumericValue = 6.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorR.NumericValue = 6.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author);
+                    rightRelationPart.Product = 36.0;
+                    rightRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    rightRelationPart.Factors.Add(firstFactorR);
+                    rightRelationPart.Factors.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(newPage, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    newPage.AddTag(equivTag);
+                    break;
+                }
+                case 8:
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorL.NumericValue = 7.0;
+
+                    var secondFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorL.NumericValue = 7.0;
+
+                    var leftRelationPart = new MultiplicationRelationDefinitionTag(newPage, Origin.Author);
+                    leftRelationPart.Product = 49.0;
+                    leftRelationPart.RelationType = MultiplicationRelationDefinitionTag.RelationTypes.GeneralMultiplication;
+                    leftRelationPart.Factors.Add(firstFactorL);
+                    leftRelationPart.Factors.Add(secondFactorL);
+
+                    var firstFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorR.NumericValue = 30.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorR.NumericValue = 19.0;
+                    secondFactorR.IsNotGiven = true;
+
+                    var rightRelationPart = new AdditionRelationDefinitionTag(newPage, Origin.Author);
+                    rightRelationPart.Sum = 49.0;
+                    rightRelationPart.RelationType = AdditionRelationDefinitionTag.RelationTypes.GeneralAddition;
+                    rightRelationPart.Addends.Add(firstFactorR);
+                    rightRelationPart.Addends.Add(secondFactorR);
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(newPage, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    newPage.AddTag(equivTag);
+                    break;
+                }
+                case 9:
+                {
+                    var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorL.NumericValue = 35.0;
+                    firstFactorL.IsNotGiven = true;
+
+                    var secondFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorL.NumericValue = 7.0;
+
+                    var leftRelationPart = new DivisionRelationDefinitionTag(newPage, Origin.Author);
+                    leftRelationPart.Quotient = 5.0;
+                    leftRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    leftRelationPart.Dividend = firstFactorL;
+                    leftRelationPart.Divisor = secondFactorL;
+
+                    var firstFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    firstFactorR.NumericValue = 40.0;
+
+                    var secondFactorR = new NumericValueDefinitionTag(newPage, Origin.Author);
+                    secondFactorR.NumericValue = 8.0;
+
+                    var rightRelationPart = new DivisionRelationDefinitionTag(newPage, Origin.Author);
+                    rightRelationPart.Quotient = 5.0;
+                    rightRelationPart.RelationType = DivisionRelationDefinitionTag.RelationTypes.GeneralDivision;
+                    rightRelationPart.Dividend = firstFactorR;
+                    rightRelationPart.Divisor = secondFactorR;
+
+                    var equivTag = new EquivalenceRelationDefinitionTag(newPage, Origin.Author);
+                    equivTag.LeftRelationPart = leftRelationPart;
+                    equivTag.RightRelationPart = rightRelationPart;
+
+                    newPage.AddTag(equivTag);
+                    break;
+                }
+            }
+
             ITag relationDefinitionToAdd = null;
 
             switch (newPage.ID)
