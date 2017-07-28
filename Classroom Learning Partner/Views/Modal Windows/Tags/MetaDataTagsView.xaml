@@ -1,7 +1,7 @@
 ﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.MetaDataTagsView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:catel="http://schemas.catelproject.com"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"

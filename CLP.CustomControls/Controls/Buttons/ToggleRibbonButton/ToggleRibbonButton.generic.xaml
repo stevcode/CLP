@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:CLP.CustomControls"
-                    xmlns:catel="http://catel.codeplex.com">
+                    xmlns:catel="http://schemas.catelproject.com">
 
     <Style TargetType="{x:Type local:ToggleRibbonButton}">
         <Setter Property="Template">
