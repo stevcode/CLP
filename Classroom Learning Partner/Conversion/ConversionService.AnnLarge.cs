@@ -347,6 +347,8 @@ namespace Classroom_Learning_Partner
                     newPage.Submissions.Add(newSubmission);
                 }
 
+                PurifyPageSubmissions(newPage);
+
                 newNotebook.Pages.Add(newPage);
 
                 if (!PageNumberToIDMap.ContainsKey(newPage.PageNumber))
@@ -361,6 +363,21 @@ namespace Classroom_Learning_Partner
             }
 
             return newNotebook;
+        }
+
+        public static void PurifyPageSubmissions(CLPPage page)
+        {
+            var purifiedSubmissions = page.Submissions.GroupBy(s => s.History.UndoActions.Count).Select(s => s.Last()).ToList();
+            page.Submissions = purifiedSubmissions.OrderBy(s => s.SubmissionTime).ToObservableCollection();
+            var versionIndex = 1;
+            foreach (var submission in page.Submissions)
+            {
+                submission.VersionIndex = (uint)versionIndex;
+                submission.LastVersionIndex = (uint)versionIndex;
+                versionIndex++;
+            }
+
+            page.LastVersionIndex = page.Submissions.Any() ? (uint?)page.Submissions.Count : null;
         }
 
         public static Ann.Notebook AnnCustomPartialNotebookLoading(string notebookFolderPath)
