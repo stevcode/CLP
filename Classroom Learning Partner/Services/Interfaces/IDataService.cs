@@ -63,8 +63,6 @@ namespace Classroom_Learning_Partner.Services
         void DeletePageAt(Notebook notebook, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, bool isPreventingEmptyNotebook = true);
         void MovePage(Notebook notebook, CLPPage page, int newPageNumber);
         void AutoSavePage(Notebook notebook, CLPPage page);
-        
-        //Obsolete
-        List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel);
+        List<CLPPage> GetLoadedSubmissionsForPage(CLPPage page);
     }
 }

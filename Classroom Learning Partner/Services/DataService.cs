@@ -1153,6 +1153,30 @@ namespace Classroom_Learning_Partner.Services
             //save page async to teacher machine, and partial cache folder
         }
 
+        public List<CLPPage> GetLoadedSubmissionsForPage(CLPPage page)
+        {
+            if (page == null)
+            {
+                return new List<CLPPage>();
+            }
+
+            var pageID = page.ID;
+            var pageDifferentiationLevel = page.DifferentiationLevel;
+            var submissions = new List<CLPPage>();
+            foreach (var notebook in LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                var studentPage = notebook.Pages.FirstOrDefault(p => p.ID == pageID && p.DifferentiationLevel == pageDifferentiationLevel);
+                if (studentPage == null)
+                {
+                    continue;
+                }
+
+                submissions.AddRange(studentPage.Submissions.ToList());
+            }
+
+            return submissions;
+        }
+
         #endregion // Page Methods
 
         #endregion // Methods
@@ -1840,25 +1864,6 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Page
 
         #endregion // Static Methods
-
-        #region OBSOLETE
-
-        public List<CLPPage> GetLoadedSubmissionsForTeacherPage(string notebookID, string pageID, string differentiationLevel)
-        {
-            var submissions = new List<CLPPage>();
-            //foreach (var notebookInfo in LoadedNotebooksInfo.Where(n => n.NameComposite.ID == notebookID && n.Notebook.Owner.IsStudent))
-            //{
-            //    var pageSubmissions = notebookInfo.Notebook.Pages.Where(p => p.ID == pageID && p.DifferentiationLevel == differentiationLevel && p.VersionIndex == 0).Select(p => p.Submissions).ToList();
-            //    foreach (var pageSubmission in pageSubmissions)
-            //    {
-            //        submissions.AddRange(pageSubmission);
-            //    }
-            //}
-
-            return submissions;
-        }
-
-        #endregion // OBSOLETE
 
         #region Tests
 

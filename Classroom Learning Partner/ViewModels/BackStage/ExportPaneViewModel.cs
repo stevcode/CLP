@@ -76,15 +76,10 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = _dataService.CurrentNotebook;
 
             var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                  ? _dataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, notebook.CurrentPage.ID, "0")
+                                  ? _dataService.GetLoadedSubmissionsForPage(notebook.CurrentPage)
                                   : notebook.CurrentPage.Submissions.ToList();
 
             var sortedPages = submissions.OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
-            var pageNumber = "" + notebook.CurrentPage.PageNumber;
-            if (notebook.CurrentPage.DifferentiationLevel != "0")
-            {
-                pageNumber += " " + notebook.CurrentPage.DifferentiationLevel;
-            }
 
             ConvertPagesToPDF(sortedPages, notebook, true);
         }
@@ -100,7 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var page in notebook.Pages)
             {
                 var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                      ? _dataService.GetLoadedSubmissionsForTeacherPage(notebook.ID, page.ID, "0")
+                                      ? _dataService.GetLoadedSubmissionsForPage(page)
                                       : page.Submissions.ToList();
 
                 foreach (var submission in submissions)
