@@ -67,7 +67,9 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task PageInformationPanelViewModel_InitializedAsync(object sender, EventArgs e)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             Length = InitialLength;
             Location = PanelLocations.Right;

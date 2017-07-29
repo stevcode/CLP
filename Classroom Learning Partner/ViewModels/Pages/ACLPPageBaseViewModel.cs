@@ -1141,7 +1141,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //    return;
             //}
 
+#pragma warning disable 1998
+#pragma warning disable 4014
             TaskQueue.Enqueue(async () =>
+#pragma warning restore 4014
+#pragma warning restore 1998
                                {
                                    var historyActionCopy = historyAction.CreatePackagedHistoryAction();
                                    if (historyActionCopy == null)

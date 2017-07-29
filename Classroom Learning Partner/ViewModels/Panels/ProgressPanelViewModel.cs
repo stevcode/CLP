@@ -34,7 +34,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Events
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             RefreshProgressPanelData();
             SetPanelWidth();

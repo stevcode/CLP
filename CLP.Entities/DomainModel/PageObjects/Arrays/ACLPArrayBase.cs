@@ -13,7 +13,9 @@ namespace CLP.Entities
     }
 
     [Serializable]
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public class CLPArrayDivision : ASerializableBase
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         #region Constructors
 
