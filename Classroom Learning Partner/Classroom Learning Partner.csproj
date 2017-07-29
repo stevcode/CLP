@@ -224,7 +224,6 @@
     <Compile Include="Converters\Single Converters\StringToEmptyStringConverter.cs" />
     <Compile Include="Converters\Multi Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IntToQuestionMarkConverter.cs" />
-    <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ObjectSerializer.cs" />
     <Compile Include="Network\CLPNetwork.cs" />
     <Compile Include="Network\INotebookContract.cs" />

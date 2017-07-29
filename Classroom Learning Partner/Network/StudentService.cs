@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner
             var historyAction = ObjectSerializer.ToObject(unzippedHistoryAction) as IHistoryAction;
             if (historyAction == null)
             {
-                Logger.Instance.WriteToLog("Failed to apply historyAction to projector.");
+                CLogger.AppendToLog("Failed to apply historyAction to projector.");
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace Classroom_Learning_Partner
             //if(notebookWorkspaceViewModel == null ||
             //   page == null)
             //{
-            //    Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+            //    CLogger.AppendToLog("Failed to add broadcasted page.");
             //    return;
             //}
 
@@ -152,7 +152,7 @@ namespace Classroom_Learning_Partner
             //if(notebookWorkspaceViewModel == null ||
             //   page == null)
             //{
-            //    Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+            //    CLogger.AppendToLog("Failed to add broadcasted page.");
             //    return;
             //}
 

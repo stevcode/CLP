@@ -12,6 +12,7 @@ using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -128,12 +129,12 @@ namespace Classroom_Learning_Partner
                               "click No the application will close)",
                               e.Exception.Message + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
 
-            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " +
+            CLogger.AppendToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " +
                                        (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
-            Logger.Instance.WriteToLog("[HResult]: " + e.Exception.HResult);
-            Logger.Instance.WriteToLog("[Source]: " + e.Exception.Source);
-            Logger.Instance.WriteToLog("[Method]: " + e.Exception.TargetSite);
-            Logger.Instance.WriteToLog("[StackTrace]: " + e.Exception.StackTrace);
+            CLogger.AppendToLog("[HResult]: " + e.Exception.HResult);
+            CLogger.AppendToLog("[Source]: " + e.Exception.Source);
+            CLogger.AppendToLog("[Method]: " + e.Exception.TargetSite);
+            CLogger.AppendToLog("[StackTrace]: " + e.Exception.StackTrace);
 
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
             {

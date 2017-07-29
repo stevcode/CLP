@@ -137,7 +137,7 @@ namespace Classroom_Learning_Partner
                                    }
                                    catch (Exception)
                                    {
-                                       Logger.Instance.WriteToLog("Failed to create Projector Proxy");
+                                       CLogger.AppendToLog("Failed to create Projector Proxy");
                                        App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Disconnected;
                                    }
                                }).Start();
@@ -192,7 +192,7 @@ namespace Classroom_Learning_Partner
                                    }
                                    catch (Exception)
                                    {
-                                       Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
+                                       CLogger.AppendToLog("Failed to create Instructor Proxy");
                                        App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Disconnected;
                                    }
                                }).Start();

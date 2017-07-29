@@ -320,7 +320,9 @@ namespace Classroom_Learning_Partner
             CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
             Ann.Notebook oldNotebook;
 
+#pragma warning disable 162
             if (IS_LARGE_CACHE)
+
             {
                 oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
                 //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
@@ -329,7 +331,8 @@ namespace Classroom_Learning_Partner
             {
                 oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
             }
-            
+#pragma warning restore 162
+
             CLogger.AppendToLog("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
             CLogger.AppendToLog("Notebook Converted");

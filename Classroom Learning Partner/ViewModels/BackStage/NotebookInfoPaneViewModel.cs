@@ -163,13 +163,13 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
             //catch (Exception)
             //{
-            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    CLogger.AppendToLog("Failed to zip pages for collection.");
             //    return;
             //}
 
             //if (string.IsNullOrEmpty(zippedPages))
             //{
-            //    Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+            //    CLogger.AppendToLog("Failed to zip pages for collection.");
             //    return;
             //}
 
