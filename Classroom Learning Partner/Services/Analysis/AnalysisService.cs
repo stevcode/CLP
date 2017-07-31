@@ -24,237 +24,237 @@ namespace Classroom_Learning_Partner.Services
 
         private static string AnalysisFolder => Path.Combine(DataService.DesktopFolderPath, "Rolling Analysis");
         private static string ConvertedPagesFolder => Path.Combine(AnalysisFolder, "Converted Pages");
-        
+
         private static string AnalysisTrackerFilePath => Path.Combine(AnalysisFolder, ANALYSIS_TRACKER_FILE_NAME);
         private static string RollingAnalysisFilePath => Path.Combine(AnalysisFolder, ROLLING_ANALYSIS_FILE_NAME);
         private static string AnnFullZipFilePath => Path.Combine(AnalysisFolder, ANN_CACHE_FILE_NAME);
 
-        private static readonly string NotebooksFolderPath = ConversionService.AnnNotebooksFolder;
-        private static readonly string ClassesFolderPath = ConversionService.AnnClassesFolder;
-        private static readonly string ImagesFolderPath = ConversionService.AnnImageFolder;
+        private static string NotebooksFolderPath => ConversionService.AnnNotebooksFolder;
+        private static string ClassesFolderPath => ConversionService.AnnClassesFolder;
+        private static string ImagesFolderPath => ConversionService.AnnImageFolder;
 
-        private static readonly Dictionary<string,string> StudentIDToNotebookPagesFolderPath = new Dictionary<string,string>();
+        private static Dictionary<string, string> StudentIDToNotebookPagesFolderPath => new Dictionary<string, string>();
 
         #region Page Number Lists
 
         public static List<int> MainPageNumbersToAnalyze = new List<int>
-                                                             {
-                                                                 11,
-                                                                 12,
-                                                                 14,
-                                                                 16,
-                                                                 18,
-                                                                 20,
-                                                                 31,
-                                                                 43,
-                                                                 44,
-                                                                 49,
-                                                                 51,
-                                                                 65,
-                                                                 66,
-                                                                 86,
-                                                                 91,
-                                                                 103,
-                                                                 104,
-                                                                 105,
-                                                                 106,
-                                                                 107,
-                                                                 108,
-                                                                 109,
-                                                                 119,
-                                                                 120,
-                                                                 121,
-                                                                 122,
-                                                                 123,
-                                                                 124,
-                                                                 125,
-                                                                 126,
-                                                                 127,
-                                                                 128,
-                                                                 140,
-                                                                 141,
-                                                                 142,
-                                                                 143,
-                                                                 144,
-                                                                 145,
-                                                                 146,
-                                                                 147,
-                                                                 148,
-                                                                 149,
-                                                                 150,
-                                                                 151,
-                                                                 152,
-                                                                 153,
-                                                                 154,
-                                                                 155,
-                                                                 156,
-                                                                 157,
-                                                                 158,
-                                                                 159,
-                                                                 160,
-                                                                 161,
-                                                                 162,
-                                                                 163,
-                                                                 164,
-                                                                 165,
-                                                                 166,
-                                                                 167,
-                                                                 168,
-                                                                 169,
-                                                                 170,
-                                                                 171,
-                                                                 172,
-                                                                 173,
-                                                                 174,
-                                                                 175,
-                                                                 185,
-                                                                 186,
-                                                                 187,
-                                                                 188,
-                                                                 189,
-                                                                 190,
-                                                                 191,
-                                                                 192,
-                                                                 193,
-                                                                 194,
-                                                                 195,
-                                                                 196,
-                                                                 197,
-                                                                 198,
-                                                                 199,
-                                                                 200,
-                                                                 202,
-                                                                 203,
-                                                                 204,
-                                                                 205,
-                                                                 206,
-                                                                 207,
-                                                                 208,
-                                                                 209,
-                                                                 210,
-                                                                 211,
-                                                                 212,
-                                                                 213,
-                                                                 214,
-                                                                 215,
-                                                              //   217,  Removed, something wrong with page definition. No hidden value?
-                                                                 218,
-                                                                 219,
-                                                              //   221,   same
-                                                                 225,
-                                                                 226,
-                                                                 227,
-                                                                 228,
-                                                                 229,
-                                                                 230,
-                                                                 231,
-                                                                 232,
-                                                                 233,
-                                                                 234,
-                                                              //   236,  same
-                                                                 240,
-                                                                 241,
-                                                                 242,
-                                                                 243,
-                                                                 244,
-                                                                 245,
-                                                                 246,
-                                                                 248,
-                                                                 249,
-                                                                 251,
-                                                                 252,
-                                                                 253,
-                                                                 254,
-                                                                 255,
-                                                                 258,
-                                                                 259,
-                                                                 260,
-                                                                 261,
-                                                                 262,
-                                                                 263,
-                                                                 264,
-                                                                 265,
-                                                                 268,
-                                                                 269,
-                                                                 270,
-                                                                 271,
-                                                                 272,
-                                                                 273,
-                                                                 275,
-                                                                 276,
-                                                                 277,
-                                                                 278,
-                                                                 279,
-                                                                 280,
-                                                                 281,
-                                                                 282,
-                                                                 284,
-                                                                 285,
-                                                                 286,
-                                                                 287,
-                                                                 288,
-                                                                 289,
-                                                                 290,
-                                                                 291,
-                                                                 293,
-                                                                 295,
-                                                                 296,
-                                                                 297,
-                                                                 298,
-                                                                 299,
-                                                                 300,
-                                                                 301,
-                                                                 302,
-                                                                 303,
-                                                                 304,
-                                                                 306,
-                                                                 307,
-                                                                 308,
-                                                                 309,
-                                                                 310,
-                                                                 311,
-                                                                 312,
-                                                                 313,
-                                                                 314,
-                                                                 315,
-                                                                 318,
-                                                                 320,
-                                                                 321,
-                                                                 322,
-                                                                 323,
-                                                                 324,
-                                                                 325,
-                                                                 326,
-                                                                 337,
-                                                                 338,
-                                                                 339,
-                                                                 341,
-                                                                 342,
-                                                                 343,
-                                                                 344,
-                                                                 354,
-                                                                 355,
-                                                                 356,
-                                                                 357,
-                                                                 362,
-                                                                 363,
-                                                                 364,
-                                                                 365,
-                                                                 366,
-                                                                 367,
-                                                                 368,
-                                                                 369,
-                                                                 376,
-                                                                 377,
-                                                                 378,
-                                                                 379,
-                                                                 380,
-                                                                 381,
-                                                                 382,
-                                                                 383,
-                                                                 384,
-                                                                 385
-                                                             };
+                                                           {
+                                                               11,
+                                                               12,
+                                                               14,
+                                                               16,
+                                                               18,
+                                                               20,
+                                                               31,
+                                                               43,
+                                                               44,
+                                                               49,
+                                                               51,
+                                                               65,
+                                                               66,
+                                                               86,
+                                                               91,
+                                                               103,
+                                                               104,
+                                                               105,
+                                                               106,
+                                                               107,
+                                                               108,
+                                                               109,
+                                                               119,
+                                                               120,
+                                                               121,
+                                                               122,
+                                                               123,
+                                                               124,
+                                                               125,
+                                                               126,
+                                                               127,
+                                                               128,
+                                                               140,
+                                                               141,
+                                                               142,
+                                                               143,
+                                                               144,
+                                                               145,
+                                                               146,
+                                                               147,
+                                                               148,
+                                                               149,
+                                                               150,
+                                                               151,
+                                                               152,
+                                                               153,
+                                                               154,
+                                                               155,
+                                                               156,
+                                                               157,
+                                                               158,
+                                                               159,
+                                                               160,
+                                                               161,
+                                                               162,
+                                                               163,
+                                                               164,
+                                                               165,
+                                                               166,
+                                                               167,
+                                                               168,
+                                                               169,
+                                                               170,
+                                                               171,
+                                                               172,
+                                                               173,
+                                                               174,
+                                                               175,
+                                                               185,
+                                                               186,
+                                                               187,
+                                                               188,
+                                                               189,
+                                                               190,
+                                                               191,
+                                                               192,
+                                                               193,
+                                                               194,
+                                                               195,
+                                                               196,
+                                                               197,
+                                                               198,
+                                                               199,
+                                                               200,
+                                                               202,
+                                                               203,
+                                                               204,
+                                                               205,
+                                                               206,
+                                                               207,
+                                                               208,
+                                                               209,
+                                                               210,
+                                                               211,
+                                                               212,
+                                                               213,
+                                                               214,
+                                                               215,
+                                                               //   217,  Removed, something wrong with page definition. No hidden value?
+                                                               218,
+                                                               219,
+                                                               //   221,   same
+                                                               225,
+                                                               226,
+                                                               227,
+                                                               228,
+                                                               229,
+                                                               230,
+                                                               231,
+                                                               232,
+                                                               233,
+                                                               234,
+                                                               //   236,  same
+                                                               240,
+                                                               241,
+                                                               242,
+                                                               243,
+                                                               244,
+                                                               245,
+                                                               246,
+                                                               248,
+                                                               249,
+                                                               251,
+                                                               252,
+                                                               253,
+                                                               254,
+                                                               255,
+                                                               258,
+                                                               259,
+                                                               260,
+                                                               261,
+                                                               262,
+                                                               263,
+                                                               264,
+                                                               265,
+                                                               268,
+                                                               269,
+                                                               270,
+                                                               271,
+                                                               272,
+                                                               273,
+                                                               275,
+                                                               276,
+                                                               277,
+                                                               278,
+                                                               279,
+                                                               280,
+                                                               281,
+                                                               282,
+                                                               284,
+                                                               285,
+                                                               286,
+                                                               287,
+                                                               288,
+                                                               289,
+                                                               290,
+                                                               291,
+                                                               293,
+                                                               295,
+                                                               296,
+                                                               297,
+                                                               298,
+                                                               299,
+                                                               300,
+                                                               301,
+                                                               302,
+                                                               303,
+                                                               304,
+                                                               306,
+                                                               307,
+                                                               308,
+                                                               309,
+                                                               310,
+                                                               311,
+                                                               312,
+                                                               313,
+                                                               314,
+                                                               315,
+                                                               318,
+                                                               320,
+                                                               321,
+                                                               322,
+                                                               323,
+                                                               324,
+                                                               325,
+                                                               326,
+                                                               337,
+                                                               338,
+                                                               339,
+                                                               341,
+                                                               342,
+                                                               343,
+                                                               344,
+                                                               354,
+                                                               355,
+                                                               356,
+                                                               357,
+                                                               362,
+                                                               363,
+                                                               364,
+                                                               365,
+                                                               366,
+                                                               367,
+                                                               368,
+                                                               369,
+                                                               376,
+                                                               377,
+                                                               378,
+                                                               379,
+                                                               380,
+                                                               381,
+                                                               382,
+                                                               383,
+                                                               384,
+                                                               385
+                                                           };
 
         public static List<int> LastPageNumbersToAnalyze = new List<int>
                                                            {
@@ -264,112 +264,112 @@ namespace Classroom_Learning_Partner.Services
                                                            };
 
         public static List<int> FixedPageNumbersToAnalyze = new List<int>
-                                                           {
-                                                               278,
-                                                               280,
-                                                               287,
-                                                               289,
-                                                               296,
-                                                               298,
-                                                               308,
-                                                               310,
-                                                               320
-                                                           };
+                                                            {
+                                                                278,
+                                                                280,
+                                                                287,
+                                                                289,
+                                                                296,
+                                                                298,
+                                                                308,
+                                                                310,
+                                                                320
+                                                            };
 
         public static List<int> OtherPageNumbersToAnalyze = new List<int>
-                                                              {
-                                                                  10,
-                                                                  15,
-                                                                  17,
-                                                                  19,
-                                                                  21,
-                                                                  22,
-                                                                  28,
-                                                                  29,
-                                                                  30,
-                                                                  32,
-                                                                  45,
-                                                                  50,
-                                                                  67,
-                                                                  68,
-                                                                  93,
-                                                                  94,
-                                                                  110,
-                                                                  111,
-                                                                  112,
-                                                                  113,
-                                                                  114,
-                                                                  118,
-                                                                  129,
-                                                                  130,
-                                                                  131,
-                                                                  132,
-                                                                  133,
-                                                                  134,
-                                                                  135,
-                                                                  136,
-                                                                  137,
-                                                                  138,
-                                                                  176,
-                                                                  177,
-                                                                  178,
-                                                                  179,
-                                                                  180,
-                                                                  181,
-                                                                  182,
-                                                                  201,
-                                                                  216,
-                                                                  220,
-                                                                  222,
-                                                                  223,
-                                                                  224,
-                                                                  235,
-                                                                  237,
-                                                                  238,
-                                                                  239,
-                                                                  247,
-                                                                  256,
-                                                                  257,
-                                                                  266,
-                                                                  267,
-                                                                  283,
-                                                                  292,
-                                                                  305,
-                                                                  316,
-                                                                  317,
-                                                                  358,
-                                                                  359,
-                                                                  360,
-                                                                  370,
-                                                                  371,
-                                                                  372,
-                                                                  373,
-                                                                  374,
-                                                                  375,
-                                                                  58,
-                                                                  59,
-                                                                  61,
-                                                                  62,
-                                                                  327,
-                                                                  328,
-                                                                  329,
-                                                                  330,
-                                                                  331,
-                                                                  332,
-                                                                  333,
-                                                                  334,
-                                                                  335,
-                                                                  336,
-                                                                  345,
-                                                                  346,
-                                                                  347,
-                                                                  348,
-                                                                  349,
-                                                                  350,
-                                                                  351,
-                                                                  352,
-                                                                  353
-                                                              };
+                                                            {
+                                                                10,
+                                                                15,
+                                                                17,
+                                                                19,
+                                                                21,
+                                                                22,
+                                                                28,
+                                                                29,
+                                                                30,
+                                                                32,
+                                                                45,
+                                                                50,
+                                                                67,
+                                                                68,
+                                                                93,
+                                                                94,
+                                                                110,
+                                                                111,
+                                                                112,
+                                                                113,
+                                                                114,
+                                                                118,
+                                                                129,
+                                                                130,
+                                                                131,
+                                                                132,
+                                                                133,
+                                                                134,
+                                                                135,
+                                                                136,
+                                                                137,
+                                                                138,
+                                                                176,
+                                                                177,
+                                                                178,
+                                                                179,
+                                                                180,
+                                                                181,
+                                                                182,
+                                                                201,
+                                                                216,
+                                                                220,
+                                                                222,
+                                                                223,
+                                                                224,
+                                                                235,
+                                                                237,
+                                                                238,
+                                                                239,
+                                                                247,
+                                                                256,
+                                                                257,
+                                                                266,
+                                                                267,
+                                                                283,
+                                                                292,
+                                                                305,
+                                                                316,
+                                                                317,
+                                                                358,
+                                                                359,
+                                                                360,
+                                                                370,
+                                                                371,
+                                                                372,
+                                                                373,
+                                                                374,
+                                                                375,
+                                                                58,
+                                                                59,
+                                                                61,
+                                                                62,
+                                                                327,
+                                                                328,
+                                                                329,
+                                                                330,
+                                                                331,
+                                                                332,
+                                                                333,
+                                                                334,
+                                                                335,
+                                                                336,
+                                                                345,
+                                                                346,
+                                                                347,
+                                                                348,
+                                                                349,
+                                                                350,
+                                                                351,
+                                                                352,
+                                                                353
+                                                            };
 
         public static List<int> AllPageNumbersToAnalyze = MainPageNumbersToAnalyze.Concat(OtherPageNumbersToAnalyze).Concat(LastPageNumbersToAnalyze).Distinct().ToList();
 
@@ -397,7 +397,7 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(desktopDirectory, "BatchAnalysis.tsv");
             if (!File.Exists(filePath))
             {
-                File.WriteAllText(filePath, "");
+                File.WriteAllText(filePath, string.Empty);
 
                 var headerRow = AnalysisEntry.BuildHeaderEntryLine();
                 File.AppendAllText(filePath, headerRow);
@@ -537,14 +537,15 @@ namespace Classroom_Learning_Partner.Services
                     #region Updating Analysis Tracker
 
                     pageProgress.StudentIDs.Add(studentID);
-                    var remainingStudentIDs = allStudentIDs.Except(pageProgress.StudentIDs);
+                    var remainingStudentIDs = allStudentIDs.Except(pageProgress.StudentIDs).ToList();
                     if (!remainingStudentIDs.Any())
                     {
                         analysisTracker.CompletedPageNumbers.Add(pageNumber);
                         analysisTracker.InProgressPages.Remove(pageProgress);
                     }
 
-                    var totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds = conversionTimeInMilliseconds + analysisTimeInMilliseconds + statisticsComplingTimeInMilliseconds;
+                    var totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds =
+                        conversionTimeInMilliseconds + analysisTimeInMilliseconds + statisticsComplingTimeInMilliseconds;
                     analysisTracker.FullPageConversionAndAnalysisEntryGenerationTimeInMilliseconds += totalPageConversionAndAnalysisEntryGenerationTimeInMilliseconds;
                     analysisTracker.PageAnalysisTimeInMilliseconds += analysisTimeInMilliseconds;
                     analysisTracker.TotalPagesAnalyzed++;
@@ -658,7 +659,7 @@ namespace Classroom_Learning_Partner.Services
 
             var totalPagesLoaded = 0;
             var totalPageLoadTimeInMilliseconds = 0.0;
-            long totalFileSizeInBytes = 0;
+            var totalFileSizeInBytes = 0L;
 
             var backupCount = 0;
 
@@ -801,7 +802,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            File.WriteAllText(RollingAnalysisFilePath, "");
+            File.WriteAllText(RollingAnalysisFilePath, string.Empty);
 
             var headerRow = AnalysisEntry.BuildHeaderEntryLine();
             File.AppendAllText(RollingAnalysisFilePath, headerRow);
@@ -992,7 +993,6 @@ namespace Classroom_Learning_Partner.Services
                 entry.DivisionType = AnalysisEntry.NA;
             }
 
-
             var metaDataViewModel = new MetaDataTagsViewModel(page);
             entry.WordType = metaDataViewModel.IsWordProblem ? AnalysisEntry.WORD_TYPE_WORD : AnalysisEntry.WORD_TYPE_NON_WORD;
 
@@ -1026,7 +1026,8 @@ namespace Classroom_Learning_Partner.Services
                 var equivalenceDefinition = pageDefinition as EquivalenceRelationDefinitionTag;
                 if (equivalenceDefinition != null)
                 {
-                    entry.PageDefinitionEquation = $"{equivalenceDefinition.LeftRelationPart.ExpandedFormattedRelation} = {equivalenceDefinition.RightRelationPart.ExpandedFormattedRelation}";
+                    entry.PageDefinitionEquation =
+                        $"{equivalenceDefinition.LeftRelationPart.ExpandedFormattedRelation} = {equivalenceDefinition.RightRelationPart.ExpandedFormattedRelation}";
                 }
 
                 var relationPartDefinition = pageDefinition as IRelationPart;
@@ -1126,9 +1127,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             entry.ArrayDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && !r.IsFinalRepresentation && r.IsUsed);
-            entry.NumberLineDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && !r.IsFinalRepresentation && r.IsUsed);
+            entry.NumberLineDeletedCount =
+                representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && !r.IsFinalRepresentation && r.IsUsed);
             entry.IndividualStampImageDeletedCount = pass3.Count(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT && e.EventType == Codings.EVENT_OBJECT_DELETE);
-            entry.StampImageRepresentationDeletedCount = representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation && r.IsUsed);
+            entry.StampImageRepresentationDeletedCount =
+                representationsUsedTag.RepresentationsUsed.Count(r => r.CodedObject == Codings.OBJECT_STAMP && !r.IsFinalRepresentation && r.IsUsed);
 
             #endregion // Whole Page Characteristics
 
@@ -1161,7 +1164,7 @@ namespace Classroom_Learning_Partner.Services
 
                 entry.LeftArrayDivideCount += (int)inkDividesInformationParts[1].ToInt();
             }
-            
+
             var leftArraysWithSkips = leftUsedArrays.Where(r => r.AdditionalInformation.Any(a => a.Contains("skip"))).ToList();
 
             entry.LeftArraySkipCount = leftArraysWithSkips.Count;
@@ -1270,24 +1273,27 @@ namespace Classroom_Learning_Partner.Services
             entry.LeftArrayPartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
 
             entry.LeftNumberLineCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
-            entry.LeftNumberLinePartiallyCorrectCount =
-                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
-            entry.LeftNumberLinePartiallyCorrectSwappedCount =
-                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftNumberLinePartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE &&
+                                                                                       r.Correctness == Correctness.PartiallyCorrect &&
+                                                                                       r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftNumberLinePartiallyCorrectSwappedCount = leftRepresentations.Count(
+                r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.LeftStampCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
-            entry.LeftStampPartiallyCorrectCount =
-                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
-            entry.LeftStampPartiallyCorrectSwappedCount =
-                leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftStampPartiallyCorrectCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP &&
+                                                                                  r.Correctness == Correctness.PartiallyCorrect &&
+                                                                                  r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.LeftStampPartiallyCorrectSwappedCount = leftRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP &&
+                                                                                         r.Correctness == Correctness.PartiallyCorrect &&
+                                                                                         r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
-            entry.LeftRepresentationsAndCorrectness =
-                leftRepresentations.Select(
-                                           r =>
-                                                   $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
-                                   .ToList();
+            entry.LeftRepresentationsAndCorrectness = leftRepresentations
+                .Select(
+                    r =>
+                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                .ToList();
 
             entry.IsLeftMR = leftRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -1429,24 +1435,28 @@ namespace Classroom_Learning_Partner.Services
             entry.RightArrayPartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
 
             entry.RightNumberLineCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
-            entry.RightNumberLinePartiallyCorrectCount =
-                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightNumberLinePartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE &&
+                                                                                         r.Correctness == Correctness.PartiallyCorrect &&
+                                                                                         r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
             entry.RightNumberLinePartiallyCorrectSwappedCount =
-                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE &&
+                                                r.Correctness == Correctness.PartiallyCorrect &&
+                                                r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.RightStampCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
-            entry.RightStampPartiallyCorrectCount =
-                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
-            entry.RightStampPartiallyCorrectSwappedCount =
-                rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightStampPartiallyCorrectCount = rightRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP &&
+                                                                                    r.Correctness == Correctness.PartiallyCorrect &&
+                                                                                    r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+            entry.RightStampPartiallyCorrectSwappedCount = rightRepresentations.Count(
+                r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
-            entry.RightRepresentationsAndCorrectness =
-                rightRepresentations.Select(
-                                            r =>
-                                                    $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
-                                    .ToList();
+            entry.RightRepresentationsAndCorrectness = rightRepresentations
+                .Select(
+                    r =>
+                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                .ToList();
 
             entry.IsRightMR = rightRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -1537,7 +1547,7 @@ namespace Classroom_Learning_Partner.Services
             entry.AlternativeNumberLineSwitched = alternativeUsedNumberLines.Any(r => r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED) ? AnalysisEntry.YES : AnalysisEntry.NO;
 
             entry.AlternativeNumberLineBlankCount = alternativeNumberLines.Count(r => r.AnalysisCodes.Contains(Codings.NUMBER_LINE_BLANK_PARTIAL_MATCH));
-            
+
             #endregion // Number Lines
 
             #region Stamps
@@ -1585,27 +1595,36 @@ namespace Classroom_Learning_Partner.Services
             #region Representation Correctness Counts
 
             entry.AlternativeArrayCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Correct);
-            entry.AlternativeArrayPartiallyCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
+            entry.AlternativeArrayPartiallyCorrectCount =
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
 
             entry.AlternativeNumberLineCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Correct);
             entry.AlternativeNumberLinePartiallyCorrectCount =
-                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE &&
+                                                      r.Correctness == Correctness.PartiallyCorrect &&
+                                                      r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
             entry.AlternativeNumberLinePartiallyCorrectSwappedCount =
-                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE &&
+                                                      r.Correctness == Correctness.PartiallyCorrect &&
+                                                      r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             entry.AlternativeStampCorrectCount = alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.Correct);
             entry.AlternativeStampPartiallyCorrectCount =
-                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP &&
+                                                      r.Correctness == Correctness.PartiallyCorrect &&
+                                                      r.CorrectnessReason != Codings.PARTIAL_REASON_SWAPPED);
             entry.AlternativeStampPartiallyCorrectSwappedCount =
-                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP && r.Correctness == Correctness.PartiallyCorrect && r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
+                alternativeRepresentations.Count(r => r.CodedObject == Codings.OBJECT_STAMP &&
+                                                      r.Correctness == Correctness.PartiallyCorrect &&
+                                                      r.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED);
 
             #endregion // Representation Correctness Counts
 
-            entry.AlternativeRepresentationsAndCorrectness =
-                alternativeRepresentations.Select(
-                                                  r =>
-                                                          $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
-                                          .ToList();
+            entry.AlternativeRepresentationsAndCorrectness = alternativeRepresentations
+                .Select(
+                    r =>
+                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                .ToList();
 
             entry.IsAlternativeMR = alternativeRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -1740,7 +1759,8 @@ namespace Classroom_Learning_Partner.Services
             entry.UnmatchedArrayPartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.PartiallyCorrect);
             entry.UnmatchedArrayIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_ARRAY && r.Correctness == Correctness.Incorrect);
 
-            entry.UnmatchedNumberLinePartiallyCorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
+            entry.UnmatchedNumberLinePartiallyCorrectCount =
+                unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.PartiallyCorrect);
             entry.UnmatchedNumberLineIncorrectCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Incorrect);
             entry.UnmatchedNumberLineUnknownCount = unmatchedRepresentations.Count(r => r.CodedObject == Codings.OBJECT_NUMBER_LINE && r.Correctness == Correctness.Unknown);
 
@@ -1749,11 +1769,11 @@ namespace Classroom_Learning_Partner.Services
 
             #endregion // Representation Correctness Counts
 
-            entry.UnmatchedRepresentationsAndCorrectness =
-                unmatchedRepresentations.Select(
-                                                r =>
-                                                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
-                                        .ToList();
+            entry.UnmatchedRepresentationsAndCorrectness = unmatchedRepresentations
+                .Select(
+                    r =>
+                        $"{r.CodedObject} [{r.CodedID}] {(r.CodedObject == Codings.OBJECT_STAMP ? r.RepresentationInformation : string.Empty)}{(r.CodedObject == Codings.OBJECT_NUMBER_LINE ? r.RepresentationInformation : string.Empty)} {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
+                .ToList();
 
             entry.IsUnmatchedMR = unmatchedRepresentations.Select(r => r.CodedObject).Distinct().Count() > 1 ? AnalysisEntry.YES : AnalysisEntry.NO;
 
@@ -1761,14 +1781,20 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Analysis
 
-            var totalNumberLineUsedCount = entry.LeftNumberLineCreatedCount + entry.RightNumberLineCreatedCount + entry.AlternativeNumberLineCreatedCount + entry.UnmatchedNumberLineCreatedCount;
+            var totalNumberLineUsedCount = entry.LeftNumberLineCreatedCount +
+                                           entry.RightNumberLineCreatedCount +
+                                           entry.AlternativeNumberLineCreatedCount +
+                                           entry.UnmatchedNumberLineCreatedCount;
             if (totalNumberLineUsedCount == 0)
             {
                 entry.NLJE = AnalysisEntry.NA;
             }
             else
             {
-                var isNLJEUsed = entry.LeftNLJE == AnalysisEntry.YES || entry.RightNLJE == AnalysisEntry.YES || entry.AlternativeNLJE == AnalysisEntry.YES || entry.UnmatchedNLJE == AnalysisEntry.YES;
+                var isNLJEUsed = entry.LeftNLJE == AnalysisEntry.YES ||
+                                 entry.RightNLJE == AnalysisEntry.YES ||
+                                 entry.AlternativeNLJE == AnalysisEntry.YES ||
+                                 entry.UnmatchedNLJE == AnalysisEntry.YES;
                 entry.NLJE = isNLJEUsed ? AnalysisEntry.YES : AnalysisEntry.NO;
             }
 

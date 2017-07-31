@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.Views
                 var xPosition = e.GetPosition(this).X;
 
                 // Determine the new amount to scroll.
-                var deltaX = (xPosition > _scrollStartX) ? -(xPosition - _scrollStartX) : (_scrollStartX - xPosition);
+                var deltaX = xPosition > _scrollStartX ? -(xPosition - _scrollStartX) : _scrollStartX - xPosition;
                 if (deltaX > 1.0)
                 {
                     CaptureMouse();

@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
             InitializedAsync += PageInformationPanelViewModel_InitializedAsync;
-            //IsVisible = false;
+            // IsVisible = false;
 
             PageOrientations.Add("Default - Landscape");
             PageOrientations.Add("Default - Portrait");
