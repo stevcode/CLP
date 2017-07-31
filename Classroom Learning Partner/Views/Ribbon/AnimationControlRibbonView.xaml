@@ -226,7 +226,7 @@
                  StrokeThickness="0"
                  Fill="Transparent">
             <Ellipse.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
+                <EventTrigger RoutedEvent="Ellipse.Loaded">
                     <BeginStoryboard>
                         <Storyboard Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
                             <ColorAnimation To="Red"
