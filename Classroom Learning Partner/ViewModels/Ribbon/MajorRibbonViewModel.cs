@@ -38,19 +38,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MajorRibbonViewModel : ViewModelBase
     {
-        public MainWindowViewModel MainWindow
-        {
-            get { return App.MainWindowViewModel; }
-        }
+        public MainWindowViewModel MainWindow => App.MainWindowViewModel;
 
-        private IPageInteractionService _pageInteractionService;
         private readonly IDataService _dataService;
+        private readonly IWindowManagerService _windowManagerService;
+        private IPageInteractionService _pageInteractionService;
         private readonly INetworkService _networkService;
 
-        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService, INetworkService networkService)
+        public MajorRibbonViewModel(IDataService dataService, IWindowManagerService windowManagerService, IPageInteractionService pageInteractionService, INetworkService networkService)
         {
-            _pageInteractionService = pageInteractionService;
             _dataService = dataService;
+            _windowManagerService = windowManagerService;
+            _pageInteractionService = pageInteractionService;
             _networkService = networkService;
 
             InitializeCommands();
@@ -69,6 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -107,6 +107,18 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
+        }
+
+        private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (_windowManagerService.IsPageInformationPanelVisible)
+            {
+                CurrentRightPanel = Panels.PageInformation;
+            }
+            else
+            {
+                CurrentRightPanel = null;
+            }
         }
 
         #endregion // Events
@@ -457,8 +469,22 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Right Panel.</summary>
         public Panels? CurrentRightPanel
         {
-            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
-            set { SetValue(CurrentRightPanelProperty, value); }
+            get => GetValue<Panels?>(CurrentRightPanelProperty);
+            set
+            {
+                SetValue(CurrentRightPanelProperty, value);
+                switch (CurrentRightPanel)
+                {
+                    case Panels.Displays:
+                        break;
+                    case Panels.PageInformation:
+                        _windowManagerService.IsPageInformationPanelVisible = true;
+                        break;
+                    case null:
+                        _windowManagerService.IsPageInformationPanelVisible = false;
+                        break;
+                }
+            }
         }
 
         public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof (Panels?));

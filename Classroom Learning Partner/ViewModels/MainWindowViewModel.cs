@@ -31,7 +31,6 @@ namespace Classroom_Learning_Partner.ViewModels
         Progress,
         Displays,
         PageInformation,
-        Webcam
     }
 
     public class MainWindowViewModel : ViewModelBase

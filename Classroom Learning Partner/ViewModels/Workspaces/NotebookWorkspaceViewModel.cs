@@ -17,13 +17,16 @@ namespace Classroom_Learning_Partner.ViewModels
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
+        private readonly IWindowManagerService _windowManagerService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="NotebookWorkspaceViewModel" /> class.</summary>
-        public NotebookWorkspaceViewModel(IDataService dataService)
+        public NotebookWorkspaceViewModel(IDataService dataService, IWindowManagerService windowManagerService)
         {
             _dataService = dataService;
+            _windowManagerService = windowManagerService;
+
             Notebook = _dataService.CurrentNotebook;
 
             ContextRibbon = this.CreateViewModel<ContextRibbonViewModel>(null);
@@ -52,13 +55,13 @@ namespace Classroom_Learning_Partner.ViewModels
             var dependencyResolver = this.GetDependencyResolver();
             var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
 
-            SingleDisplay = viewModelFactory.CreateViewModel<SingleDisplayViewModel>(notebook, null);
+            SingleDisplay = viewModelFactory.CreateViewModel<SingleDisplayViewModel>(notebook);
 
-            StagingPanel = viewModelFactory.CreateViewModel<StagingPanelViewModel>(notebook, null);
+            StagingPanel = viewModelFactory.CreateViewModel<StagingPanelViewModel>(notebook);
             StagingPanel.IsVisible = false;
 
-            NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel, null);
-            ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel, null);
+            NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel);
+            ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel);
             if (App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
             {
                 LeftPanel = ProgressPanel;
@@ -68,8 +71,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 LeftPanel = NotebookPagesPanel;
             }
 
-            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null, null);
-            PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook, null);
+            DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null);
+            PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook);
+            PageInformationPanel.IsVisible = _windowManagerService.IsPageInformationPanelVisible;
+
             RightPanel = DisplaysPanel;
 
             if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
@@ -85,6 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
+            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -92,6 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
+            _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -99,6 +106,21 @@ namespace Classroom_Learning_Partner.ViewModels
         private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
         {
             CurrentDisplay = _dataService.CurrentDisplay;
+        }
+
+        private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (PageInformationPanel == null)
+            {
+                return;
+            }
+
+            if (RightPanel != PageInformationPanel)
+            {
+                RightPanel = PageInformationPanel;
+            }
+
+            PageInformationPanel.IsVisible = _windowManagerService.IsPageInformationPanelVisible;
         }
 
         #endregion // Events

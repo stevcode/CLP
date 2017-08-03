@@ -22,6 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookPagesPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
         {
             _dataService = dataService;
+            
             Notebook = _dataService.CurrentNotebook;
             InitializedAsync += NotebookPagesPanelViewModel_InitializedAsync;
 
@@ -52,8 +53,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
-            get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
+            get => GetValue<Notebook>(NotebookProperty);
+            private set => SetValue(NotebookProperty, value);
         }
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
@@ -62,8 +63,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
+            get => GetValue<CLPPage>(CurrentPageProperty);
+            set => SetValue(CurrentPageProperty, value);
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
@@ -72,8 +73,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("Notebook")]
         public ObservableCollection<CLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get => GetValue<ObservableCollection<CLPPage>>(PagesProperty);
+            set => SetValue(PagesProperty, value);
         }
 
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
@@ -85,8 +86,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Staging Panel for submissions</summary>
         public StagingPanelViewModel StagingPanel
         {
-            get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
-            set { SetValue(StagingPanelProperty, value); }
+            get => GetValue<StagingPanelViewModel>(StagingPanelProperty);
+            set => SetValue(StagingPanelProperty, value);
         }
 
         public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel));
@@ -94,8 +95,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Submissions History Panel for the submissions of a student's page.</summary>
         public SubmissionHistoryPanelViewModel SubmissionHistoryPanel
         {
-            get { return GetValue<SubmissionHistoryPanelViewModel>(SubmissionHistoryPanelProperty); }
-            set { SetValue(SubmissionHistoryPanelProperty, value); }
+            get => GetValue<SubmissionHistoryPanelViewModel>(SubmissionHistoryPanelProperty);
+            set => SetValue(SubmissionHistoryPanelProperty, value);
         }
 
         public static readonly PropertyData SubmissionHistoryPanelProperty = RegisterProperty("SubmissionHistoryPanel", typeof(SubmissionHistoryPanelViewModel));
@@ -135,7 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddPageToStageCommandExecute(CLPPage page)
         {
-            AdvancedStagingView dialog = new AdvancedStagingView();
+            var dialog = new AdvancedStagingView();
             dialog.ShowDialog();
             if (dialog.DialogResult == false)
             {
@@ -150,7 +151,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AdvancedStagingView.StagingTypes.Correct:
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
-                                                                x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag && (t as CorrectnessSummaryTag).Correctness == Correctness.Correct) != null);
+                                                                x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag &&
+                                                                                                ((CorrectnessSummaryTag)t).Correctness == Correctness.Correct) !=
+                                                                     null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.
                     StagingPanel.ApplySortAndGroupByName();
@@ -158,7 +161,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AdvancedStagingView.StagingTypes.Incorrect:
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
-                                                                x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag && (t as CorrectnessSummaryTag).Correctness == Correctness.Incorrect) != null);
+                                                                x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag &&
+                                                                                                ((CorrectnessSummaryTag)t).Correctness == Correctness.Incorrect) !=
+                                                                     null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.
                     StagingPanel.ApplySortAndGroupByName();

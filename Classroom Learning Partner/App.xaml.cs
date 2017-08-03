@@ -93,6 +93,9 @@ namespace Classroom_Learning_Partner
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
+            var windowManagerService = new WindowManagerService();
+            ServiceLocator.Default.RegisterInstance<IWindowManagerService>(windowManagerService);
+
             var networkService = new NetworkService();
             ServiceLocator.Default.RegisterInstance<INetworkService>(networkService);
 
