@@ -26,11 +26,29 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        private bool _iDisplaysPanelVisible;
+
+        public bool IsDisplaysPanelVisible
+        {
+            get => _iDisplaysPanelVisible;
+            set
+            {
+                if (_iDisplaysPanelVisible == value)
+                {
+                    return;
+                }
+
+                _iDisplaysPanelVisible = value;
+                DisplaysPanelVisibleChanged.SafeInvoke(this);
+            }
+        }
+
         #endregion // Properties
 
         #region Events
 
         public event EventHandler<EventArgs> PageInformationPanelVisibleChanged;
+        public event EventHandler<EventArgs> DisplaysPanelVisibleChanged;
 
         #endregion // Events
 

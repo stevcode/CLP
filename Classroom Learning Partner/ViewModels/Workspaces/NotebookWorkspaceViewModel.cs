@@ -91,6 +91,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
             _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
+            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -99,6 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
             _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
+            _windowManagerService.DisplaysPanelVisibleChanged -= _windowManagerService_DisplaysPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -115,12 +117,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (RightPanel != PageInformationPanel)
+            if (RightPanel != PageInformationPanel &&
+                _windowManagerService.IsPageInformationPanelVisible)
             {
                 RightPanel = PageInformationPanel;
             }
 
             PageInformationPanel.IsVisible = _windowManagerService.IsPageInformationPanelVisible;
+        }
+
+        private void _windowManagerService_DisplaysPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (PageInformationPanel == null)
+            {
+                return;
+            }
+
+            if (RightPanel != DisplaysPanel &&
+                _windowManagerService.IsDisplaysPanelVisible)
+            {
+                RightPanel = DisplaysPanel;
+            }
+
+            DisplaysPanel.IsVisible = _windowManagerService.IsDisplaysPanelVisible;
         }
 
         #endregion // Events
@@ -492,24 +511,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             break;
                         default:
                             LeftPanel.IsVisible = false;
-                            break;
-                    }
-                }
-
-                if (propertyName == "CurrentRightPanel")
-                {
-                    switch (ribbon.CurrentRightPanel)
-                    {
-                        case Panels.Displays:
-                            RightPanel = DisplaysPanel;
-                            RightPanel.IsVisible = true;
-                            break;
-                        case Panels.PageInformation:
-                            RightPanel = PageInformationPanel;
-                            RightPanel.IsVisible = true;
-                            break;
-                        default:
-                            RightPanel.IsVisible = false;
                             break;
                     }
                 }

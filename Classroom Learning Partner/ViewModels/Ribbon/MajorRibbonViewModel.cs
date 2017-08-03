@@ -69,6 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
             _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
+            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -76,6 +77,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
+            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -114,6 +117,18 @@ namespace Classroom_Learning_Partner.ViewModels
             if (_windowManagerService.IsPageInformationPanelVisible)
             {
                 CurrentRightPanel = Panels.PageInformation;
+            }
+            else
+            {
+                CurrentRightPanel = null;
+            }
+        }
+
+        private void _windowManagerService_DisplaysPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (_windowManagerService.IsDisplaysPanelVisible)
+            {
+                CurrentRightPanel = Panels.Displays;
             }
             else
             {
@@ -476,12 +491,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch (CurrentRightPanel)
                 {
                     case Panels.Displays:
+                        _windowManagerService.IsDisplaysPanelVisible = true;
                         break;
                     case Panels.PageInformation:
                         _windowManagerService.IsPageInformationPanelVisible = true;
                         break;
                     case null:
                         _windowManagerService.IsPageInformationPanelVisible = false;
+                        _windowManagerService.IsDisplaysPanelVisible = false;
                         break;
                 }
             }
