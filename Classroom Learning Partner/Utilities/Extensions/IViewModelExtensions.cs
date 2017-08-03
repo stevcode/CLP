@@ -57,7 +57,7 @@ namespace Classroom_Learning_Partner
             var dependencyResolver = viewModel.GetDependencyResolver();
             var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
 
-            return viewModelFactory.CreateViewModel<T>(dataContext, null);
+            return viewModelFactory.CreateViewModel<T>(dataContext);
         }
     }
 }

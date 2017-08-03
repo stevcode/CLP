@@ -9,109 +9,101 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public APanelBaseViewModel() { PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute); }
+        protected APanelBaseViewModel()
+        {
+            InitializeCommands();
+        }
 
         #endregion //Constructor
 
-        #region IPanel Members
+        #region IPanel Implementation
 
-        /// <summary>
-        /// Whether the Panel is pinned to the same Z-Index as the Workspace.
-        /// </summary>
+        /// <summary>Whether the Panel is pinned to the same Z-Index as the Workspace.</summary>
         public bool IsPinned
         {
-            get { return GetValue<bool>(IsPinnedProperty); }
-            set { SetValue(IsPinnedProperty, value); }
+            get => GetValue<bool>(IsPinnedProperty);
+            set => SetValue(IsPinnedProperty, value);
         }
 
         public static readonly PropertyData IsPinnedProperty = RegisterProperty("IsPinned", typeof(bool), true);
 
-        /// <summary>
-        /// Visibility of Panel, True for Visible, False for Collapsed.
-        /// </summary>
+        /// <summary>Visibility of Panel, True for Visible, False for Collapsed.</summary>
         public bool IsVisible
         {
-            get { return GetValue<bool>(IsVisibleProperty); }
-            set { SetValue(IsVisibleProperty, value); }
+            get => GetValue<bool>(IsVisibleProperty);
+            set => SetValue(IsVisibleProperty, value);
         }
 
         public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof(bool), true);
 
-        /// <summary>
-        /// Can the Panel be resized.
-        /// </summary>
+        /// <summary>Can the Panel be resized.</summary>
         public bool IsResizable
         {
-            get { return GetValue<bool>(IsResizableProperty); }
-            set { SetValue(IsResizableProperty, value); }
+            get => GetValue<bool>(IsResizableProperty);
+            set => SetValue(IsResizableProperty, value);
         }
 
         public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), true);
 
-        /// <summary>
-        /// Initial Length of the Panel, before any resizing.
-        /// </summary>
-        public virtual double InitialLength
-        {
-            get { return 250.0; }
-        }
+        /// <summary>Initial Length of the Panel, before any resizing.</summary>
+        public virtual double InitialLength => 250.0;
 
-        /// <summary>
-        /// Minimum Length of the Panel.
-        /// </summary>
+        /// <summary>Minimum Length of the Panel.</summary>
         public double MinLength
         {
-            get { return GetValue<double>(MinLengthProperty); }
-            set { SetValue(MinLengthProperty, value); }
+            get => GetValue<double>(MinLengthProperty);
+            set => SetValue(MinLengthProperty, value);
         }
 
         public static readonly PropertyData MinLengthProperty = RegisterProperty("MinLength", typeof(double), 100.0);
 
+        /// <summary>Current Length of the Panel.</summary>
         public double Length
         {
-            get { return GetValue<double>(LengthProperty); }
-            set { SetValue(LengthProperty, value); }
+            get => GetValue<double>(LengthProperty);
+            set => SetValue(LengthProperty, value);
         }
 
         public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 250.0);
 
-        /// <summary>
-        /// The Panel's Location relative to the Workspace.
-        /// </summary>
+        /// <summary>The Panel's Location relative to the Workspace.</summary>
         public PanelLocations Location
         {
-            get { return GetValue<PanelLocations>(LocationProperty); }
-            set { SetValue(LocationProperty, value); }
+            get => GetValue<PanelLocations>(LocationProperty);
+            set => SetValue(LocationProperty, value);
         }
 
         public static readonly PropertyData LocationProperty = RegisterProperty("Location", typeof(PanelLocations), PanelLocations.Left);
 
-        #endregion
+        #endregion // IPanel Implementation
 
         #region Commands
 
-        /// <summary>
-        /// Resizes the panel.
-        /// </summary>
+        private void InitializeCommands()
+        {
+            PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
+        }
+
+        /// <summary>Resizes the panel.</summary>
         public Command<DragDeltaEventArgs> PanelResizeDragCommand { get; private set; }
 
         private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
         {
-            if(!IsResizable)
+            if (!IsResizable)
             {
                 return;
             }
 
             var isLeftOrTop = Location == PanelLocations.Left || Location == PanelLocations.Bottom;
             var newLength = isLeftOrTop ? Length + e.HorizontalChange : Length - e.HorizontalChange;
-            if(newLength < MinLength)
+            if (newLength < MinLength)
             {
                 newLength = MinLength;
             }
 
             var isLeftOrRight = Location == PanelLocations.Left || Location == PanelLocations.Right;
             var maxLength = isLeftOrRight ? Application.Current.MainWindow.ActualWidth - 100.0 : Application.Current.MainWindow.ActualHeight - 250.0;
-            if(newLength > maxLength)
+            if (newLength > maxLength)
             {
                 newLength = maxLength;
             }
@@ -119,6 +111,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Length = newLength;
         }
 
-        #endregion //Commands
+        #endregion // Commands
     }
 }
