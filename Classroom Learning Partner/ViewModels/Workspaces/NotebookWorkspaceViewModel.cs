@@ -90,6 +90,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
+            _windowManagerService.NotebookPagesPanelVisibleChanged += _windowManagerService_NotebookPagesPanelVisibleChanged;
+            _windowManagerService.ProgressPanelVisibleChanged += _windowManagerService_ProgressPanelVisibleChanged;
             _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
             _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
 
@@ -99,6 +101,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
+            _windowManagerService.NotebookPagesPanelVisibleChanged -= _windowManagerService_NotebookPagesPanelVisibleChanged;
+            _windowManagerService.ProgressPanelVisibleChanged -= _windowManagerService_ProgressPanelVisibleChanged;
             _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
             _windowManagerService.DisplaysPanelVisibleChanged -= _windowManagerService_DisplaysPanelVisibleChanged;
 
@@ -108,6 +112,38 @@ namespace Classroom_Learning_Partner.ViewModels
         private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
         {
             CurrentDisplay = _dataService.CurrentDisplay;
+        }
+
+        private void _windowManagerService_NotebookPagesPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (NotebookPagesPanel == null)
+            {
+                return;
+            }
+
+            if (LeftPanel != NotebookPagesPanel &&
+                _windowManagerService.IsNotebookPagesPanelVisible)
+            {
+                LeftPanel = NotebookPagesPanel;
+            }
+
+            NotebookPagesPanel.IsVisible = _windowManagerService.IsNotebookPagesPanelVisible;
+        }
+
+        private void _windowManagerService_ProgressPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (ProgressPanel == null)
+            {
+                return;
+            }
+
+            if (LeftPanel != ProgressPanel &&
+                _windowManagerService.IsProgressPanelVisible)
+            {
+                LeftPanel = ProgressPanel;
+            }
+
+            ProgressPanel.IsVisible = _windowManagerService.IsProgressPanelVisible;
         }
 
         private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
@@ -128,7 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _windowManagerService_DisplaysPanelVisibleChanged(object sender, EventArgs e)
         {
-            if (PageInformationPanel == null)
+            if (DisplaysPanel == null)
             {
                 return;
             }

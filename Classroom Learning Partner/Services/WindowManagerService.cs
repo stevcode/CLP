@@ -9,6 +9,40 @@ namespace Classroom_Learning_Partner.Services
 
         #region Properties
 
+        private bool _isNotebookPagesPanelVisible;
+
+        public bool IsNotebookPagesPanelVisible
+        {
+            get => _isNotebookPagesPanelVisible;
+            set
+            {
+                if (_isNotebookPagesPanelVisible == value)
+                {
+                    return;
+                }
+
+                _isNotebookPagesPanelVisible = value;
+                NotebookPagesPanelVisibleChanged.SafeInvoke(this);
+            }
+        }
+
+        private bool _isProgressPanelVisible;
+
+        public bool IsProgressPanelVisible
+        {
+            get => _isProgressPanelVisible;
+            set
+            {
+                if (_isProgressPanelVisible == value)
+                {
+                    return;
+                }
+
+                _isProgressPanelVisible = value;
+                ProgressPanelVisibleChanged.SafeInvoke(this);
+            }
+        }
+
         private bool _isPageInformationPanelVisible;
 
         public bool IsPageInformationPanelVisible
@@ -26,19 +60,19 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        private bool _iDisplaysPanelVisible;
+        private bool _isDisplaysPanelVisible;
 
         public bool IsDisplaysPanelVisible
         {
-            get => _iDisplaysPanelVisible;
+            get => _isDisplaysPanelVisible;
             set
             {
-                if (_iDisplaysPanelVisible == value)
+                if (_isDisplaysPanelVisible == value)
                 {
                     return;
                 }
 
-                _iDisplaysPanelVisible = value;
+                _isDisplaysPanelVisible = value;
                 DisplaysPanelVisibleChanged.SafeInvoke(this);
             }
         }
@@ -46,6 +80,9 @@ namespace Classroom_Learning_Partner.Services
         #endregion // Properties
 
         #region Events
+
+        public event EventHandler<EventArgs> NotebookPagesPanelVisibleChanged;
+        public event EventHandler<EventArgs> ProgressPanelVisibleChanged;
 
         public event EventHandler<EventArgs> PageInformationPanelVisibleChanged;
         public event EventHandler<EventArgs> DisplaysPanelVisibleChanged;

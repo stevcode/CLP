@@ -68,6 +68,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _windowManagerService.NotebookPagesPanelVisibleChanged += _windowManagerService_NotebookPagesPanelVisibleChanged;
+            _windowManagerService.ProgressPanelVisibleChanged += _windowManagerService_ProgressPanelVisibleChanged;
             _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
             _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
 
@@ -77,8 +79,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
-            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
-            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
+            _windowManagerService.NotebookPagesPanelVisibleChanged -= _windowManagerService_NotebookPagesPanelVisibleChanged;
+            _windowManagerService.ProgressPanelVisibleChanged -= _windowManagerService_ProgressPanelVisibleChanged;
+            _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
+            _windowManagerService.DisplaysPanelVisibleChanged -= _windowManagerService_DisplaysPanelVisibleChanged;
 
             return TaskHelper.Completed;
         }
@@ -110,6 +114,30 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
+        }
+
+        private void _windowManagerService_NotebookPagesPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (_windowManagerService.IsNotebookPagesPanelVisible)
+            {
+                CurrentLeftPanel = Panels.NotebookPages;
+            }
+            else
+            {
+                CurrentLeftPanel = null;
+            }
+        }
+
+        private void _windowManagerService_ProgressPanelVisibleChanged(object sender, EventArgs e)
+        {
+            if (_windowManagerService.IsProgressPanelVisible)
+            {
+                CurrentLeftPanel = Panels.Progress;
+            }
+            else
+            {
+                CurrentLeftPanel = null;
+            }
         }
 
         private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
@@ -475,8 +503,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Gets or sets the property value.</summary>
         public Panels? CurrentLeftPanel
         {
-            get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
-            set { SetValue(CurrentLeftPanelProperty, value); }
+            get => GetValue<Panels?>(CurrentLeftPanelProperty);
+            set
+            {
+                SetValue(CurrentLeftPanelProperty, value);
+                switch (CurrentLeftPanel)
+                {
+                    case Panels.NotebookPages:
+                        _windowManagerService.IsNotebookPagesPanelVisible = true;
+                        break;
+                    case Panels.Progress:
+                        _windowManagerService.IsProgressPanelVisible = true;
+                        break;
+                    case null:
+                        _windowManagerService.IsNotebookPagesPanelVisible = false;
+                        _windowManagerService.IsProgressPanelVisible = false;
+                        break;
+                }
+            }
         }
 
         public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof (Panels?));
