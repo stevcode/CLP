@@ -13,13 +13,15 @@ namespace Classroom_Learning_Partner.ViewModels
     public class ProgressPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IWindowManagerService _windowManagerService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.</summary>
-        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
+        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService, IWindowManagerService windowManagerService)
         {
             _dataService = dataService;
+            _windowManagerService = windowManagerService;
             Notebook = _dataService.CurrentNotebook;
             StagingPanel = stagingPanel;
 
@@ -192,8 +194,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _dataService.SetCurrentNotebook(notebook);
-
-            App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
+            _windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
         }
 
         #endregion

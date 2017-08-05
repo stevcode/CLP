@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner
 #endif
 
             InitializeCatelSettings();
-            InitializeServices();
+            InitializeServices(currentProgramMode);
             
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView
@@ -88,12 +88,16 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
-        private static void InitializeServices()
+        private static void InitializeServices(ProgramModes currentProgramMode)
         {
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
             var windowManagerService = new WindowManagerService();
+            if (currentProgramMode != ProgramModes.Projector)
+            {
+                windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
+            }
             ServiceLocator.Default.RegisterInstance<IWindowManagerService>(windowManagerService);
 
             var networkService = new NetworkService();

@@ -3,77 +3,52 @@ using Catel;
 
 namespace Classroom_Learning_Partner.Services
 {
+    public enum Panels
+    {
+        NoPanel,
+        NotebookPagesPanel,
+        ProgressPanel,
+        DisplaysPanel,
+        PageInformationPanel
+    }
+
     public class WindowManagerService : IWindowManagerService
     {
         #region IWindowManagerService Implementation
 
         #region Properties
 
-        private bool _isNotebookPagesPanelVisible;
+        private Panels _leftPanel = Panels.NoPanel;
 
-        public bool IsNotebookPagesPanelVisible
+        public Panels LeftPanel
         {
-            get => _isNotebookPagesPanelVisible;
+            get => _leftPanel;
             set
             {
-                if (_isNotebookPagesPanelVisible == value)
+                if (_leftPanel == value)
                 {
                     return;
                 }
 
-                _isNotebookPagesPanelVisible = value;
-                NotebookPagesPanelVisibleChanged.SafeInvoke(this);
+                _leftPanel = value;
+                LeftPanelChanged.SafeInvoke(this);
             }
         }
 
-        private bool _isProgressPanelVisible;
+        private Panels _rightPanel = Panels.NoPanel;
 
-        public bool IsProgressPanelVisible
+        public Panels RightPanel
         {
-            get => _isProgressPanelVisible;
+            get => _rightPanel;
             set
             {
-                if (_isProgressPanelVisible == value)
+                if (_rightPanel == value)
                 {
                     return;
                 }
 
-                _isProgressPanelVisible = value;
-                ProgressPanelVisibleChanged.SafeInvoke(this);
-            }
-        }
-
-        private bool _isPageInformationPanelVisible;
-
-        public bool IsPageInformationPanelVisible
-        {
-            get => _isPageInformationPanelVisible;
-            set
-            {
-                if (_isPageInformationPanelVisible == value)
-                {
-                    return;
-                }
-
-                _isPageInformationPanelVisible = value;
-                PageInformationPanelVisibleChanged.SafeInvoke(this);
-            }
-        }
-
-        private bool _isDisplaysPanelVisible;
-
-        public bool IsDisplaysPanelVisible
-        {
-            get => _isDisplaysPanelVisible;
-            set
-            {
-                if (_isDisplaysPanelVisible == value)
-                {
-                    return;
-                }
-
-                _isDisplaysPanelVisible = value;
-                DisplaysPanelVisibleChanged.SafeInvoke(this);
+                _rightPanel = value;
+                RightPanelChanged.SafeInvoke(this);
             }
         }
 
@@ -81,14 +56,16 @@ namespace Classroom_Learning_Partner.Services
 
         #region Events
 
-        public event EventHandler<EventArgs> NotebookPagesPanelVisibleChanged;
-        public event EventHandler<EventArgs> ProgressPanelVisibleChanged;
-
-        public event EventHandler<EventArgs> PageInformationPanelVisibleChanged;
-        public event EventHandler<EventArgs> DisplaysPanelVisibleChanged;
+        public event EventHandler<EventArgs> LeftPanelChanged;
+        public event EventHandler<EventArgs> RightPanelChanged;
 
         #endregion // Events
 
         #endregion // IWindowManagerService Implementation
+
+        private void TestEvents()
+        {
+            var numberOfSubscribedEvents = LeftPanelChanged?.GetInvocationList().Length;
+        }
     }
 }

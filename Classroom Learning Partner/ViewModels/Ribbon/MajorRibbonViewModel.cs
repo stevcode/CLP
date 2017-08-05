@@ -57,7 +57,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SetRibbonButtons();
 
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
-            CurrentLeftPanel = Panels.NotebookPages;
+            CurrentLeftPanel = _windowManagerService.LeftPanel;
+            CurrentRightPanel = _windowManagerService.RightPanel;
 
             InitializedAsync += MajorRibbonViewModel_InitializedAsync;
             ClosedAsync += MajorRibbonViewModel_ClosedAsync;
@@ -68,10 +69,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
-            _windowManagerService.NotebookPagesPanelVisibleChanged += _windowManagerService_NotebookPagesPanelVisibleChanged;
-            _windowManagerService.ProgressPanelVisibleChanged += _windowManagerService_ProgressPanelVisibleChanged;
-            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
-            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
+            _windowManagerService.LeftPanelChanged += _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged += _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -79,10 +78,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
-            _windowManagerService.NotebookPagesPanelVisibleChanged -= _windowManagerService_NotebookPagesPanelVisibleChanged;
-            _windowManagerService.ProgressPanelVisibleChanged -= _windowManagerService_ProgressPanelVisibleChanged;
-            _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
-            _windowManagerService.DisplaysPanelVisibleChanged -= _windowManagerService_DisplaysPanelVisibleChanged;
+            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -116,51 +113,47 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        private void _windowManagerService_NotebookPagesPanelVisibleChanged(object sender, EventArgs e)
+        private void _windowManagerService_LeftPanelChanged(object sender, EventArgs e)
         {
-            if (_windowManagerService.IsNotebookPagesPanelVisible)
+            switch (_windowManagerService.LeftPanel)
             {
-                CurrentLeftPanel = Panels.NotebookPages;
-            }
-            else
-            {
-                CurrentLeftPanel = null;
+                case Panels.NotebookPagesPanel:
+                    if (CurrentLeftPanel != Panels.NotebookPagesPanel)
+                    {
+                        CurrentLeftPanel = Panels.NotebookPagesPanel;
+                    }
+                    break;
+                case Panels.ProgressPanel:
+                    if (CurrentLeftPanel != Panels.ProgressPanel)
+                    {
+                        CurrentLeftPanel = Panels.ProgressPanel;
+                    }
+                    break;
+                default:
+                    CurrentLeftPanel = Panels.NoPanel;
+                    break;
             }
         }
 
-        private void _windowManagerService_ProgressPanelVisibleChanged(object sender, EventArgs e)
+        private void _windowManagerService_RightPanelChanged(object sender, EventArgs e)
         {
-            if (_windowManagerService.IsProgressPanelVisible)
+            switch (_windowManagerService.RightPanel)
             {
-                CurrentLeftPanel = Panels.Progress;
-            }
-            else
-            {
-                CurrentLeftPanel = null;
-            }
-        }
-
-        private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
-        {
-            if (_windowManagerService.IsPageInformationPanelVisible)
-            {
-                CurrentRightPanel = Panels.PageInformation;
-            }
-            else
-            {
-                CurrentRightPanel = null;
-            }
-        }
-
-        private void _windowManagerService_DisplaysPanelVisibleChanged(object sender, EventArgs e)
-        {
-            if (_windowManagerService.IsDisplaysPanelVisible)
-            {
-                CurrentRightPanel = Panels.Displays;
-            }
-            else
-            {
-                CurrentRightPanel = null;
+                case Panels.DisplaysPanel:
+                    if (CurrentRightPanel != Panels.DisplaysPanel)
+                    {
+                        CurrentRightPanel = Panels.DisplaysPanel;
+                    }
+                    break;
+                case Panels.PageInformationPanel:
+                    if (CurrentRightPanel != Panels.PageInformationPanel)
+                    {
+                        CurrentRightPanel = Panels.PageInformationPanel;
+                    }
+                    break;
+                default:
+                    CurrentRightPanel = Panels.NoPanel;
+                    break;
             }
         }
 
@@ -498,9 +491,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
-        #region Find Better Way
-
-        /// <summary>Gets or sets the property value.</summary>
+        /// <summary>Left Panel.</summary>
         public Panels? CurrentLeftPanel
         {
             get => GetValue<Panels?>(CurrentLeftPanelProperty);
@@ -509,15 +500,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(CurrentLeftPanelProperty, value);
                 switch (CurrentLeftPanel)
                 {
-                    case Panels.NotebookPages:
-                        _windowManagerService.IsNotebookPagesPanelVisible = true;
+                    case Panels.NotebookPagesPanel:
+                        _windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
                         break;
-                    case Panels.Progress:
-                        _windowManagerService.IsProgressPanelVisible = true;
+                    case Panels.ProgressPanel:
+                        _windowManagerService.LeftPanel = Panels.ProgressPanel;
                         break;
-                    case null:
-                        _windowManagerService.IsNotebookPagesPanelVisible = false;
-                        _windowManagerService.IsProgressPanelVisible = false;
+                    default:
+                        _windowManagerService.LeftPanel = Panels.NoPanel;
                         break;
                 }
             }
@@ -534,23 +524,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(CurrentRightPanelProperty, value);
                 switch (CurrentRightPanel)
                 {
-                    case Panels.Displays:
-                        _windowManagerService.IsDisplaysPanelVisible = true;
+                    case Panels.DisplaysPanel:
+                        _windowManagerService.RightPanel = Panels.DisplaysPanel;
                         break;
-                    case Panels.PageInformation:
-                        _windowManagerService.IsPageInformationPanelVisible = true;
+                    case Panels.PageInformationPanel:
+                        _windowManagerService.RightPanel = Panels.PageInformationPanel;
                         break;
-                    case null:
-                        _windowManagerService.IsPageInformationPanelVisible = false;
-                        _windowManagerService.IsDisplaysPanelVisible = false;
+                    default:
+                        _windowManagerService.RightPanel = Panels.NoPanel;
                         break;
                 }
             }
         }
 
         public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof (Panels?));
-
-        #endregion //Find Better Way
 
         /// <summary>Gets or sets the property value.</summary>
         public bool BlockStudentPenInput
@@ -714,7 +701,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _dataService.SetCurrentDisplay(null);
-            CurrentRightPanel = null;
+            CurrentRightPanel = Panels.NoPanel;
 
             if (App.Network.ProjectorProxy == null)
             {

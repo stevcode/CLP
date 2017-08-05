@@ -24,15 +24,6 @@ namespace Classroom_Learning_Partner.ViewModels
         Database
     }
 
-    public enum Panels
-    {
-        NotebookPages,
-        StudentWork,
-        Progress,
-        Displays,
-        PageInformation,
-    }
-
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;

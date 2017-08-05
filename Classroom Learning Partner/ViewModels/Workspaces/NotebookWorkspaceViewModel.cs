@@ -62,25 +62,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel);
             ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel);
-            if (App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
-            {
-                LeftPanel = ProgressPanel;
-            }
-            else
-            {
-                LeftPanel = NotebookPagesPanel;
-            }
 
             DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null);
             PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook);
-            PageInformationPanel.IsVisible = _windowManagerService.IsPageInformationPanelVisible;
 
-            RightPanel = DisplaysPanel;
-
-            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
-            {
-                NotebookPagesPanel.IsVisible = false;
-            }
+            UpdatePanels();
         }
 
         #endregion //Constructor
@@ -90,10 +76,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentDisplayChanged += _dataService_CurrentDisplayChanged;
-            _windowManagerService.NotebookPagesPanelVisibleChanged += _windowManagerService_NotebookPagesPanelVisibleChanged;
-            _windowManagerService.ProgressPanelVisibleChanged += _windowManagerService_ProgressPanelVisibleChanged;
-            _windowManagerService.PageInformationPanelVisibleChanged += _windowManagerService_PageInformationPanelVisibleChanged;
-            _windowManagerService.DisplaysPanelVisibleChanged += _windowManagerService_DisplaysPanelVisibleChanged;
+            _windowManagerService.LeftPanelChanged += _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged += _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -101,10 +85,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task NotebookWorkspaceViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentDisplayChanged -= _dataService_CurrentDisplayChanged;
-            _windowManagerService.NotebookPagesPanelVisibleChanged -= _windowManagerService_NotebookPagesPanelVisibleChanged;
-            _windowManagerService.ProgressPanelVisibleChanged -= _windowManagerService_ProgressPanelVisibleChanged;
-            _windowManagerService.PageInformationPanelVisibleChanged -= _windowManagerService_PageInformationPanelVisibleChanged;
-            _windowManagerService.DisplaysPanelVisibleChanged -= _windowManagerService_DisplaysPanelVisibleChanged;
+            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -114,68 +96,77 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentDisplay = _dataService.CurrentDisplay;
         }
 
-        private void _windowManagerService_NotebookPagesPanelVisibleChanged(object sender, EventArgs e)
+        private void _windowManagerService_LeftPanelChanged(object sender, EventArgs e)
         {
-            if (NotebookPagesPanel == null)
-            {
-                return;
-            }
-
-            if (LeftPanel != NotebookPagesPanel &&
-                _windowManagerService.IsNotebookPagesPanelVisible)
-            {
-                LeftPanel = NotebookPagesPanel;
-            }
-
-            NotebookPagesPanel.IsVisible = _windowManagerService.IsNotebookPagesPanelVisible;
+            UpdatePanels();
         }
 
-        private void _windowManagerService_ProgressPanelVisibleChanged(object sender, EventArgs e)
+        private void _windowManagerService_RightPanelChanged(object sender, EventArgs e)
         {
-            if (ProgressPanel == null)
-            {
-                return;
-            }
-
-            if (LeftPanel != ProgressPanel &&
-                _windowManagerService.IsProgressPanelVisible)
-            {
-                LeftPanel = ProgressPanel;
-            }
-
-            ProgressPanel.IsVisible = _windowManagerService.IsProgressPanelVisible;
+            UpdatePanels();
         }
 
-        private void _windowManagerService_PageInformationPanelVisibleChanged(object sender, EventArgs e)
+        private void UpdatePanels()
         {
-            if (PageInformationPanel == null)
+            switch (_windowManagerService.LeftPanel)
             {
-                return;
+                case Panels.NotebookPagesPanel:
+                    if (LeftPanel != NotebookPagesPanel)
+                    {
+                        LeftPanel = NotebookPagesPanel;
+                    }
+                    if (!NotebookPagesPanel.IsVisible)
+                    {
+                        NotebookPagesPanel.IsVisible = true;
+                    }
+                    break;
+                case Panels.ProgressPanel:
+                    if (LeftPanel != ProgressPanel)
+                    {
+                        LeftPanel = ProgressPanel;
+                    }
+                    if (!ProgressPanel.IsVisible)
+                    {
+                        ProgressPanel.IsVisible = true;
+                    }
+                    break;
+                default:
+                    if (LeftPanel != null)
+                    {
+                        LeftPanel.IsVisible = false;
+                    }
+                    break;
             }
 
-            if (RightPanel != PageInformationPanel &&
-                _windowManagerService.IsPageInformationPanelVisible)
+            switch (_windowManagerService.RightPanel)
             {
-                RightPanel = PageInformationPanel;
+                case Panels.DisplaysPanel:
+                    if (RightPanel != DisplaysPanel)
+                    {
+                        RightPanel = DisplaysPanel;
+                    }
+                    if (!DisplaysPanel.IsVisible)
+                    {
+                        DisplaysPanel.IsVisible = true;
+                    }
+                    break;
+                case Panels.PageInformationPanel:
+                    if (RightPanel != PageInformationPanel)
+                    {
+                        RightPanel = PageInformationPanel;
+                    }
+                    if (!PageInformationPanel.IsVisible)
+                    {
+                        PageInformationPanel.IsVisible = true;
+                    }
+                    break;
+                default:
+                    if (RightPanel != null)
+                    {
+                        RightPanel.IsVisible = false;
+                    }
+                    break;
             }
-
-            PageInformationPanel.IsVisible = _windowManagerService.IsPageInformationPanelVisible;
-        }
-
-        private void _windowManagerService_DisplaysPanelVisibleChanged(object sender, EventArgs e)
-        {
-            if (DisplaysPanel == null)
-            {
-                return;
-            }
-
-            if (RightPanel != DisplaysPanel &&
-                _windowManagerService.IsDisplaysPanelVisible)
-            {
-                RightPanel = DisplaysPanel;
-            }
-
-            DisplaysPanel.IsVisible = _windowManagerService.IsDisplaysPanelVisible;
         }
 
         #endregion // Events
@@ -527,29 +518,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if (viewModel == null)
             {
                 return;
-            }
-
-            if (viewModel is MajorRibbonViewModel)
-            {
-                var ribbon = viewModel as MajorRibbonViewModel;
-
-                if (propertyName == "CurrentLeftPanel")
-                {
-                    switch (ribbon.CurrentLeftPanel)
-                    {
-                        case Panels.NotebookPages:
-                            LeftPanel = NotebookPagesPanel;
-                            LeftPanel.IsVisible = true;
-                            break;
-                        case Panels.Progress:
-                            LeftPanel = ProgressPanel;
-                            LeftPanel.IsVisible = true;
-                            break;
-                        default:
-                            LeftPanel.IsVisible = false;
-                            break;
-                    }
-                }
             }
 
             if (viewModel is MainWindowViewModel)

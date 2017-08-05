@@ -4,14 +4,10 @@ namespace Classroom_Learning_Partner.Services
 {
     public interface IWindowManagerService
     {
-        bool IsNotebookPagesPanelVisible { get; set; }
-        bool IsProgressPanelVisible { get; set; }
-        bool IsPageInformationPanelVisible { get; set; }
-        bool IsDisplaysPanelVisible { get; set; }
+        Panels LeftPanel { get; set; }
+        Panels RightPanel { get; set; }
 
-        event EventHandler<EventArgs> NotebookPagesPanelVisibleChanged;
-        event EventHandler<EventArgs> ProgressPanelVisibleChanged;
-        event EventHandler<EventArgs> PageInformationPanelVisibleChanged;
-        event EventHandler<EventArgs> DisplaysPanelVisibleChanged;
+        event EventHandler<EventArgs> LeftPanelChanged;
+        event EventHandler<EventArgs> RightPanelChanged;
     }
 }
