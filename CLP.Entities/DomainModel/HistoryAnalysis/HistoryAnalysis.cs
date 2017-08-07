@@ -834,6 +834,7 @@ namespace CLP.Entities
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
             ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+            NumberLineStrategyTag.IdentifyNumberLineStrategies(page, semanticEvents);
         }
 
         #endregion // Last Pass: Tag Generation
