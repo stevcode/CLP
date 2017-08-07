@@ -1,7 +1,7 @@
 ﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.TextInputView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:catel="http://schemas.catelproject.com"
                   Title="Text Input">
 
     <StackPanel>

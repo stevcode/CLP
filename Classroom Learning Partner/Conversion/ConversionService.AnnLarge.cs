@@ -320,7 +320,9 @@ namespace Classroom_Learning_Partner
             CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
             Ann.Notebook oldNotebook;
 
+#pragma warning disable 162
             if (IS_LARGE_CACHE)
+
             {
                 oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
                 //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
@@ -329,7 +331,8 @@ namespace Classroom_Learning_Partner
             {
                 oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
             }
-            
+#pragma warning restore 162
+
             CLogger.AppendToLog("Notebook Loaded");
             var newNotebook = ConvertNotebook(oldNotebook);
             CLogger.AppendToLog("Notebook Converted");
@@ -765,6 +768,7 @@ namespace Classroom_Learning_Partner
                 newPage.PageObjects.Add(newPageObject);
             }
 
+#pragma warning disable 162
             if (IS_LARGE_CACHE)
             {
                 AddLargeCacheTagsAndInterpretationRegions(newPage);
@@ -774,7 +778,8 @@ namespace Classroom_Learning_Partner
                 AddAssessmentInterpretationRegions(newPage);
                 AddAssessmentRelationDefinitionTags(newPage);
             }
-            
+#pragma warning restore 162
+
             ConvertPageHistory(page.History, newPage);
 
             if (!IS_LARGE_CACHE)
@@ -1839,7 +1844,9 @@ namespace Classroom_Learning_Partner
             }).Case<Ann.PageObjectResizeBatchHistoryItem>(h =>
             {
                 newHistoryAction = ConvertAndUndoPageObjectResize(h, newPage);
+#pragma warning disable CS0618 // Type or member is obsolete
             }).Case<Ann.PageObjectMoveBatchHistoryItem>(h =>
+#pragma warning restore CS0618 // Type or member is obsolete
             {
                 newHistoryAction = ConvertAndUndoPageObjectMove(h, newPage);
             }).Case<Ann.PageObjectsMoveBatchHistoryItem>(h =>

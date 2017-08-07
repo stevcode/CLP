@@ -63,8 +63,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="SemanticEvent" />.</summary>
         public string ID
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get => GetValue<string>(IDProperty);
+            set => SetValue(IDProperty, value);
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
@@ -72,8 +72,8 @@ namespace CLP.Entities
         /// <summary>The pass the semantic event is part of.</summary>
         public int SemanticPassNumber
         {
-            get { return GetValue<int>(SemanticPassNumberProperty); }
-            set { SetValue(SemanticPassNumberProperty, value); }
+            get => GetValue<int>(SemanticPassNumberProperty);
+            set => SetValue(SemanticPassNumberProperty, value);
         }
 
         public static readonly PropertyData SemanticPassNumberProperty = RegisterProperty("SemanticPassNumber", typeof(int), -1);
@@ -81,8 +81,8 @@ namespace CLP.Entities
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex
         {
-            get { return GetValue<int>(SemanticEventIndexProperty); }
-            set { SetValue(SemanticEventIndexProperty, value); }
+            get => GetValue<int>(SemanticEventIndexProperty);
+            set => SetValue(SemanticEventIndexProperty, value);
         }
 
         public static readonly PropertyData SemanticEventIndexProperty = RegisterProperty("SemanticEventIndex", typeof(int), -1);
@@ -90,8 +90,8 @@ namespace CLP.Entities
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
         {
-            get { return GetValue<string>(CachedCodedValueProperty); }
-            set { SetValue(CachedCodedValueProperty, value); }
+            get => GetValue<string>(CachedCodedValueProperty);
+            set => SetValue(CachedCodedValueProperty, value);
         }
 
         public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
@@ -103,8 +103,8 @@ namespace CLP.Entities
         /// <summary>Coded Object portion of the SemanticEvent report.</summary>
         public string CodedObject
         {
-            get { return GetValue<string>(CodedObjectProperty); }
-            set { SetValue(CodedObjectProperty, value); }
+            get => GetValue<string>(CodedObjectProperty);
+            set => SetValue(CodedObjectProperty, value);
         }
 
         public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
@@ -112,8 +112,8 @@ namespace CLP.Entities
         /// <summary>Coded Object ID portion of the SemanticEvent report.</summary>
         public string CodedObjectID
         {
-            get { return GetValue<string>(CodedObjectIDProperty); }
-            set { SetValue(CodedObjectIDProperty, value); }
+            get => GetValue<string>(CodedObjectIDProperty);
+            set => SetValue(CodedObjectIDProperty, value);
         }
 
         public static readonly PropertyData CodedObjectIDProperty = RegisterProperty("CodedObjectID", typeof(string), string.Empty);
@@ -121,8 +121,8 @@ namespace CLP.Entities
         /// <summary>Coded Object ID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectIDIncrement
         {
-            get { return GetValue<string>(CodedObjectIDIncrementProperty); }
-            set { SetValue(CodedObjectIDIncrementProperty, value); }
+            get => GetValue<string>(CodedObjectIDIncrementProperty);
+            set => SetValue(CodedObjectIDIncrementProperty, value);
         }
 
         public static readonly PropertyData CodedObjectIDIncrementProperty = RegisterProperty("CodedObjectIDIncrement", typeof(string), string.Empty);
@@ -130,8 +130,8 @@ namespace CLP.Entities
         /// <summary>Coded Object SubID portion of the SemanticEvent report.</summary>
         public string CodedObjectSubID
         {
-            get { return GetValue<string>(CodedObjectSubIDProperty); }
-            set { SetValue(CodedObjectSubIDProperty, value); }
+            get => GetValue<string>(CodedObjectSubIDProperty);
+            set => SetValue(CodedObjectSubIDProperty, value);
         }
 
         public static readonly PropertyData CodedObjectSubIDProperty = RegisterProperty("CodedObjectSubID", typeof(string), string.Empty);
@@ -139,8 +139,8 @@ namespace CLP.Entities
         /// <summary>Coded Object SubID Increment portion of the SemanticEvent report.</summary>
         public string CodedObjectSubIDIncrement
         {
-            get { return GetValue<string>(CodedObjectSubIDIncrementProperty); }
-            set { SetValue(CodedObjectSubIDIncrementProperty, value); }
+            get => GetValue<string>(CodedObjectSubIDIncrementProperty);
+            set => SetValue(CodedObjectSubIDIncrementProperty, value);
         }
 
         public static readonly PropertyData CodedObjectSubIDIncrementProperty = RegisterProperty("CodedObjectSubIDIncrement", typeof(string), string.Empty);
@@ -148,8 +148,8 @@ namespace CLP.Entities
         /// <summary>Event Type portion of the SemanticEvent report.</summary>
         public string EventType
         {
-            get { return GetValue<string>(EventTypeProperty); }
-            set { SetValue(EventTypeProperty, value); }
+            get => GetValue<string>(EventTypeProperty);
+            set => SetValue(EventTypeProperty, value);
         }
 
         public static readonly PropertyData EventTypeProperty = RegisterProperty("EventType", typeof(string), string.Empty);
@@ -157,8 +157,8 @@ namespace CLP.Entities
         /// <summary>Event Information portion of the SemanticEvent report.</summary>
         public string EventInformation
         {
-            get { return GetValue<string>(EventInformationProperty); }
-            set { SetValue(EventInformationProperty, value); }
+            get => GetValue<string>(EventInformationProperty);
+            set => SetValue(EventInformationProperty, value);
         }
 
         public static readonly PropertyData EventInformationProperty = RegisterProperty("EventInformation", typeof(string), string.Empty);
@@ -170,8 +170,8 @@ namespace CLP.Entities
         /// <summary>Storage dictionary for all meta data.</summary>
         public Dictionary<string, string> MetaData
         {
-            get { return GetValue<Dictionary<string, string>>(MetaDataProperty); }
-            set { SetValue(MetaDataProperty, value); }
+            get => GetValue<Dictionary<string, string>>(MetaDataProperty);
+            set => SetValue(MetaDataProperty, value);
         }
 
         public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
@@ -179,7 +179,7 @@ namespace CLP.Entities
         /// <summary> Used if the CodedObject acts upon another PageObject. </summary>
         public string ReferencePageObjectID
         {
-            get { return MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null; }
+            get => MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -205,8 +205,8 @@ namespace CLP.Entities
         /// <summary>List of the IDs of the HistoryActionss that make up this SemanticEvent.</summary>
         public List<string> HistoryActionIDs
         {
-            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
-            set { SetValue(HistoryActionIDsProperty, value); }
+            get => GetValue<List<string>>(HistoryActionIDsProperty);
+            set => SetValue(HistoryActionIDsProperty, value);
         }
 
         public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
@@ -214,8 +214,8 @@ namespace CLP.Entities
         /// <summary>List of any SemanticEvents that make up this SemanticEvent.</summary>
         public List<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<List<ISemanticEvent>>(SemanticEventsProperty); }
-            set { SetValue(SemanticEventsProperty, value); }
+            get => GetValue<List<ISemanticEvent>>(SemanticEventsProperty);
+            set => SetValue(SemanticEventsProperty, value);
         }
 
         public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());
@@ -225,8 +225,8 @@ namespace CLP.Entities
         [ExcludeFromSerialization]
         public CLPPage ParentPage
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            get => GetValue<CLPPage>(ParentPageProperty);
+            set => SetValue(ParentPageProperty, value);
         }
 
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));

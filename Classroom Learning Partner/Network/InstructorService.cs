@@ -214,7 +214,7 @@ namespace Classroom_Learning_Partner
             //                                             //}
             //                                             //catch (Exception ex)
             //                                             //{
-            //                                             //    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
+            //                                             //    CLogger.AppendToLog("Error, failed to send partial notebook: " + ex.Message);
             //                                             //    return string.Empty;
             //                                             //}
             //                                         },
@@ -449,7 +449,7 @@ namespace Classroom_Learning_Partner
             // TODO: reimplement classPeriods
             //if (dataService == null || dataService.CurrentClassPeriod == null)
             //{
-            //    Logger.Instance.WriteToLog("Failed to send classperiod, currentclassperiod is null.");
+            //    CLogger.AppendToLog("Failed to send classperiod, currentclassperiod is null.");
             //    return;
             //}
             //try
@@ -469,7 +469,7 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedPages(string zippedPages, string notebookID)
         {
-            //Logger.Instance.WriteToLog("received pages");
+            //CLogger.AppendToLog("received pages");
             //var dataService = ServiceLocator.Default.ResolveType<IDataService>();
             //if (dataService == null)
             //{
@@ -488,7 +488,7 @@ namespace Classroom_Learning_Partner
 
             //if (pages == null)
             //{
-            //    Logger.Instance.WriteToLog("Failed to receive student pages. Pages is null");
+            //    CLogger.AppendToLog("Failed to receive student pages. Pages is null");
             //    return;
             //}
 
@@ -542,7 +542,7 @@ namespace Classroom_Learning_Partner
 
             //                          if (notebook == null)
             //                          {
-            //                              Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+            //                              CLogger.AppendToLog("Failed to collect notebook from " + studentName);
             //                              return;
             //                          }
 
@@ -566,7 +566,7 @@ namespace Classroom_Learning_Partner
 
             //    if (notebook == null)
             //    {
-            //        Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+            //        CLogger.AppendToLog("Failed to collect notebook from " + studentName);
             //        return;
             //    }
 

@@ -13,13 +13,15 @@ namespace Classroom_Learning_Partner.ViewModels
     public class ProgressPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IWindowManagerService _windowManagerService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.</summary>
-        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
+        public ProgressPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService, IWindowManagerService windowManagerService)
         {
             _dataService = dataService;
+            _windowManagerService = windowManagerService;
             Notebook = _dataService.CurrentNotebook;
             StagingPanel = stagingPanel;
 
@@ -34,7 +36,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Events
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         private async Task ProgressPanelViewModel_InitializedAsync(object sender, EventArgs e)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             RefreshProgressPanelData();
             SetPanelWidth();
@@ -190,8 +194,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _dataService.SetCurrentNotebook(notebook);
-
-            App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel = Panels.NotebookPages;
+            _windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
         }
 
         #endregion

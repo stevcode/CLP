@@ -146,14 +146,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Cache Properties
 
-        public List<FileInfo> AvailableZipContainerFileInfos
-        {
-            get
-            {
-                // ReSharper disable once ConvertPropertyToExpressionBody
-                return GetCLPContainersInFolder(CurrentCacheFolderPath);
-            }
-        }
+        public List<FileInfo> AvailableZipContainerFileInfos => GetCLPContainersInFolder(CurrentCacheFolderPath);
 
         public bool IsAutoSaveOn { get; set; } = false;
 
@@ -253,7 +246,7 @@ namespace Classroom_Learning_Partner.Services
                     }
                 }
             }
-            
+
             // HACK: Bad because it's assuming all open/loaded notebooks are in the same cache. Needs refined.
             if (File.Exists(zipContainerFilePath))
             {
@@ -556,7 +549,8 @@ namespace Classroom_Learning_Partner.Services
                     foreach (var differentiatedPageID in differentiatedPageIDs.Distinct().ToList())
                     {
                         var differentiatedInstances = authorNotebook.Pages.Where(p => p.ID == differentiatedPageID).OrderBy(p => p.DifferentiationLevel).ToList();
-                        var authorPage = differentiatedInstances.FirstOrDefault(p => p.DifferentiationLevel == student.CurrentDifferentiationGroup) ?? differentiatedInstances.FirstOrDefault();
+                        var authorPage = differentiatedInstances.FirstOrDefault(p => p.DifferentiationLevel == student.CurrentDifferentiationGroup) ??
+                                         differentiatedInstances.FirstOrDefault();
                         if (authorPage == null)
                         {
                             continue;
@@ -601,11 +595,10 @@ namespace Classroom_Learning_Partner.Services
             LoadPagesIntoNotebook(existingNotebook, pageNumbers, overwrittenStartingPageID);
 
             // Load Student Notebooks
-            if ((!owner.IsStudent &&
-                 isLoadingStudentNotebooks) ||
+            if ((!owner.IsStudent && isLoadingStudentNotebooks) ||
                 owner.ID == Person.AUTHOR_ID)
             {
-                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID);
+                var otherNotebooks = LoadAllNotebooksFromCLPContainer(zipContainerFilePath).Where(n => n.ID == notebook.ID).ToList();
                 foreach (var studentNotebook in otherNotebooks.Where(n => n.Owner.IsStudent && classRoster.ListOfStudents.Any(p => n.Owner.DisplayName == p.DisplayName)))
                 {
                     var existingStudentNotebook = LoadedNotebooks.FirstOrDefault(n => n.ID == studentNotebook.ID && n.Owner.ID == studentNotebook.Owner.ID);
@@ -731,7 +724,12 @@ namespace Classroom_Learning_Partner.Services
             InsertPageAt(notebook, page, pageIndex, isChangingPageNumbers, isAddingNextPageToDisplay);
         }
 
-        public void InsertPageAt(Notebook notebook, CLPPage page, int index, bool isChangingPageNumbers = true, bool isAddingNextPageToDisplay = true, int numberOfDifferentiatedPages = -1)
+        public void InsertPageAt(Notebook notebook,
+                                 CLPPage page,
+                                 int index,
+                                 bool isChangingPageNumbers = true,
+                                 bool isAddingNextPageToDisplay = true,
+                                 int numberOfDifferentiatedPages = -1)
         {
             if (isChangingPageNumbers)
             {
@@ -752,7 +750,7 @@ namespace Classroom_Learning_Partner.Services
 
                 ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), page.PageNumber - 1, true);
             }
-            
+
             page.ContainerZipFilePath = notebook.ContainerZipFilePath;
 
             notebook.Pages.Insert(index, page);
@@ -865,8 +863,7 @@ namespace Classroom_Learning_Partner.Services
                 ChangePageNumbersAfterGivenPage(notebook, LoadedNotebooks.ToList(), index, false);
             }
 
-            if (!notebook.Pages.Any() &&
-                isPreventingEmptyNotebook)
+            if (!notebook.Pages.Any() && isPreventingEmptyNotebook)
             {
                 var newPage = new CLPPage(Person.Author)
                               {
@@ -941,6 +938,7 @@ namespace Classroom_Learning_Partner.Services
             using (var zip = ZipFile.Read(zipContainerFilePath))
             {
                 // Change interval numbers first.
+
                 #region Interval Pages
 
                 foreach (var otherNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
@@ -963,7 +961,8 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        var pageToReNumber =
+                            otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
                         if (isIntervalPageNumbersDecreasing)
                         {
                             pageNameComposite.PageNumber--;
@@ -1001,7 +1000,8 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        var pageToReNumber =
+                            otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
                         if (isIntervalPageNumbersDecreasing)
                         {
                             pageNameComposite.PageNumber--;
@@ -1034,6 +1034,7 @@ namespace Classroom_Learning_Partner.Services
                 #endregion // Interval Pages
 
                 // Then change currentPage's page number to new page number.
+
                 #region Moved Page
 
                 foreach (var otherNotebook in LoadedNotebooks.Where(n => n.ID == notebook.ID))
@@ -1057,7 +1058,8 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        var pageToReNumber =
+                            otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
                         pageNameComposite.PageNumber = newPageNumber;
                         if (pageToReNumber != null)
                         {
@@ -1085,7 +1087,8 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
-                        var pageToReNumber = otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
+                        var pageToReNumber =
+                            otherNotebook.Pages.FirstOrDefault(p => p.ID == pageNameComposite.ID && p.DifferentiationLevel == pageNameComposite.DifferentiationLevel);
                         pageNameComposite.PageNumber = newPageNumber;
                         if (pageToReNumber != null)
                         {
@@ -1513,7 +1516,9 @@ namespace Classroom_Learning_Partner.Services
                 var submissions = GetSubmissionsForPages(notebook, pages);
                 foreach (var submission in submissions)
                 {
-                    var page = pages.FirstOrDefault(p => p.ID == submission.ID && p.DifferentiationLevel == submission.DifferentiationLevel && p.SubPageNumber == submission.SubPageNumber);
+                    var page = pages.FirstOrDefault(p => p.ID == submission.ID &&
+                                                         p.DifferentiationLevel == submission.DifferentiationLevel &&
+                                                         p.SubPageNumber == submission.SubPageNumber);
                     if (page != null)
                     {
                         page.Submissions.Add(submission);
@@ -1750,7 +1755,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static void SavePage(Notebook notebook, CLPPage page)
         {
-            if (notebook == null || 
+            if (notebook == null ||
                 page == null)
             {
                 return;
@@ -1909,7 +1914,11 @@ namespace Classroom_Learning_Partner.Services
             ConversionService.SaveClassRosterToZip(ConversionService.EmilyZipFilePath, classRoster);
 
             var classesDirInfo = new DirectoryInfo(ConversionService.EmilyClassesFolder);
-            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConversionService.ConvertCacheEmilyClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml")
+                                         .Select(file => file.FullName)
+                                         .Select(ConversionService.ConvertCacheEmilyClassPeriod)
+                                         .OrderBy(s => s.StartTime)
+                                         .ToList();
             var i = 1;
             foreach (var session in sessions)
             {

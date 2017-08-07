@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +21,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof (MajorRibbonViewModel))]
     public abstract class ACLPPageBaseViewModel : ViewModelBase
     {
         #region Constructor
@@ -644,28 +642,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            //if (propertyName == "CanSendToTeacher" &&
-            //    viewModel is RibbonViewModel)
-            //{
-            //    RaisePropertyChanged("HasSubmissions");
-            //}
-
-            //if (propertyName == "IsSending" &&
-            //    viewModel is RibbonViewModel)
-            //{
-            //    RaisePropertyChanged("HasSubmissions");
-            //}
-
-            if (IsPagePreview)
-            {
-                return;
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-        }
-
         #endregion //Methods   
 
         #region Page Interaction Methods
@@ -713,12 +689,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
-                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                CLogger.AppendToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                CLogger.AppendToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                CLogger.AppendToLog("[HResult]: " + ex.HResult);
+                CLogger.AppendToLog("[Source]: " + ex.Source);
+                CLogger.AppendToLog("[Method]: " + ex.TargetSite);
+                CLogger.AppendToLog("[StackTrace]: " + ex.StackTrace);
             }
         }
 
@@ -744,12 +720,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch (Exception ex)
             {
-                Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
-                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                CLogger.AppendToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                CLogger.AppendToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                CLogger.AppendToLog("[HResult]: " + ex.HResult);
+                CLogger.AppendToLog("[Source]: " + ex.Source);
+                CLogger.AppendToLog("[Method]: " + ex.TargetSite);
+                CLogger.AppendToLog("[StackTrace]: " + ex.StackTrace);
             }
         }
 
@@ -1165,7 +1141,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //    return;
             //}
 
+#pragma warning disable 1998
+#pragma warning disable 4014
             TaskQueue.Enqueue(async () =>
+#pragma warning restore 4014
+#pragma warning restore 1998
                                {
                                    var historyActionCopy = historyAction.CreatePackagedHistoryAction();
                                    if (historyActionCopy == null)
@@ -1217,7 +1197,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    //}
                                    //catch (Exception)
                                    //{
-                                   //    Logger.Instance.WriteToLog("Failed to send historyAction to Projector");
+                                   //    CLogger.AppendToLog("Failed to send historyAction to Projector");
                                    //}
 
                                    //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
@@ -1245,7 +1225,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var parentPage = pageObject.ParentPage;
             if (parentPage == null)
             {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                CLogger.AppendToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
             AddPageObjectToPage(parentPage, pageObject, addToHistory, forceSelectMode, index);
@@ -1255,7 +1235,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (page == null)
             {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                CLogger.AppendToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
             if (string.IsNullOrEmpty(pageObject.CreatorID))
@@ -1324,7 +1304,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (page == null)
             {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                CLogger.AppendToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
 
@@ -1349,7 +1329,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var parentPage = pageObject.ParentPage;
             if (parentPage == null)
             {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                CLogger.AppendToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
             RemovePageObjectFromPage(parentPage, pageObject, addToHistory);
@@ -1359,7 +1339,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (page == null)
             {
-                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                CLogger.AppendToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
                 return;
             }
 

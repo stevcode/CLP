@@ -38,19 +38,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MajorRibbonViewModel : ViewModelBase
     {
-        public MainWindowViewModel MainWindow
-        {
-            get { return App.MainWindowViewModel; }
-        }
+        public MainWindowViewModel MainWindow => App.MainWindowViewModel;
 
-        private IPageInteractionService _pageInteractionService;
         private readonly IDataService _dataService;
+        private readonly IWindowManagerService _windowManagerService;
+        private IPageInteractionService _pageInteractionService;
         private readonly INetworkService _networkService;
 
-        public MajorRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService, INetworkService networkService)
+        public MajorRibbonViewModel(IDataService dataService, IWindowManagerService windowManagerService, IPageInteractionService pageInteractionService, INetworkService networkService)
         {
-            _pageInteractionService = pageInteractionService;
             _dataService = dataService;
+            _windowManagerService = windowManagerService;
+            _pageInteractionService = pageInteractionService;
             _networkService = networkService;
 
             InitializeCommands();
@@ -58,7 +57,8 @@ namespace Classroom_Learning_Partner.ViewModels
             SetRibbonButtons();
 
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
-            CurrentLeftPanel = Panels.NotebookPages;
+            CurrentLeftPanel = _windowManagerService.LeftPanel;
+            CurrentRightPanel = _windowManagerService.RightPanel;
 
             InitializedAsync += MajorRibbonViewModel_InitializedAsync;
             ClosedAsync += MajorRibbonViewModel_ClosedAsync;
@@ -69,6 +69,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
+            _windowManagerService.LeftPanelChanged += _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged += _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -76,6 +78,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
             _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
 
             return TaskHelper.Completed;
         }
@@ -107,6 +111,50 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var viewModelCommandManager = viewModelBase.GetViewModelCommandManager();
             //    viewModelCommandManager.InvalidateCommands();
             //}
+        }
+
+        private void _windowManagerService_LeftPanelChanged(object sender, EventArgs e)
+        {
+            switch (_windowManagerService.LeftPanel)
+            {
+                case Panels.NotebookPagesPanel:
+                    if (CurrentLeftPanel != Panels.NotebookPagesPanel)
+                    {
+                        CurrentLeftPanel = Panels.NotebookPagesPanel;
+                    }
+                    break;
+                case Panels.ProgressPanel:
+                    if (CurrentLeftPanel != Panels.ProgressPanel)
+                    {
+                        CurrentLeftPanel = Panels.ProgressPanel;
+                    }
+                    break;
+                default:
+                    CurrentLeftPanel = Panels.NoPanel;
+                    break;
+            }
+        }
+
+        private void _windowManagerService_RightPanelChanged(object sender, EventArgs e)
+        {
+            switch (_windowManagerService.RightPanel)
+            {
+                case Panels.DisplaysPanel:
+                    if (CurrentRightPanel != Panels.DisplaysPanel)
+                    {
+                        CurrentRightPanel = Panels.DisplaysPanel;
+                    }
+                    break;
+                case Panels.PageInformationPanel:
+                    if (CurrentRightPanel != Panels.PageInformationPanel)
+                    {
+                        CurrentRightPanel = Panels.PageInformationPanel;
+                    }
+                    break;
+                default:
+                    CurrentRightPanel = Panels.NoPanel;
+                    break;
+            }
         }
 
         #endregion // Events
@@ -443,13 +491,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
-        #region Find Better Way
-
-        /// <summary>Gets or sets the property value.</summary>
+        /// <summary>Left Panel.</summary>
         public Panels? CurrentLeftPanel
         {
-            get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
-            set { SetValue(CurrentLeftPanelProperty, value); }
+            get => GetValue<Panels?>(CurrentLeftPanelProperty);
+            set
+            {
+                SetValue(CurrentLeftPanelProperty, value);
+                switch (CurrentLeftPanel)
+                {
+                    case Panels.NotebookPagesPanel:
+                        _windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
+                        break;
+                    case Panels.ProgressPanel:
+                        _windowManagerService.LeftPanel = Panels.ProgressPanel;
+                        break;
+                    default:
+                        _windowManagerService.LeftPanel = Panels.NoPanel;
+                        break;
+                }
+            }
         }
 
         public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof (Panels?));
@@ -457,13 +518,26 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Right Panel.</summary>
         public Panels? CurrentRightPanel
         {
-            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
-            set { SetValue(CurrentRightPanelProperty, value); }
+            get => GetValue<Panels?>(CurrentRightPanelProperty);
+            set
+            {
+                SetValue(CurrentRightPanelProperty, value);
+                switch (CurrentRightPanel)
+                {
+                    case Panels.DisplaysPanel:
+                        _windowManagerService.RightPanel = Panels.DisplaysPanel;
+                        break;
+                    case Panels.PageInformationPanel:
+                        _windowManagerService.RightPanel = Panels.PageInformationPanel;
+                        break;
+                    default:
+                        _windowManagerService.RightPanel = Panels.NoPanel;
+                        break;
+                }
+            }
         }
 
         public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof (Panels?));
-
-        #endregion //Find Better Way
 
         /// <summary>Gets or sets the property value.</summary>
         public bool BlockStudentPenInput
@@ -627,7 +701,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _dataService.SetCurrentDisplay(null);
-            CurrentRightPanel = null;
+            CurrentRightPanel = Panels.NoPanel;
 
             if (App.Network.ProjectorProxy == null)
             {

@@ -272,7 +272,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private ComboBox _fontFamilyComboxBox;
         private ComboBox _fontSizeComboxBox;
         private ComboBox _fontColorComboxBox;
-        private ComboBox _textContextComboxBox;
 
         #endregion //Buttons
 

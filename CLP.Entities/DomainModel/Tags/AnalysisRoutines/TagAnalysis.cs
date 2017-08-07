@@ -14,7 +14,7 @@ namespace CLP.Entities
         {
 
             // We have a page definition and an array, so we're good to go!
-            //Logger.Instance.WriteToLog("Array found! Dimensions: " + array.Columns + " by " + array.Rows);
+            //CLogger.AppendToLog("Array found! Dimensions: " + array.Columns + " by " + array.Rows);
 
             //////////var arrayWidth = array.Columns;
             //////////var arrayHeight = array.Rows;
@@ -23,8 +23,8 @@ namespace CLP.Entities
 
   
 
-            ////////////Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
-            ////////////Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
+            ////////////CLogger.AppendToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
+            ////////////CLogger.AppendToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
 
             //////////// Add a strategy tag for inner products (if applicable)
             //////////var partialProducts = array.GetPartialProducts();
@@ -78,7 +78,7 @@ namespace CLP.Entities
             //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
             //tags.Add(divisionCorrectnessTag);
 
-            //Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
+            //CLogger.AppendToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
 
             //// Add tags for the number of horizontal and vertical divisions
             //Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
@@ -91,8 +91,8 @@ namespace CLP.Entities
             //vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
             //tags.Add(vertDivsTag);
 
-            //Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
-            //Logger.Instance.WriteToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
+            //CLogger.AppendToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
+            //CLogger.AppendToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
         }
 
         // Get the (sorted) list of subdivisions of startingValue, using the place value strategy
@@ -117,7 +117,7 @@ namespace CLP.Entities
             {
                 outputString += (x.ToString() + " ");
             }
-            Logger.Instance.WriteToLog("Place value divisions of " + startingValue + ": " + outputString);*/
+            CLogger.AppendToLog("Place value divisions of " + startingValue + ": " + outputString);*/
 
             return output;
         }
@@ -216,7 +216,7 @@ namespace CLP.Entities
         /// </summary>
         public static void AnalyzeStamps(CLPPage page)
         {
-            //    Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
+            //    CLogger.AppendToLog("Analyzing stamp grouping region...");
 
             //    ObservableCollection<Tag> tags = page.PageTags;
             //    ProductRelation relation = null;
@@ -232,7 +232,7 @@ namespace CLP.Entities
             //    if(relation == null)
             //    {
             //        // No definition for the page!
-            //        Logger.Instance.WriteToLog("No page definition found! :(");
+            //        CLogger.AppendToLog("No page definition found! :(");
             //        return;
             //    }
 
@@ -252,12 +252,12 @@ namespace CLP.Entities
             //    if(region == null)
             //    {
             //        // No CLPGroupingRegion on this page!
-            //        Logger.Instance.WriteToLog("No grouping region found! :(");
+            //        CLogger.AppendToLog("No grouping region found! :(");
             //        return;
             //    }
 
             //    region.DoInterpretation();
-            //    Logger.Instance.WriteToLog("Done with stamps interpretation");
+            //    CLogger.AppendToLog("Done with stamps interpretation");
 
             //    // Now we have a list of the possible interpretations of the student's stamps
             //    ObservableCollection<CLPGrouping> groupings = region.Groupings;

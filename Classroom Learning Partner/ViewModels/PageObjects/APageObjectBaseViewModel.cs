@@ -509,7 +509,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
+                    CLogger.AppendToLog("Error: Current Batch not ChangePositionBatch.");
                     var batchHistoryAction = pageObject.ParentPage.History.EndBatch();
                     ACLPPageBaseViewModel.AddHistoryActionToPage(pageObject.ParentPage, batchHistoryAction, true);
                 }
@@ -535,7 +535,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    Logger.Instance.WriteToLog("Error: Current Batch not ResizeBatch.");
+                    CLogger.AppendToLog("Error: Current Batch not ResizeBatch.");
                     var batchHistoryAction = pageObject.ParentPage.History.EndBatch();
                     ACLPPageBaseViewModel.AddHistoryActionToPage(pageObject.ParentPage, batchHistoryAction, true);
                 }

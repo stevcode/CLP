@@ -1,9 +1,10 @@
 ﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.ClassRosterView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:catel="http://schemas.catelproject.com"
                   xmlns:system="clr-namespace:System;assembly=mscorlib"
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                  xmlns:orc="http://www.wildgums.net.au/orc"
                   Title="Edit Class Roster"
                   ShowInTaskbar="False">
     
@@ -28,7 +29,7 @@
 
         </StackPanel>
 
-        <catel:StackGrid DockPanel.Dock="Right"
+        <orc:StackGrid DockPanel.Dock="Right"
                          Margin="26 0 0 0"
                          VerticalAlignment="Stretch">
 
@@ -73,7 +74,7 @@
                     <DataTemplate>
 
                         <!-- Control Layout -->
-                        <catel:StackGrid HorizontalAlignment="Stretch"
+                        <orc:StackGrid HorizontalAlignment="Stretch"
                                          Height="42"
                                          Margin="0 0 30 0">
 
@@ -125,13 +126,13 @@
                                 </Button.Template>
                             </Button>
 
-                        </catel:StackGrid>
+                        </orc:StackGrid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
         <Line DockPanel.Dock="Right"
               Stretch="Fill"
@@ -179,7 +180,7 @@
                     <DataTemplate>
 
                         <!-- Control Layout -->
-                        <catel:StackGrid HorizontalAlignment="Stretch"
+                        <orc:StackGrid HorizontalAlignment="Stretch"
                                          Height="42">
 
                             <Grid.ColumnDefinitions>
@@ -230,7 +231,7 @@
                                 </Button.Template>
                             </Button>
 
-                        </catel:StackGrid>
+                        </orc:StackGrid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -302,7 +303,7 @@
 
         </StackPanel>
 
-        <catel:StackGrid HorizontalAlignment="Left"
+        <orc:StackGrid HorizontalAlignment="Left"
                          VerticalAlignment="Top"
                          Margin="10 0">
 
@@ -386,7 +387,14 @@
             <TextBox Grid.Column="1"
                      Text="{Binding State}" />
 
-        </catel:StackGrid>
+        </orc:StackGrid>
 
     </DockPanel>
 </catel:DataWindow>
+
+
+
+
+
+
+

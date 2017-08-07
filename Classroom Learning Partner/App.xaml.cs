@@ -12,6 +12,7 @@ using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -35,7 +36,7 @@ namespace Classroom_Learning_Partner
 #endif
 
             InitializeCatelSettings();
-            InitializeServices();
+            InitializeServices(currentProgramMode);
             
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView
@@ -76,9 +77,6 @@ namespace Classroom_Learning_Partner
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
-            // Disable Catel Validation
-            Catel.Data.ModelBase.SuspendValidationForAllModels = true;
-
             // Manual Register views to viewModels that don't adhere to standard naming conventions.
             var viewModelLocator = ServiceLocator.Default.ResolveType<IViewModelLocator>();
             viewModelLocator.Register(typeof(ColumnDisplayPreviewView), typeof(ColumnDisplayViewModel));
@@ -90,10 +88,17 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
-        private static void InitializeServices()
+        private static void InitializeServices(ProgramModes currentProgramMode)
         {
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
+
+            var windowManagerService = new WindowManagerService();
+            if (currentProgramMode != ProgramModes.Projector)
+            {
+                windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
+            }
+            ServiceLocator.Default.RegisterInstance<IWindowManagerService>(windowManagerService);
 
             var networkService = new NetworkService();
             ServiceLocator.Default.RegisterInstance<INetworkService>(networkService);
@@ -131,12 +136,12 @@ namespace Classroom_Learning_Partner
                               "click No the application will close)",
                               e.Exception.Message + (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
 
-            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " +
+            CLogger.AppendToLog("[UNHANDLED ERROR] - " + e.Exception.Message + " " +
                                        (e.Exception.InnerException != null ? "\n" + e.Exception.InnerException.Message : null));
-            Logger.Instance.WriteToLog("[HResult]: " + e.Exception.HResult);
-            Logger.Instance.WriteToLog("[Source]: " + e.Exception.Source);
-            Logger.Instance.WriteToLog("[Method]: " + e.Exception.TargetSite);
-            Logger.Instance.WriteToLog("[StackTrace]: " + e.Exception.StackTrace);
+            CLogger.AppendToLog("[HResult]: " + e.Exception.HResult);
+            CLogger.AppendToLog("[Source]: " + e.Exception.Source);
+            CLogger.AppendToLog("[Method]: " + e.Exception.TargetSite);
+            CLogger.AppendToLog("[StackTrace]: " + e.Exception.StackTrace);
 
             if (MessageBox.Show(errorMessage, "Application Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Error) == MessageBoxResult.No)
             {
