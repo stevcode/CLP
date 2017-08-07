@@ -510,36 +510,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Commands
 
-        #region Methods
-
-        // HACK: Needs a WindowManager Service. From InterestedIn attribute following MajorRibbonViewModel and MainWindowViewModel
-        protected void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if (viewModel == null)
-            {
-                return;
-            }
-
-            if (viewModel is MainWindowViewModel)
-            {
-                var mainWindow = viewModel as MainWindowViewModel;
-                if (propertyName == "IsAuthoring")
-                {
-                    CurrentDisplay = null;
-                    if (mainWindow.IsAuthoring)
-                    {
-                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                    }
-                    else
-                    {
-                        WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-                    }
-                }
-            }
-        }
-
-        #endregion //Methods
-
         #region Static Methods
 
         public static ContextRibbonViewModel GetContextRibbon()
