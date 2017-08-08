@@ -29,24 +29,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private readonly IPageInteractionService _pageInteractionService;
 
         /// <summary>Initializes a new instance of the CLPPageViewModel class.</summary>
-        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService)
+        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService, IPageInteractionService pageInteractionService)
         {
             Page = page;
             _dataService = dataService;
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _pageInteractionService = pageInteractionService;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
             Submissions.CollectionChanged += Submissions_CollectionChanged;
 
-            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
-            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
-            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
-            ClearPageCommand = new Command(OnClearPageCommandExecute);
-            SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
-
             InitializedAsync += ACLPPageBaseViewModel_InitializedAsync;
             ClosedAsync += ACLPPageBaseViewModel_ClosedAsync;
+
+            InitializeCommands();
         }
 
         private Task ACLPPageBaseViewModel_InitializedAsync(object sender, EventArgs e)
@@ -412,6 +408,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Events
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
+            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
+            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
+            SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
+        }
 
         #region Canvas Commands
 
