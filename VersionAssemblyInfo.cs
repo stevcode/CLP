@@ -1,4 +1,4 @@
 // This file is overwritten during the build process. No changes you make will persist. 
 using System.Reflection; 
-[assembly: AssemblyVersion("17.7.28.0")] 
-[assembly: AssemblyInformationalVersion("17.7.28.0-rbf24b4b6")] 
+[assembly: AssemblyVersion("17.8.8.0")] 
+[assembly: AssemblyInformationalVersion("17.8.8.0-redb8d79a")] 

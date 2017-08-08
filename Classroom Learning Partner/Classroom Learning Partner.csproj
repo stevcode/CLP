@@ -246,6 +246,7 @@
     <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Services\WindowManagerService.cs" />
+    <Compile Include="Utilities\DataContextSpy.cs" />
     <Compile Include="Utilities\Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Utilities\Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Utilities\Extensions\IModelExtensions.cs" />

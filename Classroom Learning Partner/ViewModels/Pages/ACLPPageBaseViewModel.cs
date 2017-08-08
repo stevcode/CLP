@@ -29,58 +29,17 @@ namespace Classroom_Learning_Partner.ViewModels
         private readonly IPageInteractionService _pageInteractionService;
 
         /// <summary>Initializes a new instance of the CLPPageViewModel class.</summary>
-        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService)
+        protected ACLPPageBaseViewModel(CLPPage page, IDataService dataService, IPageInteractionService pageInteractionService)
         {
             Page = page;
             _dataService = dataService;
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _pageInteractionService = pageInteractionService;
 
-            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
-
-            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
-            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
-            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
-            ClearPageCommand = new Command(OnClearPageCommandExecute);
-            SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
-
-            InitializedAsync += ACLPPageBaseViewModel_InitializedAsync;
-            ClosedAsync += ACLPPageBaseViewModel_ClosedAsync;
-        }
-
-        private Task ACLPPageBaseViewModel_InitializedAsync(object sender, EventArgs e)
-        {
-            _dataService.CurrentPageChanged += _dataService_CurrentPageChanged;
-
-            return TaskHelper.Completed;
-        }
-
-        private Task ACLPPageBaseViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
-        {
-            _dataService.CurrentNotebookChanged -= _dataService_CurrentPageChanged;
-
-            return TaskHelper.Completed;
-        }
-
-        private void _dataService_CurrentPageChanged(object sender, EventArgs e)
-        {
-            ClearAdorners();
+            InitializeEventSubscriptions();
+            InitializeCommands();
         }
 
         #endregion //Constructor
-
-        #region Overrides of ViewModelBase
-
-        protected override async Task OnClosingAsync()
-        {
-            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-            Submissions.CollectionChanged -= Submissions_CollectionChanged;
-            await base.OnClosingAsync();
-        }
-
-        #endregion
 
         #region Model
 
@@ -345,7 +304,42 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Events
 
-        protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void InitializeEventSubscriptions()
+        {
+            _dataService.CurrentPageChanged += _dataService_CurrentPageChanged;
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            Submissions.CollectionChanged += Submissions_CollectionChanged;
+        }
+
+        private void _dataService_CurrentPageChanged(object sender, EventArgs e)
+        {
+            ClearAdorners();
+        }
+
+        private void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        {
+            if (IsPagePreview || History.IsAnimating)
+            {
+                return;
+            }
+
+            if (History.RedoActions.Any())
+            {
+                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                InkStrokes.Add(e.Removed);
+                InkStrokes.Remove(e.Added);
+                MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                return;
+            }
+
+            StrokesChanged(e);
+
+            //QueueTask(() => StrokesChanged(e));
+        }
+
+        private void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsPagePreview ||
                 _pageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None ||
@@ -387,31 +381,37 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        protected void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
+        private void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (IsPagePreview || History.IsAnimating)
-            {
-                return;
-            }
-
-            if (History.RedoActions.Any())
-            {
-                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                InkStrokes.Add(e.Removed);
-                InkStrokes.Remove(e.Added);
-                MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                return;
-            }
-
-            StrokesChanged(e);
-
-            //QueueTask(() => StrokesChanged(e));
+            RaisePropertyChanged(nameof(HasSubmissions));
+            RaisePropertyChanged(nameof(NumberOfDistinctSubmissions));
         }
 
         #endregion //Events
 
+        #region Overrides of ViewModelBase
+
+        protected override async Task OnClosingAsync()
+        {
+            _dataService.CurrentPageChanged -= _dataService_CurrentPageChanged;
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            Submissions.CollectionChanged -= Submissions_CollectionChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion
+
         #region Commands
+
+        private void InitializeCommands()
+        {
+            MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
+            MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
+            MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
+            ClearPageCommand = new Command(OnClearPageCommandExecute);
+            SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
+        }
 
         #region Canvas Commands
 
@@ -549,14 +549,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void UpdateSubmissionCount()
         {
-            RaisePropertyChanged("HasSubmissions");
-            RaisePropertyChanged("NumberOfDistinctSubmissions");
-        }
-
-        protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("HasSubmissions");
-            RaisePropertyChanged("NumberOfDistinctSubmissions");
+            RaisePropertyChanged(nameof(HasSubmissions));
+            RaisePropertyChanged(nameof(NumberOfDistinctSubmissions));
         }
 
         public static void ClearAdorners(CLPPage page)

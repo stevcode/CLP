@@ -7,8 +7,8 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public CLPPageViewModel(CLPPage page, IDataService dataService)
-            : base(page, dataService) { }
+        public CLPPageViewModel(CLPPage page, IDataService dataService, IPageInteractionService pageInteractionService)
+            : base(page, dataService, pageInteractionService) { }
 
         #endregion //Constructor
     }
