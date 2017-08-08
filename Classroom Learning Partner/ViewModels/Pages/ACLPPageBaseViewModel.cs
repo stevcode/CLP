@@ -54,7 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Task ACLPPageBaseViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
         {
-            _dataService.CurrentNotebookChanged -= _dataService_CurrentPageChanged;
+            _dataService.CurrentPageChanged -= _dataService_CurrentPageChanged;
 
             return TaskHelper.Completed;
         }
