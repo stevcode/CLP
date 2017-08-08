@@ -19,7 +19,7 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region ATagBase Overrides
-        
+
         public override string FormattedName => "Array";
 
         #endregion //ATagBase Overrides
@@ -62,9 +62,15 @@ namespace CLP.Entities
                         relevantSemanticEvents.Add(currentSemanticEvent);
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
-                                                CodedResultantID = currentSemanticEvent.EventInformation,
-                                                StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_DIVIDE
+                                                CodedIncrementID
+                                                    = currentSemanticEvent
+                                                        .CodedObjectIDIncrement,
+                                                CodedResultantID
+                                                    = currentSemanticEvent
+                                                        .EventInformation,
+                                                StrategySpecifics
+                                                    = Codings
+                                                        .STRATEGY_SPECIFICS_ARRAY_DIVIDE
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
@@ -75,9 +81,15 @@ namespace CLP.Entities
                         relevantSemanticEvents.Add(currentSemanticEvent);
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
-                                                CodedResultantID = currentSemanticEvent.EventInformation,
-                                                StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK
+                                                CodedIncrementID
+                                                    = currentSemanticEvent
+                                                        .CodedObjectIDIncrement,
+                                                CodedResultantID
+                                                    = currentSemanticEvent
+                                                        .EventInformation,
+                                                StrategySpecifics
+                                                    = Codings
+                                                        .STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
@@ -110,7 +122,7 @@ namespace CLP.Entities
 
                     if (currentSemanticEvent.EventType == Codings.EVENT_CUT)
                     {
-                        for (int j = i + 1; j < semanticEvents.Count; j++)
+                        for (var j = i + 1; j < semanticEvents.Count; j++)
                         {
                             var nextSemanticEvent = semanticEvents[j];
                             if (nextSemanticEvent.CodedObject == Codings.OBJECT_ARRAY &&
@@ -120,23 +132,35 @@ namespace CLP.Entities
                                 relevantSemanticEvents.Add(currentSemanticEvent);
                                 relevantSemanticEvents.Add(nextSemanticEvent);
                                 ignoredHistoryIndexes.Add(j);
-                                var codedStrategyInner = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
-                                                         {
-                                                             CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
-                                                             CodedResultantID = currentSemanticEvent.EventInformation,
-                                                             StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT_SNAP
-                                                         };
+                                var codedStrategyInner =
+                                    new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
+                                    {
+                                        CodedIncrementID
+                                            = currentSemanticEvent
+                                                .CodedObjectIDIncrement,
+                                        CodedResultantID
+                                            = currentSemanticEvent
+                                                .EventInformation,
+                                        StrategySpecifics
+                                            = Codings
+                                                .STRATEGY_SPECIFICS_ARRAY_CUT_SNAP
+                                    };
                                 codedStrategies.Add(codedStrategyInner);
-                                continue;
                             }
                         }
 
                         relevantSemanticEvents.Add(currentSemanticEvent);
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, currentSemanticEvent.CodedObjectID)
                                             {
-                                                CodedIncrementID = currentSemanticEvent.CodedObjectIDIncrement,
-                                                CodedResultantID = currentSemanticEvent.EventInformation,
-                                                StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_CUT
+                                                CodedIncrementID
+                                                    = currentSemanticEvent
+                                                        .CodedObjectIDIncrement,
+                                                CodedResultantID
+                                                    = currentSemanticEvent
+                                                        .EventInformation,
+                                                StrategySpecifics
+                                                    = Codings
+                                                        .STRATEGY_SPECIFICS_ARRAY_CUT
                                             };
                         codedStrategies.Add(codedStrategy);
                         continue;
@@ -152,11 +176,14 @@ namespace CLP.Entities
                         var fullCodedID = $"{codedIDLeft}, {codedIDRight}";
                         var codedStrategy = new CodedRepresentationStrategy(Codings.STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT, Codings.OBJECT_ARRAY, fullCodedID)
                                             {
-                                                CodedResultantID = currentSemanticEvent.EventInformation,
-                                                StrategySpecifics = Codings.STRATEGY_SPECIFICS_ARRAY_SNAP
+                                                CodedResultantID =
+                                                    currentSemanticEvent
+                                                        .EventInformation,
+                                                StrategySpecifics =
+                                                    Codings
+                                                        .STRATEGY_SPECIFICS_ARRAY_SNAP
                                             };
                         codedStrategies.Add(codedStrategy);
-                        continue;
                     }
                 }
             }

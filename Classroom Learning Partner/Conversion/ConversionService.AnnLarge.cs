@@ -1661,7 +1661,7 @@ namespace Classroom_Learning_Partner
                         interpretationRegion.XPosition = 234.6666;
                         interpretationRegion.YPosition = 668.9809;
                         interpretationRegion.Height = 116.3069;
-                        interpretationRegion.Width = 108.3371;
+                        interpretationRegion.Width = 128.3371;
                         break;
                     }
                 case "cgXYlAbAM0GGy8iBI4tyGw": // Page 13

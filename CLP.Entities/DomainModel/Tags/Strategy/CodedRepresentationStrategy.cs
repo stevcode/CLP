@@ -26,8 +26,8 @@ namespace CLP.Entities
         /// <summary>Name of the strategy used.</summary>
         public string CodedStrategy
         {
-            get { return GetValue<string>(CodedStrategyProperty); }
-            set { SetValue(CodedStrategyProperty, value); }
+            get => GetValue<string>(CodedStrategyProperty);
+            set => SetValue(CodedStrategyProperty, value);
         }
 
         public static readonly PropertyData CodedStrategyProperty = RegisterProperty("CodedStrategy", typeof(string), string.Empty);
@@ -35,8 +35,8 @@ namespace CLP.Entities
         /// <summary>Coded value of the representation the strategy applies to.</summary>
         public string CodedRepresentation
         {
-            get { return GetValue<string>(CodedRepresentationProperty); }
-            set { SetValue(CodedRepresentationProperty, value); }
+            get => GetValue<string>(CodedRepresentationProperty);
+            set => SetValue(CodedRepresentationProperty, value);
         }
 
         public static readonly PropertyData CodedRepresentationProperty = RegisterProperty("CodedRepresentation", typeof(string), string.Empty);
@@ -44,8 +44,8 @@ namespace CLP.Entities
         /// <summary>Coded ID for the representation.</summary>
         public string CodedID
         {
-            get { return GetValue<string>(CodedIDProperty); }
-            set { SetValue(CodedIDProperty, value); }
+            get => GetValue<string>(CodedIDProperty);
+            set => SetValue(CodedIDProperty, value);
         }
 
         public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof(string), string.Empty);
@@ -53,8 +53,8 @@ namespace CLP.Entities
         /// <summary>Coded incrementID for the representation, if necessary.</summary>
         public string CodedIncrementID
         {
-            get { return GetValue<string>(CodedIncrementIDProperty); }
-            set { SetValue(CodedIncrementIDProperty, value); }
+            get => GetValue<string>(CodedIncrementIDProperty);
+            set => SetValue(CodedIncrementIDProperty, value);
         }
 
         public static readonly PropertyData CodedIncrementIDProperty = RegisterProperty("CodedIncrementID", typeof(string), string.Empty);
@@ -62,8 +62,8 @@ namespace CLP.Entities
         /// <summary>Coded resultantID for when a strategy utilized a change in Coded ID.</summary>
         public string CodedResultantID
         {
-            get { return GetValue<string>(CodedResultantIDProperty); }
-            set { SetValue(CodedResultantIDProperty, value); }
+            get => GetValue<string>(CodedResultantIDProperty);
+            set => SetValue(CodedResultantIDProperty, value);
         }
 
         public static readonly PropertyData CodedResultantIDProperty = RegisterProperty("CodedResultantID", typeof(string), string.Empty);
@@ -71,8 +71,8 @@ namespace CLP.Entities
         /// <summary>Any relevant specifics for the strategy used.</summary>
         public string StrategySpecifics
         {
-            get { return GetValue<string>(StrategySpecificsProperty); }
-            set { SetValue(StrategySpecificsProperty, value); }
+            get => GetValue<string>(StrategySpecificsProperty);
+            set => SetValue(StrategySpecificsProperty, value);
         }
 
         public static readonly PropertyData StrategySpecificsProperty = RegisterProperty("StrategySpecifics", typeof(string), string.Empty);
@@ -87,7 +87,7 @@ namespace CLP.Entities
                 var incrementID = !string.IsNullOrWhiteSpace(CodedIncrementID) ? " " + CodedIncrementID : string.Empty;
                 var resultantID = !string.IsNullOrWhiteSpace(CodedResultantID) ? ": " + CodedResultantID : string.Empty;
                 var strategySpecifics = !string.IsNullOrWhiteSpace(StrategySpecifics) ? " " + StrategySpecifics : string.Empty;
-                return string.Format("{0}: {1} [{2}{3}{4}]{5}", CodedStrategy, CodedRepresentation, CodedID, incrementID, resultantID, strategySpecifics);
+                return $"{CodedStrategy}: {CodedRepresentation} [{CodedID}{incrementID}{resultantID}]{strategySpecifics}";
             }
         }
 

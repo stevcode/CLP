@@ -28,17 +28,18 @@ namespace CLP.Entities
         /// <summary>List of all the Representation Strategies used on the page.</summary>
         public List<CodedRepresentationStrategy> CodedStrategies
         {
-            get { return GetValue<List<CodedRepresentationStrategy>>(CodedStrategiesProperty); }
-            set { SetValue(CodedStrategiesProperty, value); }
+            get => GetValue<List<CodedRepresentationStrategy>>(CodedStrategiesProperty);
+            set => SetValue(CodedStrategiesProperty, value);
         }
 
-        public static readonly PropertyData CodedStrategiesProperty = RegisterProperty("CodedStrategies", typeof(List<CodedRepresentationStrategy>), () => new List<CodedRepresentationStrategy>());
+        public static readonly PropertyData CodedStrategiesProperty =
+            RegisterProperty("CodedStrategies", typeof(List<CodedRepresentationStrategy>), () => new List<CodedRepresentationStrategy>());
 
         /// <summary>List of all the Array Strategies used on the <see cref="CLPPage" />.</summary>
         public List<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<List<ISemanticEvent>>(SemanticEventsProperty); }
-            set { SetValue(SemanticEventsProperty, value); }
+            get => GetValue<List<ISemanticEvent>>(SemanticEventsProperty);
+            set => SetValue(SemanticEventsProperty, value);
         }
 
         public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());

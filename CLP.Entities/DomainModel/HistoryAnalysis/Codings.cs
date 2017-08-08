@@ -262,6 +262,7 @@ namespace CLP.Entities
         public const string STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT = "PART";
         public const string STRATEGY_NAME_ARRAY_SKIP = "SKIP";
 
+        public const string STRATEGY_NAME_NUMBER_LINE_JUMP = "JUMP";
         public const string STRATEGY_NAME_NUMBER_LINE_REPEAT_ADDITION = "REPEAT ADD";
 
         public const string STRATEGY_NAME_BINS_DEAL = "DEAL";
@@ -277,6 +278,8 @@ namespace CLP.Entities
         public const string STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK = "ink divide";
         public const string STRATEGY_SPECIFICS_ARRAY_ARITH = "+arith";
         public const string STRATEGY_SPECIFICS_ARRAY_DOTS = "dots";
+
+        public const string STRATEGY_SPECIFICS_NUMBER_LINE_ARITH = "+arith";
 
         #endregion // Strategy Specifics
 
