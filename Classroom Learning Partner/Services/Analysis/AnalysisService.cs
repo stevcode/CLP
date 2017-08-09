@@ -377,16 +377,44 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Members
 
+        public static void RunAnalysisOnLoadedStudentNotebooks(List<Notebook> notebooks)
+        {
+            var analysisRows = new List<string>();
+
+            var studentNotebooks = notebooks.Where(n => n.Owner.IsStudent).ToList();
+            foreach (var studentNotebook in studentNotebooks)
+            {
+                foreach (var page in studentNotebook.Pages)
+                {
+                    var analysisEntry = GenerateAnalysisEntryForPage(page);
+                    var analysisRow = analysisEntry.BuildEntryLine();
+                    analysisRows.Add(analysisRow);
+                }
+            }
+
+            var desktopDirectory = DataService.DesktopFolderPath;
+            var filePath = Path.Combine(desktopDirectory, "BatchAnalysis.tsv");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            File.WriteAllText(filePath, string.Empty);
+
+            var headerRow = AnalysisEntry.BuildHeaderEntryLine();
+            File.AppendAllText(filePath, headerRow);
+
+            foreach (var analysisRow in analysisRows)
+            {
+                File.AppendAllText(filePath, Environment.NewLine + analysisRow);
+            }
+        }
+
         public static void RunAnalysisOnLoadedNotebook(Notebook notebook)
         {
             var analysisRows = new List<string>();
             foreach (var page in notebook.Pages)
             {
-                //if (page.PageNumber != 276)
-                //{
-                //    continue;
-                //}
-
                 HistoryAnalysis.GenerateSemanticEvents(page);
                 var analysisEntry = GenerateAnalysisEntryForPage(page);
                 var analysisRow = analysisEntry.BuildEntryLine();
@@ -1395,15 +1423,15 @@ namespace Classroom_Learning_Partner.Services
             var rightStampIDsDeleted = new List<string>();
             foreach (var usedRepresentation in rightStampImages)
             {
-                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
-                if (parentStampInfoParts.Length == 2)
-                {
-                    var parentStampIDsComposite = parentStampInfoParts[1];
-                    var parentStampIDs = parentStampIDsComposite.Split(" ; ").ToList();
-                    rightStampIDsCreated.AddRange(parentStampIDs);
-                    rightStampIDsDeleted.AddRange(parentStampIDs.Where(id => !stampIDsOnPage.Contains(id)));
-                }
+                //var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
+                //var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
+                //if (parentStampInfoParts.Length == 2)
+                //{
+                //    var parentStampIDsComposite = parentStampInfoParts[1];
+                //    var parentStampIDs = parentStampIDsComposite.Split(" ; ").ToList();
+                //    rightStampIDsCreated.AddRange(parentStampIDs);
+                //    rightStampIDsDeleted.AddRange(parentStampIDs.Where(id => !stampIDsOnPage.Contains(id)));
+                //}
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
                 if (representationInfoParts.Length == 2)
@@ -1412,14 +1440,14 @@ namespace Classroom_Learning_Partner.Services
                     entry.RightStampImagesCreatedCount += stampImageCount;
                 }
 
-                var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
-                if (companionStampedObjectInfoParts.Length == 2)
-                {
-                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
-                    entry.RightStampImagesCreatedCount += companionStampedObjectIDs.Count;
-                }
+                //var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
+                //var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
+                //if (companionStampedObjectInfoParts.Length == 2)
+                //{
+                //    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                //    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                //    entry.RightStampImagesCreatedCount += companionStampedObjectIDs.Count;
+                //}
             }
 
             entry.RightStampsCreatedCount += rightStampIDsCreated.Count;
@@ -1722,15 +1750,15 @@ namespace Classroom_Learning_Partner.Services
             var unmatchedStampIDsDeleted = new List<string>();
             foreach (var usedRepresentation in unmatchedStampImages)
             {
-                var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
-                var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
-                if (parentStampInfoParts.Length == 2)
-                {
-                    var parentStampIDsComposite = parentStampInfoParts[1];
-                    var parentStampIDs = parentStampIDsComposite.Split(" ; ").ToList();
-                    unmatchedStampIDsCreated.AddRange(parentStampIDs);
-                    unmatchedStampIDsDeleted.AddRange(parentStampIDs.Where(id => !stampIDsOnPage.Contains(id)));
-                }
+                //var parentStampAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (PSID)"));
+                //var parentStampInfoParts = parentStampAdditionalInfo.Split(" : ");
+                //if (parentStampInfoParts.Length == 2)
+                //{
+                //    var parentStampIDsComposite = parentStampInfoParts[1];
+                //    var parentStampIDs = parentStampIDsComposite.Split(" ; ").ToList();
+                //    unmatchedStampIDsCreated.AddRange(parentStampIDs);
+                //    unmatchedStampIDsDeleted.AddRange(parentStampIDs.Where(id => !stampIDsOnPage.Contains(id)));
+                //}
 
                 var representationInfoParts = usedRepresentation.RepresentationInformation.Split(' ');
                 if (representationInfoParts.Length == 2)
@@ -1739,14 +1767,14 @@ namespace Classroom_Learning_Partner.Services
                     entry.UnmatchedStampImagesCreatedCount += stampImageCount;
                 }
 
-                var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
-                var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
-                if (companionStampedObjectInfoParts.Length == 2)
-                {
-                    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
-                    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
-                    entry.UnmatchedStampImagesCreatedCount += companionStampedObjectIDs.Count;
-                }
+                //var companionStampedObjectAdditionalInfo = usedRepresentation.AdditionalInformation.FirstOrDefault(a => a.Contains("UNLISTED (COID)"));
+                //var companionStampedObjectInfoParts = companionStampedObjectAdditionalInfo.Split(" : ");
+                //if (companionStampedObjectInfoParts.Length == 2)
+                //{
+                //    var companionStampedObjectIDsComposite = companionStampedObjectInfoParts[1];
+                //    var companionStampedObjectIDs = companionStampedObjectIDsComposite.Split(" ; ").Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                //    entry.UnmatchedStampImagesCreatedCount += companionStampedObjectIDs.Count;
+                //}
             }
 
             entry.UnmatchedStampsCreatedCount += unmatchedStampIDsCreated.Count;

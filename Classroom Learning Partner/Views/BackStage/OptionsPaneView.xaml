@@ -37,7 +37,7 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
-            <!-- Non-Release Build Stuff
+            
             <Button Content="Generate Analysis Stats"
                     Command="{Binding RunAnalysisCommand}"
                     Height="50"
@@ -46,6 +46,7 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
+            <!-- Non-Release Build Stuff
             <Button Content="Clear Author History"
                     Command="{Binding ClearAuthorHistoryItemsCommand}"
                     Height="50"
