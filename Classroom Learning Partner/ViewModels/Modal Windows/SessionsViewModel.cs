@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -135,16 +136,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
-            AddSessionCommand = new Command(OnAddSessionCommandExecute);
-            EditSessionCommand = new Command(OnEditSessionCommandExecute);
+            AddSessionCommand = new TaskCommand(OnAddSessionCommandExecuteAsync);
+            EditSessionCommand = new TaskCommand(OnEditSessionCommandExecuteAsync);
             DeleteSessionCommand = new Command(OnDeleteSessionCommandExecute);
-            OpenSessionCommand = new Command(OnOpenSessionCommandExecute);
+            OpenSessionCommand = new TaskCommand(OnOpenSessionCommandExecuteAsync);
         }
 
         /// <summary>Adds a new Session.</summary>
-        public Command AddSessionCommand { get; private set; }
+        public TaskCommand AddSessionCommand { get; private set; }
 
-        private void OnAddSessionCommandExecute()
+        private async Task OnAddSessionCommandExecuteAsync()
         {
             var session = new Session
                           {
@@ -154,9 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var viewModel = this.CreateViewModel<SessionViewModel>(session);
             viewModel.WindowTitle = "New Session";
-
-            var result = viewModel.ShowWindowAsDialog();
-            if (result != true)
+            if (!(await viewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
@@ -168,15 +167,13 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Edits the selected Session.</summary>
-        public Command EditSessionCommand { get; private set; }
+        public TaskCommand EditSessionCommand { get; private set; }
 
-        private void OnEditSessionCommandExecute()
+        private async Task OnEditSessionCommandExecuteAsync()
         {
             var viewModel = this.CreateViewModel<SessionViewModel>(CurrentSession);
             viewModel.WindowTitle = "Edit Session";
-
-            var result = viewModel.ShowWindowAsDialog();
-            if (result != true)
+            if (!(await viewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
@@ -194,9 +191,9 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Opens the selected Session.</summary>
-        public Command OpenSessionCommand { get; private set; }
+        public TaskCommand OpenSessionCommand { get; private set; }
 
-        private async void OnOpenSessionCommandExecute()
+        private async Task OnOpenSessionCommandExecuteAsync()
         {
             await SaveViewModelAsync();
             await CloseViewModelAsync(true);

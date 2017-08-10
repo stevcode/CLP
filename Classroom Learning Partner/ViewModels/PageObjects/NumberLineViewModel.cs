@@ -17,18 +17,18 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class NumberLineViewModel : APageObjectBaseViewModel
     {
+        private readonly IUIVisualizerService _uiVisualizerService;
+
         #region Constructor
 
-        public NumberLineViewModel(NumberLine numberLine)
+        public NumberLineViewModel(NumberLine numberLine, IUIVisualizerService uiVisualizerService)
         {
+            _uiVisualizerService = uiVisualizerService;
+
             PageObject = numberLine;
 
-            ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
-            DragArrowStartCommand = new Command<DragStartedEventArgs>(OnDragArrowStartCommandExecute);
-            DragArrowCommand = new Command<DragDeltaEventArgs>(OnDragArrowCommandExecute);
-            DragArrowStopCommand = new Command<DragCompletedEventArgs>(OnDragArrowStopCommandExecute);
-            CheckArrayCompletenessCommand = new Command(OnCheckArrayCompletenessCommandExecute);
             InitializeButtons();
+            InitializeCommands();
         }
 
         private void InitializeButtons()
@@ -135,6 +135,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
+            DragArrowStartCommand = new Command<DragStartedEventArgs>(OnDragArrowStartCommandExecute);
+            DragArrowCommand = new Command<DragDeltaEventArgs>(OnDragArrowCommandExecute);
+            DragArrowStopCommand = new Command<DragCompletedEventArgs>(OnDragArrowStopCommandExecute);
+            CheckArrayCompletenessCommand = new Command(OnCheckArrayCompletenessCommandExecute);
+        }
 
         private double _initialWidth;
 
@@ -479,18 +488,16 @@ namespace Classroom_Learning_Partner.ViewModels
             return didInteract;
         }
 
-        public static void AddNumberLineToPage(CLPPage page)
+        public static async void AddNumberLineToPage(CLPPage page)
         {
             var viewModel = new NumberLineCreationViewModel();
-            var result = viewModel.ShowWindowAsDialog();
-
-            if (result != true)
+            if (!(await viewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
 
             var numberLineSize = int.Parse(viewModel.NumberLineEndPoint);
-            var numberLine = new NumberLine(page, numberLineSize, viewModel.IsUsingAutoArcs? NumberLineTypes.AutoArcs : NumberLineTypes.NumberLine);
+            var numberLine = new NumberLine(page, numberLineSize, viewModel.IsUsingAutoArcs ? NumberLineTypes.AutoArcs : NumberLineTypes.NumberLine);
             ApplyDistinctPosition(numberLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }

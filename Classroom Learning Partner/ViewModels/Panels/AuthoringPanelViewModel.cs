@@ -119,8 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
             DuplicatePageCommand = new Command(OnDuplicatePageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute, OnDeletePageCanExecute);
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
-            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
-            AddMetaDataTagsCommand = new Command(OnAddMetaDataTagsCommandExecute);
+            AddAnswerDefinitionCommand = new TaskCommand(OnAddAnswerDefinitionCommandExecuteAsync);
+            AddMetaDataTagsCommand = new TaskCommand(OnAddMetaDataTagsCommandExecuteAsync);
         }
 
         /// <summary>Adds a new page to the notebook.</summary>
@@ -464,9 +464,9 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Adds a Definiton Tag to the <see cref="CLPPage" />.</summary>
-        public Command AddAnswerDefinitionCommand { get; private set; }
+        public TaskCommand AddAnswerDefinitionCommand { get; private set; }
 
-        private void OnAddAnswerDefinitionCommandExecute()
+        private async Task OnAddAnswerDefinitionCommandExecuteAsync()
         {
             ITag answerDefinition;
             switch (SelectedAnswerDefinition)
@@ -474,9 +474,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AnswerDefinitions.Multiplication:
                     var multiplicationDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
                     var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(multiplicationDefinition);
-                    var multiplicationResult = multiplicationViewModel.ShowWindowAsDialog();
-
-                    if (multiplicationResult != true)
+                    if (!(await multiplicationViewModel.ShowWindowAsDialogAsync() ?? false))
                     {
                         return;
                     }
@@ -486,9 +484,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AnswerDefinitions.Division:
                     var divisionDefinition = new DivisionRelationDefinitionTag(CurrentPage, Origin.Author);
                     var divisionViewModel = new DivisionRelationDefinitionTagViewModel(divisionDefinition);
-                    var divisionResult = divisionViewModel.ShowWindowAsDialog();
-
-                    if (divisionResult != true)
+                    if (!(await divisionViewModel.ShowWindowAsDialogAsync() ?? false))
                     {
                         return;
                     }
@@ -498,9 +494,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AnswerDefinitions.Addition:
                     var additionDefinition = new AdditionRelationDefinitionTag(CurrentPage, Origin.Author);
                     var additionViewModel = new AdditionRelationDefinitionTagViewModel(additionDefinition);
-                    var additionResult = additionViewModel.ShowWindowAsDialog();
-
-                    if (additionResult != true)
+                    if (!(await additionViewModel.ShowWindowAsDialogAsync() ?? false))
                     {
                         return;
                     }
@@ -510,9 +504,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AnswerDefinitions.Equivalence:
                     var equivalenceDefinition = new EquivalenceRelationDefinitionTag(CurrentPage, Origin.Author);
                     var equivalenceViewModel = new EquivalenceRelationDefinitionTagViewModel(equivalenceDefinition);
-                    var equivalenceResult = equivalenceViewModel.ShowWindowAsDialog();
-
-                    if (equivalenceResult != true)
+                    if (!(await equivalenceViewModel.ShowWindowAsDialogAsync() ?? false))
                     {
                         return;
                     }
@@ -521,11 +513,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 default:
                     return;
-            }
-
-            if (answerDefinition == null)
-            {
-                return;
             }
 
             CurrentPage.AddTag(answerDefinition);
@@ -541,12 +528,12 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Creates Modal Window to edit the Meta Data Tags on the page.</summary>
-        public Command AddMetaDataTagsCommand { get; private set; }
+        public TaskCommand AddMetaDataTagsCommand { get; private set; }
 
-        private void OnAddMetaDataTagsCommandExecute()
+        private async Task OnAddMetaDataTagsCommandExecuteAsync()
         {
             var viewModel = new MetaDataTagsViewModel(CurrentPage);
-            viewModel.ShowWindowAsDialog();
+            await viewModel.ShowWindowAsDialogAsync();
         }
 
         #endregion //Commands

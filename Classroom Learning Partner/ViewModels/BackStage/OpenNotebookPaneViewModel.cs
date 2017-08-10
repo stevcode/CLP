@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
-            OpenSessionCommand = new Command(OnOpenSessionCommandExecute, OnOpenNotebookCanExecute);
+            OpenSessionCommand = new TaskCommand(OnOpenSessionCommandExecuteAsync, OnOpenNotebookCanExecute);
             OpenCacheFolderCommand = new Command(OnOpenCacheFolderCommandExecute);
         }
 
@@ -185,15 +185,13 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Opens a session.</summary>
-        public Command OpenSessionCommand { get; private set; }
+        public TaskCommand OpenSessionCommand { get; private set; }
 
-        private void OnOpenSessionCommandExecute()
+        private async Task OnOpenSessionCommandExecuteAsync()
         {
             var viewModel = this.CreateViewModel<SessionsViewModel>(SelectedNotebook);
             viewModel.IsOpening = true;
-            var result = viewModel.ShowWindowAsDialog();
-            if (result == null ||
-                !result.Value)
+            if (!(await viewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
