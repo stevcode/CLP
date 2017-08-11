@@ -413,12 +413,12 @@ namespace Classroom_Learning_Partner
             //                        };
 
             // NL Playback issues
-            var pageNumbersToLoad = new List<int>
-                                    {
-                                        253,
-                                        323,
-                                        328
-                                    };
+            //var pageNumbersToLoad = new List<int>
+            //                        {
+            //                            253,
+            //                            323,
+            //                            328
+            //                        };
 
             //var pageNumbersToLoad = new List<int>
             //                        {
@@ -435,6 +435,27 @@ namespace Classroom_Learning_Partner
             //                            384,
             //                            385
             //                        };
+
+            // On  8/11/2017
+            var pageNumbersToLoad = new List<int>
+                                    {
+                                        306,
+                                        308,
+                                        310,
+                                        312,
+                                        314,
+                                        318,
+                                        321,
+                                        322,
+                                        323,
+                                        324,
+                                        325,
+                                        342,
+                                        344,
+                                        362,
+                                        363,
+                                        364
+                                    };
 
             pageNumbersToLoad = pageNumbersToLoad.Distinct().ToList();
 
