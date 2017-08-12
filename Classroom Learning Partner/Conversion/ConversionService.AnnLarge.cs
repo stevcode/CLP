@@ -43,6 +43,80 @@ namespace Classroom_Learning_Partner
 
         #region Conversion Loop
 
+        public static void StitchedJsonToXml()
+        {
+            CLogger.AppendToLog("Beginning Json to Xml.");
+
+            var stitchedZipFilePath = AnnAuthorTagsStitched;
+            var xmlStitchedZipFilePath = Path.Combine(DataService.DesktopFolderPath, "Ann - Fall 2014 - Stitched XML.clp");
+
+            if (File.Exists(xmlStitchedZipFilePath))
+            {
+                File.Delete(xmlStitchedZipFilePath);
+            }
+
+            var entryList = new List<DataService.ZipEntrySaver>();
+
+            var classRoster = DataService.LoadClassRosterFromCLPContainer(stitchedZipFilePath);
+            classRoster.ContainerZipFilePath = xmlStitchedZipFilePath;
+            entryList.Add(new DataService.ZipEntrySaver(classRoster));
+
+            var sessions = DataService.LoadAllSessionsFromCLPContainer(stitchedZipFilePath);
+            foreach (var session in sessions)
+            {
+                session.ContainerZipFilePath = xmlStitchedZipFilePath;
+                entryList.Add(new DataService.ZipEntrySaver(session));
+            }
+
+            var notebooks = DataService.LoadAllNotebooksFromCLPContainer(stitchedZipFilePath);
+            foreach (var notebook in notebooks)
+            {
+                DataService.LoadPagesIntoNotebook(notebook, new List<int>());
+
+                notebook.ContainerZipFilePath = xmlStitchedZipFilePath;
+                entryList.Add(new DataService.ZipEntrySaver(notebook, notebook));
+
+                foreach (var page in notebook.Pages)
+                {
+                    page.ContainerZipFilePath = xmlStitchedZipFilePath;
+                    entryList.Add(new DataService.ZipEntrySaver(page, notebook));
+                }
+            }
+
+            using (var zip = new ZipFile())
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                //zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                foreach (var zipEntrySaver in entryList)
+                {
+                    zipEntrySaver.UpdateEntry(zip);
+                }
+
+                var directoryInfo = new DirectoryInfo(AnnImageFolder);
+                foreach (var fileInfo in directoryInfo.GetFiles())
+                {
+                    var fileNameWithExtension = fileInfo.Name;
+                    var imageFilePath = fileInfo.FullName;
+
+                    var internalFilePath = ZipExtensions.CombineEntryDirectoryAndName(AInternalZipEntryFile.ZIP_IMAGES_FOLDER_NAME, fileNameWithExtension);
+                    if (zip.ContainsEntry(internalFilePath))
+                    {
+                        continue;
+                    }
+
+                    var entry = zip.AddFile(imageFilePath);
+                    entry.FileName = internalFilePath;
+                }
+
+                zip.Save(xmlStitchedZipFilePath);
+            }
+
+            CLogger.AppendToLog("End Json to Xml.");
+        }
+
         public static void Combine()
         {
             // *****Important Note: Ensure IS_LARGE_CACHE is set to true in ConversionService*****

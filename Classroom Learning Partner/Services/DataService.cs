@@ -80,6 +80,7 @@ namespace Classroom_Learning_Partner.Services
         {
             CurrentCLPDataFolderPath = DefaultCLPDataFolderPath;
 
+            ConversionService.StitchedJsonToXml();
             //ConversionService.Combine();
             //ConversionService.Stitch();
             //ConversionService.ConvertAnnCache();
