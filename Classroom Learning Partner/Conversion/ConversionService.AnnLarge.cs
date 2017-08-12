@@ -475,7 +475,8 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
 
-                if (pageNameComposite.VersionIndex != "0")
+                if (pageNameComposite.VersionIndex != "0" &&
+                    !IS_CONVERTING_SUBMISSIONS)
                 {
                     continue;
                 }
@@ -498,6 +499,17 @@ namespace Classroom_Learning_Partner
             #endregion // Load Pages
 
             var notebookPages = loadedPages.Where(p => p.VersionIndex == 0).OrderBy(p => p.PageNumber).ToList();
+            if (IS_CONVERTING_SUBMISSIONS)
+            {
+                foreach (var notebookPage in notebookPages)
+                {
+                    var mostRecentSubmissions = loadedPages.Where(p => p.PageNumber == notebookPage.PageNumber && p.VersionIndex != 0).OrderBy(p => p.VersionIndex).LastOrDefault();
+                    if (mostRecentSubmissions != null)
+                    {
+                        notebookPage.Submissions.Add(mostRecentSubmissions);
+                    }
+                }
+            }
             notebook.Pages = new ObservableCollection<Ann.CLPPage>(notebookPages);
             notebook.CurrentPage = notebook.Pages.FirstOrDefault();
 

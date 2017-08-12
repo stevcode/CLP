@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -18,6 +16,7 @@ namespace Classroom_Learning_Partner
     {
         public const bool IS_LARGE_CACHE = true;
         public const bool IS_ANONYMIZED_CACHE = true;
+        public const bool IS_CONVERTING_SUBMISSIONS = true;
 
         #region Loop
 
