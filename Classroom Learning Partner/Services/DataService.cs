@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 EntryFile = entryFile;
                 InternalFilePath = entryFile.GetZipEntryFullPath(parentNotebook);
-                JsonString = entryFile.ToJsonString();
+                JsonString = entryFile.ToXmlString();
             }
 
             public AInternalZipEntryFile EntryFile { get; set; }
