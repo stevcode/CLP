@@ -87,12 +87,17 @@ namespace CLP.Entities
             return FromJsonString<T>(json);
         }
 
-        public string ToXmlString()
+        public string ToXmlString(XmlSerializerOptimalizationMode optimalizationMode = XmlSerializerOptimalizationMode.Performance)
         {
             using (var memoryStream = new MemoryStream())
             {
+                var configuration = new XmlSerializationConfiguration
+                                    {
+                                        OptimalizationMode = optimalizationMode
+                                    };
+
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, memoryStream, null);
+                xmlSerializer.Serialize(this, memoryStream, configuration);
 
                 memoryStream.Position = 0L;
                 using (var xmlReader = XmlReader.Create(memoryStream))
