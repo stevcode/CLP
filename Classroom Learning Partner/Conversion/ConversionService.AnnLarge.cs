@@ -504,7 +504,7 @@ namespace Classroom_Learning_Partner
                 foreach (var notebookPage in notebookPages)
                 {
                     var mostRecentSubmissions = loadedPages.Where(p => p.PageNumber == notebookPage.PageNumber && p.VersionIndex != 0).OrderBy(p => p.VersionIndex).LastOrDefault();
-                    if (mostRecentSubmissions != null)
+                    if (!ReferenceEquals(null, mostRecentSubmissions))
                     {
                         notebookPage.Submissions.Add(mostRecentSubmissions);
                     }
@@ -597,8 +597,7 @@ namespace Classroom_Learning_Partner
         public static Person ConvertPerson(Ann.Person person)
         {
             var name = person.FullName;
-            if (!IS_LARGE_CACHE &&
-                IS_ANONYMIZED_CACHE)
+            if (IS_ANONYMIZED_CACHE)
             {
                 const string TEXT_FILE_NAME = "AnonymousNames - Ann.txt";
                 var anonymousTextFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), TEXT_FILE_NAME);
@@ -815,9 +814,10 @@ namespace Classroom_Learning_Partner
 
             ConvertPageHistory(page.History, newPage);
 
+
+            HistoryAnalysis.GenerateSemanticEvents(newPage);
             if (!IS_LARGE_CACHE)
             {
-                HistoryAnalysis.GenerateSemanticEvents(newPage);
                 //PageInformationPanelViewModel.AnalyzeSkipCountingStatic(newPage);
             }
 
