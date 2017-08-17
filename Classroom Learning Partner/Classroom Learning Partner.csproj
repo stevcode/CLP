@@ -244,6 +244,7 @@
     <Compile Include="Services\Interfaces\IWindowManagerService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
+    <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Services\WindowManagerService.cs" />
     <Compile Include="Utilities\DataContextSpy.cs" />

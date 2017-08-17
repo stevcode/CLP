@@ -90,6 +90,9 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeServices(ProgramRoles currentProgramMode)
         {
+            var roleService = new RoleService(currentProgramMode);
+            ServiceLocator.Default.RegisterInstance<IRoleService>(roleService);
+
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
