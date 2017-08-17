@@ -318,7 +318,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             RaisePropertyChanged(nameof(CurrentPage));
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;

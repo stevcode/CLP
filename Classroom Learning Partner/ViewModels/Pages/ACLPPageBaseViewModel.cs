@@ -1128,7 +1128,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
-            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
             //    App.Network.ProjectorProxy == null ||
             //    !(historyAction is ObjectsOnPageChangedHistoryAction))
             //{

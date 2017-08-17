@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
             UGridRows = Pages.Count < 3 ? 1 : 0;
 
             if (App.Network.ProjectorProxy == null ||
-                App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
                 IsDisplayPreview)
             {
                 return;

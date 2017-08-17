@@ -6,7 +6,8 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:services="clr-namespace:Classroom_Learning_Partner.Services">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -305,7 +306,7 @@
                     <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
                              Converter="{converters:EnumToBoolConverter}"
-                             ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
+                             ConverterParameter="{x:Static services:ProgramRoles.Teacher}" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>
 

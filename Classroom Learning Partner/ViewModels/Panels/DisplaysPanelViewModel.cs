@@ -61,7 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher)
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher)
             {
                 return;
             }

@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -57,7 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             singleDisplayViewModel.OnPageResize();
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;
@@ -180,7 +181,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null ||
                 Math.Abs(e.VerticalChange) < 0.001)
             {

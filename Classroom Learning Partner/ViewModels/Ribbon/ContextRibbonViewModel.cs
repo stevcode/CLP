@@ -151,7 +151,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+                if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student)
                 {
                     CurrentPenColors.Add(new ColorButton(Colors.White));
                 }
@@ -337,7 +337,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+                if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student)
                 {
                     CurrentPenColors.Add(new ColorButton(Colors.White));
                 }

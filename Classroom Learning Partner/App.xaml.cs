@@ -25,14 +25,14 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            var currentProgramMode = ProgramModes.Teacher;
+            var currentProgramMode = ProgramRoles.Teacher;
 
 #if TEACHER
-            currentProgramMode = ProgramModes.Teacher;
+            currentProgramMode = ProgramRoles.Teacher;
 #elif STUDENT
-            currentProgramMode = ProgramModes.Student;
+            currentProgramMode = ProgramRoles.Student;
 #elif PROJECTOR
-            currentProgramMode = ProgramModes.Projector;
+            currentProgramMode = ProgramRoles.Projector;
 #endif
 
             InitializeCatelSettings();
@@ -88,13 +88,13 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
-        private static void InitializeServices(ProgramModes currentProgramMode)
+        private static void InitializeServices(ProgramRoles currentProgramMode)
         {
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
             var windowManagerService = new WindowManagerService();
-            if (currentProgramMode != ProgramModes.Projector)
+            if (currentProgramMode != ProgramRoles.Projector)
             {
                 windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
             }

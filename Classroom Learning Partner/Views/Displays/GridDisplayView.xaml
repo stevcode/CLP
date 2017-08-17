@@ -4,7 +4,8 @@
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:services="clr-namespace:Classroom_Learning_Partner.Services">
 
     <Grid>
         <Grid.Style>
@@ -72,7 +73,7 @@
                                 <Style TargetType="TextBlock">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}}"
-                                                     Value="{x:Static viewModels:ProgramModes.Projector}">
+                                                     Value="{x:Static services:ProgramRoles.Projector}">
                                             <Setter Property="FontSize"
                                                     Value="30" />
                                         </DataTrigger>

@@ -288,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var deltaX = Math.Abs(startingPoint.X - XPosition);
             var deltaY = Math.Abs(startingPoint.Y - YPosition);
-            var wasDraggedTolerance = 10.0; // App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector ? 5.0 : 1.0;
+            var wasDraggedTolerance = 10.0; // App.MainWindowViewModel.CurrentProgramMode == ProgramRoles.Projector ? 5.0 : 1.0;
             var wasDragged = Math.Max(deltaX, deltaY) > wasDraggedTolerance;
 
             if (wasDragged)

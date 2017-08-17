@@ -886,7 +886,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
             currentPage.Height = initialHeight * 2;
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;

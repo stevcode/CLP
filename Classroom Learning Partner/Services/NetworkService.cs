@@ -124,17 +124,16 @@ namespace Classroom_Learning_Partner.Services
             ServiceHost host = null;
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
                     CurrentConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
                     CurrentConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
                     foreach (var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == STUDENT_CONTRACT_ENDPOINT_NAME))
                     {
@@ -162,9 +161,8 @@ namespace Classroom_Learning_Partner.Services
         {
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     DiscoveredProjectors.Open();
                     DiscoveredStudents.Open();
 
@@ -191,9 +189,9 @@ namespace Classroom_Learning_Partner.Services
                                    }
                                }).Start();
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>

@@ -3,9 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using ServiceModelEx;
+using ConnectionStatuses = Classroom_Learning_Partner.ViewModels.ConnectionStatuses;
 
 namespace Classroom_Learning_Partner
 {
@@ -53,17 +55,16 @@ namespace Classroom_Learning_Partner
             ServiceHost host = null;
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
                     App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
                     App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
                     foreach (var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == "NetTcpBinding_IStudentContract"))
                     {
@@ -91,9 +92,8 @@ namespace Classroom_Learning_Partner
         {
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     DiscoveredProjectors.Open();
                     DiscoveredStudents.Open();
                     new Thread(() =>
@@ -142,9 +142,9 @@ namespace Classroom_Learning_Partner
                                    }
                                }).Start();
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>

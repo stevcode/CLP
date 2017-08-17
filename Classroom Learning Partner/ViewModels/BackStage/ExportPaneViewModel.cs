@@ -75,7 +75,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebook = _dataService.CurrentNotebook;
 
-            var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
+            var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student
                                   ? _dataService.GetLoadedSubmissionsForPage(notebook.CurrentPage)
                                   : notebook.CurrentPage.Submissions.ToList();
 
@@ -94,7 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage lastSubmissionAdded = null;
             foreach (var page in notebook.Pages)
             {
-                var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
+                var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student
                                       ? _dataService.GetLoadedSubmissionsForPage(page)
                                       : page.Submissions.ToList();
 

@@ -16,14 +16,6 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public enum ProgramModes
-    {
-        Teacher,
-        Student,
-        Projector,
-        Database
-    }
-
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
@@ -31,7 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the MainWindowViewModel class.</summary>
-        public MainWindowViewModel(ProgramModes currentProgramMode)
+        public MainWindowViewModel(ProgramRoles currentProgramMode)
         {
             _dataService = ServiceLocator.Default.ResolveType<IDataService>();
             CurrentProgramMode = currentProgramMode;
@@ -43,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
 
             CurrentUser = Person.Guest;
-            IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
+            IsProjectorFrozen = CurrentProgramMode != ProgramRoles.Projector;
             InitializedAsync += MainWindowViewModel_InitializedAsync;
             ClosedAsync += MainWindowViewModel_ClosedAsync;
         }
@@ -220,27 +212,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Visibility TeacherOnlyVisibility
         {
-            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Visible : Visibility.Collapsed; }
+            get { return CurrentProgramMode == ProgramRoles.Teacher ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         public Visibility ProjectorOnlyVisibility
         {
-            get { return CurrentProgramMode == ProgramModes.Projector ? Visibility.Visible : Visibility.Collapsed; }
+            get { return CurrentProgramMode == ProgramRoles.Projector ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         public Visibility StudentOnlyVisibility
         {
-            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Visible : Visibility.Collapsed; }
+            get { return CurrentProgramMode == ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed; }
         }
 
         public Visibility NotTeacherVisibility
         {
-            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Collapsed : Visibility.Visible; }
+            get { return CurrentProgramMode == ProgramRoles.Teacher ? Visibility.Collapsed : Visibility.Visible; }
         }
 
         public Visibility NotStudentVisibility
         {
-            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Collapsed : Visibility.Visible; }
+            get { return CurrentProgramMode == ProgramRoles.Student ? Visibility.Collapsed : Visibility.Visible; }
         }
 
         /// <summary>Global UI binding for Handedness</summary>
@@ -286,9 +278,9 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Properties
 
         /// <summary>Current program mode for CLP.</summary>
-        public ProgramModes CurrentProgramMode
+        public ProgramRoles CurrentProgramMode
         {
-            get { return GetValue<ProgramModes>(CurrentProgramModeProperty); }
+            get { return GetValue<ProgramRoles>(CurrentProgramModeProperty); }
             set
             {
                 SetValue(CurrentProgramModeProperty, value);
@@ -300,7 +292,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
+        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramRoles), ProgramRoles.Teacher);
 
         /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
@@ -320,15 +312,13 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = false;
             switch (CurrentProgramMode)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Teacher:
                     CurrentUser = Person.Author;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     CurrentUser = Person.Author;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     Workspace = this.CreateViewModel<UserLoginWorkspaceViewModel>(null);
                     break;
             }
@@ -357,16 +347,16 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (userMode)
             {
                 case "TEACHER":
-                    CurrentProgramMode = ProgramModes.Teacher;
+                    CurrentProgramMode = ProgramRoles.Teacher;
                     break;
                 case "PROJECTOR":
-                    CurrentProgramMode = ProgramModes.Projector;
+                    CurrentProgramMode = ProgramRoles.Projector;
                     break;
                 case "STUDENT":
-                    CurrentProgramMode = ProgramModes.Student;
+                    CurrentProgramMode = ProgramRoles.Student;
                     break;
                 default:
-                    CurrentProgramMode = ProgramModes.Teacher;
+                    CurrentProgramMode = ProgramRoles.Teacher;
                     break;
             }
 
