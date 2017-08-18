@@ -133,15 +133,43 @@ namespace CLP.Entities
             }
         }
 
-        public override int ZIndex
+        public override string CodedName => Codings.OBJECT_SHAPE;
+
+        public override string CodedID
         {
-            get { return 30; }
+            get
+            {
+                switch (ShapeType)
+                {
+                    case ShapeType.Rectangle:
+                        return "Rectangle";
+                    case ShapeType.Ellipse:
+                        return "Ellipse";
+                    case ShapeType.Triangle:
+                        return "Triangle";
+                    case ShapeType.HorizontalLine:
+                        return "Horizontal Line";
+                    case ShapeType.VerticalLine:
+                        return "Vertical Line";
+                    case ShapeType.Protractor:
+                        return "Protractor";
+                    case ShapeType.RightDiagonal:
+                        return "Right Diagonal";
+                    case ShapeType.RightDiagonalDashed:
+                        return "Right Dashed Diagonal";
+                    case ShapeType.LeftDiagonal:
+                        return "Left Diagonal";
+                    case ShapeType.LeftDiagonalDashed:
+                        return "Left Dashed Diagonal";
+                    default:
+                        return "Unknown";
+                }
+            }
         }
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
+        public override int ZIndex => 30;
+
+        public override bool IsBackgroundInteractable => false;
 
         #endregion //APageObjectBase Overrides
 
