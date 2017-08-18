@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Catel;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -9,12 +10,17 @@ namespace Classroom_Learning_Partner.ViewModels
     public abstract class AMultiDisplayViewModelBase : ViewModelBase
     {
         protected readonly IDataService _dataService;
+        protected readonly IRoleService _roleService;
 
         #region Constructor
 
-        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService)
+        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService, IRoleService  roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
+            _roleService = roleService;
 
             MultiDisplay = display;
 

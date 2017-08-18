@@ -8,8 +8,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the ColumnDisplayViewModel class.</summary>
-        public ColumnDisplayViewModel(ColumnDisplay columnDisplay, IDataService dataService)
-            : base(columnDisplay, dataService) { }
+        public ColumnDisplayViewModel(ColumnDisplay columnDisplay, IDataService dataService, IRoleService roleService)
+            : base(columnDisplay, dataService, roleService) { }
 
         #endregion //Constructor
     }

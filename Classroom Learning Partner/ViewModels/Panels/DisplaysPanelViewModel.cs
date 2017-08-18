@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Catel;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Threading;
@@ -14,13 +15,19 @@ namespace Classroom_Learning_Partner.ViewModels
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IRoleService _roleService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.</summary>
-        public DisplaysPanelViewModel(IDataService dataService)
+        public DisplaysPanelViewModel(IDataService dataService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
+            _roleService = roleService;
+
             Notebook = _dataService.CurrentNotebook;
 
             IsVisible = false;
@@ -61,7 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _dataService_CurrentDisplayChanged(object sender, EventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher)
+            if (_roleService.Role != ProgramRoles.Teacher)
             {
                 return;
             }

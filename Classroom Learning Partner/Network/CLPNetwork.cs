@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Catel.IoC;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
@@ -30,8 +31,11 @@ namespace Classroom_Learning_Partner
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
         public readonly NetTcpBinding DefaultBinding = new NetTcpBinding("ProxyBinding");
 
+        private readonly IRoleService _roleService;
+
         public CLPNetwork()
         {
+            //_roleService = ServiceLocator.Default.ResolveType<IRoleService>();
             CurrentUser = new Person();
             // TODO: Can you make DiscoveredServices async, so that you can be notified as soon as it's populated?
             // Possibly p 759-760, task.ContinueWith(), TaskContinuationOptions.OnlyOnRanToCompletion?
@@ -53,7 +57,7 @@ namespace Classroom_Learning_Partner
             App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Offline;
 
             ServiceHost host = null;
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
                 case ProgramRoles.Researcher:
                 case ProgramRoles.Teacher:
@@ -90,7 +94,7 @@ namespace Classroom_Learning_Partner
 
         public void DiscoverServices()
         {
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
                 case ProgramRoles.Researcher:
                 case ProgramRoles.Teacher:

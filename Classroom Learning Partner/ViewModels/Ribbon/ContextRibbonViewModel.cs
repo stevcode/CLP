@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using Catel;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
@@ -16,11 +17,16 @@ namespace Classroom_Learning_Partner.ViewModels
     public class ContextRibbonViewModel : ViewModelBase
     {
         private IPageInteractionService _pageInteractionService;
+        private IRoleService _roleService;
 
-        public ContextRibbonViewModel()
+        public ContextRibbonViewModel(IPageInteractionService pageInteractionService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => pageInteractionService);
+            Argument.IsNotNull(() => roleService);
+
             catelHack = UniqueIdentifier.ToString();
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            _pageInteractionService = pageInteractionService;
+            _roleService = roleService;
             InitializeButtons();
 
             switch (_pageInteractionService.CurrentPageInteractionMode)
@@ -151,7 +157,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student)
+                if (_roleService.Role != ProgramRoles.Student)
                 {
                     CurrentPenColors.Add(new ColorButton(Colors.White));
                 }
@@ -337,7 +343,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student)
+                if (_roleService.Role != ProgramRoles.Student)
                 {
                     CurrentPenColors.Add(new ColorButton(Colors.White));
                 }

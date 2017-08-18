@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Controls;
+using Catel;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -9,14 +11,19 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class SingleDisplayViewModel : ViewModelBase
     {
+        private readonly IRoleService _roleService;
+
         #region Constructor
 
         /// <summary>Initializes a new instance of the SingleDisplayViewModel class.</summary>
-        public SingleDisplayViewModel(Notebook notebook)
+        public SingleDisplayViewModel(Notebook notebook, IRoleService roleService)
         {
+            Argument.IsNotNull(() => roleService);
+
+            _roleService = roleService;
+
             Notebook = notebook;
             InitializeCommands();
-
         }
 
         #endregion //Constructor
@@ -58,7 +65,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             singleDisplayViewModel.OnPageResize();
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
+            var roleService = ServiceLocator.Default.ResolveType<IRoleService>();
+            if (roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;
@@ -181,7 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
+            if (_roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null ||
                 Math.Abs(e.VerticalChange) < 0.001)
             {

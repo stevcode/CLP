@@ -37,8 +37,9 @@ namespace Classroom_Learning_Partner
 
             InitializeCatelSettings();
             InitializeServices(currentProgramMode);
-            
-            MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
+
+            var viewModelFactory = ServiceLocator.Default.ResolveType<IViewModelFactory>();
+            MainWindowViewModel = viewModelFactory.CreateViewModel<MainWindowViewModel>(null);
             var window = new MainWindowView
                          {
                              DataContext = MainWindowViewModel

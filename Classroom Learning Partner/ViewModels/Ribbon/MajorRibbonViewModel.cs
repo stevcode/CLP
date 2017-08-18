@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Catel;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
@@ -42,15 +43,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private readonly IDataService _dataService;
         private readonly IWindowManagerService _windowManagerService;
-        private IPageInteractionService _pageInteractionService;
+        private readonly IPageInteractionService _pageInteractionService;
         private readonly INetworkService _networkService;
+        private readonly IRoleService _roleService;
 
-        public MajorRibbonViewModel(IDataService dataService, IWindowManagerService windowManagerService, IPageInteractionService pageInteractionService, INetworkService networkService)
+        public MajorRibbonViewModel(IDataService dataService, IWindowManagerService windowManagerService, IPageInteractionService pageInteractionService, INetworkService networkService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => windowManagerService);
+            Argument.IsNotNull(() => pageInteractionService);
+            Argument.IsNotNull(() => networkService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
             _windowManagerService = windowManagerService;
             _pageInteractionService = pageInteractionService;
             _networkService = networkService;
+            _roleService = roleService;
 
             InitializeCommands();
             InitializeButtons();
@@ -304,7 +313,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     }
 
-                    _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+                    // TODO: Remove this line if pageInteractionService functions correctly.
+                    //_pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
                     switch (PageInteractionMode)
                     {
@@ -886,7 +896,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
             currentPage.Height = initialHeight * 2;
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
+            if (_roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;

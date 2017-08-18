@@ -36,7 +36,7 @@
     </catel:DataWindow.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Command="{Binding SetUserModeCommand}"
+        <!--<KeyBinding Command="{Binding SetUserModeCommand}"
                     CommandParameter="TEACHER"
                     Gesture="CTRL+SHIFT+T" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
@@ -44,7 +44,7 @@
                     Gesture="CTRL+SHIFT+S" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
                     CommandParameter="PROJECTOR"
-                    Gesture="CTRL+SHIFT+P" />
+                    Gesture="CTRL+SHIFT+P" />-->
         <KeyBinding Command="{Binding TogglePenDownCommand}"
                     Gesture="CTRL+SHIFT+D" />
         <KeyBinding Command="{Binding ToggleMaximizeStateCommand}"

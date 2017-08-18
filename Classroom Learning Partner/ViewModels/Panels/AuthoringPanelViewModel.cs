@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Catel;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
@@ -24,12 +25,17 @@ namespace Classroom_Learning_Partner.ViewModels
     public class AuthoringPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IRoleService _roleService;
 
         #region Constructor
 
-        public AuthoringPanelViewModel(IDataService dataService)
+        public AuthoringPanelViewModel(IDataService dataService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
+            _roleService = roleService;
 
             Notebook = _dataService.CurrentNotebook;
 
@@ -318,7 +324,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             RaisePropertyChanged(nameof(CurrentPage));
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Teacher ||
+            if (_roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;
