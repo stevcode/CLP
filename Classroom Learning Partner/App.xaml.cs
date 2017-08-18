@@ -90,24 +90,16 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeServices(ProgramRoles currentProgramMode)
         {
-            var roleService = new RoleService(currentProgramMode);
-            ServiceLocator.Default.RegisterInstance<IRoleService>(roleService);
-
-            var dataService = new DataService();
-            ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
-
-            var windowManagerService = new WindowManagerService();
-            if (currentProgramMode != ProgramRoles.Projector)
+            if (!ServiceLocator.Default.IsTypeRegistered<IRoleService>())
             {
-                windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
+                var roleService = new RoleService(currentProgramMode);
+                ServiceLocator.Default.RegisterInstance<IRoleService>(roleService);
             }
-            ServiceLocator.Default.RegisterInstance<IWindowManagerService>(windowManagerService);
 
-            var networkService = new NetworkService();
-            ServiceLocator.Default.RegisterInstance<INetworkService>(networkService);
-
-            var pageInteractionService = new PageInteractionService();
-            ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IWindowManagerService,WindowManagerService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IDataService, DataService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<INetworkService, NetworkService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IPageInteractionService, PageInteractionService>();
         }
 
         private static void StartNetwork()
