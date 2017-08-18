@@ -54,10 +54,12 @@ echo.
 rem More directory paths
 set buildsDirectory=%outputDirectory%\1-builds
 set TeacherBuildDirectory=%buildsDirectory%\Teacher
+set ResearcherBuildDirectory=%buildsDirectory%\Researcher
 set StudentBuildDirectory=%buildsDirectory%\Student
 set ProjectorBuildDirectory=%buildsDirectory%\Projector
 set releasesDirectory=%outputDirectory%\2-releases
 set TeacherReleaseDirectory=%releasesDirectory%\Teacher-%assemblyVersion%
+set ResearcherReleaseDirectory=%releasesDirectory%\Researcher-%assemblyVersion%
 set StudentReleaseDirectory=%releasesDirectory%\Student-%assemblyVersion%
 set ProjectorReleaseDirectory=%releasesDirectory%\Projector-%assemblyVersion%
 
@@ -70,10 +72,12 @@ echo.
 echo Initializing Build and Release Directories...
 mkdir "%buildsDirectory%" 1>nul 2>nul
 mkdir "%TeacherBuildDirectory%" 1>nul 2>nul
+mkdir "%ResearcherBuildDirectory%" 1>nul 2>nul
 mkdir "%StudentBuildDirectory%" 1>nul 2>nul
 mkdir "%ProjectorBuildDirectory%" 1>nul 2>nul
 mkdir "%releasesDirectory%" 1>nul 2>nul
 mkdir "%TeacherReleaseDirectory%" 1>nul 2>nul
+mkdir "%ResearcherReleaseDirectory%" 1>nul 2>nul
 mkdir "%StudentReleaseDirectory%" 1>nul 2>nul
 mkdir "%ProjectorReleaseDirectory%" 1>nul 2>nul
 echo Directories Initialized.
@@ -87,6 +91,13 @@ echo Building Teacher Configuration...
 
 if not "%ERRORLEVEL%"=="0" (echo ERROR: Teacher Build Failed. & goto Quit)
 echo Teacher Configuration Built.
+echo.
+
+echo Building Researcher Configuration...
+%msbuildexe% "Classroom Learning Partner.sln" /nologo /m /p:Configuration=Researcher /p:Platform="Any CPU" /p:WarningLevel=0 /v:q /t:rebuild
+
+if not "%ERRORLEVEL%"=="0" (echo ERROR: Researcher Build Failed. & goto Quit)
+echo Researcher Configuration Built.
 echo.
 
 echo Building Student Configuration...
@@ -109,6 +120,14 @@ xcopy /y "%TeacherBuildDirectory%\"*.dll "%TeacherReleaseDirectory%\lib" 1>nul 2
 xcopy /y "%TeacherBuildDirectory%\Classroom Learning Partner.exe" "%TeacherReleaseDirectory%" 1>nul 2>nul
 xcopy /y "%TeacherBuildDirectory%\Classroom Learning Partner.exe.config" "%TeacherReleaseDirectory%" 1>nul 2>nul
 echo Teacher Build Released.
+echo.
+
+echo Releasing Researcher Build...
+mkdir "%ResearcherReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%ResearcherBuildDirectory%\"*.dll "%ResearcherReleaseDirectory%\lib" 1>nul 2>nul
+xcopy /y "%ResearcherBuildDirectory%\Classroom Learning Partner.exe" "%ResearcherReleaseDirectory%" 1>nul 2>nul
+xcopy /y "%ResearcherBuildDirectory%\Classroom Learning Partner.exe.config" "%ResearcherReleaseDirectory%" 1>nul 2>nul
+echo Researcher Build Released.
 echo.
 
 echo Releasing Student Build...
