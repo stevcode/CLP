@@ -29,6 +29,8 @@ namespace Classroom_Learning_Partner
 
 #if TEACHER
             currentProgramMode = ProgramRoles.Teacher;
+#elif RESEARCHER
+            currentProgramMode = ProgramRoles.Researcher;
 #elif STUDENT
             currentProgramMode = ProgramRoles.Student;
 #elif PROJECTOR

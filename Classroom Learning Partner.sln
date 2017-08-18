@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.4
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classroom Learning Partner", "Classroom Learning Partner\Classroom Learning Partner.csproj", "{86FEBAD6-E946-4865-B189-D064B37DE607}"
 EndProject
@@ -25,6 +25,7 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		Projector|Any CPU = Projector|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Researcher|Any CPU = Researcher|Any CPU
 		Student|Any CPU = Student|Any CPU
 		Teacher|Any CPU = Teacher|Any CPU
 	EndGlobalSection
@@ -35,6 +36,8 @@ Global
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86FEBAD6-E946-4865-B189-D064B37DE607}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{86FEBAD6-E946-4865-B189-D064B37DE607}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Student|Any CPU.Build.0 = Student|Any CPU
 		{86FEBAD6-E946-4865-B189-D064B37DE607}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
@@ -45,6 +48,8 @@ Global
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Student|Any CPU.Build.0 = Student|Any CPU
 		{C6B95A31-7045-4C7E-A72D-C03468E20B20}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
@@ -55,6 +60,8 @@ Global
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Student|Any CPU.Build.0 = Student|Any CPU
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
@@ -65,6 +72,8 @@ Global
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Student|Any CPU.Build.0 = Student|Any CPU
 		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
@@ -75,6 +84,8 @@ Global
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Student|Any CPU.Build.0 = Student|Any CPU
 		{117C5F32-8808-4E42-9AC9-CEAAEB3E3875}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
@@ -85,6 +96,8 @@ Global
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Projector|Any CPU.Build.0 = Projector|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0858C710-AF53-4049-B98E-CFE3638D1228}.Researcher|Any CPU.ActiveCfg = Researcher|Any CPU
+		{0858C710-AF53-4049-B98E-CFE3638D1228}.Researcher|Any CPU.Build.0 = Researcher|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Student|Any CPU.ActiveCfg = Student|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Student|Any CPU.Build.0 = Student|Any CPU
 		{0858C710-AF53-4049-B98E-CFE3638D1228}.Teacher|Any CPU.ActiveCfg = Teacher|Any CPU
