@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Visibility PlayBackwardsVisiblity => _roleService.Role == ProgramRoles.Researcher ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ResearcherOnlyVisiblity => _roleService.Role == ProgramRoles.Researcher ? Visibility.Visible : Visibility.Collapsed;
 
         #endregion // Bindings
 
@@ -145,7 +145,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _roleService_RoleChanged(object sender, EventArgs e)
         {
-            RaisePropertyChanged(nameof(PlayBackwardsVisiblity));
+            RaisePropertyChanged(nameof(ResearcherOnlyVisiblity));
         }
 
         private void _dataService_CurrentPageChanged(object sender, EventArgs e)
