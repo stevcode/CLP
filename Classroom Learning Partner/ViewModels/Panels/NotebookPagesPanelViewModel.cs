@@ -22,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookPagesPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
         {
             _dataService = dataService;
-            
+
             Notebook = _dataService.CurrentNotebook;
             InitializedAsync += NotebookPagesPanelViewModel_InitializedAsync;
 
