@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Threading;
 using Catel;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
@@ -48,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set => SetValue(CurrentPageProperty, value);
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         #endregion //Model
 
@@ -57,38 +56,39 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Multiplier for playback speed of animation.</summary>
         public double CurrentPlaybackSpeed
         {
-            get { return GetValue<double>(CurrentPlaybackSpeedProperty); }
-            set { SetValue(CurrentPlaybackSpeedProperty, value); }
+            get => GetValue<double>(CurrentPlaybackSpeedProperty);
+            set => SetValue(CurrentPlaybackSpeedProperty, value);
         }
 
-        public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof (double), 1.0);
+        public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof(double), 1.0);
 
         /// <summary>If an animation is currently recording or not.</summary>
         public bool IsRecording
         {
-            get { return GetValue<bool>(IsRecordingProperty); }
-            set { SetValue(IsRecordingProperty, value); }
+            get => GetValue<bool>(IsRecordingProperty);
+            set => SetValue(IsRecordingProperty, value);
         }
 
-        public static readonly PropertyData IsRecordingProperty = RegisterProperty("IsRecording", typeof (bool), false);
+        public static readonly PropertyData IsRecordingProperty = RegisterProperty("IsRecording", typeof(bool), false);
 
         /// <summary>If an animation is currently playing or not.</summary>
         public bool IsPlaying
         {
-            get { return GetValue<bool>(IsPlayingProperty); }
-            set { SetValue(IsPlayingProperty, value); }
+            get => GetValue<bool>(IsPlayingProperty);
+            set => SetValue(IsPlayingProperty, value);
         }
 
-        public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof (bool), false);
+        public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof(bool), false);
 
         /// <summary>Forces Playback on non-animation pages.</summary>
         public bool IsNonAnimationPlaybackEnabled
         {
-            get { return GetValue<bool>(IsNonAnimationPlaybackEnabledProperty); }
-            set { SetValue(IsNonAnimationPlaybackEnabledProperty, value); }
+            get => GetValue<bool>(IsNonAnimationPlaybackEnabledProperty);
+            set => SetValue(IsNonAnimationPlaybackEnabledProperty, value);
         }
 
-        public static readonly PropertyData IsNonAnimationPlaybackEnabledProperty = RegisterProperty("IsNonAnimationPlaybackEnabled", typeof(bool), false, OnIsNonAnimationPlaybackEnabledChanged);
+        public static readonly PropertyData IsNonAnimationPlaybackEnabledProperty =
+            RegisterProperty("IsNonAnimationPlaybackEnabled", typeof(bool), false, OnIsNonAnimationPlaybackEnabledChanged);
 
         private static void OnIsNonAnimationPlaybackEnabledChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -100,8 +100,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             animationControlRibbonViewModel._isClosing = true;
             animationControlRibbonViewModel.CurrentPage.History.IsNonAnimationPlaybackEnabled = animationControlRibbonViewModel.IsNonAnimationPlaybackEnabled;
-            animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
-            animationControlRibbonViewModel.RaisePropertyChanged("IsVisible");
+            animationControlRibbonViewModel.RaisePropertyChanged(nameof(IsPlaybackEnabled));
+            animationControlRibbonViewModel.RaisePropertyChanged(nameof(IsVisible));
             animationControlRibbonViewModel._isClosing = false;
         }
 
@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return false;
                 }
-                
+
                 return CurrentPage.History.IsAnimation || IsNonAnimationPlaybackEnabled;
             }
         }
@@ -212,7 +212,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Undoes the last action.</summary>
         public Command SlowUndoCommand { get; private set; }
 
-        private void OnSlowUndoCommandExecute() { SlowUndo(CurrentPage); }
+        private void OnSlowUndoCommandExecute()
+        {
+            SlowUndo(CurrentPage);
+        }
 
         private bool OnSlowUndoCanExecute()
         {
@@ -238,34 +241,34 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageInteractionService.SetNoInteractionMode();
 
             var t = new Thread(() =>
-            {
-                var undoAction = page.History.UndoActions.First() as IHistoryBatch;
-                var ticksToUndo = undoAction == null ? 1 : undoAction.CurrentBatchTickIndex;
-                var currentTick = ticksToUndo;
-                while (currentTick > 0 && IsPlaying)
-                {
-                    currentTick--;
-                    var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                          (DispatcherOperationCallback)delegate
-                                                          {
-                                                              page.History.Undo(true);
-                                                              return null;
-                                                          },
-                                                          null);
-                    Thread.Sleep(historyActionAnimationDelay);
-                }
+                               {
+                                   var undoAction = page.History.UndoActions.First() as IHistoryBatch;
+                                   var ticksToUndo = undoAction == null ? 1 : undoAction.CurrentBatchTickIndex;
+                                   var currentTick = ticksToUndo;
+                                   while (currentTick > 0 && IsPlaying)
+                                   {
+                                       currentTick--;
+                                       var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              page.History.Undo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyActionAnimationDelay);
+                                   }
 
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                      (DispatcherOperationCallback)delegate
-                                                      {
-                                                          IsPlaying = false;
-                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
-                                                          page.History.IsAnimating = false;
-                                                          return null;
-                                                      },
-                                                      null);
-            });
+                                   Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                         (DispatcherOperationCallback)delegate
+                                                                                                      {
+                                                                                                          IsPlaying = false;
+                                                                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+                                                                                                          page.History.IsAnimating = false;
+                                                                                                          return null;
+                                                                                                      },
+                                                                         null);
+                               });
 
             t.Start();
         }
@@ -273,7 +276,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Redoes the last undone action.</summary>
         public Command SlowRedoCommand { get; private set; }
 
-        private void OnSlowRedoCommandExecute() { SlowRedo(CurrentPage); }
+        private void OnSlowRedoCommandExecute()
+        {
+            SlowRedo(CurrentPage);
+        }
 
         private bool OnSlowRedoCanExecute()
         {
@@ -336,7 +342,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Begins recording page interations for use in an animation.</summary>
         public Command RecordAnimationCommand { get; private set; }
 
-        private void OnRecordAnimationCommandExecute() { Record(CurrentPage); }
+        private void OnRecordAnimationCommandExecute()
+        {
+            Record(CurrentPage);
+        }
 
         public void Record(CLPPage page)
         {
@@ -350,20 +359,18 @@ namespace Classroom_Learning_Partner.ViewModels
             if (IsRecording)
             {
                 Stop(page);
-                RaisePropertyChanged("IsPlaybackEnabled");
+                RaisePropertyChanged(nameof(IsPlaybackEnabled));
                 return;
             }
 
             IsRecording = true;
             if (page.History.IsAnimation)
             {
-                var eraseRedoAnimation =
-                    MessageBox.Show("Do you want to start recording from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
-                    MessageBoxResult.Yes;
+                var eraseRedoAnimation = MessageBox.Show("Do you want to start recording from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
                 if (!eraseRedoAnimation)
                 {
                     IsRecording = false;
-                    RaisePropertyChanged("IsPlaybackEnabled");
+                    RaisePropertyChanged(nameof(IsPlaybackEnabled));
                     return;
                 }
 
@@ -375,21 +382,24 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.History.UndoActions.Remove(firstUndoAction);
                 }
                 page.History.UpdateTicks();
-                RaisePropertyChanged("IsPlaybackEnabled");
+                RaisePropertyChanged(nameof(IsPlaybackEnabled));
             }
             else
             {
                 page.History.UndoActions.Clear();
                 page.History.RedoActions.Clear();
                 page.History.AddHistoryAction(new AnimationIndicatorHistoryAction(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
-                RaisePropertyChanged("IsPlaybackEnabled");
+                RaisePropertyChanged(nameof(IsPlaybackEnabled));
             }
         }
 
         /// <summary>Stops Recording, if recording. Stops Playing, if playing. Then rewinds animation to beginning.</summary>
         public Command RewindAnimationCommand { get; private set; }
 
-        private void OnRewindAnimationCommandExecute() { Rewind(CurrentPage); }
+        private void OnRewindAnimationCommandExecute()
+        {
+            Rewind(CurrentPage);
+        }
 
         public void Rewind(CLPPage page)
         {
@@ -436,7 +446,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Plays the animation in the History.</summary>
         public Command PlayAnimationCommand { get; private set; }
 
-        private void OnPlayAnimationCommandExecute() { Play(CurrentPage); }
+        private void OnPlayAnimationCommandExecute()
+        {
+            Play(CurrentPage);
+        }
 
         public void Play(CLPPage page)
         {
@@ -512,11 +525,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Plays the animation in reverse
+        ///     Plays the animation in reverse
         /// </summary>
         public Command PlayBackwardsCommand { get; private set; }
 
-        private void OnPlayBackwardsCommandExecute() { PlayBackwards(CurrentPage); }
+        private void OnPlayBackwardsCommandExecute()
+        {
+            PlayBackwards(CurrentPage);
+        }
 
         private void PlayBackwards(CLPPage page)
         {
@@ -541,30 +557,30 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageInteractionService.SetNoInteractionMode();
 
             var t = new Thread(() =>
-            {
-                while (page.History.UndoActions.Any() && IsPlaying)
-                {
-                    var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                          (DispatcherOperationCallback)delegate
-                                                          {
-                                                              page.History.Undo(true);
-                                                              return null;
-                                                          },
-                                                          null);
-                    Thread.Sleep(historyActionAnimationDelay);
-                }
+                               {
+                                   while (page.History.UndoActions.Any() && IsPlaying)
+                                   {
+                                       var historyActionAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              page.History.Undo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyActionAnimationDelay);
+                                   }
 
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                      (DispatcherOperationCallback)delegate
-                                                      {
-                                                          IsPlaying = false;
-                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
-                                                          page.History.IsAnimating = false;
-                                                          return null;
-                                                      },
-                                                      null);
-            });
+                                   Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                         (DispatcherOperationCallback)delegate
+                                                                                                      {
+                                                                                                          IsPlaying = false;
+                                                                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+                                                                                                          page.History.IsAnimating = false;
+                                                                                                          return null;
+                                                                                                      },
+                                                                         null);
+                               });
 
             t.Start();
         }
@@ -593,7 +609,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// SUMMARY
+        ///     SUMMARY
         /// </summary>
         public Command MakeAnimationFromHistoryCommand { get; private set; }
 
@@ -607,11 +623,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CurrentPage.History.ForceIntoAnimation(CurrentPage, App.MainWindowViewModel.CurrentUser);
-            RaisePropertyChanged("IsPlaybackEnabled");
+            RaisePropertyChanged(nameof(IsPlaybackEnabled));
         }
 
         /// <summary>
-        /// Clears the page of the animation and all ink and pageObjects that aren't background.
+        ///     Clears the page of the animation and all ink and pageObjects that aren't background.
         /// </summary>
         public Command ClearAnimationPageCommand { get; private set; }
 
@@ -630,11 +646,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             CurrentPage.InkStrokes.Clear();
             CurrentPage.History.ClearHistory();
-            RaisePropertyChanged("IsPlaybackEnabled");
+            RaisePropertyChanged(nameof(IsPlaybackEnabled));
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public Command UndoCommand { get; private set; }
 
@@ -646,8 +661,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnUndoCanExecute()
         {
-            return !CurrentPage.History.RedoActions.Any() &&
-                   CurrentPage.History.UndoActions.Any();
+            return !CurrentPage.History.RedoActions.Any() && CurrentPage.History.UndoActions.Any();
         }
 
         #endregion //Commands
