@@ -384,7 +384,7 @@
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
                     IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}"
-                    Visibility="{Binding ResearcherOnlyVisiblity}">
+                    Visibility="{Binding ResearcherOnlyVisibility}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
