@@ -189,7 +189,7 @@
             <!-- Clear Page -->
             <!--<Button Content="Clear Page"
                     DockPanel.Dock="Right"
-                    Width="70"
+                    MinWidth="70"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
@@ -198,6 +198,7 @@
             <!-- Create Animation from History -->
             <!--<Button Content="Forgot To Record?"
                     DockPanel.Dock="Right"
+                    MinWidth="70"
                     Padding="5 0"
                     Margin="20 0"
                     FontSize="12"
@@ -208,7 +209,7 @@
             <!--<Button Content="Undo"
                     Margin="20 0"
                     DockPanel.Dock="Right"
-                    Width="70"
+                    MinWidth="70"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
@@ -246,7 +247,8 @@
 
             <!--Rewind Button-->
             <Button DockPanel.Dock="Left"
-                    Width="70"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="MediumPurple"
                     Margin="0 0 0 0"
                     Command="{Binding RewindAnimationCommand}"
@@ -285,7 +287,8 @@
 
             <!--Play Button-->
             <Button DockPanel.Dock="Left"
-                    Width="70"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="Green"
                     Command="{Binding PlayAnimationCommand}"
                     IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
@@ -380,7 +383,8 @@
 
             <!--Play Backwards Button-->
             <Button DockPanel.Dock="Left"
-                    Width="105"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
                     IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}"
