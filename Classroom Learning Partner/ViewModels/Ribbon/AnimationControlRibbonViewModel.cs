@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Catel;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -14,30 +15,22 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class AnimationControlRibbonViewModel : ViewModelBase
     {
-        private IPageInteractionService _pageInteractionService;
+        private readonly IPageInteractionService _pageInteractionService;
+        private readonly IRoleService _roleService;
 
         #region Constructor
 
-        public AnimationControlRibbonViewModel(Notebook notebook)
+        public AnimationControlRibbonViewModel(Notebook notebook, IPageInteractionService pageInteractionService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => pageInteractionService);
+            Argument.IsNotNull(() => roleService);
+
+            _pageInteractionService = pageInteractionService;
+            _roleService = roleService;
+
             Notebook = notebook;
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
-            SlowUndoCommand = new Command(OnSlowUndoCommandExecute, OnSlowUndoCanExecute);
-            SlowRedoCommand = new Command(OnSlowRedoCommandExecute, OnSlowRedoCanExecute);
-            RecordAnimationCommand = new Command(OnRecordAnimationCommandExecute);
-            RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
-            PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
-            PlayBackwardsCommand = new Command(OnPlayBackwardsCommandExecute);
-            SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
-            MakeAnimationFromHistoryCommand = new Command(OnMakeAnimationFromHistoryCommandExecute);
-            ClearAnimationPageCommand = new Command(OnClearAnimationPageCommandExecute);
-            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
-        }
-
-        public override string Title
-        {
-            get { return "AnimationControlRibbonVM"; }
+            InitializeCommands();
         }
 
         #endregion //Constructor
@@ -190,6 +183,20 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            SlowUndoCommand = new Command(OnSlowUndoCommandExecute, OnSlowUndoCanExecute);
+            SlowRedoCommand = new Command(OnSlowRedoCommandExecute, OnSlowRedoCanExecute);
+            RecordAnimationCommand = new Command(OnRecordAnimationCommandExecute);
+            RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
+            PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
+            PlayBackwardsCommand = new Command(OnPlayBackwardsCommandExecute);
+            SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
+            MakeAnimationFromHistoryCommand = new Command(OnMakeAnimationFromHistoryCommandExecute);
+            ClearAnimationPageCommand = new Command(OnClearAnimationPageCommandExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
+        }
 
         private PageInteractionModes _oldPageInteractionMode = PageInteractionModes.Draw;
 

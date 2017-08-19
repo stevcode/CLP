@@ -6,6 +6,7 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     <UserControl.Resources>
         <ResourceDictionary>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -103,8 +104,7 @@
         </Grid.RowDefinitions>
 
         <!--Playback Controls-->
-        <DockPanel Name="PlaybackControls"
-                   Grid.Row="0"
+        <DockPanel Grid.Row="0"
                    Visibility="Collapsed"
                    Height="34"
                    Background="LightSkyBlue"
@@ -379,7 +379,7 @@
             </Button>
 
             <!--Play Backwards Button-->
-            <!--<Button DockPanel.Dock="Left"
+            <Button DockPanel.Dock="Left"
                     Width="85"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
@@ -471,7 +471,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-            </Button>-->
+            </Button>
 
             <!-- Playback Speed -->
             <StackPanel DockPanel.Dock="Left"
