@@ -389,7 +389,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Events
 
-        #region Overrides of ViewModelBase
+        #region ViewModelBase Overrides
 
         protected override async Task OnClosingAsync()
         {
@@ -400,7 +400,7 @@ namespace Classroom_Learning_Partner.ViewModels
             await base.OnClosingAsync();
         }
 
-        #endregion
+        #endregion // ViewModelBase Overrides
 
         #region Commands
 

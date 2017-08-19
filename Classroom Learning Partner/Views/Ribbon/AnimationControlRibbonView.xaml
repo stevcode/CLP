@@ -380,10 +380,11 @@
 
             <!--Play Backwards Button-->
             <Button DockPanel.Dock="Left"
-                    Width="85"
+                    Width="105"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
-                    IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
+                    IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}"
+                    Visibility="{Binding PlayBackwardsVisiblity}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

@@ -15,93 +15,44 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class AnimationControlRibbonViewModel : ViewModelBase
     {
+        private readonly IDataService _dataService;
         private readonly IPageInteractionService _pageInteractionService;
         private readonly IRoleService _roleService;
 
         #region Constructor
 
-        public AnimationControlRibbonViewModel(Notebook notebook, IPageInteractionService pageInteractionService, IRoleService roleService)
+        public AnimationControlRibbonViewModel(IDataService dataService, IPageInteractionService pageInteractionService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
             Argument.IsNotNull(() => pageInteractionService);
             Argument.IsNotNull(() => roleService);
 
+            _dataService = dataService;
             _pageInteractionService = pageInteractionService;
             _roleService = roleService;
 
-            Notebook = notebook;
+            CurrentPage = _dataService.CurrentPage;
 
+            InitializeEventSubscriptions();
             InitializeCommands();
         }
 
         #endregion //Constructor
 
-        #region Overrides of ViewModelBase
-
-        protected override async Task OnClosingAsync()
-        {
-            _isClosing = true;
-            Stop(CurrentPage);
-            await base.OnClosingAsync();
-        }
-
-        private bool _isClosing;
-        private bool _isPageChangingHack;
-
-        #endregion
-
         #region Model
 
-        /// <summary>The Model of the ViewModel.</summary>
         [Model(SupportIEditableObject = false)]
-        public Notebook Notebook
-        {
-            get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
-
-        /// <summary>A property mapped to a property on the Model SingleDisplay.</summary>
-        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
+            get => GetValue<CLPPage>(CurrentPageProperty);
+            set => SetValue(CurrentPageProperty, value);
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), null, OnCurrentPageChanged);
-
-        private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            var animationControlRibbonViewModel = sender as AnimationControlRibbonViewModel;
-            if (animationControlRibbonViewModel == null)
-            {
-                return;
-            }
-
-            animationControlRibbonViewModel._isPageChangingHack = true;
-            animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
-            animationControlRibbonViewModel.RaisePropertyChanged("IsVisible");
-
-            var currentPage = advancedPropertyChangedEventArgs.NewValue as CLPPage;
-            if (currentPage != null)
-            {
-                currentPage.History.IsNonAnimationPlaybackEnabled = animationControlRibbonViewModel.IsNonAnimationPlaybackEnabled;
-            }
-
-            var previousPage = advancedPropertyChangedEventArgs.OldValue as CLPPage;
-            if (previousPage == null ||
-                !animationControlRibbonViewModel.IsPlaying)
-            {
-                return;
-            }
-
-            animationControlRibbonViewModel.Stop(previousPage);
-        }
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage));
 
         #endregion //Model
 
-        #region Properties
+        #region Bindings
 
         /// <summary>Multiplier for playback speed of animation.</summary>
         public double CurrentPlaybackSpeed
@@ -180,7 +131,63 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #endregion //Properties
+        public Visibility PlayBackwardsVisiblity => _roleService.Role == ProgramRoles.Researcher ? Visibility.Visible : Visibility.Collapsed;
+
+        #endregion // Bindings
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            _roleService.RoleChanged += _roleService_RoleChanged;
+            _dataService.CurrentPageChanged += _dataService_CurrentPageChanged;
+        }
+
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(PlayBackwardsVisiblity));
+        }
+
+        private void _dataService_CurrentPageChanged(object sender, EventArgs e)
+        {
+            _isPageChangingHack = true;
+            RaisePropertyChanged(nameof(IsPlaybackEnabled));
+            RaisePropertyChanged(nameof(IsVisible));
+
+            var previousPage = CurrentPage;
+
+            CurrentPage = _dataService.CurrentPage;
+            if (CurrentPage != null)
+            {
+                CurrentPage.History.IsNonAnimationPlaybackEnabled = IsNonAnimationPlaybackEnabled;
+            }
+
+            if (previousPage == null ||
+                !IsPlaying)
+            {
+                return;
+            }
+
+            Stop(previousPage);
+        }
+
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        private bool _isClosing;
+        private bool _isPageChangingHack;
+
+        protected override async Task OnClosingAsync()
+        {
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            _dataService.CurrentPageChanged -= _dataService_CurrentPageChanged;
+            _isClosing = true;
+            Stop(CurrentPage);
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Commands
 
