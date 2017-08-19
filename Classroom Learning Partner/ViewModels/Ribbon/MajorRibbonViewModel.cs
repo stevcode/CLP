@@ -65,6 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _networkService = networkService;
             _roleService = roleService;
 
+            InitializeEventSubscriptions();
             InitializeCommands();
             InitializeButtons();
             SetRibbonButtons();
@@ -72,29 +73,16 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = _windowManagerService.LeftPanel;
             CurrentRightPanel = _windowManagerService.RightPanel;
-
-            InitializedAsync += MajorRibbonViewModel_InitializedAsync;
-            ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
 
         #region Events
 
-        private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        private void InitializeEventSubscriptions()
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
             _windowManagerService.LeftPanelChanged += _windowManagerService_LeftPanelChanged;
             _windowManagerService.RightPanelChanged += _windowManagerService_RightPanelChanged;
-
-            return TaskHelper.Completed;
-        }
-
-        private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
-        {
-            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
-            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
-            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
-
-            return TaskHelper.Completed;
+            _roleService.RoleChanged += _roleService_RoleChanged;
         }
 
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
@@ -170,7 +158,29 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(ResearcherOnlyVisibility));
+            RaisePropertyChanged(nameof(TeacherOnlyVisibility));
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+            RaisePropertyChanged(nameof(StudentOnlyVisibility));
+            RaisePropertyChanged(nameof(NotStudentVisibility));
+        }
+
         #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         private void InitializeButtons()
         {
@@ -511,7 +521,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>SUMMARY</summary>
         public ConnectionStatuses ConnectionStatus
         {
             get => GetValue<ConnectionStatuses>(ConnectionStatusProperty);
@@ -636,6 +645,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
             animationControlRibbon.IsNonAnimationPlaybackEnabled = (bool)args.NewValue;
         }
+
+        #region Visibilities
+
+        public Visibility ResearcherOnlyVisibility => _roleService.Role == ProgramRoles.Researcher ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility TeacherOnlyVisibility => _roleService.Role == ProgramRoles.Teacher ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                              ? Visibility.Visible
+                                                              : Visibility.Collapsed;
+
+        public Visibility StudentOnlyVisibility => _roleService.Role == ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility NotStudentVisibility => _roleService.Role != ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed;
+
+        #endregion // Visibilities
 
         #endregion //Bindings
 

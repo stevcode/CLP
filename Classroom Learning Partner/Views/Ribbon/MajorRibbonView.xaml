@@ -142,21 +142,21 @@
                                                LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                                IsChecked="{Binding CurrentLeftPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:Panels.ProgressPanel}}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               Visibility="{Binding ResearcherOrTeacherVisibility}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Submissions"
                                                CheckedText="Hide Submissions"
                                                LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
                                                IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               Visibility="{Binding ResearcherOrTeacherVisibility}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Submissions"
                                                CheckedText="Hide Submissions"
                                                LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
                                                IsChecked="{Binding MainWindow.Workspace.NotebookPagesPanel.SubmissionHistoryPanel.IsVisible}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
+                                               Visibility="{Binding StudentOnlyVisibility}" />
 
         </StackPanel>
 
@@ -215,7 +215,7 @@
         <!-- Extras -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                    Visibility="{Binding ResearcherOrTeacherVisibility}">
 
             <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
                                                CheckedText="Pens Up"
@@ -239,19 +239,19 @@
                                                      LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
                                                      IsContextButton="True" />
 
-                        <!-- Non-Release Build Stuff-->
                         <customControls:RibbonButton Text="Add New Animation Page"
                                                      Command="{Binding AddNewAnimationPageCommand}"
                                                      LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
-                                                     IsContextButton="True" />
+                                                     IsContextButton="True"
+                                                     Visibility="{Binding ResearcherOnlyVisibility}" />
 
-                        <!-- Non-Release Build Stuff-->
                         <customControls:ToggleRibbonButton UnCheckedText="Show Analysis"
                                                            CheckedText="Hide Analysis"
                                                            IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:Panels.PageInformationPanel}}"
                                                            IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                            LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
-                                                           IsContextButton="True" />
+                                                           IsContextButton="True"
+                                                           Visibility="{Binding ResearcherOnlyVisibility}" />
 
                         <customControls:ToggleRibbonButton UnCheckedText="Show Page Replay"
                                                            CheckedText="Hide Page Replay"
@@ -276,12 +276,12 @@
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1"
-              Visibility="{Binding MainWindowViewModel.NotStudentVisibility, Source={x:Static Application.Current}}" />
+              Visibility="{Binding NotStudentVisibility}" />
 
         <!-- Right Panel Control -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                    Visibility="{Binding ResearcherOrTeacherVisibility}">
 
             <customControls:RibbonButton Text="Exit Multi Display"
                                          Command="{Binding ExitMultiDisplayCommand}"
@@ -308,12 +308,12 @@
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1"
-              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+              Visibility="{Binding ResearcherOrTeacherVisibility}" />
 
         <!-- Sharing -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal"
-                    Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
+                    Visibility="{Binding StudentOnlyVisibility}">
 
             <customControls:RibbonButton Text="Send To Teacher"
                                          Command="{Binding SubmitPageCommand}"
@@ -328,7 +328,7 @@
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1"
-              Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
+              Visibility="{Binding StudentOnlyVisibility}" />
 
         <!-- Page -->
         <StackPanel DockPanel.Dock="Right"
