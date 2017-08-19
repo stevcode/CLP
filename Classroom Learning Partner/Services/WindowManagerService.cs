@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Services
         NotebookPagesPanel,
         ProgressPanel,
         DisplaysPanel,
-        PageInformationPanel
+        AnalysisPanel
     }
 
     public class WindowManagerService : IWindowManagerService

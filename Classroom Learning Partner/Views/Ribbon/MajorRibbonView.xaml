@@ -247,7 +247,7 @@
 
                         <customControls:ToggleRibbonButton UnCheckedText="Show Analysis"
                                                            CheckedText="Hide Analysis"
-                                                           IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:Panels.PageInformationPanel}}"
+                                                           IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:Panels.AnalysisPanel}}"
                                                            IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                                            LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
                                                            IsContextButton="True"

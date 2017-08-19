@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel);
 
             DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null);
-            PageInformationPanel = viewModelFactory.CreateViewModel<PageInformationPanelViewModel>(notebook);
+            AnalysisPanel = viewModelFactory.CreateViewModel<AnalysisPanelViewModel>(notebook);
 
             UpdatePanels();
         }
@@ -150,14 +150,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         DisplaysPanel.IsVisible = true;
                     }
                     break;
-                case Panels.PageInformationPanel:
-                    if (RightPanel != PageInformationPanel)
+                case Panels.AnalysisPanel:
+                    if (RightPanel != AnalysisPanel)
                     {
-                        RightPanel = PageInformationPanel;
+                        RightPanel = AnalysisPanel;
                     }
-                    if (!PageInformationPanel.IsVisible)
+                    if (!AnalysisPanel.IsVisible)
                     {
-                        PageInformationPanel.IsVisible = true;
+                        AnalysisPanel.IsVisible = true;
                     }
                     break;
                 default:
@@ -298,14 +298,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplaysPanelViewModel));
 
-        /// <summary>PageInformationPanel.</summary>
-        public PageInformationPanelViewModel PageInformationPanel
+        /// <summary>AnalysisPanel.</summary>
+        public AnalysisPanelViewModel AnalysisPanel
         {
-            get { return GetValue<PageInformationPanelViewModel>(PageInformationPanelProperty); }
-            set { SetValue(PageInformationPanelProperty, value); }
+            get { return GetValue<AnalysisPanelViewModel>(AnalysisPanelPanelProperty); }
+            set { SetValue(AnalysisPanelPanelProperty, value); }
         }
 
-        public static readonly PropertyData PageInformationPanelProperty = RegisterProperty("PageInformationPanel", typeof(PageInformationPanelViewModel));
+        public static readonly PropertyData AnalysisPanelPanelProperty = RegisterProperty("AnalysisPanel", typeof(AnalysisPanelViewModel));
 
         /// <summary>SubmissionHistoryPanel.</summary>
         // TODO: Replace with StagingPanel?

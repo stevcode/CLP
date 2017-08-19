@@ -146,10 +146,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentRightPanel = Panels.DisplaysPanel;
                     }
                     break;
-                case Panels.PageInformationPanel:
-                    if (CurrentRightPanel != Panels.PageInformationPanel)
+                case Panels.AnalysisPanel:
+                    if (CurrentRightPanel != Panels.AnalysisPanel)
                     {
-                        CurrentRightPanel = Panels.PageInformationPanel;
+                        CurrentRightPanel = Panels.AnalysisPanel;
                     }
                     break;
                 default:
@@ -574,8 +574,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     case Panels.DisplaysPanel:
                         _windowManagerService.RightPanel = Panels.DisplaysPanel;
                         break;
-                    case Panels.PageInformationPanel:
-                        _windowManagerService.RightPanel = Panels.PageInformationPanel;
+                    case Panels.AnalysisPanel:
+                        _windowManagerService.RightPanel = Panels.AnalysisPanel;
                         break;
                     default:
                         _windowManagerService.RightPanel = Panels.NoPanel;

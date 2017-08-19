@@ -173,7 +173,7 @@ namespace Classroom_Learning_Partner
 
                 page.History.RefreshHistoryIndexes();
                 HistoryAnalysis.GenerateSemanticEvents(page);
-                //PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
             }
 
             var entries = new List<DataService.ZipEntrySaver>

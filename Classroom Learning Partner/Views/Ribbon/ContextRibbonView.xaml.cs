@@ -2,7 +2,6 @@
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for ContextRibbonView.xaml</summary>
     public partial class ContextRibbonView
     {
         public ContextRibbonView()

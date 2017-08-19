@@ -116,11 +116,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages)
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -139,11 +139,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages.Where(p => p.PageNumber == currentPage.PageNumber))
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }

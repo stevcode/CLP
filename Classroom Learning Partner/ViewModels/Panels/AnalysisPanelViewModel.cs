@@ -40,13 +40,13 @@ namespace Classroom_Learning_Partner.ViewModels
         HistoryActions
     }
 
-    public class PageInformationPanelViewModel : APanelBaseViewModel
+    public class AnalysisPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
 
         #region Constructor
 
-        public PageInformationPanelViewModel(Notebook notebook, IDataService dataService)
+        public AnalysisPanelViewModel(Notebook notebook, IDataService dataService)
         {
             _dataService = dataService;
 
@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
-            InitializedAsync += PageInformationPanelViewModel_InitializedAsync;
+            InitializedAsync += AnalysisPanelViewModel_InitializedAsync;
             // IsVisible = false;
 
             PageOrientations.Add("Default - Landscape");
@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        private async Task PageInformationPanelViewModel_InitializedAsync(object sender, EventArgs e)
+        private async Task AnalysisPanelViewModel_InitializedAsync(object sender, EventArgs e)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             Length = InitialLength;
@@ -105,7 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
-            var viewModel = sender as PageInformationPanelViewModel;
+            var viewModel = sender as AnalysisPanelViewModel;
             if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
                 viewModel == null ||
                 viewModel.CurrentPage == null)
@@ -174,7 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
-            var viewModel = sender as PageInformationPanelViewModel;
+            var viewModel = sender as AnalysisPanelViewModel;
             if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
                 viewModel == null)
             {

@@ -119,8 +119,8 @@
                     <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="PageInformationPanelTemplate">
-                    <views:PageInformationPanelView DataContext="{Binding PageInformationPanel}" />
+                <ControlTemplate x:Key="AnalysisPanelTemplate">
+                    <views:AnalysisPanelView DataContext="{Binding AnalysisPanel}" />
                 </ControlTemplate>
                 
             </Control.Resources>
@@ -136,11 +136,11 @@
                                     Value="{StaticResource DisplaysPanelTemplate}" />
                         </DataTrigger>
                         
-                        <!--PageInformationPanel trigger-->
+                        <!--AnalysisPanel trigger-->
                         <DataTrigger Binding="{Binding RightPanel, Converter={converters:TypeOfConverter}}"
-                                     Value="{x:Type viewModels:PageInformationPanelViewModel}">
+                                     Value="{x:Type viewModels:AnalysisPanelViewModel}">
                             <Setter Property="Template"
-                                    Value="{StaticResource PageInformationPanelTemplate}" />
+                                    Value="{StaticResource AnalysisPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
