@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public class ContextRibbonViewModel : ViewModelBase
     {
         private IPageInteractionService _pageInteractionService;
-        private IRoleService _roleService;
+        private readonly IRoleService _roleService;
 
         public ContextRibbonViewModel(IPageInteractionService pageInteractionService, IRoleService roleService)
         {

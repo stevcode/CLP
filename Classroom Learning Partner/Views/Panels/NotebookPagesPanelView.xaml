@@ -108,7 +108,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
-                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                           Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=PagesListBox}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <Run
@@ -274,7 +274,7 @@
                                 <Grid Grid.Column="2"
                                       VerticalAlignment="Center"
                                       Margin="-5 0 5 0"
-                                      Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                      Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=PagesListBox}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -346,10 +346,8 @@
             <views:StagingPanelView.Visibility>
                 <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
                     <Binding Path="IsVisible" />
-                    <Binding Path="MainWindowViewModel.CurrentProgramMode"
-                             Source="{x:Static Application.Current}"
-                             Converter="{converters:EnumToBoolConverter}"
-                             ConverterParameter="{x:Static services:ProgramRoles.Teacher}" />
+                    <Binding Path="DataContext.IsResearcherOrTeacherRole"
+                             ElementName="PagesListBox" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>
 
@@ -359,10 +357,8 @@
                                           Grid.Column="2">
             <views:SubmissionHistoryPanelView.Visibility>
                 <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
-                    <Binding Path="MainWindowViewModel.CurrentProgramMode"
-                             Source="{x:Static Application.Current}"
-                             Converter="{converters:EnumToBoolConverter}"
-                             ConverterParameter="{x:Static services:ProgramRoles.Student}" />
+                    <Binding Path="DataContext.IsStudentRole"
+                             ElementName="PagesListBox" />
                 </MultiBinding>
             </views:SubmissionHistoryPanelView.Visibility>
         </views:SubmissionHistoryPanelView>

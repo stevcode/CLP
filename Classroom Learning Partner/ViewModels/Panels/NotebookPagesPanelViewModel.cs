@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using Catel;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -15,24 +17,41 @@ namespace Classroom_Learning_Partner.ViewModels
     public class NotebookPagesPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IRoleService _roleService;
 
         #region Constructor
 
-        /// <summary>Initializes a new instance of the <see cref="NotebookPagesPanelViewModel" /> class.</summary>
-        public NotebookPagesPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService)
+        public NotebookPagesPanelViewModel(StagingPanelViewModel stagingPanel, IDataService dataService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
+            _roleService = roleService;
 
             Notebook = _dataService.CurrentNotebook;
-            InitializedAsync += NotebookPagesPanelViewModel_InitializedAsync;
-
+            
+            InitializeEventSubscriptions();
             InitializeCommands();
 
             StagingPanel = stagingPanel;
 
             var dependencyResolver = this.GetDependencyResolver();
             var viewModelFactory = dependencyResolver.Resolve<IViewModelFactory>();
-            SubmissionHistoryPanel = viewModelFactory.CreateViewModel<SubmissionHistoryPanelViewModel>(null, null);
+            SubmissionHistoryPanel = viewModelFactory.CreateViewModel<SubmissionHistoryPanelViewModel>(null);
+        }
+
+        /// <summary>Initial Length of the Panel, before any resizing.</summary>
+        public override double InitialLength => 300.0;
+
+        #endregion //Constructor
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            InitializedAsync += NotebookPagesPanelViewModel_InitializedAsync;
+            _roleService.RoleChanged += _roleService_RoleChanged;
         }
 
         private Task NotebookPagesPanelViewModel_InitializedAsync(object sender, EventArgs e)
@@ -42,10 +61,26 @@ namespace Classroom_Learning_Partner.ViewModels
             return TaskHelper.Completed;
         }
 
-        /// <summary>Initial Length of the Panel, before any resizing.</summary>
-        public override double InitialLength => 300.0;
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+            RaisePropertyChanged(nameof(StudentOrProjectorVisibility));
+            RaisePropertyChanged(nameof(IsStudentRole));
+            RaisePropertyChanged(nameof(IsResearcherOrTeacherRole));
+        }
 
-        #endregion //Constructor
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            InitializedAsync -= NotebookPagesPanelViewModel_InitializedAsync;
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Model
 
@@ -100,6 +135,20 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SubmissionHistoryPanelProperty = RegisterProperty("SubmissionHistoryPanel", typeof(SubmissionHistoryPanelViewModel));
+
+        #region Visibilities
+
+        public Visibility ResearcherOrTeacherVisibility => IsResearcherOrTeacherRole ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility StudentOrProjectorVisibility => _roleService.Role == ProgramRoles.Student || _roleService.Role == ProgramRoles.Projector
+                                                              ? Visibility.Visible
+                                                              : Visibility.Collapsed;
+
+        public bool IsStudentRole => _roleService.Role == ProgramRoles.Student;
+
+        public bool IsResearcherOrTeacherRole => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher;
+
+        #endregion // Visibilities
 
         #endregion //Bindings
 
