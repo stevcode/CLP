@@ -244,7 +244,7 @@
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={catel:BooleanToOppositeBooleanConverter}}"
                               IsChecked="{Binding CurrentNavigationPane, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.New}}"
-                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                              Visibility="{Binding ResearcherOrTeacherVisibility}"
                               Style="{StaticResource PaneSelector}" />
 
                 <ToggleButton Content="Open"

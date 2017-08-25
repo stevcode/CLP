@@ -37,23 +37,23 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
-            
             <Button Content="Generate Analysis Stats"
                     Command="{Binding RunAnalysisCommand}"
                     Height="50"
                     Width="300"
                     Margin="10"
                     FontSize="22"
-                    FontWeight="Bold" />
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
 
-            <!-- Non-Release Build Stuff
             <Button Content="Clear Author History"
                     Command="{Binding ClearAuthorHistoryItemsCommand}"
                     Height="50"
                     Width="300"
                     Margin="10"
                     FontSize="22"
-                    FontWeight="Bold" />-->
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
 
             <Button Content="Analyze All Pages' Submissions"
                     Command="{Binding AnalyzeAllLoadedPagesCommand}"
@@ -61,7 +61,8 @@
                     Width="300"
                     Margin="10"
                     FontSize="22"
-                    FontWeight="Bold" />
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
 
             <Button Content="Analyze Current Page's Submissions"
                     Command="{Binding AnalyzeCurrentPageAndSubmissionsCommand}"
@@ -69,7 +70,8 @@
                     Width="300"
                     Margin="10"
                     FontSize="22"
-                    FontWeight="Bold" />
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
 
         </StackPanel>
 

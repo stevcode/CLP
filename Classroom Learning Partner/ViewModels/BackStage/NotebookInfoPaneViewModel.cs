@@ -11,9 +11,12 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public NotebookInfoPaneViewModel()
+        public NotebookInfoPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             Notebook = _dataService.CurrentNotebook;
+            
+
             InitializeCommands();
         }
 

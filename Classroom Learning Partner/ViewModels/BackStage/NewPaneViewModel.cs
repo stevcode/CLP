@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -12,7 +13,8 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public NewPaneViewModel()
+        public NewPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             AvailableZipContainerFileNames = _dataService.AvailableZipContainerFileInfos.Select(fi => Path.GetFileNameWithoutExtension(fi.Name)).ToObservableCollection();
             SelectedExistingZipContainerFileName = AvailableZipContainerFileNames.FirstOrDefault();

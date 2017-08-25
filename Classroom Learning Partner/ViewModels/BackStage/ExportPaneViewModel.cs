@@ -24,16 +24,11 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ExportPaneViewModel : APaneBaseViewModel
     {
-        private readonly IRoleService _roleService;
-
         #region Constructor
 
-        public ExportPaneViewModel(IRoleService roleService)
+        public ExportPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
-            Argument.IsNotNull(() => roleService);
-
-            _roleService = roleService;
-
             InitializeCommands();
         }
 
@@ -51,10 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
-        {
-            get { return "Export"; }
-        }
+        public override string PaneTitleText => "Export";
 
         #endregion //Bindings
 

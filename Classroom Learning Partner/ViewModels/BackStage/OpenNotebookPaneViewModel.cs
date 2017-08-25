@@ -20,7 +20,8 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public OpenNotebookPaneViewModel()
+        public OpenNotebookPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             AvailableZipContainerFileNames = _dataService.AvailableZipContainerFileInfos.Select(fi => Path.GetFileNameWithoutExtension(fi.Name)).ToObservableCollection();
             SelectedExistingZipContainerFileName = AvailableZipContainerFileNames.FirstOrDefault();
