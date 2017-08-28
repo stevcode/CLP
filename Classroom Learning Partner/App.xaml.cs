@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            var currentProgramMode = ProgramRoles.Teacher;
+            var currentProgramMode = ProgramRoles.Researcher;
 
 #if TEACHER
             currentProgramMode = ProgramRoles.Teacher;
