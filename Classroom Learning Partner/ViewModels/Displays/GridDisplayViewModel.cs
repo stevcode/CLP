@@ -36,8 +36,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Number of Rows in the UniformGrid</summary>
         public int UGridRows
         {
-            get { return GetValue<int>(UGridRowsProperty); }
-            set { SetValue(UGridRowsProperty, value); }
+            get => GetValue<int>(UGridRowsProperty);
+            set => SetValue(UGridRowsProperty, value);
         }
 
         public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);

@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Constructor
 
-        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService, IRoleService  roleService)
+        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService, IRoleService roleService)
         {
             Argument.IsNotNull(() => dataService);
             Argument.IsNotNull(() => roleService);
@@ -35,8 +35,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public IDisplay MultiDisplay
         {
-            get { return GetValue<IDisplay>(MultiDisplayProperty); }
-            private set { SetValue(MultiDisplayProperty, value); }
+            get => GetValue<IDisplay>(MultiDisplayProperty);
+            private set => SetValue(MultiDisplayProperty, value);
         }
 
         public static readonly PropertyData MultiDisplayProperty = RegisterProperty("MultiDisplay", typeof(IDisplay));
@@ -45,8 +45,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("MultiDisplay")]
         public int DisplayNumber
         {
-            get { return GetValue<int>(DisplayNumberProperty); }
-            set { SetValue(DisplayNumberProperty, value); }
+            get => GetValue<int>(DisplayNumberProperty);
+            set => SetValue(DisplayNumberProperty, value);
         }
 
         public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int));
@@ -55,8 +55,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("MultiDisplay")]
         public ObservableCollection<CLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get => GetValue<ObservableCollection<CLPPage>>(PagesProperty);
+            set => SetValue(PagesProperty, value);
         }
 
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
@@ -68,8 +68,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Toggle to ignore viewModels of Display Previews</summary>
         public bool IsDisplayPreview
         {
-            get { return GetValue<bool>(IsDisplayPreviewProperty); }
-            set { SetValue(IsDisplayPreviewProperty, value); }
+            get => GetValue<bool>(IsDisplayPreviewProperty);
+            set => SetValue(IsDisplayPreviewProperty, value);
         }
 
         public static readonly PropertyData IsDisplayPreviewProperty = RegisterProperty("IsDisplayPreview", typeof(bool), false);
