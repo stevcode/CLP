@@ -72,8 +72,8 @@
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}}"
-                                                     Value="{x:Static services:ProgramRoles.Projector}">
+                                        <DataTrigger Binding="{Binding DataContext.IsProjectorRole, ElementName=ItemsControl}"
+                                                     Value="True">
                                             <Setter Property="FontSize"
                                                     Value="30" />
                                         </DataTrigger>
@@ -81,7 +81,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-
+                        
                         <TextBlock Grid.Column="0"
                                    Grid.Row="1"
                                    Margin="0 0 0 5"
@@ -89,7 +89,7 @@
                                    Foreground="{DynamicResource DynamicMainColor}"
                                    FontWeight="Bold"
                                    VerticalAlignment="Bottom"
-                                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                   Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=ItemsControl}">
                             <TextBlock.LayoutTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -142,7 +142,7 @@
                                 Height="30"
                                 Margin="-20 0 0 -20"
                                 Cursor="Hand"
-                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                                Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=ItemsControl}"
                                 Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromMultiDisplayCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>

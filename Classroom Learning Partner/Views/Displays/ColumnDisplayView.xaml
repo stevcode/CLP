@@ -85,7 +85,7 @@
                                    Foreground="{DynamicResource DynamicMainColor}"
                                    FontWeight="Bold"
                                    VerticalAlignment="Bottom"
-                                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                   Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=ItemsControl}">
                             <TextBlock.LayoutTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -145,7 +145,7 @@
                                 Height="30"
                                 Margin="-20 0 0 -20"
                                 Cursor="Hand"
-                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                                Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=ItemsControl}"
                                 Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromMultiDisplayCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>

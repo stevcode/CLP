@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using Catel;
 using Catel.Data;
@@ -15,7 +17,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Constructor
 
-        /// <summary>Initializes a new instance of the SingleDisplayViewModel class.</summary>
         public SingleDisplayViewModel(Notebook notebook, IRoleService roleService)
         {
             Argument.IsNotNull(() => roleService);
@@ -23,10 +24,37 @@ namespace Classroom_Learning_Partner.ViewModels
             _roleService = roleService;
 
             Notebook = notebook;
+
+            InitializeEventSubscriptions();
             InitializeCommands();
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            _roleService.RoleChanged += _roleService_RoleChanged;
+        }
+
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(IsProjectorRole));
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+        }
+
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Model
 
@@ -101,6 +129,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Model
+
+        #region Bindings
 
         #region Page Resizing Bindings
 
@@ -179,6 +209,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double));
 
         #endregion //Page Resizing Bindings
+
+        #region Visibilities
+
+        public bool IsProjectorRole => _roleService.Role == ProgramRoles.Projector;
+
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                               ? Visibility.Visible
+                                                               : Visibility.Collapsed;
+
+        #endregion // Visibilities
+
+        #endregion // Bindings
 
         #region Commands
 

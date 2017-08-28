@@ -5,7 +5,6 @@
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:services="clr-namespace:Classroom_Learning_Partner.Services">
    
     <Grid x:Name="TopGrid">
@@ -52,7 +51,7 @@
                        Foreground="{DynamicResource DynamicMainColor}"
                        FontWeight="Bold"
                        VerticalAlignment="Bottom"
-                       Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                       Visibility="{Binding ResearcherOrTeacherVisibility}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -64,8 +63,8 @@
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}}"
-                                                     Value="{x:Static services:ProgramRoles.Projector}">
+                            <DataTrigger Binding="{Binding IsProjectorRole}"
+                                                     Value="True">
                                 <Setter Property="FontSize"
                                                     Value="30" />
                             </DataTrigger>
