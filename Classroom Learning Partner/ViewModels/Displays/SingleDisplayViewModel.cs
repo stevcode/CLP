@@ -34,22 +34,22 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
-            get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
+            get => GetValue<Notebook>(NotebookProperty);
+            private set => SetValue(NotebookProperty, value);
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>A property mapped to a property on the Model SingleDisplay.</summary>
         [ViewModelToModel("Notebook")]
         [Model(SupportIEditableObject = false)]
         public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
+            get => GetValue<CLPPage>(CurrentPageProperty);
+            set => SetValue(CurrentPageProperty, value);
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), null, OnCurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), null, OnCurrentPageChanged);
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -87,8 +87,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("CurrentPage")]
         public double Height
         {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
+            get => GetValue<double>(HeightProperty);
+            set => SetValue(HeightProperty, value);
         }
 
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), null, OnHeightChanged);
@@ -104,10 +104,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Resizing Bindings
 
-        /// <summary>Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay. DataBinding done from Dependency Property in the View.</summary>
+        /// <summary>
+        ///     Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay. DataBinding
+        ///     done from Dependency Property in the View.
+        /// </summary>
         public Tuple<double, double> DisplayWidthHeight
         {
-            get { return GetValue<Tuple<double, double>>(DisplayWidthHeightProperty); }
+            get => GetValue<Tuple<double, double>>(DisplayWidthHeightProperty);
             set
             {
                 SetValue(DisplayWidthHeightProperty, value);
@@ -119,61 +122,61 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof (Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
+        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
 
         /// <summary>Height of the toolbar for the current page.</summary>
         public double ToolBarHeight
         {
-            get { return GetValue<double>(ToolBarHeightProperty); }
-            set { SetValue(ToolBarHeightProperty, value); }
+            get => GetValue<double>(ToolBarHeightProperty);
+            set => SetValue(ToolBarHeightProperty, value);
         }
 
-        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof (double), 0.0);
+        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof(double), 0.0);
 
         /// <summary>Thickness of the border around the page.</summary>
         public double BorderThickness
         {
-            get { return GetValue<double>(BorderThicknessProperty); }
-            set { SetValue(BorderThicknessProperty, value); }
+            get => GetValue<double>(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
         }
 
-        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof (double), 1.0);
+        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof(double), 1.0);
 
         /// <summary>Width of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderWidth
         {
-            get { return GetValue<double>(BorderWidthProperty); }
-            set { SetValue(BorderWidthProperty, value); }
+            get => GetValue<double>(BorderWidthProperty);
+            set => SetValue(BorderWidthProperty, value);
         }
 
-        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof (double));
+        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof(double));
 
         /// <summary>Height of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderHeight
         {
-            get { return GetValue<double>(BorderHeightProperty); }
-            set { SetValue(BorderHeightProperty, value); }
+            get => GetValue<double>(BorderHeightProperty);
+            set => SetValue(BorderHeightProperty, value);
         }
 
-        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof (double));
+        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double));
 
         /// <summary>Physical Width of Page. Differs from the Width because Width is inside a ViewBox.</summary>
         public double DimensionWidth
         {
-            get { return GetValue<double>(DimensionWidthProperty); }
-            set { SetValue(DimensionWidthProperty, value); }
+            get => GetValue<double>(DimensionWidthProperty);
+            set => SetValue(DimensionWidthProperty, value);
         }
 
-        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof (double));
+        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double));
 
         /// <summary>Physical Height of Page. Differs from the Height because Height is inside a ViewBox.</summary>
         public double DimensionHeight
         {
-            get { return GetValue<double>(DimensionHeightProperty); }
-            set { SetValue(DimensionHeightProperty, value); }
+            get => GetValue<double>(DimensionHeightProperty);
+            set => SetValue(DimensionHeightProperty, value);
         }
 
-        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof (double));
+        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double));
 
         #endregion //Page Resizing Bindings
 
