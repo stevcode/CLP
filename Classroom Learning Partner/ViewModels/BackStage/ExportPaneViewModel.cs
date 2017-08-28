@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Catel;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
@@ -25,7 +26,8 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public ExportPaneViewModel()
+        public ExportPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             InitializeCommands();
         }
@@ -44,10 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>Title Text for the Pane.</summary>
-        public override string PaneTitleText
-        {
-            get { return "Export"; }
-        }
+        public override string PaneTitleText => "Export";
 
         #endregion //Bindings
 
@@ -75,9 +74,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebook = _dataService.CurrentNotebook;
 
-            var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                  ? _dataService.GetLoadedSubmissionsForPage(notebook.CurrentPage)
-                                  : notebook.CurrentPage.Submissions.ToList();
+            var submissions =
+                _roleService.Role != ProgramRoles.Student ? _dataService.GetLoadedSubmissionsForPage(notebook.CurrentPage) : notebook.CurrentPage.Submissions.ToList();
 
             var sortedPages = submissions.OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
 
@@ -94,9 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CLPPage lastSubmissionAdded = null;
             foreach (var page in notebook.Pages)
             {
-                var submissions = App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student
-                                      ? _dataService.GetLoadedSubmissionsForPage(page)
-                                      : page.Submissions.ToList();
+                var submissions = _roleService.Role != ProgramRoles.Student ? _dataService.GetLoadedSubmissionsForPage(page) : page.Submissions.ToList();
 
                 foreach (var submission in submissions)
                 {

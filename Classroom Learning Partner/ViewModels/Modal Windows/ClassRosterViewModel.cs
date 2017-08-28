@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Catel.Collections;
 using Catel.Data;
@@ -150,13 +151,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             ImportStudentNamesCommand = new Command(OnImportStudentNamesCommandExecute);
-            EditStudentGroupsCommand = new Command(OnEditStudentGroupsCommandExecute);
-            AddPersonCommand = new Command<bool>(OnAddPersonCommandExecute);
-            EditPersonCommand = new Command<Person>(OnEditPersonCommandExecute);
+            EditStudentGroupsCommand = new TaskCommand(OnEditStudentGroupsCommandExecuteAsync);
+            AddPersonCommand = new TaskCommand<bool>(OnAddPersonCommandExecuteAsync);
+            EditPersonCommand = new TaskCommand<Person>(OnEditPersonCommandExecuteAsync);
             DeleteTeacherCommand = new Command<Person>(OnDeleteTeacherCommandExecute);
             DeleteStudentCommand = new Command<Person>(OnDeleteStudentCommandExecute);
-            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
-            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
+            ConfirmChangesCommand = new TaskCommand(OnConfirmChangesCommandExecuteAsync);
+            CancelChangesCommand = new TaskCommand(OnCancelChangesCommandExecuteAsync);
         }
 
         /// <summary>Builds list of students from an imported StudentNames.txt file</summary>
@@ -197,18 +198,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Edits the differentiation groups of the students.</summary>
-        public Command EditStudentGroupsCommand { get; private set; }
+        public TaskCommand EditStudentGroupsCommand { get; private set; }
 
-        private void OnEditStudentGroupsCommandExecute()
+        private async Task OnEditStudentGroupsCommandExecuteAsync()
         {
             var viewModel = new StudentDifferentiationViewModel(ClassRoster);
-            viewModel.ShowWindowAsDialog();
+            await viewModel.ShowWindowAsDialogAsync();
         }
 
         /// <summary>Adds a new person to the roster.</summary>
-        public Command<bool> AddPersonCommand { get; private set; }
+        public TaskCommand<bool> AddPersonCommand { get; private set; }
 
-        private void OnAddPersonCommandExecute(bool isTeacher)
+        private async Task OnAddPersonCommandExecuteAsync(bool isTeacher)
         {
             if (isTeacher && ListOfTeachers.Any())
             {
@@ -217,18 +218,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var person = new Person
-            {
-                IsStudent = !isTeacher
-            };
+                         {
+                             IsStudent = !isTeacher
+                         };
 
             var viewModel = new PersonViewModel(person)
-            {
-                WindowTitle = isTeacher ? "New Teacher" : "New Student"
-            };
+                            {
+                                WindowTitle = isTeacher ? "New Teacher" : "New Student"
+                            };
 
-            var result = viewModel.ShowWindowAsDialog();
-
-            if (result != true)
+            if (!(await viewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
@@ -246,15 +245,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Edits the details of a Student or Teacher.</summary>
-        public Command<Person> EditPersonCommand { get; private set; }
+        public TaskCommand<Person> EditPersonCommand { get; private set; }
 
-        private void OnEditPersonCommandExecute(Person person)
+        private async Task OnEditPersonCommandExecuteAsync(Person person)
         {
             var viewModel = new PersonViewModel(person)
-            {
-                WindowTitle = person.IsStudent ? "Edit Student" : "Edit Teacher"
-            };
-            viewModel.ShowWindowAsDialog();
+                            {
+                                WindowTitle = person.IsStudent ? "Edit Student" : "Edit Teacher"
+                            };
+            await viewModel.ShowWindowAsDialogAsync();
         }
 
         /// <summary>Removes student from the List of Students</summary>
@@ -286,18 +285,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Validates and confirms changes to the ClassRoster.</summary>
-        public Command ConfirmChangesCommand { get; private set; }
+        public TaskCommand ConfirmChangesCommand { get; private set; }
 
-        private async void OnConfirmChangesCommandExecute()
+        private async Task OnConfirmChangesCommandExecuteAsync()
         {
             await SaveViewModelAsync();
             await CloseViewModelAsync(true);
         }
 
         /// <summary>Cancels changes to the ClassRoster.</summary>
-        public Command CancelChangesCommand { get; private set; }
+        public TaskCommand CancelChangesCommand { get; private set; }
 
-        private async void OnCancelChangesCommandExecute()
+        private async Task OnCancelChangesCommandExecuteAsync()
         {
             await CancelViewModelAsync();
             await CloseViewModelAsync(false);

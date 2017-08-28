@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Threading;
+using Catel;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
@@ -21,6 +21,7 @@ using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;
+using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -42,16 +43,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private readonly IDataService _dataService;
         private readonly IWindowManagerService _windowManagerService;
-        private IPageInteractionService _pageInteractionService;
+        private readonly IPageInteractionService _pageInteractionService;
         private readonly INetworkService _networkService;
+        private readonly IRoleService _roleService;
 
-        public MajorRibbonViewModel(IDataService dataService, IWindowManagerService windowManagerService, IPageInteractionService pageInteractionService, INetworkService networkService)
+        public MajorRibbonViewModel(IDataService dataService,
+                                    IWindowManagerService windowManagerService,
+                                    IPageInteractionService pageInteractionService,
+                                    INetworkService networkService,
+                                    IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => windowManagerService);
+            Argument.IsNotNull(() => pageInteractionService);
+            Argument.IsNotNull(() => networkService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
             _windowManagerService = windowManagerService;
             _pageInteractionService = pageInteractionService;
             _networkService = networkService;
+            _roleService = roleService;
 
+            InitializeEventSubscriptions();
             InitializeCommands();
             InitializeButtons();
             SetRibbonButtons();
@@ -59,29 +73,16 @@ namespace Classroom_Learning_Partner.ViewModels
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = _windowManagerService.LeftPanel;
             CurrentRightPanel = _windowManagerService.RightPanel;
-
-            InitializedAsync += MajorRibbonViewModel_InitializedAsync;
-            ClosedAsync += MajorRibbonViewModel_ClosedAsync;
         }
 
         #region Events
 
-        private Task MajorRibbonViewModel_InitializedAsync(object sender, EventArgs e)
+        private void InitializeEventSubscriptions()
         {
             _dataService.CurrentNotebookChanged += _dataService_CurrentNotebookChanged;
             _windowManagerService.LeftPanelChanged += _windowManagerService_LeftPanelChanged;
             _windowManagerService.RightPanelChanged += _windowManagerService_RightPanelChanged;
-
-            return TaskHelper.Completed;
-        }
-
-        private Task MajorRibbonViewModel_ClosedAsync(object sender, ViewModelClosedEventArgs e)
-        {
-            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
-            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
-            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
-
-            return TaskHelper.Completed;
+            _roleService.RoleChanged += _roleService_RoleChanged;
         }
 
         private void _dataService_CurrentNotebookChanged(object sender, EventArgs e)
@@ -145,10 +146,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentRightPanel = Panels.DisplaysPanel;
                     }
                     break;
-                case Panels.PageInformationPanel:
-                    if (CurrentRightPanel != Panels.PageInformationPanel)
+                case Panels.AnalysisPanel:
+                    if (CurrentRightPanel != Panels.AnalysisPanel)
                     {
-                        CurrentRightPanel = Panels.PageInformationPanel;
+                        CurrentRightPanel = Panels.AnalysisPanel;
                     }
                     break;
                 default:
@@ -157,7 +158,29 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(ResearcherOnlyVisibility));
+            RaisePropertyChanged(nameof(TeacherOnlyVisibility));
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+            RaisePropertyChanged(nameof(StudentOnlyVisibility));
+            RaisePropertyChanged(nameof(NotStudentVisibility));
+        }
+
         #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _dataService.CurrentNotebookChanged -= _dataService_CurrentNotebookChanged;
+            _windowManagerService.LeftPanelChanged -= _windowManagerService_LeftPanelChanged;
+            _windowManagerService.RightPanelChanged -= _windowManagerService_RightPanelChanged;
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         private void InitializeButtons()
         {
@@ -177,7 +200,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                           PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
 
-            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Resources/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
+            _setMarkModeButton = new GroupedRibbonButton("Mark",
+                                                         "PageInteractionMode",
+                                                         "pack://application:,,,/Resources/Images/AddCircle.png",
+                                                         PageInteractionModes.Mark.ToString());
             _setMarkModeButton.Checked += _button_Checked;
 
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
@@ -186,7 +212,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                           PageInteractionModes.Lasso.ToString());
             _setLassoModeButton.Checked += _button_Checked;
 
-            _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", PageInteractionModes.Cut.ToString());
+            _setCutModeButton = new GroupedRibbonButton("Cut",
+                                                        "PageInteractionMode",
+                                                        "pack://application:,,,/Resources/Images/Scissors32.png",
+                                                        PageInteractionModes.Cut.ToString());
             _setCutModeButton.Checked += _button_Checked;
 
             _setDividerCreationModeButton = new GroupedRibbonButton("Add Divider",
@@ -205,8 +234,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
-            _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
-            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Resources/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
+            _insertImageGeneralStampButton = new RibbonButton("Image Stamp",
+                                                              "pack://application:,,,/Resources/Images/PictureStamp.png",
+                                                              AddPageObjectToPageCommand,
+                                                              "IMAGE_GENERAL_STAMP");
+            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp",
+                                                            "pack://application:,,,/Resources/Images/PictureStamp.png",
+                                                            AddPageObjectToPageCommand,
+                                                            "IMAGE_GROUP_STAMP");
             _insertPileButton = new RibbonButton("Division Group", "pack://application:,,,/Resources/Images/DivisionGroup64.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
@@ -232,14 +267,18 @@ namespace Classroom_Learning_Partner.ViewModels
             //Shapes
             _insertShapeButton = new DropDownRibbonButton("Shape", "pack://application:,,,/Resources/Images/ShapesThin64.png");
             var shapeDropDown = new ContextMenu();
-            
+
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Resources/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE", true);
             shapeDropDown.Items.Add(_insertSquareButton);
             _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Resources/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE", true);
             shapeDropDown.Items.Add(_insertCircleButton);
             _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Resources/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE", true);
             shapeDropDown.Items.Add(_insertTriangleButton);
-            _insertHorizontalLineButton = new RibbonButton("Line", "pack://application:,,,/Resources/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE", true);
+            _insertHorizontalLineButton = new RibbonButton("Line",
+                                                           "pack://application:,,,/Resources/Images/HorizontalLineIcon.png",
+                                                           AddPageObjectToPageCommand,
+                                                           "HORIZONTALLINE",
+                                                           true);
             shapeDropDown.Items.Add(_insertHorizontalLineButton);
 
             _insertShapeButton.DropDown = shapeDropDown;
@@ -249,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Resources/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
 
             #endregion // Obsolete
-            
+
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Resources/Images/Bin32.png", AddPageObjectToPageCommand, "BIN");
 
@@ -264,7 +303,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                   true);
 
             // Recognition
-            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In", "pack://application:,,,/Resources/Images/LargeIcon.png", AddPageObjectToPageCommand, "ANSWERFILLIN", true);
+            _insertRecognitionRegionButton = new RibbonButton("Answer Fill In",
+                                                              "pack://application:,,,/Resources/Images/LargeIcon.png",
+                                                              AddPageObjectToPageCommand,
+                                                              "ANSWERFILLIN",
+                                                              true);
 
             // Other
             _insertOther = new DropDownRibbonButton("Other", "pack://application:,,,/Resources/Images/Plus32.png");
@@ -278,7 +321,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertOther.DropDown = otherDropDown;
         }
 
-        private bool _isCheckedEventRunning = false;
+        private bool _isCheckedEventRunning;
 
         private void _button_Checked(object sender, RoutedEventArgs e)
         {
@@ -292,7 +335,7 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (checkedButton.GroupName)
             {
                 case "PageInteractionMode":
-                    PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof (PageInteractionModes), checkedButton.AssociatedEnumValue);
+                    PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof(PageInteractionModes), checkedButton.AssociatedEnumValue);
 
                     if (App.MainWindowViewModel == null)
                     {
@@ -304,7 +347,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     }
 
-                    _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+                    // TODO: Remove this line if pageInteractionService functions correctly.
+                    //_pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
                     switch (PageInteractionMode)
                     {
@@ -392,6 +436,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Stamps
         private RibbonButton _insertGeneralStampButton;
+
         private RibbonButton _insertGroupStampButton;
         private RibbonButton _insertImageGeneralStampButton;
         private RibbonButton _insertImageGroupStampButton;
@@ -399,6 +444,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Arrays
         private RibbonButton _insertArrayButton;
+
         private RibbonButton _insert10x10ArrayButton;
         private RibbonButton _insertArrayCardButton;
         private RibbonButton _insertFactorCardButton;
@@ -409,6 +455,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //NumberLine
         private RibbonButton _insertNumberLineButton;
+
         private RibbonButton _insertAutoNumberLineButton;
 
         //Text
@@ -418,6 +465,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Shapes
         private DropDownRibbonButton _insertShapeButton;
+
         private RibbonButton _insertSquareButton;
         private RibbonButton _insertCircleButton;
         private RibbonButton _insertTriangleButton;
@@ -443,8 +491,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public Notebook CurrentNotebook
         {
-            get { return GetValue<Notebook>(CurrentNotebookProperty); }
-            set { SetValue(CurrentNotebookProperty, value); }
+            get => GetValue<Notebook>(CurrentNotebookProperty);
+            set => SetValue(CurrentNotebookProperty, value);
         }
 
         public static readonly PropertyData CurrentNotebookProperty = RegisterProperty("CurrentNotebook", typeof(Notebook));
@@ -453,8 +501,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("CurrentNotebook")]
         public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
+            get => GetValue<CLPPage>(CurrentPageProperty);
+            set => SetValue(CurrentPageProperty, value);
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
@@ -463,8 +511,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("CurrentNotebook")]
         public IDisplay CurrentDisplay
         {
-            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
-            set { SetValue(CurrentDisplayProperty, value); }
+            get => GetValue<IDisplay>(CurrentDisplayProperty);
+            set => SetValue(CurrentDisplayProperty, value);
         }
 
         public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
@@ -473,23 +521,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>SUMMARY</summary>
         public ConnectionStatuses ConnectionStatus
         {
-            get { return GetValue<ConnectionStatuses>(ConnectionStatusProperty); }
-            set { SetValue(ConnectionStatusProperty, value); }
+            get => GetValue<ConnectionStatuses>(ConnectionStatusProperty);
+            set => SetValue(ConnectionStatusProperty, value);
         }
 
-        public static readonly PropertyData ConnectionStatusProperty = RegisterProperty("ConnectionStatus", typeof (ConnectionStatuses), ConnectionStatuses.Listening);
+        public static readonly PropertyData ConnectionStatusProperty = RegisterProperty("ConnectionStatus", typeof(ConnectionStatuses), ConnectionStatuses.Listening);
 
         /// <summary>List of the buttons currently on the Ribbon.</summary>
         public ObservableCollection<UIElement> Buttons
         {
-            get { return GetValue<ObservableCollection<UIElement>>(ButtonsProperty); }
-            set { SetValue(ButtonsProperty, value); }
+            get => GetValue<ObservableCollection<UIElement>>(ButtonsProperty);
+            set => SetValue(ButtonsProperty, value);
         }
 
-        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
+        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof(ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
         /// <summary>Left Panel.</summary>
         public Panels? CurrentLeftPanel
@@ -513,7 +560,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof (Panels?));
+        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
 
         /// <summary>Right Panel.</summary>
         public Panels? CurrentRightPanel
@@ -527,8 +574,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     case Panels.DisplaysPanel:
                         _windowManagerService.RightPanel = Panels.DisplaysPanel;
                         break;
-                    case Panels.PageInformationPanel:
-                        _windowManagerService.RightPanel = Panels.PageInformationPanel;
+                    case Panels.AnalysisPanel:
+                        _windowManagerService.RightPanel = Panels.AnalysisPanel;
                         break;
                     default:
                         _windowManagerService.RightPanel = Panels.NoPanel;
@@ -537,12 +584,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof (Panels?));
+        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?));
 
         /// <summary>Gets or sets the property value.</summary>
         public bool BlockStudentPenInput
         {
-            get { return GetValue<bool>(BlockStudentPenInputProperty); }
+            get => GetValue<bool>(BlockStudentPenInputProperty);
             set
             {
                 SetValue(BlockStudentPenInputProperty, value);
@@ -570,16 +617,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
+        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof(bool), false);
 
         /// <summary>Toggles the animation ribbon.</summary>
         public bool IsAnimationRibbonForcedVisible
         {
-            get { return GetValue<bool>(IsAnimationRibbonForcedVisibleProperty); }
-            set { SetValue(IsAnimationRibbonForcedVisibleProperty, value); }
+            get => GetValue<bool>(IsAnimationRibbonForcedVisibleProperty);
+            set => SetValue(IsAnimationRibbonForcedVisibleProperty, value);
         }
 
-        public static readonly PropertyData IsAnimationRibbonForcedVisibleProperty = RegisterProperty("IsAnimationRibbonForcedVisible", typeof(bool), false, OnIsAnimationRibbonForcedVisibleChanged);
+        public static readonly PropertyData IsAnimationRibbonForcedVisibleProperty =
+            RegisterProperty("IsAnimationRibbonForcedVisible", typeof(bool), false, OnIsAnimationRibbonForcedVisibleChanged);
 
         private static void OnIsAnimationRibbonForcedVisibleChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
@@ -598,6 +646,22 @@ namespace Classroom_Learning_Partner.ViewModels
             animationControlRibbon.IsNonAnimationPlaybackEnabled = (bool)args.NewValue;
         }
 
+        #region Visibilities
+
+        public Visibility ResearcherOnlyVisibility => _roleService.Role == ProgramRoles.Researcher ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility TeacherOnlyVisibility => _roleService.Role == ProgramRoles.Teacher ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                              ? Visibility.Visible
+                                                              : Visibility.Collapsed;
+
+        public Visibility StudentOnlyVisibility => _roleService.Role == ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility NotStudentVisibility => _roleService.Role != ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed;
+
+        #endregion // Visibilities
+
         #endregion //Bindings
 
         #region Properties
@@ -605,7 +669,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Interaction Mode for the current page.</summary>
         public PageInteractionModes PageInteractionMode
         {
-            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
+            get => GetValue<PageInteractionModes>(PageInteractionModeProperty);
             set
             {
                 SetValue(PageInteractionModeProperty, value);
@@ -643,7 +707,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof (PageInteractionModes), PageInteractionModes.Draw);
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionModes), PageInteractionModes.Draw);
 
         #endregion //Properties
 
@@ -672,10 +736,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReconnectCommandExecute()
         {
-            if (MessageBox.Show("Are you sure you want to restart the network connection?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
-            {
-                return;
-            }
+            if (MessageBox.Show("Are you sure you want to restart the network connection?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No) { }
 
             // TODO: _networkService.Reconnect();
         }
@@ -729,7 +790,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Undoes the last action.</summary>
         public Command UndoCommand { get; private set; }
 
-        private void OnUndoCommandExecute() { _dataService.CurrentPage.History.Undo(); }
+        private void OnUndoCommandExecute()
+        {
+            _dataService.CurrentPage.History.Undo();
+        }
 
         private bool OnUndoCanExecute()
         {
@@ -752,7 +816,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Redoes the last undone action.</summary>
         public Command RedoCommand { get; private set; }
 
-        private void OnRedoCommandExecute() { _dataService.CurrentPage.History.Redo(); }
+        private void OnRedoCommandExecute()
+        {
+            _dataService.CurrentPage.History.Redo();
+        }
 
         private bool OnRedoCanExecute()
         {
@@ -851,7 +918,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Adds a new animation page to the current notebook.
+        ///     Adds a new animation page to the current notebook.
         /// </summary>
         public Command AddNewAnimationPageCommand { get; private set; }
 
@@ -886,7 +953,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialHeight = currentPage.Width / currentPage.InitialAspectRatio;
             currentPage.Height = initialHeight * 2;
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (_roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;
@@ -1133,10 +1200,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var bitmapImage = pageView.ToBitmapImage(currentPage.Width, dpi: 300);
 
-            var thumbnailsFolderPath = Catel.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
-            var thumbnailFilePath = Catel.IO.Path.Combine(thumbnailsFolderPath,
-                                                 "Page - " + currentPage.PageNumber + ";" + currentPage.DifferentiationLevel + ";" + currentPage.VersionIndex + ";" +
-                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Page Screenshots");
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
+                                                 "Page - " +
+                                                 currentPage.PageNumber +
+                                                 ";" +
+                                                 currentPage.DifferentiationLevel +
+                                                 ";" +
+                                                 currentPage.VersionIndex +
+                                                 ";" +
+                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") +
+                                                 ".png");
 
             if (!Directory.Exists(thumbnailsFolderPath))
             {

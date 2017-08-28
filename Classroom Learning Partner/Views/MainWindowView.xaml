@@ -6,6 +6,7 @@
                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:services="clr-namespace:Classroom_Learning_Partner.Services"
                   Loaded="MainWindowView_OnLoaded"
                   Closing="MainWindowView_OnClosing"
                   Icon="pack://application:,,,/Resources/Images/Icons/CLPPaperClipLogoCircled.ico"
@@ -35,7 +36,7 @@
     </catel:DataWindow.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Command="{Binding SetUserModeCommand}"
+        <!--<KeyBinding Command="{Binding SetUserModeCommand}"
                     CommandParameter="TEACHER"
                     Gesture="CTRL+SHIFT+T" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
@@ -43,7 +44,7 @@
                     Gesture="CTRL+SHIFT+S" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
                     CommandParameter="PROJECTOR"
-                    Gesture="CTRL+SHIFT+P" />
+                    Gesture="CTRL+SHIFT+P" />-->
         <KeyBinding Command="{Binding TogglePenDownCommand}"
                     Gesture="CTRL+SHIFT+D" />
         <KeyBinding Command="{Binding ToggleMaximizeStateCommand}"
@@ -160,7 +161,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:ProgramModes.Projector}}"
+                                <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:ProgramRoles.Projector}}"
                                            Value="True" />
                                 <Condition Binding="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
                                            Value="True" />

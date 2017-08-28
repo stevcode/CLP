@@ -7,12 +7,13 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:services="clr-namespace:Classroom_Learning_Partner.Services">
 
     <UserControl.Resources>
-        
+
         <ResourceDictionary>
-            
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -48,7 +49,7 @@
                 Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
             <Grid>
-                
+
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Pages, IsAsync=True}"
                          SelectedValue="{Binding CurrentPage, Mode=OneWay}"
@@ -76,7 +77,8 @@
                                     <Style TargetType="Grid">
                                         <Setter Property="Background" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsChecked, ElementName=ToggleButton}" Value="True">
+                                            <DataTrigger Binding="{Binding IsChecked, ElementName=ToggleButton}"
+                                                         Value="True">
                                                 <Setter Property="Background" Value="Lavender" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -88,7 +90,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
-                                           Visibility="{Binding MainWindowViewModel.NotTeacherVisibility, Source={x:Static Application.Current}}">
+                                           Visibility="{Binding DataContext.StudentOrProjectorVisibility, ElementName=PagesListBox}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
@@ -100,16 +102,17 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
-
+                                
                                 <TextBlock Grid.Column="0"
                                            Margin="5 0 -3 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
-                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                           Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=PagesListBox}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
-                                    <Run Text="{Binding DifferentiationLevel, Converter={converters:StringToEmptyStringConverter}, ConverterParameter=0}"/>
+                                    <Run
+                                        Text="{Binding DifferentiationLevel, Converter={converters:StringToEmptyStringConverter}, ConverterParameter=0}" />
 
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
@@ -191,7 +194,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
-                                
+
                                 <!--<Button Grid.Column="1"
                                         Width="25"
                                         Height="25"
@@ -232,14 +235,14 @@
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>-->
-                                
+
                                 <StackPanel Grid.Column="1"
                                             Height="16"
                                             IsHitTestVisible="False"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
-                                    
+
                                     <Image Height="16"
                                            Width="16"
                                            IsHitTestVisible="False"
@@ -249,8 +252,9 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                                                 Value="True">
+                                                    <DataTrigger
+                                                        Binding="{Binding PageType, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                        Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
                                                     </DataTrigger>
@@ -258,19 +262,19 @@
                                             </Style>
                                         </Image.Style>
                                     </Image>
-                                    
+
                                     <Image Height="16"
                                            Width="16"
                                            IsHitTestVisible="False"
                                            Source="pack://application:,,,/Resources/Images/Check16.png"
                                            Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
-                                    
+
                                 </StackPanel>
 
                                 <Grid Grid.Column="2"
                                       VerticalAlignment="Center"
                                       Margin="-5 0 5 0"
-                                      Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                                      Visibility="{Binding DataContext.ResearcherOrTeacherVisibility, ElementName=PagesListBox}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -282,7 +286,8 @@
                                                   Click="ShowSubmissionsButton_OnClick"
                                                   Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                                   CommandParameter="{Binding}">
-                                        <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                        <Image
+                                            Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
                                     </ToggleButton>
                                     <TextBlock Grid.Row="1"
                                                Text="{Binding ViewModel.NumberOfDistinctSubmissions, ElementName=PagePreviewView}"
@@ -330,38 +335,34 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
-                
+
             </Grid>
 
         </Border>
 
-        <views:StagingPanelView x:Name="Stage" 
+        <views:StagingPanelView x:Name="Stage"
                                 DataContext="{Binding StagingPanel}"
                                 Grid.Column="1">
             <views:StagingPanelView.Visibility>
                 <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
                     <Binding Path="IsVisible" />
-                    <Binding Path="MainWindowViewModel.CurrentProgramMode" 
-                             Source="{x:Static Application.Current}"
-                             Converter="{converters:EnumToBoolConverter}"
-                             ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
+                    <Binding Path="DataContext.IsResearcherOrTeacherRole"
+                             ElementName="PagesListBox" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>
-            
+
         </views:StagingPanelView>
 
         <views:SubmissionHistoryPanelView DataContext="{Binding SubmissionHistoryPanel}"
                                           Grid.Column="2">
             <views:SubmissionHistoryPanelView.Visibility>
                 <MultiBinding Converter="{converters:AllBoolToVisibilityMultiConverter}">
-                    <Binding Path="MainWindowViewModel.CurrentProgramMode"
-                             Source="{x:Static Application.Current}"
-                             Converter="{converters:EnumToBoolConverter}"
-                             ConverterParameter="{x:Static viewModels:ProgramModes.Student}" />
+                    <Binding Path="DataContext.IsStudentRole"
+                             ElementName="PagesListBox" />
                 </MultiBinding>
             </views:SubmissionHistoryPanelView.Visibility>
         </views:SubmissionHistoryPanelView>
-        
+
     </Grid>
 
 </catel:UserControl>

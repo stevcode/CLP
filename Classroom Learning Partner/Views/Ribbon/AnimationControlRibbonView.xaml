@@ -6,6 +6,7 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     <UserControl.Resources>
         <ResourceDictionary>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -103,8 +104,7 @@
         </Grid.RowDefinitions>
 
         <!--Playback Controls-->
-        <DockPanel Name="PlaybackControls"
-                   Grid.Row="0"
+        <DockPanel Grid.Row="0"
                    Visibility="Collapsed"
                    Height="34"
                    Background="LightSkyBlue"
@@ -189,7 +189,7 @@
             <!-- Clear Page -->
             <!--<Button Content="Clear Page"
                     DockPanel.Dock="Right"
-                    Width="70"
+                    MinWidth="70"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
@@ -198,6 +198,7 @@
             <!-- Create Animation from History -->
             <!--<Button Content="Forgot To Record?"
                     DockPanel.Dock="Right"
+                    MinWidth="70"
                     Padding="5 0"
                     Margin="20 0"
                     FontSize="12"
@@ -208,7 +209,7 @@
             <!--<Button Content="Undo"
                     Margin="20 0"
                     DockPanel.Dock="Right"
-                    Width="70"
+                    MinWidth="70"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
@@ -246,7 +247,8 @@
 
             <!--Rewind Button-->
             <Button DockPanel.Dock="Left"
-                    Width="70"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="MediumPurple"
                     Margin="0 0 0 0"
                     Command="{Binding RewindAnimationCommand}"
@@ -285,7 +287,8 @@
 
             <!--Play Button-->
             <Button DockPanel.Dock="Left"
-                    Width="70"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="Green"
                     Command="{Binding PlayAnimationCommand}"
                     IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
@@ -379,11 +382,13 @@
             </Button>
 
             <!--Play Backwards Button-->
-            <!--<Button DockPanel.Dock="Left"
-                    Width="85"
+            <Button DockPanel.Dock="Left"
+                    MinWidth="70"
+                    Padding="5 0"
                     Background="Lavender"
                     Command="{Binding PlayBackwardsCommand}"
-                    IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
+                    IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}"
+                    Visibility="{Binding ResearcherOnlyVisibility}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -471,7 +476,7 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </Grid>
-            </Button>-->
+            </Button>
 
             <!-- Playback Speed -->
             <StackPanel DockPanel.Dock="Left"

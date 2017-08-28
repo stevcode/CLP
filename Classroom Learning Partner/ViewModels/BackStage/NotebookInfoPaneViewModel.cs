@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -10,9 +11,12 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public NotebookInfoPaneViewModel()
+        public NotebookInfoPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             Notebook = _dataService.CurrentNotebook;
+            
+
             InitializeCommands();
         }
 
@@ -64,8 +68,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
-            EditClassCommand = new Command(OnEditClassCommandExecute, OnSaveCurrentNotebookCanExecute);
-            EditSessionsCommand = new Command(OnEditSessionsCommandExecute, OnSaveCurrentNotebookCanExecute);
+            EditClassCommand = new TaskCommand(OnEditClassCommandExecuteAsync, OnSaveCurrentNotebookCanExecute);
+            EditSessionsCommand = new TaskCommand(OnEditSessionsCommandExecuteAsync, OnSaveCurrentNotebookCanExecute);
             GenerateClassNotebooksCommand = new Command(OnGenerateClassNotebooksCommandExecute, OnGenerateClassNotebooksCanExecute);
         }
 
@@ -84,9 +88,9 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Edits the currently loaded ClassRoster.</summary>
-        public Command EditClassCommand { get; private set; }
+        public TaskCommand EditClassCommand { get; private set; }
 
-        private void OnEditClassCommandExecute()
+        private async Task OnEditClassCommandExecuteAsync()
         {
             if (_dataService.CurrentClassRoster == null)
             {
@@ -94,17 +98,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var viewModel = new ClassRosterViewModel(_dataService.CurrentClassRoster);
-            viewModel.ShowWindowAsDialog();
+            await viewModel.ShowWindowAsDialogAsync();
             DataService.SaveClassRoster(_dataService.CurrentClassRoster);
         }
 
         /// <summary>Opens a list of sessions in the class.</summary>
-        public Command EditSessionsCommand { get; private set; }
+        public TaskCommand EditSessionsCommand { get; private set; }
 
-        private void OnEditSessionsCommandExecute()
+        private async Task OnEditSessionsCommandExecuteAsync()
         {
             var viewModel = this.CreateViewModel<SessionsViewModel>(null);
-            viewModel.ShowWindowAsDialog();
+            await viewModel.ShowWindowAsDialogAsync();
         }
 
         /// <summary>Generates class notebooks from the authored version.</summary>
@@ -149,7 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //                      null,
             //                      "Exporting Notebook");
 
-            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramRoles.Student ||
             //    App.Network.InstructorProxy == null)
             //{
             //    return;

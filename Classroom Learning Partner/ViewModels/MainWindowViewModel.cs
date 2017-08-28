@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Catel;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -16,25 +17,23 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public enum ProgramModes
-    {
-        Teacher,
-        Student,
-        Projector,
-        Database
-    }
-
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IDataService _dataService;
+        private readonly IRoleService _roleService;
 
         #region Constructor
 
         /// <summary>Initializes a new instance of the MainWindowViewModel class.</summary>
-        public MainWindowViewModel(ProgramModes currentProgramMode)
+        public MainWindowViewModel(IDataService dataService, IRoleService roleService)
         {
-            _dataService = ServiceLocator.Default.ResolveType<IDataService>();
-            CurrentProgramMode = currentProgramMode;
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
+            _dataService = dataService;
+            _roleService = roleService;
+
+            CurrentProgramMode = _roleService.Role;
 
             MajorRibbon = this.CreateViewModel<MajorRibbonViewModel>(null);
             BackStage = this.CreateViewModel<BackStageViewModel>(null);
@@ -43,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
 
             CurrentUser = Person.Guest;
-            IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
+            IsProjectorFrozen = _roleService.Role != ProgramRoles.Projector;
             InitializedAsync += MainWindowViewModel_InitializedAsync;
             ClosedAsync += MainWindowViewModel_ClosedAsync;
         }
@@ -218,30 +217,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Global Bindings
 
-        public Visibility TeacherOnlyVisibility
-        {
-            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        public Visibility ProjectorOnlyVisibility
-        {
-            get { return CurrentProgramMode == ProgramModes.Projector ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        public Visibility StudentOnlyVisibility
-        {
-            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Visible : Visibility.Collapsed; }
-        }
-
-        public Visibility NotTeacherVisibility
-        {
-            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Collapsed : Visibility.Visible; }
-        }
-
-        public Visibility NotStudentVisibility
-        {
-            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Collapsed : Visibility.Visible; }
-        }
+        public Visibility TeacherOnlyVisibility => _roleService.Role == ProgramRoles.Teacher ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility ProjectorOnlyVisibility => _roleService.Role == ProgramRoles.Projector ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility StudentOnlyVisibility => _roleService.Role == ProgramRoles.Student ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility NotTeacherVisibility => _roleService.Role == ProgramRoles.Teacher ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility NotStudentVisibility => _roleService.Role == ProgramRoles.Student ? Visibility.Collapsed : Visibility.Visible;
 
         /// <summary>Global UI binding for Handedness</summary>
         public Handedness Handedness
@@ -286,9 +266,9 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Properties
 
         /// <summary>Current program mode for CLP.</summary>
-        public ProgramModes CurrentProgramMode
+        public ProgramRoles CurrentProgramMode
         {
-            get { return GetValue<ProgramModes>(CurrentProgramModeProperty); }
+            get { return GetValue<ProgramRoles>(CurrentProgramModeProperty); }
             set
             {
                 SetValue(CurrentProgramModeProperty, value);
@@ -300,7 +280,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
+        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramRoles), ProgramRoles.Teacher);
 
         /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
@@ -318,17 +298,15 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            switch (CurrentProgramMode)
+            switch (_roleService.Role)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Teacher:
                     CurrentUser = Person.Author;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     CurrentUser = Person.Author;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     Workspace = this.CreateViewModel<UserLoginWorkspaceViewModel>(null);
                     break;
             }
@@ -340,37 +318,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
-            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
             TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
             MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
             ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
             ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
             ExitProgramCommand = new Command(OnExitProgramCommandExecute);
             ToggleAutoSaveCommand = new Command(OnToggleAutoSaveCommandExecute);
-        }
-
-        /// <summary>Sets the UserMode of the program.</summary>
-        public Command<string> SetUserModeCommand { get; private set; }
-
-        private void OnSetUserModeCommandExecute(string userMode)
-        {
-            switch (userMode)
-            {
-                case "TEACHER":
-                    CurrentProgramMode = ProgramModes.Teacher;
-                    break;
-                case "PROJECTOR":
-                    CurrentProgramMode = ProgramModes.Projector;
-                    break;
-                case "STUDENT":
-                    CurrentProgramMode = ProgramModes.Student;
-                    break;
-                default:
-                    CurrentProgramMode = ProgramModes.Teacher;
-                    break;
-            }
-
-            SetWorkspace();
         }
 
         /// <summary>Toggles the Pen Down screen.</summary>

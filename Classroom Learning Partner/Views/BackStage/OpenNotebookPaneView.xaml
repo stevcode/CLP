@@ -46,7 +46,7 @@
                     Margin="20 0 20 0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                    Visibility="{Binding ResearcherOrTeacherVisibility}"
                     Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
@@ -66,7 +66,7 @@
                     Margin="20 0 20 0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                    Visibility="{Binding ResearcherOrTeacherVisibility}"
                     Style="{StaticResource BackStageButton}">
 
                 <StackPanel HorizontalAlignment="Center"
@@ -105,7 +105,7 @@
                         Margin="3"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
+                        Visibility="{Binding ResearcherOrTeacherVisibility}">
                     <Button.Style>
                         <Style TargetType="Button">
 

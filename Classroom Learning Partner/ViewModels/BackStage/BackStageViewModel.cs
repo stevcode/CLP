@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Catel;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -22,16 +24,45 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         public MainWindowViewModel MainWindow => App.MainWindowViewModel;
 
-        public BackStageViewModel() { InitializeCommands(); }
+        private readonly IRoleService _roleService;
 
-        private void InitializeCommands()
+        #region Constructor
+
+        public BackStageViewModel(IRoleService roleService)
         {
-            HideBackStageCommand = new Command(OnHideBackStageCommandExecute);
-            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
-            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
-            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
-            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+            Argument.IsNotNull(() => roleService);
+
+            _roleService = roleService;
+
+            InitializeEventSubscriptions();
+            InitializeCommands();
         }
+
+        #endregion // Constructor
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            _roleService.RoleChanged += _roleService_RoleChanged;
+        }
+
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+        }
+
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Bindings
 
@@ -68,9 +99,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DisplayedPaneProperty = RegisterProperty("DisplayedPane", typeof (APaneBaseViewModel));
 
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                               ? Visibility.Visible
+                                                               : Visibility.Collapsed;
+
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            HideBackStageCommand = new Command(OnHideBackStageCommandExecute);
+            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
+            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
+            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
+            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+        }
 
         /// <summary>Hides the BackStage.</summary>
         public Command HideBackStageCommand { get; private set; }

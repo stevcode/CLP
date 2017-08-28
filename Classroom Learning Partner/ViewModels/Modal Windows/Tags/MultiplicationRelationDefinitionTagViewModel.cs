@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -75,11 +75,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             AddFactorCommand = new Command(OnAddFactorCommandExecute);
-            TagCommand = new Command<IRelationPart>(OnTagCommandExecute);
+            TagCommand = new TaskCommand<IRelationPart>(OnTagCommandExecuteAsync);
             UntagCommand = new Command<IRelationPart>(OnUntagCommandExecute);
             CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
-            ConfirmChangesCommand = new Command(OnConfirmChangesCommandExecute);
-            CancelChangesCommand = new Command(OnCancelChangesCommandExecute);
+            ConfirmChangesCommand = new TaskCommand(OnConfirmChangesCommandExecuteAsync);
+            CancelChangesCommand = new TaskCommand(OnCancelChangesCommandExecuteAsync);
         }
 
         /// <summary>Adds a zero value factor to the relation definition.</summary>
@@ -91,15 +91,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Switches a numeric value to a relation Tag.</summary>
-        public Command<IRelationPart> TagCommand { get; private set; }
+        public TaskCommand<IRelationPart> TagCommand { get; private set; }
 
-        private void OnTagCommandExecute(IRelationPart numericPart)
+        private async Task OnTagCommandExecuteAsync(IRelationPart numericPart)
         {
             var additionDefinition = new AdditionRelationDefinitionTag(Model.ParentPage, Model.Origin);
 
             var additionViewModel = new AdditionRelationDefinitionTagViewModel(additionDefinition);
-            var additionResult = additionViewModel.ShowWindowAsDialog();
-            if (additionResult != true)
+            if (!(await additionViewModel.ShowWindowAsDialogAsync() ?? false))
             {
                 return;
             }
@@ -138,9 +137,9 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Validates and confirms changes to the person.</summary>
-        public Command ConfirmChangesCommand { get; private set; }
+        public TaskCommand ConfirmChangesCommand { get; private set; }
 
-        private async void OnConfirmChangesCommandExecute()
+        private async Task OnConfirmChangesCommandExecuteAsync()
         {
             OnCalculateProductCommandExecute();
 
@@ -148,9 +147,9 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>Cancels changes to the person.</summary>
-        public Command CancelChangesCommand { get; private set; }
+        public TaskCommand CancelChangesCommand { get; private set; }
 
-        private async void OnCancelChangesCommandExecute()
+        private async Task OnCancelChangesCommandExecuteAsync()
         {
             await CloseViewModelAsync(false);
         }

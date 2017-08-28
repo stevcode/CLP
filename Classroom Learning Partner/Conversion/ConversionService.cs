@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Classroom_Learning_Partner.Services;
-using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -16,8 +14,9 @@ namespace Classroom_Learning_Partner
 {
     public partial class ConversionService
     {
-        public const bool IS_LARGE_CACHE = false;
+        public const bool IS_LARGE_CACHE = true;
         public const bool IS_ANONYMIZED_CACHE = true;
+        public const bool IS_CONVERTING_SUBMISSIONS = true;
 
         #region Loop
 
@@ -174,7 +173,7 @@ namespace Classroom_Learning_Partner
 
                 page.History.RefreshHistoryIndexes();
                 HistoryAnalysis.GenerateSemanticEvents(page);
-                //PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
             }
 
             var entries = new List<DataService.ZipEntrySaver>

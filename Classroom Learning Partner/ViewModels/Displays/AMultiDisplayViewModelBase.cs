@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows;
+using Catel;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -9,19 +13,50 @@ namespace Classroom_Learning_Partner.ViewModels
     public abstract class AMultiDisplayViewModelBase : ViewModelBase
     {
         protected readonly IDataService _dataService;
+        protected readonly IRoleService _roleService;
 
         #region Constructor
 
-        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService)
+        protected AMultiDisplayViewModelBase(IDisplay display, IDataService dataService, IRoleService roleService)
         {
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
             _dataService = dataService;
+            _roleService = roleService;
 
             MultiDisplay = display;
 
+            InitializeEventSubscriptions();
             InitializeCommands();
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            _roleService.RoleChanged += _roleService_RoleChanged;
+        }
+
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(IsProjectorRole));
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+        }
+
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Model
 
@@ -29,8 +64,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public IDisplay MultiDisplay
         {
-            get { return GetValue<IDisplay>(MultiDisplayProperty); }
-            private set { SetValue(MultiDisplayProperty, value); }
+            get => GetValue<IDisplay>(MultiDisplayProperty);
+            private set => SetValue(MultiDisplayProperty, value);
         }
 
         public static readonly PropertyData MultiDisplayProperty = RegisterProperty("MultiDisplay", typeof(IDisplay));
@@ -39,8 +74,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("MultiDisplay")]
         public int DisplayNumber
         {
-            get { return GetValue<int>(DisplayNumberProperty); }
-            set { SetValue(DisplayNumberProperty, value); }
+            get => GetValue<int>(DisplayNumberProperty);
+            set => SetValue(DisplayNumberProperty, value);
         }
 
         public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int));
@@ -49,8 +84,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("MultiDisplay")]
         public ObservableCollection<CLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get => GetValue<ObservableCollection<CLPPage>>(PagesProperty);
+            set => SetValue(PagesProperty, value);
         }
 
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
@@ -62,13 +97,27 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Toggle to ignore viewModels of Display Previews</summary>
         public bool IsDisplayPreview
         {
-            get { return GetValue<bool>(IsDisplayPreviewProperty); }
-            set { SetValue(IsDisplayPreviewProperty, value); }
+            get => GetValue<bool>(IsDisplayPreviewProperty);
+            set => SetValue(IsDisplayPreviewProperty, value);
         }
 
         public static readonly PropertyData IsDisplayPreviewProperty = RegisterProperty("IsDisplayPreview", typeof(bool), false);
 
         #endregion //Properties
+
+        #region Bindings
+
+        #region Visibilities
+
+        public bool IsProjectorRole => _roleService.Role == ProgramRoles.Projector;
+
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                               ? Visibility.Visible
+                                                               : Visibility.Collapsed;
+
+        #endregion // Visibilities
+
+        #endregion // Bindings
 
         #region Commands
 

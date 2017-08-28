@@ -413,12 +413,12 @@ namespace Classroom_Learning_Partner
             //                        };
 
             // NL Playback issues
-            var pageNumbersToLoad = new List<int>
-                                    {
-                                        253,
-                                        323,
-                                        328
-                                    };
+            //var pageNumbersToLoad = new List<int>
+            //                        {
+            //                            253,
+            //                            323,
+            //                            328
+            //                        };
 
             //var pageNumbersToLoad = new List<int>
             //                        {
@@ -435,6 +435,27 @@ namespace Classroom_Learning_Partner
             //                            384,
             //                            385
             //                        };
+
+            // On  8/11/2017
+            var pageNumbersToLoad = new List<int>
+                                    {
+                                        306,
+                                        308,
+                                        310,
+                                        312,
+                                        314,
+                                        318,
+                                        321,
+                                        322,
+                                        323,
+                                        324,
+                                        325,
+                                        342,
+                                        344,
+                                        362,
+                                        363,
+                                        364
+                                    };
 
             pageNumbersToLoad = pageNumbersToLoad.Distinct().ToList();
 
@@ -454,7 +475,8 @@ namespace Classroom_Learning_Partner
                     continue;
                 }
 
-                if (pageNameComposite.VersionIndex != "0")
+                if (pageNameComposite.VersionIndex != "0" &&
+                    !IS_CONVERTING_SUBMISSIONS)
                 {
                     continue;
                 }
@@ -477,6 +499,17 @@ namespace Classroom_Learning_Partner
             #endregion // Load Pages
 
             var notebookPages = loadedPages.Where(p => p.VersionIndex == 0).OrderBy(p => p.PageNumber).ToList();
+            if (IS_CONVERTING_SUBMISSIONS)
+            {
+                foreach (var notebookPage in notebookPages)
+                {
+                    var mostRecentSubmissions = loadedPages.Where(p => p.PageNumber == notebookPage.PageNumber && p.VersionIndex != 0).OrderBy(p => p.VersionIndex).LastOrDefault();
+                    if (!ReferenceEquals(null, mostRecentSubmissions))
+                    {
+                        notebookPage.Submissions.Add(mostRecentSubmissions);
+                    }
+                }
+            }
             notebook.Pages = new ObservableCollection<Ann.CLPPage>(notebookPages);
             notebook.CurrentPage = notebook.Pages.FirstOrDefault();
 
@@ -564,8 +597,7 @@ namespace Classroom_Learning_Partner
         public static Person ConvertPerson(Ann.Person person)
         {
             var name = person.FullName;
-            if (!IS_LARGE_CACHE &&
-                IS_ANONYMIZED_CACHE)
+            if (IS_ANONYMIZED_CACHE)
             {
                 const string TEXT_FILE_NAME = "AnonymousNames - Ann.txt";
                 var anonymousTextFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), TEXT_FILE_NAME);
@@ -782,10 +814,11 @@ namespace Classroom_Learning_Partner
 
             ConvertPageHistory(page.History, newPage);
 
+
+            HistoryAnalysis.GenerateSemanticEvents(newPage);
             if (!IS_LARGE_CACHE)
             {
-                HistoryAnalysis.GenerateSemanticEvents(newPage);
-                //PageInformationPanelViewModel.AnalyzeSkipCountingStatic(newPage);
+                //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(newPage);
             }
 
             return newPage;

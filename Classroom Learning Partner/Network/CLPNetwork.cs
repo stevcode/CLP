@@ -3,9 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using ServiceModelEx;
+using ConnectionStatuses = Classroom_Learning_Partner.ViewModels.ConnectionStatuses;
 
 namespace Classroom_Learning_Partner
 {
@@ -28,8 +31,11 @@ namespace Classroom_Learning_Partner
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
         public readonly NetTcpBinding DefaultBinding = new NetTcpBinding("ProxyBinding");
 
+        private readonly IRoleService _roleService;
+
         public CLPNetwork()
         {
+            //_roleService = ServiceLocator.Default.ResolveType<IRoleService>();
             CurrentUser = new Person();
             // TODO: Can you make DiscoveredServices async, so that you can be notified as soon as it's populated?
             // Possibly p 759-760, task.ContinueWith(), TaskContinuationOptions.OnlyOnRanToCompletion?
@@ -51,19 +57,18 @@ namespace Classroom_Learning_Partner
             App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Offline;
 
             ServiceHost host = null;
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
                     App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
                     App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
                     foreach (var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == "NetTcpBinding_IStudentContract"))
                     {
@@ -89,11 +94,10 @@ namespace Classroom_Learning_Partner
 
         public void DiscoverServices()
         {
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     DiscoveredProjectors.Open();
                     DiscoveredStudents.Open();
                     new Thread(() =>
@@ -142,9 +146,9 @@ namespace Classroom_Learning_Partner
                                    }
                                }).Start();
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>

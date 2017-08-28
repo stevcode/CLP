@@ -2,6 +2,7 @@
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Catel;
 using Catel.Collections;
 using Catel.IoC;
 using Classroom_Learning_Partner.ViewModels;
@@ -34,6 +35,7 @@ namespace Classroom_Learning_Partner.Services
         #region Fields
 
         private readonly IDataService _dataService;
+        private readonly IRoleService _roleService;
         private readonly AutoResetEvent _stopFlag = new AutoResetEvent(false);
         private static Thread _networkThread;
 
@@ -41,9 +43,13 @@ namespace Classroom_Learning_Partner.Services
 
         #region Constructors
 
-        public NetworkService()
+        public NetworkService(IDataService dataService, IRoleService roleService)
         {
-            _dataService = ServiceLocator.Default.ResolveType<IDataService>();
+            Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => roleService);
+
+            _dataService = dataService;
+            _roleService = roleService;
         }
 
         #endregion // Constructors
@@ -122,19 +128,18 @@ namespace Classroom_Learning_Partner.Services
             CurrentConnectionStatus = ConnectionStatuses.Offline;
 
             ServiceHost host = null;
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
                     CurrentConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
                     CurrentConnectionStatus = ConnectionStatuses.Listening;
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
                     foreach (var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == STUDENT_CONTRACT_ENDPOINT_NAME))
                     {
@@ -160,11 +165,10 @@ namespace Classroom_Learning_Partner.Services
 
         private void DiscoverServices()
         {
-            switch (App.MainWindowViewModel.CurrentProgramMode)
+            switch (_roleService.Role)
             {
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
+                case ProgramRoles.Researcher:
+                case ProgramRoles.Teacher:
                     DiscoveredProjectors.Open();
                     DiscoveredStudents.Open();
 
@@ -191,9 +195,9 @@ namespace Classroom_Learning_Partner.Services
                                    }
                                }).Start();
                     break;
-                case ProgramModes.Projector:
+                case ProgramRoles.Projector:
                     break;
-                case ProgramModes.Student:
+                case ProgramRoles.Student:
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>

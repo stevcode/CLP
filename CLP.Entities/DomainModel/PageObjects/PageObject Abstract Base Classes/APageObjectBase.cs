@@ -34,8 +34,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="IPageObject" />.</summary>
         public string ID
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get => GetValue<string>(IDProperty);
+            set => SetValue(IDProperty, value);
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
@@ -43,8 +43,8 @@ namespace CLP.Entities
         /// <summary>X Position of the <see cref="IPageObject" />.</summary>
         public double XPosition
         {
-            get { return GetValue<double>(XPositionProperty); }
-            set { SetValue(XPositionProperty, value); }
+            get => GetValue<double>(XPositionProperty);
+            set => SetValue(XPositionProperty, value);
         }
 
         public static readonly PropertyData XPositionProperty = RegisterProperty("XPosition", typeof(double), 10.0);
@@ -52,8 +52,8 @@ namespace CLP.Entities
         /// <summary>Y Position of the <see cref="IPageObject" />.</summary>
         public double YPosition
         {
-            get { return GetValue<double>(YPositionProperty); }
-            set { SetValue(YPositionProperty, value); }
+            get => GetValue<double>(YPositionProperty);
+            set => SetValue(YPositionProperty, value);
         }
 
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 250.0);
@@ -61,8 +61,8 @@ namespace CLP.Entities
         /// <summary>Height of the <see cref="IPageObject" />.</summary>
         public double Height
         {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
+            get => GetValue<double>(HeightProperty);
+            set => SetValue(HeightProperty, value);
         }
 
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 40.0);
@@ -70,8 +70,8 @@ namespace CLP.Entities
         /// <summary>Width of the <see cref="IPageObject" />.</summary>
         public double Width
         {
-            get { return GetValue<double>(WidthProperty); }
-            set { SetValue(WidthProperty, value); }
+            get => GetValue<double>(WidthProperty);
+            set => SetValue(WidthProperty, value);
         }
 
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 40.0);
@@ -79,8 +79,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="IPageObject" />.</summary>
         public string OwnerID
         {
-            get { return GetValue<string>(OwnerIDProperty); }
-            set { SetValue(OwnerIDProperty, value); }
+            get => GetValue<string>(OwnerIDProperty);
+            set => SetValue(OwnerIDProperty, value);
         }
 
         public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
@@ -88,8 +88,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="Person" /> who created the <see cref="IPageObject" />.</summary>
         public string CreatorID
         {
-            get { return GetValue<string>(CreatorIDProperty); }
-            set { SetValue(CreatorIDProperty, value); }
+            get => GetValue<string>(CreatorIDProperty);
+            set => SetValue(CreatorIDProperty, value);
         }
 
         public static readonly PropertyData CreatorIDProperty = RegisterProperty("CreatorID", typeof(string), string.Empty);
@@ -97,26 +97,32 @@ namespace CLP.Entities
         /// <summary>Date and Time the <see cref="IPageObject" /> was created.</summary>
         public DateTime CreationDate
         {
-            get { return GetValue<DateTime>(CreationDateProperty); }
-            set { SetValue(CreationDateProperty, value); }
+            get => GetValue<DateTime>(CreationDateProperty);
+            set => SetValue(CreationDateProperty, value);
         }
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
-        /// <summary>Version marker to trigger different looks or calculated property values based on a previous, prototyped version of a <see cref="IPageObject" />.</summary>
+        /// <summary>
+        ///     Version marker to trigger different looks or calculated property values based on a previous, prototyped
+        ///     version of a <see cref="IPageObject" />.
+        /// </summary>
         public string PageObjectFunctionalityVersion
         {
-            get { return GetValue<string>(PageObjectFunctionalityVersionProperty); }
-            set { SetValue(PageObjectFunctionalityVersionProperty, value); }
+            get => GetValue<string>(PageObjectFunctionalityVersionProperty);
+            set => SetValue(PageObjectFunctionalityVersionProperty, value);
         }
 
         public static readonly PropertyData PageObjectFunctionalityVersionProperty = RegisterProperty("PageObjectFunctionalityVersion", typeof(string), "0");
 
-        /// <summary>Determines whether the <see cref="IPageObject" />'s properties can be changed by a <see cref="Person" /> other than the Creator.</summary>
+        /// <summary>
+        ///     Determines whether the <see cref="IPageObject" />'s properties can be changed by a <see cref="Person" /> other
+        ///     than the Creator.
+        /// </summary>
         public bool IsManipulatableByNonCreator
         {
-            get { return GetValue<bool>(IsManipulatableByNonCreatorProperty); }
-            set { SetValue(IsManipulatableByNonCreatorProperty, value); }
+            get => GetValue<bool>(IsManipulatableByNonCreatorProperty);
+            set => SetValue(IsManipulatableByNonCreatorProperty, value);
         }
 
         public static readonly PropertyData IsManipulatableByNonCreatorProperty = RegisterProperty("IsManipulatableByNonCreator", typeof(bool), false);
@@ -126,8 +132,8 @@ namespace CLP.Entities
         [ExcludeFromSerialization]
         public CLPPage ParentPage
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            get => GetValue<CLPPage>(ParentPageProperty);
+            set => SetValue(ParentPageProperty, value);
         }
 
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));
@@ -148,7 +154,10 @@ namespace CLP.Entities
         /// <summary>Minimum Width of the <see cref="IPageObject" />.</summary>
         public virtual double MinimumWidth => 20;
 
-        /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
+        /// <summary>
+        ///     Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" />
+        ///     anyone at any time.
+        /// </summary>
         public abstract bool IsBackgroundInteractable { get; }
 
         #endregion // Calculated Properties
@@ -219,7 +228,10 @@ namespace CLP.Entities
 
         #region History Methods
 
-        /// <summary>Signifies the pageObject was on the page immediately after the historyAction at the given historyIndex was performed</summary>
+        /// <summary>
+        ///     Signifies the pageObject was on the page immediately after the historyAction at the given historyIndex was
+        ///     performed
+        /// </summary>
         public virtual bool IsOnPageAtHistoryIndex(int historyIndex)
         {
             var orderedObjectsOnPageChangedHistoryActions = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsOnPageChangedHistoryAction>().ToList();
@@ -227,24 +239,31 @@ namespace CLP.Entities
             var isPartOfHistory = addedAtAnyPointHistoryAction != null;
 
             var addedOrRemovedBeforeThisHistoryIndexHistoryAction =
-                orderedObjectsOnPageChangedHistoryActions.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) && h.HistoryActionIndex <= historyIndex);
+                orderedObjectsOnPageChangedHistoryActions.LastOrDefault(h => (h.PageObjectIDsAdded.Contains(ID) || h.PageObjectIDsRemoved.Contains(ID)) &&
+                                                                             h.HistoryActionIndex <= historyIndex);
 
             var isOnPageBefore = addedOrRemovedBeforeThisHistoryIndexHistoryAction != null && addedOrRemovedBeforeThisHistoryIndexHistoryAction.PageObjectIDsAdded.Contains(ID);
 
             return isOnPageBefore || !isPartOfHistory;
         }
 
-        /// <summary>Gets CodedID just before the historyAction at historyIndex executes Redo(). To get CodedID just after historyAction executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>
+        ///     Gets CodedID just before the historyAction at historyIndex executes Redo(). To get CodedID just after
+        ///     historyAction executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual string GetCodedIDAtHistoryIndex(int historyIndex)
         {
             return CodedID;
         }
 
-        /// <summary>Gets a new Point(Width, Height) just before the historyAction at historyIndex executes Redo(). To get (Width, Height) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>
+        ///     Gets a new Point(Width, Height) just before the historyAction at historyIndex executes Redo(). To get (Width,
+        ///     Height) just after historyAction executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
         {
             var resizeHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<PageObjectResizeBatchHistoryAction>()
-                                              .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
+                                                .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryActionIndex >= historyIndex);
             if (resizeHistoryAction == null ||
                 !resizeHistoryAction.StretchedDimensions.Any())
             {
@@ -256,11 +275,14 @@ namespace CLP.Entities
             // TODO: numberline.endpointchange, remainderTiles.updated
         }
 
-        /// <summary>Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex.</summary>
+        /// <summary>
+        ///     Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos,
+        ///     YPos) just after historyAction executes Redo(), add 1 to historyIndex.
+        /// </summary>
         public virtual Point GetPositionAtHistoryIndex(int historyIndex)
         {
-            var moveHistoryAction =
-                ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>().FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
+            var moveHistoryAction = ParentPage.History.CompleteOrderedHistoryActions.OfType<ObjectsMovedBatchHistoryAction>()
+                                              .FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryActionIndex >= historyIndex);
 
             if (moveHistoryAction == null ||
                 !moveHistoryAction.TravelledPositions.Any())
@@ -275,7 +297,8 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        ///     Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos) just after historyAction executes Redo(), add 1 to historyIndex. // TODO: Modify
+        ///     Gets a new Point(XPos, YPos) just before the historyAction at historyIndex executes Redo(). To get (XPos, YPos)
+        ///     just after historyAction executes Redo(), add 1 to historyIndex. // TODO: Modify
         ///     these to be after current historyActions executes Redo().
         /// </summary>
         public virtual Rect GetBoundsAtHistoryIndex(int historyIndex)

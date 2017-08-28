@@ -25,20 +25,23 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            var currentProgramMode = ProgramModes.Teacher;
+            var currentProgramMode = ProgramRoles.Researcher;
 
 #if TEACHER
-            currentProgramMode = ProgramModes.Teacher;
+            currentProgramMode = ProgramRoles.Teacher;
+#elif RESEARCHER
+            currentProgramMode = ProgramRoles.Researcher;
 #elif STUDENT
-            currentProgramMode = ProgramModes.Student;
+            currentProgramMode = ProgramRoles.Student;
 #elif PROJECTOR
-            currentProgramMode = ProgramModes.Projector;
+            currentProgramMode = ProgramRoles.Projector;
 #endif
 
             InitializeCatelSettings();
             InitializeServices(currentProgramMode);
-            
-            MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
+
+            var viewModelFactory = ServiceLocator.Default.ResolveType<IViewModelFactory>();
+            MainWindowViewModel = viewModelFactory.CreateViewModel<MainWindowViewModel>(null);
             var window = new MainWindowView
                          {
                              DataContext = MainWindowViewModel
@@ -88,23 +91,18 @@ namespace Classroom_Learning_Partner
             viewModelLocator.Register(typeof(GroupCreationView), typeof(GroupCreationViewModel));
         }
 
-        private static void InitializeServices(ProgramModes currentProgramMode)
+        private static void InitializeServices(ProgramRoles currentProgramMode)
         {
-            var dataService = new DataService();
-            ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
-
-            var windowManagerService = new WindowManagerService();
-            if (currentProgramMode != ProgramModes.Projector)
+            if (!ServiceLocator.Default.IsTypeRegistered<IRoleService>())
             {
-                windowManagerService.LeftPanel = Panels.NotebookPagesPanel;
+                var roleService = new RoleService(currentProgramMode);
+                ServiceLocator.Default.RegisterInstance<IRoleService>(roleService);
             }
-            ServiceLocator.Default.RegisterInstance<IWindowManagerService>(windowManagerService);
 
-            var networkService = new NetworkService();
-            ServiceLocator.Default.RegisterInstance<INetworkService>(networkService);
-
-            var pageInteractionService = new PageInteractionService();
-            ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IWindowManagerService,WindowManagerService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IDataService, DataService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<INetworkService, NetworkService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IPageInteractionService, PageInteractionService>();
         }
 
         private static void StartNetwork()

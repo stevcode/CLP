@@ -106,6 +106,15 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Researcher|AnyCPU'">
+    <OutputPath>..\output\1-builds\Researcher\</OutputPath>
+    <DefineConstants>RESEARCHER</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Catel.Core, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Catel.Core.5.0.0\lib\net46\Catel.Core.dll</HintPath>
@@ -244,6 +253,7 @@
     <Compile Include="Services\Interfaces\IWindowManagerService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
+    <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Services\WindowManagerService.cs" />
     <Compile Include="Utilities\DataContextSpy.cs" />
@@ -303,7 +313,7 @@
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
-    <Compile Include="ViewModels\Panels\PageInformationPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\AnalysisPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
@@ -538,8 +548,8 @@
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Panels\PageInformationPanelView.xaml.cs">
-      <DependentUpon>PageInformationPanelView.xaml</DependentUpon>
+    <Compile Include="Views\Panels\AnalysisPanelView.xaml.cs">
+      <DependentUpon>AnalysisPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\StagingPanelView.xaml.cs">
       <DependentUpon>StagingPanelView.xaml</DependentUpon>
@@ -868,7 +878,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Panels\PageInformationPanelView.xaml">
+    <Page Include="Views\Panels\AnalysisPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

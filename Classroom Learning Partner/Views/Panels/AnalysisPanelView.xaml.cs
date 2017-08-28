@@ -2,10 +2,9 @@
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for PageInformationPanelView.xaml</summary>
-    public partial class PageInformationPanelView
+    public partial class AnalysisPanelView
     {
-        public PageInformationPanelView()
+        public AnalysisPanelView()
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;

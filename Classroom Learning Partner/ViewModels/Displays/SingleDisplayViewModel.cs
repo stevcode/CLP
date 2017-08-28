@@ -1,24 +1,60 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using Catel;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class SingleDisplayViewModel : ViewModelBase
     {
+        private readonly IRoleService _roleService;
+
         #region Constructor
 
-        /// <summary>Initializes a new instance of the SingleDisplayViewModel class.</summary>
-        public SingleDisplayViewModel(Notebook notebook)
+        public SingleDisplayViewModel(Notebook notebook, IRoleService roleService)
         {
-            Notebook = notebook;
-            InitializeCommands();
+            Argument.IsNotNull(() => roleService);
 
+            _roleService = roleService;
+
+            Notebook = notebook;
+
+            InitializeEventSubscriptions();
+            InitializeCommands();
         }
 
         #endregion //Constructor
+
+        #region Events
+
+        private void InitializeEventSubscriptions()
+        {
+            _roleService.RoleChanged += _roleService_RoleChanged;
+        }
+
+        private void _roleService_RoleChanged(object sender, EventArgs e)
+        {
+            RaisePropertyChanged(nameof(IsProjectorRole));
+            RaisePropertyChanged(nameof(ResearcherOrTeacherVisibility));
+        }
+
+        #endregion // Events
+
+        #region ViewModelBase Overrides
+
+        protected override async Task OnClosingAsync()
+        {
+            _roleService.RoleChanged -= _roleService_RoleChanged;
+            await base.OnClosingAsync();
+        }
+
+        #endregion // ViewModelBase Overrides
 
         #region Model
 
@@ -26,22 +62,22 @@ namespace Classroom_Learning_Partner.ViewModels
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
-            get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
+            get => GetValue<Notebook>(NotebookProperty);
+            private set => SetValue(NotebookProperty, value);
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>A property mapped to a property on the Model SingleDisplay.</summary>
         [ViewModelToModel("Notebook")]
         [Model(SupportIEditableObject = false)]
         public CLPPage CurrentPage
         {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
+            get => GetValue<CLPPage>(CurrentPageProperty);
+            set => SetValue(CurrentPageProperty, value);
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), null, OnCurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), null, OnCurrentPageChanged);
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -57,7 +93,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             singleDisplayViewModel.OnPageResize();
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            var roleService = ServiceLocator.Default.ResolveType<IRoleService>();
+            if (roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;
@@ -78,8 +115,8 @@ namespace Classroom_Learning_Partner.ViewModels
         [ViewModelToModel("CurrentPage")]
         public double Height
         {
-            get { return GetValue<double>(HeightProperty); }
-            set { SetValue(HeightProperty, value); }
+            get => GetValue<double>(HeightProperty);
+            set => SetValue(HeightProperty, value);
         }
 
         public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), null, OnHeightChanged);
@@ -93,12 +130,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        #region Bindings
+
         #region Page Resizing Bindings
 
-        /// <summary>Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay. DataBinding done from Dependency Property in the View.</summary>
+        /// <summary>
+        ///     Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay. DataBinding
+        ///     done from Dependency Property in the View.
+        /// </summary>
         public Tuple<double, double> DisplayWidthHeight
         {
-            get { return GetValue<Tuple<double, double>>(DisplayWidthHeightProperty); }
+            get => GetValue<Tuple<double, double>>(DisplayWidthHeightProperty);
             set
             {
                 SetValue(DisplayWidthHeightProperty, value);
@@ -110,63 +152,75 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof (Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
+        public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
 
         /// <summary>Height of the toolbar for the current page.</summary>
         public double ToolBarHeight
         {
-            get { return GetValue<double>(ToolBarHeightProperty); }
-            set { SetValue(ToolBarHeightProperty, value); }
+            get => GetValue<double>(ToolBarHeightProperty);
+            set => SetValue(ToolBarHeightProperty, value);
         }
 
-        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof (double), 0.0);
+        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof(double), 0.0);
 
         /// <summary>Thickness of the border around the page.</summary>
         public double BorderThickness
         {
-            get { return GetValue<double>(BorderThicknessProperty); }
-            set { SetValue(BorderThicknessProperty, value); }
+            get => GetValue<double>(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
         }
 
-        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof (double), 1.0);
+        public static readonly PropertyData BorderThicknessProperty = RegisterProperty("BorderThickness", typeof(double), 1.0);
 
         /// <summary>Width of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderWidth
         {
-            get { return GetValue<double>(BorderWidthProperty); }
-            set { SetValue(BorderWidthProperty, value); }
+            get => GetValue<double>(BorderWidthProperty);
+            set => SetValue(BorderWidthProperty, value);
         }
 
-        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof (double));
+        public static readonly PropertyData BorderWidthProperty = RegisterProperty("BorderWidth", typeof(double));
 
         /// <summary>Height of the visible border around a page. Scales based on zoom leve.</summary>
         public double BorderHeight
         {
-            get { return GetValue<double>(BorderHeightProperty); }
-            set { SetValue(BorderHeightProperty, value); }
+            get => GetValue<double>(BorderHeightProperty);
+            set => SetValue(BorderHeightProperty, value);
         }
 
-        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof (double));
+        public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double));
 
         /// <summary>Physical Width of Page. Differs from the Width because Width is inside a ViewBox.</summary>
         public double DimensionWidth
         {
-            get { return GetValue<double>(DimensionWidthProperty); }
-            set { SetValue(DimensionWidthProperty, value); }
+            get => GetValue<double>(DimensionWidthProperty);
+            set => SetValue(DimensionWidthProperty, value);
         }
 
-        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof (double));
+        public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double));
 
         /// <summary>Physical Height of Page. Differs from the Height because Height is inside a ViewBox.</summary>
         public double DimensionHeight
         {
-            get { return GetValue<double>(DimensionHeightProperty); }
-            set { SetValue(DimensionHeightProperty, value); }
+            get => GetValue<double>(DimensionHeightProperty);
+            set => SetValue(DimensionHeightProperty, value);
         }
 
-        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof (double));
+        public static readonly PropertyData DimensionHeightProperty = RegisterProperty("DimensionHeight", typeof(double));
 
         #endregion //Page Resizing Bindings
+
+        #region Visibilities
+
+        public bool IsProjectorRole => _roleService.Role == ProgramRoles.Projector;
+
+        public Visibility ResearcherOrTeacherVisibility => _roleService.Role == ProgramRoles.Researcher || _roleService.Role == ProgramRoles.Teacher
+                                                               ? Visibility.Visible
+                                                               : Visibility.Collapsed;
+
+        #endregion // Visibilities
+
+        #endregion // Bindings
 
         #region Commands
 
@@ -180,7 +234,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            if (_roleService.Role != ProgramRoles.Teacher ||
                 App.Network.ProjectorProxy == null ||
                 Math.Abs(e.VerticalChange) < 0.001)
             {

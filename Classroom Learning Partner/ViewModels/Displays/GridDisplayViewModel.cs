@@ -12,8 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the GridDisplayViewModel class.</summary>
-        public GridDisplayViewModel(GridDisplay gridDisplay, IDataService dataService)
-            : base(gridDisplay, dataService)
+        public GridDisplayViewModel(GridDisplay gridDisplay, IDataService dataService, IRoleService roleService)
+            : base(gridDisplay, dataService, roleService)
         {
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
@@ -36,8 +36,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Number of Rows in the UniformGrid</summary>
         public int UGridRows
         {
-            get { return GetValue<int>(UGridRowsProperty); }
-            set { SetValue(UGridRowsProperty, value); }
+            get => GetValue<int>(UGridRowsProperty);
+            set => SetValue(UGridRowsProperty, value);
         }
 
         public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
             UGridRows = Pages.Count < 3 ? 1 : 0;
 
             if (App.Network.ProjectorProxy == null ||
-                App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+                _roleService.Role != ProgramRoles.Teacher ||
                 IsDisplayPreview)
             {
                 return;

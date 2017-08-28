@@ -9,11 +9,49 @@ namespace Classroom_Learning_Partner.Services
         NotebookPagesPanel,
         ProgressPanel,
         DisplaysPanel,
-        PageInformationPanel
+        AnalysisPanel
     }
 
     public class WindowManagerService : IWindowManagerService
     {
+        private readonly IRoleService _roleService;
+        
+        #region Constructor
+
+        public WindowManagerService(IRoleService roleService)
+        {
+            Argument.IsNotNull(() => roleService);
+
+            _roleService = roleService;
+            InitializePanels();
+        }
+
+        #endregion // Constructor
+
+        #region Methods
+
+        private void InitializePanels()
+        {
+            switch (_roleService.Role)
+            {
+                case ProgramRoles.Researcher:
+                    LeftPanel = Panels.NotebookPagesPanel;
+                    break;
+                case ProgramRoles.Teacher:
+                    LeftPanel = Panels.NotebookPagesPanel;
+                    break;
+                case ProgramRoles.Student:
+                    LeftPanel = Panels.NotebookPagesPanel;
+                    break;
+                case ProgramRoles.Projector:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        #endregion // Methods
+
         #region IWindowManagerService Implementation
 
         #region Properties

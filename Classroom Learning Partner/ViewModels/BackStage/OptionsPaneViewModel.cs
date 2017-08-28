@@ -13,18 +13,10 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public OptionsPaneViewModel()
+        public OptionsPaneViewModel(IDataService dataService, IRoleService roleService)
+            : base(dataService, roleService)
         {
             InitializeCommands();
-        }
-
-        private void InitializeCommands()
-        {
-            GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
-            RunAnalysisCommand = new Command(OnRunAnalysisCommandExecute);
-            ClearAuthorHistoryItemsCommand = new Command(OnClearAuthorHistoryItemsCommandExecute);
-            AnalyzeAllLoadedPagesCommand = new Command(OnAnalyzeAllLoadedPagesCommandExecute);
-            AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
         }
 
         #endregion //Constructor
@@ -40,13 +32,24 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var productVersion = Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
                 var versionText = productVersion?.InformationalVersion;
-                return $"CLP Version: {versionText}";
+                var mode = _roleService.Role.ToString();
+
+                return $"CLP Version: {versionText}, Program Mode: {mode}";
             }
         }
 
         #endregion //Bindings
 
         #region Commands
+
+        private void InitializeCommands()
+        {
+            GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
+            RunAnalysisCommand = new Command(OnRunAnalysisCommandExecute);
+            ClearAuthorHistoryItemsCommand = new Command(OnClearAuthorHistoryItemsCommandExecute);
+            AnalyzeAllLoadedPagesCommand = new Command(OnAnalyzeAllLoadedPagesCommandExecute);
+            AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
+        }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
         public Command GenerateRandomMainColorCommand { get; private set; }
@@ -60,7 +63,6 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindowViewModel.ChangeApplicationMainColor(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B));
         }
 
-        /// <summary>SUMMARY</summary>
         public Command RunAnalysisCommand { get; private set; }
 
         private void OnRunAnalysisCommandExecute()
@@ -70,7 +72,6 @@ namespace Classroom_Learning_Partner.ViewModels
             MessageBox.Show("Analysis Finished.");
         }
 
-        /// <summary>SUMMARY</summary>
         public Command ClearAuthorHistoryItemsCommand { get; private set; }
 
         private void OnClearAuthorHistoryItemsCommandExecute()
@@ -116,11 +117,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages)
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -139,11 +140,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages.Where(p => p.PageNumber == currentPage.PageNumber))
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    PageInformationPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        PageInformationPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
