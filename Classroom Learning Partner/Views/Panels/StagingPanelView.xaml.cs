@@ -4,7 +4,6 @@ using System.Windows.Input;
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for StagingPanelView.xaml</summary>
     public partial class StagingPanelView
     {
         public StagingPanelView()

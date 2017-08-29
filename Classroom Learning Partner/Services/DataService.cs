@@ -1594,6 +1594,22 @@ namespace Classroom_Learning_Partner.Services
             return pageEntries;
         }
 
+        public static List<ZipEntry> GetAllPageEntriesInCache(ZipFile zip)
+        {
+            var allPageZipEntries = new List<ZipEntry>();
+
+            var notebookEntries = zip.SelectEntries($"*{Notebook.DEFAULT_INTERNAL_FILE_NAME}.xml");
+            foreach (var notebookEntry in notebookEntries)
+            {
+                var internalParentDirectory = notebookEntry.GetEntryParentDirectory();
+                var notebookPagesInternalDirectory = ZipExtensions.CombineEntryDirectoryAndName(internalParentDirectory, $"{AInternalZipEntryFile.ZIP_NOTEBOOK_PAGES_FOLDER_NAME}/");
+                var pageEntries = zip.GetEntriesInDirectory(notebookPagesInternalDirectory).ToList();
+                allPageZipEntries.AddRange(pageEntries);
+            }
+
+            return allPageZipEntries;
+        }
+
         public static List<ZipEntry> GetPageEntriesFromPageIDs(ZipFile zip, Notebook notebook, List<string> pageIDs, bool isSubmissions = false)
         {
             var internalPagesDirectory = isSubmissions ? notebook.NotebookSubmissionsDirectoryPath : notebook.NotebookPagesDirectoryPath;

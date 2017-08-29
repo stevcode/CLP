@@ -8,6 +8,7 @@ namespace Classroom_Learning_Partner.Services
         NoPanel,
         NotebookPagesPanel,
         ProgressPanel,
+        QueryPanel,
         DisplaysPanel,
         AnalysisPanel
     }

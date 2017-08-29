@@ -291,6 +291,7 @@
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryGridViewModel.cs" />
     <Compile Include="ViewModels\Panels\AuthoringPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\QueryPanelViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
@@ -362,6 +363,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\StudentDifferentiationView.xaml.cs">
       <DependentUpon>StudentDifferentiationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\QueryPanelView.xaml.cs">
+      <DependentUpon>QueryPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -639,6 +643,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\StudentDifferentiationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\QueryPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

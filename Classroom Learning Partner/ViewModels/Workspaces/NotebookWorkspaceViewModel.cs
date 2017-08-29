@@ -62,6 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             NotebookPagesPanel = viewModelFactory.CreateViewModel<NotebookPagesPanelViewModel>(StagingPanel);
             ProgressPanel = viewModelFactory.CreateViewModel<ProgressPanelViewModel>(StagingPanel);
+            QueryPanel = viewModelFactory.CreateViewModel<QueryPanelViewModel>(null);
 
             DisplaysPanel = viewModelFactory.CreateViewModel<DisplaysPanelViewModel>(null);
             AnalysisPanel = viewModelFactory.CreateViewModel<AnalysisPanelViewModel>(notebook);
@@ -128,6 +129,16 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (!ProgressPanel.IsVisible)
                     {
                         ProgressPanel.IsVisible = true;
+                    }
+                    break;
+                case Panels.QueryPanel:
+                    if (LeftPanel != QueryPanel)
+                    {
+                        LeftPanel = QueryPanel;
+                    }
+                    if (!QueryPanel.IsVisible)
+                    {
+                        QueryPanel.IsVisible = true;
                     }
                     break;
                 default:
@@ -288,6 +299,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ProgressPanelProperty = RegisterProperty("ProgressPanel", typeof(ProgressPanelViewModel));
+
+        /// <summary>QueryPanel.</summary>
+        public QueryPanelViewModel QueryPanel
+        {
+            get => GetValue<QueryPanelViewModel>(QueryPanelProperty);
+            set => SetValue(QueryPanelProperty, value);
+        }
+
+        public static readonly PropertyData QueryPanelProperty = RegisterProperty(nameof(QueryPanel), typeof(QueryPanelViewModel));
 
         /// <summary>DisplaysPanel.</summary>
         public DisplaysPanelViewModel DisplaysPanel

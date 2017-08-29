@@ -82,6 +82,10 @@
                     <views:ProgressPanelView DataContext="{Binding ProgressPanel}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="QueryPanelTemplate">
+                    <views:QueryPanelView DataContext="{Binding QueryPanel}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -100,6 +104,13 @@
                                      Value="{x:Type viewModels:ProgressPanelViewModel}">
                             <Setter Property="Template"
                                     Value="{StaticResource ProgressPanelTemplate}" />
+                        </DataTrigger>
+
+                        <!--QueryPanel trigger-->
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={converters:TypeOfConverter}}"
+                                     Value="{x:Type viewModels:QueryPanelViewModel}">
+                            <Setter Property="Template"
+                                    Value="{StaticResource QueryPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

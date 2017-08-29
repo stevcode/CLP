@@ -164,6 +164,15 @@ namespace Classroom_Learning_Partner
             return entryNameWithExtension;
         }
 
+        public static string GetEntryParentDirectory(this ZipEntry entry)
+        {
+            Argument.IsNotNull("entry", entry);
+
+            var lastSlashIndex = entry.FileName.LastIndexOf('/');
+            var entryParentDirectory = entry.FileName.Substring(0, lastSlashIndex + 1);
+            return entryParentDirectory;
+        }
+
         #endregion // ZipEntry
 
         #endregion // Extensions

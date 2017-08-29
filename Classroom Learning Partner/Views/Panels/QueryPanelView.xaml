@@ -1,0 +1,41 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.QueryPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:catel="http://schemas.catelproject.com"
+             xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
+    
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            Width="{Binding Length}">
+        
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBox Grid.Row="0"
+                     Text="{Binding QueryString}" />
+
+            <Button Grid.Row="1"
+                    Content="Run Query"
+                    VerticalAlignment="Bottom"
+                    Height="32"
+                    Command="{Binding RunQueryCommand}" />
+
+            <ListBox Grid.Row="2"
+                     ItemsSource="{Binding QueryResults}"
+                     SelectionMode="Single"
+                     Margin="5 0"
+                     ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
+                
+            </ListBox>
+
+        </Grid>
+        
+    </Border>
+            
+</catel:UserControl>
