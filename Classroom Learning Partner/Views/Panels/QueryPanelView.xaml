@@ -7,7 +7,8 @@
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
             BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
-            Width="{Binding Length}">
+            Width="{Binding Length}"
+            Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
         
         <Grid>
 
