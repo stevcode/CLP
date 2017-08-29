@@ -1030,6 +1030,7 @@
     <Resource Include="Resources\Images\Unused\Redo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\MagnifyingGlass128.png" />
     <Resource Include="Resources\Images\Folder128.png" />
     <Resource Include="Resources\Images\GreyPencil128.png" />
     <Resource Include="Resources\Images\Icons\CLPPaperClipLogoCircled64.png" />
