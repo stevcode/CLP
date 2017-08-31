@@ -235,10 +235,10 @@ namespace CLP.Entities
                 }
 
                 var deletedRepresentations = RepresentationsUsed.Where(r => !r.IsFinalRepresentation).ToList();
-                var deletedSection = !deletedRepresentations.Any() ? string.Empty : $"    Deleted Representation(s):\n{string.Join("\n", deletedRepresentations.Select(r => r.FormattedValue).ToList())}";
+                var deletedSection = !deletedRepresentations.Any() ? string.Empty : $"Deleted Representation(s):\n{string.Join("\n", deletedRepresentations.Select(r => r.FormattedValue).ToList())}";
 
                 var finalRepresentations = RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
-                var finalSection = !finalRepresentations.Any() ? string.Empty : $"    Final Representation(s):\n{string.Join("\n", finalRepresentations.Select(r => r.FormattedValue).ToList())}";
+                var finalSection = !finalRepresentations.Any() ? string.Empty : $"Final Representation(s):\n{string.Join("\n", finalRepresentations.Select(r => r.FormattedValue).ToList())}";
 
                 var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
 
