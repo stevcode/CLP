@@ -2,7 +2,8 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://schemas.catelproject.com"
-                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:orc="http://www.wildgums.net.au/orc">
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
@@ -10,21 +11,40 @@
             Width="{Binding Length}"
             Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
-        <Grid>
+        <orc:StackGrid>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            
+            <orc:StackGrid HorizontalAlignment="Stretch">
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Button Content="Caches" 
+                        Command="{Binding SelectCachesCommand}" />
+                
+                <Button Content="Pages"
+                        Command="{Binding SelectPageRangeCommand}" />
+                
+                <Button Content="Students"
+                        Command="{Binding SelectStudentsCommand}" />
 
-            <TextBox Grid.Row="0"
+            </orc:StackGrid>
+
+            <TextBox Margin="3"
                      Text="{Binding QueryString}" />
 
-            <Button Grid.Row="1"
-                    Height="32"
+            <Button Height="32"
                     Width="150"
                     Margin="5"
                     HorizontalContentAlignment="Stretch"
@@ -57,60 +77,35 @@
                 
             </Button>
 
-            <Rectangle Grid.Row="2"
-                       Height="1"
+            <Rectangle Height="1"
                        Margin="1 5"
                        Stroke="{StaticResource GrayBorderColor}" />
 
-            <Grid Grid.Row="3"
-                  HorizontalAlignment="Stretch">
-                
+            <orc:StackGrid HorizontalAlignment="Stretch">
+
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.4*" />
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0"
-                        Height="16"
-                        Margin="0 2"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Command="{Binding RunQueryCommand}">
+                <Button Content="List View" />
 
-                    <Grid VerticalAlignment="Center"
-                          HorizontalAlignment="Stretch">
+                <Button Content="Thumbnails" />
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="6*" />
-                        </Grid.ColumnDefinitions>
+                <Button Content="Sort" />
+                
+                <Button Content="Reports" />
 
-                        <Image Grid.Column="0"
-                               Source="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
-                               Height="16"
-                               Width="16"
-                               HorizontalAlignment="Center" />
+            </orc:StackGrid>
 
-                        <TextBlock Grid.Column="1"
-                                   Text="List"
-                                   TextAlignment="Center"
-                                   FontSize="12" />
-
-                    </Grid>
-
-                </Button>
-
-            </Grid>
-
-            <ListBox Grid.Row="4"
-                     ItemsSource="{Binding QueryResults}"
+            <ListBox ItemsSource="{Binding QueryResults}"
                      SelectionMode="Single"
                      Margin="5 0"
                      ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback" />
 
-        </Grid>
+        </orc:StackGrid>
 
     </Border>
 
