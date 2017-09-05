@@ -779,7 +779,7 @@ namespace CLP.Entities
                 var isNumber = int.TryParse(skip, out var number);
                 if (isNumber)
                 {
-                    skips.Add(number);
+                    skips.Add(Math.Abs(number));
                     continue;
                 }
 
