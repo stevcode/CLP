@@ -628,79 +628,18 @@ namespace CLP.Entities
 
         private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
         {
-            if (array == null ||
-                skipCountingEvent == null)
+            if (array == null)
             {
                 return null;
             }
 
-            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
-            if (eventInfoParts.Length != 2)
+            var formattedSkips = GetFormattedSkips(skipCountingEvent);
+            if (formattedSkips == null)
             {
                 return null;
             }
 
-            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
-            if (formattedInterpretationParts.Length != 2)
-            {
-                return null;
-            }
-
-            var formattedSkips = formattedInterpretationParts[1];
-            if (string.IsNullOrWhiteSpace(formattedSkips))
-            {
-                return null;
-            }
-
-            var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-
-            // Not sure what the purpose of this was, but re-implement if necessary
-            //if (skipStrings.Count == 1 &&
-            //    string.IsNullOrEmpty(skipStrings.First()))
-            //{
-            //    mostRecentSkipEvent =
-            //        semanticEvents.LastOrDefault(
-            //                                     e =>
-            //                                         e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-            //                                         (e.EventType == Codings.EVENT_ARRAY_SKIP));
-
-            //    if (mostRecentSkipEvent != null)
-            //    {
-            //        eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
-            //        if (eventInfoParts.Length == 2)
-            //        {
-            //            formattedInterpretationParts = eventInfoParts[0].Split("; ");
-            //            if (formattedInterpretationParts.Length == 2)
-            //            {
-            //                formattedSkips = formattedInterpretationParts[1];
-            //                if (!string.IsNullOrEmpty(formattedSkips))
-            //                {
-            //                    skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            var skips = new List<int>();
-            foreach (var skip in skipStrings)
-            {
-                if (string.IsNullOrEmpty(skip))
-                {
-                    skips.Add(-1);
-                    continue;
-                }
-
-                int number;
-                var isNumber = int.TryParse(skip, out number);
-                if (isNumber)
-                {
-                    skips.Add(number);
-                    continue;
-                }
-
-                skips.Add(-1);
-            }
+            var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
 
             var correctDimensionMatches = 0;
             var wrongDimensionMatches = 0;
@@ -786,26 +725,13 @@ namespace CLP.Entities
 
         private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
         {
-            if (array == null ||
-                skipCountingEvent == null)
+            if (array == null)
             {
                 return null;
             }
 
-            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
-            if (eventInfoParts.Length != 2)
-            {
-                return null;
-            }
-
-            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
-            if (formattedInterpretationParts.Length != 2)
-            {
-                return null;
-            }
-
-            var formattedSkips = formattedInterpretationParts[1];
-            if (string.IsNullOrWhiteSpace(formattedSkips))
+            var formattedSkips = GetFormattedSkips(skipCountingEvent);
+            if (formattedSkips == null)
             {
                 return null;
             }
@@ -817,6 +743,50 @@ namespace CLP.Entities
 
             var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
             return skipCodedValue;
+        }
+
+        private static string GetFormattedSkips(ISemanticEvent skipCountingEvent)
+        {
+            var eventInfoParts = skipCountingEvent?.EventInformation.Split(", ");
+            if (eventInfoParts?.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+            if (formattedInterpretationParts.Length != 2)
+            {
+                return null;
+            }
+
+            var formattedSkips = formattedInterpretationParts[1];
+            return string.IsNullOrWhiteSpace(formattedSkips) ? null : formattedSkips;
+        }
+
+        private static List<int> GetNumericSkipsFromFormattedSkips(string formattedSkips)
+        {
+            var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
+
+            var skips = new List<int>();
+            foreach (var skip in skipStrings)
+            {
+                if (string.IsNullOrEmpty(skip))
+                {
+                    skips.Add(-1);
+                    continue;
+                }
+
+                var isNumber = int.TryParse(skip, out var number);
+                if (isNumber)
+                {
+                    skips.Add(number);
+                    continue;
+                }
+
+                skips.Add(-1);
+            }
+
+            return skips;
         }
 
         private class NumberLineJumpTotal
