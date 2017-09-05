@@ -356,6 +356,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #endregion // Analysis Commands
 
+            RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
         }
 
@@ -844,6 +845,21 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion // Obsolete Commands 
+
+        /// <summary>Regenerates Analysis Tags</summary>
+        public Command RegenerateTagsCommand { get; private set; }
+
+        private void OnRegenerateTagsCommandExecute()
+        {
+            var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
+            var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+            HistoryAnalysis.GenerateTags(CurrentPage, interpretedInkSemanticEvents);
+        }
 
         #endregion // Analysis Commands
 
