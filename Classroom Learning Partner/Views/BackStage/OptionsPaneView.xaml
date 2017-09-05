@@ -73,6 +73,15 @@
                     FontWeight="Bold"
                     Visibility="{Binding ResearcherVisibility}" />
 
+            <Button Content="Regenerate All Tags"
+                    Command="{Binding RegenerateTagsCommand}"
+                    Height="50"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
+
         </StackPanel>
 
     </DockPanel>

@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearAuthorHistoryItemsCommand = new Command(OnClearAuthorHistoryItemsCommandExecute);
             AnalyzeAllLoadedPagesCommand = new Command(OnAnalyzeAllLoadedPagesCommandExecute);
             AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
+            RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
@@ -144,6 +145,44 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                    }
+                }
+            }
+
+            MessageBox.Show("Analysis Finished.");
+        }
+
+        public Command RegenerateTagsCommand { get; private set; }
+
+        private void OnRegenerateTagsCommandExecute()
+        {
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    var existingTags = page.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                    foreach (var tempArraySkipCountingTag in existingTags)
+                    {
+                        page.RemoveTag(tempArraySkipCountingTag);
+                    }
+
+                    var interpretedInkSemanticEvents = page.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+                    HistoryAnalysis.GenerateTags(page, interpretedInkSemanticEvents);
+                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+
+                    foreach (var submission in page.Submissions)
+                    {
+                        var existingTagsForSubmission = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+                        foreach (var tempArraySkipCountingTag in existingTagsForSubmission)
+                        {
+                            submission.RemoveTag(tempArraySkipCountingTag);
+                        }
+
+                        var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+                        HistoryAnalysis.GenerateTags(submission, interpretedInkSemanticEventsForSubmission);
+                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+
                         AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
