@@ -12,6 +12,13 @@ namespace CLP.Entities
         Left
     }
 
+    public enum Genders
+    {
+        Male,
+        Female,
+        Unknown
+    }
+
     [Serializable]
     public class Person : ASerializableBase, IConnectedPerson
     {
@@ -120,6 +127,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+
+        /// <summary>Gender of the person.</summary>
+        public Genders Gender
+        {
+            get => GetValue<Genders>(GenderProperty);
+            set => SetValue(GenderProperty, value);
+        }
+
+        public static readonly PropertyData GenderProperty = RegisterProperty(nameof(Gender), typeof(Genders), Genders.Unknown);
 
         #region Calculated Properties
 
