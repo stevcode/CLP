@@ -103,6 +103,7 @@ namespace Classroom_Learning_Partner
             ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IDataService, DataService>();
             ServiceLocator.Default.RegisterTypeIfNotYetRegistered<INetworkService, NetworkService>();
             ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IPageInteractionService, PageInteractionService>();
+            ServiceLocator.Default.RegisterTypeIfNotYetRegistered<IQueryService, QueryService>();
         }
 
         private static void StartNetwork()

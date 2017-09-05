@@ -9,6 +9,7 @@ using Catel;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -18,12 +19,17 @@ namespace Classroom_Learning_Partner.ViewModels
     public class QueryPanelViewModel : APanelBaseViewModel
     {
         private readonly IDataService _dataService;
+        private readonly IQueryService _queryService;
 
-        public QueryPanelViewModel(IDataService dataService)
+        public QueryPanelViewModel(IDataService dataService, IQueryService queryService)
         {
             Argument.IsNotNull(() => dataService);
+            Argument.IsNotNull(() => queryService);
 
             _dataService = dataService;
+            _queryService = queryService;
+
+            InitializeQueryConstraints();
 
             InitializedAsync += QueryPanelViewModel_InitializedAsync;
 
@@ -62,11 +68,89 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion // Bindings
 
+        #region Methods
+
+        private void InitializeQueryConstraints()
+        {
+            _queryService.RosterToQuery = _dataService.CurrentClassRoster;
+            _queryService.NotebookToQuery = _dataService.CurrentNotebook;
+            SetPageRangeToAllPages();
+            _queryService.StudentIDsToQuery = _queryService.RosterToQuery.ListOfStudents.Select(s => s.ID).ToList();
+        }
+
+        private void SetPageRangeToAllPages()
+        {
+            var cacheFilePath = _queryService.NotebookToQuery.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(cacheFilePath))
+            {
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
+
+                var pageNumbers = DataService.GetAllPageNumbersInNotebook(zip, _queryService.NotebookToQuery);
+                _queryService.PageNumbersToQuery = pageNumbers;
+            }
+        }
+
+        #endregion // Methods
+
         #region Commands
 
         private void InitializeCommands()
         {
+            SelectCacheCommand = new Command(OnSelectCacheCommandExecute);
+            SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
+            SelectStudentsCommand = new Command(OnSelectStudentsCommandExecute);
+
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
+        }
+
+        /// <summary>Selects which cache to run the query on.</summary>
+        public Command SelectCacheCommand { get; private set; }
+
+        private void OnSelectCacheCommandExecute()
+        {
+            // TODO
+        }
+
+        /// <summary>Selects which pages to run the query on.</summary>
+        public Command SelectPageRangeCommand { get; private set; }
+
+        private void OnSelectPageRangeCommandExecute()
+        {
+            var textInputViewModel = new TextInputViewModel
+                                     {
+                                         TextPrompt = "Enter page range or leave blank for all pages.",
+                                         InputText = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery, true, true)
+                                     };
+            var textInputView = new TextInputView(textInputViewModel);
+            textInputView.ShowDialog();
+
+            if (textInputView.DialogResult == null ||
+                textInputView.DialogResult != true ||
+                string.IsNullOrEmpty(textInputViewModel.InputText))
+            {
+                SetPageRangeToAllPages();
+                return;
+            }
+
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText).ToList();
+            if (!pageNumbersToOpen.Any())
+            {
+                SetPageRangeToAllPages();
+                return;
+            }
+
+            _queryService.PageNumbersToQuery = pageNumbersToOpen;
+        }
+
+        /// <summary>Selects which students to run the query on.</summary>
+        public Command SelectStudentsCommand { get; private set; }
+
+        private void OnSelectStudentsCommandExecute()
+        {
+
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>
@@ -75,59 +159,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRunQueryCommandExecute()
         {
             QueryResults.Clear();
-            Query();
+            var queryResults = _queryService.RunQuery(QueryString);
+            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}").ToObservableCollection();
         }
 
         #endregion // Commands
-
-        private void Query()
-        {
-            var queryString = QueryString;
-            if (string.IsNullOrWhiteSpace(queryString))
-            {
-                MessageBox.Show("Can't query empty string.");
-                return;
-            }
-
-            if (queryString.ToUpper() != "ABR")
-            {
-                MessageBox.Show("Query not recognized.");
-                return;
-            }
-
-            var currentNotebook = _dataService.CurrentNotebook;
-            var currentZip = currentNotebook.ContainerZipFilePath;
-            var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
-            
-            using (var zip = ZipFile.Read(currentZip))
-            {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                var pageEntries = DataService.GetAllPageEntriesInCache(zip);
-                pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries).ToList();
-            }
-
-            var xDocs = pageZipEntryLoaders.Select(el => XDocument.Parse(el.XmlString)).ToList();
-
-            foreach (var xDocument in xDocs)
-            {
-                var analysisCodes = xDocument.Descendants("AnalysisCodes").Descendants().Select(e => e.Value).ToList();
-                var isABR = analysisCodes.Any(c => c.Contains("ABR"));
-                if (isABR)
-                {
-                    var pageNumber = xDocument.Descendants("PageNumber").First().Value;
-                    var studentFirstName = xDocument.Descendants("Owner").First().Descendants("FirstName").First().Value;
-                    var studentLastName = xDocument.Descendants("Owner").First().Descendants("LastName").First().Value;
-
-                    var studentName = $"{studentFirstName} {studentLastName}";
-
-                    var queryResult = $"Page {pageNumber}, {studentName}";
-                    QueryResults.Add(queryResult);
-                }
-            }
-        }
     }
 }

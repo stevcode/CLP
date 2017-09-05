@@ -25,13 +25,13 @@
             <orc:StackGrid HorizontalAlignment="Stretch">
                 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <!--<ColumnDefinition Width="*" />-->
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 
-                <Button Content="Caches" 
-                        Command="{Binding SelectCachesCommand}" />
+                <!--<Button Content="Caches" 
+                        Command="{Binding SelectCacheCommand}" />-->
                 
                 <Button Content="Pages"
                         Command="{Binding SelectPageRangeCommand}" />

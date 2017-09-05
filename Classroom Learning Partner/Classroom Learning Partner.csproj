@@ -249,6 +249,7 @@
     <Compile Include="Services\Interfaces\IDataService.cs" />
     <Compile Include="Services\Interfaces\INetworkService.cs" />
     <Compile Include="Services\Interfaces\IPageInteractionService.cs" />
+    <Compile Include="Services\Interfaces\IQueryService.cs" />
     <Compile Include="Services\Interfaces\IRoleService.cs" />
     <Compile Include="Services\Interfaces\IWindowManagerService.cs" />
     <Compile Include="Services\NetworkService.cs" />

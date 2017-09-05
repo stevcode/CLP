@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
 
 namespace Classroom_Learning_Partner.Services
 {
-    public class QueryService
+    public class QueryService : IQueryService
     {
         #region Nested Classes
 
@@ -27,7 +25,6 @@ namespace Classroom_Learning_Partner.Services
 
         public QueryService()
         {
-            CachesToQuery = new List<string>();
             PageNumbersToQuery = new List<int>();
             StudentIDsToQuery = new List<string>();
         }
@@ -36,68 +33,75 @@ namespace Classroom_Learning_Partner.Services
 
         #region IQueryService Implementation
 
-        public List<string> CachesToQuery { get; set; }
+        public ClassRoster RosterToQuery { get; set; }
+
+        public Notebook NotebookToQuery { get; set; }
 
         public List<int> PageNumbersToQuery { get; set; }
 
         public List<string> StudentIDsToQuery { get; set; }
 
-        public List<QueryResult> RunQuery()
+        public List<QueryResult> RunQuery(string queryString)
         {
+            if (NotebookToQuery == null)
+            {
+                return null;
+            }
+
+            // TODO: Sanatize query string from master list of all available analysis codes. convert ABR to FABR/IABR
+
             var queryResults = new List<QueryResult>();
 
-            foreach (var cacheFilePath in CachesToQuery)
+            List<DataService.PageZipEntryLoader> pageZipEntryLoaders;
+            var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
+            using (var zip = ZipFile.Read(cacheFilePath))
             {
-                var pageZipEntryLoaders = new List<DataService.PageZipEntryLoader>();
-                using (var zip = ZipFile.Read(cacheFilePath))
-                {
-                    zip.CompressionMethod = CompressionMethod.None;
-                    zip.CompressionLevel = CompressionLevel.None;
-                    zip.UseZip64WhenSaving = Zip64Option.Always;
-                    zip.CaseSensitiveRetrieval = true;
+                zip.CompressionMethod = CompressionMethod.None;
+                zip.CompressionLevel = CompressionLevel.None;
+                zip.UseZip64WhenSaving = Zip64Option.Always;
+                zip.CaseSensitiveRetrieval = true;
 
-                    var pageEntries = DataService.GetAllPageEntriesInCache(zip);
-                    pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries).ToList();
+                var pageEntries = DataService.GetAllPageEntriesInCache(zip);
+                pageZipEntryLoaders = DataService.GetPageZipEntryLoadersFromEntries(pageEntries).ToList();
+            }
+
+            var xDocs = pageZipEntryLoaders.Select(el => XDocument.Parse(el.XmlString)).ToList();
+
+            foreach (var xDocument in xDocs)
+            {
+                var pageNumber = xDocument.Descendants("PageNumber").First().Value.ToInt();
+                if (pageNumber == null ||
+                    !PageNumbersToQuery.Contains(pageNumber.Value))
+                {
+                    continue;
                 }
 
-                var xDocs = pageZipEntryLoaders.Select(el => XDocument.Parse(el.XmlString)).ToList();
-
-                foreach (var xDocument in xDocs)
+                var studentID = xDocument.Descendants("Owner").First().Descendants("ID").First().Value;
+                if (string.IsNullOrWhiteSpace(studentID) ||
+                    !StudentIDsToQuery.Contains(studentID))
                 {
-                    var pageNumber = xDocument.Descendants("PageNumber").First().Value.ToInt();
-                    if (pageNumber == null ||
-                        !PageNumbersToQuery.Contains(pageNumber.Value))
-                    {
-                        continue;
-                    }
-
-                    var studentID = xDocument.Descendants("Owner").First().Descendants("ID").First().Value;
-                    if (string.IsNullOrWhiteSpace(studentID) ||
-                        !StudentIDsToQuery.Contains(studentID))
-                    {
-                        continue;
-                    }
-
-                    var analysisCodes = xDocument.Descendants("AnalysisCodes").Descendants().Select(e => e.Value).ToList();
-                    var isABR = analysisCodes.Any(c => c.Contains("ABR"));
-                    if (isABR)
-                    {
-                        
-                        var studentFirstName = xDocument.Descendants("Owner").First().Descendants("FirstName").First().Value;
-                        var studentLastName = xDocument.Descendants("Owner").First().Descendants("LastName").First().Value;
-
-                        var studentName = $"{studentFirstName} {studentLastName}";
-
-                        var queryResult = new QueryResult
-                                          {
-                                              CacheFilePath = cacheFilePath,
-                                              PageNumber = pageNumber.Value,
-                                              StudentName = studentName
-                                          };
-                        queryResults.Add(queryResult);
-                    }
+                    continue;
                 }
 
+                var analysisCodes = xDocument.Descendants("AnalysisCodes").Descendants().Select(e => e.Value).ToList();
+                var isMatchingResult = analysisCodes.Any(c => c.StartsWith(queryString.ToUpper()));
+                if (!isMatchingResult)
+                {
+                    continue;
+                }
+
+                var studentFirstName = xDocument.Descendants("Owner").First().Descendants("FirstName").First().Value;
+                var studentLastName = xDocument.Descendants("Owner").First().Descendants("LastName").First().Value;
+
+                var studentName = $"{studentFirstName} {studentLastName}";
+
+                var queryResult = new QueryResult
+                                  {
+                                      CacheFilePath = cacheFilePath,
+                                      PageNumber = pageNumber.Value,
+                                      StudentName = studentName
+                                  };
+                queryResults.Add(queryResult);
             }
 
             return queryResults;

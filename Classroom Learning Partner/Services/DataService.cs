@@ -1554,6 +1554,16 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs;
         }
 
+        public static List<int> GetAllPageNumbersInNotebook(ZipFile zip, Notebook notebook)
+        {
+            var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
+            var pageEntryNames = zip.GetEntriesInDirectory(internalPagesDirectory).Select(e => e.GetEntryNameWithoutExtension()).ToList();
+            var pageNameComposites = pageEntryNames.Select(CLPPage.NameComposite.ParseFromString).ToList();
+            var pageNumbers = pageNameComposites.Select(nc => nc.PageNumber).Distinct().ToList();
+
+            return pageNumbers;
+        }
+
         public static List<string> GetPageIDsFromPageNumbers(ZipFile zip, Notebook notebook, List<int> pageNumbers)
         {
             var internalPagesDirectory = notebook.NotebookPagesDirectoryPath;
