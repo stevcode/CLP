@@ -5,11 +5,16 @@
                   Title="Text Input">
 
     <StackPanel>
+        
         <TextBlock Text="{Binding TextPrompt}"
-                   HorizontalAlignment="Left" />
+                   HorizontalAlignment="Left"
+                   Margin="5" />
+        
         <TextBox Text="{Binding InputText}"
                  HorizontalAlignment="Left"
-                 Width="350" />
+                 Width="350"
+                 Margin="5" />
+        
     </StackPanel>
-    
+
 </catel:DataWindow>

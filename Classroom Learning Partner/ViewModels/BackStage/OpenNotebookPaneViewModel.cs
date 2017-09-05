@@ -159,7 +159,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenPageRangeCommandExecute()
         {
-            var textInputViewModel = new TextInputViewModel();
+            var textInputViewModel = new TextInputViewModel
+                                     {
+                                         TextPrompt = "Enter Page Range"
+                                     };
             var textInputView = new TextInputView(textInputViewModel);
             textInputView.ShowDialog();
 
