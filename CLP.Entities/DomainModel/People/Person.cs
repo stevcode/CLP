@@ -140,47 +140,10 @@ namespace CLP.Entities
         #region Calculated Properties
 
         /// <summary>Formatted full name of the person.</summary>
-        public string FullName
-        {
-            get
-            {
-                if (ID == AUTHOR_ID)
-                {
-                    return "AUTHOR";
-                }
-
-                if (!string.IsNullOrWhiteSpace(Alias))
-                {
-                    return Alias;
-                }
-
-                var first = string.IsNullOrWhiteSpace(Nickname) ? FirstName : Nickname;
-                var middleInitial = string.IsNullOrWhiteSpace(MiddleName) ? string.Empty : $" {MiddleName[0]}.";
-                return $"{first}{middleInitial} {LastName}";
-            }
-        }
+        public string FullName => CreateFullName(FirstName, LastName, ID, MiddleName, Nickname, Alias);
 
         /// <summary>Formatted display name of the person.</summary>
-        public string DisplayName
-        {
-            get
-            {
-                if (ID == AUTHOR_ID)
-                {
-                    return "AUTHOR";
-                }
-
-                if (!string.IsNullOrWhiteSpace(Alias))
-                {
-                    return Alias;
-                }
-
-                var first = string.IsNullOrWhiteSpace(Nickname) ? FirstName : Nickname;
-                var lastInitial = string.IsNullOrWhiteSpace(LastName) ? string.Empty : $" {LastName[0]}.";
-                var firstAndLastInitial = first + lastInitial;
-                return firstAndLastInitial;
-            }
-        }
+        public string DisplayName => CreateDisplayName(FirstName, LastName, ID, Nickname, Alias);
 
         #endregion // Calculated Properties
 
@@ -302,6 +265,41 @@ namespace CLP.Entities
                              };
 
             return personfull;
+        }
+
+        public static string CreateFullName(string firstName, string lastName, string personID, string middleName = "", string nickname = "", string alias = "")
+        {
+            if (personID == AUTHOR_ID)
+            {
+                return "AUTHOR";
+            }
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                return alias;
+            }
+
+            var first = string.IsNullOrWhiteSpace(nickname) ? firstName : nickname;
+            var middleInitial = string.IsNullOrWhiteSpace(middleName) ? string.Empty : $" {middleName[0]}.";
+            return $"{first}{middleInitial} {lastName}";
+        }
+
+        public static string CreateDisplayName(string firstName, string lastName, string personID, string nickname = "", string alias = "")
+        {
+            if (personID == AUTHOR_ID)
+            {
+                return "AUTHOR";
+            }
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                return alias;
+            }
+
+            var first = string.IsNullOrWhiteSpace(nickname) ? firstName : nickname;
+            var lastInitial = string.IsNullOrWhiteSpace(lastName) ? string.Empty : $" {lastName[0]}.";
+            var firstAndLastInitial = first + lastInitial;
+            return firstAndLastInitial;
         }
 
         #endregion // Static Methods
