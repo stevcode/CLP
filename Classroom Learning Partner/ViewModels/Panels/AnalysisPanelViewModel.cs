@@ -684,8 +684,6 @@ namespace Classroom_Learning_Partner.ViewModels
                               HeuristicsResults = heuristicsResults
                           };
 
-                CLogger.AppendToLog(tag.FormattedValue);
-
                 page.AddTag(tag);
             }
         }
