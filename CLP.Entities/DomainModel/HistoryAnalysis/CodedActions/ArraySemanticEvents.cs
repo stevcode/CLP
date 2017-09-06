@@ -1743,10 +1743,44 @@ namespace CLP.Entities
                 skipSizes[skipSize]++;
             }
 
-            var dominantSkipSize = skipSizes.OrderByDescending(d => d.Value).First().Key;
+            var expectedSkipSize = columns;
+            var wrongDimensionSkipSize = rows;
+            var dominantSkipSizeOccurances = skipSizes.OrderByDescending(d => d.Value).First().Value;
+            var allDominantSkipSizes = skipSizes.Where(d => d.Value == dominantSkipSizeOccurances).Select(d => d.Key).ToList();
 
-            // Convert non-numerics
-            // TODO: Clean up, this will probably have to be run twice if there are instances of 3 non-numerics in a row
+            var dominantSkipSize = 0;
+            var smallestDifference = int.MaxValue;
+            foreach (var aDominantSkipSize in allDominantSkipSizes)
+            {
+                var expectedSkipSizeDifference = Math.Abs(aDominantSkipSize - expectedSkipSize);
+                if (expectedSkipSizeDifference == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    break;
+                }
+
+                var wrongSkipSizeDifference = Math.Abs(aDominantSkipSize - wrongDimensionSkipSize);
+                if (wrongSkipSizeDifference == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    break;
+                }
+
+                if (dominantSkipSize == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    continue;
+                }
+
+                var smallerDifference = Math.Min(expectedSkipSizeDifference, wrongSkipSizeDifference);
+                if (smallerDifference < smallestDifference)
+                {
+                    smallestDifference = smallerDifference;
+                    dominantSkipSize = aDominantSkipSize;
+                }
+            }
+
+            // Convert non-numerics (from "middle" forward)
             for (var i = 1; i < orderedHeuristicValues.Count; i++)
             {
                 var heuristicValue = orderedHeuristicValues[i];
@@ -1759,7 +1793,6 @@ namespace CLP.Entities
                 var prev = orderedHeuristicValues[i - 1];
                 if (!prev.IsCorrectedNumeric)
                 {
-                    // TODO: Shouldn't hit this unless run into necessary above clean up.
                     continue;
                 }
 
@@ -1782,6 +1815,40 @@ namespace CLP.Entities
                 }
 
                 heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+            }
+
+            // Convert non-numerics (remaining, from "middle" backward)
+            var firstNumericHeuristic = orderedHeuristicValues.First(h => h.IsCorrectedNumeric || h.IsFinal);
+            var indexOfFirstNumericHeuristic = orderedHeuristicValues.IndexOf(firstNumericHeuristic);
+            for (var i = indexOfFirstNumericHeuristic; i > 0; i--)
+            {
+                if (i == 0)
+                {
+                    break;
+                }
+
+                var heuristicValue = orderedHeuristicValues[i];
+                var prev = orderedHeuristicValues[i - 1];
+
+                var correctedValue = (int)heuristicValue.Value - dominantSkipSize;
+                prev.Value = correctedValue;
+                prev.IsFinal = true;
+
+                var expectedValue = columns * heuristicValue.Row;
+                if (correctedValue == expectedValue)
+                {
+                    prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    continue;
+                }
+
+                var wrongDimensionExpectedValue = rows * heuristicValue.Row;
+                if (correctedValue == wrongDimensionExpectedValue)
+                {
+                    prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    continue;
+                }
+
+                prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
             }
 
             // Resolve Unknown Middles
