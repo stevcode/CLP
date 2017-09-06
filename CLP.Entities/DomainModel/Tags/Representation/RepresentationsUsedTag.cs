@@ -929,15 +929,96 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.Add("Created by Snap");
                 }
 
-                var mostRecentSideSkipEvent = semanticEvents.LastOrDefault(e => e.ReferencePageObjectID == arrayID &&
-                                                                                e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                                                                (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
-                                                                                !e.EventInformation.Contains("bottom"));
+                var skipEvents = semanticEvents.Where(e => e.ReferencePageObjectID == arrayID &&
+                                                           e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
+                                                           e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                           (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
+                                                           !e.EventInformation.Contains("bottom"));
 
-                var sideSkipCodedValue = SideSkipCountingCorrectness(array, mostRecentSideSkipEvent);
-                if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
+                var skipEventGroupings = new List<List<ISemanticEvent>>();
+                var currentSkipGrouping = new List<ISemanticEvent>();
+                foreach (var skipCountingEvent in skipEvents)
                 {
-                    usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
+                    var formattedSkips = GetFormattedSkips(skipCountingEvent);
+                    var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
+                    if (skips.Count == 1 &&
+                        skips.All(s => s == -1))
+                    {
+                        if (currentSkipGrouping.Any())
+                        {
+                            skipEventGroupings.Add(currentSkipGrouping.ToList());
+                            currentSkipGrouping = new List<ISemanticEvent>();
+                        }
+                        continue;
+                    }
+                    currentSkipGrouping.Add(skipCountingEvent);
+                }
+
+                foreach (var skipEventGrouping in skipEventGroupings)
+                {
+                    var counts = new List<dynamic>();
+                    foreach (var skipCountingEvent in skipEventGrouping)
+                    {
+                        var formattedSkips = GetFormattedSkips(skipCountingEvent);
+                        if (formattedSkips == null)
+                        {
+                            continue;
+                        }
+
+                        var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
+
+                        var correctDimensionMatches = 0;
+                        var wrongDimensionMatches = 0;
+                        var totalNumbers = 0;
+                        for (var i = 0; i < skips.Count; i++)
+                        {
+                            var currentValue = skips[i];
+                            if (currentValue == -1)
+                            {
+                                continue;
+                            }
+
+                            var expectedValue = (i + 1) * array.Columns;
+                            if (currentValue == expectedValue)
+                            {
+                                correctDimensionMatches++;
+                            }
+
+                            var wrongDimensionExpectedValue = (i + 1) * array.Rows;
+                            if (currentValue == wrongDimensionExpectedValue &&
+                                array.Rows != array.Columns)
+                            {
+                                wrongDimensionMatches++;
+                            }
+
+                            totalNumbers++;
+                        }
+
+                        var count = new
+                                    {
+                                        CorrectDimensionMatches = correctDimensionMatches,
+                                        WrongDimensionMatches = wrongDimensionMatches,
+                                        TotalNumbers = totalNumbers,
+                                        SemanticEvent = skipCountingEvent
+                                    };
+                        counts.Add(count);
+                    }
+
+                    var bestChoice = counts.Where(c => c.CorrectDimensionMatches != 0).OrderByDescending(c => c.CorrectDimensionMatches).FirstOrDefault() ??
+                                     counts.Where(c => c.WrongDimensionMatches != 0).OrderByDescending(c => c.WrongDimensionMatches).FirstOrDefault() ??
+                                     counts.OrderByDescending(c => c.TotalNumbers).FirstOrDefault();
+
+                    if (bestChoice == null)
+                    {
+                        continue;
+                    }
+
+                    var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent);
+                    if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
+                    {
+                        usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
+                    }
                 }
 
                 var mostRecentBottomSkipEvent = semanticEvents.LastOrDefault(e => e.ReferencePageObjectID == arrayID &&
@@ -983,7 +1064,6 @@ namespace CLP.Entities
 
             var correctDimensionMatches = 0;
             var wrongDimensionMatches = 0;
-            var differences = new List<int>();
             for (var i = 0; i < skips.Count; i++)
             {
                 var currentValue = skips[i];
@@ -1004,15 +1084,6 @@ namespace CLP.Entities
                 {
                     wrongDimensionMatches++;
                 }
-
-                if (i >= skips.Count - 1)
-                {
-                    continue;
-                }
-
-                var nextValue = skips[i + 1];
-                var difference = nextValue - currentValue;
-                differences.Add(difference);
             }
 
             var isCorrectDimensions = false;
