@@ -954,6 +954,11 @@ namespace CLP.Entities
                     currentSkipGrouping.Add(skipCountingEvent);
                 }
 
+                if (currentSkipGrouping.Any())
+                {
+                    skipEventGroupings.Add(currentSkipGrouping.ToList());
+                }
+
                 var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).X;
                 var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).Y;
 
@@ -1063,80 +1068,19 @@ namespace CLP.Entities
                 return null;
             }
 
+            var unformattedSkips = formattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+            var isSkipCounting = ArraySemanticEvents.IsSkipCounting(unformattedSkips);
+            if (!isSkipCounting)
+            {
+                return null;
+            }
+
             var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).X;
             var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).Y;
+            
+            var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
-            var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
-
-            var correctDimensionMatches = 0;
-            var wrongDimensionMatches = 0;
-            for (var i = 0; i < skips.Count; i++)
-            {
-                var currentValue = skips[i];
-                if (currentValue == -1)
-                {
-                    continue;
-                }
-
-                var expectedValue = (i + 1) * columns;
-                if (currentValue == expectedValue)
-                {
-                    correctDimensionMatches++;
-                }
-
-                var wrongDimensionExpectedValue = (i + 1) * rows;
-                if (currentValue == wrongDimensionExpectedValue &&
-                    rows != columns)
-                {
-                    wrongDimensionMatches++;
-                }
-            }
-
-            var isCorrectDimensions = false;
-            var isWrongDimension = false;
-
-            if (skips.Count == 1)
-            {
-                if (correctDimensionMatches > 0)
-                {
-                    isCorrectDimensions = true;
-                }
-                else if (wrongDimensionMatches > 0)
-                {
-                    isWrongDimension = true;
-                }
-            }
-            else
-            {
-                if (correctDimensionMatches == skips.Count)
-                {
-                    isCorrectDimensions = true;
-                }
-
-                if (!isCorrectDimensions)
-                {
-                    if (wrongDimensionMatches >= Math.Floor(skips.Count * 0.8))
-                    {
-                        isWrongDimension = true;
-                    }
-                }
-            }
-
-            var correctnessText = string.Empty;
-            if (isCorrectDimensions)
-            {
-                correctnessText = "correct";
-            }
-            else if (isWrongDimension)
-            {
-                correctnessText = "wrong dimension";
-            }
-            else
-            {
-                correctnessText = "other";
-            }
-
-            var skipCodedValue = $"skip [{formattedSkips}], {correctnessText}";
+            var skipCodedValue = $"skip [{formattedSkips}]\n{heuristicsResults}";
             return skipCodedValue;
         }
 
