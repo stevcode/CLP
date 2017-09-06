@@ -954,6 +954,9 @@ namespace CLP.Entities
                     currentSkipGrouping.Add(skipCountingEvent);
                 }
 
+                var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).X;
+                var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).Y;
+
                 foreach (var skipEventGrouping in skipEventGroupings)
                 {
                     var counts = new List<dynamic>();
@@ -978,15 +981,15 @@ namespace CLP.Entities
                                 continue;
                             }
 
-                            var expectedValue = (i + 1) * array.Columns;
+                            var expectedValue = (i + 1) * columns;
                             if (currentValue == expectedValue)
                             {
                                 correctDimensionMatches++;
                             }
 
-                            var wrongDimensionExpectedValue = (i + 1) * array.Rows;
+                            var wrongDimensionExpectedValue = (i + 1) * rows;
                             if (currentValue == wrongDimensionExpectedValue &&
-                                array.Rows != array.Columns)
+                                rows != columns)
                             {
                                 wrongDimensionMatches++;
                             }
@@ -1060,6 +1063,9 @@ namespace CLP.Entities
                 return null;
             }
 
+            var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).X;
+            var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).Y;
+
             var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
 
             var correctDimensionMatches = 0;
@@ -1072,15 +1078,15 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var expectedValue = (i + 1) * array.Columns;
+                var expectedValue = (i + 1) * columns;
                 if (currentValue == expectedValue)
                 {
                     correctDimensionMatches++;
                 }
 
-                var wrongDimensionExpectedValue = (i + 1) * array.Rows;
+                var wrongDimensionExpectedValue = (i + 1) * rows;
                 if (currentValue == wrongDimensionExpectedValue &&
-                    array.Rows != array.Columns)
+                    rows != columns)
                 {
                     wrongDimensionMatches++;
                 }
