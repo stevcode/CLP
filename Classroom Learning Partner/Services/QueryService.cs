@@ -84,7 +84,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var analysisCodes = xDocument.Descendants("AnalysisCodes").Descendants().Select(e => e.Value).ToList();
-                var isMatchingResult = analysisCodes.Any(c => c.StartsWith(queryString.ToUpper()));
+                var isMatchingResult = analysisCodes.Any(c => c.Contains(queryString.ToUpper()));
                 if (!isMatchingResult)
                 {
                     continue;
