@@ -22,8 +22,8 @@ namespace CLP.Entities
         /// <summary>List of all the Analysis Codes the Tag generates.</summary>
         public List<string> AnalysisCodes
         {
-            get { return GetValue<List<string>>(AnalysisCodesProperty); }
-            set { SetValue(AnalysisCodesProperty, value); }
+            get => GetValue<List<string>>(AnalysisCodesProperty);
+            set => SetValue(AnalysisCodesProperty, value);
         }
 
         public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
@@ -33,8 +33,8 @@ namespace CLP.Entities
         /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>
         public List<string> SemanticEventIDs
         {
-            get { return GetValue<List<string>>(SemanticEventIDsProperty); }
-            set { SetValue(SemanticEventIDsProperty, value); }
+            get => GetValue<List<string>>(SemanticEventIDsProperty);
+            set => SetValue(SemanticEventIDsProperty, value);
         }
 
         public static readonly PropertyData SemanticEventIDsProperty = RegisterProperty("SemanticEventIDs", typeof(List<string>), () => new List<string>());
@@ -43,7 +43,10 @@ namespace CLP.Entities
 
         public List<ISemanticEvent> SemanticEvents
         {
-            get { return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticPassNumber).ThenBy(h => h.SemanticEventIndex).ToList(); }
+            get
+            {
+                return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticPassNumber).ThenBy(h => h.SemanticEventIndex).ToList();
+            }
         }
 
         #endregion // Calculated Properties
