@@ -270,6 +270,7 @@ namespace CLP.Entities
             GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateBinsUsedInformation(page, tag);
 
             if (!tag.RepresentationsUsed.Any())
             {
@@ -296,6 +297,345 @@ namespace CLP.Entities
 
             page.AddTag(tag);
             return tag;
+        }
+
+        public static void GenerateBinsUsedInformation(CLPPage page, RepresentationsUsedTag tag)
+        {
+            switch (page.PageNumber)
+            {
+                case 2:
+                    if (page.OwnerID == "bs9X5-b9cEuwtaQHlLIKMw") // Ada
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 3:
+                    if (page.OwnerID == "d7tlNq2ryUqW53USnrea-A") // Eryn
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "9",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 6:
+                    if (page.OwnerID == "gftqBtWt8kmAfwajPo0b5w") // Alli
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "7",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "jR1aFxiiXEi2OhaqLuf4VA") // Salma
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "7",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 7:
+                    if (page.OwnerID == "L608APK1J0Kw8cVpJEvo6g") // Jane
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 9:
+                    if (page.OwnerID == "L608APK1J0Kw8cVpJEvo6g") // Jane
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.Correct,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 11:
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CBIJb3ubWUuZQRTie0mAaw") // Madeira
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = false,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = false,
+                                                      IsUsed = false,
+                                                      Correctness = Correctness.Unknown,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+
+                        var usedRepresentation3 = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation3);
+
+                        var usedRepresentation4 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.Correct,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation4);
+                    }
+                    if (page.OwnerID == "eO9HFRoY-0aLtcL2iA5-tQ") // Sanjit
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "5",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "4",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 12:
+                    if (page.OwnerID == "nUd1x4-oukipFNwazvDrfQ") // Aaron
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "5",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "4",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+            }
         }
 
         public static void GenerateArraysUsedInformation(CLPPage page,
