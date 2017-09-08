@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace CLP.Entities
 {
-    public static class Codings
+    public static partial class Codings
     {
         #region Errors
 

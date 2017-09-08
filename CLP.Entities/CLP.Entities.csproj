@@ -91,6 +91,7 @@
     <Compile Include="DomainModel\Cache\Session.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Codings.AnalysisCodes.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\IAnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\PatternPoint.cs" />
     <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
