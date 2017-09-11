@@ -20,8 +20,8 @@ namespace CLP.Entities
         /// <summary>Sequence of Final Answers and Representations.</summary>
         public List<string> Sequence
         {
-            get { return GetValue<List<string>>(SequenceProperty); }
-            set { SetValue(SequenceProperty, value); }
+            get => GetValue<List<string>>(SequenceProperty);
+            set => SetValue(SequenceProperty, value);
         }
 
         public static readonly PropertyData SequenceProperty = RegisterProperty("Sequence", typeof(List<string>), () => new List<string>());
@@ -115,7 +115,7 @@ namespace CLP.Entities
                         mostRecentSequenceItem = semanticEvent;
                     }
                 }
-                else if (Codings.IsRepresentationEvent(semanticEvent) && 
+                else if (Codings.IsRepresentationEvent(semanticEvent) &&
                          semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                 {
                     if (mostRecentSequenceItem == null ||
@@ -245,7 +245,7 @@ namespace CLP.Entities
             {
                 intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
             }
-            var firstIntermediaryAnswerIndex =  !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
+            var firstIntermediaryAnswerIndex = !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
             var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
             if (firstIntermediaryAnswerIndex != -1 &&
                 sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
@@ -267,7 +267,7 @@ namespace CLP.Entities
                     }
                     continue;
                 }
-                
+
                 if (string.IsNullOrWhiteSpace(startItem))
                 {
                     startItem = item;
@@ -288,7 +288,8 @@ namespace CLP.Entities
                     startItem = item;
                     isRepresentationUsedAfterAnswer = false;
                 }
-                else if (!isStartCOR && !isCurrentCOR)
+                else if (!isStartCOR &&
+                         !isCurrentCOR)
                 {
                     tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_INC_AFTER_REP);
                     startItem = item;
