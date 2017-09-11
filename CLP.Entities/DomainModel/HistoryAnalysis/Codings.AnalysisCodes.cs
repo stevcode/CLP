@@ -66,6 +66,11 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_DELETED = "DELETED";
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_ERASED = "ERASED";
 
+        public const string CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY = "INTERMEDIARY";
+        public const string CONSTRAINT_VALUE_ANSWER_TYPE_FINAL = "FINAL";
+
+        public const string CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER = "_TO_";
+
         #endregion // Analysis Constraint Values
 
         #region Methods
@@ -95,6 +100,24 @@ namespace CLP.Entities
             }
 
             return "No matching Alias";
+        }
+
+        public static List<string> GetAllAnalysisLabels()
+        {
+            var list = new List<string>
+                       {
+                           //ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP,
+                           ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP,
+                           ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION,
+                           ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION,
+                           ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
+                           ANALYSIS_LABEL_REPRESENTATIONS_USED,
+                           //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
+                           //ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
+                           //ANALYSIS_LABEL_PROBLEM_TYPE
+                       };
+
+            return list;
         }
 
         #endregion // Methods

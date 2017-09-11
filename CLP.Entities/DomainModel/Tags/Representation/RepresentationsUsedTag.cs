@@ -248,7 +248,7 @@ namespace CLP.Entities
 
                 var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
 
-                var codeSection = AnalysisCodes.Any() ? $"\n\nCodes: {string.Join(", ", AnalysisCodes)}" : string.Empty;
+                var codeSection = QueryCodes.Any() ? $"\n\nCodes: {string.Join(", ", QueryCodes)}" : string.Empty;
                 return $"{deletedSection}{finalSectionDelimiter}{finalSection}{codeSection}";
             }
         }
@@ -278,14 +278,12 @@ namespace CLP.Entities
                     page.History.TrashedInkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID))
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
-                    var analysisCode = AnalysisCode.CreateRepresentationUsedBlankPage();
-                    tag.QueryCodes.Add(analysisCode);
+                    AnalysisCode.AddRepresentationUsedBlankPage(tag);
                 }
                 else
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
-                    var analysisCode = AnalysisCode.CreateRepresentationUsedInkOnly();
-                    tag.QueryCodes.Add(analysisCode);
+                    AnalysisCode.AddRepresentationUsedInkOnly(tag);
                 }
             }
             else
@@ -294,16 +292,14 @@ namespace CLP.Entities
                 foreach (var usedRepresentation in tag.RepresentationsUsed)
                 {
                     // TODO: Add in order
-                    var analysisCode = AnalysisCode.CreateRepresentationUsed(usedRepresentation);
-                    tag.QueryCodes.Add(analysisCode);
+                    AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
                 }
             }
 
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
-                var analysisCode = AnalysisCode.CreateMultipleRepresentations2Step();
-                tag.QueryCodes.Add(analysisCode);
+                AnalysisCode.AddMultipleRepresentations2Step(tag);
             }
 
             page.AddTag(tag);
