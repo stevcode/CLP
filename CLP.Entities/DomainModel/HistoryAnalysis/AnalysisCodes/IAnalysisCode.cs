@@ -6,7 +6,7 @@ namespace CLP.Entities
     {
         string Alias { get; set; }
         string AnalysisLabel { get; set; }
-        List<AnalysisCode.AnalysisConstraint> ConstraintValues { get; set; }
+        List<AnalysisConstraint> ConstraintValues { get; set; }
         string FormattedValue { get; }
 
         void AddConstraint(string constraintLabel, string constraintValue);

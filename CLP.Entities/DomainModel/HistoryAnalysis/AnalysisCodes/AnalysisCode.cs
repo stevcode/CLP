@@ -1,49 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
 {
-    public partial class AnalysisCode : ASerializableBase, IAnalysisCode
+    [Serializable]
+    public class AnalysisConstraint : ASerializableBase
     {
-        #region Nested Classes
+        #region Constructors
 
-        public class AnalysisConstraint : ASerializableBase
+        public AnalysisConstraint(string constraintLabel, string constraintValue)
         {
-            #region Constructors
-
-            public AnalysisConstraint(string constraintLabel, string constraintValue)
-            {
-                ConstraintLabel = constraintLabel;
-                ConstraintValue = constraintValue;
-            }
-
-            #endregion // Constructors
-
-            #region Properties
-
-            public string ConstraintLabel
-            {
-                get => GetValue<string>(ConstraintLabelProperty);
-                set => SetValue(ConstraintLabelProperty, value);
-            }
-
-            public static readonly PropertyData ConstraintLabelProperty = RegisterProperty(nameof(ConstraintLabel), typeof(string), string.Empty);
-
-            public string ConstraintValue
-            {
-                get => GetValue<string>(ConstraintValueProperty);
-                set => SetValue(ConstraintValueProperty, value);
-            }
-
-            public static readonly PropertyData ConstraintValueProperty = RegisterProperty(nameof(ConstraintValue), typeof(string), string.Empty);
-
-            #endregion // Properties
+            ConstraintLabel = constraintLabel;
+            ConstraintValue = constraintValue;
         }
 
-        #endregion // Nested Classes
+        #endregion // Constructors
 
+        #region Properties
+
+        public string ConstraintLabel
+        {
+            get => GetValue<string>(ConstraintLabelProperty);
+            set => SetValue(ConstraintLabelProperty, value);
+        }
+
+        public static readonly PropertyData ConstraintLabelProperty = RegisterProperty(nameof(ConstraintLabel), typeof(string), string.Empty);
+
+        public string ConstraintValue
+        {
+            get => GetValue<string>(ConstraintValueProperty);
+            set => SetValue(ConstraintValueProperty, value);
+        }
+
+        public static readonly PropertyData ConstraintValueProperty = RegisterProperty(nameof(ConstraintValue), typeof(string), string.Empty);
+
+        #endregion // Properties
+    }
+
+    [Serializable]
+    public partial class AnalysisCode : ASerializableBase, IAnalysisCode
+    {
         #region Constructors
+
+        public AnalysisCode() { }
 
         public AnalysisCode(string analysisLabel)
         {
@@ -85,7 +86,7 @@ namespace CLP.Entities
         {
             get
             {
-                var constraintValues = string.Join(" - ", ConstraintValues.Select(c => c.ConstraintValue)).ToList();
+                var constraintValues = string.Join(" - ", ConstraintValues.Select(c => c.ConstraintValue).ToList());
                 var bracesString = ConstraintValues.Any() ? $" {{{constraintValues}}}" : string.Empty;
 
                 return $"{Alias}{bracesString}";
