@@ -4,7 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class AnalysisCode : ASerializableBase, IAnalysisCode
+    public partial class AnalysisCode : ASerializableBase, IAnalysisCode
     {
         #region Nested Classes
 
@@ -43,6 +43,16 @@ namespace CLP.Entities
 
         #endregion // Nested Classes
 
+        #region Constructors
+
+        public AnalysisCode(string analysisLabel)
+        {
+            AnalysisLabel = analysisLabel;
+            Alias = Codings.AnalysisLabelToAlias(analysisLabel);
+        }
+
+        #endregion // Constructors
+
         #region Properties
 
         public string AnalysisLabel
@@ -80,6 +90,15 @@ namespace CLP.Entities
 
                 return $"{Alias}{bracesString}";
             }
+        }
+
+        #endregion // Properties
+
+        #region Properties
+
+        public void AddConstraint(string constraintLabel, string constraintValue)
+        {
+            ConstraintValues.Add(new AnalysisConstraint(constraintLabel, constraintValue));
         }
 
         #endregion // Properties

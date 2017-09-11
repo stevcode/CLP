@@ -28,6 +28,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
 
+        public List<IAnalysisCode> QueryCodes
+        {
+            get => GetValue<List<IAnalysisCode>>(QueryCodesProperty);
+            set => SetValue(QueryCodesProperty, value);
+        }
+
+        public static readonly PropertyData QueryCodesProperty = RegisterProperty(nameof(QueryCodes), typeof(List<IAnalysisCode>), () => new List<IAnalysisCode>());
+
+        public string QueryCodesReport => string.Join("\n", QueryCodes);
+
         public string AnalysisCodesReport => string.Join(", ", AnalysisCodes);
 
         /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>

@@ -278,21 +278,32 @@ namespace CLP.Entities
                     page.History.TrashedInkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID))
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
+                    var analysisCode = AnalysisCode.CreateRepresentationUsedBlankPage();
+                    tag.QueryCodes.Add(analysisCode);
                 }
                 else
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
+                    var analysisCode = AnalysisCode.CreateRepresentationUsedInkOnly();
+                    tag.QueryCodes.Add(analysisCode);
                 }
             }
             else
             {
                 tag.RepresentationsUsedType = RepresentationsUsedTypes.RepresentationsUsed;
+                foreach (var usedRepresentation in tag.RepresentationsUsed)
+                {
+                    // TODO: Add in order
+                    var analysisCode = AnalysisCode.CreateRepresentationUsed(usedRepresentation);
+                    tag.QueryCodes.Add(analysisCode);
+                }
             }
 
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
-                tag.AnalysisCodes.Add(Codings.REPRESENTATIONS_MR2STEP);
+                var analysisCode = AnalysisCode.CreateMultipleRepresentations2Step();
+                tag.QueryCodes.Add(analysisCode);
             }
 
             page.AddTag(tag);

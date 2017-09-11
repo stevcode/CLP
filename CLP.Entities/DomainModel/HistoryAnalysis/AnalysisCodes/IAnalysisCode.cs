@@ -8,5 +8,7 @@ namespace CLP.Entities
         string AnalysisLabel { get; set; }
         List<AnalysisCode.AnalysisConstraint> ConstraintValues { get; set; }
         string FormattedValue { get; }
+
+        void AddConstraint(string constraintLabel, string constraintValue);
     }
 }
