@@ -114,7 +114,8 @@
 
                 <Button Content="Sort" />
                 
-                <Button Content="Reports" />
+                <Button Content="Reports"
+                        Command="{Binding ShowReportsCommand}"/>
 
             </orc:StackGrid>
 

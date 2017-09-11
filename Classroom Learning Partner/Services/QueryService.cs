@@ -153,6 +153,35 @@ namespace Classroom_Learning_Partner.Services
             return queryResults;
         }
 
+        public string GatherReports()
+        {
+            var test = $"Pages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+
+            return test;
+        }
+
         #endregion // IQueryService Implementation
 
         #region Methods
