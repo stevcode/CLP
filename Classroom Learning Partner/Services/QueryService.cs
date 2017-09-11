@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Catel;
 using CLP.Entities;
 using Ionic.Zip;
 using Ionic.Zlib;
@@ -25,6 +26,28 @@ namespace Classroom_Learning_Partner.Services
             public string PageID { get; set; }
             public int PageNumber { get; set; }
             public string StudentName { get; set; }
+        }
+
+        public class QueryReport
+        {
+            public string PrimaryQueryLabel { get;set; }
+
+
+
+
+
+            public string FormattedReport
+            {
+                get
+                {
+                    var rows = new List<string>
+                               {
+                                   PrimaryQueryLabel
+                               };
+
+                    return string.Empty;
+                }
+            }
         }
 
         #endregion // Nested Classes
@@ -56,6 +79,12 @@ namespace Classroom_Learning_Partner.Services
         {
             var queryResults = new List<QueryResult>();
             if (NotebookToQuery == null)
+            {
+                return queryResults;
+            }
+
+            var query = ParseQueryString(queryString);
+            if (query == null)
             {
                 return queryResults;
             }
@@ -184,6 +213,103 @@ namespace Classroom_Learning_Partner.Services
             return queryCodes;
         }
 
+        private Query ParseQueryString(string queryString)
+        {
+            var allAliases = Codings.GetAllAnalysisAliases();
+            if (!allAliases.Contains(queryString.ToUpper()))
+            {
+                return null;
+            }
+
+            var analysisLabel = Codings.AnalysisAliasToLabel(queryString);
+            var query = GenerateQuery(analysisLabel);
+
+            return query;
+        }
+
         #endregion // Methods
+
+        #region Static Methods
+
+        public static Query GenerateQuery(string analysisLabel)
+        {
+            var query = new Query
+                        {
+                            QueryLabel = analysisLabel,
+                            Alias = Codings.AnalysisLabelToAlias(analysisLabel),
+                            Constraints = PopulateQueryWithAllConstraints(analysisLabel)
+                        };
+
+            return query;
+        }
+
+        public static Dictionary<string, List<string>> PopulateQueryWithAllConstraints(string analysisLabel)
+        {
+            var constraints = new Dictionary<string, List<string>>();
+            var codedCorrectnessValues = Enum<Correctness>.GetValues().Select(Codings.CorrectnessToCodedCorrectness).ToList();
+            var correctnessConstraintValues = new List<string>
+                                              {
+                                                  Codings.CONSTRAINT_VALUE_ALL
+                                              };
+            correctnessConstraintValues.AddRange(codedCorrectnessValues.ToList());
+
+            switch (analysisLabel)
+            {
+                case Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP:
+                case Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP:
+                    break;
+                case Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
+                    var answerChangedConstraintValues = new List<string>
+                                           {
+                                               Codings.CONSTRAINT_VALUE_ALL
+                                           };
+                    answerChangedConstraintValues.AddRange(from fromCorrectness in codedCorrectnessValues
+                                                           from toCorrectness in codedCorrectnessValues
+                                                           select $"{fromCorrectness}{Codings.CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER}{toCorrectness}");
+
+                    constraints.Add(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues);
+                    break;
+                case Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION:
+                    constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
+                                    new List<string>
+                                    {
+                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
+                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
+                                    });
+                    
+                    constraints.Add(Codings.CONSTRAINT_ANSWER_CORRECTNESS, correctnessConstraintValues);
+                    break;
+                case Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER:
+                    constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
+                                    new List<string>
+                                    {
+                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
+                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
+                                    });
+
+                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, correctnessConstraintValues);
+                    break;
+                case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
+                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_NAME,
+                                    new List<string>
+                                    {
+                                        Codings.OBJECT_ARRAY,
+                                        Codings.OBJECT_NUMBER_LINE,
+                                        Codings.OBJECT_STAMP
+                                    });
+                    break;
+                case Codings.ANALYSIS_LABEL_ARRAY_SKIP_COUNTING:
+                case Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
+                case Codings.ANALYSIS_LABEL_PROBLEM_TYPE:
+                    break;
+            }
+
+
+            return constraints;
+        }
+
+        #endregion // Static Methods
     }
 }

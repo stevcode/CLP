@@ -95,13 +95,13 @@ namespace CLP.Entities
 
         #endregion // Properties
 
-        #region Properties
+        #region Methods
 
         public void AddConstraint(string constraintLabel, string constraintValue)
         {
             ConstraintValues.Add(new AnalysisConstraint(constraintLabel, constraintValue));
         }
 
-        #endregion // Properties
+        #endregion // Methods
     }
 }
