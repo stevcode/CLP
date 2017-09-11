@@ -40,9 +40,27 @@
                         Command="{Binding SelectStudentsCommand}" />
 
             </orc:StackGrid>
+            
+            <orc:StackGrid>
 
-            <TextBox Margin="3"
-                     Text="{Binding QueryString}" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Label Content="Query String:"
+                       Margin="3">
+                    <Label.ToolTip>
+                        <ToolTip>
+                            <Label Content="MR2STEP, AR, ABR, RAA, REPS_USED" />
+                        </ToolTip>
+                    </Label.ToolTip>
+                </Label>
+
+                <TextBox Margin="3"
+                         Text="{Binding QueryString}" />
+                
+            </orc:StackGrid>
 
             <Button Height="32"
                     Width="150"
