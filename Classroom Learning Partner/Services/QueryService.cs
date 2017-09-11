@@ -14,6 +14,12 @@ namespace Classroom_Learning_Partner.Services
 
         public class Query
         {
+            public Query()
+            {
+                Constraints = new Dictionary<string, List<string>>();
+                ConstraintValues = new Dictionary<string, string>();
+            }
+
             public string QueryLabel { get; set; }
             public string Alias { get; set; }
             public Dictionary<string,List<string>> Constraints { get; set; }
@@ -22,10 +28,16 @@ namespace Classroom_Learning_Partner.Services
 
         public class QueryResult
         {
+            public QueryResult()
+            {
+                QueryCodes = new List<IAnalysisCode>();
+            }
+
             public string CacheFilePath { get; set; }
             public string PageID { get; set; }
             public int PageNumber { get; set; }
             public string StudentName { get; set; }
+            public List<IAnalysisCode> QueryCodes { get; set; }
         }
 
         public class QueryReport
@@ -89,6 +101,11 @@ namespace Classroom_Learning_Partner.Services
                 return queryResults;
             }
 
+            var queries = new List<Query>
+                          {
+                              query
+                          };
+
             var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
             var xDocuments = GetAllXDocumentsFromCache(cacheFilePath);
             foreach (var xDocument in xDocuments)
@@ -122,14 +139,14 @@ namespace Classroom_Learning_Partner.Services
 
                 var queryCodes = GetPageQueryCodes(root);
 
-                var analysisCodes = root.Descendants("AnalysisCodes").Descendants().Select(e => e.Value).ToList();
-                var isMatchingResult = analysisCodes.Any(c => c.Contains(queryString.ToUpper()));
+                var isMatchingResult = IsQueryMatch(queryCodes, queries);
                 if (!isMatchingResult)
                 {
                     continue;
                 }
 
                 var queryResult = ParseQueryResultFromXElement(root, pageNumber, studentID, cacheFilePath);
+                queryResult.QueryCodes = queryCodes;
                 queryResults.Add(queryResult);
             }
 
@@ -180,7 +197,6 @@ namespace Classroom_Learning_Partner.Services
 
         private bool IsQueryMatch(List<IAnalysisCode> queryCodes, List<Query> queries)
         {
-
             foreach (var query in queries)
             {
           //      CLogger.AppendToLog(queryCodes.FirstOrDefault());
@@ -295,10 +311,24 @@ namespace Classroom_Learning_Partner.Services
                     constraints.Add(Codings.CONSTRAINT_REPRESENTATION_NAME,
                                     new List<string>
                                     {
+                                        Codings.CONSTRAINT_VALUE_ALL,
                                         Codings.OBJECT_ARRAY,
                                         Codings.OBJECT_NUMBER_LINE,
-                                        Codings.OBJECT_STAMP
+                                        Codings.OBJECT_STAMP,
+                                        Codings.OBJECT_BINS,
+                                        Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY,
+                                        Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE
                                     });
+
+                    constraints.Add(Codings.CONSTRAINT_HISTORY_STATUS,
+                                    new List<string>
+                                    {
+                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL,
+                                        Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED
+                                    });
+
+                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, correctnessConstraintValues);
                     break;
                 case Codings.ANALYSIS_LABEL_ARRAY_SKIP_COUNTING:
                 case Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
