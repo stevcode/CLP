@@ -159,8 +159,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRunQueryCommandExecute()
         {
             QueryResults.Clear();
-            var queryResults = _queryService.RunQuery(QueryString);
-            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}").ToObservableCollection();
+            var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName);
+            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}\n - {string.Join("\n - ", r.QueryCodes.Select(q => q.FormattedValue))}").ToObservableCollection();
         }
 
         #endregion // Commands

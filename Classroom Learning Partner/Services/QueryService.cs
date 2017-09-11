@@ -146,7 +146,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = ParseQueryResultFromXElement(root, pageNumber, studentID, cacheFilePath);
-                queryResult.QueryCodes = queryCodes;
+                queryResult.QueryCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -197,12 +197,14 @@ namespace Classroom_Learning_Partner.Services
 
         private bool IsQueryMatch(List<IAnalysisCode> queryCodes, List<Query> queries)
         {
-            foreach (var query in queries)
+            if (!queries.Any())
             {
-          //      CLogger.AppendToLog(queryCodes.FirstOrDefault());
+                return false;
             }
 
-            return false;
+            var query = queries.First();
+            var queryLabel = query.QueryLabel;
+            return queryCodes.Any(c => c.AnalysisLabel == queryLabel);
         }
 
         private List<IAnalysisCode> GetPageQueryCodes(XElement root)
@@ -237,7 +239,7 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var analysisLabel = Codings.AnalysisAliasToLabel(queryString);
+            var analysisLabel = Codings.AnalysisAliasToLabel(queryString.ToUpper());
             var query = GenerateQuery(analysisLabel);
 
             return query;

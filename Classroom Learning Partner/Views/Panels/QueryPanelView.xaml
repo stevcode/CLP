@@ -48,11 +48,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 
-                <Label Content="Query String:"
+                <Label Content="Query:"
                        Margin="3">
                     <Label.ToolTip>
                         <ToolTip>
-                            <Label Content="MR2STEP, AR, ABR, RAA, REPS_USED" />
+                            <TextBox Text="MR2STEP, AR, ABR, RAA, REPS_USED" />
                         </ToolTip>
                     </Label.ToolTip>
                 </Label>
