@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Catel;
@@ -30,34 +31,67 @@ namespace Classroom_Learning_Partner.Services
         {
             public QueryResult()
             {
-                QueryCodes = new List<IAnalysisCode>();
+                MatchingQueryCodes = new List<IAnalysisCode>();
+                AllQueryCodes = new List<IAnalysisCode>();
             }
 
             public string CacheFilePath { get; set; }
             public string PageID { get; set; }
             public int PageNumber { get; set; }
             public string StudentName { get; set; }
-            public List<IAnalysisCode> QueryCodes { get; set; }
+            public List<IAnalysisCode> MatchingQueryCodes { get; set; }
+            public List<IAnalysisCode> AllQueryCodes { get; set; }
         }
 
-        public class QueryReport
+        public class Report
         {
+            public Report(string queryLabel)
+            {
+                QueryLabel = queryLabel;
+            }
+
+            public string QueryLabel { get; set; }
+            public PrimaryReport Primary { get; set; }
+
+        }
+
+        public class PrimaryReport
+        {
+            public PrimaryReport(string constraintValueType)
+            {
+                Rows = new List<PrimaryRow>();
+
+                ConstraintValueType = constraintValueType;
+                MatchedEntriesLabel = "Matched\nEntries";
+                MatchedInstancesLabel = "Matched\nInstances";
+                TotalEntriesLabel = "Total\nEntries";
+            }
+
             public string PrimaryQueryLabel { get;set; }
 
+            public List<PrimaryRow> Rows { get; set; }
 
+            public string ConstraintValueType { get; set; }
+            public string MatchedEntriesLabel { get; set; }
+            public string MatchedInstancesLabel { get; set; }
+            public string TotalEntriesLabel { get; set; }
 
+            public string PercentageLabel => $"%\n{MatchedInstancesLabel}\nover\n{TotalEntriesLabel}";
+        }
 
+        public class PrimaryRow
+        {
+            public string ConstraintValue { get; set; }
+            public int MatchedEntries { get; set; }
+            public int MatchedInstances { get; set; }
+            public int TotalMatchedEntries { get; set; }
 
-            public string FormattedReport
+            public string EntriesOverTotalEntriesPercentage
             {
                 get
                 {
-                    var rows = new List<string>
-                               {
-                                   PrimaryQueryLabel
-                               };
-
-                    return string.Empty;
+                    var percentage = Math.Round((100.0 * MatchedEntries) / TotalMatchedEntries, 2, MidpointRounding.AwayFromZero);
+                    return $"{percentage:0.00}%";
                 }
             }
         }
@@ -71,6 +105,8 @@ namespace Classroom_Learning_Partner.Services
             PageNumbersToQuery = new List<int>();
             StudentIDsToQuery = new List<string>();
             Queries = new List<Query>();
+            QueryCache = new Dictionary<int, List<IAnalysisCode>>();
+            QueryResults = new List<QueryResult>();
         }
 
         #endregion // Constructor
@@ -86,6 +122,10 @@ namespace Classroom_Learning_Partner.Services
         public List<string> StudentIDsToQuery { get; set; }
 
         public List<Query> Queries { get; set; }
+
+        public Dictionary<int, List<IAnalysisCode>> QueryCache { get; set; }
+
+        public List<QueryResult> QueryResults { get; set; }
 
         public List<QueryResult> RunQuery(string queryString)
         {
@@ -105,6 +145,10 @@ namespace Classroom_Learning_Partner.Services
                           {
                               query
                           };
+
+            Queries = queries;
+
+            var isQueryCached = QueryCache.Keys.Any();
 
             var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
             var xDocuments = GetAllXDocumentsFromCache(cacheFilePath);
@@ -138,6 +182,17 @@ namespace Classroom_Learning_Partner.Services
                 #endregion // Restrict Student IDs
 
                 var queryCodes = GetPageQueryCodes(root);
+                if (!isQueryCached)
+                {
+                    if (QueryCache.ContainsKey(pageNumber))
+                    {
+                        QueryCache[pageNumber].AddRange(queryCodes.ToList());
+                    }
+                    else
+                    {
+                        QueryCache.Add(pageNumber, queryCodes);
+                    }
+                }
 
                 var isMatchingResult = IsQueryMatch(queryCodes, queries);
                 if (!isMatchingResult)
@@ -146,40 +201,60 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = ParseQueryResultFromXElement(root, pageNumber, studentID, cacheFilePath);
-                queryResult.QueryCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+                queryResult.MatchingQueryCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+                queryResult.AllQueryCodes = queryCodes.ToList();
                 queryResults.Add(queryResult);
             }
 
+            QueryResults = queryResults;
             return queryResults;
         }
 
-        public string GatherReports()
+        public Report GatherReports()
         {
-            var test = $"Pages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
-            test += $"\nPages\tMatched Entries\tMatched Instances\tTotal Students\t% Entries / Students\tARR\tBINS\tSTAMP\tNL\tNR";
+            if (!Queries.Any())
+            {
+                return null;
+            }
 
-            return test;
+            var queryLabel = Queries.First().QueryLabel;
+            var allPagesPrimaryReport = new PrimaryReport("Pages")
+                                        {
+                                            TotalEntriesLabel = "Total\nStudents"
+                                        };
+
+            var totalStudents = 22;
+            var pageNumbers = PageNumbersToQuery.ToList();
+            foreach (var pageNumber in pageNumbers)
+            {
+                var constraintValue = pageNumber.ToString();
+                var queryResultsForPage = QueryResults.Where(r => r.PageNumber == pageNumber).ToList();
+                var matchedEntries = queryResultsForPage.Count;
+                var matchedInstances = queryResultsForPage.Sum(r => r.MatchingQueryCodes.Count);
+                var totalMatchedEntries = totalStudents;
+
+                var primaryRow = new PrimaryRow()
+                                 {
+                                     ConstraintValue = constraintValue,
+                                     MatchedEntries = matchedEntries,
+                                     MatchedInstances = matchedInstances,
+                                     TotalMatchedEntries = totalMatchedEntries
+                                 };
+                allPagesPrimaryReport.Rows.Add(primaryRow);
+            }
+
+            var tallyRow = new PrimaryRow()
+                           {
+                               ConstraintValue = "Total\nMatched\nEntries",
+                               MatchedEntries = allPagesPrimaryReport.Rows.Sum(r => r.MatchedEntries),
+                               MatchedInstances = allPagesPrimaryReport.Rows.Sum(r => r.MatchedInstances),
+                               TotalMatchedEntries = allPagesPrimaryReport.Rows.Sum(r => r.TotalMatchedEntries)
+                           };
+            allPagesPrimaryReport.Rows.Add(tallyRow);
+
+            var report = new Report(queryLabel);
+            report.Primary = allPagesPrimaryReport;
+            return report;
         }
 
         #endregion // IQueryService Implementation

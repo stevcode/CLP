@@ -11,6 +11,6 @@ namespace Classroom_Learning_Partner.Services
         List<string> StudentIDsToQuery { get; set; }
 
         List<QueryService.QueryResult> RunQuery(string queryString);
-        string GatherReports();
+        QueryService.Report GatherReports();
     }
 }

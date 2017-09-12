@@ -278,6 +278,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\ReportsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\Tags\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
@@ -355,6 +356,9 @@
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\ReportsView.xaml.cs">
+      <DependentUpon>ReportsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\Tags\MetaDataTagsView.xaml.cs">
       <DependentUpon>MetaDataTagsView.xaml</DependentUpon>
     </Compile>
@@ -369,6 +373,12 @@
     </Compile>
     <Compile Include="Views\Panels\QueryPanelView.xaml.cs">
       <DependentUpon>QueryPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PrimaryReportView.xaml.cs">
+      <DependentUpon>PrimaryReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReportView.xaml.cs">
+      <DependentUpon>ReportView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\To MVVMize\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -633,6 +643,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\ReportsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\Tags\MetaDataTagsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -650,6 +664,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\QueryPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrimaryReportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

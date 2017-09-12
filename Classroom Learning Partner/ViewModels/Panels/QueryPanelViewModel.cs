@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectStudentsCommand = new Command(OnSelectStudentsCommandExecute);
 
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
-            ShowReportsCommand = new Command(OnShowReportsCommandExecute);
+            ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
         }
 
         /// <summary>Selects which cache to run the query on.</summary>
@@ -161,16 +161,17 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             QueryResults.Clear();
             var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName);
-            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}\n - {string.Join("\n - ", r.QueryCodes.Select(q => q.FormattedValue))}").ToObservableCollection();
+            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}\n - {string.Join("\n - ", r.MatchingQueryCodes.Select(q => q.FormattedValue))}").ToObservableCollection();
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>
-        public Command ShowReportsCommand { get; private set; }
+        public TaskCommand ShowReportsCommand { get; private set; }
 
-        private void OnShowReportsCommandExecute()
+        private async Task OnShowReportsCommandExecuteAsync()
         {
             var report = _queryService.GatherReports();
-            
+            var viewModel = new ReportsViewModel(report);
+            await viewModel.ShowWindowAsDialogAsync();
         }
 
         #endregion // Commands
