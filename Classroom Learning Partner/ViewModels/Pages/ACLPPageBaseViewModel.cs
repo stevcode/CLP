@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService = dataService;
             _pageInteractionService = pageInteractionService;
 
-            InitializeEventSubscriptions();
+            InitializedAsync += ACLPPageBaseViewModel_InitializedAsync;
             InitializeCommands();
         }
 
@@ -303,6 +303,11 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Events
+
+        private async Task ACLPPageBaseViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            InitializeEventSubscriptions();
+        }
 
         private void InitializeEventSubscriptions()
         {

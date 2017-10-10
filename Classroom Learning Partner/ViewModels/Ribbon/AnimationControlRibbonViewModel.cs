@@ -605,7 +605,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            CurrentPage.History.MoveToHistoryPoint(e.OldValue, e.NewValue);
+            //CurrentPage.History.MoveToHistoryPoint(e.OldValue, e.NewValue);
         }
 
         /// <summary>
