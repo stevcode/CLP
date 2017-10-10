@@ -130,6 +130,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentLeftPanel = Panels.ProgressPanel;
                     }
                     break;
+                case Panels.QueryPanel:
+                    if (CurrentLeftPanel != Panels.QueryPanel)
+                    {
+                        CurrentLeftPanel = Panels.QueryPanel;
+                    }
+                    break;
                 default:
                     CurrentLeftPanel = Panels.NoPanel;
                     break;
@@ -552,6 +558,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case Panels.ProgressPanel:
                         _windowManagerService.LeftPanel = Panels.ProgressPanel;
+                        break;
+                    case Panels.QueryPanel:
+                        _windowManagerService.LeftPanel = Panels.QueryPanel;
                         break;
                     default:
                         _windowManagerService.LeftPanel = Panels.NoPanel;

@@ -17,8 +17,6 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        public UsedRepresentation() { }
-
         #endregion // Constructors
 
         #region Properties
@@ -26,8 +24,8 @@ namespace CLP.Entities
         /// <summary>Coded value of the Representation.</summary>
         public string CodedObject
         {
-            get { return GetValue<string>(CodedObjectProperty); }
-            set { SetValue(CodedObjectProperty, value); }
+            get => GetValue<string>(CodedObjectProperty);
+            set => SetValue(CodedObjectProperty, value);
         }
 
         public static readonly PropertyData CodedObjectProperty = RegisterProperty("CodedObject", typeof(string), string.Empty);
@@ -35,8 +33,8 @@ namespace CLP.Entities
         /// <summary>Coded ID of the Representation.</summary>
         public string CodedID
         {
-            get { return GetValue<string>(CodedIDProperty); }
-            set { SetValue(CodedIDProperty, value); }
+            get => GetValue<string>(CodedIDProperty);
+            set => SetValue(CodedIDProperty, value);
         }
 
         public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof(string), string.Empty);
@@ -44,8 +42,8 @@ namespace CLP.Entities
         /// <summary>Information considered part of the make-up of the Representation.</summary>
         public string RepresentationInformation
         {
-            get { return GetValue<string>(RepresentationInformationProperty); }
-            set { SetValue(RepresentationInformationProperty, value); }
+            get => GetValue<string>(RepresentationInformationProperty);
+            set => SetValue(RepresentationInformationProperty, value);
         }
 
         public static readonly PropertyData RepresentationInformationProperty = RegisterProperty("RepresentationInformation", typeof(string), string.Empty);
@@ -53,8 +51,8 @@ namespace CLP.Entities
         /// <summary>Representational Correctness of this particular Representation.</summary>
         public Correctness Correctness
         {
-            get { return GetValue<Correctness>(CorrectnessProperty); }
-            set { SetValue(CorrectnessProperty, value); }
+            get => GetValue<Correctness>(CorrectnessProperty);
+            set => SetValue(CorrectnessProperty, value);
         }
 
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
@@ -62,8 +60,8 @@ namespace CLP.Entities
         /// <summary>If applicable, lists a reason for Correctness set to Partial or Incorrect.</summary>
         public string CorrectnessReason
         {
-            get { return GetValue<string>(CorrectnessReasonProperty); }
-            set { SetValue(CorrectnessReasonProperty, value); }
+            get => GetValue<string>(CorrectnessReasonProperty);
+            set => SetValue(CorrectnessReasonProperty, value);
         }
 
         public static readonly PropertyData CorrectnessReasonProperty = RegisterProperty("CorrectnessReason", typeof(string), Codings.PARTIAL_REASON_UNKNOWN);
@@ -71,17 +69,17 @@ namespace CLP.Entities
         /// <summary>The part/side of the page definition the Representation matchec correctness against.</summary>
         public string MatchedRelationSide
         {
-            get { return GetValue<string>(MatchedRelationSideProperty); }
-            set { SetValue(MatchedRelationSideProperty, value); }
+            get => GetValue<string>(MatchedRelationSideProperty);
+            set => SetValue(MatchedRelationSideProperty, value);
         }
 
         public static readonly PropertyData MatchedRelationSideProperty = RegisterProperty("MatchedRelationSide", typeof(string), string.Empty);
-        
+
         /// <summary>Signifies the Representation is still on the page at the time of submission.</summary>
         public bool IsFinalRepresentation
         {
-            get { return GetValue<bool>(IsFinalRepresentationProperty); }
-            set { SetValue(IsFinalRepresentationProperty, value); }
+            get => GetValue<bool>(IsFinalRepresentationProperty);
+            set => SetValue(IsFinalRepresentationProperty, value);
         }
 
         public static readonly PropertyData IsFinalRepresentationProperty = RegisterProperty("IsFinalRepresentation", typeof(bool), false);
@@ -89,8 +87,8 @@ namespace CLP.Entities
         /// <summary>Signifies the Representation was used, as determined by the specific Representation type.</summary>
         public bool IsUsed
         {
-            get { return GetValue<bool>(IsUsedProperty); }
-            set { SetValue(IsUsedProperty, value); }
+            get => GetValue<bool>(IsUsedProperty);
+            set => SetValue(IsUsedProperty, value);
         }
 
         public static readonly PropertyData IsUsedProperty = RegisterProperty("IsUsed", typeof(bool), false);
@@ -98,8 +96,8 @@ namespace CLP.Entities
         /// <summary>Signifies the Representation was interacted with, as determined by the specific Representation type.</summary>
         public bool IsInteractedWith
         {
-            get { return GetValue<bool>(IsInteractedWithProperty); }
-            set { SetValue(IsInteractedWithProperty, value); }
+            get => GetValue<bool>(IsInteractedWithProperty);
+            set => SetValue(IsInteractedWithProperty, value);
         }
 
         public static readonly PropertyData IsInteractedWithProperty = RegisterProperty("IsInteractedWith", typeof(bool), false);
@@ -107,8 +105,8 @@ namespace CLP.Entities
         /// <summary>Any extra information relevant to the compiled Representation information.</summary>
         public List<string> AdditionalInformation
         {
-            get { return GetValue<List<string>>(AdditionalInformationProperty); }
-            set { SetValue(AdditionalInformationProperty, value); }
+            get => GetValue<List<string>>(AdditionalInformationProperty);
+            set => SetValue(AdditionalInformationProperty, value);
         }
 
         public static readonly PropertyData AdditionalInformationProperty = RegisterProperty("AdditionalInformation", typeof(List<string>), () => new List<string>());
@@ -116,8 +114,8 @@ namespace CLP.Entities
         /// <summary>List of any Analysis Codes generated by the Representation.</summary>
         public List<string> AnalysisCodes
         {
-            get { return GetValue<List<string>>(AnalysisCodesProperty); }
-            set { SetValue(AnalysisCodesProperty, value); }
+            get => GetValue<List<string>>(AnalysisCodesProperty);
+            set => SetValue(AnalysisCodesProperty, value);
         }
 
         public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
@@ -125,12 +123,12 @@ namespace CLP.Entities
         /// <summary>List of all the PageObject IDs used by this singular Representation construct.</summary>
         public List<string> PageObjectIDs
         {
-            get { return GetValue<List<string>>(PageObjectIDsProperty); }
-            set { SetValue(PageObjectIDsProperty, value); }
+            get => GetValue<List<string>>(PageObjectIDsProperty);
+            set => SetValue(PageObjectIDsProperty, value);
         }
 
         public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>), () => new List<string>());
-        
+
         public string FormattedValue
         {
             get
@@ -197,23 +195,27 @@ namespace CLP.Entities
         /// <summary>Identifies 3 possible usages scenarios: Ink Only, Blank Page, or Representations Used.</summary>
         public RepresentationsUsedTypes RepresentationsUsedType
         {
-            get { return GetValue<RepresentationsUsedTypes>(RepresentationsUsedTypeProperty); }
-            set { SetValue(RepresentationsUsedTypeProperty, value); }
+            get => GetValue<RepresentationsUsedTypes>(RepresentationsUsedTypeProperty);
+            set => SetValue(RepresentationsUsedTypeProperty, value);
         }
 
-        public static readonly PropertyData RepresentationsUsedTypeProperty = RegisterProperty("RepresentationsUsedType", typeof(RepresentationsUsedTypes), RepresentationsUsedTypes.BlankPage);
+        public static readonly PropertyData RepresentationsUsedTypeProperty =
+            RegisterProperty("RepresentationsUsedType", typeof(RepresentationsUsedTypes), RepresentationsUsedTypes.BlankPage);
 
         /// <summary>List of all Representations used on the page.</summary>
-        /// <remarks>The IsUsed property can still be set to false, this is a list of all Representations added to the page, 
-        /// the IsUsed property determines if the Representation was also used on the page in a significant fashion.</remarks>
+        /// <remarks>
+        ///     The IsUsed property can still be set to false, this is a list of all Representations added to the page,
+        ///     the IsUsed property determines if the Representation was also used on the page in a significant fashion.
+        /// </remarks>
         public List<UsedRepresentation> RepresentationsUsed
         {
-            get { return GetValue<List<UsedRepresentation>>(RepresentationsUsedProperty); }
-            set { SetValue(RepresentationsUsedProperty, value); }
+            get => GetValue<List<UsedRepresentation>>(RepresentationsUsedProperty);
+            set => SetValue(RepresentationsUsedProperty, value);
         }
 
-        public static readonly PropertyData RepresentationsUsedProperty = RegisterProperty("RepresentationsUsed", typeof(List<UsedRepresentation>), () => new List<UsedRepresentation>());
-        
+        public static readonly PropertyData RepresentationsUsedProperty =
+            RegisterProperty("RepresentationsUsed", typeof(List<UsedRepresentation>), () => new List<UsedRepresentation>());
+
         #region ATagBase Overrides
 
         public override bool IsSingleValueTag => true;
@@ -235,14 +237,18 @@ namespace CLP.Entities
                 }
 
                 var deletedRepresentations = RepresentationsUsed.Where(r => !r.IsFinalRepresentation).ToList();
-                var deletedSection = !deletedRepresentations.Any() ? string.Empty : $"    Deleted Representation(s):\n{string.Join("\n", deletedRepresentations.Select(r => r.FormattedValue).ToList())}";
+                var deletedSection = !deletedRepresentations.Any()
+                                         ? string.Empty
+                                         : $"Deleted Representation(s):\n{string.Join("\n", deletedRepresentations.Select(r => r.FormattedValue).ToList())}";
 
                 var finalRepresentations = RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
-                var finalSection = !finalRepresentations.Any() ? string.Empty : $"    Final Representation(s):\n{string.Join("\n", finalRepresentations.Select(r => r.FormattedValue).ToList())}";
+                var finalSection = !finalRepresentations.Any()
+                                       ? string.Empty
+                                       : $"Final Representation(s):\n{string.Join("\n", finalRepresentations.Select(r => r.FormattedValue).ToList())}";
 
                 var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
 
-                var codeSection = AnalysisCodes.Any() ? $"\n\nCodes: {string.Join(", ", AnalysisCodes)}" : string.Empty;
+                var codeSection = QueryCodes.Any() ? $"\n\nCodes: {string.Join(", ", QueryCodes.Select(c => c.FormattedValue))}" : string.Empty;
                 return $"{deletedSection}{finalSectionDelimiter}{finalSection}{codeSection}";
             }
         }
@@ -264,6 +270,7 @@ namespace CLP.Entities
             GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            GenerateBinsUsedInformation(page, tag);
 
             if (!tag.RepresentationsUsed.Any())
             {
@@ -271,28 +278,385 @@ namespace CLP.Entities
                     page.History.TrashedInkStrokes.All(s => s.GetStrokeOwnerID() == Person.AUTHOR_ID))
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.BlankPage;
+                    AnalysisCode.AddRepresentationUsedBlankPage(tag);
                 }
                 else
                 {
                     tag.RepresentationsUsedType = RepresentationsUsedTypes.InkOnly;
+                    AnalysisCode.AddRepresentationUsedInkOnly(tag);
                 }
             }
             else
             {
                 tag.RepresentationsUsedType = RepresentationsUsedTypes.RepresentationsUsed;
+                foreach (var usedRepresentation in tag.RepresentationsUsed)
+                {
+                    // TODO: Add in order
+                    AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
+                }
             }
 
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
-                tag.AnalysisCodes.Add(Codings.REPRESENTATIONS_MR2STEP);
+                AnalysisCode.AddMultipleRepresentations2Step(tag);
+            }
+
+            var isMR = IsMR(tag);
+            if (isMR)
+            {
+                AnalysisCode.AddMultipleRepresentations1Step(tag);
             }
 
             page.AddTag(tag);
             return tag;
         }
 
-        public static void GenerateArraysUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        public static void GenerateBinsUsedInformation(CLPPage page, RepresentationsUsedTag tag)
+        {
+            switch (page.PageNumber)
+            {
+                case 2:
+                    if (page.OwnerID == "bs9X5-b9cEuwtaQHlLIKMw") // Ada
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 3:
+                    if (page.OwnerID == "d7tlNq2ryUqW53USnrea-A") // Eryn
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "9",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 6:
+                    if (page.OwnerID == "gftqBtWt8kmAfwajPo0b5w") // Alli
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "7",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "jR1aFxiiXEi2OhaqLuf4VA") // Salma
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "7",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 7:
+                    if (page.OwnerID == "L608APK1J0Kw8cVpJEvo6g") // Jane
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "6",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 9:
+                    if (page.OwnerID == "L608APK1J0Kw8cVpJEvo6g") // Jane
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "7",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.Correct,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    break;
+                case 11:
+                    if (page.OwnerID == "iVMtTQVQ00qXyIVqvXBF2g") // Eva
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.Correct,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CBIJb3ubWUuZQRTie0mAaw") // Madeira
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+                    }
+                    if (page.OwnerID == "CeH7YED0RkqGkmhSI5V2xw") // Nadia
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "8",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = false,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = false,
+                                                      IsUsed = false,
+                                                      Correctness = Correctness.Unknown,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+
+                        var usedRepresentation3 = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "4",
+                                                     IsInteractedWith = false,
+                                                     IsUsed = false,
+                                                     Correctness = Correctness.Unknown,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation3);
+
+                        var usedRepresentation4 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "8",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.Correct,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation4);
+                    }
+                    if (page.OwnerID == "eO9HFRoY-0aLtcL2iA5-tQ") // Sanjit
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = false,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "5",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "4",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+                case 12:
+                    if (page.OwnerID == "nUd1x4-oukipFNwazvDrfQ") // Aaron
+                    {
+                        var usedRepresentation = new UsedRepresentation
+                                                 {
+                                                     IsFinalRepresentation = true,
+                                                     CodedObject = Codings.OBJECT_BINS,
+                                                     CodedID = "5",
+                                                     IsInteractedWith = true,
+                                                     IsUsed = true,
+                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                 };
+                        tag.RepresentationsUsed.Add(usedRepresentation);
+
+                        var usedRepresentation2 = new UsedRepresentation
+                                                  {
+                                                      IsFinalRepresentation = true,
+                                                      CodedObject = Codings.OBJECT_BINS,
+                                                      CodedID = "4",
+                                                      IsInteractedWith = true,
+                                                      IsUsed = true,
+                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
+                                                  };
+                        tag.RepresentationsUsed.Add(usedRepresentation2);
+                    }
+                    break;
+            }
+        }
+
+        public static void GenerateArraysUsedInformation(CLPPage page,
+                                                         RepresentationsUsedTag tag,
+                                                         List<ISemanticEvent> semanticEvents,
+                                                         SimplifiedRelation leftRelation,
+                                                         SimplifiedRelation rightRelation,
+                                                         SimplifiedRelation alternativeRelation)
         {
             var patternPoints = new List<PatternPoint>();
             var completedPatternPoints = new List<PatternPoint>();
@@ -496,12 +860,12 @@ namespace CLP.Entities
 
                 usedRepresentation.CodedObject = Codings.OBJECT_ARRAY;
                 usedRepresentation.CodedID = array.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
-                usedRepresentation.IsInteractedWith =
-                    semanticEvents.Where(e => e.ReferencePageObjectID == arrayID)
-                                  .Any(
-                                       e =>
-                                           e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK || e.EventType == Codings.EVENT_ARRAY_EQN ||
-                                           (e.EventType == Codings.EVENT_INK_ADD && e.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
+                usedRepresentation.IsInteractedWith = semanticEvents
+                    .Where(e => e.ReferencePageObjectID == arrayID)
+                    .Any(e => e.EventType == Codings.EVENT_ARRAY_SKIP ||
+                              e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK ||
+                              e.EventType == Codings.EVENT_ARRAY_EQN ||
+                              (e.EventType == Codings.EVENT_INK_ADD && e.EventInformation.Contains(Codings.EVENT_INFO_INK_LOCATION_OVER)));
                 usedRepresentation.IsUsed = true;
 
                 if (subArrayGroups.ContainsKey(arrayID))
@@ -513,11 +877,28 @@ namespace CLP.Entities
                     for (var i = 0; i < subArrays.Count - 1; i++)
                     {
                         var subArray = subArrays[i];
-                        var trimmedSubArray = subArray.Replace('a', ' ').Replace('b', ' ').Replace('c', ' ').Replace('d', ' ').Replace('e', ' ').Replace('f', ' ').Replace('g', ' ').Replace('h', ' ').Trim();
+                        var trimmedSubArray = subArray.Replace('a', ' ')
+                                                      .Replace('b', ' ')
+                                                      .Replace('c', ' ')
+                                                      .Replace('d', ' ')
+                                                      .Replace('e', ' ')
+                                                      .Replace('f', ' ')
+                                                      .Replace('g', ' ')
+                                                      .Replace('h', ' ')
+                                                      .Trim();
                         for (var j = i + 1; j < subArrays.Count; j++)
                         {
                             var nextSubArray = subArrays[j];
-                            var nextTrimmedSubArray = nextSubArray.Replace('a', ' ').Replace('b', ' ').Replace('c', ' ').Replace('d', ' ').Replace('e', ' ').Replace('f', ' ').Replace('g', ' ').Replace('h', ' ').Trim();
+                            var nextTrimmedSubArray = nextSubArray
+                                .Replace('a', ' ')
+                                .Replace('b', ' ')
+                                .Replace('c', ' ')
+                                .Replace('d', ' ')
+                                .Replace('e', ' ')
+                                .Replace('f', ' ')
+                                .Replace('g', ' ')
+                                .Replace('h', ' ')
+                                .Trim();
 
                             if (trimmedSubArray == nextTrimmedSubArray)
                             {
@@ -535,11 +916,10 @@ namespace CLP.Entities
                     usedRepresentation.RepresentationInformation = string.Join(", ", subArrays);
                 }
 
-                var inkDivideAddEventsCount =
-                    semanticEvents.Count(
-                                         e =>
-                                             e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                             e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK && e.ReferencePageObjectID == arrayID);
+                var inkDivideAddEventsCount = semanticEvents.Count(e => e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
+                                                                        e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                                        e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK &&
+                                                                        e.ReferencePageObjectID == arrayID);
                 usedRepresentation.AdditionalInformation.Add($"Total Ink Divides : {inkDivideAddEventsCount}");
 
                 if (patternPoint.EndEventType == Codings.EVENT_CUT)
@@ -562,23 +942,110 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.Add("Created by Snap");
                 }
 
-                var mostRecentSideSkipEvent =
-                    semanticEvents.LastOrDefault(
-                                                 e =>
-                                                     e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) && !e.EventInformation.Contains("bottom"));
+                var skipEvents = semanticEvents.Where(e => e.ReferencePageObjectID == arrayID &&
+                                                           e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
+                                                           e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                           (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
+                                                           !e.EventInformation.Contains("bottom"));
 
-                var sideSkipCodedValue = SideSkipCountingCorrectness(array, mostRecentSideSkipEvent);
-                if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
+                var skipEventGroupings = new List<List<ISemanticEvent>>();
+                var currentSkipGrouping = new List<ISemanticEvent>();
+                foreach (var skipCountingEvent in skipEvents)
                 {
-                    usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
+                    var formattedSkips = GetFormattedSkips(skipCountingEvent);
+                    var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
+                    if (skips.Count == 1 &&
+                        skips.All(s => s == -1))
+                    {
+                        if (currentSkipGrouping.Any())
+                        {
+                            skipEventGroupings.Add(currentSkipGrouping.ToList());
+                            currentSkipGrouping = new List<ISemanticEvent>();
+                        }
+                        continue;
+                    }
+                    currentSkipGrouping.Add(skipCountingEvent);
                 }
 
-                var mostRecentBottomSkipEvent =
-                    semanticEvents.LastOrDefault(
-                                                 e =>
-                                                     e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-                                                     (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) && e.EventInformation.Contains("bottom"));
+                if (currentSkipGrouping.Any())
+                {
+                    skipEventGroupings.Add(currentSkipGrouping.ToList());
+                }
+
+                var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).X;
+                var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(patternPoint.EndHistoryActionIndex).Y;
+
+                foreach (var skipEventGrouping in skipEventGroupings)
+                {
+                    var counts = new List<dynamic>();
+                    foreach (var skipCountingEvent in skipEventGrouping)
+                    {
+                        var formattedSkips = GetFormattedSkips(skipCountingEvent);
+                        if (formattedSkips == null)
+                        {
+                            continue;
+                        }
+
+                        var skips = GetNumericSkipsFromFormattedSkips(formattedSkips);
+
+                        var correctDimensionMatches = 0;
+                        var wrongDimensionMatches = 0;
+                        var totalNumbers = 0;
+                        for (var i = 0; i < skips.Count; i++)
+                        {
+                            var currentValue = skips[i];
+                            if (currentValue == -1)
+                            {
+                                continue;
+                            }
+
+                            var expectedValue = (i + 1) * columns;
+                            if (currentValue == expectedValue)
+                            {
+                                correctDimensionMatches++;
+                            }
+
+                            var wrongDimensionExpectedValue = (i + 1) * rows;
+                            if (currentValue == wrongDimensionExpectedValue &&
+                                rows != columns)
+                            {
+                                wrongDimensionMatches++;
+                            }
+
+                            totalNumbers++;
+                        }
+
+                        var count = new
+                                    {
+                                        CorrectDimensionMatches = correctDimensionMatches,
+                                        WrongDimensionMatches = wrongDimensionMatches,
+                                        TotalNumbers = totalNumbers,
+                                        SemanticEvent = skipCountingEvent
+                                    };
+                        counts.Add(count);
+                    }
+
+                    var bestChoice = counts.Where(c => c.CorrectDimensionMatches != 0).OrderByDescending(c => c.CorrectDimensionMatches).FirstOrDefault() ??
+                                     counts.Where(c => c.WrongDimensionMatches != 0).OrderByDescending(c => c.WrongDimensionMatches).FirstOrDefault() ??
+                                     counts.OrderByDescending(c => c.TotalNumbers).FirstOrDefault();
+
+                    if (bestChoice == null)
+                    {
+                        continue;
+                    }
+
+                    var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent);
+                    if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
+                    {
+                        usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
+                    }
+                }
+
+                var mostRecentBottomSkipEvent = semanticEvents.LastOrDefault(e => e.ReferencePageObjectID == arrayID &&
+                                                                                  e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                                                  (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
+                                                                                  e.EventInformation.Contains("bottom"));
 
                 var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent);
                 if (!string.IsNullOrWhiteSpace(bottomSkipCodedValue))
@@ -603,14 +1070,59 @@ namespace CLP.Entities
 
         private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
         {
-            if (array == null ||
-                skipCountingEvent == null)
+            if (array == null)
             {
                 return null;
             }
 
-            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
-            if (eventInfoParts.Length != 2)
+            var formattedSkips = GetFormattedSkips(skipCountingEvent);
+            if (formattedSkips == null)
+            {
+                return null;
+            }
+
+            var unformattedSkips = formattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+            var isSkipCounting = ArraySemanticEvents.IsSkipCounting(unformattedSkips);
+            if (!isSkipCounting)
+            {
+                return null;
+            }
+
+            var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).X;
+            var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(skipCountingEvent.LastHistoryAction.HistoryActionIndex).Y;
+            
+            var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
+
+            var skipCodedValue = $"skip [{formattedSkips}]\n{heuristicsResults}";
+            return skipCodedValue;
+        }
+
+        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
+        {
+            if (array == null)
+            {
+                return null;
+            }
+
+            var formattedSkips = GetFormattedSkips(skipCountingEvent);
+            if (formattedSkips == null)
+            {
+                return null;
+            }
+
+            var historyIndex = skipCountingEvent.LastHistoryAction.HistoryActionIndex;
+            var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
+                                   ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
+            var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
+
+            var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
+            return skipCodedValue;
+        }
+
+        private static string GetFormattedSkips(ISemanticEvent skipCountingEvent)
+        {
+            var eventInfoParts = skipCountingEvent?.EventInformation.Split(", ");
+            if (eventInfoParts?.Length != 2)
             {
                 return null;
             }
@@ -622,40 +1134,12 @@ namespace CLP.Entities
             }
 
             var formattedSkips = formattedInterpretationParts[1];
-            if (string.IsNullOrWhiteSpace(formattedSkips))
-            {
-                return null;
-            }
+            return string.IsNullOrWhiteSpace(formattedSkips) ? null : formattedSkips;
+        }
 
+        private static List<int> GetNumericSkipsFromFormattedSkips(string formattedSkips)
+        {
             var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-
-            // Not sure what the purpose of this was, but re-implement if necessary
-            //if (skipStrings.Count == 1 &&
-            //    string.IsNullOrEmpty(skipStrings.First()))
-            //{
-            //    mostRecentSkipEvent =
-            //        semanticEvents.LastOrDefault(
-            //                                     e =>
-            //                                         e.ReferencePageObjectID == arrayID && e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
-            //                                         (e.EventType == Codings.EVENT_ARRAY_SKIP));
-
-            //    if (mostRecentSkipEvent != null)
-            //    {
-            //        eventInfoParts = mostRecentSkipEvent.EventInformation.Split(", ");
-            //        if (eventInfoParts.Length == 2)
-            //        {
-            //            formattedInterpretationParts = eventInfoParts[0].Split("; ");
-            //            if (formattedInterpretationParts.Length == 2)
-            //            {
-            //                formattedSkips = formattedInterpretationParts[1];
-            //                if (!string.IsNullOrEmpty(formattedSkips))
-            //                {
-            //                    skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
 
             var skips = new List<int>();
             foreach (var skip in skipStrings)
@@ -666,132 +1150,17 @@ namespace CLP.Entities
                     continue;
                 }
 
-                int number;
-                var isNumber = int.TryParse(skip, out number);
+                var isNumber = int.TryParse(skip, out var number);
                 if (isNumber)
                 {
-                    skips.Add(number);
+                    skips.Add(Math.Abs(number));
                     continue;
                 }
 
                 skips.Add(-1);
             }
 
-            var correctDimensionMatches = 0;
-            var wrongDimensionMatches = 0;
-            var differences = new List<int>();
-            for (var i = 0; i < skips.Count; i++)
-            {
-                var currentValue = skips[i];
-                if (currentValue == -1)
-                {
-                    continue;
-                }
-
-                var expectedValue = (i + 1) * array.Columns;
-                if (currentValue == expectedValue)
-                {
-                    correctDimensionMatches++;
-                }
-
-                var wrongDimensionExpectedValue = (i + 1) * array.Rows;
-                if (currentValue == wrongDimensionExpectedValue &&
-                    array.Rows != array.Columns)
-                {
-                    wrongDimensionMatches++;
-                }
-
-                if (i >= skips.Count - 1)
-                {
-                    continue;
-                }
-
-                var nextValue = skips[i + 1];
-                var difference = nextValue - currentValue;
-                differences.Add(difference);
-            }
-
-            var isCorrectDimensions = false;
-            var isWrongDimension = false;
-
-            if (skips.Count == 1)
-            {
-                if (correctDimensionMatches > 0)
-                {
-                    isCorrectDimensions = true;
-                }
-                else if (wrongDimensionMatches > 0)
-                {
-                    isWrongDimension = true;
-                }
-            }
-            else
-            {
-                if (correctDimensionMatches == skips.Count)
-                {
-                    isCorrectDimensions = true;
-                }
-
-                if (!isCorrectDimensions)
-                {
-                    if (wrongDimensionMatches >= Math.Floor(skips.Count * 0.8))
-                    {
-                        isWrongDimension = true;
-                    }
-                }
-            }
-
-            var correctnessText = string.Empty;
-            if (isCorrectDimensions)
-            {
-                correctnessText = "correct";
-            }
-            else if (isWrongDimension)
-            {
-                correctnessText = "wrong dimension";
-            }
-            else
-            {
-                correctnessText = "other";
-            }
-
-            var skipCodedValue = $"skip [{formattedSkips}], {correctnessText}";
-            return skipCodedValue;
-        }
-
-        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
-        {
-            if (array == null ||
-                skipCountingEvent == null)
-            {
-                return null;
-            }
-
-            var eventInfoParts = skipCountingEvent.EventInformation.Split(", ");
-            if (eventInfoParts.Length != 2)
-            {
-                return null;
-            }
-
-            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
-            if (formattedInterpretationParts.Length != 2)
-            {
-                return null;
-            }
-
-            var formattedSkips = formattedInterpretationParts[1];
-            if (string.IsNullOrWhiteSpace(formattedSkips))
-            {
-                return null;
-            }
-
-            var historyIndex = skipCountingEvent.LastHistoryAction.HistoryActionIndex;
-            var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
-                                                           ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
-            var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
-
-            var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
-            return skipCodedValue;
+            return skips;
         }
 
         private class NumberLineJumpTotal
@@ -822,7 +1191,12 @@ namespace CLP.Entities
             public int JumpEraseSinceLastAddCount { get; set; }
         }
 
-        public static void GenerateNumberLinesUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        public static void GenerateNumberLinesUsedInformation(CLPPage page,
+                                                              RepresentationsUsedTag tag,
+                                                              List<ISemanticEvent> semanticEvents,
+                                                              SimplifiedRelation leftRelation,
+                                                              SimplifiedRelation rightRelation,
+                                                              SimplifiedRelation alternativeRelation)
         {
             var patternPoints = new List<PatternPoint>();
             var numberLineJumpTotals = new List<NumberLineJumpTotal>();
@@ -873,14 +1247,13 @@ namespace CLP.Entities
                     if (!numberLineJumpTotal.CurrentJumps.Any() &&
                         numberLineJumpTotal.JumpEraseSinceLastAddCount > 1)
                     {
-                        var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID &&
-                                                                    p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
+                        var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID && p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
                         patternPoint.EndHistoryActionIndex = numberLineJumpTotal.LastJumpEraseHistoryActionIndex;
                         patternPoint.EndSemanticEventIndex = numberLineJumpTotal.LastJumpEraseSemanticEventIndex;
                         patternPoint.EndEventType = Codings.EVENT_NUMBER_LINE_JUMP_ERASE;
 
                         numberLineJumpTotal.IsPatternFinished = true;
-                        
+
                         var newPatternPoint = new PatternPoint
                                               {
                                                   PageObjectID = numberLineID,
@@ -915,7 +1288,7 @@ namespace CLP.Entities
                     var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && !jt.IsPatternFinished);
                     var jumpsToRemove = (from jump in allJumps
                                          from currentJump in numberLineJumpTotal.CurrentJumps
-                                           where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
+                                         where jump.JumpSize == currentJump.JumpSize && jump.StartingTickIndex == currentJump.StartingTickIndex
                                          select currentJump).ToList();
 
                     numberLineJumpTotal.JumpEraseCount += jumpsToRemove.Count;
@@ -945,8 +1318,7 @@ namespace CLP.Entities
                     var numberLineJumpTotal = numberLineJumpTotals.First(jt => jt.NumberLineID == numberLineID && !jt.IsPatternFinished);
                     numberLineJumpTotal.IsPatternFinished = true;
 
-                    var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID &&
-                                                                p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
+                    var patternPoint = patternPoints.First(p => p.PageObjectID == numberLineID && p.StartHistoryActionIndex == numberLineJumpTotal.StartHistoryActionIndex);
                     patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
                     patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
                     patternPoint.EndEventType = semanticEvent.EventType;
@@ -982,8 +1354,9 @@ namespace CLP.Entities
 
                 usedRepresentation.CodedObject = Codings.OBJECT_NUMBER_LINE;
                 usedRepresentation.CodedID = numberLine.GetCodedIDAtHistoryIndex(patternPoint.EndHistoryActionIndex);
-                usedRepresentation.IsInteractedWith =
-                    semanticEvents.Where(e => e.ReferencePageObjectID == numberLineID).Any(e => e.EventType == Codings.EVENT_NUMBER_LINE_JUMP || e.EventType == Codings.EVENT_NUMBER_LINE_CHANGE);
+                usedRepresentation.IsInteractedWith = semanticEvents
+                    .Where(e => e.ReferencePageObjectID == numberLineID)
+                    .Any(e => e.EventType == Codings.EVENT_NUMBER_LINE_JUMP || e.EventType == Codings.EVENT_NUMBER_LINE_CHANGE);
                 usedRepresentation.IsUsed = numberLineJumpTotal.TotalJumpsAfterLastJumpsAdded.Any();
                 if (usedRepresentation.IsUsed)
                 {
@@ -1020,10 +1393,10 @@ namespace CLP.Entities
                 foreach (var jump in jumps)
                 {
                     arcs.Add(new
-                    {
-                        Start = jump.StartingTickIndex,
-                        End = jump.JumpSize + jump.StartingTickIndex
-                    });
+                             {
+                                 Start = jump.StartingTickIndex,
+                                 End = jump.JumpSize + jump.StartingTickIndex
+                             });
                 }
                 var sortedArcs = arcs.Distinct().OrderBy(x => x.Start).ToList();
                 var gaps = 0;
@@ -1114,14 +1487,19 @@ namespace CLP.Entities
             }
         }
 
-        public static void GenerateStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag, List<ISemanticEvent> semanticEvents, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        public static void GenerateStampsUsedInformation(CLPPage page,
+                                                         RepresentationsUsedTag tag,
+                                                         List<ISemanticEvent> semanticEvents,
+                                                         SimplifiedRelation leftRelation,
+                                                         SimplifiedRelation rightRelation,
+                                                         SimplifiedRelation alternativeRelation)
         {
             var stampObjectIDsOnPage = new List<string>();
             var stampObjectIDsOnPageSinceLastClear = new List<string>();
             var stampObjectIDsRemovedSinceLastAdd = new List<string>();
             var stampObjectIDsRemovedButPartOfCurrentRepresentation = new List<string>();
 
-            var endPoints = new Dictionary<int,List<string>>();
+            var endPoints = new Dictionary<int, List<string>>();
             var endPointCompanions = new Dictionary<int, List<string>>();
             var endPointCount = 0;
 
@@ -1161,11 +1539,21 @@ namespace CLP.Entities
                 }
             }
 
-            var stampedObjectsRemovedSinceLastAdd = stampObjectIDsRemovedSinceLastAdd.Select(page.GetPageObjectByIDOnPageOrInHistory).Where(so => so != null).Cast<StampedObject>().ToList();
+            var stampedObjectsRemovedSinceLastAdd = stampObjectIDsRemovedSinceLastAdd
+                .Select(page.GetPageObjectByIDOnPageOrInHistory)
+                .Where(so => so != null)
+                .Cast<StampedObject>()
+                .ToList();
             var parentStampIDsOfStampedObjectsRemovedSinceLastAdd = stampedObjectsRemovedSinceLastAdd.Select(so => so.ParentStampID).ToList();
 
-            var stampedObjectsRemovedButPartOfCurrentRepresentation = stampObjectIDsRemovedButPartOfCurrentRepresentation.Select(page.GetPageObjectByIDOnPageOrInHistory).Where(so => so != null).Cast<StampedObject>().ToList();
-            var stampObjectsRemovedButCompanionToEndPoint = stampedObjectsRemovedButPartOfCurrentRepresentation.Where(so => parentStampIDsOfStampedObjectsRemovedSinceLastAdd.Contains(so.ParentStampID)).ToList();
+            var stampedObjectsRemovedButPartOfCurrentRepresentation = stampObjectIDsRemovedButPartOfCurrentRepresentation
+                .Select(page.GetPageObjectByIDOnPageOrInHistory)
+                .Where(so => so != null)
+                .Cast<StampedObject>()
+                .ToList();
+            var stampObjectsRemovedButCompanionToEndPoint = stampedObjectsRemovedButPartOfCurrentRepresentation
+                .Where(so => parentStampIDsOfStampedObjectsRemovedSinceLastAdd.Contains(so.ParentStampID))
+                .ToList();
 
             foreach (var stampObject in stampObjectsRemovedButCompanionToEndPoint)
             {
@@ -1202,7 +1590,12 @@ namespace CLP.Entities
                 if (groupedStampedObjects.Count() == 1)
                 {
                     var stampObjectsGroup = groupedStampedObjects.First().ToList();
-                    var usedRepresentation = GenerateUsedStampRepresentation(stampObjectsGroup, companionStampedObjectIDs, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                    var usedRepresentation = GenerateUsedStampRepresentation(stampObjectsGroup,
+                                                                             companionStampedObjectIDs,
+                                                                             isFinalRepresentation,
+                                                                             leftRelation,
+                                                                             rightRelation,
+                                                                             alternativeRelation);
                     tag.RepresentationsUsed.Add(usedRepresentation);
                     continue;
                 }
@@ -1212,12 +1605,22 @@ namespace CLP.Entities
                     var firstStampObjectsGroup = groupedStampedObjects.First().ToList();
                     var firstParentStampID = groupedStampedObjects.First().Key;
                     var firstCompanionStampedObjectsGroupIDs = companionStampedObjects.Where(so => so.ParentStampID == firstParentStampID).Select(so => so.ID).ToList();
-                    var firstUsedRepresentation = GenerateUsedStampRepresentation(firstStampObjectsGroup, firstCompanionStampedObjectsGroupIDs, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                    var firstUsedRepresentation = GenerateUsedStampRepresentation(firstStampObjectsGroup,
+                                                                                  firstCompanionStampedObjectsGroupIDs,
+                                                                                  isFinalRepresentation,
+                                                                                  leftRelation,
+                                                                                  rightRelation,
+                                                                                  alternativeRelation);
 
                     var secondStampObjectsGroup = groupedStampedObjects.Last().ToList();
                     var secondParentStampID = groupedStampedObjects.Last().Key;
                     var secondCompanionStampedObjectsGroupIDs = companionStampedObjects.Where(so => so.ParentStampID == secondParentStampID).Select(so => so.ID).ToList();
-                    var secondUsedRepresentation = GenerateUsedStampRepresentation(secondStampObjectsGroup, secondCompanionStampedObjectsGroupIDs, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                    var secondUsedRepresentation = GenerateUsedStampRepresentation(secondStampObjectsGroup,
+                                                                                   secondCompanionStampedObjectsGroupIDs,
+                                                                                   isFinalRepresentation,
+                                                                                   leftRelation,
+                                                                                   rightRelation,
+                                                                                   alternativeRelation);
 
                     if (firstUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE ||
                         secondUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE)
@@ -1229,14 +1632,24 @@ namespace CLP.Entities
                 }
 
                 var allStampedObjects = groupedStampedObjects.SelectMany(g => g).ToList();
-                var combinedUsedRepresentation = GenerateUsedStampRepresentation(allStampedObjects, companionStampedObjectIDs, isFinalRepresentation, leftRelation, rightRelation, alternativeRelation);
+                var combinedUsedRepresentation = GenerateUsedStampRepresentation(allStampedObjects,
+                                                                                 companionStampedObjectIDs,
+                                                                                 isFinalRepresentation,
+                                                                                 leftRelation,
+                                                                                 rightRelation,
+                                                                                 alternativeRelation);
                 tag.RepresentationsUsed.Add(combinedUsedRepresentation);
             }
 
             tag.RepresentationsUsed = tag.RepresentationsUsed.Where(r => r != null).ToList();
         }
 
-        private static UsedRepresentation GenerateUsedStampRepresentation(List<StampedObject> stampedObjects, List<string> companionStampedObjectIDs, bool isFinalRepresentation, SimplifiedRelation leftRelation, SimplifiedRelation rightRelation, SimplifiedRelation alternativeRelation)
+        private static UsedRepresentation GenerateUsedStampRepresentation(List<StampedObject> stampedObjects,
+                                                                          List<string> companionStampedObjectIDs,
+                                                                          bool isFinalRepresentation,
+                                                                          SimplifiedRelation leftRelation,
+                                                                          SimplifiedRelation rightRelation,
+                                                                          SimplifiedRelation alternativeRelation)
         {
             if (!stampedObjects.Any())
             {
@@ -1283,10 +1696,17 @@ namespace CLP.Entities
         public static bool IsMR2STEP(RepresentationsUsedTag tag)
         {
             var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
-            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT).Select(r => r.CodedObject).Distinct().ToList();
-            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE).Select(r => r.CodedObject).Distinct().ToList();
+            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
+                                              .Select(r => r.CodedObject)
+                                              .Distinct()
+                                              .ToList();
+            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE)
+                                                    .Select(r => r.CodedObject)
+                                                    .Distinct()
+                                                    .ToList();
 
-            var unmatchedRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
+            var unmatchedRepresentations =
+                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
 
             foreach (var leftSideRepresentation in leftSideRepresentations)
             {
@@ -1409,16 +1829,14 @@ namespace CLP.Entities
                 }
                 else if (leftCorrectness == Correctness.PartiallyCorrect &&
                          rightCorrectness == Correctness.Incorrect &&
-                         (alternativeCorrectness == Correctness.Incorrect ||
-                          alternativeCorrectness == Correctness.Unknown))
+                         (alternativeCorrectness == Correctness.Incorrect || alternativeCorrectness == Correctness.Unknown))
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_LEFT;
                     representationCorrectness = Correctness.PartiallyCorrect;
                 }
                 else if (rightCorrectness == Correctness.PartiallyCorrect &&
                          leftCorrectness == Correctness.Incorrect &&
-                         (alternativeCorrectness == Correctness.Incorrect || 
-                          alternativeCorrectness == Correctness.Unknown))
+                         (alternativeCorrectness == Correctness.Incorrect || alternativeCorrectness == Correctness.Unknown))
                 {
                     matchedRelationSide = Codings.MATCHED_RELATION_RIGHT;
                     representationCorrectness = Correctness.PartiallyCorrect;
@@ -1468,8 +1886,7 @@ namespace CLP.Entities
             // HACK: BUG: This is at the request of Lily for the stats. All other things considered, this is a situation where a student just had a little
             // trouble getting the jumps exactly correct on a Number Line, but they still got the jump size and number of jumps correct and ended at the right
             // spot. It should be COR, but Lily wanted it set to PAR.
-            if (isOverlapsAndGaps &&
-                representationCorrectness == Correctness.Correct)
+            if (isOverlapsAndGaps && representationCorrectness == Correctness.Correct)
             {
                 representationCorrectness = Correctness.PartiallyCorrect;
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS;
@@ -1477,14 +1894,29 @@ namespace CLP.Entities
 
             usedRepresentation.Correctness = representationCorrectness;
             usedRepresentation.MatchedRelationSide = matchedRelationSide;
-            if (representationRelation != null && 
+            if (representationRelation != null &&
                 representationRelation.IsSwapped &&
                 usedRepresentation.CorrectnessReason != Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS)
             {
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
             }
+        }
 
-            
+        public static bool IsMR(RepresentationsUsedTag tag)
+        {
+            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
+            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
+                                              .Select(r => r.CodedObject)
+                                              .Distinct()
+                                              .ToList();
+            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE)
+                                                    .Select(r => r.CodedObject)
+                                                    .Distinct()
+                                                    .ToList();
+            var unmatchedRepresentations =
+                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
+
+            return leftSideRepresentations.Count > 1 || rightSideRepresentations.Count > 1 || alternativeSideRepresentations.Count > 1 || unmatchedRepresentations.Count > 1;
         }
 
         #endregion // Static Methods

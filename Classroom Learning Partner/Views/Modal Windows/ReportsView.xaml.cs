@@ -3,11 +3,11 @@ using Catel.Windows;
 
 namespace Classroom_Learning_Partner.Views
 {
-    public partial class PersonView
+    public partial class ReportsView
     {
-        public const double WINDOW_WIDTH = 300;
+        public const double WINDOW_WIDTH = 600;
 
-        public PersonView()
+        public ReportsView()
             : base(DataWindowMode.Custom)
         {
             InitializeComponent();

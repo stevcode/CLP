@@ -1,5 +1,4 @@
 ﻿using System;
-using Catel;
 
 namespace Classroom_Learning_Partner
 {
@@ -7,8 +6,6 @@ namespace Classroom_Learning_Partner
     {
         public static double? ToDouble(this object potentialNumber)
         {
-            Argument.IsNotNull("potentialNumber", potentialNumber);
-
             if (!(potentialNumber is IConvertible))
             {
                 return null;
@@ -30,8 +27,6 @@ namespace Classroom_Learning_Partner
 
         public static int? ToInt(this object potentialNumber)
         {
-            Argument.IsNotNull("potentialNumber", potentialNumber);
-
             if (!(potentialNumber is IConvertible))
             {
                 return null;

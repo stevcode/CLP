@@ -86,6 +86,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
@@ -149,6 +150,12 @@
 
                     <Button Content="Run Bottom Skip Counting Analysis"
                             Command="{Binding AnalyzeBottomSkipCountingCommand}"
+                            Grid.ColumnSpan="2"
+                            Height="20"
+                            Margin="1" />
+
+                    <Button Content="Regenerate Tags"
+                            Command="{Binding RegenerateTagsCommand}"
                             Grid.ColumnSpan="2"
                             Height="20"
                             Margin="1" />

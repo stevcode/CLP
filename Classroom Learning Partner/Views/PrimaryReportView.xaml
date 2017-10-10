@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Classroom_Learning_Partner.Views.PrimaryReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataGrid ItemsSource="{Binding Rows}"
+              AutoGenerateColumns="False"
+              FontSize="12"
+              CanUserSortColumns="False">
+        <!--<DataGrid.Resources>
+            <Style TargetType="{x:Type DataGridColumnHeader}"
+                   BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                <Setter Property="Background"
+                        Value="MediumPurple" />
+            </Style>
+        </DataGrid.Resources>-->
+        <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding ConstraintValue}"
+                                IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding DataContext.ConstraintValueType, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+
+            <DataGridTextColumn
+                Binding="{Binding MatchedEntries}"
+                IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding DataContext.MatchedEntriesLabel, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+
+            <DataGridTextColumn
+                Binding="{Binding MatchedInstances}"
+                IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding DataContext.MatchedInstancesLabel, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+
+            <DataGridTextColumn
+                Binding="{Binding TotalMatchedEntries}"
+                IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding DataContext.TotalEntriesLabel, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+
+            <DataGridTextColumn
+                Binding="{Binding EntriesOverTotalEntriesPercentage}"
+                IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding DataContext.PercentageLabel, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+        </DataGrid.Columns>
+
+    </DataGrid>
+</UserControl>

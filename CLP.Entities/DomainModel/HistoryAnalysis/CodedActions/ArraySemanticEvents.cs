@@ -1743,10 +1743,49 @@ namespace CLP.Entities
                 skipSizes[skipSize]++;
             }
 
-            var dominantSkipSize = skipSizes.OrderByDescending(d => d.Value).First().Key;
+            if (!skipSizes.Any())
+            {
+                return "\tNo Heuristic Adjustment Possible";
+            }
 
-            // Convert non-numerics
-            // TODO: Clean up, this will probably have to be run twice if there are instances of 3 non-numerics in a row
+            var expectedSkipSize = columns;
+            var wrongDimensionSkipSize = rows;
+            var dominantSkipSizeOccurances = skipSizes.OrderByDescending(d => d.Value).First().Value;
+            var allDominantSkipSizes = skipSizes.Where(d => d.Value == dominantSkipSizeOccurances).Select(d => d.Key).ToList();
+
+            var dominantSkipSize = 0;
+            var smallestDifference = int.MaxValue;
+            foreach (var aDominantSkipSize in allDominantSkipSizes)
+            {
+                var expectedSkipSizeDifference = Math.Abs(aDominantSkipSize - expectedSkipSize);
+                if (expectedSkipSizeDifference == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    break;
+                }
+
+                var wrongSkipSizeDifference = Math.Abs(aDominantSkipSize - wrongDimensionSkipSize);
+                if (wrongSkipSizeDifference == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    break;
+                }
+
+                if (dominantSkipSize == 0)
+                {
+                    dominantSkipSize = aDominantSkipSize;
+                    continue;
+                }
+
+                var smallerDifference = Math.Min(expectedSkipSizeDifference, wrongSkipSizeDifference);
+                if (smallerDifference < smallestDifference)
+                {
+                    smallestDifference = smallerDifference;
+                    dominantSkipSize = aDominantSkipSize;
+                }
+            }
+
+            // Convert non-numerics (from "middle" forward)
             for (var i = 1; i < orderedHeuristicValues.Count; i++)
             {
                 var heuristicValue = orderedHeuristicValues[i];
@@ -1759,7 +1798,6 @@ namespace CLP.Entities
                 var prev = orderedHeuristicValues[i - 1];
                 if (!prev.IsCorrectedNumeric)
                 {
-                    // TODO: Shouldn't hit this unless run into necessary above clean up.
                     continue;
                 }
 
@@ -1784,6 +1822,46 @@ namespace CLP.Entities
                 heuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
             }
 
+            // Convert non-numerics (remaining, from "middle" backward)
+            var firstNumericHeuristic = orderedHeuristicValues.First(h => h.IsCorrectedNumeric || h.IsFinal);
+            var indexOfFirstNumericHeuristic = orderedHeuristicValues.IndexOf(firstNumericHeuristic);
+            for (var i = indexOfFirstNumericHeuristic; i > 0; i--)
+            {
+                if (i == 0)
+                {
+                    break;
+                }
+
+                var heuristicValue = orderedHeuristicValues[i];
+                var prev = orderedHeuristicValues[i - 1];
+
+                // HACK: Hack to fix conversion issue. Large Cache crashes here during conversion.
+                if (!(heuristicValue.Value is int))
+                {
+                    return "\tHeuristic Adjustment Error";
+                }
+
+                var correctedValue = (int)heuristicValue.Value - dominantSkipSize;
+                prev.Value = correctedValue;
+                prev.IsFinal = true;
+
+                var expectedValue = columns * heuristicValue.Row;
+                if (correctedValue == expectedValue)
+                {
+                    prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                    continue;
+                }
+
+                var wrongDimensionExpectedValue = rows * heuristicValue.Row;
+                if (correctedValue == wrongDimensionExpectedValue)
+                {
+                    prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                    continue;
+                }
+
+                prev.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+            }
+
             // Resolve Unknown Middles
             for (var i = 1; i < orderedHeuristicValues.Count - 1; i++)
             {
@@ -1795,6 +1873,12 @@ namespace CLP.Entities
 
                 var prev = orderedHeuristicValues[i - 1];
                 var next = orderedHeuristicValues[i + 1];
+
+                if (!(prev.Value is int) ||
+                    !(next.Value is int))
+                {
+                    continue;
+                }
 
                 var prevExpected = columns * (heuristicValue.Row - 1);
                 var nextExpected = columns * (heuristicValue.Row + 1);
@@ -1829,25 +1913,28 @@ namespace CLP.Entities
             if (!firstHeuristicValue.IsFinal)
             {
                 var nextHeuristicValue = orderedHeuristicValues[1];
-                var correctedValue = (int)nextHeuristicValue.Value - dominantSkipSize;
-                var expectedValue = columns;
-                var expectedWrongDimensionValue = rows;
-                if (correctedValue == expectedValue)
+                if (nextHeuristicValue.Value is int)
                 {
-                    firstHeuristicValue.Value = correctedValue;
-                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
-                    firstHeuristicValue.IsFinal = true;
-                }
-                else if (correctedValue == expectedWrongDimensionValue)
-                {
-                    firstHeuristicValue.Value = correctedValue;
-                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
-                    firstHeuristicValue.IsFinal = true;
-                }
-                else
-                {
-                    firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
-                    firstHeuristicValue.IsFinal = true;
+                    var correctedValue = (int)nextHeuristicValue.Value - dominantSkipSize;
+                    var expectedValue = columns;
+                    var expectedWrongDimensionValue = rows;
+                    if (correctedValue == expectedValue)
+                    {
+                        firstHeuristicValue.Value = correctedValue;
+                        firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                        firstHeuristicValue.IsFinal = true;
+                    }
+                    else if (correctedValue == expectedWrongDimensionValue)
+                    {
+                        firstHeuristicValue.Value = correctedValue;
+                        firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                        firstHeuristicValue.IsFinal = true;
+                    }
+                    else
+                    {
+                        firstHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+                        firstHeuristicValue.IsFinal = true;
+                    }
                 }
             }
 
@@ -1856,25 +1943,28 @@ namespace CLP.Entities
             if (!lastHeuristicValue.IsFinal)
             {
                 var prevHeuristicValue = orderedHeuristicValues[orderedHeuristicValues.Count - 2];
-                var correctedValue = (int)prevHeuristicValue.Value + dominantSkipSize;
-                var expectedValue = columns * rows;
-                var expectedWrongDimensionValue = rows * rows;
-                if (correctedValue == expectedValue)
+                if (prevHeuristicValue.Value is int)
                 {
-                    lastHeuristicValue.Value = correctedValue;
-                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
-                    lastHeuristicValue.IsFinal = true;
-                }
-                else if (correctedValue == expectedWrongDimensionValue)
-                {
-                    lastHeuristicValue.Value = correctedValue;
-                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
-                    lastHeuristicValue.IsFinal = true;
-                }
-                else
-                {
-                    lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
-                    lastHeuristicValue.IsFinal = true;
+                    var correctedValue = (int)prevHeuristicValue.Value + dominantSkipSize;
+                    var expectedValue = columns * rows;
+                    var expectedWrongDimensionValue = rows * rows;
+                    if (correctedValue == expectedValue)
+                    {
+                        lastHeuristicValue.Value = correctedValue;
+                        lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.Expected;
+                        lastHeuristicValue.IsFinal = true;
+                    }
+                    else if (correctedValue == expectedWrongDimensionValue)
+                    {
+                        lastHeuristicValue.Value = correctedValue;
+                        lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.WrongDimension;
+                        lastHeuristicValue.IsFinal = true;
+                    }
+                    else
+                    {
+                        lastHeuristicValue.CorrectedDesignation = HeuristicValue.HeuristicDesignation.UnknownNumeric;
+                        lastHeuristicValue.IsFinal = true;
+                    }
                 }
             }
 
@@ -1908,7 +1998,7 @@ namespace CLP.Entities
                 }
                 else
                 {
-                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    var jumpRange = $"By {currentJumpSize}, from {currentFirst} to {currentLast}";
                     jumpRanges.Add(jumpRange);
 
                     currentFirst = previous;
@@ -1918,7 +2008,7 @@ namespace CLP.Entities
 
                 if (i == skips.Count - 1)
                 {
-                    var jumpRange = string.Format("By {0}, from {1} to {2}", currentJumpSize, currentFirst, currentLast);
+                    var jumpRange = $"By {currentJumpSize}, from {currentFirst} to {currentLast}";
                     jumpRanges.Add(jumpRange);
                 }
             }
@@ -1957,7 +2047,7 @@ namespace CLP.Entities
                 jumpRanges.Add("\t- Likely arithmetic error");
             }
 
-            var result = string.Join("\n", jumpRanges);
+            var result = string.Join("\n\t", jumpRanges);
             return result;
         }
 

@@ -20,8 +20,8 @@ namespace CLP.Entities
         /// <summary>Sequence of Final Answers and Representations.</summary>
         public List<string> Sequence
         {
-            get { return GetValue<List<string>>(SequenceProperty); }
-            set { SetValue(SequenceProperty, value); }
+            get => GetValue<List<string>>(SequenceProperty);
+            set => SetValue(SequenceProperty, value);
         }
 
         public static readonly PropertyData SequenceProperty = RegisterProperty("Sequence", typeof(List<string>), () => new List<string>());
@@ -39,8 +39,8 @@ namespace CLP.Entities
             get
             {
                 var sequence = string.Join(", ", Sequence);
-                var analysisCodes = string.Join(", ", AnalysisCodes);
-                var codedSection = AnalysisCodes.Any() ? $"\nCodes: {analysisCodes}" : string.Empty;
+                var analysisCodes = string.Join(", ", QueryCodes.Select(c => c.FormattedValue));
+                var codedSection = QueryCodes.Any() ? $"\nCodes: {analysisCodes}" : string.Empty;
 
                 return $"{sequence}{codedSection}";
             }
@@ -115,7 +115,7 @@ namespace CLP.Entities
                         mostRecentSequenceItem = semanticEvent;
                     }
                 }
-                else if (Codings.IsRepresentationEvent(semanticEvent) && 
+                else if (Codings.IsRepresentationEvent(semanticEvent) &&
                          semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
                 {
                     if (mostRecentSequenceItem == null ||
@@ -182,25 +182,25 @@ namespace CLP.Entities
             var firstRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
             if (firstRepresentationIndex > 0)
             {
-                var previousSequenceItems = sequence.Take(firstRepresentationIndex);
+                var previousSequenceItems = sequence.Take(firstRepresentationIndex).ToList();
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_FINAL_ANS_COR_BEFORE_REP);
+                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Correct);
                 }
 
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_FINAL_ANS_INC_BEFORE_REP);
+                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Incorrect);
                 }
 
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP);
+                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Correct);
                 }
 
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP);
+                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Incorrect);
                 }
             }
 
@@ -226,7 +226,7 @@ namespace CLP.Entities
             if (firstFinalAnswerIndex != -1 &&
                 sequenceAfterFirstFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
-                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_FINAL_ANSWER);
+                AnalysisCode.AddRepresentationAfterFinalAnswer(tag, Correctness.Unknown);
             }
 
             var firstCorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-COR");
@@ -245,12 +245,12 @@ namespace CLP.Entities
             {
                 intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
             }
-            var firstIntermediaryAnswerIndex =  !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
+            var firstIntermediaryAnswerIndex = !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
             var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
             if (firstIntermediaryAnswerIndex != -1 &&
                 sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
             {
-                tag.AnalysisCodes.Add(Codings.ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER);
+                AnalysisCode.AddRepresentationAfterIntermediaryAnswer(tag, Correctness.Unknown);
             }
 
             // ARA
@@ -267,7 +267,7 @@ namespace CLP.Entities
                     }
                     continue;
                 }
-                
+
                 if (string.IsNullOrWhiteSpace(startItem))
                 {
                     startItem = item;
@@ -284,25 +284,26 @@ namespace CLP.Entities
 
                 if (isStartCOR && isCurrentCOR)
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_COR_AFTER_REP);
+                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Correct);
                     startItem = item;
                     isRepresentationUsedAfterAnswer = false;
                 }
-                else if (!isStartCOR && !isCurrentCOR)
+                else if (!isStartCOR &&
+                         !isCurrentCOR)
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_INC_AFTER_REP);
+                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Incorrect);
                     startItem = item;
                     isRepresentationUsedAfterAnswer = false;
                 }
                 else if (isStartCOR && !isCurrentCOR)
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_COR_TO_INC_AFTER_REP);
+                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Incorrect);
                     startItem = item;
                     isRepresentationUsedAfterAnswer = false;
                 }
                 else if (!isStartCOR && isCurrentCOR)
                 {
-                    tag.AnalysisCodes.Add(Codings.ANALYSIS_INC_TO_COR_AFTER_REP);
+                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Correct);
                     startItem = item;
                     isRepresentationUsedAfterAnswer = false;
                 }

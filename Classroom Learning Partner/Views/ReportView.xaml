@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="Classroom_Learning_Partner.Views.ReportView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:orc="http://www.wildgums.net.au/orc"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+    <orc:StackGrid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="{Binding QueryLabel}" />
+        
+        <views:PrimaryReportView DataContext="{Binding Primary}" />
+    </orc:StackGrid>
+</UserControl>

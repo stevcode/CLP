@@ -56,7 +56,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
             InitializedAsync += AnalysisPanelViewModel_InitializedAsync;
-            // IsVisible = false;
 
             PageOrientations.Add("Default - Landscape");
             PageOrientations.Add("Default - Portrait");
@@ -357,6 +356,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #endregion // Analysis Commands
 
+            RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
         }
 
@@ -684,8 +684,6 @@ namespace Classroom_Learning_Partner.ViewModels
                               HeuristicsResults = heuristicsResults
                           };
 
-                CLogger.AppendToLog(tag.FormattedValue);
-
                 page.AddTag(tag);
             }
         }
@@ -845,6 +843,23 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion // Obsolete Commands 
+
+        /// <summary>Regenerates Analysis Tags</summary>
+        public Command RegenerateTagsCommand { get; private set; }
+
+        private void OnRegenerateTagsCommandExecute()
+        {
+            var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
+            foreach (var tempArraySkipCountingTag in existingTags)
+            {
+                CurrentPage.RemoveTag(tempArraySkipCountingTag);
+            }
+
+            var indexOfPass3Start =
+                CurrentPage.History.SemanticEvents.IndexOf(CurrentPage.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
+            var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
+            HistoryAnalysis.GenerateTags(CurrentPage, interpretedInkSemanticEvents);
+        }
 
         #endregion // Analysis Commands
 

@@ -18,7 +18,6 @@ namespace CLP.Entities
 
         #region Constructors
 
-        /// <summary>Initializes <see cref="SemanticEvent" /> from scratch.</summary>
         public SemanticEvent()
         {
             ID = Guid.NewGuid().ToCompactID();

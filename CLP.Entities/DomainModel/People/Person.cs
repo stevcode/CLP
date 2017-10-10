@@ -12,6 +12,13 @@ namespace CLP.Entities
         Left
     }
 
+    public enum Genders
+    {
+        Male,
+        Female,
+        Unknown
+    }
+
     [Serializable]
     public class Person : ASerializableBase, IConnectedPerson
     {
@@ -36,8 +43,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="Person" />.</summary>
         public string ID
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get => GetValue<string>(IDProperty);
+            set => SetValue(IDProperty, value);
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
@@ -45,8 +52,8 @@ namespace CLP.Entities
         /// <summary>Person's First Name</summary>
         public string FirstName
         {
-            get { return GetValue<string>(FirstNameProperty); }
-            set { SetValue(FirstNameProperty, value); }
+            get => GetValue<string>(FirstNameProperty);
+            set => SetValue(FirstNameProperty, value);
         }
 
         public static readonly PropertyData FirstNameProperty = RegisterProperty("FirstName", typeof(string), string.Empty);
@@ -54,8 +61,8 @@ namespace CLP.Entities
         /// <summary>Person's nickname or Title, overrides first name in displays.</summary>
         public string Nickname
         {
-            get { return GetValue<string>(NicknameProperty); }
-            set { SetValue(NicknameProperty, value); }
+            get => GetValue<string>(NicknameProperty);
+            set => SetValue(NicknameProperty, value);
         }
 
         public static readonly PropertyData NicknameProperty = RegisterProperty("Nickname", typeof(string), string.Empty);
@@ -63,8 +70,8 @@ namespace CLP.Entities
         /// <summary>Person's Middle Name</summary>
         public string MiddleName
         {
-            get { return GetValue<string>(MiddleNameProperty); }
-            set { SetValue(MiddleNameProperty, value); }
+            get => GetValue<string>(MiddleNameProperty);
+            set => SetValue(MiddleNameProperty, value);
         }
 
         public static readonly PropertyData MiddleNameProperty = RegisterProperty("MiddleName", typeof(string), string.Empty);
@@ -72,8 +79,8 @@ namespace CLP.Entities
         /// <summary>Person's Last name</summary>
         public string LastName
         {
-            get { return GetValue<string>(LastNameProperty); }
-            set { SetValue(LastNameProperty, value); }
+            get => GetValue<string>(LastNameProperty);
+            set => SetValue(LastNameProperty, value);
         }
 
         public static readonly PropertyData LastNameProperty = RegisterProperty("LastName", typeof(string), string.Empty);
@@ -81,8 +88,8 @@ namespace CLP.Entities
         /// <summary>Complete override of DisplayName</summary>
         public string Alias
         {
-            get { return GetValue<string>(AliasProperty); }
-            set { SetValue(AliasProperty, value); }
+            get => GetValue<string>(AliasProperty);
+            set => SetValue(AliasProperty, value);
         }
 
         public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof(string), string.Empty);
@@ -90,24 +97,24 @@ namespace CLP.Entities
         /// <summary>Signifies the <see cref="Person" /> is a student.</summary>
         public bool IsStudent
         {
-            get { return GetValue<bool>(IsStudentProperty); }
-            set { SetValue(IsStudentProperty, value); }
+            get => GetValue<bool>(IsStudentProperty);
+            set => SetValue(IsStudentProperty, value);
         }
 
         public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
 
         public string CurrentDifferentiationGroup
         {
-            get { return GetValue<string>(CurrentDifferentiationGroupProperty); }
-            set { SetValue(CurrentDifferentiationGroupProperty, value); }
+            get => GetValue<string>(CurrentDifferentiationGroupProperty);
+            set => SetValue(CurrentDifferentiationGroupProperty, value);
         }
 
         public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), string.Empty);
 
         public string TemporaryDifferentiationGroup
         {
-            get { return GetValue<string>(TemporaryDifferentiationGroupProperty); }
-            set { SetValue(TemporaryDifferentiationGroupProperty, value); }
+            get => GetValue<string>(TemporaryDifferentiationGroupProperty);
+            set => SetValue(TemporaryDifferentiationGroupProperty, value);
         }
 
         public static readonly PropertyData TemporaryDifferentiationGroupProperty = RegisterProperty("TemporaryDifferentiationGroup", typeof(string), string.Empty);
@@ -115,56 +122,28 @@ namespace CLP.Entities
         /// <summary>Left or Right Handed.</summary>
         public Handedness Handedness
         {
-            get { return GetValue<Handedness>(HandednessProperty); }
-            set { SetValue(HandednessProperty, value); }
+            get => GetValue<Handedness>(HandednessProperty);
+            set => SetValue(HandednessProperty, value);
         }
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
+        /// <summary>Gender of the person.</summary>
+        public Genders Gender
+        {
+            get => GetValue<Genders>(GenderProperty);
+            set => SetValue(GenderProperty, value);
+        }
+
+        public static readonly PropertyData GenderProperty = RegisterProperty(nameof(Gender), typeof(Genders), Genders.Unknown);
+
         #region Calculated Properties
 
         /// <summary>Formatted full name of the person.</summary>
-        public string FullName
-        {
-            get
-            {
-                if (ID == AUTHOR_ID)
-                {
-                    return "AUTHOR";
-                }
-
-                if (!string.IsNullOrWhiteSpace(Alias))
-                {
-                    return Alias;
-                }
-
-                var first = string.IsNullOrWhiteSpace(Nickname) ? FirstName : Nickname;
-                var middleInitial = string.IsNullOrWhiteSpace(MiddleName) ? string.Empty : $" {MiddleName[0]}.";
-                return $"{first}{middleInitial} {LastName}";
-            }
-        }
+        public string FullName => CreateFullName(FirstName, LastName, ID, MiddleName, Nickname, Alias);
 
         /// <summary>Formatted display name of the person.</summary>
-        public string DisplayName
-        {
-            get
-            {
-                if (ID == AUTHOR_ID)
-                {
-                    return "AUTHOR";
-                }
-
-                if (!string.IsNullOrWhiteSpace(Alias))
-                {
-                    return Alias;
-                }
-
-                var first = string.IsNullOrWhiteSpace(Nickname) ? FirstName : Nickname;
-                var lastInitial = string.IsNullOrWhiteSpace(LastName) ? string.Empty : $" {LastName[0]}.";
-                var firstAndLastInitial = first + lastInitial;
-                return firstAndLastInitial;
-            }
-        }
+        public string DisplayName => CreateDisplayName(FirstName, LastName, ID, Nickname, Alias);
 
         #endregion // Calculated Properties
 
@@ -177,8 +156,8 @@ namespace CLP.Entities
         [ExcludeFromSerialization]
         public string CurrentMachineName
         {
-            get { return GetValue<string>(CurrentMachineNameProperty); }
-            set { SetValue(CurrentMachineNameProperty, value); }
+            get => GetValue<string>(CurrentMachineNameProperty);
+            set => SetValue(CurrentMachineNameProperty, value);
         }
 
         public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), string.Empty);
@@ -188,8 +167,8 @@ namespace CLP.Entities
         [ExcludeFromSerialization]
         public string CurrentMachineAddress
         {
-            get { return GetValue<string>(CurrentMachineAddressProperty); }
-            set { SetValue(CurrentMachineAddressProperty, value); }
+            get => GetValue<string>(CurrentMachineAddressProperty);
+            set => SetValue(CurrentMachineAddressProperty, value);
         }
 
         public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string), string.Empty);
@@ -199,8 +178,8 @@ namespace CLP.Entities
         [ExcludeFromSerialization]
         public bool IsConnected
         {
-            get { return GetValue<bool>(IsConnectedProperty); }
-            set { SetValue(IsConnectedProperty, value); }
+            get => GetValue<bool>(IsConnectedProperty);
+            set => SetValue(IsConnectedProperty, value);
         }
 
         public static readonly PropertyData IsConnectedProperty = RegisterProperty("IsConnected", typeof(bool), false);
@@ -288,6 +267,41 @@ namespace CLP.Entities
             return personfull;
         }
 
+        public static string CreateFullName(string firstName, string lastName, string personID, string middleName = "", string nickname = "", string alias = "")
+        {
+            if (personID == AUTHOR_ID)
+            {
+                return "AUTHOR";
+            }
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                return alias;
+            }
+
+            var first = string.IsNullOrWhiteSpace(nickname) ? firstName : nickname;
+            var middleInitial = string.IsNullOrWhiteSpace(middleName) ? string.Empty : $" {middleName[0]}.";
+            return $"{first}{middleInitial} {lastName}";
+        }
+
+        public static string CreateDisplayName(string firstName, string lastName, string personID, string nickname = "", string alias = "")
+        {
+            if (personID == AUTHOR_ID)
+            {
+                return "AUTHOR";
+            }
+
+            if (!string.IsNullOrWhiteSpace(alias))
+            {
+                return alias;
+            }
+
+            var first = string.IsNullOrWhiteSpace(nickname) ? firstName : nickname;
+            var lastInitial = string.IsNullOrWhiteSpace(lastName) ? string.Empty : $" {lastName[0]}.";
+            var firstAndLastInitial = first + lastInitial;
+            return firstAndLastInitial;
+        }
+
         #endregion // Static Methods
 
         #region Static Persons
@@ -302,21 +316,13 @@ namespace CLP.Entities
 
         public static int GuestCount { get; set; }
 
-        public static Person Guest
-        {
-            get
-            {
-                // ReSharper disable once ConvertPropertyToExpressionBody
-                // Expression Body initialization is single call only. This evaluates every time Guest get is called.
-                return new Person
-                       {
-                           ID = Guid.NewGuid().ToCompactID(),
-                           FirstName = "GUEST",
-                           Alias = "GUEST " + ++GuestCount,
-                           IsStudent = true
-                       };
-            }
-        }
+        public static Person Guest => new Person
+                                      {
+                                          ID = Guid.NewGuid().ToCompactID(),
+                                          FirstName = "GUEST",
+                                          Alias = "GUEST " + ++GuestCount,
+                                          IsStudent = true
+                                      };
 
         #endregion //Static Persons
     }
