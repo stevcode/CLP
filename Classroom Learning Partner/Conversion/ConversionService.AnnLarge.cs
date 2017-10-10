@@ -454,7 +454,15 @@ namespace Classroom_Learning_Partner
                                         344,
                                         362,
                                         363,
-                                        364
+                                        364,
+                                        365,
+                                        366,
+                                        367,
+                                        368,
+                                        369,
+                                        376,
+                                        377,
+                                        378
                                     };
 
             pageNumbersToLoad = pageNumbersToLoad.Distinct().ToList();
