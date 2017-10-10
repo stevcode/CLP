@@ -36,7 +36,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData QueryCodesProperty = RegisterProperty(nameof(QueryCodes), typeof(List<IAnalysisCode>), () => new List<IAnalysisCode>());
 
-        public string QueryCodesReport => string.Join("\n", QueryCodes);
+        public string QueryCodesReport => string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
 
         public string AnalysisCodesReport => string.Join(", ", AnalysisCodes);
 

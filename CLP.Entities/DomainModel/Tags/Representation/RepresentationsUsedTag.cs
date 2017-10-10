@@ -248,7 +248,7 @@ namespace CLP.Entities
 
                 var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
 
-                var codeSection = QueryCodes.Any() ? $"\n\nCodes: {string.Join(", ", QueryCodes)}" : string.Empty;
+                var codeSection = QueryCodes.Any() ? $"\n\nCodes: {string.Join(", ", QueryCodes.Select(c => c.FormattedValue))}" : string.Empty;
                 return $"{deletedSection}{finalSectionDelimiter}{finalSection}{codeSection}";
             }
         }
