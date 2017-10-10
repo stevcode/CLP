@@ -163,7 +163,7 @@
                                                LargeImageSource="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
                                                IsChecked="{Binding CurrentLeftPanel, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static services:Panels.QueryPanel}}"
                                                IsEnabled="{Binding MainWindow.Workspace, Converter={converters:TypeMatchToBooleanConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding ResearcherOrTeacherVisibility}" />
+                                               Visibility="{Binding ResearcherOnlyVisibility}" />
 
         </StackPanel>
 
