@@ -135,7 +135,7 @@ namespace CLP.Entities
         {
             var list = new List<string>
                        {
-                           //ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP,
+                           ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP,
                            ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP,
                            ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION,
                            ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION,
