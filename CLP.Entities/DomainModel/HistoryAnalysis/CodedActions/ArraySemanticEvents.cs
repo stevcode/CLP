@@ -1835,6 +1835,12 @@ namespace CLP.Entities
                 var heuristicValue = orderedHeuristicValues[i];
                 var prev = orderedHeuristicValues[i - 1];
 
+                // HACK: Hack to fix conversion issue. Large Cache crashes here during conversion.
+                if (!(heuristicValue.Value is int))
+                {
+                    return "\tHeuristic Adjustment Error";
+                }
+
                 var correctedValue = (int)heuristicValue.Value - dominantSkipSize;
                 prev.Value = correctedValue;
                 prev.IsFinal = true;
