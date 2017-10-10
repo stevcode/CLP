@@ -855,7 +855,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.RemoveTag(tempArraySkipCountingTag);
             }
 
-            var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+            var indexOfPass3Start =
+                CurrentPage.History.SemanticEvents.IndexOf(CurrentPage.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
+            var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
             HistoryAnalysis.GenerateTags(CurrentPage, interpretedInkSemanticEvents);
         }
 

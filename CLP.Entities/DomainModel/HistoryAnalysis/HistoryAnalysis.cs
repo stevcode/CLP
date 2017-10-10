@@ -27,7 +27,8 @@ namespace CLP.Entities
                                             {
                                                 CodedObject = "\tPASS",
                                                 CodedObjectID = "1",
-                                                EventInformation = "Initialization"
+                                                EventInformation = "Initialization",
+                                                SemanticEventIndex = -1
                                             });
 
             var initialSemanticEvents = GenerateInitialSemanticEvents(page);
@@ -46,7 +47,8 @@ namespace CLP.Entities
                                             {
                                                 CodedObject = "\tPASS",
                                                 CodedObjectID = "2",
-                                                EventInformation = "Ink Clustering"
+                                                EventInformation = "Ink Clustering",
+                                                SemanticEventIndex = -2
                                             });
 
             var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
@@ -65,11 +67,13 @@ namespace CLP.Entities
                                             {
                                                 CodedObject = "\tPASS",
                                                 CodedObjectID = "3",
-                                                EventInformation = "Ink Interpretation"
+                                                EventInformation = "Ink Interpretation",
+                                                SemanticEventIndex = -3
                                             });
 
             var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
             eventIndex = 0;
+            // BUG: Previous passes just pass by reference the Semantic Event if it's not transformed, this means the PassNumber is copied over.
             foreach (var initialSemanticEvent in interpretedInkSemanticEvents)
             {
                 initialSemanticEvent.SemanticPassNumber = 3;
