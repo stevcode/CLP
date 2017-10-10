@@ -1518,7 +1518,7 @@ namespace Classroom_Learning_Partner
                     var b4 = new ChoiceBubble(3, MultipleChoiceLabelTypes.Letters)
                              {
                                  Offset = segmentWidth * 3,
-                                 Answer = "63 ÷ 9"
+                                 Answer = "63 / 9"
                              };
                     newMultipleChoice.ChoiceBubbles.Add(b1);
                     newMultipleChoice.ChoiceBubbles.Add(b2);
