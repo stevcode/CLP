@@ -657,6 +657,28 @@ namespace Classroom_Learning_Partner
                 CLogger.AppendToLog($"[CONVERSION ERROR]: Person.FullName is blank. Original Person.FullName is {person.FullName}.");
             }
 
+            #region Gender Assignments
+
+            newPerson.Gender = Genders.Female;
+            var maleIDs = new List<string>
+                          {
+                              "nUd1x4-oukipFNwazvDrfQ",
+                              "5Saq8eHcvkW4m5ILxSHFZg",
+                              "VKEj_15f30-yNA4oqRiHhA",
+                              "SKcmfl_FwEC6zgSrUv7N7Q",
+                              "OwuTe3Bzo0WFDcUDQRd4rQ",
+                              "L6H-WqceTk-2A31gWRwHLg",
+                              "eO9HFRoY-0aLtcL2iA5-tQ",
+                              "Dn7CAxRwF0W9RX3Lwe9_uA"
+                          };
+
+            if (maleIDs.Contains(newPerson.ID))
+            {
+                newPerson.Gender = Genders.Male;
+            }
+
+            #endregion // Gender Assignments
+
             return newPerson;
         }
 
