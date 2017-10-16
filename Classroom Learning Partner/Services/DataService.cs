@@ -1653,7 +1653,7 @@ namespace Classroom_Learning_Partner.Services
                                  pages.Add(page);
                              });
 
-            return pages;
+            return pages.Where(p => p != null).ToList();
         }
 
         public static List<CLPPage> GetSubmissionsForPages(Notebook notebook, List<CLPPage> pages)
