@@ -38,7 +38,7 @@ namespace CLP.Entities
 
         public string QueryCodesReport => string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
 
-        public string AnalysisCodesReport => string.Join(", ", AnalysisCodes);
+        public string AnalysisCodesReport => string.Join("\n", AnalysisCodes);
 
         /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>
         public List<string> SemanticEventIDs

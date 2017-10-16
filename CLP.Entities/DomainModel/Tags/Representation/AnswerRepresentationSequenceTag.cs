@@ -39,7 +39,7 @@ namespace CLP.Entities
             get
             {
                 var sequence = string.Join(", ", Sequence);
-                var analysisCodes = string.Join(", ", QueryCodes.Select(c => c.FormattedValue));
+                var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
                 var codedSection = QueryCodes.Any() ? $"\nCodes: {analysisCodes}" : string.Empty;
 
                 return $"{sequence}{codedSection}";
