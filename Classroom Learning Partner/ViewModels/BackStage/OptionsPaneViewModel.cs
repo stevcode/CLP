@@ -168,7 +168,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         page.RemoveTag(tempArraySkipCountingTag);
                     }
 
-                    var interpretedInkSemanticEvents = page.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+                    var indexOfPass3Start =
+                        page.History.SemanticEvents.IndexOf(page.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
+                    var interpretedInkSemanticEvents = page.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
                     HistoryAnalysis.GenerateTags(page, interpretedInkSemanticEvents);
                     AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
 
@@ -180,7 +182,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             submission.RemoveTag(tempArraySkipCountingTag);
                         }
 
-                        var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3).ToList();
+                        var indexOfPass3StartForSubmission = submission.History.SemanticEvents.IndexOf(submission.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
+                        var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Skip(indexOfPass3StartForSubmission + 1).ToList();
                         HistoryAnalysis.GenerateTags(submission, interpretedInkSemanticEventsForSubmission);
                         AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
 
