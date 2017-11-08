@@ -1093,7 +1093,7 @@ namespace CLP.Entities
             
             var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
-            var skipCodedValue = $"skip [{formattedSkips}]\n{heuristicsResults}";
+            var skipCodedValue = $"skip [{formattedSkips}]\n\t{heuristicsResults}";
             return skipCodedValue;
         }
 

@@ -53,10 +53,7 @@ namespace CLP.Entities
 
         public override string FormattedName => "Array Skip Counting";
 
-        public override string FormattedValue
-        {
-            get { return string.Format("ARR skip [{0}: {1}]\n{2}", CodedID, RowInterpretations, HeuristicsResults); }
-        }
+        public override string FormattedValue => $"ARR skip [{CodedID}: {RowInterpretations}]\n\t{HeuristicsResults}";
 
         #endregion //ATagBase Overrides
 
