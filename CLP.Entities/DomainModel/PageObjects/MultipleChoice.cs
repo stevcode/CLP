@@ -57,7 +57,12 @@ namespace CLP.Entities
         /// <summary>The answer associated with the bubble.</summary>
         public string Answer
         {
-            get { return GetValue<string>(AnswerProperty); }
+            get
+            {
+                // HACK: to properly display ÷ on assessment page 3
+                var answer = GetValue<string>(AnswerProperty);
+                return answer == "63 ? 9" ? "63 ÷ 9" : answer;
+            }
             set { SetValue(AnswerProperty, value); }
         }
 
