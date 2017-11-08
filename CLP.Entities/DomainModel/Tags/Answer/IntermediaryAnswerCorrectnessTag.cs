@@ -67,7 +67,7 @@ namespace CLP.Entities
                 var correctAnswerDescription = $"Correct answer is {CorrectAnswer}";
                 var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left answer blank" : $"Student answered {StudentAnswer}";
                 var finalAnswerFriendlyCorrectness = Codings.CorrectnessToFriendlyCorrectness(IntermediaryAnswerCorrectness);
-                var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes: {AnalysisCodesReport}" : string.Empty;
+                var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes:\n{AnalysisCodesReport}" : string.Empty;
 
                 var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){analysisCodesDescription}";
                 return formattedValue;

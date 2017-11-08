@@ -162,7 +162,7 @@ namespace CLP.Entities
                 sections.AddRange(AdditionalInformation);
 
                 var formattedAnalysisCodes = string.Join(", ", AnalysisCodes);
-                var formattedAnalysisCodeSection = $"Codes: {formattedAnalysisCodes}";
+                var formattedAnalysisCodeSection = $"Codes:\n{formattedAnalysisCodes}";
                 if (AnalysisCodes.Any())
                 {
                     sections.Add(formattedAnalysisCodeSection);
@@ -248,7 +248,7 @@ namespace CLP.Entities
 
                 var finalSectionDelimiter = deletedRepresentations.Any() && finalRepresentations.Any() ? "\n" : string.Empty;
 
-                var codeSection = QueryCodes.Any() ? $"\n\nCodes: {string.Join("\n", QueryCodes.Select(c => c.FormattedValue))}" : string.Empty;
+                var codeSection = QueryCodes.Any() ? $"\n\nCodes:\n{string.Join("\n", QueryCodes.Select(c => c.FormattedValue))}" : string.Empty;
                 return $"{deletedSection}{finalSectionDelimiter}{finalSection}{codeSection}";
             }
         }
