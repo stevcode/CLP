@@ -172,12 +172,16 @@ namespace CLP.Entities
                 var replacedSections = new List<string>();
                 foreach (var section in sections)
                 {
-                    if (section == "Total Ink Divides: 0")
+                    var replacingSection = string.Copy(section);
+                    if (replacingSection == "Total Ink Divides: 0")
                     {
                         continue;
                     }
 
-                    replacedSections.Add(section);
+                    var replace1 = replacingSection.Replace(", LS", ", 1S");
+                    var replace2 = replace1.Replace(", RS", ", 2S");
+
+                    replacedSections.Add(replace2);
                 }
 
                 var formattedSections = sections.Any() ? $"  - {string.Join("\n  - ", replacedSections)}" : string.Empty;
