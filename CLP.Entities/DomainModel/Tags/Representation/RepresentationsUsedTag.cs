@@ -168,7 +168,19 @@ namespace CLP.Entities
                     sections.Add(formattedAnalysisCodeSection);
                 }
 
-                var formattedSections = sections.Any() ? $"  - {string.Join("\n  - ", sections)}" : string.Empty;
+                // HACK: Temporarily printing different values to Analysis Panel
+                var replacedSections = new List<string>();
+                foreach (var section in sections)
+                {
+                    if (section == "Total Ink Divides: 0")
+                    {
+                        continue;
+                    }
+
+                    replacedSections.Add(section);
+                }
+
+                var formattedSections = sections.Any() ? $"  - {string.Join("\n  - ", replacedSections)}" : string.Empty;
                 var formattedValue = $"{header}\n{formattedSections}";
 
                 return formattedValue;
@@ -920,7 +932,7 @@ namespace CLP.Entities
                                                                         e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
                                                                         e.EventType == Codings.EVENT_ARRAY_DIVIDE_INK &&
                                                                         e.ReferencePageObjectID == arrayID);
-                usedRepresentation.AdditionalInformation.Add($"Total Ink Divides : {inkDivideAddEventsCount}");
+                usedRepresentation.AdditionalInformation.Add($"Total Ink Divides: {inkDivideAddEventsCount}");
 
                 if (patternPoint.EndEventType == Codings.EVENT_CUT)
                 {
