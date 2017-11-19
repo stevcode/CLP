@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Data;
 
@@ -9,6 +10,8 @@ namespace CLP.Entities
     public class AnalysisConstraint : ASerializableBase
     {
         #region Constructors
+
+        public AnalysisConstraint() { }
 
         public AnalysisConstraint(string constraintLabel, string constraintValue)
         {
@@ -73,14 +76,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData AliasProperty = RegisterProperty(nameof(Alias), typeof(string), string.Empty);
 
-        public List<AnalysisConstraint> ConstraintValues
+        public ObservableCollection<AnalysisConstraint> ConstraintValues
         {
-            get => GetValue<List<AnalysisConstraint>>(ConstraintValuesProperty);
+            get => GetValue<ObservableCollection<AnalysisConstraint>>(ConstraintValuesProperty);
             set => SetValue(ConstraintValuesProperty, value);
         }
 
         public static readonly PropertyData ConstraintValuesProperty =
-            RegisterProperty(nameof(ConstraintValues), typeof(List<AnalysisConstraint>), () => new List<AnalysisConstraint>());
+            RegisterProperty(nameof(ConstraintValues), typeof(ObservableCollection<AnalysisConstraint>), () => new ObservableCollection<AnalysisConstraint>());
 
         public string FormattedValue
         {

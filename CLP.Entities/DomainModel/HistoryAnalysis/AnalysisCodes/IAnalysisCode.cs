@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace CLP.Entities
 {
@@ -6,7 +7,7 @@ namespace CLP.Entities
     {
         string Alias { get; set; }
         string AnalysisLabel { get; set; }
-        List<AnalysisConstraint> ConstraintValues { get; set; }
+        ObservableCollection<AnalysisConstraint> ConstraintValues { get; set; }
         string FormattedValue { get; }
 
         void AddConstraint(string constraintLabel, string constraintValue);
