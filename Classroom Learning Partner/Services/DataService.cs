@@ -1644,14 +1644,29 @@ namespace Classroom_Learning_Partner.Services
         {
             var pages = new List<CLPPage>();
 
-            Parallel.ForEach(pageZipEntryLoaders,
-                             pageZipEntryLoader =>
-                             {
-                                 var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
-                                 page.ContainerZipFilePath = zipContainerFilePath;
-                                 page.PageNumber = pageZipEntryLoader.PageNumber;
-                                 pages.Add(page);
-                             });
+            var isLoadingInParallel = false;
+
+            if (isLoadingInParallel)
+            {
+                Parallel.ForEach(pageZipEntryLoaders,
+                                 pageZipEntryLoader =>
+                                 {
+                                     var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
+                                     page.ContainerZipFilePath = zipContainerFilePath;
+                                     page.PageNumber = pageZipEntryLoader.PageNumber;
+                                     pages.Add(page);
+                                 });
+            }
+            else
+            {
+                foreach (var pageZipEntryLoader in pageZipEntryLoaders)
+                {
+                    var page = ASerializableBase.FromXmlString<CLPPage>(pageZipEntryLoader.XmlString);
+                    page.ContainerZipFilePath = zipContainerFilePath;
+                    page.PageNumber = pageZipEntryLoader.PageNumber;
+                    pages.Add(page);
+                }
+            }
 
             return pages.Where(p => p != null).ToList();
         }
