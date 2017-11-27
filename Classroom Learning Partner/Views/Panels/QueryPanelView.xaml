@@ -127,12 +127,15 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid HorizontalAlignment="Stretch">
 
-                            <TextBlock Text="{Binding FormattedValue}" />
+                            <TextBlock Text="{Binding FormattedValue}"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch" />
 
                             <Rectangle Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                        StrokeThickness="0"
+                                       HorizontalAlignment="Stretch"
                                        Fill="Transparent">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseUp">
