@@ -367,12 +367,32 @@ namespace Classroom_Learning_Partner.Services
             var allAliases = Codings.GetAllAnalysisAliases();
             if (!allAliases.Contains(queryString.ToUpper()))
             {
-                return null;
+                return Specials(queryString);
             }
 
             var analysisLabel = Codings.AnalysisAliasToLabel(queryString.ToUpper());
             var query = GenerateQuery(analysisLabel);
 
+            return query;
+        }
+
+        private Query Specials(string queryString)
+        {
+            var specials = new List<string>
+                           {
+                               "NL",
+                               "ARR",
+                               "BIN",
+                               "STAMP",
+                               "BINS",
+                               "STAMPS"
+                           };
+            if (!specials.Contains(queryString.ToUpper()))
+            {
+                return null;
+            }
+
+            var query = GenerateQuery(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
             return query;
         }
 
