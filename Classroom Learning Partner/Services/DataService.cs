@@ -1665,7 +1665,7 @@ namespace Classroom_Learning_Partner.Services
         {
             var pages = new List<CLPPage>();
 
-            var isLoadingInParallel = false;
+            var isLoadingInParallel = true;
 
             if (isLoadingInParallel)
             {
