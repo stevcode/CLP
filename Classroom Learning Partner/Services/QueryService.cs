@@ -334,8 +334,28 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var query = queries.First();
-            var queryLabel = query.QueryLabel;
-            return queryCodes.Any(c => c.AnalysisLabel == queryLabel);
+            var matchingCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+            if (!query.ConstraintValues.Keys.Any())
+            {
+                return matchingCodes.Any();
+            }
+
+            var isMatching = false;
+            foreach (var constraint in query.ConstraintValues.Keys)
+            {
+                var constraintValues = queryCodes.SelectMany(c => c.ConstraintValues).ToList();
+                var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
+                if (matchingConstraintValues.Any())
+                {
+                    var queryConstraintValue = query.ConstraintValues[constraint];
+                    if (matchingConstraintValues.Any(c => c.ConstraintValue.Contains(queryConstraintValue)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private List<IAnalysisCode> GetPageQueryCodes(XElement root)
@@ -382,10 +402,8 @@ namespace Classroom_Learning_Partner.Services
                            {
                                "NL",
                                "ARR",
-                               "BIN",
                                "STAMP",
-                               "BINS",
-                               "STAMPS"
+                               "BINS"
                            };
             if (!specials.Contains(queryString.ToUpper()))
             {
@@ -393,6 +411,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var query = GenerateQuery(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
+            query.ConstraintValues.Add(Codings.CONSTRAINT_REPRESENTATION_NAME, queryString.ToUpper());
             return query;
         }
 
