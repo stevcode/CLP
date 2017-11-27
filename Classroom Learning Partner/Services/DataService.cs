@@ -1180,6 +1180,27 @@ namespace Classroom_Learning_Partner.Services
             return submissions;
         }
 
+        public CLPPage GetPageByCompositeID(CLPPage.NameComposite nameComposite, string studentID)
+        {
+            var studentNotebook = LoadedNotebooks.FirstOrDefault(n => n.OwnerID == studentID);
+            if (studentNotebook == null)
+            {
+                return null;
+            }
+
+            var notebookPage = studentNotebook.Pages.FirstOrDefault(x => x.ID == nameComposite.ID &&
+                                                                         x.OwnerID == studentID &&
+                                                                         x.DifferentiationLevel == nameComposite.DifferentiationLevel &&
+                                                                         x.VersionIndex == nameComposite.VersionIndex);
+            if (notebookPage != null)
+            {
+                return notebookPage;
+            }
+
+            notebookPage = studentNotebook.Pages.FirstOrDefault(x => x.ID == nameComposite.ID && x.DifferentiationLevel == nameComposite.DifferentiationLevel);
+            return notebookPage?.Submissions.FirstOrDefault(x => x.OwnerID == studentID && x.VersionIndex == nameComposite.VersionIndex);
+        }
+
         #endregion // Page Methods
 
         #endregion // Methods
@@ -1971,5 +1992,7 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Tests
+
+
     }
 }

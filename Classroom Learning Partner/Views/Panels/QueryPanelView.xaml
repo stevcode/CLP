@@ -21,33 +21,33 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
+
             <orc:StackGrid HorizontalAlignment="Stretch">
-                
+
                 <Grid.ColumnDefinitions>
                     <!--<ColumnDefinition Width="*" />-->
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
+
                 <!--<Button Content="Caches" 
                         Command="{Binding SelectCacheCommand}" />-->
-                
+
                 <Button Content="Pages"
                         Command="{Binding SelectPageRangeCommand}" />
-                
+
                 <Button Content="Students"
                         Command="{Binding SelectStudentsCommand}" />
 
             </orc:StackGrid>
-            
+
             <orc:StackGrid>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
+
                 <Label Content="Query:"
                        Margin="3">
                     <Label.ToolTip>
@@ -59,7 +59,7 @@
 
                 <TextBox Margin="3"
                          Text="{Binding QueryString}" />
-                
+
             </orc:StackGrid>
 
             <Button Height="32"
@@ -68,21 +68,21 @@
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Center"
                     Command="{Binding RunQueryCommand}">
-                
+
                 <Grid VerticalAlignment="Center"
                       HorizontalAlignment="Stretch">
-                    
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="6*" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <Image Grid.Column="0"
                            Source="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
                            Height="24"
                            Width="24"
                            HorizontalAlignment="Center" />
-                    
+
                     <TextBlock Grid.Column="1"
                                Text="Run Query"
                                TextAlignment="Center"
@@ -90,9 +90,9 @@
                                Padding="3"
                                FontWeight="Bold"
                                FontSize="16" />
-                    
+
                 </Grid>
-                
+
             </Button>
 
             <Rectangle Height="1"
@@ -113,16 +113,24 @@
                 <Button Content="Thumbnails" />
 
                 <Button Content="Sort" />
-                
+
                 <Button Content="Reports"
-                        Command="{Binding ShowReportsCommand}"/>
+                        Command="{Binding ShowReportsCommand}" />
 
             </orc:StackGrid>
 
             <ListBox ItemsSource="{Binding QueryResults}"
                      SelectionMode="Single"
                      Margin="5 0"
-                     ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback" />
+                     ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding FormattedValue}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
 
         </orc:StackGrid>
 

@@ -57,14 +57,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData QueryStringProperty = RegisterProperty(nameof(QueryString), typeof(string), string.Empty);
 
         /// <summary>Temp results of query.</summary>
-        public ObservableCollection<string> QueryResults
+        public ObservableCollection<QueryService.QueryResult> QueryResults
         {
-            get => GetValue<ObservableCollection<string>>(QueryResultsProperty);
+            get => GetValue<ObservableCollection<QueryService.QueryResult>>(QueryResultsProperty);
             set => SetValue(QueryResultsProperty, value);
         }
 
         public static readonly PropertyData QueryResultsProperty =
-            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryService.QueryResult>), () => new ObservableCollection<QueryService.QueryResult>());
 
         #endregion // Bindings
 
@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             QueryResults.Clear();
             var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName);
-            QueryResults = queryResults.Select(r => $"Page {r.PageNumber}, {r.StudentName}\n - {string.Join("\n - ", r.MatchingQueryCodes.Select(q => q.FormattedValue))}").ToObservableCollection();
+            QueryResults = queryResults.ToObservableCollection();
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>
@@ -173,6 +173,13 @@ namespace Classroom_Learning_Partner.ViewModels
             var viewModel = new ReportsViewModel(report);
             await viewModel.ShowWindowAsDialogAsync();
         }
+
+        //public Command ShowPage { get; private set; }
+
+        //private void OnShowPageCommandExecute()
+        //{
+        //    var page = _dataService.GetPageByCompositeID()
+        //}
 
         #endregion // Commands
     }

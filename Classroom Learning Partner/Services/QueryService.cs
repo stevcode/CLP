@@ -39,8 +39,15 @@ namespace Classroom_Learning_Partner.Services
             public string PageID { get; set; }
             public int PageNumber { get; set; }
             public string StudentName { get; set; }
+            public string StudentID { get; set; }
             public List<IAnalysisCode> MatchingQueryCodes { get; set; }
             public List<IAnalysisCode> AllQueryCodes { get; set; }
+            public CLPPage.NameComposite NameComposite { get; set; }
+
+            public string FormattedValue
+            {
+                get { return $"Page {PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingQueryCodes.Select(q => q.FormattedValue))}"; }
+            }
         }
 
         public class Report
@@ -181,6 +188,24 @@ namespace Classroom_Learning_Partner.Services
 
                 #endregion // Restrict Student IDs
 
+                #region CompositeID
+
+                var pageID = (string)root.Element("ID");
+                var subPageNumber = (int)root.Element("SubPageNumber");
+                var differentiationLevel = (string)root.Element("DifferentiationLevel");
+                var versionIndex = (uint)root.Element("VersionIndex");
+
+                var nameComposite = new CLPPage.NameComposite
+                                    {
+                                        ID = pageID,
+                                        PageNumber = pageNumber,
+                                        SubPageNumber = subPageNumber,
+                                        DifferentiationLevel = differentiationLevel,
+                                        VersionIndex = versionIndex
+                                    };
+
+                #endregion // CompositeID
+
                 var queryCodes = GetPageQueryCodes(root);
                 if (!isQueryCached)
                 {
@@ -201,6 +226,8 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = ParseQueryResultFromXElement(root, pageNumber, studentID, cacheFilePath);
+                queryResult.NameComposite = nameComposite;
+                queryResult.StudentID = studentID;
                 queryResult.MatchingQueryCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
                 queryResult.AllQueryCodes = queryCodes.ToList();
                 queryResults.Add(queryResult);

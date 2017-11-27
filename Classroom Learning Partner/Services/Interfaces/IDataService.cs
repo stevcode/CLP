@@ -64,5 +64,6 @@ namespace Classroom_Learning_Partner.Services
         void MovePage(Notebook notebook, CLPPage page, int newPageNumber);
         void AutoSavePage(Notebook notebook, CLPPage page);
         List<CLPPage> GetLoadedSubmissionsForPage(CLPPage page);
+        CLPPage GetPageByCompositeID(CLPPage.NameComposite nameComposite, string studentID);
     }
 }
