@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:orc="http://www.wildgums.net.au/orc">
+                   xmlns:orc="http://www.wildgums.net.au/orc"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
@@ -126,7 +127,25 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding FormattedValue}"/>
+                        <Grid>
+
+                            <TextBlock Text="{Binding FormattedValue}" />
+
+                            <Rectangle Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
+                                       StrokeThickness="0"
+                                       Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand
+                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
+                        </Grid>
+                        
+                        
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 

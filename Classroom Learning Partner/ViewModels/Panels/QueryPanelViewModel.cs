@@ -105,6 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
             ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
+            SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
         /// <summary>Selects which cache to run the query on.</summary>
@@ -174,12 +175,18 @@ namespace Classroom_Learning_Partner.ViewModels
             await viewModel.ShowWindowAsDialogAsync();
         }
 
-        //public Command ShowPage { get; private set; }
+        public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
 
-        //private void OnShowPageCommandExecute()
-        //{
-        //    var page = _dataService.GetPageByCompositeID()
-        //}
+        private void OnSetCurrentPageCommandExecute(QueryService.QueryResult queryResult)
+        {
+            var page = _dataService.GetPageByCompositeID(queryResult.NameComposite, queryResult.StudentID);
+            if (page == null)
+            {
+                return;
+            }
+
+            _dataService.SetCurrentPage(page);
+        }
 
         #endregion // Commands
     }
