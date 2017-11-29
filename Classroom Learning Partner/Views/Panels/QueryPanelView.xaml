@@ -53,7 +53,7 @@
                        Margin="3">
                     <Label.ToolTip>
                         <ToolTip>
-                            <TextBox Text="MR, MR2STEP, AR, ABR, RAA, REPS_USED, ARR, BINS, NL, STAMP" />
+                            <TextBox Text="MR, MR2STEP, CAAR, ABR, RAA, REPS_USED, ARR, BINS, NL, STAMP" />
                         </ToolTip>
                     </Label.ToolTip>
                 </Label>
