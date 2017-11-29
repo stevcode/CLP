@@ -161,7 +161,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRunQueryCommandExecute()
         {
             QueryResults.Clear();
-            var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName);
+            var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+            if (!queryResults.Any())
+            {
+                MessageBox.Show("No results found.");
+            }
             QueryResults = queryResults.ToObservableCollection();
         }
 
