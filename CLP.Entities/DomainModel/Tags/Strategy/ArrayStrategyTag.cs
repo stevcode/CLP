@@ -20,7 +20,7 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override string FormattedName => "Array";
+        public override string FormattedName => "Array Strategy";
 
         #endregion //ATagBase Overrides
 

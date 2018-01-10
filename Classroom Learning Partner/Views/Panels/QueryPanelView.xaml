@@ -95,7 +95,7 @@
                 </Grid>
 
             </Button>
-
+            
             <Rectangle Height="1"
                        Margin="1 5"
                        Stroke="{StaticResource GrayBorderColor}" />
