@@ -3,6 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://schemas.catelproject.com"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:orc="http://www.wildgums.net.au/orc"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
@@ -95,6 +96,20 @@
                 </Grid>
 
             </Button>
+
+            <ItemsControl x:Name="ConditionCreationControl"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ItemsSource="{Binding Conditions}">
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+
+                        <views:QueryConditionView />
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
             
             <Rectangle Height="1"
                        Margin="1 5"

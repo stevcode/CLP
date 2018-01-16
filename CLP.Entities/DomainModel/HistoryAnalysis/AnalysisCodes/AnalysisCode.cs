@@ -96,6 +96,14 @@ namespace CLP.Entities
             }
         }
 
+        public List<string> ConstraintLabels
+        {
+            get
+            {
+                return ConstraintValues.Select(c => c.ConstraintLabel).ToList();
+            }
+        }
+
         #endregion // Properties
 
         #region Methods

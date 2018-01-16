@@ -48,6 +48,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>String to run the query on.</summary>
+        public ObservableCollection<QueryConditionViewModel> Conditions
+        {
+            get => GetValue<ObservableCollection<QueryConditionViewModel>>(ConditionsProperty);
+            set => SetValue(ConditionsProperty, value);
+        }
+
+        public static readonly PropertyData ConditionsProperty = RegisterProperty(nameof(Conditions), typeof(ObservableCollection<QueryConditionViewModel>), () => new ObservableCollection<QueryConditionViewModel>());
+
+        /// <summary>String to run the query on.</summary>
         public string QueryString
         {
             get => GetValue<string>(QueryStringProperty);
