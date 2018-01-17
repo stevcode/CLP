@@ -10,7 +10,8 @@ namespace Classroom_Learning_Partner.Services
         List<int> PageNumbersToQuery { get; set; }
         List<string> StudentIDsToQuery { get; set; }
 
-        List<QueryService.QueryResult> RunQuery(string queryString);
+        List<QueryService.QueryResult> QueryByString(string queryString);
+        List<QueryService.QueryResult> QueryByConditions(List<ConditionScaffold> conditions);
         QueryService.Report GatherReports();
     }
 }

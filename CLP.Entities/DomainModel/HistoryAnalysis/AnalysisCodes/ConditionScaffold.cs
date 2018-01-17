@@ -41,6 +41,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData ConstraintNameProperty = RegisterProperty(nameof(ConstraintName), typeof(string), string.Empty);
 
+        /// <summary>Name of the constraint.</summary>
+        public string SelectedConstraintValue
+        {
+            get => GetValue<string>(SelectedConstraintValueProperty);
+            set => SetValue(SelectedConstraintValueProperty, value);
+        }
+
+        public static readonly PropertyData SelectedConstraintValueProperty = RegisterProperty(nameof(SelectedConstraintValue), typeof(string), string.Empty);
+
         /// <summary>Allowable values for the constraint.</summary>
         public List<string> ConstraintValues
         {

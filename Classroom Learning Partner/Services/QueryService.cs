@@ -134,7 +134,7 @@ namespace Classroom_Learning_Partner.Services
 
         public List<QueryResult> QueryResults { get; set; }
 
-        public List<QueryResult> RunQuery(string queryString)
+        public List<QueryResult> QueryByString(string queryString)
         {
             var queryResults = new List<QueryResult>();
             if (NotebookToQuery == null)
@@ -236,6 +236,26 @@ namespace Classroom_Learning_Partner.Services
             QueryResults = queryResults;
             return queryResults;
         }
+
+        public List<QueryResult> QueryByConditions(List<ConditionScaffold> conditions)
+        {
+            var queryResults = new List<QueryResult>();
+            if (NotebookToQuery == null)
+            {
+                return queryResults;
+            }
+
+
+
+
+
+
+
+
+            QueryResults = queryResults;
+            return queryResults;
+        }
+
 
         public Report GatherReports()
         {
@@ -414,6 +434,16 @@ namespace Classroom_Learning_Partner.Services
             query.ConstraintValues.Add(Codings.CONSTRAINT_REPRESENTATION_NAME, queryString.ToUpper());
             return query;
         }
+
+        //private Query ParseConditions(List<ConditionScaffold> conditions)
+        //{
+        //    var allAliases = Codings.GetAllAnalysisAliases();
+
+        //    var analysisLabel = Codings.AnalysisAliasToLabel(queryString.ToUpper());
+        //    var query = GenerateQuery(analysisLabel);
+
+        //    return query;
+        //}
 
         #endregion // Methods
 

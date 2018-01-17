@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
@@ -182,7 +183,19 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnRunQueryCommandExecute()
         {
             QueryResults.Clear();
-            var queryResults = _queryService.RunQuery(QueryString).OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+
+            List<QueryService.QueryResult> queryResults;
+            if (!string.IsNullOrWhiteSpace(QueryString))
+            {
+                queryResults = _queryService.QueryByString(QueryString);
+            }
+            else
+            {
+                var conditions = Conditions.Select(vm => vm.SelectedAnalysisCode).ToList();
+                queryResults = _queryService.QueryByConditions(conditions);
+            }
+
+            queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
             if (!queryResults.Any())
             {
                 MessageBox.Show("No results found.");
