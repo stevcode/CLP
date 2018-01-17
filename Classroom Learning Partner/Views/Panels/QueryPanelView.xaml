@@ -21,6 +21,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -104,7 +105,12 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <views:QueryConditionView />
+                        <StackPanel>
+                            <views:QueryConditionView />
+                            <Button Content="AND"
+                                    Width="30"
+                                    Command="{Binding DataContext.AddANDConditionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" />
+                        </StackPanel>
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

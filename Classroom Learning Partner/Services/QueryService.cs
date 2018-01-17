@@ -437,7 +437,7 @@ namespace Classroom_Learning_Partner.Services
             var codedCorrectnessValues = Enum<Correctness>.GetValues().Select(Codings.CorrectnessToCodedCorrectness).ToList();
             var correctnessConstraintValues = new List<string>
                                               {
-                                                  Codings.CONSTRAINT_VALUE_ALL
+                                                  Codings.CONSTRAINT_VALUE_ANY
                                               };
             correctnessConstraintValues.AddRange(codedCorrectnessValues.ToList());
 
@@ -449,7 +449,7 @@ namespace Classroom_Learning_Partner.Services
                 case Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
                     var answerChangedConstraintValues = new List<string>
                                            {
-                                               Codings.CONSTRAINT_VALUE_ALL
+                                               Codings.CONSTRAINT_VALUE_ANY
                                            };
                     answerChangedConstraintValues.AddRange(from fromCorrectness in codedCorrectnessValues
                                                            from toCorrectness in codedCorrectnessValues
@@ -461,7 +461,7 @@ namespace Classroom_Learning_Partner.Services
                     constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
                                     new List<string>
                                     {
-                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANY,
                                         Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
                                         Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
                                     });
@@ -472,7 +472,7 @@ namespace Classroom_Learning_Partner.Services
                     constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
                                     new List<string>
                                     {
-                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANY,
                                         Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
                                         Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
                                     });
@@ -483,7 +483,7 @@ namespace Classroom_Learning_Partner.Services
                     constraints.Add(Codings.CONSTRAINT_REPRESENTATION_NAME,
                                     new List<string>
                                     {
-                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANY,
                                         Codings.OBJECT_ARRAY,
                                         Codings.OBJECT_NUMBER_LINE,
                                         Codings.OBJECT_STAMP,
@@ -495,7 +495,7 @@ namespace Classroom_Learning_Partner.Services
                     constraints.Add(Codings.CONSTRAINT_HISTORY_STATUS,
                                     new List<string>
                                     {
-                                        Codings.CONSTRAINT_VALUE_ALL,
+                                        Codings.CONSTRAINT_VALUE_ANY,
                                         Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL,
                                         Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED
                                     });

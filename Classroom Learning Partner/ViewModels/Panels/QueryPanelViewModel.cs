@@ -34,6 +34,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializedAsync += QueryPanelViewModel_InitializedAsync;
 
             InitializeCommands();
+
+            Conditions.Add(new QueryConditionViewModel());
         }
 
         #region Events
@@ -108,6 +110,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
+            AddANDConditionCommand = new Command(OnAddANDConditionCommandExecute);
+
             SelectCacheCommand = new Command(OnSelectCacheCommandExecute);
             SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
             SelectStudentsCommand = new Command(OnSelectStudentsCommandExecute);
@@ -115,6 +119,14 @@ namespace Classroom_Learning_Partner.ViewModels
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
             ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
+        }
+
+        /// <summary>Selects which cache to run the query on.</summary>
+        public Command AddANDConditionCommand { get; private set; }
+
+        private void OnAddANDConditionCommandExecute()
+        {
+            Conditions.Add(new QueryConditionViewModel());
         }
 
         /// <summary>Selects which cache to run the query on.</summary>

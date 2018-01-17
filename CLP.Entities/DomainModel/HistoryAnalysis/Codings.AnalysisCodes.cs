@@ -57,7 +57,7 @@ namespace CLP.Entities
 
         #region Analysis Constraint Values
 
-        public const string CONSTRAINT_VALUE_ALL = "ALL";
+        public const string CONSTRAINT_VALUE_ANY = "ANY";
 
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE = "BLANK_PAGE";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY = "INK_ONLY";

@@ -92,6 +92,7 @@
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.AnswerRepresentationSequence.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.RepresentationsUsed.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\ConditionScaffold.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.AnalysisCodes.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\IAnalysisCode.cs" />
