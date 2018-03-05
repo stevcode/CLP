@@ -22,6 +22,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -120,6 +121,15 @@
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
+
+            <!--Run Query Button-->
+            <Button Height="32"
+                    Width="80"
+                    Margin="5"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Content="Clear Query"
+                    Command="{Binding ClearQueryCommand}" />
 
             <!--Dividing Line-->
             <Rectangle Height="1"

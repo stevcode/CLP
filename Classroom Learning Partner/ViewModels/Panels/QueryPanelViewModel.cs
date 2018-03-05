@@ -125,6 +125,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectStudentsCommand = new Command(OnSelectStudentsCommandExecute);
 
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
+            ClearQueryCommand = new Command(OnClearQueryCommandExecute);
             ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
@@ -208,6 +209,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("No results found.");
             }
             QueryResults = queryResults.ToObservableCollection();
+        }
+
+        /// <summary>Clears the current query.</summary>
+        public Command ClearQueryCommand { get; private set; }
+
+        private void OnClearQueryCommandExecute()
+        {
+            QueryResults.Clear();
+
+            Conditions.Clear();
+            Conditions.Add(new QueryConditionViewModel());
+            QueryString = string.Empty;
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>
