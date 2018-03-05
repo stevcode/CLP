@@ -22,7 +22,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -68,39 +67,53 @@
 
             </orc:StackGrid>
 
-            <!--Run Query Button-->
-            <Button Height="32"
-                    Width="150"
-                    Margin="5"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Center"
-                    Command="{Binding RunQueryCommand}">
+            <!--Run/Clear Query Button-->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
 
-                <Grid VerticalAlignment="Center"
-                      HorizontalAlignment="Stretch">
+                <Button Height="32"
+                        Width="150"
+                        Margin="5"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding RunQueryCommand}">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="6*" />
-                    </Grid.ColumnDefinitions>
+                    <Grid VerticalAlignment="Center"
+                          HorizontalAlignment="Stretch">
 
-                    <Image Grid.Column="0"
-                           Source="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
-                           Height="24"
-                           Width="24"
-                           HorizontalAlignment="Center" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="6*" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="1"
-                               Text="Run Query"
-                               TextAlignment="Center"
-                               VerticalAlignment="Stretch"
-                               Padding="3"
-                               FontWeight="Bold"
-                               FontSize="16" />
+                        <Image Grid.Column="0"
+                               Source="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
+                               Height="24"
+                               Width="24"
+                               HorizontalAlignment="Center" />
 
-                </Grid>
+                        <TextBlock Grid.Column="1"
+                                   Text="Run Query"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Stretch"
+                                   Padding="3"
+                                   FontWeight="Bold"
+                                   FontSize="16" />
 
-            </Button>
+                    </Grid>
+
+                </Button>
+
+                <Button Height="28"
+                        Width="50"
+                        Margin="5"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="Clear"
+                        Command="{Binding ClearQueryCommand}" />
+
+            </StackPanel>
+            
 
             <!--Manual Query Builder-->
             <ItemsControl x:Name="ConditionCreationControl"
@@ -121,15 +134,6 @@
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
-
-            <!--Run Query Button-->
-            <Button Height="32"
-                    Width="80"
-                    Margin="5"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Content="Clear Query"
-                    Command="{Binding ClearQueryCommand}" />
 
             <!--Dividing Line-->
             <Rectangle Height="1"
