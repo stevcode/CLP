@@ -10,6 +10,7 @@ namespace Classroom_Learning_Partner.Services
         List<int> PageNumbersToQuery { get; set; }
         List<string> StudentIDsToQuery { get; set; }
 
+        void LoadQueryablePages();
         List<QueryService.QueryResult> QueryByString(string queryString);
         List<QueryService.QueryResult> QueryByConditions(List<ConditionScaffold> conditions);
         QueryService.Report GatherReports();

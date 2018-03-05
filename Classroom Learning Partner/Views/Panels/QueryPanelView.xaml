@@ -25,6 +25,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!--Page/Student Filter-->
             <orc:StackGrid HorizontalAlignment="Stretch">
 
                 <Grid.ColumnDefinitions>
@@ -44,6 +45,7 @@
 
             </orc:StackGrid>
 
+            <!--Text Query Box-->
             <orc:StackGrid>
 
                 <Grid.ColumnDefinitions>
@@ -65,6 +67,7 @@
 
             </orc:StackGrid>
 
+            <!--Run Query Button-->
             <Button Height="32"
                     Width="150"
                     Margin="5"
@@ -98,6 +101,7 @@
 
             </Button>
 
+            <!--Manual Query Builder-->
             <ItemsControl x:Name="ConditionCreationControl"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           ItemsSource="{Binding Conditions}">
@@ -116,11 +120,13 @@
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
-            
+
+            <!--Dividing Line-->
             <Rectangle Height="1"
                        Margin="1 5"
                        Stroke="{StaticResource GrayBorderColor}" />
 
+            <!--View Toggles-->
             <orc:StackGrid HorizontalAlignment="Stretch">
 
                 <Grid.ColumnDefinitions>
@@ -141,6 +147,7 @@
 
             </orc:StackGrid>
 
+            <!--Query Results List-->
             <ListBox ItemsSource="{Binding QueryResults}"
                      SelectionMode="Single"
                      Margin="5 0"

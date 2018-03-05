@@ -84,8 +84,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeQueryConstraints()
         {
+            if (_queryService.NotebookToQuery != null &&
+                _queryService.NotebookToQuery == _dataService.CurrentNotebook)
+            {
+                return;
+            }
+
             _queryService.RosterToQuery = _dataService.CurrentClassRoster;
             _queryService.NotebookToQuery = _dataService.CurrentNotebook;
+            _queryService.LoadQueryablePages();
             SetPageRangeToAllPages();
             _queryService.StudentIDsToQuery = _queryService.RosterToQuery.ListOfStudents.Select(s => s.ID).ToList();
         }
@@ -217,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(QueryService.QueryResult queryResult)
         {
-            var page = _dataService.GetPageByCompositeID(queryResult.NameComposite, queryResult.StudentID);
+            var page = _dataService.GetPageByCompositeID(queryResult.Page.PageNameComposite, queryResult.Page.StudentID);
             if (page == null)
             {
                 return;

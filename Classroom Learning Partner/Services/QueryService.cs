@@ -13,6 +13,27 @@ namespace Classroom_Learning_Partner.Services
     {
         #region Nested Classes
 
+        public class QueryablePage
+        {
+            public QueryablePage()
+            {
+                MatchingQueryCodes = new List<IAnalysisCode>();
+                AllQueryCodes = new List<IAnalysisCode>();
+            }
+
+            public string CacheFilePath { get; set; }
+            public string StudentID { get; set; }
+            public string StudentName { get; set; }
+            public CLPPage.NameComposite PageNameComposite { get; set; }
+            public List<IAnalysisCode> MatchingQueryCodes { get; set; }
+            public List<IAnalysisCode> AllQueryCodes { get; set; }
+
+            public string FormattedValue
+            {
+                get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingQueryCodes.Select(q => q.FormattedValue))}"; }
+            }
+        }
+
         public class Query
         {
             public Query()
@@ -22,27 +43,23 @@ namespace Classroom_Learning_Partner.Services
             }
 
             public string QueryLabel { get; set; }
-            public string Alias { get; set; }
-            public Dictionary<string,List<string>> Constraints { get; set; }
+            public Dictionary<string, List<string>> Constraints { get; set; }
             public Dictionary<string, string> ConstraintValues { get; set; }
         }
 
         public class QueryResult
         {
-            public QueryResult()
+            public QueryResult(QueryablePage page)
             {
+                Page = page;
                 MatchingQueryCodes = new List<IAnalysisCode>();
-                AllQueryCodes = new List<IAnalysisCode>();
             }
 
-            public string CacheFilePath { get; set; }
-            public string PageID { get; set; }
-            public int PageNumber { get; set; }
-            public string StudentName { get; set; }
-            public string StudentID { get; set; }
+            public QueryablePage Page { get; set; }
             public List<IAnalysisCode> MatchingQueryCodes { get; set; }
-            public List<IAnalysisCode> AllQueryCodes { get; set; }
-            public CLPPage.NameComposite NameComposite { get; set; }
+
+            public int PageNumber => Page.PageNameComposite.PageNumber;
+            public string StudentName => Page.StudentName;
 
             public string FormattedValue
             {
@@ -111,8 +128,7 @@ namespace Classroom_Learning_Partner.Services
         {
             PageNumbersToQuery = new List<int>();
             StudentIDsToQuery = new List<string>();
-            Queries = new List<Query>();
-            QueryCache = new Dictionary<int, List<IAnalysisCode>>();
+            QueryablePages = new List<QueryablePage>();
             QueryResults = new List<QueryResult>();
         }
 
@@ -128,11 +144,75 @@ namespace Classroom_Learning_Partner.Services
 
         public List<string> StudentIDsToQuery { get; set; }
 
-        public List<Query> Queries { get; set; }
-
-        public Dictionary<int, List<IAnalysisCode>> QueryCache { get; set; }
+        public List<QueryablePage> QueryablePages { get; set; }
 
         public List<QueryResult> QueryResults { get; set; }
+
+        public Query LastQuery { get; set; }
+
+        public void LoadQueryablePages()
+        {
+            QueryablePages.Clear();
+
+            var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
+            var pageXDocuments = GetAllPageXDocumentsFromCache(cacheFilePath);
+            foreach (var pageXDocument in pageXDocuments)
+            {
+                var root = pageXDocument.Element("CLPPage");
+                if (root == null)
+                {
+                    continue;
+                }
+
+                #region Student Information
+
+                var isStudent = (bool)root.Element("Owner")?.Element("IsStudent");
+                if (!isStudent)
+                {
+                    continue;
+                }
+
+                var studentID = (string)root.Element("Owner")?.Element("ID");
+                var studentFirstName = (string)root.Element("Owner")?.Element("FirstName");
+                var studentLastName = (string)root.Element("Owner")?.Element("LastName");
+                var nickname = (string)root.Element("Owner")?.Element("Nickname");
+                var alias = (string)root.Element("Owner")?.Element("Alias");
+                var studentName = Person.CreateDisplayName(studentFirstName, studentLastName, studentID, nickname, alias);
+
+                #endregion // Student Information
+
+                #region PageNameComposite
+
+                var pageID = (string)root.Element("ID");
+                var pageNumber = (int)root.Element("PageNumber");
+                var subPageNumber = (int)root.Element("SubPageNumber");
+                var differentiationLevel = (string)root.Element("DifferentiationLevel");
+                var versionIndex = (uint)root.Element("VersionIndex");
+                var pageNameComposite = new CLPPage.NameComposite
+                                        {
+                                            ID = pageID,
+                                            PageNumber = pageNumber,
+                                            SubPageNumber = subPageNumber,
+                                            DifferentiationLevel = differentiationLevel,
+                                            VersionIndex = versionIndex
+                                        };
+
+                #endregion // PageNameComposite
+
+                var queryCodes = GetPageQueryCodes(root);
+
+                var queryablePage = new QueryablePage
+                                    {
+                                        CacheFilePath = cacheFilePath,
+                                        StudentID = studentID,
+                                        StudentName = studentName,
+                                        PageNameComposite = pageNameComposite,
+                                        AllQueryCodes = queryCodes.ToList()
+                                    };
+
+                QueryablePages.Add(queryablePage);
+            }
+        }
 
         public List<QueryResult> QueryByString(string queryString)
         {
@@ -143,93 +223,23 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var query = ParseQueryString(queryString);
+            LastQuery = query;
             if (query == null)
             {
                 return queryResults;
             }
 
-            var queries = new List<Query>
-                          {
-                              query
-                          };
-
-            Queries = queries;
-
-            var isQueryCached = QueryCache.Keys.Any();
-
-            var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
-            var xDocuments = GetAllXDocumentsFromCache(cacheFilePath);
-            foreach (var xDocument in xDocuments)
+            foreach (var queryablePage in QueryablePages)
             {
-                var root = xDocument.Element("CLPPage");
-                if (root == null)
-                {
-                    continue;
-                }
 
-                #region Restrict Page Numbers
-
-                var pageNumber = (int)root.Element("PageNumber");
-                if (!PageNumbersToQuery.Contains(pageNumber))
-                {
-                    continue;
-                }
-
-                #endregion // Restrict Page Numbers
-
-                #region Restrict Student IDs
-
-                var studentID = (string)root.Element("Owner")?.Element("ID");
-                if (string.IsNullOrWhiteSpace(studentID) ||
-                    !StudentIDsToQuery.Contains(studentID))
-                {
-                    continue;
-                }
-
-                #endregion // Restrict Student IDs
-
-                #region CompositeID
-
-                var pageID = (string)root.Element("ID");
-                var subPageNumber = (int)root.Element("SubPageNumber");
-                var differentiationLevel = (string)root.Element("DifferentiationLevel");
-                var versionIndex = (uint)root.Element("VersionIndex");
-
-                var nameComposite = new CLPPage.NameComposite
-                                    {
-                                        ID = pageID,
-                                        PageNumber = pageNumber,
-                                        SubPageNumber = subPageNumber,
-                                        DifferentiationLevel = differentiationLevel,
-                                        VersionIndex = versionIndex
-                                    };
-
-                #endregion // CompositeID
-
-                var queryCodes = GetPageQueryCodes(root);
-                if (!isQueryCached)
-                {
-                    if (QueryCache.ContainsKey(pageNumber))
-                    {
-                        QueryCache[pageNumber].AddRange(queryCodes.ToList());
-                    }
-                    else
-                    {
-                        QueryCache.Add(pageNumber, queryCodes);
-                    }
-                }
-
-                var isMatchingResult = IsQueryMatch(queryCodes, queries);
+                var isMatchingResult = IsPageAMatch(queryablePage, query);
                 if (!isMatchingResult)
                 {
                     continue;
                 }
 
-                var queryResult = ParseQueryResultFromXElement(root, pageNumber, studentID, cacheFilePath);
-                queryResult.NameComposite = nameComposite;
-                queryResult.StudentID = studentID;
-                queryResult.MatchingQueryCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
-                queryResult.AllQueryCodes = queryCodes.ToList();
+                var queryResult = new QueryResult(queryablePage);
+                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -245,26 +255,18 @@ namespace Classroom_Learning_Partner.Services
                 return queryResults;
             }
 
-
-
-
-
-
-
-
             QueryResults = queryResults;
             return queryResults;
         }
 
-
         public Report GatherReports()
         {
-            if (!Queries.Any())
+            if (LastQuery == null)
             {
                 return null;
             }
 
-            var queryLabel = Queries.First().QueryLabel;
+            var queryLabel = LastQuery.QueryLabel;
             var allPagesPrimaryReport = new PrimaryReport("Pages")
                                         {
                                             TotalEntriesLabel = "Total\nStudents"
@@ -275,7 +277,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var pageNumber in pageNumbers)
             {
                 var constraintValue = pageNumber.ToString();
-                var queryResultsForPage = QueryResults.Where(r => r.PageNumber == pageNumber).ToList();
+                var queryResultsForPage = QueryResults.Where(r => r.Page.PageNameComposite.PageNumber == pageNumber).ToList();
                 var matchedEntries = queryResultsForPage.Count;
                 var matchedInstances = queryResultsForPage.Sum(r => r.MatchingQueryCodes.Count);
                 var totalMatchedEntries = totalStudents;
@@ -308,7 +310,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Methods
 
-        private List<XDocument> GetAllXDocumentsFromCache(string cacheFilePath)
+        private List<XDocument> GetAllPageXDocumentsFromCache(string cacheFilePath)
         {
             List<DataService.PageZipEntryLoader> pageZipEntryLoaders;
             
@@ -328,42 +330,23 @@ namespace Classroom_Learning_Partner.Services
             return xDocs;
         }
 
-        private QueryResult ParseQueryResultFromXElement(XElement root, int pageNumber, string studentID, string cacheFilePath)
+        private bool IsPageAMatch(QueryablePage queryablePage, Query query)
         {
-            var studentFirstName = (string)root.Element("Owner")?.Element("FirstName");
-            var studentLastName = (string)root.Element("Owner")?.Element("LastName");
-            var nickname = (string)root.Element("Owner")?.Element("Nickname");
-            var alias = (string)root.Element("Owner")?.Element("Alias");
-            var studentName = Person.CreateDisplayName(studentFirstName, studentLastName, studentID, nickname, alias);
-
-            var queryResult = new QueryResult
-                              {
-                                  CacheFilePath = cacheFilePath,
-                                  PageNumber = pageNumber,
-                                  StudentName = studentName
-                              };
-
-            return queryResult;
-        }
-
-        private bool IsQueryMatch(List<IAnalysisCode> queryCodes, List<Query> queries)
-        {
-            if (!queries.Any())
+            if (query == null ||
+                queryablePage == null)
             {
                 return false;
             }
 
-            var query = queries.First();
-            var matchingCodes = queryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+            var matchingCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
             if (!query.ConstraintValues.Keys.Any())
             {
                 return matchingCodes.Any();
             }
 
-            var isMatching = false;
             foreach (var constraint in query.ConstraintValues.Keys)
             {
-                var constraintValues = queryCodes.SelectMany(c => c.ConstraintValues).ToList();
+                var constraintValues = queryablePage.AllQueryCodes.SelectMany(c => c.ConstraintValues).ToList();
                 var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
                 if (matchingConstraintValues.Any())
                 {
@@ -454,7 +437,6 @@ namespace Classroom_Learning_Partner.Services
             var query = new Query
                         {
                             QueryLabel = analysisLabel,
-                            Alias = Codings.AnalysisLabelToAlias(analysisLabel),
                             Constraints = PopulateQueryWithAllConstraints(analysisLabel)
                         };
 
