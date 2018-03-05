@@ -232,7 +232,7 @@ namespace Classroom_Learning_Partner.Services
             foreach (var queryablePage in QueryablePages)
             {
 
-                var isMatchingResult = IsPageAMatch(queryablePage, query);
+                var isMatchingResult = IsPageAMatch(queryablePage, query) && PageNumbersToQuery.Contains(queryablePage.PageNameComposite.PageNumber);
                 if (!isMatchingResult)
                 {
                     continue;
@@ -249,10 +249,26 @@ namespace Classroom_Learning_Partner.Services
 
         public List<QueryResult> QueryByConditions(List<ConditionScaffold> conditions)
         {
-            var queryResults = new List<QueryResult>();
-            if (NotebookToQuery == null)
+            if (NotebookToQuery == null ||
+                !conditions.Any())
             {
-                return queryResults;
+                return new List<QueryResult>();
+            }
+
+            var queries = conditions.Select(ParseCondition).ToList();
+            var queryResults = new List<QueryResult>();
+
+            foreach (var queryablePage in QueryablePages)
+            {
+                var isMatchingResult = queries.All(q => IsPageAMatch(queryablePage, q)) && PageNumbersToQuery.Contains(queryablePage.PageNameComposite.PageNumber);
+                if (!isMatchingResult)
+                {
+                    continue;
+                }
+
+                var queryResult = new QueryResult(queryablePage);
+                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisLabel)).ToList();
+                queryResults.Add(queryResult);
             }
 
             QueryResults = queryResults;
@@ -418,15 +434,22 @@ namespace Classroom_Learning_Partner.Services
             return query;
         }
 
-        //private Query ParseConditions(List<ConditionScaffold> conditions)
-        //{
-        //    var allAliases = Codings.GetAllAnalysisAliases();
+        private Query ParseCondition(ConditionScaffold condition)
+        {
+            if (condition == null)
+            {
+                return null;
+            }
 
-        //    var analysisLabel = Codings.AnalysisAliasToLabel(queryString.ToUpper());
-        //    var query = GenerateQuery(analysisLabel);
+            var analysisLabel = condition.AnalysisCodeLabel;
+            var query = GenerateQuery(analysisLabel);
+            foreach (var conditionConstraint in condition.Constraints.Where(c => c.IsQueryable))
+            {
+                query.ConstraintValues.Add(conditionConstraint.ConstraintName, conditionConstraint.SelectedConstraintValue);
+            }
 
-        //    return query;
-        //}
+            return query;
+        }
 
         #endregion // Methods
 
