@@ -362,19 +362,24 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var constraint in query.ConstraintValues.Keys)
             {
-                var constraintValues = queryablePage.AllQueryCodes.SelectMany(c => c.ConstraintValues).ToList();
+                var constraintValues = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).SelectMany(c => c.ConstraintValues).ToList();
                 var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
-                if (matchingConstraintValues.Any())
+                if (!matchingConstraintValues.Any())
                 {
-                    var queryConstraintValue = query.ConstraintValues[constraint];
-                    if (matchingConstraintValues.Any(c => c.ConstraintValue.Contains(queryConstraintValue)))
-                    {
-                        return true;
-                    }
+                    return false;
                 }
+
+                var queryConstraintValue = query.ConstraintValues[constraint];
+                if (queryConstraintValue == Codings.CONSTRAINT_VALUE_ANY ||
+                    matchingConstraintValues.Any(c => c.ConstraintValue.Contains(queryConstraintValue)))
+                {
+                    continue;
+                }
+
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         private List<IAnalysisCode> GetPageQueryCodes(XElement root)

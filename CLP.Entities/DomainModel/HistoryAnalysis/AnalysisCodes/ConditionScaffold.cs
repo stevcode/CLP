@@ -152,11 +152,47 @@ namespace CLP.Entities
                                                     select $"{fromCorrectness}{Codings.CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER}{toCorrectness}");
 
             var abr = new ConditionScaffold(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION, Codings.ANALYSIS_ALIAS_ANSWER_BEFORE_REPRESENTATION);
-            abr.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues.ToList()));
+            //abr.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues.ToList()));
+            abr.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_TYPE,
+                                                       new List<string>
+                                                       {
+                                                           Codings.CONSTRAINT_VALUE_ANY,
+                                                           Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
+                                                           Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
+                                                       }));
+            abr.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CORRECTNESS,
+                                                       new List<string>
+                                                       {
+                                                           Codings.CONSTRAINT_VALUE_ANY,
+                                                           Codings.CORRECTNESS_CORRECT,
+                                                           Codings.CORRECTNESS_PARTIAL,
+                                                           Codings.CORRECTNESS_INCORRECT,
+                                                           Codings.CORRECTNESS_ILLEGIBLE,
+                                                           Codings.CORRECTNESS_UNANSWERED,
+                                                           Codings.CORRECTNESS_UNKNOWN
+                                                       }));
             conditions.Add(abr);
 
             var raa = new ConditionScaffold(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER, Codings.ANALYSIS_ALIAS_REPRESENTATION_AFTER_ANSWER);
-            raa.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues.ToList()));
+            //raa.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues.ToList()));
+            raa.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_TYPE,
+                                                       new List<string>
+                                                       {
+                                                           Codings.CONSTRAINT_VALUE_ANY,
+                                                           Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
+                                                           Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
+                                                       }));
+            raa.Constraints.Add(new ConstraintScaffold(Codings.CONSTRAINT_ANSWER_CORRECTNESS,
+                                                       new List<string>
+                                                       {
+                                                           Codings.CONSTRAINT_VALUE_ANY,
+                                                           Codings.CORRECTNESS_CORRECT,
+                                                           Codings.CORRECTNESS_PARTIAL,
+                                                           Codings.CORRECTNESS_INCORRECT,
+                                                           Codings.CORRECTNESS_ILLEGIBLE,
+                                                           Codings.CORRECTNESS_UNANSWERED,
+                                                           Codings.CORRECTNESS_UNKNOWN
+                                                       }));
             conditions.Add(raa);
 
             var caar = new ConditionScaffold(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION, Codings.ANALYSIS_ALIAS_CHANGED_ANSWER_AFTER_REPRESENTATION);
