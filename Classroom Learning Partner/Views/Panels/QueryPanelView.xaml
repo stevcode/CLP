@@ -13,172 +13,92 @@
             Width="{Binding Length}"
             Visibility="{Binding IsVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
 
-        <orc:StackGrid>
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!--Page/Student Filter-->
-            <orc:StackGrid HorizontalAlignment="Stretch">
-
-                <Grid.ColumnDefinitions>
-                    <!--<ColumnDefinition Width="*" />-->
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <!--<Button Content="Caches" 
-                        Command="{Binding SelectCacheCommand}" />-->
-
-                <Button Content="Pages"
-                        Command="{Binding SelectPageRangeCommand}" />
-
-                <Button Content="Students"
-                        Command="{Binding SelectStudentsCommand}" />
-
-            </orc:StackGrid>
-
-            <!--Text Query Box-->
-            <orc:StackGrid>
+            <Grid Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      Grid.Row="0">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Query:"
-                       Margin="3">
-                    <Label.ToolTip>
-                        <ToolTip>
-                            <TextBox Text="MR, MR2STEP, CAAR, ABR, RAA, REPS_USED, ARR, BINS, NL, STAMP" />
-                        </ToolTip>
-                    </Label.ToolTip>
-                </Label>
-
-                <TextBox Margin="3"
-                         Text="{Binding QueryString}" />
-
-            </orc:StackGrid>
-
-            <!--Run/Clear Query Button-->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-
-                <Button Height="32"
-                        Width="150"
-                        Margin="5"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Command="{Binding RunQueryCommand}">
-
-                    <Grid VerticalAlignment="Center"
-                          HorizontalAlignment="Stretch">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="6*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Image Grid.Column="0"
-                               Source="pack://application:,,,/Resources/Images/MagnifyingGlass128.png"
-                               Height="24"
-                               Width="24"
-                               HorizontalAlignment="Center" />
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Run Query"
-                                   TextAlignment="Center"
-                                   VerticalAlignment="Stretch"
-                                   Padding="3"
-                                   FontWeight="Bold"
-                                   FontSize="16" />
-
-                    </Grid>
-
-                </Button>
-
-                <Button Height="28"
-                        Width="50"
-                        Margin="5"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Content="Clear"
-                        Command="{Binding ClearQueryCommand}" />
-
-            </StackPanel>
-            
-
-            <!--Manual Query Builder-->
-            <ItemsControl x:Name="ConditionCreationControl"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          ItemsSource="{Binding Conditions}">
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-
-                        <StackPanel>
-                            <views:QueryConditionView />
-                            <Button Content="AND"
-                                    Width="30"
-                                    Command="{Binding DataContext.AddANDConditionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}" />
-                        </StackPanel>
-
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-            </ItemsControl>
-
-            <!--Dividing Line-->
-            <Rectangle Height="1"
-                       Margin="1 5"
-                       Stroke="{StaticResource GrayBorderColor}" />
-
-            <!--View Toggles-->
-            <orc:StackGrid HorizontalAlignment="Stretch">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="1.4*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Content="List View" />
+                <Label Grid.Column="0" 
+                           Content="QUERY:" />
 
-                <Button Content="Thumbnails" />
+                <ComboBox Grid.Column="1" />
 
-                <Button Content="Sort" />
+                <Button Grid.Column="2" />
 
-                <Button Content="Reports"
-                        Command="{Binding ShowReportsCommand}" />
+                <ComboBox Grid.Column="3" />
 
-            </orc:StackGrid>
+            </Grid>
+
+            <Button Grid.Column="0"
+                        Grid.Row="1" 
+                        HorizontalAlignment="Center"
+                        Content="Save Query"
+                        Command="{Binding SelectPageRangeCommand}" />
+
+            <Button Grid.Column="2"
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        Content="Run Query"
+                        Command="{Binding RunQueryCommand}" />
+
+            <!--Horizontal Dividing Line-->
+            <Rectangle Grid.Column="0"
+                           Grid.ColumnSpan="3"
+                           Grid.Row="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
+
+            <!--Vertical Dividing Line-->
+            <Rectangle Grid.Column="1"  
+                           Grid.Row="3"
+                           Width="1"
+                           Margin="5 1"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
             <!--Query Results List-->
-            <ListBox ItemsSource="{Binding QueryResults}"
-                     SelectionMode="Single"
-                     Margin="5 0"
-                     ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
+            <ListBox Grid.Column="2"
+                         Grid.Row="3" 
+                         ItemsSource="{Binding QueryResults}"
+                         SelectionMode="Single"
+                         Margin="5 0"
+                         ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid HorizontalAlignment="Stretch">
 
                             <TextBlock Text="{Binding FormattedValue}"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch" />
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch" />
 
-                            <Rectangle Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
-                                       StrokeThickness="0"
-                                       HorizontalAlignment="Stretch"
-                                       Fill="Transparent">
+                            <Rectangle
+                                    Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
+                                    StrokeThickness="0"
+                                    HorizontalAlignment="Stretch"
+                                    Fill="Transparent">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseUp">
                                         <catel:EventToCommand
@@ -188,15 +108,15 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
+
                         </Grid>
-                        
-                        
+
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 
             </ListBox>
 
-        </orc:StackGrid>
+        </Grid>
 
     </Border>
 
