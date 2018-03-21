@@ -50,6 +50,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        public override double InitialLength => 500.0;
+
         /// <summary>String to run the query on.</summary>
         public ObservableCollection<QueryConditionViewModel> Conditions
         {
